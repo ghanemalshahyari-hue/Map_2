@@ -34,7 +34,7 @@ function check(ok, label, detail) {
 // ── Server helpers (loaded via _internals) ────────────────────────────────────
 const bridge   = require('./UI_MOdified/server/wargame-sim-bridge.js');
 const internals = bridge._internals;
-const { buildPreviewFromScenario, PREVIEW_STEP_TEXT, PREVIEW_STEP_TEXT_DEFAULT } = internals;
+const { buildPreviewFromScenario, PREVIEW_STEP_SEQUENCE, PREVIEW_STEP_TEXT, PREVIEW_STEP_TEXT_DEFAULT } = internals;
 
 // ── brief-to-scenario generator (direct) ─────────────────────────────────────
 const GEN = require('./UI_MOdified/server/ai/brief-to-scenario.js');
@@ -136,6 +136,9 @@ check(typeof buildPreviewFromScenario === 'function',
 check(typeof PREVIEW_STEP_TEXT === 'object' && PREVIEW_STEP_TEXT !== null,
     'PREVIEW_STEP_TEXT exported via _internals');
 
+check(Array.isArray(PREVIEW_STEP_SEQUENCE) && PREVIEW_STEP_SEQUENCE.length === 7,
+    'PREVIEW_STEP_SEQUENCE exports seven operational preview steps');
+
 // ── Section 5: Preview object invariants ─────────────────────────────────────
 console.log('\n  5. Preview object structure');
 
@@ -155,6 +158,9 @@ check(preview.review_source === 'ai_decision_demo',
 
 check(Array.isArray(preview.steps) && preview.steps.length >= 5 && preview.steps.length <= 8,
     'steps count in [5, 8]', preview.steps.length);
+
+check(preview.steps.length === 7,
+    'preview uses seven operational steps', preview.steps.length);
 
 check(Array.isArray(preview.red_units) && preview.red_units.length > 0,
     'red_units present', preview.red_units.length);
@@ -199,6 +205,33 @@ check(step0.unit_positions && Array.isArray(step0.unit_positions.red) && Array.i
 check(Array.isArray(step0.movement_lines),
     'step[0].movement_lines is array');
 
+var expectedTitles = [
+    'Initial posture',
+    'Reconnaissance and confirmation',
+    'Defensive readiness',
+    'Main movement/action',
+    'Contact or engagement',
+    'Consolidation',
+    'Decision point',
+];
+var actualTitles = preview.steps.map(function (s) { return s.phase_name_en; });
+check(JSON.stringify(actualTitles) === JSON.stringify(expectedTitles),
+    'improved operational step titles are generated', actualTitles.join(' | '));
+
+check(preview.steps.every(function (s) {
+    return typeof s.action_en === 'string' && s.action_en.length > 0 &&
+           typeof s.reason_en === 'string' && s.reason_en.length > 0 &&
+           typeof s.risk_en === 'string' && s.risk_en.length > 0;
+}), 'every step has action/reason/risk fields');
+
+check(preview.steps.every(function (s) {
+    return Array.isArray(s.units_involved) && s.units_involved.length > 0 &&
+           Array.isArray(s.related_bases) && s.related_bases.length > 0 &&
+           /preview_only:true/.test(s.review_warning || '') &&
+           /approximate_route:true/.test(s.review_warning || '') &&
+           /requires_review:true/.test(s.review_warning || '');
+}), 'every step carries units, related bases/anchors, and review warning metadata');
+
 // ── Section 7: Movement lines only when positions change ─────────────────────
 console.log('\n  7. Movement lines');
 
@@ -221,6 +254,16 @@ if (laterStep) {
         if (nonZero) {
             check(line.approximate === true,
                 'movement line[' + line.unit_uid + '] carries approximate:true');
+            check(line.approximate_route === true,
+                'movement line[' + line.unit_uid + '] carries approximate_route:true');
+            check(line.requires_review === true,
+                'movement line[' + line.unit_uid + '] carries requires_review:true');
+            check(typeof line.from_label === 'string' && line.from_label.length > 0,
+                'movement line[' + line.unit_uid + '] has from anchor/base label');
+            check(typeof line.to_label === 'string' && line.to_label.length > 0,
+                'movement line[' + line.unit_uid + '] has to objective/area label');
+            check(Number.isInteger(line.step_index) && line.step_index === laterStep.index,
+                'movement line[' + line.unit_uid + '] has step_index metadata');
         }
     });
     check(laterStep.movement_lines.every(function (l) {
@@ -319,6 +362,27 @@ check(/Clear Preview/.test(clientSrc) && /data-act="clear"/.test(clientSrc),
     'panel exposes visible Clear Preview control');
 check(/preview_only/.test(clientSrc) && /approximate_route/.test(clientSrc) && /requires_review/.test(clientSrc),
     'panel warning shows preview_only / approximate_route / requires_review tokens');
+
+check(/Action \/ العمل/.test(clientSrc) && /Reason \/ السبب/.test(clientSrc) &&
+      /Units involved \/ الوحدات المشاركة/.test(clientSrc) &&
+      /Related bases\/anchors \/ القواعد والمراسي المرتبطة/.test(clientSrc),
+    'panel renders action, reason, units involved, and related bases/anchors');
+
+check(/bindPopup/.test(clientSrc) && /from anchor\/base/.test(clientSrc) &&
+      /to objective\/area/.test(clientSrc) && /approximate_route:true/.test(clientSrc) &&
+      /requires_review:true/.test(clientSrc),
+    'movement lines render labels/popups with review metadata');
+
+var proposedBefore = JSON.stringify(FIXTURE_BRIEF.operational_brief.proposed_units);
+buildPreviewFromScenario(gen.scenario, gen.report, FIXTURE_BRIEF);
+check(JSON.stringify(FIXTURE_BRIEF.operational_brief.proposed_units) === proposedBefore,
+    'buildPreviewFromScenario does not mutate source proposed_units');
+
+var builderStart = bridgeSrc.indexOf('function buildPreviewFromScenario');
+var builderEnd = bridgeSrc.indexOf('// ── main router', builderStart);
+var builderSrc = bridgeSrc.slice(builderStart, builderEnd);
+check(!/step\s*[345]|Step\s*[345]/i.test(builderSrc),
+    'preview builder has no Step 3/4/5 dependency');
 
 // ─────────────────────────────────────────────────────────────────────────────
 console.log('\n  ─────────────────────────────────────────────');

@@ -43,6 +43,29 @@
         return !!(window.L && window.map && typeof window.L.layerGroup === 'function');
     }
 
+    function lineReviewHtml(line) {
+        var step = line && line.step_label ? line.step_label : ('Step ' + (((line && line.step_index) || 0) + 1));
+        return [
+            '<div style="font-size:12px;color:#e8eaed;background:#0e1620;padding:5px;min-width:180px;">',
+            '<b>' + esc(step) + '</b><br>',
+            '<span style="color:#8fa5b8;">from anchor/base:</span> ' + esc(line && line.from_label || 'unknown') + '<br>',
+            '<span style="color:#8fa5b8;">to objective/area:</span> ' + esc(line && line.to_label || 'objective/area') + '<br>',
+            '<span style="color:#e0c060;">approximate_route:true</span><br>',
+            '<span style="color:#e0c060;">requires_review:true</span>',
+            '</div>',
+        ].join('');
+    }
+
+    function compactListHtml(items) {
+        var list = Array.isArray(items) ? items.filter(Boolean).slice(0, 6) : [];
+        if (!list.length) return '<span style="color:#8fa5b8;">review data pending</span>';
+        return list.map(function (item) {
+            return '<span style="display:inline-block;margin:0 4px 4px 0;padding:2px 6px;' +
+                   'border:1px solid #2e5d7d;border-radius:3px;background:#121a22;color:#cfe6ff;">' +
+                   esc(item) + '</span>';
+        }).join('');
+    }
+
     // ── Public API ────────────────────────────────────────────────────────────
     function isActive() { return _active; }
 
@@ -237,10 +260,22 @@
             var color = line.side === 'BLUE' ? '#7fd6a0' : '#f0a0a0';
             var pl = window.L.polyline(
                 [[line.from[1], line.from[0]], [line.to[1], line.to[0]]],
-                { color: color, weight: 2, dashArray: '6,4', opacity: 0.7, interactive: false }
+                { color: color, weight: 2, dashArray: '6,4', opacity: 0.82, interactive: true }
             );
             pl._rmoozPreview = true;
             pl._rmoozReviewOnly = true;
+            pl._rmoozPreviewLine = line;
+            var reviewHtml = lineReviewHtml(line);
+            if (typeof pl.bindPopup === 'function') pl.bindPopup(reviewHtml);
+            if (typeof pl.bindTooltip === 'function') {
+                pl.bindTooltip(
+                    'from anchor/base: ' + esc(line.from_label || 'unknown') +
+                    ' | to objective/area: ' + esc(line.to_label || 'objective/area') +
+                    ' | step: ' + esc(line.step_label || ('Step ' + (idx + 1))) +
+                    ' | approximate_route:true | requires_review:true',
+                    { sticky: true }
+                );
+            }
             _stepLayer.addLayer(pl);
         });
     }
@@ -275,9 +310,13 @@
         var total = steps.length;
         var phaseEn  = step.phase_name_en || step.phase_kind || '';
         var phaseAr  = step.phase_name_ar || '';
-        var decision = step.decision_en || '';
+        var action   = step.action_en || step.decision_en || '';
+        var reason   = step.reason_en || '';
         var risk     = step.risk_en || '';
         var evidence = step.evidence_en || '';
+        var units    = step.units_involved || [];
+        var bases    = step.related_bases || [];
+        var reviewWarning = step.review_warning || 'preview_only:true | approximate_route:true | requires_review:true';
         var warning  = _preview.movement_warning || 'Approximate demo movement — route requires review';
 
         var prevDisabled = idx === 0 ? ' disabled style="opacity:0.4;"' : '';
@@ -303,12 +342,20 @@
             '<span style="color:#cfe6ff;">' + esc(phaseEn) + (phaseAr ? ' — ' + esc(phaseAr) : '') + '</span>',
             '</div>',
         ];
-        if (decision) {
+        if (action) {
             html.push(
                 '<div style="margin-bottom:5px;">',
-                '<div style="font-size:11px;color:#8fa5b8;margin-bottom:2px;">Decision / القرار</div>',
+                '<div style="font-size:11px;color:#8fa5b8;margin-bottom:2px;">Action / العمل</div>',
                 '<div style="font-size:12px;color:#e8eaed;background:#121a22;border-radius:3px;',
-                'padding:4px 6px;direction:rtl;text-align:right;">' + esc(decision) + '</div></div>'
+                'padding:4px 6px;">' + esc(action) + '</div></div>'
+            );
+        }
+        if (reason) {
+            html.push(
+                '<div style="margin-bottom:5px;">',
+                '<div style="font-size:11px;color:#8fa5b8;margin-bottom:2px;">Reason / السبب</div>',
+                '<div style="font-size:12px;color:#e8eaed;background:#121a22;border-radius:3px;',
+                'padding:4px 6px;">' + esc(reason) + '</div></div>'
             );
         }
         if (risk) {
@@ -319,6 +366,18 @@
                 'padding:4px 6px;">' + esc(risk) + '</div></div>'
             );
         }
+        html.push(
+            '<div style="margin-bottom:5px;">',
+            '<div style="font-size:11px;color:#8fa5b8;margin-bottom:2px;">Units involved / الوحدات المشاركة</div>',
+            '<div style="font-size:12px;background:#0f1922;border-radius:3px;padding:4px 6px;">',
+            compactListHtml(units),
+            '</div></div>',
+            '<div style="margin-bottom:5px;">',
+            '<div style="font-size:11px;color:#8fa5b8;margin-bottom:2px;">Related bases/anchors / القواعد والمراسي المرتبطة</div>',
+            '<div style="font-size:12px;background:#0f1922;border-radius:3px;padding:4px 6px;">',
+            compactListHtml(bases),
+            '</div></div>'
+        );
         if (evidence) {
             html.push(
                 '<div style="margin-bottom:5px;">',
@@ -331,6 +390,7 @@
             '<div style="margin-top:8px;padding:5px 7px;border-radius:4px;background:#2a2412;',
             'border:1px solid #b8860b;color:#e0c060;font-size:11px;">',
             '<b>⚠ preview_only · approximate_route · requires_review</b><br>',
+            esc(reviewWarning) + '<br>',
             esc(warning),
             '</div>',
             '<div style="display:flex;justify-content:flex-end;margin-top:8px;">',

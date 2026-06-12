@@ -915,35 +915,143 @@ function computeFreshness(c) {
 
 // ── DEMO-ACTUAL-1: preview scenario builder (pure — no fs writes) ─────────────
 // Called by POST /api/wargame-sim/generate-preview with { noWrite:true }.
-// Computes step-by-step unit positions and dashed movement lines for each of
-// 5–8 decision steps derived from the template phases. RED units interpolate
-// from an approach origin to their final template positions; BLUE stays fixed
-// at defensive positions. All output is marked preview_only / _isPreview.
-var PREVIEW_STEP_TEXT = {
-    deployment:         { decision_en: 'Initial force deployment — establish baseline positions',              risk_en: 'Exposure during initial deployment',                decision_ar: 'نشر القوات الأولي' },
-    preparation_recon:  { decision_en: 'Preparation and reconnaissance — gather intelligence on objective',   risk_en: 'Detection by enemy during recon',                   decision_ar: 'التحضير والاستطلاع' },
-    approach_movement:  { decision_en: 'Advance forces toward objective using covered approaches',             risk_en: 'Interdiction during movement phase',                decision_ar: 'الاقتراب والتحرك' },
-    landing:            { decision_en: 'Execute landing operation at designated insertion points',             risk_en: 'Anti-access systems active during landing',         decision_ar: 'تنفيذ الإبرار' },
-    shaping:            { decision_en: 'Shaping fires and maneuver to degrade enemy defenses',                risk_en: 'Counter-fire may limit shaping effects',            decision_ar: 'التمهيد' },
-    approach:           { decision_en: 'Advance to assault positions under concealment',                      risk_en: 'Enemy observation may compromise approach',          decision_ar: 'الاقتراب' },
-    assault:            { decision_en: 'Assault objective — coordinated fire and maneuver',                   risk_en: 'Defender advantage requires combined arms',          decision_ar: 'الاقتحام' },
-    secure_expand:      { decision_en: 'Secure beachhead / foothold and expand control area',                 risk_en: 'Counterattack risk during consolidation',            decision_ar: 'التأمين والتوسيع' },
-    consolidate:        { decision_en: 'Consolidate gains and establish defensive positions',                  risk_en: 'Counterattack during transition to defense',         decision_ar: 'التثبيت' },
-    prepare_defense:    { decision_en: 'Prepare defensive positions and obstacle plan',                       risk_en: 'Vulnerability during preparation phase',             decision_ar: 'إعداد الدفاع' },
-    defend:             { decision_en: 'Execute defensive plan — engage enemy in depth',                      risk_en: 'Attrition and loss of defensive cohesion',           decision_ar: 'الدفاع' },
-    counterattack:      { decision_en: 'Launch counterattack to restore situation',                           risk_en: 'Counterattack may expose flanks if poorly timed',    decision_ar: 'الهجوم المضاد' },
-    insertion:          { decision_en: 'Insert reconnaissance element without detection',                     risk_en: 'Detection terminates mission',                       decision_ar: 'الإدخال' },
-    observation:        { decision_en: 'Establish observation posts and begin intelligence collection',       risk_en: 'Engagement by enemy patrols',                        decision_ar: 'المراقبة' },
-    reporting:          { decision_en: 'Transmit collected intelligence through secure channel',              risk_en: 'Electronic signature during transmission',           decision_ar: 'الإبلاغ' },
-    exfiltration:       { decision_en: 'Exfiltrate element via alternate route',                              risk_en: 'Pursuit risk during exfiltration',                   decision_ar: 'الإخلاء' },
-    air_defense:        { decision_en: 'Activate air defense coverage and engagement protocols',              risk_en: 'Saturation attacks may overwhelm point defense',     decision_ar: 'الدفاع الجوي' },
-    assessment:         { decision_en: 'Post-operation assessment — consolidate learning for next phase',     risk_en: 'Reassessment may reveal gaps in initial intelligence', decision_ar: 'التقييم النهائي' },
-};
+// Computes step-by-step unit positions and dashed movement lines for a fixed
+// operational preview sequence. RED units interpolate from an approach origin
+// to their final template positions; BLUE stays fixed at defensive positions.
+// All output is marked preview_only / _isPreview and requires review.
+var PREVIEW_STEP_SEQUENCE = [
+    {
+        kind: 'initial_posture',
+        title_en: 'Initial posture',
+        title_ar: 'تمركز ابتدائي',
+        action_en: 'Establish the preview force posture around known bases and trial anchors.',
+        action_ar: 'تثبيت تمركز معاينة أولي حول القواعد والمراسي المعروفة.',
+        reason_en: 'The reviewed payload identifies bases, anchors, and proposed units before any committed tasking.',
+        risk_en: 'Baseline locations remain approximate until commander review confirms anchors.',
+    },
+    {
+        kind: 'reconnaissance_confirmation',
+        title_en: 'Reconnaissance and confirmation',
+        title_ar: 'استطلاع وتأكيد',
+        action_en: 'Confirm base candidates, proposed unit groups, and the objective area before movement.',
+        action_ar: 'تأكيد مرشحي القواعد ومجموعات الوحدات المقترحة ومنطقة الهدف قبل الحركة.',
+        reason_en: 'Step 1/2 reviewed data is useful but still review-only; reconnaissance reduces ambiguity.',
+        risk_en: 'Unconfirmed catalog matches or stale base evidence can mislead follow-on planning.',
+    },
+    {
+        kind: 'defensive_readiness',
+        title_en: 'Defensive readiness',
+        title_ar: 'جاهزية دفاعية',
+        action_en: 'Frame BLUE defensive readiness around friendly trial anchors while RED remains observed.',
+        action_ar: 'تأطير الجاهزية الدفاعية الزرقاء حول المراسي التجريبية الصديقة مع استمرار مراقبة الأحمر.',
+        reason_en: 'Friendly anchors provide a defensive frame without creating final posture or movement orders.',
+        risk_en: 'Readiness is a preview label only; no live readiness or posture is mutated.',
+    },
+    {
+        kind: 'main_movement_action',
+        title_en: 'Main movement/action',
+        title_ar: 'الحركة أو العمل الرئيسي',
+        action_en: 'Preview RED movement from related bases toward the objective or area of concern.',
+        action_ar: 'معاينة حركة الأحمر من القواعد المرتبطة نحو الهدف أو منطقة الاهتمام.',
+        reason_en: 'Current reviewed anchors are sufficient to show an approximate route for commander sense-making.',
+        risk_en: 'Routes are schematic and require terrain, doctrine, and operator review.',
+    },
+    {
+        kind: 'contact_engagement',
+        title_en: 'Contact or engagement',
+        title_ar: 'تماس أو اشتباك',
+        action_en: 'Show where opposing preview tracks could create contact or engagement risk.',
+        action_ar: 'إظهار مواضع قد تنتج تماساً أو خطر اشتباك بين مسارات المعاينة المتقابلة.',
+        reason_en: 'A decision preview should expose likely friction points before any live adjudication.',
+        risk_en: 'No engagement result is adjudicated; combat effects are not created.',
+    },
+    {
+        kind: 'consolidation',
+        title_en: 'Consolidation',
+        title_ar: 'تثبيت',
+        action_en: 'Preview consolidation around the objective or area after the main action.',
+        action_ar: 'معاينة التثبيت حول الهدف أو المنطقة بعد العمل الرئيسي.',
+        reason_en: 'The reviewed objective area needs a stabilization step before a decision point.',
+        risk_en: 'Consolidation boundaries are approximate and do not create final placement.',
+    },
+    {
+        kind: 'decision_point',
+        title_en: 'Decision point',
+        title_ar: 'نقطة قرار',
+        action_en: 'Present the commander with a review point: continue, revise anchors, or request richer inputs.',
+        action_ar: 'عرض نقطة مراجعة للقائد: المتابعة أو تعديل المراسي أو طلب مدخلات أغنى.',
+        reason_en: 'The preview is based only on current Step 1/2 evidence and stops before committing scenario state.',
+        risk_en: 'Further action requires operator review and later-step evidence; no auto-apply path exists.',
+    },
+];
+var PREVIEW_STEP_TEXT = {};
+PREVIEW_STEP_SEQUENCE.forEach(function (step) {
+    PREVIEW_STEP_TEXT[step.kind] = {
+        decision_en: step.action_en,
+        risk_en: step.risk_en,
+        decision_ar: step.action_ar,
+    };
+});
 var PREVIEW_STEP_TEXT_DEFAULT = {
-    decision_en: 'Execute phase — coordinate actions per the operational plan',
-    risk_en: 'Friction and enemy reaction require contingency planning',
-    decision_ar: 'تنفيذ المرحلة',
+    decision_en: 'Preview tasking intent from reviewed data only.',
+    risk_en: 'Friction and enemy reaction require commander review before any committed action.',
+    decision_ar: 'معاينة نية المهمة من البيانات المراجعة فقط.',
 };
+
+function briefRoot(brief) {
+    return (brief && brief.operational_brief) ? brief.operational_brief : (brief || {});
+}
+
+function compactLabel(value, fallback) {
+    if (value == null || value === '') return fallback || 'unknown';
+    return String(value);
+}
+
+function unitLabel(u, fallback) {
+    if (!u) return fallback || 'unit';
+    var side = compactLabel(u.side || u.force || u.affiliation, '');
+    var role = compactLabel(u.role || u.platform || u.platform_class || u.type || u.unit_type, '');
+    var id = compactLabel(u.uid || u.unit_uid || u.name || u.label, '');
+    var count = u.estimated_count != null ? ('x' + u.estimated_count) : '';
+    return [side, role, id, count].filter(Boolean).join(' ').trim() || fallback || 'unit';
+}
+
+function baseLabel(b, fallback) {
+    if (!b) return fallback || 'anchor';
+    return compactLabel(
+        b.name_en || b.name || b.base_name || b.anchor_name || b.location_name || b.id || b.kind,
+        fallback || 'anchor'
+    );
+}
+
+function uniqueLimited(items, limit) {
+    var seen = {};
+    var out = [];
+    (items || []).forEach(function (item) {
+        var label = compactLabel(item, '');
+        if (!label || seen[label]) return;
+        seen[label] = true;
+        if (out.length < limit) out.push(label);
+    });
+    return out;
+}
+
+function evidenceLabel(root, report, templateName) {
+    var sources = [];
+    if (root.letter_ref_number) sources.push('letter_ref_number:' + root.letter_ref_number);
+    if (root.source_file) sources.push('source_file:' + root.source_file);
+    if (root.source_type) sources.push('source_type:' + root.source_type);
+    if (root.document_set_id) sources.push('document_set_id:' + root.document_set_id);
+    if (root.doctrine_source) sources.push('doctrine:' + root.doctrine_source);
+    if (Array.isArray(root.doctrine_sources) && root.doctrine_sources.length) {
+        sources.push('doctrine_sources:' + root.doctrine_sources.slice(0, 2).map(compactLabel).join(', '));
+    }
+    if (report && report.template) sources.push('template:' + report.template);
+    if (templateName) sources.push('scenario_template:' + templateName);
+    return sources.length
+        ? sources.join(' | ')
+        : 'AI-derived from reviewed operational brief, task assembly, proposed units, and placement/base candidates.';
+}
 
 function buildPreviewFromScenario(scenario, report, brief) {
     var obj         = scenario.obj || {};
@@ -952,18 +1060,30 @@ function buildPreviewFromScenario(scenario, report, brief) {
     var redUnits    = Array.isArray(scenario.red_units) ? scenario.red_units : [];
     var blueUnits   = Array.isArray(scenario.blue_units_initial) ? scenario.blue_units_initial : [];
     var blsTemplate = Array.isArray(scenario.bls_template) ? scenario.bls_template : [];
-    var phaseTable  = Array.isArray(scenario.phase_table) ? scenario.phase_table : [];
-
+    var root        = briefRoot(brief);
+    var proposedUnits = Array.isArray(root.proposed_units) ? root.proposed_units : [];
+    var placementCandidates = Array.isArray(root.placement_candidates) ? root.placement_candidates : [];
+    var enemyBases = Array.isArray(root.enemy_bases) ? root.enemy_bases : [];
+    var friendlyBases = Array.isArray(root.friendly_trial_bases) ? root.friendly_trial_bases : [];
+    var objectiveLabel = compactLabel(obj.name || obj.label || root.objective || root.mission, 'objective/area');
+    var evidence = evidenceLabel(root, report, report ? (report.template_name_en || report.template_name_ar) : null);
+    var proposedUnitLabels = uniqueLimited(proposedUnits.map(function (u, i) {
+        return unitLabel(u, 'proposed unit ' + (i + 1));
+    }), 6);
+    var generatedUnitLabels = uniqueLimited(redUnits.concat(blueUnits).map(function (u, i) {
+        return unitLabel(u, 'preview unit ' + (i + 1));
+    }), 6);
+    var unitsInvolved = proposedUnitLabels.length ? proposedUnitLabels : generatedUnitLabels;
+    if (!unitsInvolved.length) unitsInvolved = ['reviewed force package'];
+    var baseLabels = uniqueLimited(
+        enemyBases.concat(friendlyBases).concat(placementCandidates).concat(blsTemplate).map(function (b, i) {
+            return baseLabel(b, 'anchor ' + (i + 1));
+        }).concat([objectiveLabel]),
+        8
+    );
+    if (!baseLabels.length) baseLabels = [objectiveLabel];
     var startOrigin = pipeline.length > 0 ? pipeline[0] : [objCoord[0] + 0.4, objCoord[1] - 0.4];
-    var rawSteps = [
-        { kind: 'deployment', name_en: 'Initial Deployment', name_ar: 'الاستعداد الأولي' },
-    ].concat(phaseTable.map(function (p) {
-        return { kind: p.phase || p.kind_native || 'phase', name_en: p.phase || p.kind_native || 'Phase', name_ar: '' };
-    })).concat([
-        { kind: 'assessment', name_en: 'Final Assessment', name_ar: 'التقييم النهائي' },
-    ]);
-    if (rawSteps.length > 8) rawSteps = rawSteps.slice(0, 8);
-    while (rawSteps.length < 5) rawSteps.push({ kind: 'assessment', name_en: 'Assessment', name_ar: 'التقييم' });
+    var rawSteps = PREVIEW_STEP_SEQUENCE.slice();
     var numSteps = rawSteps.length;
 
     function startPos(i) {
@@ -1013,7 +1133,14 @@ function buildPreviewFromScenario(scenario, report, brief) {
                 if (dx * dx + dy * dy > 1e-10) {
                     movementLines.push({
                         side: 'RED', unit_uid: u.uid || 'R-' + (ui + 1),
-                        from: from, to: to, approximate: true,
+                        from: from, to: to,
+                        from_label: baseLabels[0] || 'from anchor/base',
+                        to_label: objectiveLabel,
+                        step_index: stepIdx,
+                        step_label: 'Step ' + (stepIdx + 1),
+                        approximate: true,
+                        approximate_route: true,
+                        requires_review: true,
                     });
                 }
             });
@@ -1023,13 +1150,19 @@ function buildPreviewFromScenario(scenario, report, brief) {
         return {
             index: stepIdx,
             phase_kind: phase.kind,
-            phase_name_en: phase.name_en,
-            phase_name_ar: phase.name_ar,
+            phase_name_en: phase.title_en,
+            phase_name_ar: phase.title_ar,
             time_label: stepIdx === 0 ? 'H0' : ('H+' + (stepIdx * 6) + 'h'),
             decision_en: text.decision_en,
             decision_ar: text.decision_ar,
+            action_en: phase.action_en,
+            action_ar: phase.action_ar,
+            reason_en: phase.reason_en,
             risk_en: text.risk_en,
-            evidence_en: 'AI-derived — based on reviewed brief. All values require commander review.',
+            evidence_en: evidence,
+            units_involved: unitsInvolved.slice(),
+            related_bases: baseLabels.slice(),
+            review_warning: 'preview_only:true | approximate_route:true | requires_review:true',
             unit_positions: { red: redPositions, blue: bluePositions },
             movement_lines: movementLines,
         };
@@ -1844,5 +1977,5 @@ module.exports = { handle, _internals: {
     // WIZARD-FINGERPRINT-1
     hashFile, round4, currentSetupFingerprint, setupMatchesRun, persistRunMetaWhenReady,
     // DEMO-ACTUAL-1
-    buildPreviewFromScenario, PREVIEW_STEP_TEXT, PREVIEW_STEP_TEXT_DEFAULT,
+    buildPreviewFromScenario, PREVIEW_STEP_SEQUENCE, PREVIEW_STEP_TEXT, PREVIEW_STEP_TEXT_DEFAULT,
 } };

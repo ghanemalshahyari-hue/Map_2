@@ -91,7 +91,11 @@ function buildModule(rmoozScenario, domStub) {
         // PR-289L
         'buildLiveOobUnitIndex', 'buildLiveStepInvolvedUnits',
         '_liveInvolveLabel', '_liveSideLabel',
-        'getLiveStepInvolvedUnits', 'paintLiveStepInvolvedUnits', '_sluCell'
+        'getLiveStepInvolvedUnits', 'paintLiveStepInvolvedUnits', '_sluCell',
+        // PHASE-6C readiness/supply cells (paintLiveStepInvolvedUnits now calls these)
+        '_liveReadinessLabel', '_liveSupplyLabel',
+        // TASK-series orders/tasking cells (paint also calls these now)
+        '_liveOpKey', '_sluCellOrders', '_sluTaskingLabel'
     ];
     var bodies = fnNames.map(function(n) {
         var src = extractFn(swSrc, n);

@@ -3555,6 +3555,10 @@
                             <button class="usp-collapse-btn" aria-expanded="true" aria-controls="usp-tasking-body">&#171;</button>
                         </div>
                         <div id="usp-tasking-body" class="usp-section-body" data-collapsed="false">
+                            <div class="usp-tasking-row usp-tasking-overlay-row" id="usp-tasking-overlay-row" hidden>
+                                <span class="usp-tasking-lbl">Overlay Preview</span>
+                                <span class="usp-tasking-val usp-tasking-overlay-val" id="usp-tasking-overlay"></span>
+                            </div>
                             <div class="usp-tasking-row" id="usp-tasking-why-row" hidden>
                                 <span class="usp-tasking-lbl" data-i18n="usp-lbl-why">Why</span>
                                 <span class="usp-tasking-val" id="usp-tasking-why"></span>
@@ -5967,6 +5971,11 @@
             word-break:break-word; font-family:'Consolas','Courier New',monospace;
         }
         .usp-tasking-doctrine-val { color:#6080a0; font-style:italic; font-size:0.68rem; }
+        .usp-tasking-overlay-row {
+            background:#0a1218;
+            border-bottom-color:#183247;
+        }
+        .usp-tasking-overlay-val { color:#78c6ff; }
 
         /* Light theme */
         [data-theme="light"] .usp-tasking-block { border-bottom-color:#dde8f0; }
@@ -5975,6 +5984,8 @@
         [data-theme="light"] .usp-tasking-lbl { color:#5a7890; }
         [data-theme="light"] .usp-tasking-val { color:#2a4060; }
         [data-theme="light"] .usp-tasking-doctrine-val { color:#486888; }
+        [data-theme="light"] .usp-tasking-overlay-row { background:#eef7ff; border-bottom-color:#c8dff2; }
+        [data-theme="light"] .usp-tasking-overlay-val { color:#0f5f94; }
 
         /* RTL */
         [dir="rtl"] .usp-tasking-row { flex-direction:row-reverse; }

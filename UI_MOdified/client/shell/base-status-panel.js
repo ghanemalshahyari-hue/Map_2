@@ -1,17 +1,20 @@
 /* ============================================================================
  * base-status-panel.js - BASE-STATUS-A / Step 1 Base Status Panel
  * ----------------------------------------------------------------------------
- * Detailed read-only panel for Step 1 base/placement anchors. It uses only
- * review payload data already produced by DOC-UNDERSTANDING-1. It does not
- * create scenario units, tasking, COAs, movement, or execution state.
+ * Detailed read-only renderer for Step 1 base/placement anchors. It uses only
+ * review payload data already produced by DOC-UNDERSTANDING-1 and renders
+ * through the common selected-object panel entry point. It does not create
+ * scenario units, tasking, COAs, movement, or execution state.
  *
+ *   window.openSelectedObjectPanel({ object_kind, source, review_only, exact_unit_position, data })
  *   window.RmoozBaseStatusPanel = { open(anchor, payload), close(), normalizePlatform(unit) }
  * ========================================================================== */
 (function () {
     'use strict';
 
     var CATALOG_REQUIRED = 'يحتاج ربط بقاعدة البيانات / Catalog required';
-    var PANEL_ID = 'step1-base-status-panel';
+    var PANEL_ID = 'unit-status-panel';
+    var savedUnitPanelHtml = null;
 
     function esc(s) {
         return String(s == null ? '' : s).replace(/[&<>"]/g, function (ch) {
@@ -224,10 +227,13 @@
     function ensurePanel() {
         if (!document || !document.body) return null;
         var panel = document.getElementById(PANEL_ID);
-        if (panel) return panel;
+        if (panel) {
+            if (savedUnitPanelHtml == null) savedUnitPanelHtml = panel.innerHTML;
+            return panel;
+        }
         panel = document.createElement('aside');
         panel.id = PANEL_ID;
-        panel.className = 'step1-base-status-panel';
+        panel.className = 'unit-status-panel selected-object-panel';
         document.body.appendChild(panel);
         ensureStyles();
         return panel;
@@ -237,15 +243,37 @@
         var style = document.createElement('style');
         style.id = 'step1-base-status-style';
         style.textContent = [
-            '.step1-base-status-panel{position:fixed;right:0;top:0;width:430px;max-width:100vw;height:100vh;z-index:940;background:#0d1119;color:#cdd8e4;border-left:3px solid #2a4060;box-shadow:-6px 0 24px rgba(0,0,0,.75);font-family:Consolas,monospace;font-size:12px;overflow:auto;box-sizing:border-box;}',
-            '.step1-base-status-panel[hidden]{display:none!important}.bsp-header{padding:12px 14px;background:#101820;border-bottom:1px solid #1e2b3a;display:flex;justify-content:space-between;gap:12px}.bsp-title{font-size:16px;color:#e8f0f8;font-weight:700}.bsp-subtitle{color:#8fb8e0;margin-top:2px}.bsp-close{border:1px solid #33475f;background:#111a24;color:#cfe6ff;border-radius:4px;cursor:pointer;width:28px;height:28px}.bsp-section{border-bottom:1px solid #172434;padding:10px 14px}.bsp-section h3{margin:0 0 8px;color:#8fb8e0;font-size:12px;text-transform:uppercase;letter-spacing:0}.bsp-row{display:grid;grid-template-columns:142px 1fr;gap:8px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.035)}.bsp-row span{color:#7f93a6}.bsp-row b{color:#e8eaed;font-weight:500;text-align:right;word-break:break-word}.bsp-chip{display:inline-block;margin:2px 4px 2px 0;padding:2px 7px;border-radius:8px;border:1px solid #2e5d7d;background:#16222e;color:#cfe6ff}.bsp-chip.red{border-color:#6e3333;color:#f0a0a0}.bsp-chip.blue{border-color:#2c6542;color:#7fd6a0}.bsp-chip.warn{border-color:#8a6a20;color:#e0c060;background:#2a2412}.bsp-chip.review{border-color:#8a6a20;color:#e0c060;background:#2a2412}.bsp-summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}.bsp-table-wrap{overflow:auto;border:1px solid #1e2b3a}.bsp-table{width:100%;border-collapse:collapse;min-width:680px}.bsp-table th,.bsp-table td{padding:5px 6px;border-bottom:1px solid #182536;text-align:left;vertical-align:top}.bsp-table th{color:#8fb8e0;background:#101820;font-size:11px}.bsp-table td{color:#d8e0e8}.bsp-table small{color:#9ab}.bsp-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.bsp-tab{border:1px solid #26384a;background:#101820;color:#9fbad0;padding:6px;text-align:center}.bsp-tab-body{margin-top:8px;padding:8px;border:1px dashed #30455c;color:#e0c060;background:#121711;direction:rtl;text-align:right}.bsp-empty{color:#8fa5b8;font-style:italic}.bsp-log{margin:0;padding-left:18px;color:#d8e0e8}.bsp-log li{margin:3px 0}.bsp-cap-list{margin:0;padding-left:18px;color:#d8e0e8}.bsp-cap-list li{margin:3px 0}',
-            '@media(max-width:768px){.step1-base-status-panel{width:100%;}.bsp-row{grid-template-columns:118px 1fr}}'
+            '#unit-status-panel.selected-object-panel{background:#0d1119;color:#cdd8e4;border-left:3px solid #2a4060;font-family:Consolas,monospace;font-size:12px;overflow:auto;}',
+            '#unit-status-panel.selected-object-panel[hidden]{display:none!important}.bsp-header{padding:12px 14px;background:#101820;border-bottom:1px solid #1e2b3a;display:flex;justify-content:space-between;gap:12px}.bsp-title{font-size:16px;color:#e8f0f8;font-weight:700}.bsp-subtitle{color:#8fb8e0;margin-top:2px}.bsp-close{border:1px solid #33475f;background:#111a24;color:#cfe6ff;border-radius:4px;cursor:pointer;width:28px;height:28px}.bsp-section{border-bottom:1px solid #172434;padding:10px 14px}.bsp-section h3{margin:0 0 8px;color:#8fb8e0;font-size:12px;text-transform:uppercase;letter-spacing:0}.bsp-row{display:grid;grid-template-columns:142px 1fr;gap:8px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.035)}.bsp-row span{color:#7f93a6}.bsp-row b{color:#e8eaed;font-weight:500;text-align:right;word-break:break-word}.bsp-chip{display:inline-block;margin:2px 4px 2px 0;padding:2px 7px;border-radius:8px;border:1px solid #2e5d7d;background:#16222e;color:#cfe6ff}.bsp-chip.red{border-color:#6e3333;color:#f0a0a0}.bsp-chip.blue{border-color:#2c6542;color:#7fd6a0}.bsp-chip.warn{border-color:#8a6a20;color:#e0c060;background:#2a2412}.bsp-chip.review{border-color:#8a6a20;color:#e0c060;background:#2a2412}.bsp-summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}.bsp-table-wrap{overflow:auto;border:1px solid #1e2b3a}.bsp-table{width:100%;border-collapse:collapse;min-width:680px}.bsp-table th,.bsp-table td{padding:5px 6px;border-bottom:1px solid #182536;text-align:left;vertical-align:top}.bsp-table th{color:#8fb8e0;background:#101820;font-size:11px}.bsp-table td{color:#d8e0e8}.bsp-table small{color:#9ab}.bsp-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.bsp-tab{border:1px solid #26384a;background:#101820;color:#9fbad0;padding:6px;text-align:center}.bsp-tab-body{margin-top:8px;padding:8px;border:1px dashed #30455c;color:#e0c060;background:#121711;direction:rtl;text-align:right}.bsp-empty{color:#8fa5b8;font-style:italic}.bsp-log{margin:0;padding-left:18px;color:#d8e0e8}.bsp-log li{margin:3px 0}.bsp-cap-list{margin:0;padding-left:18px;color:#d8e0e8}.bsp-cap-list li{margin:3px 0}',
+            '@media(max-width:768px){#unit-status-panel.selected-object-panel{width:100%;}.bsp-row{grid-template-columns:118px 1fr}}'
         ].join('');
         document.head.appendChild(style);
+    }
+    function restoreUnitPanel() {
+        var panel = ensurePanel();
+        if (panel && savedUnitPanelHtml != null && panel.getAttribute && panel.getAttribute('data-object-kind') !== 'unit') {
+            panel.innerHTML = savedUnitPanelHtml;
+        }
+        if (panel) {
+            panel.className = String(panel.className || '').replace(/\bselected-object-panel\b/g, '').trim() || 'unit-status-panel';
+            if (panel.removeAttribute) panel.removeAttribute('data-object-kind');
+        }
     }
     function close() {
         var panel = document && document.getElementById(PANEL_ID);
         if (panel) panel.setAttribute('hidden', '');
+    }
+    function renderMessage(kind, message) {
+        var panel = ensurePanel();
+        if (!panel) return;
+        panel.className = 'unit-status-panel selected-object-panel';
+        panel.setAttribute('data-object-kind', kind || 'unknown');
+        panel.innerHTML = '<header class="bsp-header"><div><div class="bsp-title">Selected Object</div>' +
+            '<div class="bsp-subtitle">' + esc(kind || 'unknown') + '</div></div><button class="bsp-close" type="button" title="Close">x</button></header>' +
+            '<section class="bsp-section"><h3>Status</h3><div class="bsp-empty">' + esc(message) + '</div></section>';
+        panel.removeAttribute('hidden');
+        var closeBtn = panel.querySelector('.bsp-close');
+        if (closeBtn) closeBtn.addEventListener('click', close);
     }
     function render(anchor, payload) {
         var panel = ensurePanel();
@@ -266,7 +294,9 @@
         var titleAr = base.base_name_ar || anchor.base_name_ar || '';
         var lat = anchor.lat != null ? anchor.lat : base.lat;
         var lon = anchor.lon != null ? anchor.lon : base.lon;
-        var html = '<header class="bsp-header"><div><div class="bsp-title">' + esc(titleEn) + '</div>' +
+        panel.className = 'unit-status-panel selected-object-panel';
+        panel.setAttribute('data-object-kind', 'base');
+        var html = '<header class="bsp-header"><div><div class="bsp-title">Selected Object</div><div class="bsp-title">' + esc(titleEn) + '</div>' +
             '<div class="bsp-subtitle" dir="rtl">' + esc(titleAr || '-') + '</div><div>' +
             chip(side, side === 'BLUE' ? 'blue' : 'red') + chip(type) + chip('Review only', 'review') +
             chip('needs_review:true', 'review') + chip('exact_unit_position:false', 'review') +
@@ -309,9 +339,38 @@
         if (closeBtn) closeBtn.addEventListener('click', close);
     }
 
+    function openSelectedObjectPanel(selection) {
+        selection = selection || {};
+        var kind = selection.object_kind || 'unknown';
+        if (kind === 'unit') {
+            restoreUnitPanel();
+            if (window.AppUnitStatusPanel && typeof window.AppUnitStatusPanel.populatePanel === 'function') {
+                if (typeof window.AppUnitStatusPanel.rehydratePanelControls === 'function') {
+                    window.AppUnitStatusPanel.rehydratePanelControls();
+                }
+                window.AppUnitStatusPanel.populatePanel(selection.data || selection.unit, selection.selectedAt || Date.now());
+                if (typeof window.AppUnitStatusPanel.openPanel === 'function') window.AppUnitStatusPanel.openPanel();
+            }
+            return;
+        }
+        if (kind === 'base') {
+            var data = selection.data || {};
+            render(data.anchor || data.base || data, data.payload || selection.payload || {});
+            return;
+        }
+        if (kind === 'infrastructure') {
+            renderMessage('infrastructure', 'Infrastructure status support pending');
+            return;
+        }
+        renderMessage(kind || 'unknown', 'Selected object support pending');
+    }
+
+    window.openSelectedObjectPanel = openSelectedObjectPanel;
     window.RmoozBaseStatusPanel = {
         open: render,
         close: close,
-        normalizePlatform: normalizePlatform
+        normalizePlatform: normalizePlatform,
+        openSelectedObjectPanel: openSelectedObjectPanel,
+        restoreUnitPanel: restoreUnitPanel
     };
 })();

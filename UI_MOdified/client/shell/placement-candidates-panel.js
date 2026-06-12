@@ -83,10 +83,18 @@
             marker._rmoozBaseAnchorData = c;
             marker.bindPopup('<div style="font-size:12px;color:#e8eaed;background:#0e1620;">' +
                 '<b>' + esc(c.mention || c.base_name_en || c.base_name_ar || 'Placement anchor') + '</b><br>' +
-                'review marker only<br>exact_unit_position: false<br>click marker for Base Status Panel</div>');
+                'review marker only<br>exact_unit_position: false<br>click marker for Selected Object Panel</div>');
             if (typeof marker.on === 'function') {
                 marker.on('click', function () {
-                    if (window.RmoozBaseStatusPanel && typeof window.RmoozBaseStatusPanel.open === 'function') {
+                    if (typeof window.openSelectedObjectPanel === 'function') {
+                        window.openSelectedObjectPanel({
+                            object_kind: 'base',
+                            source: 'step1_external_app',
+                            review_only: true,
+                            exact_unit_position: false,
+                            data: { anchor: c, payload: lastPayload || {} }
+                        });
+                    } else if (window.RmoozBaseStatusPanel && typeof window.RmoozBaseStatusPanel.open === 'function') {
                         window.RmoozBaseStatusPanel.open(c, lastPayload || {});
                     }
                 });

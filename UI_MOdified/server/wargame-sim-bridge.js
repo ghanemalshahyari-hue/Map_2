@@ -1102,8 +1102,16 @@ function buildPreviewFromScenario(scenario, report, brief) {
         var redPositions = redUnits.map(function (u, ui) {
             var finalPos = Array.isArray(u.coord) ? u.coord : objCoord;
             var start    = startPos(ui);
+            var uid = u.uid || 'R-' + (ui + 1);
             return {
-                uid: u.uid || 'R-' + (ui + 1), side: 'RED', role: u.role,
+                uid: uid,
+                side: 'RED',
+                role: u.role,
+                platform: u.platform || u.platform_class || u.type || u.role,
+                label: unitLabel(u, uid),
+                preview_only: true,
+                _isPreview: true,
+                requires_review: true,
                 coord: [
                     start[0] + (finalPos[0] - start[0]) * progress,
                     start[1] + (finalPos[1] - start[1]) * progress,
@@ -1111,8 +1119,16 @@ function buildPreviewFromScenario(scenario, report, brief) {
             };
         });
         var bluePositions = blueUnits.map(function (u, ui) {
+            var uid = u.unit_uid || 'B-' + (ui + 1);
             return {
-                uid: u.unit_uid || 'B-' + (ui + 1), side: 'BLUE', role: u.role,
+                uid: uid,
+                side: 'BLUE',
+                role: u.role,
+                platform: u.platform || u.platform_class || u.type || u.role,
+                label: unitLabel(u, uid),
+                preview_only: true,
+                _isPreview: true,
+                requires_review: true,
                 coord: Array.isArray(u.coord) ? u.coord : objCoord,
             };
         });
@@ -1178,7 +1194,15 @@ function buildPreviewFromScenario(scenario, report, brief) {
         template_name_ar: report ? report.template_name_ar : null,
         obj: obj,
         bases: blsTemplate.map(function (b) {
-            return { name: b.name, coord: b.coord, role: b.role, preview_only: true, needs_review: true };
+            return {
+                name: b.name,
+                label: baseLabel(b, b.name || 'anchor'),
+                coord: b.coord,
+                role: b.role,
+                preview_only: true,
+                needs_review: true,
+                requires_review: true,
+            };
         }),
         red_units: redUnits.map(function (u) {
             return { uid: u.uid, side: u.side, role: u.role, bls: u.bls, preview_only: true, _isPreview: true };

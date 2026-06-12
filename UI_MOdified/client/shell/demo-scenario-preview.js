@@ -48,10 +48,21 @@
         return [
             '<div style="font-size:12px;color:#e8eaed;background:#0e1620;padding:5px;min-width:180px;">',
             '<b>' + esc(step) + '</b><br>',
-            '<span style="color:#8fa5b8;">from anchor/base:</span> ' + esc(line && line.from_label || 'unknown') + '<br>',
-            '<span style="color:#8fa5b8;">to objective/area:</span> ' + esc(line && line.to_label || 'objective/area') + '<br>',
+            '<span style="color:#8fa5b8;">From:</span> ' + esc(line && line.from_label || 'unknown') + '<br>',
+            '<span style="color:#8fa5b8;">To:</span> ' + esc(line && line.to_label || 'objective/area') + '<br>',
             '<span style="color:#e0c060;">approximate_route:true</span><br>',
             '<span style="color:#e0c060;">requires_review:true</span>',
+            '</div>',
+        ].join('');
+    }
+
+    function unitReviewHtml(u) {
+        return [
+            '<div style="font-size:12px;color:#e8eaed;background:#0e1620;padding:5px;min-width:180px;">',
+            '<b>' + esc(u && (u.label || u.uid) || 'Preview unit') + '</b><br>',
+            '<span style="color:#8fa5b8;">side:</span> ' + esc(u && u.side || 'unknown') + '<br>',
+            '<span style="color:#8fa5b8;">role/platform:</span> ' + esc(u && (u.platform || u.role) || 'unknown') + '<br>',
+            '<span style="color:#e0c060;">preview_only:true</span>',
             '</div>',
         ].join('');
     }
@@ -175,7 +186,7 @@
     function _anchorIcon() {
         return window.L.divIcon({
             className: 'rmooz-demo-preview-anchor',
-            html: '<div style="width:20px;height:20px;border-radius:3px;background:#cfe6ff;' +
+            html: '<div style="width:22px;height:22px;border-radius:4px;background:#cfe6ff;' +
                   'border:2px solid #2e5d7d;box-shadow:0 0 0 2px rgba(207,230,255,.45);' +
                   'display:flex;align-items:center;justify-content:center;color:#0a1820;' +
                   'font-size:10px;font-weight:800;">A</div>',
@@ -183,14 +194,36 @@
         });
     }
 
-    function _unitIcon(side) {
-        var bg     = side === 'BLUE' ? '#7fd6a0' : '#f0a0a0';
-        var border = side === 'BLUE' ? '#2e7d54' : '#8b0000';
+    function _objectiveIcon() {
         return window.L.divIcon({
-            className: 'rmooz-demo-preview-unit-' + (side === 'BLUE' ? 'blue' : 'red'),
-            html: '<div style="width:12px;height:12px;border-radius:2px;background:' + bg +
-                  ';border:2px solid ' + border + ';opacity:0.85;"></div>',
-            iconSize: [16, 16], iconAnchor: [8, 8],
+            className: 'rmooz-demo-preview-objective',
+            html: '<div style="position:relative;width:28px;height:28px;border-radius:50%;' +
+                  'border:2px dashed #e0c060;background:rgba(224,192,96,.16);' +
+                  'box-shadow:0 0 0 3px rgba(224,192,96,.18);display:flex;align-items:center;' +
+                  'justify-content:center;color:#ffe28a;font-size:11px;font-weight:800;">T</div>',
+            iconSize: [32, 32], iconAnchor: [16, 16],
+        });
+    }
+
+    function _unitIcon(unit) {
+        var side = unit && unit.side === 'BLUE' ? 'BLUE' : 'RED';
+        var bg     = side === 'BLUE' ? '#77d59a' : '#f09a9a';
+        var border = side === 'BLUE' ? '#1f7a4d' : '#8f1f1f';
+        var ring   = side === 'BLUE' ? 'rgba(119,213,154,.38)' : 'rgba(240,154,154,.38)';
+        var label  = esc((unit && (unit.uid || unit.label)) || (side === 'BLUE' ? 'B' : 'R')).slice(0, 12);
+        var sideClass = side === 'BLUE' ? 'rmooz-demo-preview-unit-friendly' : 'rmooz-demo-preview-unit-enemy';
+        return window.L.divIcon({
+            className: 'rmooz-demo-preview-unit ' + sideClass,
+            html: '<div style="position:relative;display:flex;align-items:center;gap:4px;">' +
+                  '<span style="width:16px;height:16px;border-radius:3px;background:' + bg +
+                  ';border:2px solid ' + border + ';box-shadow:0 0 0 4px ' + ring +
+                  ';display:inline-flex;align-items:center;justify-content:center;color:#0a1820;' +
+                  'font-size:9px;font-weight:900;">P</span>' +
+                  '<span style="max-width:82px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' +
+                  'background:#0e1620;color:#e8eaed;border:1px solid ' + border + ';border-radius:3px;' +
+                  'padding:1px 4px;font-size:10px;font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.55);">' +
+                  label + '</span></div>',
+            iconSize: [108, 24], iconAnchor: [8, 12],
         });
     }
 
@@ -209,14 +242,45 @@
             });
             m._rmoozPreview = true;
             m._rmoozReviewOnly = true;
+            if (typeof m.bindTooltip === 'function') {
+                m.bindTooltip(
+                    esc(b.label || b.name || 'Base') + ' | preview_only:true | requires_review:true',
+                    { sticky: true }
+                );
+            }
             m.bindPopup(
                 '<div style="font-size:12px;color:#e8eaed;background:#0e1620;padding:4px;">' +
-                '<b>' + esc(b.name || 'Base') + '</b><br>' +
-                '<span style="color:#cfe6ff;font-size:11px;">Preview anchor — review only</span>' +
+                '<b>' + esc(b.label || b.name || 'Base') + '</b><br>' +
+                '<span style="color:#cfe6ff;font-size:11px;">Preview anchor — review only</span><br>' +
+                '<span style="color:#e0c060;font-size:11px;">requires_review:true</span>' +
                 '</div>'
             );
             _baseLayer.addLayer(m);
         });
+        var obj = _preview.obj || {};
+        if (Array.isArray(obj.coord) && obj.coord.length >= 2 &&
+            Number.isFinite(obj.coord[0]) && Number.isFinite(obj.coord[1])) {
+            var target = window.L.marker([obj.coord[1], obj.coord[0]], {
+                icon: _objectiveIcon(),
+                interactive: true,
+                keyboard: false,
+                title: 'Approximate target / requires review',
+                alt: 'Approximate target / requires review',
+            });
+            target._rmoozPreview = true;
+            target._rmoozReviewOnly = true;
+            target._rmoozApproximateTarget = true;
+            if (typeof target.bindTooltip === 'function') {
+                target.bindTooltip('Approximate target / requires review', { sticky: true });
+            }
+            target.bindPopup(
+                '<div style="font-size:12px;color:#e8eaed;background:#0e1620;padding:4px;">' +
+                '<b>' + esc(obj.name || obj.label || 'Approximate target') + '</b><br>' +
+                '<span style="color:#e0c060;font-size:11px;">Approximate target / requires review</span>' +
+                '</div>'
+            );
+            _baseLayer.addLayer(target);
+        }
     }
 
     function renderStep(idx) {
@@ -233,10 +297,20 @@
             if (!u || !Array.isArray(u.coord) || u.coord.length < 2) return;
             if (!Number.isFinite(u.coord[0]) || !Number.isFinite(u.coord[1])) return;
             var m = window.L.marker([u.coord[1], u.coord[0]], {
-                icon: _unitIcon('RED'), interactive: false, keyboard: false,
+                icon: _unitIcon(u), interactive: true, keyboard: false,
             });
             m._rmoozPreview = true;
             m._rmoozReviewOnly = true;
+            m._rmoozPreviewUnit = u;
+            if (typeof m.bindTooltip === 'function') {
+                m.bindTooltip(
+                    esc(u.label || u.uid || 'RED preview unit') +
+                    ' | side:RED | role/platform:' + esc(u.platform || u.role || 'unknown') +
+                    ' | preview_only:true',
+                    { sticky: true }
+                );
+            }
+            if (typeof m.bindPopup === 'function') m.bindPopup(unitReviewHtml(u));
             _stepLayer.addLayer(m);
         });
 
@@ -244,10 +318,20 @@
             if (!u || !Array.isArray(u.coord) || u.coord.length < 2) return;
             if (!Number.isFinite(u.coord[0]) || !Number.isFinite(u.coord[1])) return;
             var m = window.L.marker([u.coord[1], u.coord[0]], {
-                icon: _unitIcon('BLUE'), interactive: false, keyboard: false,
+                icon: _unitIcon(u), interactive: true, keyboard: false,
             });
             m._rmoozPreview = true;
             m._rmoozReviewOnly = true;
+            m._rmoozPreviewUnit = u;
+            if (typeof m.bindTooltip === 'function') {
+                m.bindTooltip(
+                    esc(u.label || u.uid || 'BLUE preview unit') +
+                    ' | side:BLUE | role/platform:' + esc(u.platform || u.role || 'unknown') +
+                    ' | preview_only:true',
+                    { sticky: true }
+                );
+            }
+            if (typeof m.bindPopup === 'function') m.bindPopup(unitReviewHtml(u));
             _stepLayer.addLayer(m);
         });
 
@@ -260,18 +344,26 @@
             var color = line.side === 'BLUE' ? '#7fd6a0' : '#f0a0a0';
             var pl = window.L.polyline(
                 [[line.from[1], line.from[0]], [line.to[1], line.to[0]]],
-                { color: color, weight: 2, dashArray: '6,4', opacity: 0.82, interactive: true }
+                {
+                    color: color,
+                    weight: 4,
+                    dashArray: '8,5',
+                    opacity: 0.92,
+                    interactive: true,
+                    className: 'rmooz-demo-preview-line rmooz-demo-preview-line-active',
+                }
             );
             pl._rmoozPreview = true;
             pl._rmoozReviewOnly = true;
+            pl._rmoozPreviewActiveStep = true;
             pl._rmoozPreviewLine = line;
             var reviewHtml = lineReviewHtml(line);
             if (typeof pl.bindPopup === 'function') pl.bindPopup(reviewHtml);
             if (typeof pl.bindTooltip === 'function') {
                 pl.bindTooltip(
-                    'from anchor/base: ' + esc(line.from_label || 'unknown') +
-                    ' | to objective/area: ' + esc(line.to_label || 'objective/area') +
-                    ' | step: ' + esc(line.step_label || ('Step ' + (idx + 1))) +
+                    'Step ' + (idx + 1) +
+                    ' | From: ' + esc(line.from_label || 'unknown') +
+                    ' | To: ' + esc(line.to_label || 'objective/area') +
                     ' | approximate_route:true | requires_review:true',
                     { sticky: true }
                 );
@@ -386,6 +478,22 @@
                 'padding:4px 6px;">' + esc(evidence) + '</div></div>'
             );
         }
+        html.push(
+            '<div class="rmooz-demo-preview-legend" style="margin-top:8px;padding:6px 7px;',
+            'border:1px solid #2e5d7d;border-radius:4px;background:#0b131b;font-size:11px;color:#cfe6ff;">',
+            '<div style="font-weight:700;margin-bottom:4px;color:#8fbce0;">Legend / مفتاح الخريطة</div>',
+            '<div><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#77d59a;',
+            'border:1px solid #1f7a4d;box-shadow:0 0 0 3px rgba(119,213,154,.28);margin-right:6px;"></span>',
+            'Friendly preview unit</div>',
+            '<div><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#f09a9a;',
+            'border:1px solid #8f1f1f;box-shadow:0 0 0 3px rgba(240,154,154,.28);margin-right:6px;"></span>',
+            'Enemy preview unit</div>',
+            '<div><span style="display:inline-block;width:28px;border-top:3px dashed #f0a0a0;margin-right:6px;',
+            'vertical-align:middle;"></span>Approximate movement/action</div>',
+            '<div><span style="display:inline-block;width:10px;height:10px;border-radius:50%;border:2px dashed #e0c060;',
+            'margin-right:6px;vertical-align:middle;"></span>Requires review</div>',
+            '</div>'
+        );
         html.push(
             '<div style="margin-top:8px;padding:5px 7px;border-radius:4px;background:#2a2412;',
             'border:1px solid #b8860b;color:#e0c060;font-size:11px;">',

@@ -47,6 +47,15 @@ const FIXTURE_BRIEF = {
         enemy:    { summary: 'Two mechanised battalions defending the ridge line.' },
         friendly: { summary: 'One armoured brigade reinforced with engineers.' },
         objectives: [{ name: 'OBJ-A', coord: [51.5, 24.5] }],
+        placement_candidates: [
+            { name: 'Anchor Delta', lat: 24.49, lon: 51.49, object_kind: 'base' },
+        ],
+        enemy_bases: [
+            { name: 'Enemy Base Ridge', lat: 24.55, lon: 51.55 },
+        ],
+        friendly_trial_bases: [
+            { name: 'Friendly Trial Base', lat: 24.45, lon: 51.45 },
+        ],
         proposed_units: [
             { side: 'RED',  platform: 'T-72', estimated_count: 3, lat: 51.5,  lon: 24.5 },
             { side: 'BLUE', platform: 'M1A2', estimated_count: 4, lat: 51.48, lon: 24.48 },
@@ -232,6 +241,11 @@ check(preview.steps.every(function (s) {
            /requires_review:true/.test(s.review_warning || '');
 }), 'every step carries units, related bases/anchors, and review warning metadata');
 
+check(step0.unit_positions.red.concat(step0.unit_positions.blue).every(function (u) {
+    return u.preview_only === true && u._isPreview === true && u.requires_review === true &&
+           typeof u.label === 'string' && u.label.length > 0;
+}), 'marker metadata has preview_only/review flags and readable labels');
+
 // ── Section 7: Movement lines only when positions change ─────────────────────
 console.log('\n  7. Movement lines');
 
@@ -368,15 +382,43 @@ check(/Action \/ العمل/.test(clientSrc) && /Reason \/ السبب/.test(clie
       /Related bases\/anchors \/ القواعد والمراسي المرتبطة/.test(clientSrc),
     'panel renders action, reason, units involved, and related bases/anchors');
 
-check(/bindPopup/.test(clientSrc) && /from anchor\/base/.test(clientSrc) &&
-      /to objective\/area/.test(clientSrc) && /approximate_route:true/.test(clientSrc) &&
+check(/rmooz-demo-preview-legend/.test(clientSrc) &&
+      /Friendly preview unit/.test(clientSrc) &&
+      /Enemy preview unit/.test(clientSrc) &&
+      /Approximate movement\/action/.test(clientSrc) &&
+      /Requires review/.test(clientSrc),
+    'legend renders friendly/enemy/movement/review symbols');
+
+check(/rmooz-demo-preview-unit-friendly/.test(clientSrc) &&
+      /rmooz-demo-preview-unit-enemy/.test(clientSrc) &&
+      /preview_only:true/.test(clientSrc) &&
+      /role\/platform/.test(clientSrc),
+    'unit markers have friendly/enemy classes, preview badge metadata, and tooltips');
+
+check(/rmooz-demo-preview-line-active/.test(clientSrc) &&
+      /_rmoozPreviewActiveStep\s*=\s*true/.test(clientSrc) &&
+      /weight:\s*4/.test(clientSrc),
+    'active step movement/action line styling exists');
+
+check(/bindPopup/.test(clientSrc) && /From:/.test(clientSrc) &&
+      /To:/.test(clientSrc) && /approximate_route:true/.test(clientSrc) &&
       /requires_review:true/.test(clientSrc),
     'movement lines render labels/popups with review metadata');
 
+check(/Approximate target \/ requires review/.test(clientSrc) &&
+      /_rmoozApproximateTarget\s*=\s*true/.test(clientSrc),
+    'objective marker shows Approximate target / requires review');
+
+check(/_stepLayer\.clearLayers\s*\(\)/.test(clientSrc),
+    'renderStep clears previous marker and line layers before drawing current step');
+
 var proposedBefore = JSON.stringify(FIXTURE_BRIEF.operational_brief.proposed_units);
+var placementBefore = JSON.stringify(FIXTURE_BRIEF.operational_brief.placement_candidates);
 buildPreviewFromScenario(gen.scenario, gen.report, FIXTURE_BRIEF);
 check(JSON.stringify(FIXTURE_BRIEF.operational_brief.proposed_units) === proposedBefore,
     'buildPreviewFromScenario does not mutate source proposed_units');
+check(JSON.stringify(FIXTURE_BRIEF.operational_brief.placement_candidates) === placementBefore,
+    'buildPreviewFromScenario does not mutate source placement_candidates');
 
 var builderStart = bridgeSrc.indexOf('function buildPreviewFromScenario');
 var builderEnd = bridgeSrc.indexOf('// ── main router', builderStart);

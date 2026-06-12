@@ -1,5 +1,0 @@
-[scenario-watcher] watching C:\Users\ADMIN\Desktop\MAP_2\UI_MOdified\data\scenarios
-Web server running at http://127.0.0.1:8000 (LAN accessible)
-  Open workspace: http://127.0.0.1:8000/app.html
-  Landing page:   http://127.0.0.1:8000/
-  Note: if localhost is served by another process on this machine, prefer 127.0.0.1.

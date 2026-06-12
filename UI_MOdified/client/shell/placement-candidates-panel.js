@@ -32,6 +32,81 @@
     }
     function hasCandidates(payload) { return candidatesOf(payload).length > 0; }
 
+    var anchorLayer = null;
+
+    function clearMapAnchors() {
+        if (anchorLayer && anchorLayer.clearLayers) anchorLayer.clearLayers();
+        if (window) window.__rmoozStep1PlacementAnchorCount = 0;
+    }
+
+    var lastPayload = null;
+
+    function mapAnchorIcon(c) {
+        var side = String(c.side || '').toUpperCase();
+        var color = side === 'BLUE' ? '#7fd6a0' : (side === 'RED' ? '#f0a0a0' : '#cfe6ff');
+        var type = String(c.site_type || c.base_type || '').toLowerCase();
+        if (/naval/.test(type)) color = side === 'BLUE' ? '#7fd6a0' : '#e0b070';
+        else if (/land|ground/.test(type)) color = side === 'BLUE' ? '#7fd6a0' : '#c98';
+        else if (/air/.test(type)) color = side === 'BLUE' ? '#7fd6a0' : '#f0a0a0';
+        return window.L.divIcon({
+            className: 'step1-review-placement-anchor',
+            html: '<div style="width:18px;height:18px;border-radius:3px;background:' + color +
+                ';border:2px solid #101820;box-shadow:0 0 0 2px rgba(207,230,255,.55);display:flex;align-items:center;justify-content:center;color:#101820;font-size:11px;font-weight:800;">B</div>',
+            iconSize: [22, 22],
+            iconAnchor: [11, 11],
+        });
+    }
+
+    function renderMapAnchors(cands) {
+        if (!window || !window.L || !window.map || typeof window.L.layerGroup !== 'function') return;
+        window.__rmoozStep1SelectedObjectPayload = lastPayload || {};
+        if (!anchorLayer) {
+            anchorLayer = window.L.layerGroup();
+            anchorLayer.addTo(window.map);
+            window.__rmoozStep1PlacementAnchorLayer = anchorLayer;
+        }
+        anchorLayer.clearLayers();
+        var count = 0;
+        cands.forEach(function (c) {
+            if (!c || c.lat == null || c.lon == null) return;
+            var lat = Number(c.lat), lon = Number(c.lon);
+            if (!Number.isFinite(lat) || !Number.isFinite(lon)) return;
+            var marker = window.L.marker([lat, lon], {
+                icon: mapAnchorIcon(c),
+                interactive: true,
+                keyboard: false,
+                title: 'Step 1 placement anchor - review only',
+                alt: 'Step 1 placement anchor - review only',
+            });
+            marker._rmoozStep1PlacementAnchor = true;
+            marker._rmoozReviewOnly = true;
+            marker._rmoozExactUnitPosition = false;
+            marker._rmoozBaseAnchorData = c;
+            marker.bindPopup('<div style="font-size:12px;color:#e8eaed;background:#0e1620;">' +
+                '<b>' + esc(c.mention || c.base_name_en || c.base_name_ar || 'Placement anchor') + '</b><br>' +
+                'review marker only<br>exact_unit_position: false<br>click marker for Base Status Panel</div>');
+            if (typeof marker.on === 'function') {
+                marker.on('click', function () {
+                    if (typeof window.openSelectedObjectPanel === 'function') {
+                        window.__rmoozStep1SelectedObjectPayload = lastPayload || {};
+                        window.openSelectedObjectPanel({
+                            object_kind: "base",
+                            source: "step1_external_app",
+                            review_only: true,
+                            exact_unit_position: false,
+                            data: c
+                        });
+                    } else if (window.RmoozBaseStatusPanel && typeof window.RmoozBaseStatusPanel.open === 'function') {
+                        window.RmoozBaseStatusPanel.open(c, lastPayload || {});
+                    }
+                });
+            }
+            anchorLayer.addLayer(marker);
+            count++;
+        });
+        window.__rmoozStep1PlacementAnchorCount = count;
+    }
+
     var TYPE_LABEL = {
         known_base:          'Known base — قاعدة معروفة',
         known_location:      'Known location — موقع معروف',
@@ -65,6 +140,47 @@
         return '<span style="display:inline-block;margin:2px 4px 2px 0;padding:1px 7px;border-radius:9px;font-size:10px;' +
             'background:' + (bg || '#16222e') + ';border:1px solid ' + (color || '#2e5d7d') + ';color:' + (color || '#cfe6ff') + ';">' +
             esc(text) + '</span>';
+    }
+
+    /* ── T-4A-V (GIS-TERRAIN-1): advisory terrain context — render only ── */
+    // Pure display of candidate.terrain (attached server-side by the T-4A
+    // opt-in). The panel NEVER calls the terrain API and NEVER alters the
+    // candidate: terrain informs the commander, it does not gate anything.
+    var TERRAIN_WARN_LABEL = {
+        dem_not_configured: 'DEM not configured — لا يوجد نموذج ارتفاعات',
+        no_terrain_data: 'no terrain data — لا بيانات تضاريس',
+        outside_dem_coverage: 'outside DEM coverage — خارج تغطية النموذج',
+        no_data_at_point: 'no data at this point — لا بيانات عند النقطة',
+        terrain_module_unavailable: 'terrain module unavailable — وحدة التضاريس غير متاحة',
+    };
+
+    function terrainSection(t) {
+        var avail = t.terrain_available === true;
+        var h = '<div style="margin-top:6px;border-top:1px dashed #284050;padding-top:5px;">';
+        h += '<div style="font-size:10px;color:#8fb8e0;">⛰ Terrain context — سياق التضاريس ' +
+             chip('Advisory only — للاستئناس فقط', '#8fa5b8', '#161b22') +
+             (t.needs_review ? chip('needs review — مراجعة', '#e0c060', '#2a2412') : '') +
+             '</div>';
+        h += '<div style="font-size:10px;color:#9ab;margin-top:3px;">';
+        if (avail) {
+            h += 'Elevation — الارتفاع: <b dir="ltr" style="color:#cfe6ff;">' +
+                 (t.elevation_m != null ? esc(t.elevation_m) + ' m' : '—') + '</b> &nbsp;·&nbsp; ';
+        } else {
+            // unavailability is a WARNING state, never an error
+            h += chip('Terrain unavailable — بيانات التضاريس غير متوفرة', '#e0a93a', '#2a2412') + ' &nbsp;·&nbsp; ';
+        }
+        h += 'Terrain confidence — ثقة بيانات التضاريس: ' +
+             chip(esc(t.confidence || '—'), avail ? '#7fd6a0' : '#e0a93a') +
+             (t.source && t.source.type ? ' <span style="color:#7f93a6;">· source: ' + esc(t.source.type) + '</span>' : '');
+        h += '</div>';
+        var tw = (t.warnings || []);
+        if (tw.length) {
+            h += '<div style="margin-top:3px;"><span style="font-size:10px;color:#7f93a6;">Warnings — تحذيرات:</span> ' +
+                 tw.map(function (w) { return chip(TERRAIN_WARN_LABEL[w] || w, '#b8860b', '#2a2412'); }).join('') +
+                 '</div>';
+        }
+        h += '</div>';
+        return h;
     }
 
     function card(c) {
@@ -105,14 +221,20 @@
                 return chip(WARN_LABEL[w] || w, '#b8860b', '#2a2412');
             }).join('') + '</div>';
         }
+        // T-4A-V: advisory terrain context — rendered ONLY when the candidate
+        // payload already carries it (no browser-side terrain calls; a
+        // terrain-less candidate renders exactly as before).
+        if (c.terrain && typeof c.terrain === 'object') h += terrainSection(c.terrain);
         h += '</div>';
         return h;
     }
 
     function render(mount, payload) {
         if (!mount) return;
+        lastPayload = payload || {};
         var cands = candidatesOf(payload);
-        if (!cands.length) { mount.innerHTML = ''; return; }
+        if (!cands.length) { mount.innerHTML = ''; clearMapAnchors(); return; }
+        renderMapAnchors(cands);
 
         var src = (payload && payload.placement) || payload || {};
         var missing = (src.missing_information || []).filter(function (s) { return /^unresolved_location/.test(s); });

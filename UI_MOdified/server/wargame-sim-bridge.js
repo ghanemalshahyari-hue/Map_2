@@ -46,6 +46,8 @@ const GEN       = require(path.join(__dirname, 'ai', 'brief-to-scenario.js'));
 const TEMPLATES = require(path.join(__dirname, 'ai', 'operation-templates.js'));
 // MDMP-EXTERNAL-1 / G-2: step 3/4/5 → courses_of_action[].wargame_turns[].
 const MDMP_ADAPTER = require(path.join(__dirname, 'ai', 'mdmp-external-adapter.js'));
+const PLANNING = require(path.join(__dirname, 'ai', 'planning-model.js'));            // G-3A
+const LOCATION = require(path.join(__dirname, 'ai', 'location-intelligence.js'));     // G-3B
 
 // Collect a request body and parse it. cb(obj) on success; cb(null) when the
 // body is empty; cb(undefined) when a body is present but not valid JSON.
@@ -1013,6 +1015,56 @@ function handle(req, res, ctx) {
                     });
                 }
             } catch (e) { sendJson(res, 500, { ok: false, error: 'analyze failed: ' + (e && e.message) }); }
+        });
+        return true;
+    }
+
+    // ── DOC-UNDERSTANDING-1 / G-3C: location placement candidates (read-only) ──
+    // Runs the G-3B resolver over a brief (+ optional free-text mentions /
+    // incidents / AO) and returns placement CANDIDATES for commander review.
+    // Deterministic, offline (no LLM, no network, no geocoder). NEVER places a
+    // unit and never mutates anything — candidate generation only.
+    //   body: { brief?, mentions?[string], incidents?[], ao?, outcome_type? }
+    //   returns: { ok, placement_candidates[], missing_information[],
+    //              conflicts[], source_summary[], count }
+    if (pathname === '/api/wargame-sim/placement' && method === 'POST') {
+        readJsonBody(req, function (body) {
+            body = (body && typeof body === 'object' && !Array.isArray(body)) ? body : {};
+            try {
+                // Build the planning model from a brief when present (G-3A);
+                // otherwise an empty model that still accepts mentions.
+                var briefIn = body.brief || (body.operational_brief ? { operational_brief: body.operational_brief } : null);
+                var model = briefIn
+                    ? PLANNING.fromOperationalBrief(briefIn, { source_type: 'uploaded_doc', outcome_type: body.outcome_type })
+                    : PLANNING.emptyPlanningModel();
+
+                // Auto-collect candidate mention text from the brief's prose +
+                // the operator-supplied mentions. The resolver splits each into
+                // place phrases; non-place text simply yields no candidate.
+                var mentions = Array.isArray(body.mentions) ? body.mentions.slice() : [];
+                var ob = briefIn && (briefIn.operational_brief || briefIn);
+                if (ob && typeof ob === 'object') {
+                    [ob.mission, ob.commander_intent,
+                     ob.enemy && ob.enemy.summary, ob.friendly && ob.friendly.summary]
+                        .forEach(function (t) { if (typeof t === 'string' && t.trim()) mentions.push({ text: t, source: PLANNING.makeSource({ type: 'uploaded_doc', origin: 'brief' }) }); });
+                }
+
+                var enriched = LOCATION.enrichPlanningModelLocations(model, {
+                    mentions: mentions,
+                    incidents: body.incidents != null ? body.incidents : model.incidents,
+                    ao: body.ao != null ? body.ao : null,
+                    as_of: body.as_of, staleness_days: body.staleness_days,
+                });
+
+                sendJson(res, 200, {
+                    ok: true,
+                    placement_candidates: enriched.placement_candidates || [],
+                    missing_information: enriched.missing_information || [],
+                    conflicts: enriched.conflicts || [],
+                    source_summary: enriched.source_summary || [],
+                    count: (enriched.placement_candidates || []).length,
+                });
+            } catch (e) { sendJson(res, 400, { ok: false, error: 'placement failed: ' + (e && e.message) }); }
         });
         return true;
     }

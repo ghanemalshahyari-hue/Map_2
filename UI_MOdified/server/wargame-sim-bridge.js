@@ -913,6 +913,151 @@ function computeFreshness(c) {
     };
 }
 
+// ── DEMO-ACTUAL-1: preview scenario builder (pure — no fs writes) ─────────────
+// Called by POST /api/wargame-sim/generate-preview with { noWrite:true }.
+// Computes step-by-step unit positions and dashed movement lines for each of
+// 5–8 decision steps derived from the template phases. RED units interpolate
+// from an approach origin to their final template positions; BLUE stays fixed
+// at defensive positions. All output is marked preview_only / _isPreview.
+var PREVIEW_STEP_TEXT = {
+    deployment:         { decision_en: 'Initial force deployment — establish baseline positions',              risk_en: 'Exposure during initial deployment',                decision_ar: 'نشر القوات الأولي' },
+    preparation_recon:  { decision_en: 'Preparation and reconnaissance — gather intelligence on objective',   risk_en: 'Detection by enemy during recon',                   decision_ar: 'التحضير والاستطلاع' },
+    approach_movement:  { decision_en: 'Advance forces toward objective using covered approaches',             risk_en: 'Interdiction during movement phase',                decision_ar: 'الاقتراب والتحرك' },
+    landing:            { decision_en: 'Execute landing operation at designated insertion points',             risk_en: 'Anti-access systems active during landing',         decision_ar: 'تنفيذ الإبرار' },
+    shaping:            { decision_en: 'Shaping fires and maneuver to degrade enemy defenses',                risk_en: 'Counter-fire may limit shaping effects',            decision_ar: 'التمهيد' },
+    approach:           { decision_en: 'Advance to assault positions under concealment',                      risk_en: 'Enemy observation may compromise approach',          decision_ar: 'الاقتراب' },
+    assault:            { decision_en: 'Assault objective — coordinated fire and maneuver',                   risk_en: 'Defender advantage requires combined arms',          decision_ar: 'الاقتحام' },
+    secure_expand:      { decision_en: 'Secure beachhead / foothold and expand control area',                 risk_en: 'Counterattack risk during consolidation',            decision_ar: 'التأمين والتوسيع' },
+    consolidate:        { decision_en: 'Consolidate gains and establish defensive positions',                  risk_en: 'Counterattack during transition to defense',         decision_ar: 'التثبيت' },
+    prepare_defense:    { decision_en: 'Prepare defensive positions and obstacle plan',                       risk_en: 'Vulnerability during preparation phase',             decision_ar: 'إعداد الدفاع' },
+    defend:             { decision_en: 'Execute defensive plan — engage enemy in depth',                      risk_en: 'Attrition and loss of defensive cohesion',           decision_ar: 'الدفاع' },
+    counterattack:      { decision_en: 'Launch counterattack to restore situation',                           risk_en: 'Counterattack may expose flanks if poorly timed',    decision_ar: 'الهجوم المضاد' },
+    insertion:          { decision_en: 'Insert reconnaissance element without detection',                     risk_en: 'Detection terminates mission',                       decision_ar: 'الإدخال' },
+    observation:        { decision_en: 'Establish observation posts and begin intelligence collection',       risk_en: 'Engagement by enemy patrols',                        decision_ar: 'المراقبة' },
+    reporting:          { decision_en: 'Transmit collected intelligence through secure channel',              risk_en: 'Electronic signature during transmission',           decision_ar: 'الإبلاغ' },
+    exfiltration:       { decision_en: 'Exfiltrate element via alternate route',                              risk_en: 'Pursuit risk during exfiltration',                   decision_ar: 'الإخلاء' },
+    air_defense:        { decision_en: 'Activate air defense coverage and engagement protocols',              risk_en: 'Saturation attacks may overwhelm point defense',     decision_ar: 'الدفاع الجوي' },
+    assessment:         { decision_en: 'Post-operation assessment — consolidate learning for next phase',     risk_en: 'Reassessment may reveal gaps in initial intelligence', decision_ar: 'التقييم النهائي' },
+};
+var PREVIEW_STEP_TEXT_DEFAULT = {
+    decision_en: 'Execute phase — coordinate actions per the operational plan',
+    risk_en: 'Friction and enemy reaction require contingency planning',
+    decision_ar: 'تنفيذ المرحلة',
+};
+
+function buildPreviewFromScenario(scenario, report, brief) {
+    var obj         = scenario.obj || {};
+    var objCoord    = Array.isArray(obj.coord) ? obj.coord : [0, 0];
+    var pipeline    = Array.isArray(scenario.pipeline) ? scenario.pipeline : [];
+    var redUnits    = Array.isArray(scenario.red_units) ? scenario.red_units : [];
+    var blueUnits   = Array.isArray(scenario.blue_units_initial) ? scenario.blue_units_initial : [];
+    var blsTemplate = Array.isArray(scenario.bls_template) ? scenario.bls_template : [];
+    var phaseTable  = Array.isArray(scenario.phase_table) ? scenario.phase_table : [];
+
+    var startOrigin = pipeline.length > 0 ? pipeline[0] : [objCoord[0] + 0.4, objCoord[1] - 0.4];
+    var rawSteps = [
+        { kind: 'deployment', name_en: 'Initial Deployment', name_ar: 'الاستعداد الأولي' },
+    ].concat(phaseTable.map(function (p) {
+        return { kind: p.phase || p.kind_native || 'phase', name_en: p.phase || p.kind_native || 'Phase', name_ar: '' };
+    })).concat([
+        { kind: 'assessment', name_en: 'Final Assessment', name_ar: 'التقييم النهائي' },
+    ]);
+    if (rawSteps.length > 8) rawSteps = rawSteps.slice(0, 8);
+    while (rawSteps.length < 5) rawSteps.push({ kind: 'assessment', name_en: 'Assessment', name_ar: 'التقييم' });
+    var numSteps = rawSteps.length;
+
+    function startPos(i) {
+        var cols  = Math.max(1, Math.ceil(Math.sqrt(Math.max(1, redUnits.length))));
+        var col   = i % cols;
+        var row   = Math.floor(i / cols);
+        return [
+            startOrigin[0] + (col - (cols - 1) / 2) * 0.06,
+            startOrigin[1] + (row - 1) * 0.06,
+        ];
+    }
+
+    var steps = rawSteps.map(function (phase, stepIdx) {
+        var progress     = numSteps > 1 ? stepIdx / (numSteps - 1) : 0;
+        var prevProgress = stepIdx > 0 ? (stepIdx - 1) / (numSteps - 1) : null;
+        var redPositions = redUnits.map(function (u, ui) {
+            var finalPos = Array.isArray(u.coord) ? u.coord : objCoord;
+            var start    = startPos(ui);
+            return {
+                uid: u.uid || 'R-' + (ui + 1), side: 'RED', role: u.role,
+                coord: [
+                    start[0] + (finalPos[0] - start[0]) * progress,
+                    start[1] + (finalPos[1] - start[1]) * progress,
+                ],
+            };
+        });
+        var bluePositions = blueUnits.map(function (u, ui) {
+            return {
+                uid: u.unit_uid || 'B-' + (ui + 1), side: 'BLUE', role: u.role,
+                coord: Array.isArray(u.coord) ? u.coord : objCoord,
+            };
+        });
+        var movementLines = [];
+        if (prevProgress !== null && stepIdx > 0) {
+            redUnits.forEach(function (u, ui) {
+                var finalPos = Array.isArray(u.coord) ? u.coord : objCoord;
+                var start    = startPos(ui);
+                var from = [
+                    start[0] + (finalPos[0] - start[0]) * prevProgress,
+                    start[1] + (finalPos[1] - start[1]) * prevProgress,
+                ];
+                var to = [
+                    start[0] + (finalPos[0] - start[0]) * progress,
+                    start[1] + (finalPos[1] - start[1]) * progress,
+                ];
+                var dx = to[0] - from[0], dy = to[1] - from[1];
+                if (dx * dx + dy * dy > 1e-10) {
+                    movementLines.push({
+                        side: 'RED', unit_uid: u.uid || 'R-' + (ui + 1),
+                        from: from, to: to, approximate: true,
+                    });
+                }
+            });
+        }
+
+        var text = PREVIEW_STEP_TEXT[phase.kind] || PREVIEW_STEP_TEXT_DEFAULT;
+        return {
+            index: stepIdx,
+            phase_kind: phase.kind,
+            phase_name_en: phase.name_en,
+            phase_name_ar: phase.name_ar,
+            time_label: stepIdx === 0 ? 'H0' : ('H+' + (stepIdx * 6) + 'h'),
+            decision_en: text.decision_en,
+            decision_ar: text.decision_ar,
+            risk_en: text.risk_en,
+            evidence_en: 'AI-derived — based on reviewed brief. All values require commander review.',
+            unit_positions: { red: redPositions, blue: bluePositions },
+            movement_lines: movementLines,
+        };
+    });
+
+    return {
+        _isPreview: true,
+        preview_only: true,
+        review_source: 'ai_decision_demo',
+        scenario_label: scenario.scenario_label || 'AI Decision Demo Preview',
+        template: report ? report.template : null,
+        template_name_en: report ? report.template_name_en : null,
+        template_name_ar: report ? report.template_name_ar : null,
+        obj: obj,
+        bases: blsTemplate.map(function (b) {
+            return { name: b.name, coord: b.coord, role: b.role, preview_only: true, needs_review: true };
+        }),
+        red_units: redUnits.map(function (u) {
+            return { uid: u.uid, side: u.side, role: u.role, bls: u.bls, preview_only: true, _isPreview: true };
+        }),
+        blue_units: blueUnits.map(function (u) {
+            return { uid: u.unit_uid, side: u.side, role: u.role, preview_only: true, _isPreview: true };
+        }),
+        steps: steps,
+        movement_warning: 'Approximate demo movement / route requires review',
+    };
+}
+
 // ── main router ─────────────────────────────────────────────────────────────
 function handle(req, res, ctx) {
     const { url, pathname, method, sendJson } = ctx;
@@ -1227,6 +1372,52 @@ function handle(req, res, ctx) {
                     objective: !!(scenario.obj && Array.isArray(scenario.obj.coord) && scenario.obj.coord.length === 2),
                 });
             } catch (e) { sendJson(res, 400, { ok: false, error: 'generate failed: ' + (e && e.message) }); }
+        });
+        return true;
+    }
+
+    // ── DEMO-ACTUAL-1: generate preview (no write, no commit, no sim) ──────────
+    // Returns a preview scenario object (_isPreview:true, preview_only:true,
+    // review_source:"ai_decision_demo") with 5–8 decision steps and approximate
+    // movement lines. Never writes files or touches any live scenario state.
+    // Body: { brief, objective?, template? }
+    if (pathname === '/api/wargame-sim/generate-preview' && method === 'POST') {
+        readJsonBody(req, function (body) {
+            if (!(body && typeof body === 'object' && !Array.isArray(body))) {
+                sendJson(res, 400, { ok: false, error: 'JSON body required: { brief, objective? }' });
+                return;
+            }
+            try {
+                var briefSrc = body.brief || body;
+                var briefNorm = BRIEF.normalizeBrief(briefSrc);
+                if (body.understanding) briefNorm.understanding = body.understanding;
+                var objective = (body.objective && typeof body.objective === 'object') ? body.objective : null;
+                if (!objective) {
+                    var ob = briefNorm.operational_brief || {};
+                    var cands = Array.isArray(ob.placement_candidates) ? ob.placement_candidates : [];
+                    for (var ci = 0; ci < cands.length; ci++) {
+                        var cand = cands[ci];
+                        if (cand && typeof cand.lon === 'number' && typeof cand.lat === 'number') {
+                            objective = { lon: cand.lon, lat: cand.lat };
+                            break;
+                        }
+                    }
+                }
+                var gen = GEN.generateScenarioFromBrief(briefNorm, {
+                    objective: objective,
+                    template: body.template || null,
+                    name: 'demo_preview',
+                    noWrite: true,
+                });
+                if (gen.requiresObjective) {
+                    sendJson(res, 422, { ok: false, requires_objective: true, error: gen.reason });
+                    return;
+                }
+                var preview = buildPreviewFromScenario(gen.scenario, gen.report, briefNorm);
+                sendJson(res, 200, { ok: true, preview: preview, report: gen.report });
+            } catch (e) {
+                sendJson(res, 400, { ok: false, error: 'generate-preview failed: ' + (e && e.message) });
+            }
         });
         return true;
     }
@@ -1652,4 +1843,6 @@ module.exports = { handle, _internals: {
     isTerrainOptIn,
     // WIZARD-FINGERPRINT-1
     hashFile, round4, currentSetupFingerprint, setupMatchesRun, persistRunMetaWhenReady,
+    // DEMO-ACTUAL-1
+    buildPreviewFromScenario, PREVIEW_STEP_TEXT, PREVIEW_STEP_TEXT_DEFAULT,
 } };

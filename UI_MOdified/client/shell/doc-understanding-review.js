@@ -339,10 +339,13 @@
             '</select></div>';
         // G-3 approval gate message (hidden until a blocked Generate attempt).
         html += '<div data-el="coa-block-warn" style="display:none;margin:0 0 8px;padding:6px 8px;border-radius:5px;background:#2a2412;border:1px solid #b8860b;color:#e0c060;font-size:12px;"></div>';
+        // DEMO-ACTUAL-1: show Preview button when placement candidates or reviewed brief exist.
+        var showPreviewBtn = !!(p.brief || (window.RmoozPlacementPanel && window.RmoozPlacementPanel.hasCandidates(p)));
         html += '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
             '<button type="button" data-act="generate" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:6px;padding:7px 14px;font-weight:600;">Generate Scenario — توليد السيناريو</button>' +
             '<button type="button" data-act="edit" style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#22303f;color:#cfe6ff;border-radius:6px;padding:7px 14px;">Edit Understanding — تعديل الفهم</button>' +
             '<button type="button" data-act="more" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:6px;padding:7px 14px;">Upload More — وثائق إضافية</button>' +
+            (showPreviewBtn ? '<button type="button" data-act="preview" style="font:inherit;cursor:pointer;border:1px solid #b8860b;background:#2a2412;color:#e0c060;border-radius:6px;padding:7px 14px;">Preview Decision Steps — معاينة خطوات القرار</button>' : '') +
             '<button type="button" data-act="cancel" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:6px;padding:7px 14px;">Cancel — إلغاء</button>' +
             '</div>' +
             '<details data-el="editbox" style="margin-top:8px;"><summary style="cursor:pointer;font-size:12px;color:#8fa5b8;">Operational Brief JSON — مسودة الموجز</summary>' +
@@ -407,6 +410,23 @@
             if (box) box.open = true;
         });
         bind('more', handlers.onUploadMore);
+        // DEMO-ACTUAL-1: preview decision steps (no write, no commit, no mutation).
+        bind('preview', function () {
+            if (!window.RmoozDemoPreview || typeof window.RmoozDemoPreview.build !== 'function') {
+                alert('Preview module not loaded (shell/demo-scenario-preview.js)');
+                return;
+            }
+            var previewBtn = container.querySelector('[data-act="preview"]');
+            var prevLabel = previewBtn ? previewBtn.textContent : '';
+            if (previewBtn) { previewBtn.disabled = true; previewBtn.textContent = '…'; }
+            window.RmoozDemoPreview.build(p).then(function () {
+                if (previewBtn) { previewBtn.disabled = false; previewBtn.textContent = prevLabel; }
+            }).catch(function (err) {
+                if (previewBtn) { previewBtn.disabled = false; previewBtn.textContent = prevLabel; }
+                console.error('[demo-preview] build failed:', err);
+                alert('Preview failed: ' + (err && (err.message || String(err))));
+            });
+        });
         bind('cancel', handlers.onCancel || function () { container.style.display = 'none'; });
     }
 

@@ -63,6 +63,40 @@ ok('surfaces the base-known / exact-unknown warning', /base known/.test(html) &&
 ok('surfaces the outside-AO warning for Chah Bahar', /outside area of operation/.test(html));
 ok('shows base coordinates', /27\.19611/.test(html) && /56\.28778/.test(html));
 
+var fakeLayer = null;
+global.window.L = {
+    divIcon: function (opts) { return opts; },
+    marker: function (latlng, opts) {
+        return {
+            latlng: latlng,
+            opts: opts,
+            _rmoozStep1PlacementAnchor: false,
+            _rmoozReviewOnly: false,
+            _rmoozExactUnitPosition: null,
+            bindPopup: function (htmlText) { this.popup = htmlText; return this; },
+        };
+    },
+    layerGroup: function () {
+        fakeLayer = {
+            layers: [],
+            addTo: function () { return this; },
+            clearLayers: function () { this.layers = []; },
+            addLayer: function (layer) { this.layers.push(layer); },
+        };
+        return fakeLayer;
+    },
+};
+global.window.map = {};
+var mMap = { innerHTML: '' };
+Panel.render(mMap, payload);
+ok('map renderer draws review-only placement anchor markers', fakeLayer && fakeLayer.layers.length === 2);
+ok('map anchor markers are flagged review-only / not exact unit positions',
+    fakeLayer && fakeLayer.layers.every(function (m) {
+        return m._rmoozStep1PlacementAnchor === true && m._rmoozReviewOnly === true && m._rmoozExactUnitPosition === false;
+    }));
+ok('map anchor icon class is step1-review-placement-anchor',
+    fakeLayer && fakeLayer.layers.every(function (m) { return /step1-review-placement-anchor/.test(m.opts.icon.className || ''); }));
+
 // Read-only surface invariant: no action buttons emitted from this mirror.
 ok('READ-ONLY: emits no action buttons / data-act', html.indexOf('<button') === -1 && html.indexOf('data-act') === -1);
 

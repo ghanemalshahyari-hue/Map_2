@@ -32,6 +32,57 @@
     }
     function hasCandidates(payload) { return candidatesOf(payload).length > 0; }
 
+    var anchorLayer = null;
+
+    function clearMapAnchors() {
+        if (anchorLayer && anchorLayer.clearLayers) anchorLayer.clearLayers();
+        if (window) window.__rmoozStep1PlacementAnchorCount = 0;
+    }
+
+    function mapAnchorIcon(c) {
+        var side = String(c.side || '').toUpperCase();
+        var color = side === 'BLUE' ? '#7fd6a0' : (side === 'RED' ? '#f0a0a0' : '#cfe6ff');
+        return window.L.divIcon({
+            className: 'step1-review-placement-anchor',
+            html: '<div style="width:14px;height:14px;border-radius:50%;background:' + color +
+                ';border:2px solid #101820;box-shadow:0 0 0 2px rgba(207,230,255,.55);"></div>',
+            iconSize: [18, 18],
+            iconAnchor: [9, 9],
+        });
+    }
+
+    function renderMapAnchors(cands) {
+        if (!window || !window.L || !window.map || typeof window.L.layerGroup !== 'function') return;
+        if (!anchorLayer) {
+            anchorLayer = window.L.layerGroup();
+            anchorLayer.addTo(window.map);
+            window.__rmoozStep1PlacementAnchorLayer = anchorLayer;
+        }
+        anchorLayer.clearLayers();
+        var count = 0;
+        cands.forEach(function (c) {
+            if (!c || c.lat == null || c.lon == null) return;
+            var lat = Number(c.lat), lon = Number(c.lon);
+            if (!Number.isFinite(lat) || !Number.isFinite(lon)) return;
+            var marker = window.L.marker([lat, lon], {
+                icon: mapAnchorIcon(c),
+                interactive: true,
+                keyboard: false,
+                title: 'Step 1 placement anchor - review only',
+                alt: 'Step 1 placement anchor - review only',
+            });
+            marker._rmoozStep1PlacementAnchor = true;
+            marker._rmoozReviewOnly = true;
+            marker._rmoozExactUnitPosition = false;
+            marker.bindPopup('<div style="font-size:12px;color:#e8eaed;background:#0e1620;">' +
+                '<b>' + esc(c.mention || c.base_name_en || c.base_name_ar || 'Placement anchor') + '</b><br>' +
+                'review marker only<br>exact_unit_position: false</div>');
+            anchorLayer.addLayer(marker);
+            count++;
+        });
+        window.__rmoozStep1PlacementAnchorCount = count;
+    }
+
     var TYPE_LABEL = {
         known_base:          'Known base — قاعدة معروفة',
         known_location:      'Known location — موقع معروف',
@@ -157,7 +208,8 @@
     function render(mount, payload) {
         if (!mount) return;
         var cands = candidatesOf(payload);
-        if (!cands.length) { mount.innerHTML = ''; return; }
+        if (!cands.length) { mount.innerHTML = ''; clearMapAnchors(); return; }
+        renderMapAnchors(cands);
 
         var src = (payload && payload.placement) || payload || {};
         var missing = (src.missing_information || []).filter(function (s) { return /^unresolved_location/.test(s); });

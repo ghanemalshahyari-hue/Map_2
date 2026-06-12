@@ -69,6 +69,67 @@
         }
         return { blue: pc.blue || 0, red: pc.red || 0, neutral: pc.neutral || 0 };
     }
+    function hasUsablePlacementCandidates(p) {
+        var ob = opBrief(p);
+        var src = (p && p.placement) || p || {};
+        var candidates = [];
+        if (Array.isArray(ob.placement_candidates)) candidates = candidates.concat(ob.placement_candidates);
+        if (Array.isArray(src.placement_candidates)) candidates = candidates.concat(src.placement_candidates);
+        if (Array.isArray(src.candidates)) candidates = candidates.concat(src.candidates);
+        return candidates.some(function (c) {
+            return c && Number.isFinite(Number(c.lat)) && Number.isFinite(Number(c.lon));
+        });
+    }
+    function textLooksPlaceholder(value) {
+        var text = String(value == null ? '' : value).trim().toLowerCase();
+        if (!text) return true;
+        return /<[^>]+>|\u064a\u0635\u062f\u0631\s+\u0644\u0627\u062d\u0642|later|tbd|todo|placeholder|template/.test(text);
+    }
+    function taskAssemblyLooksPlaceholder(p) {
+        var ta = opBrief(p).task_assembly || (p && p.understanding && p.understanding.task_assembly);
+        if (!ta || typeof ta !== 'object' || Array.isArray(ta)) return true;
+        var supporting = Array.isArray(ta.supporting_tasks) ? ta.supporting_tasks : [];
+        return textLooksPlaceholder(ta.summary) &&
+            textLooksPlaceholder(ta.main_task) &&
+            supporting.length === 0;
+    }
+    function isStep1LikePayload(p) {
+        var u = (p && p.understanding) || {};
+        var label = String(u.set_label_en || u.detected_type || p && p.kind || '').toLowerCase();
+        if (/external app step 1|step 1|planning_guidance|mdmp_external|operational brief/.test(label)) return true;
+        return ((p && p.documents) || []).some(function (d) {
+            var bits = [d && d.filename, d && d.detected_type, d && d.mdmp_step, d && d.type_label_en].join(' ').toLowerCase();
+            return /step\s*1|planning_guidance|mdmp/.test(bits);
+        });
+    }
+    function hasStep1MissingMarkers(p) {
+        var ob = opBrief(p);
+        var missing = (ob.missing_information || []).concat((p && p.understanding && p.understanding.ambiguities) || []);
+        return missing.some(function (m) {
+            return /\[step1\]|task_assembly|units_duty|placeholder|not found/i.test(String(m || ''));
+        });
+    }
+    function isPartialStep1Upload(p) {
+        var ob = opBrief(p);
+        var noUnits = proposedUnits(p).length === 0;
+        var noEnemyBases = !Array.isArray(ob.enemy_bases) || ob.enemy_bases.length === 0;
+        var noUsablePlacement = !hasUsablePlacementCandidates(p);
+        if (!isStep1LikePayload(p)) return false;
+        return noUnits && (noEnemyBases || noUsablePlacement || taskAssemblyLooksPlaceholder(p) || hasStep1MissingMarkers(p));
+    }
+    function renderPartialStep1Warning() {
+        return '<div data-el="partial-step1-warning" style="margin:8px 0 10px;padding:8px 10px;border-radius:6px;' +
+            'background:#2a2412;border:1px solid #b8860b;color:#e0c060;font-size:12px;line-height:1.35;">' +
+            '<div style="font-weight:700;margin-bottom:4px;">Input quality warning — تحذير جودة الملف</div>' +
+            '<div>This appears to be a template/partial planning guide, not a full External Step 1 output. ' +
+            'Map preview requires proposed_units and placement_candidates.</div>' +
+            '<div style="direction:rtl;text-align:right;margin-top:4px;">' +
+            '\u064a\u0628\u062f\u0648 \u0623\u0646 \u0627\u0644\u0645\u0644\u0641 \u0642\u0627\u0644\u0628/\u062f\u0644\u064a\u0644 \u062a\u062e\u0637\u064a\u0637 \u062c\u0632\u0626\u064a \u0648\u0644\u064a\u0633 \u0645\u062e\u0631\u062c\u0627\u062a Step 1 \u0643\u0627\u0645\u0644\u0629. ' +
+            '\u0645\u0639\u0627\u064a\u0646\u0629 \u0627\u0644\u062e\u0631\u064a\u0637\u0629 \u062a\u062d\u062a\u0627\u062c proposed_units \u0648 placement_candidates.' +
+            '</div>' +
+            '<div style="margin-top:5px;color:#f4d98a;">Upload the full Step 1 generated output before using Preview Decision Steps.</div>' +
+            '</div>';
+    }
     function fieldRow(label, value) {
         if (value == null || value === '' || (Array.isArray(value) && !value.length)) return '';
         var text = Array.isArray(value) ? value.join(', ') : value;
@@ -278,6 +339,7 @@
         p = p || {};
         var u = p.understanding || {};
         var pc = proposedCounts(p);
+        var partialStep1 = isPartialStep1Upload(p);
         var html = '<div style="font-size:14px;color:#7fd6a0;font-weight:600;margin-bottom:8px;">AI understood this as — فهم الذكاء الاصطناعي</div>';
         html += '<div style="margin-bottom:8px;">' + chip('Type / النوع', (u.set_label_en || '') + ' — ' + (u.set_label_ar || ''), '#7fd6a0');
         (p.documents || []).forEach(function (d) {
@@ -294,6 +356,7 @@
             html += '<div style="margin:0 0 8px;padding:5px 7px;border:1px solid #4a5a6a;background:#101820;color:#cfe6ff;border-radius:4px;font-size:11px;font-family:Consolas,monospace;direction:ltr;text-align:left;">' +
                 esc(debugLine) + '</div>';
         }
+        if (partialStep1) html += renderPartialStep1Warning();
         if (p.dedupe && p.dedupe.same_in_both_slots) {
             html += '<div style="margin-bottom:8px;padding:6px 8px;border-radius:5px;background:#2a2412;border:1px solid #b8860b;color:#e0c060;font-size:12px;">' +
                 '⮕ Same document in both slots — treated as ONE Mixed Operational Document. نفس الوثيقة في الخانتين — عوملت كوثيقة عمليات واحدة.</div>';
@@ -340,7 +403,7 @@
         // G-3 approval gate message (hidden until a blocked Generate attempt).
         html += '<div data-el="coa-block-warn" style="display:none;margin:0 0 8px;padding:6px 8px;border-radius:5px;background:#2a2412;border:1px solid #b8860b;color:#e0c060;font-size:12px;"></div>';
         // DEMO-ACTUAL-1: show Preview button when placement candidates or reviewed brief exist.
-        var showPreviewBtn = !!(p.brief || (window.RmoozPlacementPanel && window.RmoozPlacementPanel.hasCandidates(p)));
+        var showPreviewBtn = !partialStep1 && !!(p.brief || (window.RmoozPlacementPanel && window.RmoozPlacementPanel.hasCandidates(p)));
         html += '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
             '<button type="button" data-act="generate" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:6px;padding:7px 14px;font-weight:600;">Generate Scenario — توليد السيناريو</button>' +
             '<button type="button" data-act="edit" style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#22303f;color:#cfe6ff;border-radius:6px;padding:7px 14px;">Edit Understanding — تعديل الفهم</button>' +

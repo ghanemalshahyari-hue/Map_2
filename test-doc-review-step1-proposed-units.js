@@ -96,5 +96,41 @@ assert(html.indexOf('source_type') !== -1 && html.indexOf('ai_candidate_from_ext
 assert(html.indexOf('base_known_exact_unit_position_unknown') !== -1, 'warning shown');
 assert(html.indexOf('AI information requires review') !== -1, 'AI review warning');
 assert(html.indexOf('Accept') === -1 && html.indexOf('Reject') === -1, 'no Accept/Reject controls');
+assert(html.indexOf('template/partial planning guide') === -1, 'full Step 1 input does not show partial/template warning');
+assert(html.indexOf('data-act="preview"') !== -1, 'full Step 1 input still shows Preview Decision Steps');
+
+const fullSnap = JSON.stringify(out.brief.operational_brief.proposed_units);
+window.RmoozDocReview.render({ innerHTML: '', style: {}, querySelector: function () { return null; } }, out, {});
+assert(JSON.stringify(out.brief.operational_brief.proposed_units) === fullSnap, 'full payload not mutated by render');
+
+const partialInput = {
+    letter_ref_number: '<\u0631\u0642\u0645 \u0627\u0644\u0645\u0631\u062c\u0639>',
+    task_assembly: '\u064a\u0635\u062f\u0631 \u0644\u0627\u062d\u0642\u0627\u064b',
+    Units_Duty: '<\u0648\u0627\u062c\u0628\u0627\u062a \u0623\u0648\u0644\u064a\u0629>',
+    doctrine_upload_required: true,
+    doctrine_sources: ['pending_upload'],
+    doctrine_application_policy: 'operator_uploaded_doctrine_required_before_final_tasking',
+    Assembly_Area: 'R CN 64215 7114840',
+    join_op_mission: '<\u0627\u0644\u0645\u0647\u0645\u0629>',
+};
+const partialOut = ADAPTER.adaptMdmpBundle([{ filename: 'step1-template-guide.json', data: partialInput }]);
+partialOut.understanding = B.understandingFromBrief(B.normalizeBrief(partialOut.brief));
+const partialSnap = JSON.stringify(partialOut.brief);
+const partialContainer = {
+    innerHTML: '',
+    style: {},
+    querySelector: function () { return null; },
+};
+window.RmoozDocReview.render(partialContainer, partialOut, {});
+const partialHtml = partialContainer.innerHTML;
+
+assert(partialHtml.indexOf('template/partial planning guide') !== -1, 'partial/template Step 1 shows English warning');
+assert(partialHtml.indexOf('\u064a\u0628\u062f\u0648 \u0623\u0646 \u0627\u0644\u0645\u0644\u0641 \u0642\u0627\u0644\u0628/\u062f\u0644\u064a\u0644 \u062a\u062e\u0637\u064a\u0637 \u062c\u0632\u0626\u064a') !== -1, 'partial/template Step 1 shows Arabic warning');
+assert(partialHtml.indexOf('Map preview requires proposed_units and placement_candidates') !== -1, 'warning names preview data requirements');
+assert(partialHtml.indexOf('Upload the full Step 1 generated output') !== -1, 'warning recommends full Step 1 generated output');
+assert(partialHtml.indexOf('data-act="preview"') === -1, 'partial/template Step 1 disables Preview Decision Steps');
+assert(partialHtml.indexOf('Missing / ambiguous') !== -1, 'partial/template Step 1 keeps missing/ambiguous list readable');
+assert(partialHtml.indexOf('BLUE 0 / RED 0 / NEUTRAL 0') !== -1, 'partial/template Step 1 still shows honest zero counts');
+assert(JSON.stringify(partialOut.brief) === partialSnap, 'partial/template payload not mutated by render');
 
 console.log('  [PASS] Step 1 review UI shows task assembly and proposed RED units');

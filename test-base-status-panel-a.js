@@ -42,6 +42,9 @@ global.document = {
 global.window = {};
 global.window.document = global.document;
 
+// DB1 + SYMBOL-DB-B categorizer load BEFORE the panel (which delegates systems lookup to it).
+require(path.join(__dirname, 'UI_MOdified/client/shell/world-state-db.js'));
+require(path.join(__dirname, 'UI_MOdified/client/shell/symbol-db.js'));
 require(path.join(__dirname, 'UI_MOdified/client/shell/base-status-panel.js'));
 require(path.join(__dirname, 'UI_MOdified/client/shell/placement-candidates-panel.js'));
 
@@ -194,6 +197,17 @@ ok('no final scenario units or tasking created by panel payload',
     payload.brief.operational_brief.enemy.units.length === 0 &&
     payload.brief.operational_brief.friendly.units.length === 0 &&
     payload.brief.operational_brief.courses_of_action.length === 0);
+
+// ── SYMBOL-DB-B integration: panel delegates systems lookup to the categorizer ──
+var npF16 = BasePanel.normalizePlatform({ platform: 'f16c' });
+ok('SYMBOL-DB-B: known platform -> panel shows catalog matched + real systems',
+    npF16.catalog_match_status === 'matched' && npF16.sensors.length > 0);
+var npUnknown = BasePanel.normalizePlatform({ platform: 'Unlisted Platform X' });
+ok('SYMBOL-DB-B: unknown platform -> no invented systems (sensors empty), still unknown',
+    npUnknown.symbol_category === 'unknown' && npUnknown.sensors.length === 0 && npUnknown.weapons.length === 0);
+var npHelo = BasePanel.normalizePlatform({ platform: 'AB-212' });
+ok('SYMBOL-DB-B: category-only platform unchanged (helicopter, no invented systems)',
+    npHelo.symbol_category === 'helicopter' && npHelo.sensors.length === 0);
 
 console.log('\n' + passed + ' passed, ' + failed + ' failed');
 process.exit(failed ? 1 : 0);

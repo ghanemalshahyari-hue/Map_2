@@ -121,7 +121,7 @@
         else if (/logistic|supply|depot/.test(p)) { cat = 'logistics'; status = 'category_only'; confidence = 0.64; }
         else if (/ground|armor|tank|infantry|brigade|battalion/.test(p)) { cat = 'ground_unit'; status = 'category_only'; confidence = 0.62; }
 
-        return {
+        var result = {
             symbol_category: cat,
             symbol_category_candidates: candidates,
             platform_class: cat === 'unknown' ? null : cat,
@@ -135,6 +135,27 @@
             unknown_fields: cat === 'unknown' ? ['platform'] : [],
             needs_review: true
         };
+        // SYMBOL-DB-B: merge catalog-sourced systems (sensors/weapons/magazines) when the
+        // canonical categorizer is loaded. Systems come ONLY from the DB1 catalog — never
+        // invented. We override status/summary only on a real catalog hit (matched/
+        // role_class/declared); category-only and unknown platforms render exactly as before.
+        var SDB = (typeof window !== 'undefined' && window.RmoozSymbolDB) || null;
+        if (SDB && typeof SDB.categorize === 'function') {
+            var enriched = SDB.categorize(unit);
+            result.sensors = enriched.sensors;
+            result.weapons = enriched.weapons;
+            result.magazines = enriched.magazines;
+            result.unknown_fields = enriched.unknown_fields;
+            if (enriched.catalog_match_status === 'matched' ||
+                enriched.catalog_match_status === 'role_class' ||
+                enriched.catalog_match_status === 'declared') {
+                result.catalog_match_status = enriched.catalog_match_status;
+                result.catalog_confidence = enriched.catalog_confidence;
+                if (enriched.capability_summary) result.capability_summary = enriched.capability_summary;
+                if (enriched.platform_class) result.platform_class = enriched.platform_class;
+            }
+        }
+        return result;
     }
     function categoryCapability(cat) {
         var map = {

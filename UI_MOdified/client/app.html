@@ -4649,6 +4649,8 @@
          Import Tools" (kept, not deleted). Orchestration only; porter unchanged. -->
     <!-- DOC-UNDERSTANDING-1 / G-3: COA Review Panel (cards + Select/Reject/Edit/Compare + generation gate). Must load BEFORE the review renderer. -->
     <script src="shell/coa-review-panel.js?v=1"></script>
+    <!-- SYMBOL-DB-B: proposed-unit platform categorizer (systems from DB1 catalog; no invention). Must load BEFORE the base status panel, which delegates systems lookup to it. -->
+    <script src="shell/symbol-db.js?v=symbol-db-b"></script>
     <script src="shell/base-status-panel.js?v=base-status-a"></script>
     <script src="shell/placement-candidates-panel.js?v=1"></script>
     <!-- DOC-UNDERSTANDING-1 / Phase E: shared AI-Understanding review renderer (used by the wizard + verify page). -->

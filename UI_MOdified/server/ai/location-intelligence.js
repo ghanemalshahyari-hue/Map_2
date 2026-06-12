@@ -268,13 +268,75 @@ function aoCheck(lat, lon, ao) {
     return 'unknown';
 }
 
+/* ── T-4A: advisory terrain context (GIS-TERRAIN-1) ─────────────────────── */
+// OPT-IN ONLY (includeTerrain:true). Lazy-required so the default path never
+// loads the terrain stack and existing G-3B behavior stays byte-identical.
+// Terrain is ADVISORY context for the commander: it never rejects a
+// candidate, never moves lat/lon, never changes candidate.confidence or
+// placement_type — the block carries its own separate terrain confidence.
+var _terrainMod;                 // undefined = not tried, null = unavailable
+function terrainModule() {
+    if (_terrainMod !== undefined) return _terrainMod;
+    try { _terrainMod = require('../terrain-analysis.js'); }
+    catch (_) { _terrainMod = null; }
+    return _terrainMod;
+}
+
+/** Build the advisory terrain block for one candidate. Returns null when the
+ *  candidate has no usable lat/lon (no crash, no block). Missing DEM (or a
+ *  missing terrain module) degrades to terrain_available:false + warnings —
+ *  never a failure (L6: needs_review always true). */
+function terrainForCandidate(candidate) {
+    if (!candidate || !inLat(candidate.lat) || !inLon(candidate.lon)) return null;
+    var TA = terrainModule();
+    if (!TA) {
+        return {
+            terrain_available: false, elevation_m: null, confidence: 'low',
+            warnings: ['terrain_module_unavailable', 'no_terrain_data'],
+            source: PM.makeSource({ type: 'gis_analysis', key: 'point_terrain',
+                                    origin: 'location_intelligence', confidence: 'low' }),
+            needs_review: true,
+        };
+    }
+    var p = TA.analyzePointTerrain(candidate.lat, candidate.lon);
+    if (!p || p.ok !== true) {
+        return {
+            terrain_available: false, elevation_m: null, confidence: 'low',
+            warnings: ['no_terrain_data'],
+            source: PM.makeSource({ type: 'gis_analysis', key: 'point_terrain',
+                                    origin: 'location_intelligence', confidence: 'low' }),
+            needs_review: true,
+        };
+    }
+    return {
+        terrain_available: p.available === true && p.elevation_m !== null,
+        elevation_m: p.elevation_m,
+        confidence: p.confidence,
+        warnings: (p.warnings || []).slice(),
+        source: p.source,                      // terrain_layer — a direct point read
+        needs_review: true,
+    };
+}
+
+/** Idempotently attach terrain blocks to every candidate in `list` that has
+ *  lat/lon and no terrain block yet. Mutates only the (already-cloned)
+ *  candidates handed in — callers own the clone boundary. */
+function attachTerrainToCandidates(list) {
+    (Array.isArray(list) ? list : []).forEach(function (c) {
+        if (!c || c.terrain) return;
+        var t = terrainForCandidate(c);
+        if (t) c.terrain = t;
+    });
+}
+
 /* ── 3–5. Core: resolve a mention into placement candidate(s) ───────────── */
 /**
  * resolveMention(mention, opts?) → [candidate, ...]
  *   mention: a free-text string, or { text|phrase, location_id?, source?, exact? }
  *   opts: { ao?, incidents?(parsed or raw), llm_candidate?({lat,lon,...}),
  *           inputSource?(source.type for explicit coords; default manual_app_entry),
- *           as_of?, staleness_days? }
+ *           as_of?, staleness_days?,
+ *           includeTerrain? (T-4A: attach advisory candidate.terrain; default OFF) }
  * Priority: explicit coord > gazetteer > incident_log > llm placeholder.
  */
 function resolveMention(mention, opts) {
@@ -309,6 +371,11 @@ function resolveMention(mention, opts) {
         };
         var im = matchIncident(cand, incidents, o);
         if (im) { cand.incident_status = im.status; im.warnings.forEach(function (w) { if (cand.warnings.indexOf(w) === -1) cand.warnings.push(w); }); }
+        // T-4A: opt-in advisory terrain context (no-op without lat/lon).
+        if (o.includeTerrain === true) {
+            var terr = terrainForCandidate(cand);
+            if (terr) cand.terrain = terr;
+        }
         candidates.push(cand);
     }
 
@@ -427,7 +494,10 @@ function arr(v) { return Array.isArray(v) ? v : []; }
 /**
  * enrichPlanningModelLocations(planningModel, options) → NEW model (cloned).
  *   options: { mentions?[ string | {text,source?} ], ao?, incidents?,
- *              llm_candidates?, as_of?, staleness_days? }
+ *              llm_candidates?, as_of?, staleness_days?,
+ *              includeTerrain? (T-4A: attach advisory candidate.terrain blocks;
+ *                               default OFF — omitted/false keeps G-3B behavior
+ *                               unchanged, terrain stack never even loads) }
  * Appends model.placement_candidates from: options.mentions + model objects
  * that carry a name but no coordinate. Preserves source metadata, surfaces
  * ambiguous mentions as conflicts, lists unresolved mentions in
@@ -465,6 +535,7 @@ function enrichPlanningModelLocations(planningModel, options) {
             ao: ao, incidents: incidents, llm_candidate: null,
             inputSource: (job.src && job.src.type) || 'manual_app_entry',
             as_of: o.as_of, staleness_days: o.staleness_days,
+            includeTerrain: o.includeTerrain === true,             // T-4A passthrough
         });
         // ambiguous mention (multiple distinct candidates) → conflict
         var distinct = cands.filter(function (c) { return c.location_id; }).map(function (c) { return c.location_id; });
@@ -485,6 +556,10 @@ function enrichPlanningModelLocations(planningModel, options) {
         });
     });
 
+    // T-4A: when opted in, also cover candidates that were already on the
+    // (cloned) model from earlier passes — idempotent, existing blocks kept.
+    if (o.includeTerrain === true) attachTerrainToCandidates(model.placement_candidates);
+
     return model;
 }
 
@@ -500,4 +575,7 @@ module.exports = {
     aoCheck,
     resolveMention,
     enrichPlanningModelLocations,
+    // T-4A (GIS-TERRAIN-1): advisory terrain context for candidates.
+    terrainForCandidate,
+    attachTerrainToCandidates,
 };

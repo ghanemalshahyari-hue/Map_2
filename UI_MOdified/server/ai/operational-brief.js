@@ -388,7 +388,7 @@ const MDMP_STEPS = [
       any: ['letter_ref_number', 'Assembly_Area', 'task_assembly',
             'Units_Duty', 'GROUND_COMPONENT_MISSION', 'Operational_Assumptions'] },
     { step: 'staff_brief_2',
-      any: ['Staff_Brief_2', 'staff_brief_2', 'intel_summary', 'enemy_capabilities',
+      any: ['Staff_Brief_2', 'staff_brief_2', 'sections', 'intel_summary', 'enemy_capabilities',
             'operations', 'hr', 'logistics'] },
     { step: 'staff_brief',      // step 2 outputs — intel summary / capabilities
       any: ['Enemy_Capabilities', 'First_light', 'Recent_and_Ongoing_Activities',

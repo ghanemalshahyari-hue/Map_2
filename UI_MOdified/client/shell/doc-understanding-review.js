@@ -175,14 +175,16 @@
         var sb = opBrief(p).staff_brief_2;
         if (!sb || !sb.sections) return '';
         var labels = {
-            intel_summary: 'intel_summary',
-            enemy_capabilities: 'enemy_capabilities',
-            operations: 'operations',
-            hr: 'hr',
-            logistics: 'logistics',
+            intel_summary: '\u0645\u0644\u062e\u0635 \u0627\u0644\u0627\u0633\u062a\u062e\u0628\u0627\u0631\u0627\u062a \u2014 Intel Summary',
+            enemy_capabilities: '\u0642\u062f\u0631\u0627\u062a \u0627\u0644\u0639\u062f\u0648 \u2014 Enemy Capabilities',
+            operations: '\u0627\u0644\u0639\u0645\u0644\u064a\u0627\u062a \u2014 Operations',
+            hr: '\u0627\u0644\u0642\u0648\u0649 \u0627\u0644\u0628\u0634\u0631\u064a\u0629 \u2014 HR',
+            logistics: '\u0627\u0644\u0625\u0645\u062f\u0627\u062f \u2014 Logistics',
         };
         var html = '<section style="margin:10px 0;padding:8px 0;border-top:1px solid #23303d;">' +
-            '<div style="font-size:13px;color:#cfe6ff;font-weight:600;margin-bottom:6px;">Staff Brief 2 \u2014 \u0645\u0648\u062c\u0632 \u0627\u0644\u0623\u0631\u0643\u0627\u0646 2</div>';
+            '<div style="font-size:13px;color:#cfe6ff;font-weight:600;margin-bottom:6px;">Staff Brief 2 \u2014 \u0625\u064a\u062c\u0627\u0632 \u0627\u0644\u0623\u0631\u0643\u0627\u0646 2</div>';
+        html += fieldRow('external_step', sb.external_step);
+        html += fieldRow('package_type', sb.package_type);
         Object.keys(labels).forEach(function (name) {
             var section = sb.sections[name] || {};
             var keys = Object.keys(section);
@@ -198,8 +200,34 @@
             });
             html += '</div>';
         });
+        var conclusionRows = [];
+        ['intel_summary', 'operations', 'hr', 'logistics'].forEach(function (name) {
+            Object.keys(sb.sections[name] || {}).forEach(function (k) {
+                if (/Conclusions?$/i.test(k) || /_Conclusions$/i.test(k)) {
+                    conclusionRows.push(name + ': ' + k + ' = ' + ((sb.sections[name][k] || {}).value || ''));
+                }
+            });
+        });
+        html += '<div style="margin:8px 0;"><div style="font-size:12px;color:#8fa5b8;margin-bottom:4px;">\u0627\u0644\u0627\u0633\u062a\u0646\u062a\u0627\u062c\u0627\u062a \u2014 Conclusions</div>';
+        html += conclusionRows.length ? listBlock('conclusions', conclusionRows) : '<div style="font-size:12px;color:#e0a93a;">missing_information</div>';
+        html += '</div>';
+        html += '<div style="margin:8px 0;"><div style="font-size:12px;color:#e0a93a;margin-bottom:4px;">\u0627\u0644\u0645\u0639\u0644\u0648\u0645\u0627\u062a \u0627\u0644\u0646\u0627\u0642\u0635\u0629 \u2014 Missing Information</div>';
+        html += (sb.missing_information && sb.missing_information.length)
+            ? listBlock('missing_information', sb.missing_information, '#e0a93a')
+            : '<div style="font-size:12px;color:#8fa5b8;">none</div>';
+        html += '</div>';
+        if (sb.step1_linkage) {
+            html += '<div style="margin:8px 0;"><div style="font-size:12px;color:#8fa5b8;margin-bottom:4px;">Step 1 linkage</div>' +
+                fieldRow('task_assembly', sb.step1_linkage.task_assembly ? 'true' : 'false') +
+                fieldRow('proposed_units', sb.step1_linkage.proposed_units) +
+                fieldRow('doctrine_upload_required', sb.step1_linkage.doctrine_upload_required ? 'true' : 'false') +
+                fieldRow('placement_candidates', sb.step1_linkage.placement_candidates) + '</div>';
+        }
         if (sb.duplicate_key_warnings && sb.duplicate_key_warnings.length) {
             html += listBlock('duplicate_key_warnings', sb.duplicate_key_warnings.map(function (w) { return w.section + '.' + w.key; }), '#e0a93a');
+        }
+        if (sb.conflicts && sb.conflicts.length) {
+            html += listBlock('conflicts', sb.conflicts.map(function (c) { return c.key + ': ' + c.type; }), '#e0a93a');
         }
         html += '</section>';
         return html;

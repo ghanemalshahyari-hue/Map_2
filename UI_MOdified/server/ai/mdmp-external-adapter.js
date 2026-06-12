@@ -313,6 +313,22 @@ const STAFF2_SECTIONS = {
         'Field_Hospitals', 'Supply_Conclusions'],
 };
 
+const STAFF2_FILE_SECTION = {
+    AAAA: 'intel_summary',
+    BBBB: 'enemy_capabilities',
+    CCCC: 'operations',
+    DDDD: 'hr',
+    EEEE: 'logistics',
+};
+
+const STAFF2_MISSING_LABEL = {
+    intel_summary: 'Intel Summary',
+    enemy_capabilities: 'Enemy Capabilities',
+    operations: 'Operations',
+    hr: 'HR',
+    logistics: 'Logistics',
+};
+
 function newStaffBrief2(file) {
     return {
         sections: {
@@ -322,8 +338,11 @@ function newStaffBrief2(file) {
             hr: {},
             logistics: {},
         },
-        raw_external_json: null,
+        external_step: 2,
+        package_type: 'Staff_Brief_2',
+        raw_external_json: { files: [] },
         duplicate_key_warnings: [],
+        conflicts: [],
         missing_information: [],
         source_type: 'ai_candidate_from_external_llm',
         needs_review: true,
@@ -358,10 +377,12 @@ function addStaff2Field(staff, sectionName, key, value, file, sourceKey) {
     };
 }
 
-function mapStaff2Object(staff, obj, file, prefix) {
+function mapStaff2Object(staff, obj, file, prefix, onlySection) {
     if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return;
+    const sectionsRoot = obj.sections && typeof obj.sections === 'object' && !Array.isArray(obj.sections) ? obj.sections : obj;
     Object.keys(STAFF2_SECTIONS).forEach(sectionName => {
-        const nested = obj[sectionName];
+        if (onlySection && sectionName !== onlySection) return;
+        const nested = sectionsRoot[sectionName];
         if (nested && typeof nested === 'object' && !Array.isArray(nested)) {
             Object.keys(nested).forEach(k => {
                 const raw = rawStructuredValue(nested, k);
@@ -370,6 +391,7 @@ function mapStaff2Object(staff, obj, file, prefix) {
         }
     });
     Object.keys(STAFF2_SECTIONS).forEach(sectionName => {
+        if (onlySection && sectionName !== onlySection) return;
         STAFF2_SECTIONS[sectionName].forEach(k => {
             const raw = rawStructuredValue(obj, k);
             if (raw != null) addStaff2Field(staff, sectionName, k, raw, file, (prefix ? prefix + '.' : '') + k);
@@ -377,21 +399,52 @@ function mapStaff2Object(staff, obj, file, prefix) {
     });
 }
 
+function rebuildStaff2Conflicts(staff) {
+    const seen = {};
+    Object.keys(staff.sections).forEach(sectionName => {
+        Object.keys(staff.sections[sectionName]).forEach(k => {
+            const item = staff.sections[sectionName][k];
+            const serialized = JSON.stringify(item && item.value);
+            if (!seen[k]) seen[k] = [];
+            seen[k].push({ section: sectionName, value: item && item.value, serialized });
+        });
+    });
+    staff.conflicts = [];
+    Object.keys(seen).forEach(k => {
+        const vals = Array.from(new Set(seen[k].map(x => x.serialized)));
+        if (seen[k].length > 1 && vals.length > 1) {
+            staff.conflicts.push({
+                key: k,
+                type: 'duplicate_key_different_values_across_sections',
+                entries: seen[k],
+                needs_review: true,
+                source_type: 'ai_candidate_from_external_llm',
+            });
+        }
+    });
+}
+
 function mapStaffBrief2(data, file, state) {
     const staff = state.staff_brief_2 || newStaffBrief2(file);
-    staff.raw_external_json = staff.raw_external_json || clone(data);
+    staff.raw_external_json.files.push({ file, data: clone(data) });
+    const fileStem = String(file || '').replace(/\.[^.]+$/, '').toUpperCase();
+    const onlySection = STAFF2_FILE_SECTION[fileStem] || null;
     const wrapped = rawStructuredValue(data, 'Staff_Brief_2') || rawStructuredValue(data, 'staff_brief_2');
-    if (wrapped && typeof wrapped === 'object' && !Array.isArray(wrapped)) mapStaff2Object(staff, wrapped, file, 'Staff_Brief_2');
-    mapStaff2Object(staff, data, file, '');
+    if (wrapped && typeof wrapped === 'object' && !Array.isArray(wrapped)) mapStaff2Object(staff, wrapped, file, 'Staff_Brief_2', onlySection);
+    mapStaff2Object(staff, data, file, '', onlySection);
+    rebuildStaff2Conflicts(staff);
+    staff.missing_information = [];
+    state.missing_information = state.missing_information.filter(m => String(m).indexOf('Staff Brief 2 missing section: ') !== 0);
     Object.keys(staff.sections).forEach(sectionName => {
         if (!Object.keys(staff.sections[sectionName]).length) {
-            const missKey = 'staff_brief_2.sections.' + sectionName;
+            const missKey = 'Staff Brief 2 missing section: ' + STAFF2_MISSING_LABEL[sectionName];
             if (staff.missing_information.indexOf(missKey) === -1) staff.missing_information.push(missKey);
             addMissing(state, missKey);
         }
     });
     state.staff_brief_2 = staff;
-    if (!state.external_raw.staff_brief_2) state.external_raw.staff_brief_2 = clone(data);
+    if (!state.external_raw.staff_brief_2) state.external_raw.staff_brief_2 = { files: [] };
+    state.external_raw.staff_brief_2.files.push({ file, data: clone(data) });
     if (!state.enemy_summary && staff.sections.enemy_capabilities.Enemy_Capabilities) {
         state.enemy_summary = { text: String(staff.sections.enemy_capabilities.Enemy_Capabilities.value), file, key: 'Enemy_Capabilities' };
     }
@@ -774,8 +827,9 @@ function adaptMdmpBundle(entries) {
 
     for (const e of list) {
         const det = BRIEF.detectMdmp(e.data);
-        const step = det.is ? det.step : 'unknown';
         const file = e.filename || '(unnamed)';
+        const fileStem = String(file).replace(/\.[^.]+$/, '').toUpperCase();
+        const step = det.is ? det.step : (STAFF2_FILE_SECTION[fileStem] ? 'staff_brief_2' : 'unknown');
         state.files.push({ filename: file, mdmp_step: step, matched_keys: det.is ? det.matched : [] });
         if (det.is) state.steps.push(step);
         if (step === 'coa_development') mapStep3(e.data, file, state);
@@ -830,7 +884,19 @@ function adaptMdmpBundle(entries) {
     }
     if (state.area) ob.area_of_operations = state.area;
     if (state.force_comparison) ob.force_comparison = state.force_comparison;
-    if (state.staff_brief_2) ob.staff_brief_2 = state.staff_brief_2;
+    if (state.staff_brief_2) {
+        if (state.seen_planning) {
+            state.staff_brief_2.step1_linkage = {
+                task_assembly: !!ob.task_assembly,
+                proposed_units: ob.proposed_units.length,
+                doctrine_upload_required: !!(ob.task_assembly && ob.task_assembly.doctrine_upload_required),
+                placement_candidates: ob.placement_candidates.length,
+                needs_review: true,
+                source_type: 'ai_candidate_from_external_llm',
+            };
+        }
+        ob.staff_brief_2 = state.staff_brief_2;
+    }
     if (Object.keys(state.external_raw).length) ob.external_raw = state.external_raw;
 
     // COAs: 2 BLUE always (even if empty — the operator sees what's missing),

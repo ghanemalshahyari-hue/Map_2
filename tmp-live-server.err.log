@@ -1,0 +1,168 @@
+[scenario-loader] "attack_objective_draft-18" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-19" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-19" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-19" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-3" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 6 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 6 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "air_defense_draft-2" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 6 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 6 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-3" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-3" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-4" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-4" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-5" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 27 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 6 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-5" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 27 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 6 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-6" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-6" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-7" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-7" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-8" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-8" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-9" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-9" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-10" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-10" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-11" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-11" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-12" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-12" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-13" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern
+[scenario-loader] "attack_objective_draft-13" loaded with 5 warning(s):
+  - steps: count 4 deviates from wargame1/2 norm (12); valid but off-pattern
+  - bls_template: count 1 deviates from wargame1/2 norm (4); valid but off-pattern
+  - red_units: count 76 deviates from wargame1/2 norm (11); valid but off-pattern
+  - blue_units_initial: count 7 deviates from wargame1/2 norm (39); valid but off-pattern
+  - pipeline: count 3 deviates from wargame1/2 norm (15); valid but off-pattern

@@ -1,0 +1,349 @@
+{
+  "name": "air_defense_draft",
+  "scenario_label": "تقوم القوة المشتركة BLUE بحماية منطقة التجمع ومحاور الحركة، ",
+  "model_version": "brief-gen-v1",
+  "map_bbox": [
+    32.29,
+    34.16,
+    33.49,
+    35.36
+  ],
+  "obj": {
+    "name": "OBJ X",
+    "coord": [
+      32.89,
+      34.76
+    ],
+    "target_depth_km": 12,
+    "carver": 10,
+    "radius_km": 10
+  },
+  "pipeline": [
+    [
+      33.27732,
+      35.0782
+    ],
+    [
+      33.08366,
+      34.9191
+    ],
+    [
+      32.89,
+      34.76
+    ]
+  ],
+  "red_units": [
+    {
+      "uid": "R-001",
+      "label": "aircraft-1",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "aircraft",
+      "coord": [
+        33.01911,
+        35.0782
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-002",
+      "label": "cruise_missile-2",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "cruise_missile",
+      "coord": [
+        33.07075,
+        35.03577
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-003",
+      "label": "uav-3",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "uav",
+      "coord": [
+        33.12239,
+        34.99335
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-004",
+      "label": "aircraft-4",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "aircraft",
+      "coord": [
+        33.17403,
+        34.95092
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-005",
+      "label": "cruise_missile-5",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "cruise_missile",
+      "coord": [
+        33.22567,
+        34.90849
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-006",
+      "label": "uav-6",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "uav",
+      "coord": [
+        33.27732,
+        34.86607
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    }
+  ],
+  "blue_units_base_ids": [
+    "b1",
+    "b2",
+    "b3",
+    "b4",
+    "b5",
+    "b6"
+  ],
+  "blue_units_initial": [
+    {
+      "unit_uid": "B-001",
+      "base_id": "b1",
+      "role": "sam_battery",
+      "coord": [
+        32.97521,
+        34.76
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "unit_uid": "B-002",
+      "base_id": "b2",
+      "role": "sam_battery",
+      "coord": [
+        32.9326,
+        34.82062
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "unit_uid": "B-003",
+      "base_id": "b3",
+      "role": "radar",
+      "coord": [
+        32.8474,
+        34.82062
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "unit_uid": "B-004",
+      "base_id": "b4",
+      "role": "short_range_ad",
+      "coord": [
+        32.80479,
+        34.76
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "unit_uid": "B-005",
+      "base_id": "b5",
+      "role": "c2",
+      "coord": [
+        32.8474,
+        34.69938
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "unit_uid": "B-006",
+      "base_id": "b6",
+      "role": "sam_battery",
+      "coord": [
+        32.9326,
+        34.69938
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    }
+  ],
+  "bls_template": [
+    {
+      "name": "BLS-1",
+      "coord": [
+        33.03607,
+        34.76
+      ],
+      "role": "staging",
+      "draft": true,
+      "needs_review": true
+    }
+  ],
+  "phase_table": [
+    {
+      "index": 0,
+      "time_label": "H0",
+      "elapsed_hours": 0,
+      "phase": "deployment",
+      "kind_native": "deployment"
+    },
+    {
+      "index": 1,
+      "time_label": "H+6",
+      "elapsed_hours": 6,
+      "phase": "detection",
+      "kind_native": "detection"
+    },
+    {
+      "index": 2,
+      "time_label": "H+12",
+      "elapsed_hours": 12,
+      "phase": "engagement",
+      "kind_native": "engagement"
+    },
+    {
+      "index": 3,
+      "time_label": "H+18",
+      "elapsed_hours": 18,
+      "phase": "sustainment",
+      "kind_native": "sustainment"
+    }
+  ],
+  "steps": [
+    {
+      "index": 0,
+      "time_label": "H0",
+      "elapsed_hours": 0,
+      "phase": "deployment",
+      "kind_native": "deployment"
+    },
+    {
+      "index": 1,
+      "time_label": "H+6",
+      "elapsed_hours": 6,
+      "phase": "detection",
+      "kind_native": "detection"
+    },
+    {
+      "index": 2,
+      "time_label": "H+12",
+      "elapsed_hours": 12,
+      "phase": "engagement",
+      "kind_native": "engagement"
+    },
+    {
+      "index": 3,
+      "time_label": "H+18",
+      "elapsed_hours": 18,
+      "phase": "sustainment",
+      "kind_native": "sustainment"
+    }
+  ],
+  "terrain_note": "Draft scenario generated from a reviewed Operational Brief. Positions are placeholders for operator review.",
+  "source": "OperationalBrief",
+  "generated_from_brief": true,
+  "generation": {
+    "from": "operational_brief",
+    "template": "air_defense",
+    "template_name_en": "Air Defense",
+    "template_name_ar": "دفاع جوي",
+    "draft": true,
+    "placement_confidence": "low",
+    "objective_source": "operator",
+    "document_set_id": "ds_mdmp_37115fd334e0",
+    "source_citations": [
+      {
+        "field": "mission",
+        "file": "step1_italy_france_training_test.json",
+        "keys": [
+          "join_op_mission"
+        ]
+      },
+      {
+        "field": "commander_intent",
+        "file": "step1_italy_france_training_test.json",
+        "keys": [
+          "Join_op_purp",
+          "joint_ops_how",
+          "joint_ops_desired_end"
+        ]
+      },
+      {
+        "field": "friendly.summary",
+        "file": "step1_italy_france_training_test.json",
+        "keys": [
+          "friendly_forces"
+        ]
+      },
+      {
+        "field": "enemy.summary",
+        "file": "step1_italy_france_training_test.json",
+        "keys": [
+          "enemy_forces"
+        ]
+      }
+    ],
+    "missing_fields": [
+      "enemy (RED) unit count (used default)",
+      "friendly (BLUE) unit count (used default)",
+      "all unit positions are DRAFT — refine on the map",
+      "precise coordinates were not taken from the document"
+    ],
+    "proposed_unit_counts": {
+      "red": 6,
+      "blue": 6
+    }
+  },
+  "ported_from": "brief-to-scenario.js"
+}

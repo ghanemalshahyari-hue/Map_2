@@ -1,0 +1,70 @@
+{
+  "fixturePath": "/tmp/Iran_Qatar_step1_updated_red_blue_trial.json",
+  "server": "http://127.0.0.1:8011",
+  "screenshots": [
+    "preview-clear.png",
+    "preview-step-1.png",
+    "preview-step-final.png",
+    "preview-step-middle.png"
+  ],
+  "step1": {
+    "active": true,
+    "stepCount": 6,
+    "text": "Preview Decision Steps / معاينة خطوات القرار\n✕\n◀\nStep 1 / 6\n▶\nPhase / المرحلة: Initial Deployment — الاستعداد الأولي\nDecision / القرار\nInitial force deployment — establish baseline positions\nRisk / المخاطر\nExposure during initial deployment\nEvidence / الأدلة\nAI-derived — based on reviewed brief. All values require commander review.\n⚠ preview_only · approximate_route · requires_review\nApproximate demo movement / route requires review\nClear Preview / مسح المعاينة",
+    "previewLayers": 15,
+    "movementLines": 0,
+    "panelBox": {
+      "top": 122,
+      "bottom": 443,
+      "left": 970.1875,
+      "right": 1416
+    },
+    "headerBottom": 74,
+    "bottomStatusTop": 670,
+    "viewportH": 920
+  },
+  "mid": {
+    "active": true,
+    "stepCount": 6,
+    "text": "Preview Decision Steps / معاينة خطوات القرار\n✕\n◀\nStep 4 / 6\n▶\nPhase / المرحلة: assault\nDecision / القرار\nAssault objective — coordinated fire and maneuver\nRisk / المخاطر\nDefender advantage requires combined arms\nEvidence / الأدلة\nAI-derived — based on reviewed brief. All values require commander review.\n⚠ preview_only · approximate_route · requires_review\nApproximate demo movement / route requires review\nClear Preview / مسح المعاينة",
+    "previewLayers": 23,
+    "movementLines": 8,
+    "panelBox": {
+      "top": 122,
+      "bottom": 443,
+      "left": 970.1875,
+      "right": 1416
+    },
+    "headerBottom": 74,
+    "bottomStatusTop": 670,
+    "viewportH": 920
+  },
+  "final": {
+    "active": true,
+    "stepCount": 6,
+    "text": "Preview Decision Steps / معاينة خطوات القرار\n✕\n◀\nStep 6 / 6\n▶\nPhase / المرحلة: Final Assessment — التقييم النهائي\nDecision / القرار\nPost-operation assessment — consolidate learning for next phase\nRisk / المخاطر\nReassessment may reveal gaps in initial intelligence\nEvidence / الأدلة\nAI-derived — based on reviewed brief. All values require commander review.\n⚠ preview_only · approximate_route · requires_review\nApproximate demo movement / route requires review\nClear Preview / مسح المعاينة",
+    "previewLayers": 23,
+    "movementLines": 8,
+    "panelBox": {
+      "top": 122,
+      "bottom": 443,
+      "left": 970.1875,
+      "right": 1416
+    },
+    "headerBottom": 74,
+    "bottomStatusTop": 670,
+    "viewportH": 920
+  },
+  "cleared": {
+    "active": false,
+    "stepCount": 0,
+    "text": "",
+    "previewLayers": 0,
+    "movementLines": 0,
+    "panelBox": null,
+    "headerBottom": 74,
+    "bottomStatusTop": 670,
+    "viewportH": 920
+  },
+  "consoleIssues": []
+}

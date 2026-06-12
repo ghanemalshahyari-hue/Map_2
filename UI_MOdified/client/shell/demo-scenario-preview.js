@@ -257,9 +257,10 @@
         _panel = document.createElement('div');
         _panel.id = 'rmooz-demo-preview-panel';
         _panel.style.cssText = [
-            'position:fixed', 'bottom:80px', 'left:50%', 'transform:translateX(-50%)',
+            'position:fixed', 'top:122px', 'right:24px',
             'z-index:9900', 'background:#0e1620', 'border:1px solid #2e5d7d',
-            'border-radius:8px', 'padding:12px 16px', 'min-width:340px', 'max-width:480px',
+            'border-radius:8px', 'padding:12px 16px', 'min-width:340px', 'max-width:min(520px, calc(100vw - 32px))',
+            'max-height:calc(100vh - 240px)', 'overflow:auto',
             'box-shadow:0 4px 20px rgba(0,0,0,.65)', 'font-family:inherit', 'color:#e8eaed',
             'direction:ltr',
         ].join(';');
@@ -287,7 +288,7 @@
             '<div style="font-size:13px;font-weight:700;color:#cfe6ff;">',
             'Preview Decision Steps / معاينة خطوات القرار</div>',
             '<button data-act="close" style="background:transparent;border:none;cursor:pointer;',
-            'color:#8fa5b8;font-size:16px;padding:0 4px 0 8px;" title="Close">✕</button>',
+            'color:#8fa5b8;font-size:16px;padding:0 4px 0 8px;" title="Clear Preview">✕</button>',
             '</div>',
             '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">',
             '<button data-act="prev"' + prevDisabled + ' style="font:inherit;cursor:pointer;',
@@ -329,14 +330,21 @@
         html.push(
             '<div style="margin-top:8px;padding:5px 7px;border-radius:4px;background:#2a2412;',
             'border:1px solid #b8860b;color:#e0c060;font-size:11px;">',
-            '⚠ ' + esc(warning),
-            '</div>'
+            '<b>⚠ preview_only · approximate_route · requires_review</b><br>',
+            esc(warning),
+            '</div>',
+            '<div style="display:flex;justify-content:flex-end;margin-top:8px;">',
+            '<button data-act="clear" style="font:inherit;cursor:pointer;border:1px solid #b8860b;',
+            'background:#17130a;color:#e0c060;border-radius:4px;padding:4px 10px;font-size:11px;">',
+            'Clear Preview / مسح المعاينة</button></div>'
         );
 
         _panel.innerHTML = html.join('');
 
         var closeBtn = _panel.querySelector('[data-act="close"]');
         if (closeBtn) closeBtn.addEventListener('click', clear);
+        var clearBtn = _panel.querySelector('[data-act="clear"]');
+        if (clearBtn) clearBtn.addEventListener('click', clear);
         var prevBtn = _panel.querySelector('[data-act="prev"]');
         if (prevBtn && !prevBtn.disabled) prevBtn.addEventListener('click', function () { stepTo(idx - 1); });
         var nextBtn = _panel.querySelector('[data-act="next"]');

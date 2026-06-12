@@ -315,6 +315,10 @@ check(/_active\s*=\s*false/.test(clientSrc),
 
 check(/_preview\s*=\s*null/.test(clientSrc),
     'clear() sets _preview to null');
+check(/Clear Preview/.test(clientSrc) && /data-act="clear"/.test(clientSrc),
+    'panel exposes visible Clear Preview control');
+check(/preview_only/.test(clientSrc) && /approximate_route/.test(clientSrc) && /requires_review/.test(clientSrc),
+    'panel warning shows preview_only / approximate_route / requires_review tokens');
 
 // ─────────────────────────────────────────────────────────────────────────────
 console.log('\n  ─────────────────────────────────────────────');

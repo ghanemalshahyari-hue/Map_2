@@ -39,15 +39,21 @@
         if (window) window.__rmoozStep1PlacementAnchorCount = 0;
     }
 
+    var lastPayload = null;
+
     function mapAnchorIcon(c) {
         var side = String(c.side || '').toUpperCase();
         var color = side === 'BLUE' ? '#7fd6a0' : (side === 'RED' ? '#f0a0a0' : '#cfe6ff');
+        var type = String(c.site_type || c.base_type || '').toLowerCase();
+        if (/naval/.test(type)) color = side === 'BLUE' ? '#7fd6a0' : '#e0b070';
+        else if (/land|ground/.test(type)) color = side === 'BLUE' ? '#7fd6a0' : '#c98';
+        else if (/air/.test(type)) color = side === 'BLUE' ? '#7fd6a0' : '#f0a0a0';
         return window.L.divIcon({
             className: 'step1-review-placement-anchor',
-            html: '<div style="width:14px;height:14px;border-radius:50%;background:' + color +
-                ';border:2px solid #101820;box-shadow:0 0 0 2px rgba(207,230,255,.55);"></div>',
-            iconSize: [18, 18],
-            iconAnchor: [9, 9],
+            html: '<div style="width:18px;height:18px;border-radius:3px;background:' + color +
+                ';border:2px solid #101820;box-shadow:0 0 0 2px rgba(207,230,255,.55);display:flex;align-items:center;justify-content:center;color:#101820;font-size:11px;font-weight:800;">B</div>',
+            iconSize: [22, 22],
+            iconAnchor: [11, 11],
         });
     }
 
@@ -74,9 +80,17 @@
             marker._rmoozStep1PlacementAnchor = true;
             marker._rmoozReviewOnly = true;
             marker._rmoozExactUnitPosition = false;
+            marker._rmoozBaseAnchorData = c;
             marker.bindPopup('<div style="font-size:12px;color:#e8eaed;background:#0e1620;">' +
                 '<b>' + esc(c.mention || c.base_name_en || c.base_name_ar || 'Placement anchor') + '</b><br>' +
-                'review marker only<br>exact_unit_position: false</div>');
+                'review marker only<br>exact_unit_position: false<br>click marker for Base Status Panel</div>');
+            if (typeof marker.on === 'function') {
+                marker.on('click', function () {
+                    if (window.RmoozBaseStatusPanel && typeof window.RmoozBaseStatusPanel.open === 'function') {
+                        window.RmoozBaseStatusPanel.open(c, lastPayload || {});
+                    }
+                });
+            }
             anchorLayer.addLayer(marker);
             count++;
         });
@@ -207,6 +221,7 @@
 
     function render(mount, payload) {
         if (!mount) return;
+        lastPayload = payload || {};
         var cands = candidatesOf(payload);
         if (!cands.length) { mount.innerHTML = ''; clearMapAnchors(); return; }
         renderMapAnchors(cands);

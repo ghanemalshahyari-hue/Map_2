@@ -4453,6 +4453,10 @@
     <script src="shell/detection.js?v=1"></script>
     <script src="shell/engagement.js?v=1"></script>
     <script src="shell/world-state-db.js?v=1"></script>
+    <!-- G-4-C: read-only tasking overlay projection helper.
+         Loaded for controlled preview access only: no UI controls, no storage,
+         no backend, no live scenario mutation. -->
+    <script src="shell/tasking-overlay-store.js?v=1"></script>
     <!-- PR-WS2: World State projection (WS1). Loaded before the map so the
          adjudicator can derive a live World State snapshot per step and route
          objective status through it (parity-proof read seam — World State

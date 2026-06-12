@@ -67,6 +67,47 @@
             esc(text) + '</span>';
     }
 
+    /* ── T-4A-V (GIS-TERRAIN-1): advisory terrain context — render only ── */
+    // Pure display of candidate.terrain (attached server-side by the T-4A
+    // opt-in). The panel NEVER calls the terrain API and NEVER alters the
+    // candidate: terrain informs the commander, it does not gate anything.
+    var TERRAIN_WARN_LABEL = {
+        dem_not_configured: 'DEM not configured — لا يوجد نموذج ارتفاعات',
+        no_terrain_data: 'no terrain data — لا بيانات تضاريس',
+        outside_dem_coverage: 'outside DEM coverage — خارج تغطية النموذج',
+        no_data_at_point: 'no data at this point — لا بيانات عند النقطة',
+        terrain_module_unavailable: 'terrain module unavailable — وحدة التضاريس غير متاحة',
+    };
+
+    function terrainSection(t) {
+        var avail = t.terrain_available === true;
+        var h = '<div style="margin-top:6px;border-top:1px dashed #284050;padding-top:5px;">';
+        h += '<div style="font-size:10px;color:#8fb8e0;">⛰ Terrain context — سياق التضاريس ' +
+             chip('Advisory only — للاستئناس فقط', '#8fa5b8', '#161b22') +
+             (t.needs_review ? chip('needs review — مراجعة', '#e0c060', '#2a2412') : '') +
+             '</div>';
+        h += '<div style="font-size:10px;color:#9ab;margin-top:3px;">';
+        if (avail) {
+            h += 'Elevation — الارتفاع: <b dir="ltr" style="color:#cfe6ff;">' +
+                 (t.elevation_m != null ? esc(t.elevation_m) + ' m' : '—') + '</b> &nbsp;·&nbsp; ';
+        } else {
+            // unavailability is a WARNING state, never an error
+            h += chip('Terrain unavailable — بيانات التضاريس غير متوفرة', '#e0a93a', '#2a2412') + ' &nbsp;·&nbsp; ';
+        }
+        h += 'Terrain confidence — ثقة بيانات التضاريس: ' +
+             chip(esc(t.confidence || '—'), avail ? '#7fd6a0' : '#e0a93a') +
+             (t.source && t.source.type ? ' <span style="color:#7f93a6;">· source: ' + esc(t.source.type) + '</span>' : '');
+        h += '</div>';
+        var tw = (t.warnings || []);
+        if (tw.length) {
+            h += '<div style="margin-top:3px;"><span style="font-size:10px;color:#7f93a6;">Warnings — تحذيرات:</span> ' +
+                 tw.map(function (w) { return chip(TERRAIN_WARN_LABEL[w] || w, '#b8860b', '#2a2412'); }).join('') +
+                 '</div>';
+        }
+        h += '</div>';
+        return h;
+    }
+
     function card(c) {
         var tone = TYPE_TONE[c.placement_type] || '#8fa5b8';
         var coords = (c.lat != null && c.lon != null)
@@ -105,6 +146,10 @@
                 return chip(WARN_LABEL[w] || w, '#b8860b', '#2a2412');
             }).join('') + '</div>';
         }
+        // T-4A-V: advisory terrain context — rendered ONLY when the candidate
+        // payload already carries it (no browser-side terrain calls; a
+        // terrain-less candidate renders exactly as before).
+        if (c.terrain && typeof c.terrain === 'object') h += terrainSection(c.terrain);
         h += '</div>';
         return h;
     }

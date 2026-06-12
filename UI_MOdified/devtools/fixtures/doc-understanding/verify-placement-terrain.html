@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T-4A-V — placement candidates terrain context (devtools verify)</title>
+    <!--
+      DEVTOOLS-ONLY harness — NOT part of the production client, excluded from
+      the offline image (.dockerignore: devtools/). Serve UI_MOdified/ as a
+      static root (scripts/verify-server.js) and open
+      /devtools/fixtures/doc-understanding/verify-placement-terrain.html.
+
+      Renders sample-placement-terrain.json (REAL G-3B resolver output with the
+      REAL T-4A includeTerrain opt-in — regenerate via
+      make-sample-placement-terrain.js) through the PRODUCTION
+      /shell/placement-candidates-panel.js. Render-only: no terrain API calls.
+    -->
+    <style>
+        body { background:#0b0f0d; color:#e8eaed; font-family:'Segoe UI',Tahoma,Arial,sans-serif; margin:0; padding:18px; }
+        .hdr { font-size:15px; color:#7fd6a0; font-weight:600; margin-bottom:4px; }
+        .sub { font-size:12px; color:#9aa3ad; margin-bottom:12px; }
+        .wrap { max-width:760px; margin:0 auto; }
+        #status { font-size:12px; color:#c5ddf0; margin-bottom:8px; }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="hdr">Placement Candidates + Terrain Context — Verify Harness (T-4A-V)</div>
+        <div class="sub">sample-placement-terrain.json → <code>RmoozPlacementPanel.render()</code>. Terrain blocks are advisory only; on a DEM-less machine the unavailable/warning path renders.</div>
+        <div id="status">Loading…</div>
+        <div id="mount"></div>
+    </div>
+
+    <script src="/shell/placement-candidates-panel.js?v=1"></script>
+    <script>
+        (function () {
+            var statusEl = document.getElementById('status');
+            fetch('./sample-placement-terrain.json')
+                .then(function (r) { return r.json(); })
+                .then(function (p) {
+                    var cands = p.placement.placement_candidates;
+                    statusEl.textContent = 'sample loaded · candidates=' + cands.length +
+                        ' · withTerrain=' + cands.filter(function (c) { return c.terrain; }).length;
+                    window.RmoozPlacementPanel.render(document.getElementById('mount'), p);
+                })
+                .catch(function (e) { statusEl.textContent = 'error: ' + e.message; });
+        })();
+    </script>
+</body>
+</html>

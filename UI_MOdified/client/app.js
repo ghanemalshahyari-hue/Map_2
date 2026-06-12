@@ -3821,12 +3821,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * Rear geographic bearing: choose the perpendicular to the trueLeft→trueRight chord that places
-     * the rear offset on the side opposite the scallop bulge (teeth point toward enemy).
+     * the rear/depth structure on the rendered side opposite the scallop bulge
+     * (scallopSide = combat/enemy-facing side; generatedDepthSide = -scallopSide).
+     *
+     * `getScallopBulgeSideRelativeToChord` returns a rendered layer-point side. Geographic bearing
+     * perpendiculars use the opposite sign convention at this chord boundary, so using the returned
+     * side directly here produces the opposite rendered side for the rear/depth structure.
      */
     function getAutoFlankRearBearingChord(leftPt, rightPt) {
         const chordBear = bearingDegrees(leftPt, rightPt);
         const bulgeSide = getScallopBulgeSideRelativeToChord(leftPt, rightPt);
-        const perpMult = bulgeSide ? -bulgeSide : 1;
+        const perpMult = bulgeSide || 1;
         return ((chordBear + perpMult * 90) % 360 + 360) % 360;
     }
 

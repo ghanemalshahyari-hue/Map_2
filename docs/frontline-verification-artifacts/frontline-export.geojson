@@ -57,7 +57,7 @@
           "filled": false,
           "dashed": false,
           "strokeWidth": 1.5,
-          "sessionId": "verify-frontline-1781235294848"
+          "sessionId": "verify-frontline-1781235874673"
         },
         "layerId": "layer-1"
       }
@@ -93,7 +93,7 @@
           "filled": false,
           "dashed": false,
           "strokeWidth": 1.5,
-          "sessionId": "verify-frontline-1781235294848"
+          "sessionId": "verify-frontline-1781235874673"
         },
         "layerId": "layer-1"
       }
@@ -129,7 +129,7 @@
           "filled": false,
           "dashed": false,
           "strokeWidth": 1.5,
-          "sessionId": "verify-frontline-1781235294848"
+          "sessionId": "verify-frontline-1781235874673"
         },
         "layerId": "layer-1"
       }
@@ -175,7 +175,7 @@
           "filled": true,
           "dashed": false,
           "strokeWidth": 2,
-          "sessionId": "verify-frontline-1781235294848",
+          "sessionId": "verify-frontline-1781235874673",
           "scallopSide": 1
         },
         "layerId": "layer-3"
@@ -188,24 +188,28 @@
         "coordinates": [
           [
             [
-              54.98100070778384,
-              24.734938690433484
+              54.94,
+              24.7
             ],
             [
-              55.03051757812501,
-              24.709410369765177
+              54.9496288,
+              24.6286695
             ],
             [
-              55.02090454101563,
-              24.78174733781577
+              55.0396296,
+              24.6386695
             ],
             [
-              54.975348543034244,
-              24.776733806947174
+              55.03,
+              24.71
             ],
             [
-              54.98100070778384,
-              24.734938690433484
+              54.98,
+              24.735
+            ],
+            [
+              54.94,
+              24.7
             ]
           ]
         ]
@@ -221,7 +225,7 @@
           "autoFlank": {
             "area": true,
             "typeId": "auto-flank-area",
-            "sessionId": "verify-frontline-1781235294848",
+            "sessionId": "verify-frontline-1781235874673",
             "tag": "battalion",
             "lengthKm": 8,
             "parentUnitId": null,
@@ -239,20 +243,20 @@
         "type": "LineString",
         "coordinates": [
           [
-            55.03051757812501,
-            24.709410369765177
+            54.94,
+            24.7
           ],
           [
-            55.02090454101563,
-            24.78174733781577
+            54.9496288,
+            24.6286695
           ],
           [
-            54.975348543034244,
-            24.776733806947174
+            55.0396296,
+            24.6386695
           ],
           [
-            54.98100070778384,
-            24.734938690433484
+            55.03,
+            24.71
           ]
         ]
       },
@@ -265,110 +269,7 @@
           "autoFlank": {
             "area": true,
             "typeId": "auto-flank-area-outline",
-            "sessionId": "verify-frontline-1781235294848",
-            "tag": "battalion",
-            "lengthKm": 8,
-            "parentUnitId": null,
-            "areaRole": null,
-            "className": "auto-flank-area-outline"
-          }
-        },
-        "layerId": "layer-3"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              54.975348543034244,
-              24.776733806947174
-            ],
-            [
-              54.93026733398438,
-              24.77177232822881
-            ],
-            [
-              54.93988037109376,
-              24.69942955501979
-            ],
-            [
-              54.979705810546875,
-              24.735606201766874
-            ],
-            [
-              54.98100070778384,
-              24.734938690433484
-            ],
-            [
-              54.975348543034244,
-              24.776733806947174
-            ]
-          ]
-        ]
-      },
-      "properties": {
-        "app": {
-          "kind": "polygon",
-          "color": "#3b82f6",
-          "weight": 3,
-          "fillColor": "#3b82f6",
-          "fillOpacity": 0.08,
-          "dashArray": null,
-          "autoFlank": {
-            "area": true,
-            "typeId": "auto-flank-area",
-            "sessionId": "verify-frontline-1781235294848",
-            "tag": "battalion",
-            "lengthKm": 8,
-            "parentUnitId": null,
-            "areaRole": null,
-            "className": "auto-flank-area",
-            "stroke": false
-          }
-        },
-        "layerId": "layer-3"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [
-            54.98100070778384,
-            24.734938690433484
-          ],
-          [
-            54.975348543034244,
-            24.776733806947174
-          ],
-          [
-            54.975348543034244,
-            24.776733806947174
-          ],
-          [
-            54.93026733398438,
-            24.77177232822881
-          ],
-          [
-            54.93988037109376,
-            24.69942955501979
-          ]
-        ]
-      },
-      "properties": {
-        "app": {
-          "kind": "polyline",
-          "color": "#3b82f6",
-          "weight": 3,
-          "dashArray": null,
-          "autoFlank": {
-            "area": true,
-            "typeId": "auto-flank-area-outline",
-            "sessionId": "verify-frontline-1781235294848",
+            "sessionId": "verify-frontline-1781235874673",
             "tag": "battalion",
             "lengthKm": 8,
             "parentUnitId": null,

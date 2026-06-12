@@ -64,7 +64,8 @@ test('fixture line default apex/control side is outside red-reference side', () 
 test('auto-flank depth geometry derives from canonical scallop side', () => {
     assert.ok(appJs.includes('function getAutoFlankRearBearingChord'), 'auto-flank should have one rear-bearing function');
     assert.ok(appJs.includes('const bulgeSide = getScallopBulgeSideRelativeToChord(leftPt, rightPt)'), 'rear bearing must read scallopSide through the chord side helper');
-    assert.ok(appJs.includes('const perpMult = bulgeSide ? -bulgeSide : 1'), 'rear/depth geometry should intentionally use the opposite side from the scallop bulge');
+    assert.ok(appJs.includes('generatedDepthSide = -scallopSide'), 'rear/depth geometry should document the opposite-side contract');
+    assert.ok(appJs.includes('const perpMult = bulgeSide || 1'), 'rear/depth bearing conversion should produce the rendered side opposite the scallop bulge');
     assert.ok(appJs.includes('const trueLeft8   = latLngAtBearing(trueLeft,  distBatKm,  rearBear)'), 'battalion depth offset should use canonical rearBear');
     assert.ok(appJs.includes('const trueRight20 = latLngAtBearing(trueRight, distBrigKm, rearBear)'), 'brigade depth offset should use canonical rearBear');
     assert.ok(appJs.includes('const batAnchorInside = latLngAtBearing(circleCenter, Math.max(0.05, distBatKm * 0.5), rearBear)'), 'retention/classification anchors should use canonical rearBear');

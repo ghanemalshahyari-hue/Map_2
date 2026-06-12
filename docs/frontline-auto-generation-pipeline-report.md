@@ -124,14 +124,14 @@ It verifies:
 - Scalloped rendering can flip without coordinate reversal.
 - Debug/flip controls are present.
 - `scallopSide` persists through IO.
-- Auto-flank depth/control geometry derives from the same canonical side helper.
+- Auto-flank depth/control geometry derives from the same canonical side helper but renders on the opposite side from the scallop arc.
 
 Added/extended `scripts/verify-frontline-persistence.js`.
 
 It drives the browser workflow in Edge, draws a front line, generates the auto-flank structure, flips side, exports, reloads/imports, and asserts:
 
-- Default structural generated side matches default `scallopSide`.
-- Flipped structural generated side reverses with `scallopSide`.
+- Default structural generated side is `-scallopSide`.
+- Flipped structural generated side reverses while preserving `generatedDepthSide = -scallopSide`.
 - Exported JSON includes `scallopSide`.
 - Reload/import preserves side and generated type counts.
 - No console/page errors occur.
@@ -143,14 +143,14 @@ The geometry produced after the front line is drawn and a flank button is clicke
 | Geometry | Style | Creator | Side source | Persistence |
 | --- | --- | --- | --- | --- |
 | Blue scalloped front-line segments | `typeId: scalloped`, friendly blue `#3b82f6` | `createTmgLayer(...)`, grouped by `addScallopedFrontLineFromChordPairs(...)` | Directly stores `scallopSide`; visual flip is done by icon rotation | Exported/imported as `tmg-single` or `tmg-group` with `scallopSide` |
-| Auto-flank/depth area polygons | `auto-flank-area`, fill/stroke blue, `fillOpacity: 0.08` | `renderClippedAutoFlankRings(...)` from rings built in `buildRectangleAutoFlankZoneRings(...)` | Uses `rearBear` from `getAutoFlankRearBearingChord(...)`, which uses `getScallopBulgeSideRelativeToChord(...)` and therefore `scallopSide` | Exported/imported as polygon/multipolygon with `autoFlank` metadata |
+| Auto-flank/depth area polygons | `auto-flank-area`, fill/stroke blue, `fillOpacity: 0.08` | `renderClippedAutoFlankRings(...)` from rings built in `buildRectangleAutoFlankZoneRings(...)` | Uses `rearBear` from `getAutoFlankRearBearingChord(...)`, which converts the scallop combat side into the opposite rendered rear/depth side | Exported/imported as polygon/multipolygon with `autoFlank` metadata |
 | Auto-flank area outlines | `auto-flank-area-outline`, blue polyline | `addAreaOutlinePolyline(...)` | Derived from the already-side-selected polygon rings | Exported/imported as polyline with `autoFlank` metadata |
 | Battalion/deep seam line | `auto-flank-area-seam`, blue polyline | `renderClippedAutoFlankRings(...)` from `seamSegment` | `seamSegment` is built from `trueLeft8/trueRight8`, both offset using canonical `rearBear` | Exported/imported as polyline with `autoFlank` metadata |
 | Battalion divider/control line | `auto-flank-area-divider`, blue polyline | `renderClippedAutoFlankRings(...)` from `battalionDivider` | Divider endpoint `divB` uses canonical `rearBear`; `divA` uses the opposite bearing only to make a full cut line through the area | Exported/imported as polyline with `autoFlank` metadata |
 | Echelon/support labels | `auto-flank-echelon`, label markers | `addAutoFlankEchelonMarkers(...)` | No independent side logic; labels are stamped on generated polygons/seams/dividers | Not exported directly; re-derived from imported auto-flank geometry |
 | Temporary orange debug control vectors | orange debug lines/points | `showFrontLineDebugOverlay()` | Directly uses `scallopSide` as source of truth for the control/apex side | Temporary only; not persisted |
 
-No separate old normal-side logic remains in the auto-flank/depth path. The only tactical side choice is the front-line `scallopSide`; all generated polygons, outlines, seams, dividers, and labels are downstream of that decision.
+No separate old normal-side logic remains in the auto-flank/depth path. The only tactical side choice is the front-line `scallopSide`; all generated polygons, outlines, seams, dividers, and labels are downstream of that decision and render on `-scallopSide`.
 
 ## Browser Verification
 
@@ -170,8 +170,8 @@ Artifacts:
 
 Observed result:
 
-- Before flip: `scallopSide = -1`; generated structural side `-1`; generated types `auto-flank-area: 1`, `auto-flank-area-outline: 1`, `auto-flank-echelon: 3`.
-- After flip: `scallopSide = 1`; generated structural side `1`; generated types `auto-flank-area: 2`, `auto-flank-area-outline: 2`, `auto-flank-echelon: 6`.
-- After reload/import: `scallopSide = 1`; generated structural side `1`; generated type counts unchanged from after flip.
+- Before flip: `scallopSide = -1`; generated structural side `1`; generated types `auto-flank-area: 2`, `auto-flank-area-outline: 2`, `auto-flank-echelon: 8`.
+- After flip: `scallopSide = 1`; generated structural side `-1`; generated types `auto-flank-area: 1`, `auto-flank-area-outline: 1`, `auto-flank-echelon: 3`.
+- After reload/import: `scallopSide = 1`; generated structural side `-1`; generated type counts unchanged from after flip.
 - Exported front-line app payload includes `"scallopSide": 1`.
 - Console errors: none. Page errors: none.

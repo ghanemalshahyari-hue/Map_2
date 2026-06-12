@@ -130,7 +130,7 @@ function collectState() {
   const structuralAutoFlanks = autoFlankSummary.filter(item => item.typeId !== 'auto-flank-echelon');
   const structuralSideScores = structuralAutoFlanks.map(item => item.centroidSide).filter(Boolean);
   const structuralDepthScore = structuralAutoFlanks.reduce((sum, item) => sum + (Number(item.aggregateSideScore) || 0), 0);
-  const expectedDepthSide = segs[0] ? (segs[0]._tmgData.scallopSide === -1 ? -1 : 1) : null;
+  const expectedDepthSide = segs[0] ? -(segs[0]._tmgData.scallopSide === -1 ? -1 : 1) : null;
 
   return {
     segmentCount: segs.length,
@@ -273,11 +273,11 @@ function collectState() {
   if (after.firstSegment.scallopSide !== 1) throw new Error('expected side after flip = 1');
   if (!generatedBeforeFlip.flankCount) throw new Error('auto-flank geometry was not generated before flip');
   if (generatedBeforeFlip.structuralDepthSide !== generatedBeforeFlip.expectedDepthSide) {
-    throw new Error('default auto-flank depth/control geometry is not on the selected front-line side');
+    throw new Error('default auto-flank depth/control geometry is not opposite the selected scallop side');
   }
   if (!after.flankCount) throw new Error('auto-flank geometry missing after flip');
   if (after.structuralDepthSide !== after.expectedDepthSide) {
-    throw new Error('flipped auto-flank depth/control geometry did not move to the selected front-line side');
+    throw new Error('flipped auto-flank depth/control geometry did not stay opposite the selected scallop side');
   }
   if (generatedBeforeFlip.structuralDepthSide === after.structuralDepthSide) {
     throw new Error('auto-flank depth/control geometry did not flip sides');

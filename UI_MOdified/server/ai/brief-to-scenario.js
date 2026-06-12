@@ -77,6 +77,10 @@ function resolveObjective(brief, ob, opts) {
 
 function generateScenarioFromBrief(brief, opts) {
     opts = opts || {};
+    // opts.noWrite: when true the caller guarantees no file side-effects should
+    // occur from this invocation. This generator is already fs-free (pure in-memory),
+    // so noWrite is a contract marker — any future fs.writeFileSync / fs.mkdirSync
+    // additions here MUST be gated with `if (!opts.noWrite)`.
     const ob = (brief && brief.operational_brief) || brief || {};
     const understanding = (brief && brief.understanding) || {};
 

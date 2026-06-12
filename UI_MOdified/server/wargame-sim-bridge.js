@@ -66,6 +66,10 @@ function readJsonBody(req, cb) {
     });
 }
 
+function isTerrainOptIn(value) {
+    return value === true || value === 1 || value === '1' || value === 'true';
+}
+
 // Resolve the TestingAI root. DEBUG-DOCX-1 root cause RC-2: the old hardcoded
 // 'C:/Users/ADMIN/Desktop/TestingAI' default is dead on any box whose user isn't
 // "ADMIN", so staged DOCX, the run, and the import all silently targeted a
@@ -131,6 +135,54 @@ var activeChild = null;
 function mkdirp(d) { try { fs.mkdirSync(d, { recursive: true }); } catch (_) {} }
 function exists(p) { try { return fs.existsSync(p); } catch (_) { return false; } }
 function readJson(p) { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch (_) { return null; } }
+
+function buildHead() {
+    try {
+        var r = spawnSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: ROOT, encoding: 'utf8', windowsHide: true });
+        if (r && r.status === 0 && r.stdout) return String(r.stdout).trim();
+    } catch (_) {}
+    return 'unknown';
+}
+
+function analyzeDebugPayload(payload) {
+    payload = payload || {};
+    var brief = payload.brief || {};
+    var ob = (brief && brief.operational_brief) || {};
+    var understanding = payload.understanding || {};
+    var units = Array.isArray(ob.proposed_units) ? ob.proposed_units
+        : (Array.isArray(understanding.proposed_units) ? understanding.proposed_units : []);
+    var countSide = function (side) {
+        return units.filter(function (u) { return String((u && u.side) || '').toUpperCase() === side; }).length;
+    };
+    return {
+        build_commit: buildHead(),
+        detected_type: understanding.set_label_en || payload.kind || brief.set_type || 'unknown',
+        proposed_units_count: units.length,
+        proposed_units_blue: countSide('BLUE'),
+        proposed_units_red: countSide('RED'),
+        proposed_units_neutral: countSide('NEUTRAL'),
+        placement_candidates_count: Array.isArray(ob.placement_candidates) ? ob.placement_candidates.length : 0,
+        enemy_bases_count: Array.isArray(ob.enemy_bases) ? ob.enemy_bases.length : 0,
+    };
+}
+
+function analyzeDebugEnabled() {
+    return String(process.env.RMOOZ_DEBUG_ANALYZE || '').trim() === '1';
+}
+
+function withAnalyzeDebug(payload) {
+    if (!analyzeDebugEnabled()) return payload;
+    var debug = analyzeDebugPayload(payload);
+    payload.debug = debug;
+    payload.debug_line = 'build ' + debug.build_commit +
+        ' | type ' + debug.detected_type +
+        ' | proposed_units ' + debug.proposed_units_count +
+        ' (BLUE ' + debug.proposed_units_blue + ', RED ' + debug.proposed_units_red + ', NEUTRAL ' + debug.proposed_units_neutral + ')' +
+        ' | placement_candidates ' + debug.placement_candidates_count +
+        ' | enemy_bases ' + debug.enemy_bases_count;
+    console.log('[analyze-debug]', payload.debug_line);
+    return payload;
+}
 
 function terminateChildTree(child) {
     if (!child || !child.pid) return false;
@@ -861,6 +913,161 @@ function computeFreshness(c) {
     };
 }
 
+// ── DEMO-ACTUAL-1: preview scenario builder (pure — no fs writes) ─────────────
+// Called by POST /api/wargame-sim/generate-preview with { noWrite:true }.
+// Computes step-by-step unit positions and dashed movement lines for each of
+// 5–8 decision steps derived from the template phases. RED units interpolate
+// from an approach origin to their final template positions; BLUE stays fixed
+// at defensive positions. All output is marked preview_only / _isPreview.
+var PREVIEW_STEP_TEXT = {
+    deployment:         { decision_en: 'Initial force deployment — establish baseline positions',              risk_en: 'Exposure during initial deployment',                decision_ar: 'نشر القوات الأولي' },
+    preparation_recon:  { decision_en: 'Preparation and reconnaissance — gather intelligence on objective',   risk_en: 'Detection by enemy during recon',                   decision_ar: 'التحضير والاستطلاع' },
+    approach_movement:  { decision_en: 'Advance forces toward objective using covered approaches',             risk_en: 'Interdiction during movement phase',                decision_ar: 'الاقتراب والتحرك' },
+    landing:            { decision_en: 'Execute landing operation at designated insertion points',             risk_en: 'Anti-access systems active during landing',         decision_ar: 'تنفيذ الإبرار' },
+    shaping:            { decision_en: 'Shaping fires and maneuver to degrade enemy defenses',                risk_en: 'Counter-fire may limit shaping effects',            decision_ar: 'التمهيد' },
+    approach:           { decision_en: 'Advance to assault positions under concealment',                      risk_en: 'Enemy observation may compromise approach',          decision_ar: 'الاقتراب' },
+    assault:            { decision_en: 'Assault objective — coordinated fire and maneuver',                   risk_en: 'Defender advantage requires combined arms',          decision_ar: 'الاقتحام' },
+    secure_expand:      { decision_en: 'Secure beachhead / foothold and expand control area',                 risk_en: 'Counterattack risk during consolidation',            decision_ar: 'التأمين والتوسيع' },
+    consolidate:        { decision_en: 'Consolidate gains and establish defensive positions',                  risk_en: 'Counterattack during transition to defense',         decision_ar: 'التثبيت' },
+    prepare_defense:    { decision_en: 'Prepare defensive positions and obstacle plan',                       risk_en: 'Vulnerability during preparation phase',             decision_ar: 'إعداد الدفاع' },
+    defend:             { decision_en: 'Execute defensive plan — engage enemy in depth',                      risk_en: 'Attrition and loss of defensive cohesion',           decision_ar: 'الدفاع' },
+    counterattack:      { decision_en: 'Launch counterattack to restore situation',                           risk_en: 'Counterattack may expose flanks if poorly timed',    decision_ar: 'الهجوم المضاد' },
+    insertion:          { decision_en: 'Insert reconnaissance element without detection',                     risk_en: 'Detection terminates mission',                       decision_ar: 'الإدخال' },
+    observation:        { decision_en: 'Establish observation posts and begin intelligence collection',       risk_en: 'Engagement by enemy patrols',                        decision_ar: 'المراقبة' },
+    reporting:          { decision_en: 'Transmit collected intelligence through secure channel',              risk_en: 'Electronic signature during transmission',           decision_ar: 'الإبلاغ' },
+    exfiltration:       { decision_en: 'Exfiltrate element via alternate route',                              risk_en: 'Pursuit risk during exfiltration',                   decision_ar: 'الإخلاء' },
+    air_defense:        { decision_en: 'Activate air defense coverage and engagement protocols',              risk_en: 'Saturation attacks may overwhelm point defense',     decision_ar: 'الدفاع الجوي' },
+    assessment:         { decision_en: 'Post-operation assessment — consolidate learning for next phase',     risk_en: 'Reassessment may reveal gaps in initial intelligence', decision_ar: 'التقييم النهائي' },
+};
+var PREVIEW_STEP_TEXT_DEFAULT = {
+    decision_en: 'Execute phase — coordinate actions per the operational plan',
+    risk_en: 'Friction and enemy reaction require contingency planning',
+    decision_ar: 'تنفيذ المرحلة',
+};
+
+function buildPreviewFromScenario(scenario, report, brief) {
+    var obj         = scenario.obj || {};
+    var objCoord    = Array.isArray(obj.coord) ? obj.coord : [0, 0];
+    var pipeline    = Array.isArray(scenario.pipeline) ? scenario.pipeline : [];
+    var redUnits    = Array.isArray(scenario.red_units) ? scenario.red_units : [];
+    var blueUnits   = Array.isArray(scenario.blue_units_initial) ? scenario.blue_units_initial : [];
+    var blsTemplate = Array.isArray(scenario.bls_template) ? scenario.bls_template : [];
+    var phaseTable  = Array.isArray(scenario.phase_table) ? scenario.phase_table : [];
+
+    // Approach origin: first pipeline point (approachOrigin from the generator).
+    var startOrigin = pipeline.length > 0 ? pipeline[0] : [objCoord[0] + 0.4, objCoord[1] - 0.4];
+
+    // Build 5–8 steps: deployment bookend + template phases + assessment bookend.
+    var rawSteps = [
+        { kind: 'deployment', name_en: 'Initial Deployment', name_ar: 'الاستعداد الأولي' },
+    ].concat(phaseTable.map(function (p) {
+        return { kind: p.phase || p.kind_native || 'phase', name_en: p.phase || p.kind_native || 'Phase', name_ar: '' };
+    })).concat([
+        { kind: 'assessment', name_en: 'Final Assessment', name_ar: 'التقييم النهائي' },
+    ]);
+    if (rawSteps.length > 8) rawSteps = rawSteps.slice(0, 8);
+    while (rawSteps.length < 5) rawSteps.push({ kind: 'assessment', name_en: 'Assessment', name_ar: 'التقييم' });
+    var numSteps = rawSteps.length;
+
+    // Spread RED start positions around the approach origin.
+    function startPos(i) {
+        var cols  = Math.max(1, Math.ceil(Math.sqrt(Math.max(1, redUnits.length))));
+        var col   = i % cols;
+        var row   = Math.floor(i / cols);
+        return [
+            startOrigin[0] + (col - (cols - 1) / 2) * 0.06,
+            startOrigin[1] + (row - 1) * 0.06,
+        ];
+    }
+
+    var steps = rawSteps.map(function (phase, stepIdx) {
+        var progress     = numSteps > 1 ? stepIdx / (numSteps - 1) : 0;
+        var prevProgress = stepIdx > 0 ? (stepIdx - 1) / (numSteps - 1) : null;
+
+        // RED: interpolate from approach origin to template coord across steps.
+        var redPositions = redUnits.map(function (u, ui) {
+            var finalPos = Array.isArray(u.coord) ? u.coord : objCoord;
+            var start    = startPos(ui);
+            return {
+                uid: u.uid || 'R-' + (ui + 1), side: 'RED', role: u.role,
+                coord: [
+                    start[0] + (finalPos[0] - start[0]) * progress,
+                    start[1] + (finalPos[1] - start[1]) * progress,
+                ],
+            };
+        });
+
+        // BLUE: stays at defensive template positions.
+        var bluePositions = blueUnits.map(function (u, ui) {
+            return {
+                uid: u.unit_uid || 'B-' + (ui + 1), side: 'BLUE', role: u.role,
+                coord: Array.isArray(u.coord) ? u.coord : objCoord,
+            };
+        });
+
+        // Movement lines: prev→current position, only when positions actually change.
+        var movementLines = [];
+        if (prevProgress !== null && stepIdx > 0) {
+            redUnits.forEach(function (u, ui) {
+                var finalPos = Array.isArray(u.coord) ? u.coord : objCoord;
+                var start    = startPos(ui);
+                var from = [
+                    start[0] + (finalPos[0] - start[0]) * prevProgress,
+                    start[1] + (finalPos[1] - start[1]) * prevProgress,
+                ];
+                var to = [
+                    start[0] + (finalPos[0] - start[0]) * progress,
+                    start[1] + (finalPos[1] - start[1]) * progress,
+                ];
+                var dx = to[0] - from[0], dy = to[1] - from[1];
+                if (dx * dx + dy * dy > 1e-10) {
+                    movementLines.push({
+                        side: 'RED', unit_uid: u.uid || 'R-' + (ui + 1),
+                        from: from, to: to, approximate: true,
+                    });
+                }
+            });
+        }
+
+        var text = PREVIEW_STEP_TEXT[phase.kind] || PREVIEW_STEP_TEXT_DEFAULT;
+        return {
+            index: stepIdx,
+            phase_kind: phase.kind,
+            phase_name_en: phase.name_en,
+            phase_name_ar: phase.name_ar,
+            time_label: stepIdx === 0 ? 'H0' : ('H+' + (stepIdx * 6) + 'h'),
+            decision_en: text.decision_en,
+            decision_ar: text.decision_ar,
+            risk_en: text.risk_en,
+            evidence_en: 'AI-derived — based on reviewed brief. All values require commander review.',
+            unit_positions: { red: redPositions, blue: bluePositions },
+            movement_lines: movementLines,
+        };
+    });
+
+    return {
+        _isPreview: true,
+        preview_only: true,
+        review_source: 'ai_decision_demo',
+        scenario_label: scenario.scenario_label || 'AI Decision Demo Preview',
+        template: report ? report.template : null,
+        template_name_en: report ? report.template_name_en : null,
+        template_name_ar: report ? report.template_name_ar : null,
+        obj: obj,
+        bases: blsTemplate.map(function (b) {
+            return { name: b.name, coord: b.coord, role: b.role, preview_only: true, needs_review: true };
+        }),
+        red_units: redUnits.map(function (u) {
+            return { uid: u.uid, side: u.side, role: u.role, bls: u.bls, preview_only: true, _isPreview: true };
+        }),
+        blue_units: blueUnits.map(function (u) {
+            return { uid: u.unit_uid, side: u.side, role: u.role, preview_only: true, _isPreview: true };
+        }),
+        steps: steps,
+        movement_warning: 'Approximate demo movement / route requires review',
+    };
+}
+
 // ── main router ─────────────────────────────────────────────────────────────
 function handle(req, res, ctx) {
     const { url, pathname, method, sendJson } = ctx;
@@ -906,7 +1113,7 @@ function handle(req, res, ctx) {
                     if (exists(p)) inputs.push({ slot: slot, filename: SLOT_FILE[slot], bytes: fs.readFileSync(p) });
                 });
                 if (!inputs.length) { sendJson(res, 404, { ok: false, error: 'no staged documents — upload a red and/or blue .docx, or POST a JSON brief/scenario' }); return; }
-                sendJson(res, 200, BRIEF.analyzeDocuments(inputs));
+                sendJson(res, 200, withAnalyzeDebug(BRIEF.analyzeDocuments(inputs)));
             } catch (e) { sendJson(res, 500, { ok: false, error: 'analyze failed: ' + (e && e.message) }); }
         };
         if (method === 'GET') { analyzeStaged(); return true; }
@@ -924,6 +1131,27 @@ function handle(req, res, ctx) {
                 return;
             }
             try {
+                var analyzeDiagEnabled = analyzeDebugEnabled();
+                var analyzeDiag = function (filename, content, det, adaptedOb) {
+                    if (!analyzeDiagEnabled) return;
+                    var step1 = BRIEF.getExternalStep1Root(content);
+                    var root = (step1 && step1.root) || content || {};
+                    var ef = (root.enemy_forces && typeof root.enemy_forces === 'object') ? root.enemy_forces : {};
+                    var diag = {
+                        uploaded_filename: filename || '(posted body)',
+                        detected_external_step: (det && det.step) || null,
+                        detected_package_type: root.package_type || root.Package_Type || root.document_type || root.type || null,
+                        has_task_assembly: root.task_assembly !== undefined,
+                        has_Units_Duty: root.Units_Duty !== undefined,
+                        has_enemy_forces_air_bases: Array.isArray(ef.air_bases),
+                        has_enemy_forces_bases: Array.isArray(ef.bases),
+                        proposed_units_count: Array.isArray(root.proposed_units) ? root.proposed_units.length :
+                            (adaptedOb && Array.isArray(adaptedOb.proposed_units) ? adaptedOb.proposed_units.length : 0),
+                        placement_candidates_count: Array.isArray(root.placement_candidates) ? root.placement_candidates.length :
+                            (adaptedOb && Array.isArray(adaptedOb.placement_candidates) ? adaptedOb.placement_candidates.length : 0),
+                    };
+                    console.log('[analyze-classification]', JSON.stringify(diag));
+                };
                 // MDMP-EXTERNAL-1 / G-2: a bundle of external MDMP-stage files
                 // ({ bundle: [{ filename|name, content }] }) maps into ONE brief
                 // via the adapter (step3→COAs+force comparison, step4→wargame
@@ -946,14 +1174,19 @@ function handle(req, res, ctx) {
                             sendJson(res, 400, { ok: false, error: 'bundle[' + bi + '] content must be a JSON object' });
                             return;
                         }
-                        if (!BRIEF.detectMdmp(content).is) {
+                        var bundleDet = BRIEF.detectMdmp(content);
+                        analyzeDiag(it.filename || it.name || ('bundle-' + bi), content, bundleDet, null);
+                        if (!bundleDet.is) {
                             sendJson(res, 400, { ok: false, error: 'bundle[' + bi + '] (' + (it.filename || it.name || '?') + ') is not a recognized external MDMP-stage file — post it alone for brief/scenario/unknown handling' });
                             return;
                         }
                         entries.push({ filename: it.filename || it.name || ('bundle-' + bi), data: content });
                     }
                     var bundleOut = MDMP_ADAPTER.adaptMdmpBundle(entries);
-                    sendJson(res, 200, {
+                    for (var ai = 0; ai < entries.length; ai++) {
+                        analyzeDiag(entries[ai].filename, entries[ai].data, BRIEF.detectMdmp(entries[ai].data), bundleOut.brief.operational_brief);
+                    }
+                    sendJson(res, 200, withAnalyzeDebug({
                         ok: true, kind: 'mdmp_external', bundle: true,
                         steps_present: bundleOut.report.steps_present,
                         requires_review: true, confidence: 'low',
@@ -963,7 +1196,7 @@ function handle(req, res, ctx) {
                         documents: bundleOut.brief.documents,
                         understanding: BRIEF.understandingFromBrief(bundleOut.brief),
                         llm_fill: { available: false, reason: 'External MDMP bundle adapted deterministically; LLM enrichment runs on deployment' },
-                    });
+                    }));
                     return;
                 }
                 var kind = BRIEF.classifyJsonInput(body);
@@ -973,22 +1206,23 @@ function handle(req, res, ctx) {
                     var clone = JSON.parse(JSON.stringify(body));
                     var nr = NORMALIZER.normalizeScenario(clone);
                     var v2 = VALIDATOR.validateScenario(clone);
-                    sendJson(res, 200, {
+                    sendJson(res, 200, withAnalyzeDebug({
                         ok: true, kind: 'rmooz_scenario',
                         validation: validation, normalization: nr.report, normalized_validation: v2,
                         loadable: v2.ok, understanding: BRIEF.understandingFromScenario(clone),
                         llm_fill: { available: false, reason: 'RMOOZ scenario JSON — validated + normalized deterministically' },
-                    });
+                    }));
                 } else if (kind === 'operational_brief') {
+                    analyzeDiag('(posted body)', body, BRIEF.detectMdmp(body), null);
                     var vb = BRIEF.validateBrief(body);
                     var nb = BRIEF.normalizeBrief(body);
-                    sendJson(res, 200, {
+                    sendJson(res, 200, withAnalyzeDebug({
                         ok: true, kind: 'operational_brief',
                         validation: vb, brief: nb, documents: nb.documents,
                         document_set_id: nb.document_set_id, set_type: nb.set_type || 'operational_brief',
                         understanding: BRIEF.understandingFromBrief(nb),
                         llm_fill: { available: false, reason: 'Operational Brief provided directly' },
-                    });
+                    }));
                 } else if (kind === 'mdmp_external') {
                     // MDMP-EXTERNAL-1 / G-2: single external MDMP-stage file →
                     // the dedicated adapter (placeholder scrub + citations).
@@ -996,7 +1230,8 @@ function handle(req, res, ctx) {
                     // ambiguities say which stages are absent.
                     var det = BRIEF.detectMdmp(body);
                     var single = MDMP_ADAPTER.adaptMdmpBundle([{ filename: '(posted body)', data: body }]);
-                    sendJson(res, 200, {
+                    analyzeDiag('(posted body)', body, det, single.brief.operational_brief);
+                    sendJson(res, 200, withAnalyzeDebug({
                         ok: true, kind: 'mdmp_external', mdmp_step: det.step, matched_keys: det.matched,
                         requires_review: true, confidence: 'low',
                         adapter: 'mdmp-external-adapter@1',
@@ -1004,15 +1239,15 @@ function handle(req, res, ctx) {
                         document_set_id: single.brief.document_set_id,
                         understanding: BRIEF.understandingFromBrief(single.brief),
                         llm_fill: { available: false, reason: 'External MDMP file adapted deterministically (' + det.step + '); LLM enrichment runs on deployment' },
-                    });
+                    }));
                 } else {
                     var u = BRIEF.unknownToBrief(body);
-                    sendJson(res, 200, {
+                    sendJson(res, 200, withAnalyzeDebug({
                         ok: true, kind: 'unknown', requires_review: true, confidence: 'low',
                         brief: u.brief, mapped: u.mapped, document_set_id: u.brief.document_set_id,
                         understanding: BRIEF.understandingFromBrief(u.brief),
                         llm_fill: { available: false, reason: 'Unknown JSON mapped best-effort into a brief — review required' },
-                    });
+                    }));
                 }
             } catch (e) { sendJson(res, 500, { ok: false, error: 'analyze failed: ' + (e && e.message) }); }
         });
@@ -1024,7 +1259,9 @@ function handle(req, res, ctx) {
     // incidents / AO) and returns placement CANDIDATES for commander review.
     // Deterministic, offline (no LLM, no network, no geocoder). NEVER places a
     // unit and never mutates anything — candidate generation only.
-    //   body: { brief?, mentions?[string], incidents?[], ao?, outcome_type? }
+    //   body: { brief?, mentions?[string], incidents?[], ao?, outcome_type?,
+    //           includeTerrain?:true }
+    //   query: ?includeTerrain=1
     //   returns: { ok, placement_candidates[], missing_information[],
     //              conflicts[], source_summary[], count }
     if (pathname === '/api/wargame-sim/placement' && method === 'POST') {
@@ -1049,12 +1286,31 @@ function handle(req, res, ctx) {
                         .forEach(function (t) { if (typeof t === 'string' && t.trim()) mentions.push({ text: t, source: PLANNING.makeSource({ type: 'uploaded_doc', origin: 'brief' }) }); });
                 }
 
-                var enriched = LOCATION.enrichPlanningModelLocations(model, {
+                var enrichOptions = {
                     mentions: mentions,
                     incidents: body.incidents != null ? body.incidents : model.incidents,
                     ao: body.ao != null ? body.ao : null,
                     as_of: body.as_of, staleness_days: body.staleness_days,
+                };
+                var includeTerrain = isTerrainOptIn(body.includeTerrain) || isTerrainOptIn(url.searchParams.get('includeTerrain'));
+                if (includeTerrain) {
+                    enrichOptions.includeTerrain = true;
+                }
+
+                var enriched = LOCATION.enrichPlanningModelLocations(model, enrichOptions);
+                var uploadedCandidates = Array.isArray(ob && ob.placement_candidates) ? ob.placement_candidates : [];
+                uploadedCandidates.forEach(function (cand, ci) {
+                    if (!cand || typeof cand !== 'object' || Array.isArray(cand)) return;
+                    var copy = JSON.parse(JSON.stringify(cand));
+                    copy.exact_unit_position = false;
+                    copy.needs_review = true;
+                    copy.source_type = copy.source_type || 'ai_candidate_from_external_llm';
+                    copy.source = copy.source || PLANNING.makeSource({ type: 'uploaded_doc', origin: 'brief', key: 'operational_brief.placement_candidates[' + ci + ']' });
+                    if (!Array.isArray(copy.warnings)) copy.warnings = [];
+                    if (copy.warnings.indexOf('coordinate_requires_location_intelligence_review') === -1) copy.warnings.push('coordinate_requires_location_intelligence_review');
+                    enriched.placement_candidates.push(copy);
                 });
+                if (includeTerrain) LOCATION.attachTerrainToCandidates(enriched.placement_candidates);
 
                 sendJson(res, 200, {
                     ok: true,
@@ -1126,6 +1382,54 @@ function handle(req, res, ctx) {
                     objective: !!(scenario.obj && Array.isArray(scenario.obj.coord) && scenario.obj.coord.length === 2),
                 });
             } catch (e) { sendJson(res, 400, { ok: false, error: 'generate failed: ' + (e && e.message) }); }
+        });
+        return true;
+    }
+
+    // ── DEMO-ACTUAL-1: generate preview (no write, no commit, no sim) ──────────
+    // Returns a preview scenario object (_isPreview:true, preview_only:true,
+    // review_source:"ai_decision_demo") with 5–8 decision steps and approximate
+    // movement lines. Never writes files or touches any live scenario state.
+    // Body: { brief, objective?, template? }
+    if (pathname === '/api/wargame-sim/generate-preview' && method === 'POST') {
+        readJsonBody(req, function (body) {
+            if (!(body && typeof body === 'object' && !Array.isArray(body))) {
+                sendJson(res, 400, { ok: false, error: 'JSON body required: { brief, objective? }' });
+                return;
+            }
+            try {
+                var briefSrc = body.brief || body;
+                var briefNorm = BRIEF.normalizeBrief(briefSrc);
+                if (body.understanding) briefNorm.understanding = body.understanding;
+                // Resolve objective: explicit > placement candidates in the brief > fail.
+                var objective = (body.objective && typeof body.objective === 'object') ? body.objective : null;
+                if (!objective) {
+                    var ob = briefNorm.operational_brief || {};
+                    var cands = Array.isArray(ob.placement_candidates) ? ob.placement_candidates : [];
+                    for (var ci = 0; ci < cands.length; ci++) {
+                        var cand = cands[ci];
+                        if (cand && typeof cand.lon === 'number' && typeof cand.lat === 'number') {
+                            objective = { lon: cand.lon, lat: cand.lat };
+                            break;
+                        }
+                    }
+                }
+                // noWrite:true — contract marker; the generator is already fs-free.
+                var gen = GEN.generateScenarioFromBrief(briefNorm, {
+                    objective: objective,
+                    template: body.template || null,
+                    name: 'demo_preview',
+                    noWrite: true,
+                });
+                if (gen.requiresObjective) {
+                    sendJson(res, 422, { ok: false, requires_objective: true, error: gen.reason });
+                    return;
+                }
+                var preview = buildPreviewFromScenario(gen.scenario, gen.report, briefNorm);
+                sendJson(res, 200, { ok: true, preview: preview, report: gen.report });
+            } catch (e) {
+                sendJson(res, 400, { ok: false, error: 'generate-preview failed: ' + (e && e.message) });
+            }
         });
         return true;
     }
@@ -1548,6 +1852,9 @@ module.exports = { handle, _internals: {
     // SCENARIO-AUTOGEN-1
     scenarioJsonPathOf, isValidScenarioObjective, buildMinimalScenario,
     writeCanonicalScenarioViaPython, ensureScenarioJson, normalizeOverrideFile,
+    isTerrainOptIn,
     // WIZARD-FINGERPRINT-1
     hashFile, round4, currentSetupFingerprint, setupMatchesRun, persistRunMetaWhenReady,
+    // DEMO-ACTUAL-1
+    buildPreviewFromScenario, PREVIEW_STEP_TEXT, PREVIEW_STEP_TEXT_DEFAULT,
 } };

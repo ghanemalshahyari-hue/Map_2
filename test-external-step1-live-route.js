@@ -133,6 +133,9 @@ function postAnalyze(body) {
     const container = { innerHTML: '', style: {}, querySelector: function () { return null; } };
     window.RmoozDocReview.render(container, out, {});
     const html = container.innerHTML;
+    const caps = window.RmoozDocReview.assessReviewPayloadCapabilities(out);
+    assert(caps.status === 'map_ready', 'full Step 1 route capability status map_ready');
+    assert(caps.map_preview_ready === true, 'full Step 1 route map preview ready');
     assert(html.indexOf('Task Assembly') !== -1, 'Task Assembly section renders');
     assert(html.indexOf('Doctrine Required') !== -1, 'Doctrine section renders');
     assert(html.indexOf('Proposed Units') !== -1, 'Proposed Units section renders');
@@ -143,6 +146,7 @@ function postAnalyze(body) {
     });
     assert(html.indexOf('BLUE 0 / RED 27 / NEUTRAL 0') !== -1, 'UI count includes RED 27');
     assert(html.indexOf('template/partial planning guide') === -1, 'full Step 1 does not show partial/template warning');
+    assert(html.indexOf('Input capability check') !== -1, 'full Step 1 shows capability box');
     assert(html.indexOf('data-act="preview"') !== -1, 'full Step 1 still shows Preview Decision Steps');
 
     const partialStep1 = {
@@ -171,9 +175,15 @@ function postAnalyze(body) {
     const partialContainer = { innerHTML: '', style: {}, querySelector: function () { return null; } };
     window.RmoozDocReview.render(partialContainer, partialOut, {});
     const partialHtml = partialContainer.innerHTML;
-    assert(partialHtml.indexOf('template/partial planning guide') !== -1, 'partial Step 1 shows upload quality warning');
-    assert(partialHtml.indexOf('Map preview requires proposed_units and placement_candidates') !== -1, 'partial warning explains preview requirements');
+    const partialCaps = window.RmoozDocReview.assessReviewPayloadCapabilities(partialOut);
+    assert(partialCaps.status === 'text_only' || partialCaps.status === 'insufficient', 'partial Step 1 route is not map_ready');
+    assert(partialCaps.map_preview_ready === false, 'partial Step 1 route map preview not ready');
+    assert(partialCaps.missing_for_map_preview.indexOf('proposed_units') !== -1, 'partial Step 1 route missing proposed_units');
+    assert(partialHtml.indexOf('Input capability check') !== -1, 'partial Step 1 shows generic capability box');
+    assert(partialHtml.indexOf('AI understood the document, but no map-ready units were found') !== -1, 'partial Step 1 shows upload quality warning');
+    assert(partialHtml.indexOf('Unit map preview requires proposed_units and placement_candidates') !== -1, 'partial warning explains preview requirements');
     assert(partialHtml.indexOf('data-act="preview"') === -1, 'partial Step 1 hides Preview Decision Steps');
+    assert(partialHtml.indexOf('data-act="preview-disabled"') !== -1, 'partial Step 1 shows disabled map preview button');
     assert(partialHtml.indexOf('Missing / ambiguous') !== -1, 'partial Step 1 keeps ambiguity list');
     assert(JSON.stringify(partialOut.brief) === partialSnap, 'partial Step 1 render does not mutate payload');
 

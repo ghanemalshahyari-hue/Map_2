@@ -74,7 +74,11 @@ const container = {
 
 window.RmoozDocReview.render(container, out, {});
 const html = container.innerHTML;
+const caps = window.RmoozDocReview.assessReviewPayloadCapabilities(out);
 
+assert(caps.status === 'map_ready', 'full Step 1 capability status map_ready');
+assert(caps.map_preview_ready === true, 'full Step 1 map preview ready');
+assert(caps.text_preview_ready === true, 'full Step 1 text preview ready');
 assert(html.indexOf('\u062a\u062c\u0645\u064a\u0639 \u0627\u0644\u0648\u0627\u062c\u0628') !== -1 && html.indexOf('Task Assembly') !== -1, 'task assembly section');
 assert(html.indexOf('\u0648\u0627\u062c\u0628\u0627\u062a \u0627\u0644\u0648\u062d\u062f\u0627\u062a') !== -1 && html.indexOf('Units Duty') !== -1, 'Units Duty section');
 assert(html.indexOf('main_task') !== -1 && html.indexOf('supporting_tasks') !== -1, 'task assembly fields');
@@ -98,6 +102,8 @@ assert(html.indexOf('base_known_exact_unit_position_unknown') !== -1, 'warning s
 assert(html.indexOf('AI information requires review') !== -1, 'AI review warning');
 assert(html.indexOf('Accept') === -1 && html.indexOf('Reject') === -1, 'no Accept/Reject controls');
 assert(html.indexOf('template/partial planning guide') === -1, 'full Step 1 input does not show partial/template warning');
+assert(html.indexOf('Input capability check') !== -1, 'full Step 1 shows generic capability check');
+assert(html.indexOf('Map preview') !== -1 && html.indexOf('ready') !== -1, 'full Step 1 capability box shows map ready');
 assert(html.indexOf('data-act="preview"') !== -1, 'full Step 1 input still shows Preview Decision Steps');
 
 const fullSnap = JSON.stringify(out.brief.operational_brief.proposed_units);
@@ -172,7 +178,12 @@ const rawValidContainer = {
 };
 window.RmoozDocReview.render(rawValidContainer, rawValidStep1, {});
 const rawValidHtml = rawValidContainer.innerHTML;
+const rawValidCaps = window.RmoozDocReview.assessReviewPayloadCapabilities(rawValidStep1);
 
+assert(rawValidCaps.status === 'map_ready', 'raw valid Step 1 capability status map_ready');
+assert(rawValidCaps.proposed_unit_count === 83, 'raw valid Step 1 capability counts 83 units');
+assert(rawValidCaps.placement_candidate_count === 36, 'raw valid Step 1 capability counts 36 placement candidates');
+assert(rawValidCaps.enemy_base_count === 32, 'raw valid Step 1 capability counts 32 nested RED bases');
 assert(rawValidHtml.indexOf('BLUE 7 / RED 76 / NEUTRAL 0') !== -1, 'raw valid Step 1 shows 83 proposed units');
 assert(rawValidHtml.indexOf('RED bases') !== -1 && rawValidHtml.indexOf('<b>32</b>') !== -1, 'raw valid Step 1 shows 32 nested RED bases');
 assert(rawValidHtml.indexOf('Nested RED Base 1') !== -1, 'raw valid Step 1 renders nested enemy_forces.bases');
@@ -202,12 +213,18 @@ const partialContainer = {
 };
 window.RmoozDocReview.render(partialContainer, partialOut, {});
 const partialHtml = partialContainer.innerHTML;
+const partialCaps = window.RmoozDocReview.assessReviewPayloadCapabilities(partialOut);
 
-assert(partialHtml.indexOf('template/partial planning guide') !== -1, 'partial/template Step 1 shows English warning');
-assert(partialHtml.indexOf('\u064a\u0628\u062f\u0648 \u0623\u0646 \u0627\u0644\u0645\u0644\u0641 \u0642\u0627\u0644\u0628/\u062f\u0644\u064a\u0644 \u062a\u062e\u0637\u064a\u0637 \u062c\u0632\u0626\u064a') !== -1, 'partial/template Step 1 shows Arabic warning');
-assert(partialHtml.indexOf('Map preview requires proposed_units and placement_candidates') !== -1, 'warning names preview data requirements');
-assert(partialHtml.indexOf('Upload the full Step 1 generated output') !== -1, 'warning recommends full Step 1 generated output');
+assert(partialCaps.status === 'text_only' || partialCaps.status === 'insufficient', 'partial/template Step 1 is not map_ready');
+assert(partialCaps.map_preview_ready === false, 'partial/template Step 1 map preview not ready');
+assert(partialCaps.missing_for_map_preview.indexOf('proposed_units') !== -1, 'partial/template Step 1 missing proposed_units');
+assert(partialHtml.indexOf('Input capability check') !== -1, 'partial/template Step 1 shows generic capability check');
+assert(partialHtml.indexOf('AI understood the document, but no map-ready units were found') !== -1, 'partial/template Step 1 shows English capability warning');
+assert(partialHtml.indexOf('\u0641\u0647\u0645 \u0627\u0644\u0630\u0643\u0627\u0621 \u0627\u0644\u0627\u0635\u0637\u0646\u0627\u0639\u064a \u0645\u062d\u062a\u0648\u0649 \u0627\u0644\u0645\u0644\u0641') !== -1, 'partial/template Step 1 shows Arabic capability warning');
+assert(partialHtml.indexOf('Unit map preview requires proposed_units and placement_candidates') !== -1, 'warning names preview data requirements');
+assert(partialHtml.indexOf('Upload the full Step 1 generated output or run deep extraction') !== -1, 'warning recommends full Step 1 or deep extraction');
 assert(partialHtml.indexOf('data-act="preview"') === -1, 'partial/template Step 1 disables Preview Decision Steps');
+assert(partialHtml.indexOf('data-act="preview-disabled"') !== -1, 'partial/template Step 1 shows disabled Map Preview Not Ready button');
 assert(partialHtml.indexOf('Missing / ambiguous') !== -1, 'partial/template Step 1 keeps missing/ambiguous list readable');
 assert(partialHtml.indexOf('BLUE 0 / RED 0 / NEUTRAL 0') !== -1, 'partial/template Step 1 still shows honest zero counts');
 assert(JSON.stringify(partialOut.brief) === partialSnap, 'partial/template payload not mutated by render');

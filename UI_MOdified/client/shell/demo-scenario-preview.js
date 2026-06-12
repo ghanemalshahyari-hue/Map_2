@@ -387,7 +387,7 @@
             'position:fixed', 'top:122px', 'right:24px',
             'z-index:9900', 'background:#0e1620', 'border:1px solid #2e5d7d',
             'border-radius:8px', 'padding:12px 16px', 'min-width:340px', 'max-width:min(520px, calc(100vw - 32px))',
-            'max-height:calc(100vh - 240px)', 'overflow:auto',
+            'max-height:calc(100vh - 270px)', 'overflow:auto',
             'box-shadow:0 4px 20px rgba(0,0,0,.65)', 'font-family:inherit', 'color:#e8eaed',
             'direction:ltr',
         ].join(';');

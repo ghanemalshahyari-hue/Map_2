@@ -149,7 +149,7 @@ ok('Hamedan remains review-only and exact false', /Review only/.test(panel.inner
 BasePanel.open(candidateFromBase(bandar), payload);
 ok('Bandar Abbas opens grouped platform panel', /Bandar Abbas/.test(panel.innerHTML) && /P-3F Orion/.test(panel.innerHTML) && /C-130H/.test(panel.innerHTML));
 ok('Bandar Abbas proposed unit table count matches data',
-    (panel.innerHTML.match(/<tr>/g) || []).length - 1 === 3);
+    (panel.innerHTML.match(/bsp-u-row/g) || []).length === 3);
 ok('Bandar Abbas unknown platform does not crash and shows catalog required',
     /Unlisted Platform X/.test(panel.innerHTML) && /unknown/.test(panel.innerHTML) && /Catalog required/.test(panel.innerHTML));
 ok('Bandar Abbas evidence shows source and doctrine warning', /source file: Iran_Qatar/.test(panel.innerHTML) && /Doctrine required warning: true/.test(panel.innerHTML));
@@ -159,6 +159,39 @@ ok('Chabahar opens panel with helicopter category', /Chabahar/.test(panel.innerH
 
 BasePanel.open(candidateFromBase(blue), payload);
 ok('BLUE trial base shows BLUE side', /Blue Trial Base 1/.test(panel.innerHTML) && />BLUE</.test(panel.innerHTML));
+
+// ── SYMBOL-DB-C: full SYMBOL-DB-B enrichment surfaced per proposed unit (reused, not re-derived) ──
+var tabriz = base('Tabriz', 'تبریز', 'RED', 'air_base', 38.13, 46.23);
+var symPayload = { documents: [{ filename: 'sym.json' }], brief: { operational_brief: {
+    task_assembly: {}, enemy: { units: [] }, friendly: { units: [] }, courses_of_action: [],
+    enemy_bases: [tabriz], friendly_trial_bases: [],
+    proposed_units: [ unit('RED', 'Tabriz', 'f16c', 6, 'مقاتلة'), unit('RED', 'Tabriz', 'F-14A Tomcat', 12, 'مقاتلة') ],
+    missing_information: [] } } };
+BasePanel.open(candidateFromBase(tabriz), symPayload);
+// symPayload = one MATCHED unit (f16c, DB1 systems) + one catalog-MISSING unit (F-14A, no DB1 systems).
+var f16cat = global.window.AppWorldStateDB.CAPABILITY_CATALOG.f16c;
+var f16SysCount = f16cat.sensors.length + f16cat.weapons.length + f16cat.magazines.length;
+var enrF16 = BasePanel.normalizePlatform({ platform: 'f16c' });
+var sensorTok = (enrF16.sensors[0] && (enrF16.sensors[0].label || enrF16.sensors[0].class)) || '';
+ok('SYMBOL-DB-C: matched platform surfaces its DB1 sensor in the card', sensorTok.length > 0 && panel.innerHTML.indexOf(sensorTok) !== -1);
+ok('SYMBOL-DB-C: catalog_match_status (matched) + confidence% shown', /bsp-cat-matched/.test(panel.innerHTML) && /\d+%/.test(panel.innerHTML));
+ok('SYMBOL-DB-C: platform_class (f16c) + capability_summary surfaced',
+    /Platform class/.test(panel.innerHTML) && /f16c/.test(panel.innerHTML) && enrF16.capability_summary.length > 0 && panel.innerHTML.indexOf(enrF16.capability_summary) !== -1);
+// NO-INVENT (panel-level): the panel renders EXACTLY DB1's f16c system chips and NONE for the catalog-missing F-14A.
+// (the catalog-missing unit contributes zero .bsp-syschip), so total rendered chips == f16c's DB1 system count.
+var renderedChips = (panel.innerHTML.match(/bsp-syschip/g) || []).length;
+ok('SYMBOL-DB-C: panel renders EXACTLY DB1 systems for the matched unit, none invented / none for missing',
+    f16SysCount > 0 && renderedChips === f16SysCount);
+ok('SYMBOL-DB-C: every DB1 f16c sensor (label|class) is surfaced in the card',
+    f16cat.sensors.every(function (s) { return panel.innerHTML.indexOf(s.label || s.class) !== -1; }));
+ok('SYMBOL-DB-C: every DB1 f16c weapon (class) is surfaced in the card',
+    f16cat.weapons.every(function (w) { return panel.innerHTML.indexOf(w.class || w.id) !== -1; }));
+// per-unit Catalog-required banner (.bsp-catreq) + .bsp-u-missing flag appear for EXACTLY the 1 catalog-missing unit
+// (not from the static Systems/Capability tab, which uses .bsp-tab-body, and not from the always-present header chip).
+ok('SYMBOL-DB-C: per-unit Catalog-required banner shown for exactly the 1 catalog-missing unit',
+    (panel.innerHTML.match(/bsp-catreq/g) || []).length === 1 && (panel.innerHTML.match(/bsp-u-missing/g) || []).length === 1);
+ok('SYMBOL-DB-C: catalog-missing unit (F-14A) lists its empty systems in unknown_fields',
+    /F-14A Tomcat/.test(panel.innerHTML) && /Unknown fields/.test(panel.innerHTML) && /sensors, weapons, magazines/.test(panel.innerHTML));
 
 // The live content-band MEASUREMENT now lives in shell-safe-area.js (publishes the CSS vars
 // the card binds to) and is covered by test-shell-safe-area.js. The card no longer sets inline

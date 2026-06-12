@@ -1,0 +1,60 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: dms_qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+
+  # Reranker is run via `docker run` (see infinity-reranker container) so
+  # it stays out of compose lifecycle — its model volume (infinity_models)
+  # represents the "remote vLLM machine's" model storage in this offline
+  # simulation.  We just attach to its network so the app can reach it
+  # by container name.
+
+  app:
+    image: dms_app:latest
+    container_name: dms_app
+    depends_on:
+      - qdrant
+    env_file:
+      - .env
+    environment:
+      QDRANT_URL: http://qdrant:6333
+    # host.docker.internal is the host's loopback as seen from inside the
+    # container.  LM Studio listens on the host at :1234.  On Linux Docker
+    # we need this explicit alias since it isn't built in (unlike on Mac).
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./inputs:/app/inputs
+      - ./prompts:/app/prompts
+      - ./templates:/app/templates
+      - ./data:/app/data
+      - ./output:/app/output
+      - ./output_docs:/app/output_docs
+      # Python source — edits on host take effect inside the container
+      # without rebuilding the image.  CRITICAL: do NOT mount ./:/app —
+      # that would shadow /app/.cache (Docling layout + bge-m3 tokenizer
+      # baked into the image) and break ingestion.  Per-directory only.
+      - ./graph:/app/graph
+      - ./scripts:/app/scripts
+      - ./ui:/app/ui
+      - ./main.py:/app/main.py
+    ports:
+      - "8501:8501"
+    command: ["python", "main.py"]
+
+volumes:
+  qdrant_storage:
+    driver: local
+
+# We bring the Infinity container in by name via an external network so
+# `RERANK_BASE_URL=http://infinity-reranker:7997` resolves.  See README for
+# the one-time `docker network connect` step.
+networks:
+  default:
+    name: dms_default

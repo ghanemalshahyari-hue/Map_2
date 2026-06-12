@@ -1,0 +1,322 @@
+# C: MO - Impact of range on missile weapons
+Video: https://www.youtube.com/watch?v=2PzsXm-fhFA
+Video ID: 2PzsXm-fhFA
+
+hello everyone in today's video we're
+going to take a look at the importance
+of setting the correct
+range for automatic fires on units so
+what we have here is a pretty
+straightforward scenario again this just
+for the purposes of demonstration
+we have ourselves a knife nike hercules
+which has a pretty darn long range it's
+kind of a classic
+american sam system it's used all around
+the world i kind of think of it like the
+uh
+i don't know what the non-russian
+version of the sa-5 would be but
+this is basically what it is so we're
+going to do is we're basically going to
+demonstrate why it's so critical that
+you set your wra
+which is your weapons release
+authorization so that the weapon
+actually will be able to hit the target
+you were trying to strike i'll show you
+what i mean in a second
+so what we're going to do is we're going
+to unpause real quickly here we're just
+going to let our little target that
+we've just spotted i kind of sneak in
+i'm going to declare them hostile and
+we'll see exactly what happens here
+so our nike hercules of course is going
+to enter into the max range and off the
+missile goes at a staggering what was
+that about
+80 nautical miles away this is a pretty
+cool missile
+we're going to travel really really high
+in the atmosphere and it's basically
+going to follow its complete arc
+the sukhoi is going to see there he's
+going to go ahead and fire his second
+one it's going to go flying up there
+got to come down oh it's going to go
+down over here's the next one
+and eventually we had managed to
+actually get a hit but what we really
+want to do is take a look at the end
+game here
+so this is where it's going to get kind
+of interesting the missed one
+missed so if i actually open up the
+little detail box here you'll notice
+here just
+kind of why it missed percent to hit
+adjusted for distance
+46 so we lost 10
+of our ability to hit the target because
+of the incredible distance
+now there's another sneaky thing going
+on here too now if there were mountains
+that aircraft would duck behind the
+mountains and the weapon would have been
+useless
+so you're sitting there going so we lost
+about 10 and again minus once you do all
+the agility and everything like that
+look at the final probability to hit is
+about 20
+which is terrible we can get up to 30
+points so instead of using four missiles
+we only need to use three
+so let's go ahead and reset the scenario
+real fast here go and grab that
+like shoot and now let's go ahead and
+have
+the maximum range here for our shot
+again what's the point of wasting the
+weapon if you know you can't hit
+so we're going to go to automatic firing
+range real quickly we're just going to
+set this our normal range would be about
+80.
+half range would be about 40 nautical
+miles you're sitting there going
+i don't know 40 nautical miles seems
+like that's awfully close if our maximum
+range is 80. but let's see if that even
+makes any more of a difference here
+so go ahead and pause uh there's our
+target again so we're just going to
+kind of watch so in 40 nautical miles is
+going to put it
+let's put it right about here i'll put
+that one right there and i'll see
+exactly what happens here
+so he starts cruising he's kind of doing
+his little thing our
+nike battery by the way in the early
+days didn't have tv screens it actually
+used a little
+pens that would draw on paper in order
+to calculate trajectories it was
+it was different there's actually some
+pretty neat videos notice our sand
+battery does not give itself away as
+quickly either so he's going to go ahead
+and cross the 41 look at that missile on
+the way
+now i imagine this one's probably not
+going to kill him because it is a very
+maneuverable aircraft here
+and we've launched three and we've
+launched
+four and here comes number five
+and here comes number six now as a
+retreating target here comes number
+seven
+you ever get to feeling the dicer just
+against you that day now if you were
+here dropping weapons on us
+we would never been able to take a shot
+on him and now we are out of ammunition
+that we can readily use
+let's take a look at the result however
+let's see weapon game
+uh we're taking a look here we jammed it
+successfully it was spoofed spoofed
+spoofed spoofed spoofed spoofed spoofed
+spoofed you could see in this particular
+case our sequoia was
+amazingly effective at basically uh
+completely jamming the bejeezes out of
+that poor missile there
+so the only way we're ever going to be
+able to get a decent number is if we
+reset everything and take away that
+capability so let's go ahead and restart
+that one again again this is one of
+those things that
+you have to think about i'll zoom in
+we'll go into our sensors here and we'll
+just get rid of those
+oh a radar warning receiver remove
+sensor we'll get rid of the defensive
+ecm that's just not fair
+all right let's go switch back to the
+other guy set him back to a 40 nautical
+mile range and see what happens
+now that we've eliminated one of our
+variables so to speak
+say 40 we'll say 40. come down here of
+course we could do this with the s 400
+if you prefer
+i will show you the real advantage to
+this in a minute let's go ahead and
+unpause
+we see him again he's over there grab
+this guy speed up time a little bit he's
+going to cruise into range
+and any moment the weapon's going to
+fire off they go
+now let's see uh what happens this time
+so we fire one
+and he's gone let's take a look at the
+uh actual report here
+contact change it got splattered oh
+let's see here impacts what were the
+probabilities here
+so we're at a 45 adjusted for target
+speed that was not one
+notice we have no adjustment for
+distance this time because we're not
+firing at that extremely long range
+so as a result our final percent to hit
+was a 25. our target was a little bit
+slower we'd actually have an even better
+one
+now i know you're sitting here going
+okay so basically use half range got it
+um where are we going with this where
+are we going with this well let me show
+you where we're going with this so what
+i'm going to do now is go ahead and
+reset my scenario again
+and i'll go back i'll go ahead and grab
+our guys i like shoot and die that's
+pretty funny
+we'll pick out this side real quickly
+i'm gonna go ahead and delete this guy
+here i'm gonna get myself a taiko
+go to surface ship tyco and we'll get a
+nice one now let's see
+that looks pretty good block 2b oh my
+that that that's a heck of an
+anti-missile platform
+so now of course we have to launch junk
+at it so let's go ahead and
+switch back to die really specific right
+now we'll go ahead and get aircraft so
+we'll get ourselves obviously twofold 22
+m3 is the correct answer here
+let's see here m-dash i'm pretty sure
+it's m-3 oh it's m-3
+sorry all right we got the modernized
+version sweet
+all right let's get a nuclear rotary
+launcher that seems fair
+uh the kitchen i love this weapon it's
+so nice
+as16 all right it sounds like a nice
+this sounds fair right
+so we're gonna go ahead and copy him a
+few times so that we have a whole a
+little tiny battle group's worth
+copy those guys go like this go ahead
+and pause real fast
+i'm going to flip on their radars
+because we do need to be able to
+actually acquire the target
+and that looks pretty good we're just
+slightly out of range
+uh allocate all no no no okay
+allocate all allocate all
+allocate all okay so let me show you the
+real trick here
+so we're going to sneak this way i
+wouldn't be surprised if they already
+launched missiles
+and off coast their missiles and they're
+being jammed these poor um tupelo lives
+are not going to get very far but they
+will have enough time to launch all the
+weapons
+beautiful all right let's switch back to
+the americans so now how can we apply
+this well first things first this is vls
+so you can spin a lot of these things at
+one time
+the problem is and let me show you
+exactly what's going to happen here
+so these guys are going to pass each
+other in the night and they're going to
+go right by again those are targeting
+those
+these are the ones targeting the
+missiles now because these targets are
+so tiny
+if we launch these sms at maximum range
+we're going to end up running out of
+them so the trick here is to actually go
+ahead and tweak the maximum range in
+which to attack them with the weapon
+so in this case let's see here we have a
+block three b's so we'll come down to
+block three b's
+instead of all launching against our
+guided weapons at stupid long dangerous
+distances we can shrink it a little bit
+in order to improve our chance of
+hitting
+obviously it gets a little bit scarier
+as well but we're not going to waste all
+of our interceptors on targets that we
+can't actually hit
+so here we go here we go comes flying in
+and keep in mind several of those oh
+here comes the fun part
+it's so much fun to watch one of the
+cool things if you want to see something
+really neat when this happens
+if you actually look at this from the
+side i'll go ahead and grab my ship here
+and get the antietam here it's just fun
+to watch this
+just like all the anti-ship missiles
+notice because they fired from maximum
+range they're actually firing over the
+heads of the missiles which is again
+why you want to make sure that you just
+tell your missiles not to fire at their
+maximum ranges again this is just
+another little quick tip
+here comes the essms i believe i think
+we're close enough for them not quite we
+will in a second
+and here comes the ssms yeah there they
+go
+again this is why they call it an egypt
+ship but i'm not comfortable with the
+fact that this missile got within
+1.8 nautical miles that seems a little
+nerve-wracking
+and we shot most of them down and i
+believe one of the tuples survived all
+that
+and i just think it's kind of funny that
+they just took these absurdly long-range
+shots here look at this
+bush and they managed to get one of them
+so the key element there and
+the takeaway that i just want you to
+realize is if you leave it alone you're
+gonna end up firing a lot of weapons
+way beyond the maximum range or be on
+the radar horizon and never actually be
+able to do damage against a maneuvering
+target
+now if your target did not maneuver feel
+free to take the shot at absolute
+maximum range
+another really really classic use for
+this is if you want to think about the
+f-14
+if you tell it to fire its long-range
+phoenix missiles at maximum range
+you'll never hit anything that's just a
+general tip hopefully this has been
+helpful other than that enjoy

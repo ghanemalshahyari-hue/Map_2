@@ -17,7 +17,7 @@ try {
 const app      = express();
 /** maps/ folder — env var (set by Electron) or project-root default */
 const MAPS_DIR = process.env.RMOOZ_MAPS_DIR || path.join(__dirname, '..', 'maps');
-const PORT     = 8080;
+const PORT     = parseInt(process.env.TILE_SERVER_PORT, 10) || 8080;
 
 // Allow the web page (port 8000) to call this server
 app.use((req, res, next) => {
@@ -48,15 +48,41 @@ function loadAll() {
         console.log('  Loading:', filename, '(' + sizeMB + ' MB)...');
         try {
             const db = new Database(filepath, { readonly: true });
-            const row = db.prepare("SELECT value FROM metadata WHERE name='format'").get();
-            const fmt = (row && row.value) || 'png';
-            dbs[name] = { db, format: fmt };
-            console.log('  Loaded :', name, '(format:', fmt + ')');
+            // Read the full metadata table so we can expose real minzoom/maxzoom
+            // (used by the client to set maxNativeZoom → overzoom instead of blank
+            // tiles when zooming past the data ceiling).
+            const meta = {};
+            try { for (const r of db.prepare('SELECT name, value FROM metadata').all()) meta[r.name] = r.value; } catch (_) {}
+            const fmt = (meta.format) || 'png';
+            let minzoom = parseInt(meta.minzoom, 10);
+            let maxzoom = parseInt(meta.maxzoom, 10);
+            if (!Number.isFinite(maxzoom)) { try { maxzoom = db.prepare('SELECT MAX(zoom_level) z FROM tiles').get().z; } catch (_) {} }
+            if (!Number.isFinite(minzoom)) { try { minzoom = db.prepare('SELECT MIN(zoom_level) z FROM tiles').get().z; } catch (_) {} }
+            dbs[name] = { db, format: fmt, minzoom, maxzoom, bounds: meta.bounds || null, attribution: meta.attribution || null };
+            console.log('  Loaded :', name, '(format:', fmt, '| zoom', minzoom + '..' + maxzoom + ')');
         } catch (e) {
             console.error('  FAILED :', filename, '-', e.message);
         }
     }
 }
+
+// TileJSON-ish metadata: lets the client read the tileset's real maxzoom and set
+// Leaflet maxNativeZoom, so zooming past the data ceiling upscales (overzoom)
+// instead of requesting non-existent tiles and showing blank/grey.
+app.get('/services/:tileset.json', (req, res) => {
+    const entry = dbs[req.params.tileset];
+    if (!entry) { res.status(404).json({ error: 'unknown tileset' }); return; }
+    res.json({
+        tilejson: '2.2.0',
+        name:     req.params.tileset,
+        format:   entry.format,
+        scheme:   'xyz',
+        minzoom:  Number.isFinite(entry.minzoom) ? entry.minzoom : 0,
+        maxzoom:  Number.isFinite(entry.maxzoom) ? entry.maxzoom : 22,
+        bounds:   entry.bounds ? entry.bounds.split(',').map(Number) : undefined,
+        attribution: entry.attribution || undefined,
+    });
+});
 
 app.get('/services/:tileset/:z/:x/:y.:fmt', (req, res) => {
     const { tileset, z, x, y } = req.params;
@@ -85,7 +111,7 @@ app.get('/services/:tileset/:z/:x/:y.:fmt', (req, res) => {
 loadAll();
 const tileListener = app.listen(PORT, '127.0.0.1', () => {
     console.log('');
-    console.log('  Tile server running at http://localhost:' + PORT);
+    console.log('  Tile server running at http://127.0.0.1:' + PORT);
     console.log('  Tilesets ready:', Object.keys(dbs).join(', ') || '(none - check maps/ folder)');
     console.log('  (Supports large files - reads from disk, no size limit)');
     console.log('');

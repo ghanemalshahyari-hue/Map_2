@@ -1,0 +1,19 @@
+# data/doctrine/classification_markings.txt
+#
+# One marking per line. Blank lines and lines starting with # are ignored.
+# Matched case-insensitively with word boundaries and stripped from both
+# `text` and `contextualized_text` of every chunk by
+# graph/post_processors/classification_stripper.py.
+#
+# Longer markings are matched before shorter ones (the builder in
+# graph/doctrine_vocab.py sorts by length), so "FOR OFFICIAL USE ONLY"
+# will be removed as one unit rather than leaving "FOR" / "ONLY" behind.
+
+UNCLASSIFIED
+CONFIDENTIAL
+SECRET
+FOR OFFICIAL USE ONLY
+U//FOUO
+FOUO
+CUI
+NOFORN

@@ -1,0 +1,305 @@
+# C: MO - Update 1147.18 changes to Sonar and IRST
+Video: https://www.youtube.com/watch?v=mcTpZ8-86Q4
+Video ID: mcTpZ8-86Q4
+
+hello everyone in today's video where
+we're going to take a look at some of
+the most recent changes uh for command
+modern operations
+uh for those of you who have been uh
+trolling the forums recently it probably
+spotted this new update that came out
+just a little while ago
+uh they're calling it the one one four
+seven one eight update
+and now inside this update there's a
+bunch of neat little things here some of
+them are pretty straightforward we got
+you know basic
+bug corrections we added a whole bunch
+of new units but there are two very
+interesting features that were just
+brought in uh the first one is allowing
+you to use irist which is infrared
+search and track
+as fire control which is a very
+interesting discussion if you missed it
+and the second thing it is is it's
+changed the sonar model
+significantly now there's some other
+things that are actually going to go on
+here and if
+you want to read this particular post
+it's actually really really interesting
+because it talks about the fact that the
+convergence zones are actually dependent
+on both
+temperature as well as how far you are
+away from the north pole
+it's actually really really this is a
+great technical discussion for folks who
+are like into this kind of things
+and there was also this nice little
+chart that came along with it and it
+also had a great response from the
+developer who basically talked about
+some of the different pieces here
+so again this is really really cool
+stuff but we're going to be taking a
+look at both of those in command
+so let's go and take a look at the first
+one go pull this out of the way so you
+don't need to see it
+so the first one was adding the ability
+to use iris as a way to go ahead and
+target aircraft and actually engage them
+without giving anybody any warning so
+what i have here is a raphael m
+this is the 2019 version in case you're
+curious there's actually a bunch of
+different versions of this that you can
+actually use
+they actually gave us a little post let
+me go and grab that that shows you all
+the different sensors that have this
+capability again this is on that little
+forum topic if you want to check it out
+so what i've done with this aircraft is
+i've taken off its radar
+now you're probably going well that's
+kind of dangerous why would you do that
+well the reason is
+because i needed to demonstrate the fact
+it doesn't need a radar to launch
+missiles anymore
+because the missiles can be guided via
+data link or cec
+so off this guy's nose right now we
+can't see this just yet is i have a pair
+of mig-28s here
+pretty much ready to rock so what's
+going to happen is raphael is going to
+sneak up
+identify them with the iris and then
+engage them
+without them ever knowing the guy was
+behind them because they never
+activate their emitters so let's go
+ahead and unpause real quickly
+i'm gonna go ahead and bring the raphael
+up to afterburner speed here so they can
+kind of catch up to this other aircraft
+just so you can kind of see what this
+looks like in action
+raphael by the way is equipped with two
+meteors which are these now pretty big
+missiles again this is a if you want to
+think about it as kind of like a
+knockoff of the amram again
+what isn't i think the mri was a
+knockoff of the meteor uh we also have
+of course the mica em and the mica er as
+well which are both really really solid
+platforms that we can use for this
+particular purpose
+remember these are receive only this is
+a data link weapon this is not going to
+be actively guided
+okay so we've already acquired one of
+the different targets we're going to get
+a little bit closer
+and we've already acquired the second
+target so i'm going to go ahead and
+attack both of these i'm just pressing
+f1
+dragging a box around them let's go
+ahead and switch on to the other side
+real quick
+let's go ahead and unpause and you can
+see my two mig-28s here
+just chilling they're having no warning
+until suddenly out of nowhere
+a radar guided actually a data link
+missile comes out and slaps one of them
+right out of sky
+the other one of course misses
+unfortunately he sees it panics he's
+going to turn himself around and try to
+bring his nose directly onto that threat
+and see what happens
+of course as soon as he finishes turning
+around there's probably going to be two
+or three more missiles
+basically arriving right on my poor
+mig-28 and splashing it right out of the
+sky
+that entire engagement was done with
+long-range missiles without a single
+radar being turned on as a matter of
+fact our raphael here is
+looking large and in charge of anything
+he's probably heading back to base
+back at nellis indeed okay
+so the other thing that they added which
+is a little different is they've changed
+the way that convergence zones work
+now if you remember conversion zones
+were basically a way of
+bouncing sound off the sea floor or off
+of the sound layer basically so you
+could pick up things at extremely long
+ranges
+so unfortunately the calculations for
+that in the old days were not quite
+correct they were basically didn't take
+into account latitude nearly as
+effectively
+so what we have here is we have
+ourselves a handy dandy virginia class
+and it's basically sneaking up on this
+ssbn which is a delta iv i believe i
+recall correctly
+now this particular submarine here is
+chilling at 459 feet below sea level
+this guy is chilling at about 853 feet
+below sea level
+i'm going to press the f2 key and bring
+up my depths notice we have the presence
+of a good old-fashioned
+acoustic layer here it's a pretty thick
+layer you can see you could be chilling
+in there and basically be invisible
+tons of room above it tons of room below
+it also keep in mind we are sitting here
+at
+the equator creeping along going pretty
+darn slow right now
+now this other submarine is actually
+below the layer and we're above it
+the only reason we're able to detect
+each other is because of the fact that
+the virginia submarine here
+has got this spectacular toad array
+that's basically dipping
+down below the layer so it can actually
+detect the submarine
+now where it gets interesting is if i
+order my virginia to actually dive down
+which i'll go ahead and
+set it as deep as possible and i go
+ahead and grab my delta over here in
+order my delta to go up
+let's say shallow you create an
+interesting problem where it becomes
+difficult to detect each other
+because they're on the wrong side of
+that as a matter of fact poof
+you can see that delta 4 is completely
+gone now because it floated above the
+layer so unfortunately my sensor
+platform and i've talked about this
+during the sonar tutorial is now below
+where the actual layer is and our target
+is above which means i can never detect
+them anymore
+so that's obviously at low altitudes i'm
+kind of saying
+as far as equator goes this is a known
+issue and it's actually kind of
+complicated
+now here's where the change kicks in
+if we go to the high latitudes i'm going
+to go all the way up to the north pole
+here
+you can see that i have myself my ssn
+same exact submarine and it's following
+the
+same exact type of the submarine but
+watch what happens when i hit f2 this
+time
+you'll notice that there is no layer
+in existence and not only is there no
+layer here because of our depth issue
+you'll notice
+that we're picking up the submarine that
+we're trying to find behind us
+not in the front of us remember a total
+array is dipped behind you not in in
+front
+so now i'm going to go grab my boomer
+real quick okay boomer
+so what i'm going to do is i'm going to
+order this boomerang to go ahead and
+come up
+let's say shallow and i'm going to go
+ahead and take my virginia in order my
+virginia to go
+down now normally when you do something
+like this we'll have the same situation
+that we had back before
+where we go right underneath the
+acoustic layer and we completely lose
+track of the other submarine that we're
+tracking
+so i'm gonna go ahead and go deep deep
+deep deep deep notice
+not only were we able to identify that
+submarine
+but we've also been able to classify
+that submarine
+something we couldn't do before because
+we're actually detecting that submarine
+let me go ahead and grab it using a
+different sonar set because there is no
+acoustic layer in place
+now if you do read that article that's
+on the website it actually goes into
+great detail as to why this effect
+exists
+but from a playing perspective you just
+have to know that the further up the
+latitudes you go
+the deeper the layer is going to be
+meaning your submarine operations are
+going to have to be significantly deeper
+if you wish to take advantage of that
+particular feature otherwise you're
+going to be in a situation like we have
+over here where i completely lose track
+of it
+until i reacquired by the way because
+basically i got right on top of it so i
+was able to listen to it again
+so these are the two big changes um
+there was another change that came in
+that was very very interesting i just
+want to bring this one up super quick
+and that was the fact that they brought
+in new facilities and our new facilities
+are basically broadcast stations now
+you're probably wondering why these are
+all here
+it's because they're going to be
+bringing in pcls receivers which is
+basically the ability to detect units
+based on passive radio signals if you
+want to imagine a tv signal bouncing off
+an airplane and then being picked up by
+the special receiver
+that would give us the ability to do
+that this is not in the program yet at
+this time so something you're going to
+have to kind of keep it out for other
+than that i just thought i'd share some
+of those things for you in case
+you haven't seen them or you're not sure
+why things are behaving differently than
+they used to before
+the key thing to watch out for is
+there's only a limited list of
+iris-based aircraft
+and again that effect is still visible
+all you have to do is click on your sub
+and go ahead and press the f2 key and
+you can see the existence of the layers
+enjoy

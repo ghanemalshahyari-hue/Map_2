@@ -1,0 +1,354 @@
+# C: MO - Radar Changes with Patch 1147.39
+Video: https://www.youtube.com/watch?v=g8Qzj1l56_E
+Video ID: g8Qzj1l56_E
+
+hello everyone in today's video we're
+going to be checking out the new changes
+that just came in command modern
+operations build
+1147.39 now if you're interested in
+checking this one out for yourself it is
+on beta right now we should be getting
+some of the features released to steam
+shortly but if you're in such a rush to
+go ahead and try these things out if you
+go to the main command forum here this
+is the matrix games one just go to the
+tippy top you're going to see this
+little update right here the whole idea
+is you click on the sucker download this
+thing and then copy it into your main
+command folder so that you can go ahead
+and check this out although eventually
+assuming the features work properly we
+should see this in the regular build as
+well so how does this work well we've
+got some major major major changes to
+radar things that i'm sitting there
+going oh yeah now for me personally i
+would love to see some changes to things
+like the weather model to make it more
+weathery but again that's just me so
+let's go and check them out so the two
+big changes here are the way face array
+radars lose sensitivity at their side
+lobes aka if you don't point at it you
+can't see it and we also have new range
+resolution boxes which now limit our
+ability to spot multiple targets that
+are located close to each other now
+you're sitting here going wait what oh
+let me show you let me show you let me
+show you so let's go ahead and put in
+god's eye view here i have these two
+flights here i have a one group of f-16s
+here of course there are 16s what else
+would i pick here i've got one group in
+standard formation and i have this other
+group in uh standard formation pretty
+much ready to rock here but what i have
+done is i'm going to switch teams real
+fast to blue red seam here is i've
+actually modified the formation to put
+everybody a lot closer together and have
+left this cruise formation to be at the
+same scale so here's what's going to
+happen i have this old old old building
+and what i did is not the same i'll get
+to that one in a minute i have this old
+building and what i did is i put a
+sensor on it i put a knife rest which is
+a p8 radar now a p8 radar is you can
+probably tell by this low number kind of
+ancient and it's not the greatest
+two-dimensional radar one of the
+downsides of the frequency that it
+operates at is
+it has very very low resolution well
+what i mean by resolution well let me go
+grab something here oh got to grab this
+boop here it is so i built this program
+ages ago for a
+company that was making some really
+really neat games and stuff like that
+and say could you put together something
+that we could like play with the values
+and let the user design their own radar
+i said sure
+since then it's basically sat there in
+my little folder ready to go but at the
+very least it'll demonstrate this
+problem to you very clearly so what i
+have here is i have three little
+contacts one two three you can see them
+kind of listed across and they're very
+easy to see on my little kind of split
+ppi here so what i'm going to do is i'm
+going to increase the frequency of the
+radar we'll go up to 8.5 gigahertz now
+notice look at how teeny tiny each one
+of these little specks are they're three
+very very my new three very very easy
+and obvious to spot specs as a matter of
+fact if i go up to like 9.5 which is
+getting close to uh fighter control
+radar these things are easy to spot if
+they were flying in formation with each
+other
+so what i'm going to do now is i'm
+actually going to go the other way i'm
+going to reduce my frequency to 1.5
+gigahertz watch this
+uh oh
+so i got a question for you how many
+targets do you now see because if you
+ask me i would say that i see um one two
+three four or maybe six or i'm getting
+maybe it's just one really really long
+target yeah you want to make this even
+more difficult to understand let me
+reduce the size of the radar dish a
+little bit here drop it down to one and
+a one and a half watch this uh oh
+i think i was a little too efficient
+here let's go up to 250 kilowatts and
+see if that helps things out a little
+bit here
+uh
+i can't even see the targets oh there
+they are if you look really closely you
+can see this
+massive massive massive line that's just
+kind of going whoop and cutting across
+here because i'm one of the downsides of
+shrinking your radar dishes of naturally
+you're going to make your beam width
+massively bigger so you're sitting there
+saying oh can i play with this um no
+this is proprietary unfortunately so
+anyway let's go back to our game here so
+what does that mean for us well this is
+one of those things where it's going to
+be easier to see it so what i'm going to
+do is i'm going to switch back over to a
+red team here i'm going to go and take
+this building i'm going to turn the
+building on and it's going to activate
+this radar scope on it now keep in mind
+this is a two-dimensional radar so it
+doesn't have any of those fancy lobes
+that enable you to determine altitude or
+anything like that so we're just going
+to let these two groups of airplanes fly
+towards us let's go ahead and kill birds
+eye boop first of all i actually have to
+switch to the team that i intend to be
+operating the radar with shame shame go
+ahead and unpause here i'm just going to
+give it a little bit of time
+and what i expect to happen is to
+suddenly spot a target once those f-16
+buddies are getting a range here keep in
+mind these old 2d radars didn't really
+have the greatest gain either so even
+though they're pretty powerful you could
+basically pick up a bomber with it you
+can't really pick up little tiny
+fighters but it'll demonstrate my
+purposes almost perfectly once they get
+a little tiny bit closer there we go
+alright let's take a look
+so if you remember i launched eight
+airplanes i have one two three four five
+six
+airplanes on radar okay fine you say so
+let's give it some time and try to
+increase the resolution
+um
+okay then
+one two three four five six airplanes
+but i had eight airplanes
+get a little bit of a time whoa oh god
+oh
+now there's one over there
+so there's no jamming going on here this
+is because if you take a look at this
+gigantic line here that's about 16
+nautical miles wide this entire zone is
+our area of uncertainty for the position
+of the aircraft because the aircraft in
+the formation which by the way over here
+are so close to each other they're
+showing up as a single target whereas
+the aircraft that are wider farther
+apart are showing as a more typical
+spread out target now what i'm going to
+do now is i'll let them get a little
+closer again this is just like our
+demonstration a few moments ago using
+the ppi there so let them get a little
+closer
+come on come on come on good so now i'm
+going to order my sa2 to engage them now
+the sa2 has a fire control radar that's
+absolutely incredibly tall and has a
+very very tight wavelength on it so
+notice as soon as he flips his radar on
+i'm immediately able to pick one of
+those radar targets and i'm getting
+constant updates because the whole radar
+dish is pointing directly at that target
+as these two chewing towards us also
+notice the wavelength on this fire
+control radar is so tiny that i can't
+actually see any of these other targets
+in an actual sa2 you can actually make
+out other targets when you're locking
+onto somebody trying to engage them
+directly because it does have a wide
+enough wave that you actually can't see
+these things so i'm just kind of
+surprised that is not simulated because
+ideally let me go ahead and flip this on
+yeah ideally this radar would actually
+be able to see everyone notice this guy
+slipped and now we can see him directly
+as he came out of his formation as this
+engagement continued here so there's our
+second weapon on the way it takes a
+little while to launch these things i'm
+quicker than that and of course as soon
+as we can gauge we're just going to fire
+another one but we're still not clear on
+the motions of these guys over here so
+again that's a neat feature by the way
+the lower the wavelength like we saw
+earlier the worse this happens it gets
+so bad as a matter of fact that when you
+get things like abm radars i have a 5
+000 mile range but guess what 10
+missiles i launched are going to show up
+as one little line that's going to boing
+boing boing boing boing boing it's going
+to be nuts so that's a super cool
+feature i can't wait to play with that
+especially with ancient ancient radar
+systems now let's take a look at the
+next one
+we want to switch back to the other team
+here back to blue so then i have another
+building to the north and this will be
+demonstrating the other big feature that
+they have this week and that's going to
+be the fact that phased array radars
+don't generate all of their signal
+strength or their gain in a straight
+line as a matter of fact if you've seen
+the classic radar diagram uh you'll
+notice that on a phased array radar most
+of your strength is going to be out the
+straight front and as you move towards
+the lobe of the radar which is going to
+be the edge of where the actual radar
+dish is that range is going to
+deteriorate because your gain is going
+to drop significantly so let's go ahead
+and flip this radar on
+well that doesn't look right now notice
+our radar range on this particular thing
+this is 175 nautical mile range matter
+of fact the home amounts there 175
+nautical miles but notice the range
+progressively decreases as we move
+towards the limit of the physical limit
+of the dish so far so that when we get
+all the way here to the lobe my range is
+down to 111. now i'm not an expert at
+division but my calculator tells me
+that's a 63 reduction in range as you
+start moving away from the front of the
+beam obviously if this is a 360 like an
+s400 that's not going to be an effect
+but let's see what that means tactically
+so i'm going to unpause time here i have
+two groups of f-16s because you know
+f-16s and you notice immediately i
+detect this guy no problem this is an
+anspy this is like an aegis radar this
+thing it does the job pretty well here
+so i picked him out immediately notice
+i'm having no difficulties in the
+slightest of identifying where he is
+like i said oh notice all of his buddies
+are instantaneously rectified even
+though these airplanes are let's see
+here uh let's see 1.5 miles apart no
+difficulties acquiring them compared to
+our ancient little radar to the south
+there so we go ahead and continue our
+little engagement here while these f-16s
+are coming towards us oh we lost one for
+a second there but don't worry we'll
+require in a moment
+just cruising along they're cruising
+along everything's fine i'm just
+watching those bogeys maybe i'm not
+getting one of my sm-2s ready to go oh
+ah i see my sample site in the south is
+doing his thing there sounds good sounds
+good they get closer they get closer oh
+my gosh these aircraft are look at this
+80 nautical miles away they're getting
+closer they could be dropping j sows on
+us oh boy by the way did anybody notice
+the fact that there's another group of
+f-16s at 50 miles away that we didn't
+see it oh wait we'll find that out in a
+minute so we'll go ahead and spat fast
+forward time things will kind of cruise
+oh we picked up another one he must have
+been a little low we didn't pick him up
+right away
+still waiting on that other air for 16.
+oh boy
+here comes oh there they are
+notice i wasn't able to detect him until
+he was 30 nautical miles away even
+though that first group i was able to
+completely 100 identify no problem at
+all all the way out here at 175 nautical
+miles away now you're probably saying
+wow that's that's kind of that's
+annoying that makes these things uh that
+makes them a little bit harder to employ
+you're absolutely right now one of the
+interesting things is there's many
+aircraft that have this style radar on
+board so for example let's go ahead and
+grab everybody's favorite here grab
+myself an f-35 uh we'll do a c because
+why not we'll do m m-rim and there must
+be a new version of the m-ram there
+press okay we'll do internal press okay
+grab this guy turn on its radar
+now notice that if you're in f35 land
+being able to come over here now makes
+you completely invisible even though if
+i had a traditionally scanned radar
+let's go ahead and borrow um i'll do an
+f16 i'll do a c here i want an np good i
+don't want the 70 i'm with the 63 that's
+the one i want let's grab ourselves the
+irish pod why not go and grab this guy
+flip his radar on
+oh i got the wrong one that's also a
+phased array you get the idea though so
+again this is going to be an interesting
+feature that's going to affect the way
+that especially modern scenarios and
+modern campaigns are played but other
+than that we had a couple little
+graphical fixes we have some stuff about
+anti-satellite fixes but as you can see
+these are some interesting features in
+the definitely impact gameplay enjoy

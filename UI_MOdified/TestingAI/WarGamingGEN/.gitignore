@@ -1,0 +1,10 @@
+.env
+runs/
+venv*/
+__pycache__/
+*.pyc
+.DS_Store
+*.log
+inputs/forces/*.docx
+inputs/scenario.json
+inputs/gis/

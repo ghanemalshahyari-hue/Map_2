@@ -1,0 +1,403 @@
+# C: MO - Estimating and Setting Up Salvo Sizes
+Video: https://www.youtube.com/watch?v=5E-Kl2lq18k
+Video ID: 5E-Kl2lq18k
+
+Hello everyone. In today's video, we're
+going to be taking a look at salvo
+control. Now, one of the interesting
+problems that we always face is we're
+here in the middle of the ocean. A bunch
+of bogeies suddenly appear on our screen
+and we're immediately get suspicious. We
+call general alert. We send our crews to
+the missiles. We start spooling up gyros
+and doing calculations and seeing if
+anybody's supposed to be here. So,
+here's the problem. We come way out to
+our targets here and we can see one
+bogey. He's about 3600 ft or 36,000 ft.
+400 knots. We have another bogey. Uh it
+was about 36,000 ft, also 400 knots. We
+have no knowledge as to the nature of
+these two vehicles. Um if we were an SA5
+and we had NCTR, we could pull it off.
+We could also get out a telescope and
+look. But the reality is we're not going
+to know what these two targets are for
+quite some time. Now, what we want to be
+able to do is to dictate what altitude
+to go ahead. Actually, not altitude,
+what range to fire at. And we're also
+interested in how many missiles we're
+going to fire. So, I'm going to press
+control shift F9. What that's going to
+do is open up my doctrine and rules of
+engagement. If you go all the way to the
+right here, you're going to see weapon
+release authorization, WRA. Now, if I
+open that up and kind of scroll down a
+little bit, I can see got my SA2s, and
+it gives you the default weapons per
+salvo information, as well as how many
+shooters per salvo there are. Now, the
+interesting thing is we've talked about
+and MCONT and all that stuff before, but
+one of the things we've never really
+done is fiddled with the implications
+tactically of some of this. So, right
+now, if we have an unidentified target,
+we fire two missiles. If we have
+something uh we just know it's an
+aircraft and we don't care about all
+these categories here, we fire two
+missiles. Otherwise, we fire two
+missiles. Now, if you think about that,
+uh does that make sense? Well, let's go
+take a look at that SA2 for a second
+here and get a feel for if that even is
+logical. So, let's grab the SA2 2D and
+its percent to hit is 30%. Now, if you
+happen to have a calculator here real
+quick, and I happen to because I have a
+button that I keep pushing by accident.
+So, before we even talk about chaff and
+jamming, we have a 30% chance to hit. So
+that would means if we wanted to fire
+two missiles, that's going to give us a
+half increase, which would give us a 45%
+chance. So if we wanted to do it again,
+we'll go ahead and 075. You'll see if
+three missiles will give us a 52.5%
+chance, assuming ideal scenario, to
+actually strike the target. Now, this is
+really important to us because this
+means that if we're going to do any
+damage at all, we need to be thinking
+about how many of these missiles are
+actually launching. By default, as you
+probably observed, we're not firing one
+of these things. We're firing a pair of
+these things. Now, given the low
+probability of hit, if it even went in a
+straight line, this is actually not
+optimum in the slightest. So, we're
+actually going to go increase this up to
+three. Now, the SA2 has three missile
+control channels. SA2 rather. So, that
+means we can only launch three. We can't
+do more than that. Some modern systems
+can shoot quite a few more. So, we're
+going to say three. Now, the interesting
+thing here is if you come down here to
+guided weapons, guided weapons is all
+limited to one as well, even though it's
+such a tiny thing. But the reality is
+you're never going to hit it. Same thing
+with ballistic weapons. You're never
+ever ever going to hit it. It's a waste
+of your time. Now, the interesting thing
+here is if we scoot over to automatic
+firing range and open this little box
+real quick, you'll notice it has no
+escape zone, which is awesome. 50% of a
+max, 25% of max. Everything's broken
+down. If I leave this alone, it's based
+on the unspecified target type setting.
+Now, if I come down here, you can see
+very close that again, it's got kind of
+that automatic range. It's not
+thrilling. That's not going to do us any
+good. We're not going to hit anything.
+So, we're going to have to optimize
+that. Now, here's where things get kind
+of interesting. If we're taking a pot
+shot at something very, very slow,
+there's nothing wrong with firing at a
+longer range. If we're taking a shot at
+something that's close, we definitely
+want to take something in a much, much
+shorter range. Let's put those two
+things together. So, we're going to go
+ahead and leave this one to automatic
+firing range. You can see automatic fire
+to max range. And you can see that's
+what it's currently set to. Let's limit
+this to 75%. Uh, low performance
+reconnaissance, 75% seems pretty good.
+Medium performance 75. We'll say high
+performance. Again, this would be
+unlikely, but we'll drop that down to
+half range. Now, low performance
+bombers, you can take that shot pretty
+far at medium performance bombers.
+Again, we'll bring the range in a little
+bit. We'll say a high performance
+bomber, we're going to have to basically
+fire that in point blank range. Now,
+when it comes to fighters, we'll go
+ahead and set 50% to kind of beat the
+minimum. Once we start getting into
+proper maneuverability, we really want
+to drop this into what they call the no
+escape zone shot. Now, what this is
+going to do is this is going to create
+basically a curve. If we don't know, of
+course, we'll just fire um basically
+half range. We'll shoot at half range.
+Now, this is going to create a bit of a
+curve to engage the targets. Not only
+we're firing more missiles, but we're
+also changing the range at which we're
+firing them. All right, let's go ahead
+and declare both of these targets
+hostile. Now, we don't know what either
+of these targets are. They're just a
+little bit too far away for us. We'll go
+ahead and speed up time a little bit
+there to get a little closer. SA2 does
+not have all the range. We're not
+shooting S300s here. And yes, I go
+between the SA system and the um
+basically the complex number
+interchangeably. It's just kind of how I
+knew it and when I learned it
+originally. 9K12. There you go. All
+right. So, we have one unknown target
+which is giving us a little bit of
+trouble here. And it's a very small
+moving target. And this one right here,
+our crew is actually identified as a
+bear. So, this one is known as
+unspecified. Now, check this out. If I
+grab my SA2, shift F1, and then click on
+it real quick, you're going to see here
+that it is considered an unknown target.
+So, it's going to be firing three
+missiles at 50% max range. Now, check
+this out. If I shift F1 and click on
+this buddy, you'll notice that it is
+going to be firing 75% of max range.
+Now, that creates a really fun little
+situation for us where this target will
+be shot at before this target, even
+though this target will come into range
+first. The reason for that is simple
+because it's going to be within it 75%
+arc. Again, 50% of this distance, let's
+see, that's 22 miles. 50% would be right
+here. And again, 75% is going to be
+right in here. And it looks like, oh, it
+might just Oh, there it goes. And there
+goes the first launch right there. And
+you'll notice here that we fired. Let me
+go ahead and control D this again. Nice.
+You can see this guy panicked and
+started turning. And you can also see
+here that we're actually engaging the
+targets, which we knew was the
+slowmoving one. Now, one of the things
+you'll find really interesting here as
+this missile continues to climb up.
+There's actually three missiles here.
+Very, very difficult to see, but they're
+all there. Trust me. If I do one of
+these, you can kind of you can't really
+see them. I don't know how they fire
+them all off in such quick salvo. I
+don't know what the deal with that is.
+That's okay, though. Watch the magic.
+Boom. Boom. Pause. Now, you'll notice
+none of those missiles struck. As a
+matter of fact, if you look here, the um
+generic salvo of the shaft actually
+failed the first time. These two groups
+actually succeeded. So, but the funny
+thing is, remember how we only had a one
+in three shot of actually hitting
+anything. You'll see here that my final
+probability of hit was actually 28%.
+Which is actually not bad at all. We
+still missed again cuz 1/3 on a one
+missile is just not going to happen. But
+the interesting thing is is that our
+math was actually very accurate. So,
+we're going to go do this again. Again,
+this is a group of three missiles here.
+Have you ever wondered why they went
+through so many SA2s during Vietnam?
+That is definitely going to strike them.
+All right, the probability you finally
+beat us here. Let's see here. Um, one of
+them failed to spoof the sensor. Let's
+see. Had a pretty good chance of
+spoofing the sensor. Coming over here, I
+rolled a one. So, of course, I blew him
+out of the sky. But, as you'll notice,
+it took a lot of missiles to do that
+accurately. The interesting thing is our
+other buddy here is like, "Well, I'm in
+a MIG 21. I'm out of here." And he just
+sort of like turned and ran. [laughter]
+I have no idea where he thinks he's
+going to land right now because he
+certainly has no other runways on this
+map right now. So like I don't know what
+this guy What are you What are you
+doing? Like you know what I mean? Are
+you running? Where are you going? Let's
+see. He's engaged defensive. Uh I'm
+going to unassign you and then you can
+go back to what you were doing. He's
+still engaged defensive. So the reason
+he's engaged defensive was because the
+fire control radar came on and that's
+enough to basically scare him off which
+is actually fairly realistic.
+So let's go ahead and reset the
+scenario. And this time it's a little
+different because we have a Patriot. A
+Patriot is a much much higher
+performance system. So if I were to
+actually come down here again, we're
+applying what we've learned, so to
+speak. So for example, if I were to grab
+this E model, which we have quite a few
+of these loaded right now, uh you can
+see that a probability of hit is 95%,
+which means it's only going to take a
+single missile fired at a good range.
+Now, Sharp Statisticians will point out
+the fact that 55 miles is 95%. 95% is a
+target that doesn't turn between 2 and
+55 miles. This would go down to about
+60% if we were in a situation where um
+we were firing a missile that knew we
+were firing on it and basically was
+beaming the missile. So, we're going to
+need at least two against a maneuvering
+target against a non-maneuvering target.
+Don't waste our time, so to speak. So,
+let's go ahead and run this through and
+go ahead and like I said, control shift
+F9. Let's head to one more time here. Uh
+we're going to go over to the Patriots.
+We have the Gam Twos and we have the
+errants. The errant are the little ones.
+You'll notice the default is one round.
+Uh they're very confident about the
+Patriots capability here. I'm not as
+confident about the Patriots capability.
+I I know how these things usually go.
+So, what we're going to do is we're
+going to go ahead and reduce the range
+there for shooting at something unknown.
+41 miles is a really long distance. And
+again, I'll use 41. That's a little more
+confident. Again, something that is um
+definitely going to be easily engaged
+here. We probably want to go to no
+escape zone cuz anything super
+maneuverable is going to be very
+challenging. From there, we can
+basically work our way down. So, that'd
+be 50% of max. Less maneuverable
+fighters, we'll keep it at 50% of max.
+That's going to be fine. Bombers,
+they're never going to be able to get
+away from that. So, we'll go down to
+like 35 miles. It's like 2/3. Medium
+performance, we'll go down to 50.
+Everything else, we're just going to pop
+right up to 75% because let's be honest,
+it's it's not going to matter. Uh, let's
+see here. 50 miles for that. Medium
+performance, we'll do 50 miles for that.
+You'd be amazed how easily this uh shot
+is going to go down here. So, we'll do
+75% there. Awax, let's be honest, Awax
+can turn. Uh, UAV is a waste of time,
+but um, you want to shoot those
+basically minimum range here. Tankers,
+75. Don't waste my time. Class two UAVs,
+I'm just going to say in 50% it's UAV.
+They're going to waste your ammo. Guide
+weapons. I'm going to leave all that
+stuff alone. Now, we're going to let the
+errant do its thing here. If anything,
+we can order the errand not to fire. So,
+the errant right there, you've got the
+extended range mode kind of a thing like
+that. And if I scroll down here, let's
+see if I can get you the details. 40 mi.
+So, the errands are going to fire a
+little bit later. So, let's unpause.
+We'll go ahead and flag both of these as
+hostile. the Patriot crew. The
+interesting thing about the Patriot
+compared to the SA2 is an SA2 is a very
+hands-on missile system. The Patriot
+basically a memo pops up and says, "Did
+you want to me shoot me? Would you like
+me to shoot this thing down for you?"
+And all you do is basically say yes. It
+does the job for you. It's actually It's
+kind of weird, but again, it's the way
+it works. All right, we're coming into
+range now. Um, we're not going to fire
+because again, we've adjusted the ranges
+quite dramatically. Now, the interesting
+thing is, um, these are both unknown
+targets right now. We don't actually
+identify them. Again, we don't have that
+NCTR that's going to give us that
+capability. They're going to have to get
+a lot closer before we can safely
+identify them, which is going to give us
+that kind of 50 mile limit. Now, check
+this out. Both of these targets get shot
+at more or less at the same time at a
+range of that's a distance about 40 mi
+away. So, these are actually the
+problem. Nope, those are gams. Those
+aren't errands. But again, that's your
+75% point. Now, the scary thing about a
+Patriot, if you've never seen this thing
+in action, is look at how high it goes.
+It's at about 40,000 ft here. And it's
+just peaking as far as speed goes. And
+now it's going to make its way down. Now
+I can tell you without a doubt this
+would be a fighter. One of the things
+that I wish command has, which it does
+not, is I can't manually mark something
+as a fighter. I know that that's a
+fighter by the speed it just turned and
+how quickly it is. So I should be able
+to flag it as such so that in the future
+we're not wasting missiles. This guy, on
+the other hand, is doomed. [laughter]
+There ain't going to go well for him. As
+a matter of fact, I'll open up the
+little page here so you can watch the
+fireworks kind of do their thing. This
+thing's basically re-entering orbit
+right through his roof. And you can see
+no problem. End game. What was the
+probability it hit there? It was an 85%
+chance to destroy him. And of course, we
+tried to use salvos of Chaff. It's not
+going to happen, guys. Chaff ain't going
+to stop that. Meanwhile, our Mig 21 is
+on the run and he's basically going to
+outrun the missile, which is one of the
+reasons why, like I said, I wish we
+could manually flag him as a hostile
+target. Not as hostile target, but as
+know being a fighter because um he's
+basically going to run out of fuel as he
+runs from us. But I'm not complaining
+about that part. So, as you can see,
+it's all a matter of knowing the
+probability of hit of the weapon, the
+ranges you're engaging at, and the type
+of targets. Enjoy.

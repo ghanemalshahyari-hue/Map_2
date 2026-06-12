@@ -1,0 +1,227 @@
+# C: MO - Ground Targets of Opportunity
+Video: https://www.youtube.com/watch?v=ILGHFWHn6Rk
+Video ID: ILGHFWHn6Rk
+
+hello everyone in today's video we're
+going to be entering one of those
+classic questions that comes up every
+once in a while and it's uh why are my
+facilities not just shooting at things
+now this is one of those things that are
+kind of subtle and it's one of those
+bits where it should be pretty
+straightforward it makes sense but
+doesn't quite make sense and there's
+some context and some WR stuff which
+makes it a little challenging so well
+let's go and take a look at our scenario
+today so we have of course the bb61 Iowa
+yes that Iowa Battleship and of course
+down here we have a bunch of
+fortifications we've managed to throw in
+quite a few here we have 130 millimeter
+cannons uh more than in range of a
+battleship here and you're probably
+observing that neither one of these are
+exchanging fireworthy of course they're
+going well at this point you should be
+taking pot shots at this one and this
+one this should be taking pot shots at
+this one and they should be having a
+heck of old time like that so initially
+you're going to say well there has to be
+a reason for that and it probably has
+something to do with my WRA okay let's
+take a look I'm going to control f59 I'm
+going to go up to a wr8 here I'm gonna
+go take a quick look let's see here uh
+surface contacts uh okay positively
+identified okay we've done that that's
+checked out here all right looks good
+here looks good here let's head over to
+the weapon release authorization let's
+scroll down to Let's see we have the 406
+millimeters you know 18 inch guns and
+let's see what we have here automatic
+firing range firing let's scroll down
+land contact automatic okay automatic
+fire whatever we have for specialized
+everything looks perfectly fine down
+here
+now you're going but I've said
+everything correctly oh this should work
+it should work as a matter of fact if I
+press F1 and I clicked on one of these
+guys on my battleship would start
+shooting away just like that without any
+difficulty and it's actually pretty fun
+to watch these because you'll watch them
+accelerate and then they Arc back down
+and then they start raining death and
+destruction keep in mind this is not one
+shot at a time it's actually very fun to
+watch this so I'm just going to kind of
+appreciate the fireworks here
+oh annihilated and you'll probably also
+notice if I switch back to the other
+team they're gonna grab my group here
+press F1 and go ahead and click on them
+they will more than happily start
+returning fire here but again they have
+the same style WRA that we have on the
+other side my poor battleship's about to
+get hammered here it's okay you can take
+it you can take it shoot back shoot back
+make sure you want to hit F1 you
+actually do that correctly here let's
+see here F1 left click there we go there
+it goes and now the fireworks are
+exchanging back and forth and you can
+see my battleship it's a little worse
+for wear here 130 millimeter cannons are
+actually surprisingly effective against
+this and yes it's got tomahawks and
+stuff like that but that's not the point
+of my demonstration so how do we fix
+this so I'm going to go back and I'll
+reload the scenario real fast oh yeah
+we'll be on blue side here because why
+not of course I probably got my blues
+and my Reds backwards which I do almost
+every time and now nope looks like we
+got it right today
+someone press spacebar and we're gonna
+get rolling again so the initial
+instinct to fix this so control shift up
+to nine here I'm going to go up to the
+surface I'm gonna go ahead and say free
+which now means they can just go to town
+or whatever they're feeling it all right
+nah that's not going to do it for us
+either the reason again is because
+surface targets or opportunity targets
+or manual targets only that means
+anything that is a Surface Target will
+not be engaged unless you tell it to be
+engaged or it's allowed to do
+opportunity fire so in this case what
+I'm going to do is I'm going to press
+Ctrl F9 we're going to come down here
+and this is a lovely button that says
+engage opportunity targets I'm going to
+say yeah go right ahead so what's going
+to happen now is there our battleship is
+going to start loading up all those big
+shells it's going to start calculating
+firing Solutions and you can see it very
+very happily starts popping those really
+really large caliber guys right into our
+little defensive fortifications that you
+see down there one thing you're probably
+also observing is the fact that even
+though it's happily firing away none of
+those bunkers are defending themselves
+and you can see my battleship happily is
+enjoying his little battle here so I'm
+gonna go ahead and head back but keep in
+mind ships versus ships they'll always
+engage each other Surface versus uh
+ships no ships for a surface no so let's
+go ahead and pop this one back in again
+I'm gonna go ahead and press Ctrl shift
+F9 again go ahead and activate the
+opportunity targets we're going to go
+ahead and head up to the top there and
+grab ourselves the other team editor
+switch to go to Red Team Ctrl shift F9
+we're going to go ahead and say yeah go
+nuts okay now we're actually going to
+get some show of fireworks unpause
+battleship's gonna be sitting there he's
+immediately spotted all those
+fortifications meanwhile all of our
+fornications are sitting there are
+slamming their 130 millimeter
+projectiles into the breach the guys are
+sitting there cranking on little wheels
+the rangefinder guys sitting there
+basically working out the range and
+angles and everything like that and
+they're preparing to fire so let's go
+head over to the other team real quick
+I'll go ahead and collect any of these
+real fast and we can kind of see what's
+going on here shift F1 if I click on it
+you'll notice that we have a 163 second
+time delay the reason for the delay by
+the way is because they actually have to
+load the gun they have to calculate the
+range which for those of you who are
+uninitiated to range calculation with
+visual means it is uh it's an experience
+it's an experience but you can see at
+this point the battleship is just having
+a good old time here just kind of
+blowing everything I can see ah now the
+battle begins and you can see our Iowa's
+going at it here it's actually pretty
+entertaining because I'm I've got a lot
+of points in the Iowa being able to
+survive all this but if something
+important expensive gets hit um our Iowa
+is going to be right out of the fight
+here and I'm kind of getting the feeling
+like something expensive or important
+got hit on the Iowa so let's go take a
+look at him real fast and see how he's
+doing you know just on principle here uh
+let's see what got hit what got hit
+let's see we've probably lost one of our
+406s new we only lost one of our 406s
+that's probably an issue we're having to
+reload here let's see we have here we
+live out of range yeah everything's out
+of range does not surprise me and the
+406's weapon is loading that's right
+they are kind of Battleship guns I guess
+they do take a minute continue the
+battle I say
+of course this is stupid you'd never
+turn into the guy like that if you turn
+into them like that yes you get a
+smaller profile Target for those of you
+who are big fans of old school but
+unfortunately now you're masking your
+reader guns which can't fire and um it
+can be pretty problematic one it's
+really really critical to be able to hit
+the really really big stuff here
+there we go
+only in command
+as I said I fully expected the
+battleship to survive that now what I'm
+really really curious about now this is
+one of those fun things I know this has
+nothing to do with what I'm explaining
+oh they still got to fix that uh you'll
+notice here that we went through this
+much ammunition to um actually they went
+through that much that's uh 468 rounds
+of 130 millimeter but here's the joke
+look at how much I went through as a
+battleship as a matter of fact if I were
+to hit him out of my magazines real
+quick let's say this one real fast uh
+okay so it's not going to tell me
+exactly I'd have to actually look and
+not break it down individually but you
+can see I've gone through you know three
+quarters of my ammunition so far but
+other than that the key thing to take
+away is that when you do do your WRA you
+need that opportunity targets if you
+want them just to go willingly keep in
+mind when you do that with aircraft they
+go willy-nilly even if it's something
+stupid like a building or a Hut so keep
+that in mind enjoy

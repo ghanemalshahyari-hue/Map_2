@@ -1,0 +1,235 @@
+# C: MO - SEAD and DEAD
+Video: https://www.youtube.com/watch?v=W1ag1FPJMGk
+Video ID: W1ag1FPJMGk
+
+hello everyone in today's video we're
+going to be taking a look at some more
+tactics and this time we're going to be
+looking at the classic seed indeed
+technique so let's go ahead and take a
+look so first things first we have
+ourselves a pretty classic scenario i'm
+sure you've probably seen a variation on
+this many many many many times if you
+have a sam site that's just sort of
+chilling and has some sort of early
+warning radar and you have a couple
+different aircraft for the purposes of
+destroying them
+now what makes this particular scenario
+a little on the tricky side is the fact
+that generally your anti-sam weapons
+have a pretty hefty range however
+the sims themselves that often have a
+very very hefty range as well and to
+make things even more difficult when
+you're using some kind of anti-radiation
+missile such as the harm that we're
+packing right here you unfortunately are
+required to have a positive target lock
+which means the radar has to be emitting
+in order for you to be able to get a
+successful launch and a successful a hit
+usually now one of the things that
+modern sam drivers will actually do is
+they'll shut down their radar when they
+detect a harm launch so that basically
+they can't get struck by it so we're
+going to take a look at today is kind of
+a classic method to trick the sam to
+turning on its radar to making a nice
+and easy target and then making it a
+nice easy complete kill here so let's go
+and take a look what we're working with
+here
+so over on the side we have ourselves an
+f-16 cm of course and uh it's gonna be
+packing agm-88c which is a really nice
+weapon it's so superior to the strike if
+you've tried that one out before over in
+the north here we have ourselves this is
+our deed platform he has a couple cpu
+103s which are these amazing amazing
+amazing cluster bomb units we know over
+here that there's a sam too uh they've
+no doubt identifying us thanks to this
+handy-dandy tin shield that's been
+basically painting us this entire time
+so let's go ahead and get some
+strategics here i'm going to switch over
+to our terrain view and take a look
+uh here we are so taking a look i notice
+there's a pretty large mountain range
+here and i also know just doing the math
+real quick that the overall range here
+is going to put us right on this limit
+here meaning if i park my guy over here
+i'll be within the range of the sam site
+but still able to duck for cover
+meanwhile of course our other buddy is
+basically going to kind of hang out so
+this is how we're going to do this we're
+going to grab our deed platform we're
+going to order him to cruise down here
+like this go way way way way way way
+down meanwhile we're going to grab our
+seed platform and have them flow towards
+the target region now here's one of the
+important parts about the seed versus
+deed you've got to keep the seed in
+range but you've also got to keep the
+deed out of the range of the sam system
+so basically you're going to have this
+particular f-16 act as the bait and you
+can have this one basically deliver the
+kill shot after the kill shot's been
+made we're just going to basically walk
+right up and up knock so that we can
+kind of finish the job here so let's go
+ahead now i come sneaking in here you
+see now many of you are saying why don't
+you just fire this arm as soon as you
+get in range when the thing launches on
+you well because then you're running and
+if you need to fire a second harm you
+could already be in a lot of trouble
+here so what i'm going to do is i'm in
+order him to come down to a loiter speed
+i'm going to take my deed guy here i'm
+going to pop them up to 12 000 and i'm
+going to send them all the way to
+afterburner speed now notice i'm
+completely within range of the sam site
+here but i want to go as slow as
+possible so what i'm going to do is i'm
+going to charge the same and then i'm
+going to dive into this cover right here
+so again i'm going to pop up to about 12
+000 feet to go ahead and put on my view
+here so we can see a little more clearly
+that's about 6 500 we're moving quick
+we're moving quick so the sam site's
+smart he's going to be starting to do
+his dlz calculations which are basically
+the dynamic launch zone he's going to be
+looking at the f-16 going wow he's
+closing at me at 700 knots which means i
+can fire very very long range sam and i
+should still be able to hit him without
+too much of difficulty now the reason
+this works so well is because he's going
+to get that right as we dive for cover
+down here which is basically going to
+save us from the embarrassment of
+getting hosed here so i'll go ahead and
+come down here i'll bleed off a little
+bit of that speed of course our f-16
+bunny in the back needs to stay just
+outside of the range it looks like just
+outside of the range is going to put us
+here so go ahead and do a zigzag pattern
+at a loiter speed here so that it can
+drop that harm as soon as the target
+gets engaged we're going to get a little
+closer right now that sam is looking
+right out of his window going okay this
+is an easy one this is an easy one we
+just got a point at them of course this
+becomes the game we're completely within
+his range but they have not fired on us
+yet now one of the neat things about
+doing this mission with an f-35 it's
+f-35 has got that really really
+sophisticated sensor which makes it much
+much much easier to actually identify
+when you're being fired on so we're
+getting a little closer we're getting a
+little closer you can already see how
+dangerous this is because basically this
+guy's the bait and meanwhile this guy's
+buddy he's gonna have to be really
+really quick about uh delivering that
+weapon as soon as he has the ability one
+of the things you can do is you could
+actually pre-arm this thing if you
+wanted to so as soon as the target does
+start ready there it is
+so now we're just going to drag this
+muscle downwards and notice my arm is
+already on the way we'll go ahead and
+deliver a second one
+this f-16 is just going to turn and burn
+turn and burn turn and burn
+meanwhile we're going to start kind of
+just hanging out this way
+i played more than enough uh dcs to know
+the bbb
+that's going to be honking in your ears
+during this entire engagement so what
+we're going to do is we're going to grab
+him we're going to pull him right back
+around have him pop back up and we're
+going to have that a targeting radar
+locked back onto him so the goal here is
+to basically trick the targeting radar
+to being like oh he's coming back for
+more is he we'll go ahead and fire
+another one there it is afterburner
+turn around
+we're just going to dive right from an
+altitude
+[Laughter]
+that was a mistake
+we'll go ahead and pop this guy back up
+come out of military come back up to
+medium altitude
+and splash one splash two delightful so
+now we're just gonna go up and kind of
+mop things up here i'm gonna go ahead
+and order up a regular attack you know
+i'll take it at a nice leisurely speed
+here you know i'm also gonna send this
+guy over here as well you know we might
+as well do a little bit of a gun runs on
+this guy down too so go ahead and drop
+him down to let's call it 2000 feet
+actually that might be a little low
+because they have something in the
+shoulder launch they might surprise us
+there send this guy down to 12 000 feet
+also send them in a nice leisurely
+cruise we're just going to come swinging
+on in here like this
+lock ourselves on i'll go ahead and give
+them
+a couple of these oh we have a terrain
+limitation let's make sure we haven't
+made that mistake
+now let's see here terrain limitation
+between 10 000 feet so we need 10 000
+feet agl here the local altitude is
+23.88 so we actually need to come up a
+little higher but that's fine
+come right on top of this guy
+and we're just going to kind of deliver
+a couple of these and we're ready to go
+right back home so we're going to order
+this guy to come flying home meanwhile
+we're going to send this guy in for a
+really fun gun run and let's go ah it
+doesn't matter the sam site is
+obliterated all right folks you did a
+good job you can head home so hopefully
+you see by this video how you can
+basically use one aircraft to basically
+keep somebody distracted while you use
+the other aircraft to continually guide
+now back in the vietnam war when you had
+all sa2s and you're running to a
+situation where this really lousy strike
+missiles you basically had to use this
+strategy in order to be successful
+hopefully that helps out as far as i
+come up with ways to kind of defeat
+those systems effectively but until then
+enjoy

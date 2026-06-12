@@ -9,9 +9,1661 @@
       "id": "layer-1",
       "name": "Layer 1",
       "visible": true,
+      "active": false
+    },
+    {
+      "id": "layer-2",
+      "name": "استيراد · 2 ملفات",
+      "visible": true,
       "active": true
     }
   ],
   "__folders": [],
-  "features": []
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.70730746443389,
+          23.7836292858872
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.70730746443389,
+            23.7836292858872
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c331"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.7148408522297,
+          23.78941513228274
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.7148408522297,
+            23.78941513228274
+          ],
+          "sidc": "10031002161211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "p33c"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.70467343093544,
+          23.792327029798432
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.70467343093544,
+            23.792327029798432
+          ],
+          "sidc": "10031002181211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "b3c"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.716387852379505,
+          23.780187549520406
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.716387852379505,
+            23.780187549520406
+          ],
+          "sidc": "10031002211211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "lc"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.588460712228,
+          23.782369751467208
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.588460712228,
+            23.782369751467208
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c332"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.739756040091045,
+          23.87699484420227
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.739756040091045,
+            23.87699484420227
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c333"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.53590413302674,
+          23.802497478533315
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.53590413302674,
+            23.802497478533315
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c321"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.53601035272089,
+          23.811526732658862
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.53601035272089,
+            23.811526732658862
+          ],
+          "sidc": "10031002161211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "p32c"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.44279016989198,
+          23.813781645770117
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.44279016989198,
+            23.813781645770117
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c322"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.52351359863308,
+          23.859240466217948
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.52351359863308,
+            23.859240466217948
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c323"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.69520014589905,
+          23.909005921192417
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.69520014589905,
+            23.909005921192417
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c311"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.70258686036208,
+          23.90305498271687
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.70258686036208,
+            23.90305498271687
+          ],
+          "sidc": "10031002161211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "p31c"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.61042675926793,
+          23.91623834185816
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.61042675926793,
+            23.91623834185816
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c312"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.69678850915183,
+          23.970390253029624
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.69678850915183,
+            23.970390253029624
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c313"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.43069709327611,
+          23.87457969799194
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.43069709327611,
+            23.87457969799194
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c231"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.436508886587006,
+          23.867301149482998
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.436508886587006,
+            23.867301149482998
+          ],
+          "sidc": "10031002161211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "p23c"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.42472650131829,
+          23.867410643660442
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.42472650131829,
+            23.867410643660442
+          ],
+          "sidc": "10031002181211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "b2c"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.333708745981184,
+          23.887732560093408
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.333708745981184,
+            23.887732560093408
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c232"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.425663446426285,
+          23.934950209550685
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.425663446426285,
+            23.934950209550685
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c233"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.29550498999953,
+          23.92734313539254
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.29550498999953,
+            23.92734313539254
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c221"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.27452537212632,
+          23.921919445042008
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.27452537212632,
+            23.921919445042008
+          ],
+          "sidc": "10031002161211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "p22c"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.209892232249445,
+          23.954682529054367
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.209892232249445,
+            23.954682529054367
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c222"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.25470785524347,
+          23.975545361544373
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.25470785524347,
+            23.975545361544373
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c223"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.37514038620233,
+          23.969817327286815
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.37514038620233,
+            23.969817327286815
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c211"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.3599757660869,
+          23.95758053310596
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.3599757660869,
+            23.95758053310596
+          ],
+          "sidc": "10031002161211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "p21c"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.30097819243857,
+          23.99304085456901
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.30097819243857,
+            23.99304085456901
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c212"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.34354292837244,
+          24.01227025084114
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.34354292837244,
+            24.01227025084114
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c213"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.60621682169228,
+          23.972900226381938
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.60621682169228,
+            23.972900226381938
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c131"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.59098258976293,
+          23.95671469343811
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.59098258976293,
+            23.95671469343811
+          ],
+          "sidc": "10031002161211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "p13c"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.58378842953125,
+          23.96301979300171
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.58378842953125,
+            23.96301979300171
+          ],
+          "sidc": "10031002181211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "b1c"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.51758466516092,
+          23.98211028290499
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.51758466516092,
+            23.98211028290499
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c132"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.614542041944844,
+          24.033674158627313
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.614542041944844,
+            24.033674158627313
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c133"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          54.997546687257056,
+          22.765429760040284
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            54.997546687257056,
+            22.765429760040284
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c121"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.47705833991728,
+          24.022148750948713
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.47705833991728,
+            24.022148750948713
+          ],
+          "sidc": "10031002161211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "p12c"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.400361999512455,
+          24.039214124072206
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.400361999512455,
+            24.039214124072206
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c122"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.4501215763008,
+          24.057263038469166
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.4501215763008,
+            24.057263038469166
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c123"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.568745092019626,
+          24.059524342964476
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.568745092019626,
+            24.059524342964476
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c111"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.55927194882782,
+          24.056821881558065
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.55927194882782,
+            24.056821881558065
+          ],
+          "sidc": "10031002161211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "p11c"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.501079092381595,
+          24.084132942986717
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.501079092381595,
+            24.084132942986717
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c112"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52.54989367008565,
+          24.10287972589582
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "symbol",
+          "latlng": [
+            52.54989367008565,
+            24.10287972589582
+          ],
+          "sidc": "10031000151211020000",
+          "textModifiers": {
+            "size": 13,
+            "simpleStatusModifier": true,
+            "uniqueDesignation": "c113"
+          },
+          "statusKey": "status-operational"
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            52.146847145079015,
+            23.959267912584043
+          ],
+          [
+            52.17060960144488,
+            23.96110046913144
+          ],
+          [
+            52.19463622144344,
+            23.961998669941185
+          ],
+          [
+            52.218119439757295,
+            23.966550813071137
+          ],
+          [
+            52.241257445018164,
+            23.972562264092687
+          ],
+          [
+            52.2638027292081,
+            23.97985146505132
+          ],
+          [
+            52.286758533720466,
+            23.986179769852548
+          ],
+          [
+            52.30887073409495,
+            23.99480146224255
+          ],
+          [
+            52.32733904668168,
+            24.007907234344014
+          ],
+          [
+            52.34525309796544,
+            24.02130928597043
+          ],
+          [
+            52.364982482427735,
+            24.033767729453995
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "tmg-group",
+          "points": [
+            [
+              52.146847145079015,
+              23.959267912584043
+            ],
+            [
+              52.17060960144488,
+              23.96110046913144
+            ],
+            [
+              52.19463622144344,
+              23.961998669941185
+            ],
+            [
+              52.218119439757295,
+              23.966550813071137
+            ],
+            [
+              52.241257445018164,
+              23.972562264092687
+            ],
+            [
+              52.2638027292081,
+              23.97985146505132
+            ],
+            [
+              52.286758533720466,
+              23.986179769852548
+            ],
+            [
+              52.30887073409495,
+              23.99480146224255
+            ],
+            [
+              52.32733904668168,
+              24.007907234344014
+            ],
+            [
+              52.34525309796544,
+              24.02130928597043
+            ],
+            [
+              52.364982482427735,
+              24.033767729453995
+            ]
+          ],
+          "typeId": "scalloped",
+          "color": "#3b82f6",
+          "filled": false,
+          "dashed": false,
+          "strokeWidth": 1.5
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            52.364982482427735,
+            24.033767729453995
+          ],
+          [
+            52.38759348689879,
+            24.041988382122412
+          ],
+          [
+            52.41057134487292,
+            24.049588970992538
+          ],
+          [
+            52.43306783560023,
+            24.059137088944976
+          ],
+          [
+            52.45260692934983,
+            24.073065370162272
+          ],
+          [
+            52.46446022816957,
+            24.090342732248292
+          ],
+          [
+            52.48726423896669,
+            24.09974838107056
+          ],
+          [
+            52.510400707099016,
+            24.107841929776058
+          ],
+          [
+            52.532428585618995,
+            24.118376682367117
+          ],
+          [
+            52.5552364,
+            24.1277839
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "tmg-group",
+          "points": [
+            [
+              52.364982482427735,
+              24.033767729453995
+            ],
+            [
+              52.38759348689879,
+              24.041988382122412
+            ],
+            [
+              52.41057134487292,
+              24.049588970992538
+            ],
+            [
+              52.43306783560023,
+              24.059137088944976
+            ],
+            [
+              52.45260692934983,
+              24.073065370162272
+            ],
+            [
+              52.46446022816957,
+              24.090342732248292
+            ],
+            [
+              52.48726423896669,
+              24.09974838107056
+            ],
+            [
+              52.510400707099016,
+              24.107841929776058
+            ],
+            [
+              52.532428585618995,
+              24.118376682367117
+            ],
+            [
+              52.5552364,
+              24.1277839
+            ]
+          ],
+          "typeId": "scalloped",
+          "color": "#3b82f6",
+          "filled": false,
+          "dashed": false,
+          "strokeWidth": 1.5
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            52.146847145079015,
+            23.959267912584043
+          ],
+          [
+            52.146847145079015,
+            23.959267912584043
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "tmg-single",
+          "latlng1": [
+            52.146847145079015,
+            23.959267912584043
+          ],
+          "latlng2": [
+            52.146847145079015,
+            23.959267912584043
+          ],
+          "typeId": "circle-x",
+          "color": "#3b82f6",
+          "filled": false,
+          "dashed": false,
+          "strokeWidth": 1.5
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            52.364982482427735,
+            24.033767729453995
+          ],
+          [
+            52.364982482427735,
+            24.033767729453995
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "tmg-single",
+          "latlng1": [
+            52.364982482427735,
+            24.033767729453995
+          ],
+          "latlng2": [
+            52.364982482427735,
+            24.033767729453995
+          ],
+          "typeId": "circle-x",
+          "color": "#3b82f6",
+          "filled": false,
+          "dashed": false,
+          "strokeWidth": 1.5
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            52.5552364,
+            24.1277839
+          ],
+          [
+            52.5552364,
+            24.1277839
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "tmg-single",
+          "latlng1": [
+            52.5552364,
+            24.1277839
+          ],
+          "latlng2": [
+            52.5552364,
+            24.1277839
+          ],
+          "typeId": "circle-x",
+          "color": "#3b82f6",
+          "filled": false,
+          "dashed": false,
+          "strokeWidth": 1.5
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            52.3730842,
+            23.8073611
+          ],
+          [
+            52.7166339,
+            24.0083803
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "polyline",
+          "color": "#3b82f6",
+          "weight": 4,
+          "dashArray": null
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            52.7166339,
+            24.0083803
+          ],
+          [
+            52.8780314,
+            23.8889767
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "polyline",
+          "color": "#3b82f6",
+          "weight": 4,
+          "dashArray": null
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            52.8780314,
+            23.8889767
+          ],
+          [
+            52.599389,
+            23.6554088
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "polyline",
+          "color": "#3b82f6",
+          "weight": 4,
+          "dashArray": null
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            52.599389,
+            23.6554088
+          ],
+          [
+            52.3730842,
+            23.8073611
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "polyline",
+          "color": "#3b82f6",
+          "weight": 4,
+          "dashArray": null
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            52.364982482427735,
+            24.033767729453995
+          ],
+          [
+            52.54485905,
+            23.9078707
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "polyline",
+          "color": "#3b82f6",
+          "weight": 4,
+          "dashArray": null
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            52.54485905,
+            23.9078707
+          ],
+          [
+            52.3730842,
+            23.8073611
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "polyline",
+          "color": "#3b82f6",
+          "weight": 4,
+          "dashArray": null
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            52.3730842,
+            23.8073611
+          ],
+          [
+            52.146847145079015,
+            23.959267912584043
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "polyline",
+          "color": "#3b82f6",
+          "weight": 4,
+          "dashArray": null
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            52.5552364,
+            24.1277839
+          ],
+          [
+            52.7166339,
+            24.0083803
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "polyline",
+          "color": "#3b82f6",
+          "weight": 4,
+          "dashArray": null
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            52.7166339,
+            24.0083803
+          ],
+          [
+            52.54485905,
+            23.9078707
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "polyline",
+          "color": "#3b82f6",
+          "weight": 4,
+          "dashArray": null
+        },
+        "layerId": "layer-2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            52.54485905,
+            23.9078707
+          ],
+          [
+            52.364982482427735,
+            24.033767729453995
+          ]
+        ]
+      },
+      "properties": {
+        "app": {
+          "kind": "polyline",
+          "color": "#3b82f6",
+          "weight": 4,
+          "dashArray": null
+        },
+        "layerId": "layer-2"
+      }
+    }
+  ]
 }

@@ -1,0 +1,350 @@
+# C: MO - Effect of Generation on DECM
+Video: https://www.youtube.com/watch?v=Wu01igw5w9I
+Video ID: Wu01igw5w9I
+
+hello everyone in today's video we're
+going to be taking a look at defensive
+ECM versus a generation of seekers now
+the purpose of this video is basically
+to kind of show you the impact of
+different generations of both radar and
+decm and kind of how they interact with
+each other so to kind of get us kicked
+off with this one I've got our 737 there
+unfortunate victim that's going to be
+flying towards this first generation
+sa25 but to get you a degeneration what
+I'm actually going to do is start by
+going over to our database viewer here
+now in our database viewer if you're go
+down a facility and type in something
+I'll go ahead and pick on something old
+school here like an sa 6 and if you're
+actually to click on it one of the
+things you probably notice when you're
+reading through all this great data here
+is the fact that you probably saw that
+the straight flesh radar which is our
+Fire Control radar has a specific
+technology band a certain generation to
+it the other thing you probably observed
+is when you're looking at certain types
+of sensors I'll go ahead and pick a decm
+here we keep it nice and easy today
+generic decm you probably observe the
+fact that when you clicked on one of
+these items you'll also notice that
+there is a generation associated with it
+now those two generations actually have
+a big integral part of what they
+actually affect on each other so what's
+going to happen here is we have
+ourselves a 737 and what I'm going to do
+is I'm going to go ahead and equip it
+with some nice simple decm now what you
+probably observed here is when we came
+in here a minute ago we actually did
+generic decm is that there were
+different years associated with them and
+different levels of Effectiveness now
+remember decm is different than oecm
+again electronic countermeasures and
+that it is designed to make the target a
+little bit harder to hit by incoming
+weapons than it is to completely hide
+the weapons in the very early days of
+any sort of ECM basically you try to be
+the loudest noise in the room so they
+couldn't identify exactly where you are
+so they couldn't engage you smoothly
+decm on the other hand tries to make
+that kind of last point of contact
+between you and the weapon more
+ambiguous so one of the strategies they
+would do of course is they do things
+like du a range gate range gate pulloff
+technique where basically once they
+locked you up in range you create a wide
+version of your blip and actually drag
+the range gate off of you other
+techniques they would use include things
+like side load attacks or side Lo rather
+not side load attacks where basically
+you trick the target into thinking that
+you're slightly to the right or slightly
+to the left of your actual original
+position all these different electronic
+techniques of course are vary depending
+on what was going on so what we have
+here is we have a weapon launch and you
+can see this is a good old fashioned
+essay one here I tried to pick something
+a little old fashioned for this and the
+saay one is about as oldfashioned as
+you're going to get now this particular
+weapon as you probably observe like I
+said is going to be a 1950s generation
+weapon notice by the way that our Seeker
+does not have a generation on it but the
+weapon itself does so if I do sa1 this
+would be the B model here um of course
+we already saw that from before I click
+on that real quick and you can see here
+that it is a 1950s technology as well so
+the weapons coming in are 737 is not
+going to do any maneuvering or anything
+like that these weapons are just
+tracking straight we've got nothing
+fancy but remember we have that
+1970s decm on board again that's going
+to be doing some basic kind of magic for
+the purposes of trying to get out of the
+way or basically confuse the last couple
+seconds of the impact here so here comes
+the first weapon and I'll go ahead and
+pause here and I can see here our decm
+tried to jam but it failed I'm actually
+going to open this box up real quick so
+what you're going to notice here is it's
+going to give you good little details
+the decm is 7s technology pretty fair
+against a 50s technology weapon so now
+if you take a look here our actual
+probability of actually jamming that
+weapon or preventing it from basically
+hitting us smoothly most of these
+weapons were worked out to be about 20%
+we rolled a 79 so it's a failure second
+weapon arrived and you can actually see
+here that our generic decm actually
+succeeded uh we had a one in five chance
+of blocking that 1950s technology with
+our
+1970s device so of course the sa1
+batteries got to open back up again in a
+few moments and take a couple more pot
+shots at us because you know why would
+they just sort of sit around
+waiting uh I think the first two didn't
+hit Chief uh let's s with some more so
+here comes the next group I'm sure one
+of these probably got to do the job
+here boom that did it so now if you take
+a look here you can see that we tried to
+jam them the first one we actually
+succeeded which caused the weapon to
+miss the target second time we failed
+again we need a 20% chance and it was an
+81 probability and of course Wham that
+weapon actually clicked us so we needed
+a 25 to hit we rolled a five so we blew
+up so now the interesting thing is when
+the decm starts to get a significant
+improvement over the performance of the
+actual radar that's targeting you so so
+what I'm going to do is grab my little
+sensors here I'm going to remove this
+generic decm again this the simple 1970s
+flavor and we're going to add in
+something a little bit more effective
+here by the way decm does not give you
+away so what I'm going to do is grab
+some
+uh now nothing Beats 2020s decm
+technology which is got to have digital
+automatic emitter IDs and it's got to
+have tools that will dynamically use
+different methods constantly
+electronically they probably use a
+phased array in order to block it it's
+pretty fancy stuff now one of things I
+have to emphasize with any decm is you
+have to remember no matter what
+generation is it doesn't hide you from
+being attacked the only thing it does is
+reduce the probability of the weapon
+actually making a successful hit on you
+so here comes our two weapons up here
+and now things are going to get a little
+bit different this time so I'm going to
+go and open up our little view here so
+we can watch kind of the Terminus here I
+love how you can click on one of these
+missiles and actually see how many
+seconds there is to impact two one again
+those last second little updates here it
+comes and we got the next one coming in
+right here missm all right so our chance
+here if you take a look here it's Night
+2020s Technology on my huge airplane by
+the way it's trying to spoof 50s
+technology you'll notice my probability
+jumped up to 35% and now of course
+didn't succeed here that happens now if
+you come over here you'll notice that
+again 2020 is technology vers 1950s
+technology we kept that 35% but on
+either one of our jamming actually
+succeeded and again that's an important
+fact about decm is it does not prevent a
+missile from tracking it just makes it
+much harder for it to make a nice clean
+hit on on the target you'll see both
+times we've actually failed every single
+jamming attempt the sa1s are just not
+the world's best surfaced air missile
+for this particular purpose but it does
+demonstrate the point very clearly and
+then in a moment of course we'll flip
+everything around seriously seriously so
+my Advanced 2020s jamming is doing an
+abysal job here but you know what else
+is doing an abysal job the sa W it has a
+one in4 chance to hit here so that has
+not gone so well here ah oh that did it
+and you can see again even though it was
+2020s technology it's the ECM you still
+can get struck now where this calculus
+gets a little more interesting of course
+is when you flip the table around so
+what I'm going to do is I'm going to
+grab myself I'm going go right down here
+to this of course had an sa1 I'm going
+to switch this to something slightly
+more
+advanced
+sa27 oh yeah there we go this is not
+very fair here this is a very very very
+very very very modern system it's it's
+it's unbelievable and you can see here
+it's early 2010's radar technology here
+it's absolutely fantastic IC so we're
+going to go ahead and run back to our
+the boy here our little 37 and we're
+going to double check to make sure that
+they only have that generic simple one
+from the
+1970s so let's go ah on pause here we'll
+have our 737 500 again this is a drone
+don't worry there's nobody on board it's
+going to fly into range of this
+extremely capable surface St missile
+system and of course he's waiting until
+he gets into the dlz before he takes his
+shot he's sitting there carefully
+adjusting twisting it notice by the way
+have 27 Miss
+not sorry 256 missiles on this thing it
+is such an obnoxious weapon uh let's see
+here fire Dome Grinch I'll be definitely
+don't want that I just want to confirm
+that I haven't accidentally cuz I do
+that all the time ah it is 20,000 ft I
+knew it so what I'm going to do is I'm
+going to grab on my 737 and Order him to
+get down to uh 18,000 ft kind of a thing
+like that one of the cool things is you
+can actually right click and you can
+actually edit unit properties and you
+could do this yourself if this ever
+happens to you like it always happens to
+me put you back here all right fantastic
+all right 737 is going to roll in here
+we're in the correct firing parameters
+take a few moments I'm just going to
+check to make sure I haven't goofed up
+on this side here looks pretty good
+shift F1 I was going to say we're not
+quite in position yeah we're just not in
+the range that we need to be one thing
+we could do too is that we can actually
+do Cooperative engagement but I'm going
+to be lazy there we go let's get him a
+little bit there it goes now this is
+where things are going to flip around we
+have an extremely modern Seeker versus
+extremely classic DEC M system so I've
+got some bad feeling for our poor oh boy
+oh boy this is going to go poorly
+SP now if I open up the generic decm
+here what you'll observe here is the
+active radar Seeker is early 2010s
+you'll see that my original probability
+which if you remember I think it was
+like 15% is now 5% because the Seeker is
+just that much better so when you're
+always considering the calculus remember
+the missile Seeker will always do better
+than the decm that's just kind of one of
+those things now there are other things
+we could have done here too of course we
+could have put a bunch of oecm on know
+basically a bunch of jamming platforms
+to make things interesting and of course
+you can do some really really silly
+stuff so um by silly stuff let me go
+show you what I mean by that so I'm
+going to go run over here real quickly
+here I'm going grab myself another copy
+that 737 uh that's fine classic doesn't
+bother me oh there's no passengers it's
+remote control and now what we're going
+to do here is cheat just a tiny bit now
+this is always kind of fun to do so
+let's go ahead and do one of these one
+of these I'm going to go ahead and type
+in a generic decm and I'm going to grab
+one of these
+[Laughter]
+all right let's go ahead and order him
+to get into the lethal range here we'll
+have to order him down to 18,000 ft
+again and um is he going to get there in
+time probably not I'll go ahe edit his
+properties real quick here here oh oh my
+gosh we need that let's do 18,000 ft
+enter looks good to me
+okay I know what you're
+thinking all right here we go this will
+be entertaining so let's go over to our
+red guy here is's locking on to him keep
+in mind ECM won't stop you from being
+launched on it's just going to make the
+missile less accurate all right here
+comes our first missile all right here
+it comes it's closing in it's coasting
+it's coasting it's looking pretty clean
+clean whenever you do any decm in
+command here you will observe the fact
+that it actually will trigger all the
+decms on board a particular platform so
+in this particular case every single
+Jammer had one shot at actually jamming
+the missile which is actually kind of
+funny and if you come down here you'll
+see our final probability success was
+about a one in4 chance which means he's
+going to go through an awful lot of
+missiles actually look at
+this I don't even want to work the
+probability out on that but I think it
+works out to be about 78% so as you can
+see my 737 is um oh we got him
+eventually it had to get through every
+single one of these Jammers in order to
+connect with the actual Target which is
+just sort of a fun little thing to play
+with so if you're looking for a way to
+make things a a little more challenging
+for enemies without them realizing what
+magic you're pulling off one of the fun
+techniques to use is this one cuz
+remember it only takes one successful
+platform to actually work here to be
+able to do this now if you wanted to go
+extrapolate this even greater remember
+there are other countermeasures you can
+use like chaff so you can get pretty
+excessive if you want an aircraft that
+you literally cannot shoot down with a
+missile but other than that enjoy

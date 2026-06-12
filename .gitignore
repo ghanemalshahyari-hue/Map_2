@@ -4,6 +4,13 @@ UI_MOdified/node_modules/
 # Large map tile files
 *.mbtiles
 
+# Local/offline heavyweight artifacts. Keep these on disk or in transfer bundles,
+# not in git history.
+UI_MOdified/TestingAI/SmartSearch/litellm/litellm-image.tar
+UI_MOdified/TestingAI/_archive/source_data/geo/*.tif
+UI_MOdified/Offline_Deployment/dist/
+UI_MOdified/Offline_Deployment/TestingAI_Runtime/runs/
+
 # Uploads (user-generated at runtime)
 UI_MOdified/uploads/
 
@@ -27,6 +34,16 @@ Desktop.ini
 # Environment / secrets
 .env
 .env.*
+# …but the committed TEMPLATES (no secrets, document the vars) stay tracked.
+!UI_MOdified/.env.example
+!UI_MOdified/Offline_Deployment/.env.offline.example
+
+# Offline deployment CA certificate — operator-supplied at the site, never committed.
+# Only the README placeholder in certs/ is committed.
+UI_MOdified/Offline_Deployment/certs/*.crt
+UI_MOdified/Offline_Deployment/certs/*.pem
+UI_MOdified/Offline_Deployment/certs/*.key
+UI_MOdified/Offline_Deployment/dist/bundle/.env.offline
 
 # AI gateway local secrets (api keys, etc.) — never commit.
 # `ai-config.js` is the committed defaults; this overlay file (if present)
@@ -45,3 +62,22 @@ UI_MOdified/data/units.db
 # NOTE: deliberately scoped to *.tmp.* only. The real journals (data/journal/*.jsonl)
 # and seed plans (data/users/**/*.geojson) are intentional baseline data and stay tracked.
 UI_MOdified/data/users/**/*.tmp.*
+
+# one-time bootstrap admin password — secret, never commit
+UI_MOdified/data/BOOTSTRAP_PASSWORD.txt
+
+# LOCAL-IMPORT-2: local Wargame output drop. Run folders copied here are bulk
+# generated geojson (large, machine-local) — ignore them. Keep the folder on a
+# fresh clone by tracking ONLY the README + .gitkeep.
+UI_MOdified/data/imports/wargame_outputs/*
+!UI_MOdified/data/imports/wargame_outputs/README.md
+!UI_MOdified/data/imports/wargame_outputs/.gitkeep
+
+# Local API key/archive secret files
+UI_MOdified/TestingAI/_archive/apik.rtf
+
+# MDMP-EXTERNAL-1: raw drop from the other AI app's MDMP pipeline. Its
+# step2_task_analysis.py carries internal LLM endpoint IPs — never commit the
+# raw folder. Sanitized key-schema fixtures live (tracked) under
+# UI_MOdified/devtools/fixtures/mdmp-external/.
+UI_MOdified/TestingAI/Other_App_Ai_Generated output/

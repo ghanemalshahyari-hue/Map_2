@@ -1,0 +1,313 @@
+# C: MO - 'Chainsaw' Patrol Mission Pattern
+Video: https://www.youtube.com/watch?v=-c-IH_4sI-A
+Video ID: -c-IH_4sI-A
+
+Hello everyone. In today's video, we're
+going to be taking a look at one of the
+latest additions to our beta version of
+Command Modern Operations, and that is
+the chainsaw patrol method. Now, what is
+the chainsaw patrol method? Well, it
+took me a little bit of digging and kind
+of diving around, and I'm familiar with
+it as an air warfare technique, but the
+short version, if I borrow this lovely
+Reddit post right here, is you're going
+to design it so that you have aircraft
+always going away from the carrier, and
+you have aircraft that are always coming
+back to do things like getting refueling
+from the carrier. So, for a traditional
+combat air patrol, basically you're
+going to do a big old donut here,
+keeping an eye in for things. The idea
+with this one is we're going to extend
+the range to go all the way out, get
+some gas, go back out, get some gas,
+kind of a thing like that. Basically, go
+back and forth. Now, the interesting
+thing is this is something we've been
+able to do for a while. If you wanted to
+do specific types of missions, you could
+basically build a point here, a point
+here, point here, point here, point
+here, point here, and it would be quite
+a bit of points to say the least. So,
+what we're going to try to do is we're
+going to try to recreate it using our
+new features built into this particular
+beta version. So, let's go ahead and
+pause the party. A couple different
+things I need to do. First thing is I
+need to get an Awax cuz I know there's a
+lot of trouble in this ocean out here.
+And the least of our worries, of course,
+is going to be submarines. I would know
+cuz I didn't add any. But, let's go
+ahead and add our handydandy Awax first.
+We'll do that one immediately. One of
+the things I'm going to do is I'm going
+to set these to be a fixed bearing to
+our little carrier battle group. The
+reason I'm doing that is I want them to
+follow the carrier as the carrier moves.
+So, we'll call it awax spot. Keep it
+nice and simple. Press my F11 key.
+There's my Awax. I'm toss them right
+there. Of course, you have to add the
+mission first. Uh, Awax looking
+around. Let's see. We'll set that to
+support. Looks groovy. Go ahead and drop
+that one down. Awesome. So, now at least
+we have Awax support to kind of keep an
+eye on things around us. Again, we're a
+very, very tiny carrier battle group
+here, but for the purposes of what we're
+doing, this will work just fine. So, the
+next thing we're going to do is we're
+going to set up the chainsaw mission.
+Now, I've done a bunch of different
+reading on this and try to find like
+what's kind of the optimum position and
+angles and all that other stuff. And
+again, the short version is it all
+depends. If you have aircraft which are
+very very heavily loaded with weapons or
+the short range, I'm looking at UF35,
+it's going to be a very challenging
+activity to try to do. So, normally what
+they talk about is going out to about
+a,000 miles for their combat air patrol
+here. Again, that would be something
+like this line which is going to take us
+right past Nova Scotia here into
+basically middle of the North Atlantic.
+As you can see, this is a very, very,
+very long chainsaw arm here. It's so
+long, as a matter of fact, that
+depending on what aircraft we have,
+we're probably going to have to stop for
+gas about halfway up the arc, which
+means we're never really going to get
+there. That doesn't work very well for
+us. So, what I'm going to do is I'm
+going to have that. I'm going to go down
+to about 500 miles here. So, I'm going
+to go ahead and create my first
+waypoint. That's going to be the top of
+the chainsaw here. I'm going to go ahead
+and grab myself another waypoint. If you
+can't see, I'm doing 135° here at about
+500 miles. Delightful. We'll go ahead
+and dial that in. Now, these are going
+to be my chainsaw waypoints. It doesn't
+mean necessarily that I'm going to go
+there and come right back. As a matter
+of fact, when I fiddle with this quite a
+bit, I've discovered that they tend to
+kind of zigzag all over the place, which
+isn't a bad thing, and you you'll see
+exactly what I mean. So, let's go ahead
+and set this to a rotating bearing on
+our carrier battle group, which means
+they're going to follow us around. And
+everything's looking pretty awesome. So,
+let's go ahead and press our control F11
+here. We're going to go ahead and set
+ourselves up with a mission, even with a
+chainsaw. Good luck knowing what that's
+from. Uh, it's just I you will know. But
+anyway, let's go take a look. Now, we're
+going to be doing a regular AW patrol
+here. Patrol AW patrol active. Sounds
+good to me. And I have F-14D Tomcats. Of
+course, these hypothetical funds, but
+too bad. So, I'm going to go toss them
+in here. And one of the interesting
+things we can do here is we can actually
+grab these aircraft that are for
+refueling purposes and add them directly
+to the mission. Do not do that. Even
+though it will work initially, when
+these aircraft run low on fuel, what's
+going to happen is they're going to
+return to base, leaving these guys with
+no options and they're going to fall
+right out of the sky. Uh you will know
+it the first five times you do it,
+especially when you lose like, you know,
+30 F-35s because they went swimming
+because you didn't think about that.
+Instead, what I would actually recommend
+do is your refilling track should be
+somewhere in the middle. And ideally,
+what we would do is we try to design a
+refilling track so it has some airto-air
+cover. Now, normally what you would do
+is, you know, if you do something like
+this, like put your refilling track
+right here, yeah, you're going to be
+able to take advantage of the fact that
+people can stop by the mission to get
+some gas. But the reality is, unless you
+put a mission around it to protect that
+refueling track, it's going to get
+attacked. So, keep in mind, I'm doing a
+bad job of this. I'm just know, like I
+said, just giving you an idea of some of
+the complexity of these missions. There
+we go. So, this is going to be my
+refueling point right there. I'm going
+to set that to be a rotating reference
+point as well. I want to move with the
+carrier group. Uh, if I was a smarter
+person, I'd rename this. Control-r
+refueling point. That looks good to me.
+I like that. I'm going to press Ctrl+
+F11. We're going to go ahead and set
+this to a regular old boss support
+mission. Looks good. Looks good. Press
+Okie do. Let's grab our refueling
+aircraft and toss them in there. I've
+grabbed both varieties. Of course,
+modern refueling would be like an MQ25
+or something like that, but uh I should
+probably add give this a name. Refuel
+stuff. Very specific. All right.
+Everything's good. Our chainsaw is good
+to go. Our Awax looking around is good
+looking around. No, it's not that song.
+One of the things I do need to do though
+is I need to tell them to actually turn
+their radars on. Otherwise, our Awax is
+going to be pretty darn pointless. And
+again, the F35, if we were using that,
+is a fabulous aircraft for like doing
+that kind of work. But we're dealing
+with F-14s here. So, we got to kind of
+roll with it. All right, let's see what
+happens. So, what's going to happen here
+is we're going to have a lot of aircraft
+launched off this deck in a very, very,
+very short period of time. As a matter
+of fact, I'll speed up time because this
+is some really long distances we're
+dealing with here. This is not normal.
+Actually, for carriers, it probably is
+normal. All right, let's go take a look
+at all the shenanigans we just caused
+here so you can get a feel for what's
+going on. So, we have lactose number
+two. Don't be intolerant or get no gas.
+Actually, it's a radar. So, this guy, of
+course, he's F-14 because reasons. And
+there's the other one. And what you're
+going to observe about these F-14s is
+one of the groups of F-14s is going to
+be proceeding to this point. And you're
+going to notice a different group of
+F-14s. Instead of going to this point,
+they're going to chainsaw outwards, do a
+power donut, and they're going to come
+back in this direction. Now, the crazy
+thing here is if I grab a flight brave
+right here. I'll go ahead and speed up
+time a little bit so you can kind of see
+them in action. And you can see our
+glorious uh limited view of these F-14s.
+And again, he's going to turn. He's
+going to start heading this way while
+the other one starts setting up this
+way. As a matter of fact, you can
+actually see his desired point just by
+clicking on it. Just like that. There
+goes my K6Ds. The nice thing about
+those, of course, is they'll help us out
+a little bit as far as fuel goes. Let's
+speed up time a little bit. Uhoh, we've
+got something. You can see this one got
+away from the ship and he's
+automatically bringing himself over to
+this point. Remember, the concept of the
+chainsaw is to have always somebody
+going out and always have somebody
+coming back. So, we'll go and speed up
+time a little bit. Looks like we're
+having a little bit of a party here. And
+there we go. F-14 is doing the F-14
+thing. You can see this new group is
+coming out. You can see they're stopping
+to go get some gas. There they go.
+Remember, I set up a nice little
+refueling track there. Oh, we ran into
+some trouble. They went for my
+refuelers. I knew they go for my
+refuelers. They always do. And of
+course, that should take care of that
+pretty efficiently. Nice. Everybody gets
+their gas. They're going to continue on
+their little mission. Oh, we got got
+shenanigans. We got shenanigans. Nice.
+You can see again there. Oh, there goes
+that one going all the way down south.
+You can see after they get gas, they're
+doing this big long line. Now, if I was
+a much much smarter and a less lazy
+individual, I would have set the
+refueling tracks on the main chainsaw
+arms here. That's going to give us a
+little bit better reach. But you can see
+how they're creating that continuous
+coverage back and forth. So, what I'll
+do now is that we've obliterated most of
+the opponents is you can see very
+clearly how they're alternating between
+those points and they're also
+alternating directly between the carrier
+itself. There they go. Oh. Oh, more
+trouble. More trouble. More trouble. Ah,
+we caused you to abort. Go
+home. I don't know why Canada is
+shooting at us today. It must have been
+something we said. All right. Yep. See
+how he's going out? They're going to do
+their cap. They're going to turn around.
+They go out. They turn around. They turn
+out. Turn around. Just like that. And
+that's where that chainsaw concept goes
+through like you saw in that little
+image that we saw a little bit earlier
+on. And one of the fun things about
+chainsaws, and I'll zoom out a little
+bit here, we've got five hours to go on
+our mission to give you an idea of how
+good our continuous coverage is, is the
+fact that we're always spending some
+time running away and some time coming
+back. If you time this well and you have
+enough aircraft on the mission, the
+great thing you got going on here, I
+told you we run out of time, is the fact
+that you always have somebody's covered.
+Again, it's very difficult to get
+between this at a welltimed period. Of
+course, we got no points. Losses and
+expenditures, we got 18 Seoy 35s. That
+makes me feel pretty good. and a loss of
+eight F14Ds. Now, one of the things you
+should probably investigate here is if I
+actually open this one up, how many of
+these ran out of gas? That one ran out
+of gas. That one ran out of gas. That
+one ran out of gas. That one ran out of
+gas. That one ran out of gas. That one
+exploded. That one ran out of gas. So,
+every single one of seven of her
+casualties were fuel. One of her
+casualty was due to air-to-air combat,
+which just goes to show you how
+challenging this can be. And again, one
+of the things that differentiates this
+between a regular mission like this is
+that little zigzag it does between.
+Enjoy.

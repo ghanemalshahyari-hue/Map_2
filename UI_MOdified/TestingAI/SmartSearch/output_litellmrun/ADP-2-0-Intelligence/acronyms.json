@@ -1,0 +1,22 @@
+{
+  "COA": "course of action",
+  "C2": "command and control",
+  "IPB": "intelligence preparation of the battlefield",
+  "MDMP": "military decision-making process",
+  "METT-TC": "mission enemy terrain-and-weather troops-available time and civil-considerations",
+  "OPORD": "operation order",
+  "FRAGO": "fragmentary order",
+  "WARNO": "warning order",
+  "CCIR": "commander's critical information requirement",
+  "PIR": "priority intelligence requirement",
+  "FFIR": "friendly forces information requirement",
+  "AO": "area of operations",
+  "AOR": "area of responsibility",
+  "ROE": "rules of engagement",
+  "SOP": "standard operating procedure",
+  "TTP": "tactics techniques and procedures",
+  "BDA": "battle damage assessment",
+  "LOC": "line of communication",
+  "LOO": "line of operations",
+  "LOE": "line of effort"
+}

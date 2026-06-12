@@ -1,0 +1,584 @@
+# C: MO - Radar Aspect and Detectability
+Video: https://www.youtube.com/watch?v=1r4P_gI-Pdw
+Video ID: 1r4P_gI-Pdw
+
+hello everyone in today's video we're
+going to be taking a look at the impact
+of aspect on detectability and how you
+can kind of manipulate it a little bit
+in order to be able to detect or not be
+detected so what we've done here is we
+grab ourselves a p37 who's a old school
+Russian radar early 1960s technology I
+really like it because it's got a really
+really really high transmit power which
+also gives it a stupid range of 250
+nautical miles which let's be realistic
+it's probably instrumented to probably
+200 but ah it's all good kind of a thing
+like that plus not to mention the Earth
+is curved and like if you've ever zoomed
+out all the way yeah we'd like to see
+this radar see over this curvature here
+but I'm not going to worry about it
+today so we're going to do is that we
+have a bunch of different targets in
+this environment and I want to detect
+them one by one and go ahead and try to
+figure out what's going on as I do my
+detections so make my life simpler I'm
+actually going to go up to game options
+here and go up to message log do you see
+this thing here that says new error
+contact and this is option for time
+scale 1X I'm actually going to click
+both of these check boxes here so it
+raises a balloon and it slows my game
+down this is one of those things I feel
+like I should have done a video on a
+long time ago because this is is really
+really helpful if you're keeping an eye
+out for specific new targets before you
+get whacked by vampire or something like
+that and again it's not that vampire
+suck your blood it's the you know
+typical unidentified incoming missile
+sort of a thing like that so let's go
+ahead and unpause and Boop and we can
+see we instantaneously get a bunch of
+new contacts here which is what I
+expected now we have one kind of over
+here keep in mind in order to identify a
+track you have to make the radar go
+around twice as you can see here three
+seconds have passed and I picked out all
+those tracks here but if you're curious
+how long it's going to take me to get
+targeting range and speed information
+you can go ahead and hit the radar
+itself and you'll probably notice it's
+an interval 10 so it takes 10 seconds to
+come back around again so theoretically
+at 13 seconds of our scenario here we
+should automatically get another whack
+of these and then our folks will
+actually sit there and start running the
+math ready set look at that perfect so
+now we have a bunch of tracks so we have
+350 knots here we have this chap over
+here we have somebody what is this about
+uh 211 nautical miles man that's a long
+distance away oh we picked these ones
+that are kind of flying away I kind of
+doing donut and then like these two seem
+to be flying away from us so go ahead
+and speed up time watch whoop did you
+see that did you see that it
+automatically brought us back down to 1x
+speed and instantly identified our new
+contact who's chilling over here uh the
+reason this is so helpful here is
+because we noticed the range was about
+you know 350 knots they seem to be about
+214 211 miles away which is pretty darn
+good so let's go ahead and speed up time
+again
+oh new contact
+notice how handy this little bubble is
+by the way great little tool and I've
+got a new one um this one seems to be
+interesting it's about 210 nautical
+miles and we didn't pick them up radar
+came around and illuminated them again
+we're picking them up at 350 knots and
+about uh 36 000 feet so it's speed up
+time oh we got another one and let's see
+here we picked that particular Target up
+at 210 we picked this particular Target
+up at 207 that was a three nautical mile
+difference I mean one of these other two
+that have been running away from us the
+whole time are doing a pretty good job
+of it so what's going on here well let's
+uh put on God's eye real fast and take a
+peek what we can see here is a wide
+variety of different aircraft coming
+over here this is an f-104s and this one
+of course it's an F16 because F-16 now
+if I actually click on one of these
+database entries and you scroll down a
+teeny tiny bit you'll notice that we
+have a great little detail that's going
+to be providing us what we need to know
+as far as detectability depending on
+kind of what we set our particular
+aircraft up to you know if I come down
+here and I'm in this particular one we
+can see from the front of the airplane I
+have a 4.65 decibels of square meter
+kind of a thing 2.9 square meter on the
+side you'll notice I'm 4.7 square meters
+into the back I'm 2.9 square meters now
+the cool thing here is if we go over to
+our f-104 and go ahead and open this one
+up real fast you'll notice that it is a
+little bit smaller in the nose oh he's
+got a 2.7 square meter uh nose here his
+side of 6.5 this reader is a 2.7 so it's
+actually slightly smaller than the F-16
+now what did that 0.3 mean it meant at
+this distance of course I picked them up
+at 200 in remember 207 for our f60 I'm
+sorry 211 for F16 and 207 for f104 so
+that tiny tiny tiny little difference in
+meterage I think that's not really the
+attack how about square footage our
+square meter Ridge sounds good to me
+um basically made the difference of
+three nautical miles at 250. now of
+course if you sit here and do I'll grab
+a calculator and do 207 divided by two
+one one you'll see that's a about a two
+percent difference in range which
+technically speaking is not nearly as
+much as you hope it would be now the
+other thing you probably observed is I
+had a copy of these two aircraft
+actually flying these big big kind of a
+funky polygon shapes around here and
+you'll notice they were detected at 215
+and then our f-104 buddy right here was
+actually detected later in the scenario
+as he started to round this corner the
+reason for that that these were detected
+at a longer range is because they
+exposed more of their side now the big
+thing you want to notice here is their
+range when they were detected was about
+212 and about 20210 respectively which
+meant that even though we were showing
+the sides the only real difference in
+range detection here was like two and a
+half nautical miles which again if you
+want to go ahead and get that out again
+209 divided by 213 Boop that's uh once
+again two percent so the important thing
+that you need to know about that is just
+because you've changed your aspect
+doesn't necessarily guarantee you're not
+going to be detected by these really
+really high raw powered early warning
+radars
+now another thing you probably observed
+is the fact that I have some of the
+aircraft flying away from this
+particular radar you're probably saying
+what's to do with these guys one of the
+big challenges for any radar systems is
+of course filtering out clutter so one
+of the simplest ways they can do that is
+they can use Doppler shift or Doppler
+information you know basically if you
+pick up a Target and it's getting closer
+to you because the um radar waves are
+being Doppler shifted towards you you
+know that you probably got an airplane
+and not you know a tree because trees
+generally don't come at you at 500 knots
+the reason that's so valuable is if I'm
+applying 10 knots off the ground the
+only thing Doppler shifting is going to
+be us and that's how one of the
+effective methods we can to again to
+detect the F-35 for example it's a 600
+mile an hour mosquito I think that's an
+F-35 of course you wouldn't want to go
+those speeds but that's okay so anyway
+one of the common problems is it
+actually filter out anything that is
+being shifted away from it
+electronically and they allow it to be
+concentrate on things that are moving
+towards it electronically in order to
+basically filter out stuff that's
+getting away from you you can't really
+get a shot on so the interesting thing
+here and I find this very very I I don't
+know how I feel about this because again
+we don't know the actual minutia of the
+calculation here but a lot of times when
+you read quotes of a Soviet radar design
+or basically any radar design receding
+targets are harder to detect because
+we're not looking for that particular
+type of shift we're looking for a shift
+that's coming towards us so if I
+actually were to go like this real
+quickly and I'll let these targets speed
+towards the edge the interesting thing
+here is once they hit their maximum rate
+there is right there you'll see that
+they hit a maximum range at about 211
+which was almost exactly the same range
+that we detected them coming at us now
+again one of those things I don't know
+much about the p37 but I know in some
+other systems receding targets are
+harder to detect just not something I'm
+going to worry about the key number that
+we need to know though is when it's
+running from us or coming at us it's
+square meter Ridge is about the same so
+let's go ahead and reset our scenario
+here and now we're going to show you
+just how we can exploit this by causing
+some frustration for our opponents here
+let's go ahead and reinsure a scenario
+now you probably saw these other three
+airplanes chilling I'm going to grab
+that one real quickly I have my radar
+inconveniencing device and what I'm
+going to do is I'm going to flip on my
+radar inconveniencing device here now
+the inconveniencing dice of course these
+are noise Jammers there's a lot of
+different types of jamming I'm not going
+to get into it actually read a really
+fun book about that about a month ago
+and they were it's at the very least um
+I'm glad they simplified it because it's
+so insanely complicated how these radio
+things actually work and how the
+different frequency agility and the
+types of noise and the modulation and
+it's it's incredible when you really get
+down to it but um be glad that it's
+simplified so anyway let's go ahead and
+pause my radar immediately score is
+going to say the word jammed another
+reason it's going to say jammed because
+someone sent it the raspberry and when
+Dad gives me the raspberry no but the
+problem here of course is it's a very
+very powerful radar which is why I
+picked it and it even though it's jammed
+finger quote that just means it's
+receiving jamming it doesn't mean that
+it can't see now if this were 1950s
+radar the display would be spaghetti
+like kind of spaghetti
+you know that kind of a thing but we
+don't have that kind of an issue so we
+don't have to worry about it too too
+much so right now of course the close
+range targets we detected no problem and
+then if you remember our next set of
+targets that we picked up a few moments
+later these were the ones that had their
+sides to us now if I control V real
+quick you'll probably observe the fact
+that the line of sight between those
+Targets in my Jammer isn't fantastic so
+what I'm going to do is I'm going to
+grab that Jammer real quick again this
+is what I love I really wish we had
+drawing tools Uncle Demetrius who's been
+a strong tools one of those kind of
+things in here so I'm gonna go ahead and
+uh go ahead and control B again so now
+the Jammers between these chaps and us
+so the one reason our Jammer is not
+actually appearing right now is the fact
+that this jamming is so effective it's
+just coming out as lines right now he
+knows there's something out there but he
+can't actually identify even where it is
+now what I want you to observe here is
+these two aircraft have dropped
+completely off the network here
+the jamming is just so effective that we
+just we can't see them even though we
+have that nice lovely side aspect to
+them so if we go like this again if you
+take a quick look you can see my Jammers
+kind of between the two and we've lost
+them completely so what's gonna happen
+is as I speed up time a little bit oh
+you see we can reacquire them and the
+reason of course being here is that my
+line of sight is actually shifted a tiny
+bit here we're actually able to see more
+of the target as it kind of goes around
+the corner there so of course if I drop
+these two Targets in a speed up time
+again we'll allow them kind of to do
+their piece you can say oop got them
+again and now you can see we've
+reacquired them as we're slowly getting
+our way out of that very very powerful
+beam of jamming here and we just picked
+up another contact that's the one we had
+before and of course in a moment we're
+going to get the other two which are
+going to appear in just a second notice
+we still haven't picked up there they go
+yeah we're having a heck of a time at
+this but that's okay meanwhile notice
+these guys are now a distance of look at
+this 216 nautical miles away and I think
+what about 210 or something like that
+watch what happens when we get within
+that little detectability code remember
+it was like 207 last time so we'll give
+it a few moments speed up time and then
+we immediately have this one so we can
+see here that he was picked up at a
+range of 202 notice what happened
+because my target had a significantly
+less square meter Ridge that's my new
+term for it we now weren't able to
+detect it until it was a whopping seven
+five or six seven miles closer to us now
+remember if we want to do the math on
+that let's get a yield calculator here
+two two divided by two one two we've
+actually knocked five percent off the
+detection range of our particular
+aircraft because we're showing our nose
+to it plus the jamming now the reason
+that that works so effectively is we've
+basically gone ahead and created a
+situation where our Target here now has
+the noise plus the smallest square meter
+which this is why jamming plus stealth
+is the greatest thing ever invented and
+it's also one of the excellent
+strategies that we have at our disposal
+with later types of aircraft now if I
+don't pause for a second here let's give
+us a few moments for our little F6 our
+f-104 is showing up f104 hasn't even
+showed up yet hey get over here final
+four there he is notice he was not
+detected to
+187.
+what was it 207 I think it was bam 10
+detection reduction now 10 does not
+sound like a lot and um I could do the
+math on that real quickly here it's not
+much it's 20 miles is basically the
+difference if you want to work it out
+real quick 25 miles but um the key thing
+there is if you're trying to get in
+range of like an S 300 or something like
+that that's a big difference if you're
+trying to get something like an sdb or a
+Jason kind of off the rack before we
+break and run for your lives is all the
+you know basically radar guided missiles
+come dropping down on you a couple
+moments later
+now we'll also take a look at another
+aspect of this that's important and
+that's the jamming aircraft themselves
+so what I'm going to do is I'm going to
+order two different paths I'm going to
+order this guy to come right at it I'm
+gonna grab this guy and I'm gonna order
+him to do this
+yeah you can see exactly what I'm doing
+here
+and I'm gonna grab this guy and I'm
+gonna order him to go like this yeah I
+see what I'm doing here it's exactly
+what I'm doing see of course in the real
+world when we take these Corners these
+Corners are a little bit more aggressive
+but again we just want to take a look at
+it you ever get the feeling that
+somebody keeps changing my visibility
+settings I swear every time we get a
+patch all right let's go switch back to
+uh blue side here and uh we got all
+sorts of junk on the screen here but
+that's perfectly fine not worried about
+it I'm gonna go ahead and speed up time
+here and we're going to take it and take
+a look when we detect all of our radar
+inconveniencing devices here
+so for the sake of clarity what I will
+do real fast is I'll actually grab these
+guys remove these chaps move these chaps
+that looks pretty good to me let's go
+swing back over to the other side now
+and we'll go see what happens here so
+speed up time
+and pause we actually don't need to do
+that anymore it does it for me so we see
+here we have a boki and we've detected
+them at 17 nautical miles and uh let's
+see here you can see here we've actually
+picked it up by the radar itself which
+is pretty cool so okay the key thing we
+need to know here is I was about 17
+nautical miles that's pretty close
+that's that's darn close don't close
+again if I needed to drop a weapon
+they'd be in a lot of trouble so other
+ones of course are taking these really
+really funky paths as you recall you can
+see one's kind of doing a ziggy zag and
+the other one's doing that so we're
+interested I love that this is not a bug
+by the way this is a by Design as they
+say so theoretically we should detect
+that one at a distance less than 17
+because the fact we saw its side aspect
+as a matter of fact when we get to this
+point we detected the target at 22
+nautic miles it's a five nautical miles
+crater the reason being is because if
+you look we're actually looking at the
+side as well it's an oblique of the
+target so we're actually able to detect
+them sooner than this one which was
+coming right at us starting to see the
+pattern here
+and then of course if we look for this
+one who's doing this little thing there
+oh there he goes how much you want to
+make a bet it's 22 nautical miles oh 18.
+so again we have a yeah pretty pretty
+solid oblique there so you can see here
+that when you're planning your Jammers
+if you want your Jammers not to get shot
+down the trick is to minimize the amount
+of time that you're actually going to
+expose the side of your jamming aircraft
+so now of course if I go ahead and grab
+one of these excuse me guys I just need
+to borrow you for a moment a chew you
+I'm glad these guys have a lot of range
+so if we wanted to make it so that we
+absolutely maximize our jamming
+capability here we want to design our
+Jammers and a track that is going to be
+basically keeping a thin aspect of the
+target always pointing towards where we
+want to go now one of the nice things is
+if I set up a mission to go ahead and
+make them go back and forth like this
+that's really really really easy to do
+because now what I've done is I've made
+an aircraft that basically has a little
+teeny tiny moment when it's actually
+exposing its side so that it actually is
+going to be more effective aircraft so I
+guess we've answered a couple different
+questions here today on 1B of course do
+you make your tar jamming tracks look
+like this or do you make your jamming
+tracks look like this relative to the
+radar and the answer is definitely this
+this is going to be superior in every
+way if you're trying to protect the life
+of the Jammer granted you get less width
+that way but again you can always put
+parallel tracks together and be very
+successful the other thing we saw too is
+even though targets have different
+aspects to them we weren't able to
+didn't make that much of a difference it
+was like two or three percent until we
+added jamming when it was suddenly a 10
+reduction which is quite a bit and it
+makes a huge difference when it comes to
+trying to get close enough to deploy
+weapons now there's one more thing we'll
+take a look at today and what we'll do
+is we'll grab ourselves an F-35
+because science f35a oh we'll grab the
+one from Finland because why not um
+we'll do it in here we'll make it very
+difficult we'll make it internal also
+four missiles are you kidding me have
+you guys played DCs
+I'm actually going to delete my Jammer
+a radar and conveniency device I like
+that so we have this guy and of course
+um we'll track him directly and we're
+just going to speed
+there he is now I just want to point
+this out real fast so our handy dandy
+little F-35 here was picked up at a
+range of 14.99 miles did you notice that
+that range was almost exactly the same
+as our good buddy the Jammer and you're
+saying but I thought the F-35 was just
+so stealthy well N35 is stealthy but if
+you've actually clicked on the F-35 for
+a second you'll probably have noticed
+that when we come down here that we have
+a front we have a side that also means
+we have a bottom and actually we
+actually get closer to the actual Target
+itself more of the bottom which is the
+wide part of an airplane not the side or
+the front or the back starts to become
+more and more visible so for her to
+actually grab this guy just to kind of
+prove my point here let's go ahead and
+move them back real quick here drop them
+down to low dangerous altitude here of
+course this is other benefits like you
+know be able to take advantage of you
+know the surface you know the curvature
+of the earth and all that let's go ahead
+and switch back to this guy I think this
+will surprise you
+all right there we go let's go ahead and
+um drop him because they don't want to
+see him Drop it like it's hot Drop it
+like it's hot all right so we're going
+to go ahead and proceed Zoom ah there he
+is ready to be disappointed
+it made no difference whatsoever as a
+matter of fact it eliminated let's call
+it uh I don't know what was that like
+maybe eight six or seven percent of its
+distant detectability not even maybe
+five percent of its detectability so
+even though it does have that wider
+aspect it only makes the slightest
+amount of actual difference and that's
+one of the most interesting things about
+radar they actually have these things
+called Splat plots where they show you
+kind of the detectability of an aircraft
+based on angle and one of the things
+that are so classified is not even funny
+is the sweet angle between us and a
+radar detector that would basically make
+us the hardest to detect but still allow
+us to get to that radar now if we had
+access to that number oh we could do
+some nasty professional command addition
+version things here but we're not going
+to do that just for the sake of again
+being able to see this key takeaways uh
+direction of your Jammers I'll keep in
+mind it does make a difference but it
+doesn't make a difference and of course
+I'll be mindful of certain loadouts
+actually let me do that real fast just
+just kind of aware here so if I grab my
+F35 again this is real quick real quick
+real quick it's important to know that
+some of these loadouts have they're
+absolutely massive for example if I the
+GPU 49s look what happens to my Square
+no Square noses my uh what did I say
+square meter Ridge I think I'll call it
+that you can see it's massive but you
+can see all the other ones when they're
+internal a much smaller enjoy

@@ -1,0 +1,109 @@
+# C: MO - Custom Environment Zones
+Video: https://www.youtube.com/watch?v=-BsOyOScvRQ
+Video ID: -BsOyOScvRQ
+
+hello everyone in today's video we're
+going to show you how you can create
+custom environmental regions just to
+make air planning that much trickier
+than it needs to be so the first thing I
+like to do whenever I'm working with
+custom environment regions is I always
+like to go up to the editor and actually
+set the weather to something other than
+the default this is a combination of my
+sanity as well as I'm making sure it's
+working so what I'm going to do is I'm
+going to set the average temperature
+will pretend it's a little bit cooler
+here when sea state will make it a
+little windy and we'll say we've got
+kind of everybody's a favorite form of
+clouds here go ahead and slap it right
+there that looks pretty good I like that
+I'll work with that so next we're going
+to do is we're going to create an area
+that we want to go ahead and convert so
+let's see here I'm looking at the
+weather forecast today it looks like
+there's a little nastiness up north of
+us cool so I'm going to go ahead and
+create myself an area I'll control right
+click go ahead Define myself an area and
+we'll go ahead and say this part of New
+England's uh getting some weather right
+now so go ahead and drag a big old box
+kind of around it like that now what I'm
+going to do is go up to missions and ref
+points Bob the reference points manager
+click on custom environment zones give
+it a name
+um icky weather up north hey go ahead
+and give it a little color just while we
+have to create it first before we can go
+to color go ahead and create new it's
+going to go ahead and select it I like
+to pick on it I'm going to hit that
+button real fast and make sure it looks
+right uh that looks pretty good but of
+course there's no waypoints on it so
+let's go grab our waypoints we created
+to awesome in the pile hey look at that
+so now we have ourselves this big region
+which is going to be all sorts of icky
+weather so what I'm going to do is
+Select it I'm going to click on edit
+says data so the easiest way to use this
+is I like to concentrate on all these
+four switches that we have right here
+there's some fun stuff for thermal
+layers and czs and all that I'm not
+going to play with that today so what
+I'm going to do is we're going to say
+the weather's uh let's call it a little
+bit colder just a little bit let's say
+that there's a little bit of you know
+why not some snow or something we'll see
+this guy's um they'll say it's pretty
+thick pretty thick we'll go kind of on
+that one we'll see it's also a little
+windy so now what you're going to notice
+is I'm going to go ahead and close this
+I'm going to press the save option is
+our weather is now different so if I
+zoom in on this lip you can see it very
+distinctive so as you can see we've
+played high clouds 2023 10 degrees
+Celsius wind C2 watch this oh boy that
+weather is way worse up north you can
+see that the time of day hasn't changed
+but you can see clearly that the weather
+is now solid middle clouds we have a
+little bit of light rain which of course
+would be snow and our Wednesday state is
+now too now what's so cool about this is
+you can create as many of these weather
+zones as you want to create so and this
+is pretty fun stuff now of course after
+you've took the time to build all your
+really really complicated little modes
+in here there's nothing stopping you
+from coming in here as a game designer
+to say a mission designer I should say
+and go ahead and freezing all these
+suckers so people can't mess with it one
+of the things I recommend doing is
+building these cez on the layer that is
+like neutral so that the player can't
+come and say and say oh would it be
+inconvenient if there's a bunch of snow
+right over Maine you don't want them to
+do something like that you just want to
+be able to customize it the way that you
+need to customize it so you can see this
+is a super useful tool of course if we
+were over here and this is the 1990s we
+could could basically draw an overcast
+right around here and have fun trying to
+find tanks with laser guided bombs other
+than that enjoy

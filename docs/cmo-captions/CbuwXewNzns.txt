@@ -1,0 +1,256 @@
+# C: MO - Interception Missions
+Video: https://www.youtube.com/watch?v=CbuwXewNzns
+Video ID: CbuwXewNzns
+
+hello everyone in today's video we're
+going to be taking a look at
+interception missions now we've done
+some stuff in the past with intercepted
+missions but there have been some
+interesting questions that have kind of
+come up recently about them that
+immediately made me go wait a minute I
+haven't used an interception mission for
+an aircraft intact in a very long time
+so I said well you know what well let's
+experiment a little bit and see if it's
+what everybody remembers them to be so
+what we have here is a pretty typical
+scenario obviously it's how we've had to
+fast forward or I should say go back in
+time to a 1958 we have ourselves Otis
+Air Force Base which is a lovely Air
+Base I think I've flown over this one a
+bunch of times in the real world and of
+course we have uh Providence here is our
+Target to a bunch of supposed Soviet
+bombers which could be on their way any
+second the reality is yeah they're on
+their way obviously I have no idea how
+the United States expected the Russians
+to suddenly show up across Greenland and
+how's it going with the ranges of
+Russian aircraft at the time but hey we
+didn't know any better so anyway let's
+go and fast forward time here again
+we're just playing in almost an area
+here going fast forward fast forward oh
+we've detected something we better set
+up an intercept so we're going to do
+this a couple different ways so the
+first method what I'm going to do is set
+up a basic interception Mission and
+you're going to watch what happens so
+press Ctrl f11 I'll go ahead and say
+intercept intercept and this is an air
+intercept Mission uh strike air
+intercept looks good to me and press OK
+notice there are no targets I love the
+fact that the new version of this now
+just lets you know hey there's no
+targets fine fine I'll add all the
+selected units on the map give me a
+second geez let's go ahead and hit that
+button right there and now we have a
+bunch of bogeys which of course make
+them hostile bogeys so now we have a
+difficult decision um what are we going
+to launch we have some 102s 104s and
+106s the correct answer of course is the
+102. even though there's plenty of
+options here in this particular Porsche
+of course if you're wondering what group
+42 is Yo Texas towers oh yeah piece of
+History absolute garbage so we're going
+to do is we're going to grab these real
+quick come f-102's they should have said
+grab them we're gonna go ahead and arm
+them right away already selected ACS
+we're going to cheat let's see here
+nuclear Falcon today Mighty Mouse rocket
+why would they get an airplane with a
+rocket I don't get why they did that
+enable quick that sounds fine for me
+boop you're ready to go
+so the question is how many of these
+things are we going to launch at there's
+a wave of bombers down here well um the
+answer is yes we're going to send them
+all I'm going to hold on to my f104s as
+Reserve only on account of the fact that
+they don't really have um the range some
+of these other aircraft do so I'm not
+going to get too too carried away I
+don't get my f106 is kind of behind as
+well just in case I need them let's see
+here long range that's kind of fun the G
+model ah there's so many good choices
+back then when it came to these things
+go ahead and grab that one as well let's
+grab the one to sixes one of fours all
+right folks you have the duty yes we
+could set this as Dynamic if we wanted
+to but we're going to be okay for now so
+I'm not going to change any of the
+settings here I'm going to hit spacebar
+obviously we can go into Mission
+settings and I sweep this to our hearts
+content here I'll open that up real fast
+obviously we can control how many we can
+launch at a time I'm a fan of bigger
+flights especially in the old days oh no
+new targets have been spotted on the
+horizon hmm so now watch this I'm going
+to unpause here our aircraft are gonna
+launch right away and all you're going
+to notice pause that on these group guys
+immediately take off they kick their
+after burners up to maximum oh man f-102
+is flying out of Otis Air Force base and
+I'm going to pause immediately now what
+you're probably seeing here is probably
+not something you had expected you'll
+note that when I initially created this
+Mission I selected this group of targets
+to be the targets that I'm interested in
+what you also notice is almost
+immediately this group of f-106s took a
+left turn and went firing immediately
+after this group of aircraft that are in
+the East that are not included in my
+targets we should probably notice at the
+bottom of the screen see this thing this
+is opportunity this shows the members of
+Strike Team escorts may be distracted by
+from targets when encountering an
+opportunity to Target this means that if
+I leave this check box on this is an
+acceptable behavior as a matter of fact
+I'll unpause to let it kind of do its
+thing here if I didn't hit that check
+box there click on that button that
+would mean these aircraft here would
+immediately say just kidding and go
+flying directly into this target here so
+let's go ahead and let them kind of go
+here they're sort of setting themselves
+up and any point of course I could order
+them to break up my intercept operation
+here oh here we go here we go you know
+I'm going to switch to swarm mode we'll
+watch all these f102s do their thing
+here oh yeah look at this classic Cold
+War action here now notice as more
+targets were detected and engaged uh the
+fireworks begins in Earnest and yes the
+bow Mark missiles are not firing and no
+the Nikes aren't firing either but I
+will say it might be a good idea to
+throw my f104s into the mix here so let
+me go grab my f104s real quickly here
+and toss them into the mix you're up so
+now my f104s as you know are very fast
+but they're also much short-legged here
+so as you can see all the ones that are
+not Mission assigned here are joining in
+on the interception operation and
+they're actually picking on this little
+guy right here I don't think he's going
+to get very far and you can see he gets
+splattered and that mission is Success
+now unfortunately my f104 is uh you
+focus and I'll go home now we can go
+ahead and cancel that mission because
+it's no longer required but like you
+notice because that button was selected
+they were had no problem chasing after
+other targets so let's reset the mission
+again real fast all right we're looking
+pretty good here let's get them good
+looks like we have a group of targets
+I'm gonna go ahead and undo the good old
+control F1 here f11 rather we're going
+to say strike this it's an air intercept
+Mission press okie doke we'll grab our
+f-102s we're ready to selected aircraft
+oops helps if you actually select the
+aircraft you intend to ready we'll grab
+the aimed aim for G's here man that's
+classic we'll grab the f106s as well and
+order them to be ready to go and we'll
+grab the G's why not because science and
+we'll grab of course uh we'll throw the
+hard urge group in there and our f-104s
+like I said I like to keep them as
+Reserve please do not commit all your
+interceptors into one Mission it doesn't
+ever work well all right I've set this
+to Wing Pilots only this is the early
+version of the 104. all right I'm happy
+with that and this time I'm going to go
+back here grab the targets on the map
+add them and switch this to focusing on
+strike targets now watch what happens
+this time
+oh a bunch of new targets appeared now
+notice my f-102s 104s and 106s are
+obsessed with engaging that group right
+there which is awesome because it means
+I can go like this and Order My f104s to
+get them
+go get them zippers
+yes that's how you spell zippers but oh
+well let's go grab my f104s we'll order
+them to do the thing obviously we don't
+want to be showing multi-mission we just
+want to keep it normal all right yf104
+DS they're going to get their thing
+going right away I'll let them decide
+how they want to do that oh of course if
+I was a smarter person I would have told
+them to do at all selected on map so now
+if I go ahead and unpause you'll see
+that a group of these aircraft will get
+taken off right away and they're gonna
+go chase down that group that was on
+their right
+oh looks like f102s are just starting to
+get into range there's math 104's if
+you're wondering why these guys took so
+long to get going it's because they have
+very very limited range if they took off
+right away they'd actually run out of
+gas before they got to the Battle Zone
+where they have to do a little dog
+fighting thing look at this look at this
+look at this
+1200 knots come get some so I'm actually
+going to press f11 now go back to my uh
+Go gum see this how strikes this is now
+inactive it is inactive because it ran
+out of targets so what I'm going to do
+is I'm going to press opportunity
+striking I'm going to reactivate that
+mission now what you want to do when you
+reactivate that is you want all these
+guys to immediately join in on the fun
+and start engaging this group but you'll
+notice they will not do that the reason
+they're not doing that is because they
+are on rtb right now so if I wanted to I
+could actually come back here grab them
+order them back into the emission now
+and since I've got in this opportunity
+scrambling ideally they'd immediately
+turn around and join in the fun
+so this is a very neat way that in the
+event that you accidentally goofed up on
+an intercept Mission you can now get
+f-102 swarm here hahaha how did that one
+get through oh no oh
+I thought this was another Russian plane
+that had survived that Providence you
+live to see another day and other people
+who are playing command have seen kind
+of a neat way that you can use intercept
+missions enjoy

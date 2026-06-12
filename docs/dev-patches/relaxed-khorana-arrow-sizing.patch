@@ -1,0 +1,68 @@
+diff --git a/UI_MOdified/client/wargame/adjudicator-map.js b/UI_MOdified/client/wargame/adjudicator-map.js
+index 4663b70..29b7e62 100644
+--- a/UI_MOdified/client/wargame/adjudicator-map.js
++++ b/UI_MOdified/client/wargame/adjudicator-map.js
+@@ -3382,7 +3382,13 @@
+         // ONE arrow per side: centroid of all actor positions → centroid of all
+         // target positions. Multiple units attacking the same general area are one
+         // operational axis — drawing individual lines just produces spaghetti.
+-        function drawAxisArrow(arcs, color, outlineColor, label) {
++        // role 'main' (attacker) gets a thicker, more opaque body; 'support'
++        // (counterattack) is thinner so the attack axis reads as dominant.
++        const AN5_SIZING = {
++            main:    { bodyHalfPx: 5, headHalfPx: 12, headLenPx: 18, opacity: 0.72, outlineWidthPx: 1.0 },
++            support: { bodyHalfPx: 3, headHalfPx:  9, headLenPx: 14, opacity: 0.55, outlineWidthPx: 0.8 },
++        };
++        function drawAxisArrow(arcs, color, outlineColor, label, role) {
+             if (!arcs.length) return;
+             let aLat = 0, aLng = 0, tLat = 0, tLng = 0;
+             for (const arc of arcs) {
+@@ -3407,15 +3413,16 @@
+                 { lat: tip.lat, lng: tip.lng },
+             ];
+ 
++            const sz = AN5_SIZING[role] || AN5_SIZING.main;
+             const members = arcs.map(a => `${a.actor_uid || '?'} → ${a.target_uid || '?'}`).join(', ');
+             const arrow = createManeuverArrowPolygon(centerline, color, {
+-                bodyHalfPx:    5,
+-                headHalfPx:    12,
+-                headLenPx:     18,
+-                outline:       outlineColor,
+-                outlineWidthPx: 1.0,
+-                opacity:       0.70,
+-                pane:          SCENARIO_GRAPHICS_PANE,
++                bodyHalfPx:     sz.bodyHalfPx,
++                headHalfPx:     sz.headHalfPx,
++                headLenPx:      sz.headLenPx,
++                outline:        outlineColor,
++                outlineWidthPx: sz.outlineWidthPx,
++                opacity:        sz.opacity,
++                pane:           SCENARIO_GRAPHICS_PANE,
+             });
+             if (arrow) {
+                 arrow.bindTooltip(`${label} (${n}): ${members}`, { sticky: true });
+@@ -3423,19 +3430,20 @@
+                 engagementArcs.push(arrow);
+             } else {
+                 // Fallback: thin polyline + arrowhead when polygon builder is unavailable.
++                const fbWeight = Math.max(2, Math.round(sz.bodyHalfPx * 0.5));
+                 const fb = window.L.polyline([[aLat, aLng], [tip.lat, tip.lng]], {
+-                    color, weight: 3, opacity: 0.70, interactive: false,
++                    color, weight: fbWeight, opacity: sz.opacity, interactive: false,
+                     pane: SCENARIO_GRAPHICS_PANE,
+                 }).bindTooltip(`${label}: ${members}`, { sticky: true });
+                 fb.addTo(layerGroup);
+                 engagementArcs.push(fb);
+-                const ah = makeArrowhead([aLat, aLng], [tip.lat, tip.lng], color, 12, SCENARIO_GRAPHICS_PANE);
++                const ah = makeArrowhead([aLat, aLng], [tip.lat, tip.lng], color, sz.headHalfPx, SCENARIO_GRAPHICS_PANE);
+                 if (ah) { ah.addTo(layerGroup); engagementArcs.push(ah); }
+             }
+         }
+ 
+-        drawAxisArrow(redArcs,  ENGAGEMENT_RED,  '#5b0c0c', 'Axis of attack');
+-        drawAxisArrow(blueArcs, ENGAGEMENT_BLUE, '#7eb8e0', 'Counterattack axis');
++        drawAxisArrow(redArcs,  ENGAGEMENT_RED,  '#5b0c0c', 'Axis of attack',    'main');
++        drawAxisArrow(blueArcs, ENGAGEMENT_BLUE, '#7eb8e0', 'Counterattack axis', 'support');
+     }
+ 
+     // ── Per-step unit movement ────────────────────────────────────────

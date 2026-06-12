@@ -1,0 +1,26 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  RMOOZ — OPTIONAL tile-server debug override  (OFFLINE-TILE-PROXY-1)
+#
+#  Publishes the internal MBTiles tile-server (container port 8080) on the host,
+#  so it can be hit directly, e.g.
+#    http://<server-ip>:8080/services/<dataset>/{z}/{x}/{y}.png
+#
+#  NOT needed in the default in-app proxy mode (RMOOZ_TILE_PROXY_MODE=web): there
+#  the browser only uses the web port and the web-server proxies tiles to
+#  127.0.0.1:8080 INSIDE the container. Use this ONLY for direct tile debugging,
+#  or when running with RMOOZ_TILE_PROXY_MODE off.
+#
+#  Compose merges list values (ports) by APPENDING, so layering this file over the
+#  base compose adds the 8080 publish to the existing web-port publish.
+#
+#  Usage (layer AFTER the base compose file):
+#    docker compose -f Offline_Deployment/docker-compose.offline.yml \
+#                   -f Offline_Deployment/docker-compose.tiles-debug.yml \
+#                   --env-file Offline_Deployment/.env.offline up -d
+# ─────────────────────────────────────────────────────────────────────────────
+version: "3.9"
+
+services:
+  rmooz-offline:
+    ports:
+      - "${TILE_PUBLIC_PORT:-8080}:8080"

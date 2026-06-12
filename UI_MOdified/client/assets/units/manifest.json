@@ -1,0 +1,48 @@
+{
+  "_comment": "RMOOZ unit image asset manifest — provenance record for every locally cached image.",
+  "_format": "1.2",
+  "_generated": "2026-06-10",
+  "images": {
+    "uss-lake-champlain-cvs39.jpg": {
+      "local_asset": "/client/assets/units/uss-lake-champlain-cvs39.jpg",
+      "subject": "USS Lake Champlain (CVS-39)",
+      "description": "USS Lake Champlain (CVS-39) underway, February 1965. Essex-class anti-submarine aircraft carrier.",
+      "source_name": "Naval History and Heritage Command (NHHC)",
+      "source_accession": "USN 1114106",
+      "source_url": "https://commons.wikimedia.org/wiki/File:USS_Lake_Champlain_(CVS-39)_underway_in_February_1965_(USN_1114106).jpg",
+      "original_url": "https://upload.wikimedia.org/wikipedia/commons/e/ef/USS_Lake_Champlain_%28CVS-39%29_underway_in_February_1965_%28USN_1114106%29.jpg",
+      "credit": "U.S. Navy / NHHC (photo USN 1114106)",
+      "date_original": "February 1965",
+      "date_cached": "2026-06-10",
+      "license": "Public Domain — U.S. Government work (17 U.S.C. § 105); no copyright applies.",
+      "applies_to_platform": "meko",
+      "applies_to_unit_id": "CVS-39",
+      "platform_match": {
+        "meko": { "image_match": "representative", "note": "Naval combatant catalog default; Essex-class carrier used as representative naval asset." }
+      },
+      "notes": "Naval combatant / meko DB1 catalog default + specific unit-level image for USS Lake Champlain. Pass as unit.image_url in scenario to use ship-specific context."
+    },
+    "patriot-sam-battery.jpg": {
+      "local_asset": "/client/assets/units/patriot-sam-battery.jpg",
+      "subject": "U.S. Army Patriot SAM Battery (MIM-104), Poland 2010",
+      "description": "U.S. Army soldiers from Alpha Battery, 5-7 ADA instructing Polish forces on Patriot preventive maintenance in Morag, Poland, June 2010.",
+      "source_name": "Wikimedia Commons / U.S. Army",
+      "source_author": "Staff Sergeant Lawree Roscoe Washington Jr., U.S. Army",
+      "source_url": "https://commons.wikimedia.org/wiki/File:PATRIOT_battery_in_Poland,_2010.JPG",
+      "original_url": "https://upload.wikimedia.org/wikipedia/commons/0/02/PATRIOT_battery_in_Poland%2C_2010.JPG",
+      "credit": "U.S. Army / SSG Washington (PATRIOT battery in Poland, 2010)",
+      "date_original": "June 2010",
+      "date_cached": "2026-06-10",
+      "license": "Public Domain — U.S. Army work created in official capacity (17 U.S.C. § 105); no copyright applies.",
+      "applies_to_platforms": ["air_defense", "patriot", "sam_s300", "sam_s75"],
+      "platform_match": {
+        "patriot":     { "image_match": "representative", "note": "MIM-104 Patriot system actually depicted. Representative match for this catalog entry." },
+        "air_defense": { "image_match": "generic",         "note": "Generic air-defense / SAM reference image. Depicts Patriot; used as visual placeholder for any air-defense unit." },
+        "sam_s300":    { "image_match": "generic",         "note": "Generic SAM placeholder. This is NOT an S-300 photo. Replace with actual S-300 imagery when available." },
+        "sam_s75":     { "image_match": "generic",         "note": "Generic SAM placeholder. This is NOT an S-75 Dvina photo. Replace with actual S-75 imagery when available." }
+      },
+      "notes": "Patriot photo acceptable for 'patriot' catalog entry. Used as generic placeholder for other SAM/air-defense entries until platform-specific imagery is sourced."
+    }
+  },
+  "offline_note": "All images in this manifest are cached locally and do not require network access. For online use, source_url is the canonical public-domain reference."
+}

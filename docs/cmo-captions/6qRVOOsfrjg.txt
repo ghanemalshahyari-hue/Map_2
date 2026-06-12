@@ -1,0 +1,151 @@
+# C: MO - Using a tanker to ferry aircraft long distances.
+Video: https://www.youtube.com/watch?v=6qRVOOsfrjg
+Video ID: 6qRVOOsfrjg
+
+hello everyone in today's video we're
+going to look at a fun trick that we can
+use a tanker for the purposes of
+basically
+acting as sort of an in-flight aircraft
+carrier underway replenishment kind of a
+situation
+this particular technique is kind of fun
+because basically what you're going to
+be doing is using a tanker for the
+purposes
+of dragging an aircraft in long distance
+while keeping it complete fueled
+at the same time is not limiting your
+ability to kind of go back and forth
+like you see on a lot of supporting
+tracks
+so let's go ahead and try this so what
+i'm going to do is i'm going to grab
+this group of f4es here i'm going to
+flip them up to afterburner so they suck
+up a lot of fuel here
+so let's have them run it after burner
+for just a few moments here again we
+want to suck that fuel down pretty quick
+give them something to do i picked
+phantoms because they're notorious for
+not having the world's greatest fuel
+capacity here
+now this is interesting i'm sitting up
+here i've got my little kc-135 i'm going
+to point these guys
+up here they're sucking down their gas
+they've only got 11 minutes of gas
+left this is wonderful this is working
+perfectly go ahead now bring them up to
+the side i'm go ahead and pause
+i'll go ahead and reduce them now to
+regular speed
+do a medium altitude we'll say cruise
+and now of course what we're going to do
+is we're going to ask the entire
+squadron to go ahead and refuel itself
+so i'm going to go ahead and say select
+provider i'm going to pick this kc135
+now what i'm going to do is i'm going to
+tell this k31 to 35 to go this way at
+loiter speed
+so what's going to happen now is our
+buddies in the f4 phantoms are going to
+come sneak up on the kc-135
+select the kc-135 real quick and now i'm
+going to order the kc-135 to go up to
+military speed
+notice the kc-135 has to stay at loiter
+speed once refueling
+however if i click on my flight six here
+you'll see they're all taking on fuel
+together so what's happening in effect
+is this kc-135 is basically filling
+all the aircraft in the entire squadron
+up together and basically axing as the
+world's largest external fuel tank so
+that what will happen now of course is
+how this aircraft will
+suddenly run out of fuel i should say
+the kc-135 or the phantoms will have
+received their maximum allotment of fuel
+and be able to actually be disconnected
+you know they'll go ahead and start
+following this guy so grab my kc-135
+we'll run them up to cruise speed
+and we'll grab our f4s and we'll kind of
+order them to kind of escort this guy
+for a little while
+so the escort the escort they escort the
+s court and then i right click on them
+and say
+why don't you go ahead and refuel again
+please meanwhile i'll grab my kc-135
+order him in this direction
+notice he's going to automatically slow
+down so that those phantoms could come
+sneak up behind him and they're going to
+plug in
+and now notice my kc-135 is again acting
+as the world's
+largest external fuel tank here and
+those guys are eventually going to run
+out of fuel or the guy is going to run
+out or we'll have to come back
+now this is such a slick trick because
+you can use this as a way to basically
+extend the range of an aircraft
+indefinitely as long as your refueling
+aircraft has the capability to do so
+it's worth also noting that if you're
+creating a mission let's say i want to
+create like a fake mission here
+fake press uh land strike if i press
+okay
+coming down here where you have the
+configuration for the air to air
+refueling you can actually tell it
+the tanker to follow the receiver's
+flight plan
+now this is simply an automatic way to
+do what i was just doing a moment ago
+keep in mind when he's done he's going
+to return but by doing it manually you
+can basically do this indefinitely until
+you reach the actual destination you're
+going to do
+so if i want to do something a little
+excessive here let's say i'm going to
+cross in the united states here
+speed up time a little bit i'll let
+these guys suck down as much fuel as
+they can
+now this is the longest range f4 phantom
+flight ever okay it's looking pretty bad
+that's looking pretty bad
+let's go ahead and re-right-click on and
+refuel if possible tanker automatically
+they're automatically going to see that
+buddy over there
+he's going to start slowing down he's
+supposed to be slowing down let me go
+ahead and
+refuel manually here that way he auto
+slows down there we go
+so he's going to go ahead and know that
+somebody's coming up look at this and
+now he's acting as an external fuel tank
+again
+that blue circle by the way indicates
+how little fuel this guy is actually
+going to have
+but notice these f4s which are only
+supposed to have a 100 mile range
+about 150 hit this one about that we've
+extended them to
+let's see here how we doing so far about
+a thousand nautical miles so you can see
+just how effective that kind of tactical
+in-flight refueling can be
+enjoy

@@ -1,0 +1,18 @@
+{
+  "schema": "testingai-export",
+  "version": 2,
+  "run_id": "2026-06-05_20-14-15_marker_test",
+  "generated_at": "2026-06-05T17:22:47.185Z",
+  "input_docs": [
+    "red_team.docx",
+    "blue_team.docx"
+  ],
+  "files": {
+    "geojson_all": "geojson/all_phases.geojson",
+    "geojson_steps": [
+      "geojson/step00.geojson"
+    ],
+    "report": "wargame_report.md",
+    "schedule": "wargameschedule.csv"
+  }
+}

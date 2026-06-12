@@ -1,0 +1,268 @@
+# C: MO - Intercept Command
+Video: https://www.youtube.com/watch?v=18_6ueHh4Nc
+Video ID: 18_6ueHh4Nc
+
+hello everyone in today's video we're
+going to be taking a look at the
+intercept command inside of command and
+kind of showing what it does and sort of
+why it's helpful why it's unhelpful all
+that other good stuff that usually kind
+of comes along with it so we have a
+pretty serious scenario here we have a
+bunch of different sides um I've got
+some neutral friends here I've got some
+allies here I've got all sorts of
+craziness all appearing on the screen oh
+boy there's unknown contacts appearing
+on the screen ah things are just getting
+crazy so let's go ahead and break down
+what the intercept command does and how
+to use it so I've got myself the under
+twins right here a couple f16s duh and
+what they're doing right now is I want
+them to go ahead and take a look at the
+skunk over here so what I'm going to do
+is I'm going to select them right click
+on this oh no it didn't work right so
+I'm going to click them again press
+shift right click and you will notice we
+have this new menu that pops up allowing
+me no suitable weapon to engage or The
+Intercept command now if I click
+intercept you're going to get a big
+Angry message here that's going to say
+no suitable weapons now another thing
+happened here you probably observed as
+well and that's the fact that it lost my
+ploted course uh-oh that's okay though
+cuz we're going to give them something
+else to do now let me grab a different
+aircraft here I have an ajs 37 vigan
+here and you can see he's just kind of
+cruising basically North here if you
+want to think about it another way he
+does have a suitable anti- ship weapon
+he actually is a very capable one known
+as an rb15 it's like a bus that you
+shoot off the bottom of this way too
+small airplane for it so what I'm going
+to do is I'm going to do the same thing
+I'm going to click them shift right
+click on the skunk and notice I can
+either engage or I can intercept so I'm
+going to be smart and I'm going to order
+an intercept I'm not going to do
+anything dumb here now you're going to
+see a couple different things happen at
+once first of all we required another
+ship we'll have to go check that one out
+in a minute what You observe here is our
+aircraft is picking up some speed it's h
+starting to accelerate just a little bit
+and the next thing you probably notice
+is it's automatically starting to
+descend now you're sitting here going is
+it going to descend down to like 20 or
+30 feet or something like that like uh
+what is the deal with this guy why is he
+oh he stopped at 10,000 ft so your
+brain's going 10,000 ft what's the deal
+with that well 10,000 ft of course if
+you take a here real quick is going to
+be our engagement altitude that's
+basically where we're going to let this
+thing rip one of the things I find very
+interesting is the Nimrod and the vgan
+are basically racing each other to oh
+we've identified it oh pause what you'll
+observe here is this is a neutral ship
+this is a commercial fishing boat and
+you'll notice the vgan immediately broke
+off the attack he's like oh I don't want
+to have a piece of that that would be
+very very very embarrassing so that's so
+cool so let's go ahead and shift right
+click over at this skunk real quickly
+I'm going to say intercept and what he's
+going to do is he's going to go ahead
+and spin himself around you can see got
+a little bit of altitude now he's going
+to basically do a Big parabolic Arc here
+and he just going to come swinging back
+down like this and he's going to come
+take a look at whatever this particular
+ship is on this side you can see the
+f-16s are trying to join in on the fun
+as well all right we start sneaking up
+there everything's looking pretty
+good oh boy getting
+close I'm afraid to hit the time
+acceleration I wish there was like a 10x
+or something like that that would make
+this much interesting much easier I
+should say kind of a thing like that
+we're getting very very close there he's
+just swinging in everything's looking
+pretty
+good there it is uhoh this might not be
+something friendly now notice if he had
+some kind of radar on or something along
+those lines this would be a much much
+easier Target to identify because we
+could basically sneak up on it but the
+problem is uh we have to get basically
+on top of this guy in order to say oh no
+he's
+hostile then the cool thing is you'll
+notice the moment that he identified the
+target as hostile he wasted no time and
+immediately dropped both of those rv1
+15s on him now the interesting thing of
+course is this is a basically a minimum
+engagement range of an rb15 I think we
+fired those at what yeah that was like
+six miles away so like he barely had
+time to recognize his stacks and
+basically drop two of those on him so
+that's got to be unconvenient for him of
+course now what happens when you try to
+intercept an Allied unit so we're
+dealing with that so I'm going to go
+ahead and grab my thunder twins here
+shift I'm going to right click on the
+C130 Hercules and what you'll notice
+here is if I shift right click there are
+no options here for my intercept that
+simply mathematically not possible
+because this is an Allied unit I can't
+basically say hey get over here like
+that if I wanted them to actually follow
+this unit around what I would have to do
+naturally is that I have to actually
+kind of bind everything and get it all
+set up and basically control it that way
+now as I'm cruising along here I happen
+to pick up another Target I happen to
+identify a Boeing 737 that seems to have
+taken off just a few moments ago now if
+I were to grab my thunder twins here and
+I shift right click on one of these
+you'll notice I still have the intercept
+command but notice what happens when I
+order ordered up The Intercept that time
+you'll see that it automatically
+identified them and now it's rushing
+alongside them to basically engage them
+it's one of those things that you have
+to be very very mindful of so I'm going
+to go ahead and delete that missile that
+is not the desired Behavior at all so I
+got to go back up to Blue I got to go to
+postures I got a green I got to go ahead
+and say they're neutral one more time to
+basically reset them so again I'll do
+that one one more time just so you can
+be aware of that shift right click I've
+already identified them and again you
+can see intercept the moment I order
+them on a neutral Target the missile
+launch
+so that's a very common mistake people
+make now if these targets were
+completely unknown to us I keep in mind
+we did identify them because we have a
+little sniper pod on the F-16 to make it
+easier to identify them that would be a
+slightly different story for us so
+unfortunately I'm not going to be
+shooting down any airliners I don't do
+that if I can help it so let's go ahead
+and go back to there we'll go back to
+Blue postures we'll go ahead and grab
+those real quickly here set them back to
+neutral we'll go and pause that sucker
+there we go so now the f-16s can feel
+really silly because of course they try
+to Target these now if I went in here
+and hit P like that let's I just want to
+drop them for a sec pause now if I were
+to see them as neutral targets and hold
+on shift right click and then press
+intercept you'll notice once again it
+will try to lock them on as hostile
+until it can identify it completely for
+this particular scenario and
+unfortunately our little F-16 buddies
+are gone what are you doing to me man
+you also notice that the rtb and the
+reason the rtb of course is because of
+the fact not that they're low on fuel
+but of course um basically what had
+happened here is they've done their one
+attack so they automatically know to
+come back notice by the way once we
+confirm the target is friendly one more
+time we did not cancel the attack but we
+were able to identify them back to that
+without having the collective
+responsibility problem all right let's
+go out to see with our level f16s here
+we've got plenty of ocean here so I'm
+going to get Cru in here and again it's
+one of those where sometimes you know
+your scenario sometimes you don't but
+that's okay uh oh and we've already
+picked that guy up a while ago we
+probably identified him yeah of course
+we identified him we've got nothing to
+take shots at with him though kind of
+kind of disappointed with that so anyway
+I'm f16s out this way oh we found
+something now we've identified a couple
+interesting things here we've got
+ourselves an RTS as the bear and we have
+an unknown Target so I'm going to grab
+my thunder twins here I'm going to go
+ahead and drop whoa grabbing them there
+we go shift right click and I'm just
+going to go ahead and let go ahead and
+hit intercept there now our F16 buddies
+right here um go on rtb and go ahead and
+unassign them for that there we
+go and you can see uh now that I've got
+AE order them they're now going to pick
+up speed and they're going to go right
+into intercept mode now one of the cool
+things with this intercept here and one
+of the things I appreciate about this is
+you'll notice we've identified the path
+that the bear is actually taking so our
+lovely f-16s here are actually plotting
+an intercept course so you can see that
+they kind of spun around and then
+they're leading them early and then
+they're going to go ahead and engage the
+other one all based on whatever their
+Roe is actually going to be for their
+given scenario so let them go ahead and
+take a couple pot shots here we oh that
+was going to do some damage uh I don't
+know if you're going to get a baron one
+but we'll take a look
+oh G to have to try that
+again there we go nice and there rtb
+once again so as you can see the
+intercept command is a pretty useful
+command it gets a little funky when
+you're dealing with some neutral units
+especially if you already know something
+is neutral in order to to intercept it's
+going to treat as hostile and basically
+shoot at it if you have an unknown it's
+going to try to identify what it is then
+it will attack if it has to otherwise
+it's basically going to stalk it around
+which is kind of fun if that's something
+you're trying to do in a given s scario
+enjoy

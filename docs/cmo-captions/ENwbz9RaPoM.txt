@@ -1,0 +1,514 @@
+# C: MO - Creating bases and facilities using OpenStreetMap and AI
+Video: https://www.youtube.com/watch?v=ENwbz9RaPoM
+Video ID: ENwbz9RaPoM
+
+hello everyone in today's video we're
+going to be taking a look at a couple
+different ways how you can sort of take
+sort of a real world image and convert
+it into yummy targets to drop all sorts
+of fun ordinance on before I get too
+carried away with that um I read a
+really funny comment that says I'm not a
+real person and I love that because
+there's no pictures of me and the reason
+there's no pictures of me is because I I
+teach and you can't really have a social
+media presence if you're a public school
+teacher that doesn't go well for you
+anyway so let's get started so there's a
+couple different ways we can do this and
+we're sitting here in a lovely Rhode
+Island and know um some people what they
+do is there's some external tools you
+can use for this which work really
+really well uh some people what they
+like to do is just kind of a mish mash
+slam things down here but there's two
+basic ways that I like to assemble
+Target bases so to speak the first
+method what I like to do is to use my
+open toppo map like I we have right here
+which is actually pretty groovy and the
+neat thing about this of course is um
+this is going to give us the buildings
+the downside of this of course is when
+you start doing one of these and you get
+a little zoomy then you get a little
+zoomy out everything disappears and you
+zoom in and you're trying to get the
+right levels if you're going to use the
+open topa map which I prefer for this
+just do yourself a quick favor and make
+sure everything's shut off except the
+open too map which is going to make it a
+little bit easier to do so the next
+thing we're going to do of course is
+we're going to go ahead and try to
+figure out what these buildings are now
+if we don't know what the buildings are
+because we're not there we don't want to
+go jump into Google Earth or something
+along those lines that's perfectly fine
+because you can actually take advantage
+of a lot of the stuff that's already
+built into command to do this and let me
+show you what I mean so let's pick on
+this building right here um this one
+right here looks probably a three- story
+if I had to put a quick guesstimate on
+it and if I switch to my distance
+measuring tool I can actually measure
+how long that is now it's very difficult
+to see but it actually says it's about
+80 M across now that's useful for us
+because if we go up to my database VI
+real quickly if I were to go over here
+to facility and I type in uh let's see
+here what do we want I think we said
+medium we'll go ahead and do that first
+uh medium building or if you want to you
+can just type a building or structure
+again depending on what kind of thing
+you're trying to do here looks good to
+me uh it's not a communication I said a
+barracks right it's said about 80 M
+across scrolling down here I can see the
+length of this building is about 60 M so
+that's just a little bit on the the
+small side for what we're doing here if
+I go up to my large building here I can
+see that this is about 70 M this is
+actually much much better and the width
+is about right so we've actually found
+our Target building here this is item
+115 here so what I'm going to do now is
+I'm just going to press my little insert
+key click roughly in the center of that
+building go up to facility come in here
+and I'm just going to go ahead and type
+in what do we say I think it was large
+building so just come in here grab my
+building up very large there's also very
+large if you need it press oky dooke and
+Boop just like that now here's the cool
+thing here um I can specifically name
+that building something but if it's
+going to be a particular Target oh we
+don't need to we can come in here of
+course and let me go ahead and duplicate
+that cuz I see there's a very large
+building up here this one's probably
+going to be medium that one's also going
+to be large but what you can do is just
+have some fun is you can say uh command
+um building kind of a thing like that
+even though it's not a bunker or
+anything like that you can come over
+here and you've got another building
+large here and I you could say you know
+officers quarters officers Ward
+something along those lines and again
+you can go very very serious as far as
+naming the individual buildings where
+things start to get a little more
+interesting when you're going through
+this process of course everything's all
+glitchy oh I pressed the T key be
+careful the T Key by the way is when end
+up with little guys like this you I can
+measure this across real quickly here
+and I'm getting about 10 m when it comes
+to 10 meter buildings of course uh
+usually that's when I like to interpret
+what it could be so what I'll do is I'll
+come in here I'll type in something like
+Mast you can get a nice little TV Mast
+grab a little structure Mast here toss
+that one right here going over to here
+again this could be like a little
+generator sort of a thing like that and
+you could sort of build it on the little
+buildings is kind of like I want Sayo on
+that you can kind of go for the rest of
+it uh once in a while of course as
+you're assembling all these different
+components and starting to kind of fill
+in all these buildings sort of matching
+their size you're going to get to a
+point where you're like oh what if they
+overlap each other they're not going to
+overlap each other as long as you kind
+of put them in the middle the other
+thing you'll face of course is you get
+huge structures like this and of course
+you can tell right just by looking that
+we're looking at a rail yard right now
+so the nice thing is I can come in here
+I can come in here we can say a rail
+Depot or something like that uh actually
+you have to type in Depot properly if
+you actually wanted to get it to work d
+p o deot of course we have a vehicle
+Depot I'm just going to make this one
+generic generic the other thing you can
+do too is do a rail station for those of
+you who's a little more conventional
+either way that's the one structure
+Railway yard I knew I could find it so
+again you could sort of build this and
+if you're asking how I know this uh just
+take a look right here and anybody plays
+factorio knows what this little
+connection is right there so what we
+would do is we'd slowly build that
+structure up kind of going a one at a
+time kind of going through until we've
+populated everything now let's say we've
+built our base here and again let me go
+ahead and fast forward there we go now
+everything's looking pretty good there
+so we have ourselves our little
+structures uh everything's ready I've
+labeled here I've actually recognized
+one of the antenna symbols there so I
+actually toss an antenna there again
+those little details like that make
+these things so much more fun when you
+do it so one of the things I like to do
+when I'm done is I like to grab
+everything and go ahead and group that
+real quick now a lot of times when
+people group things you get this
+frustrating situation where this kind of
+thing happens and this gets really
+really frustrating for folks uh because
+basically it decides that's where the
+center of the group is so if you want to
+fix that you can just hit the F4 real
+quick and you can actually come here and
+you can actually Define what the main
+one is so if I reset this and make this
+one my command base and this one becomes
+the center I see this little building
+right here is more in the middle if that
+makes sense so I can actually set that
+one as the group lead so now when I
+close away you'll notice the center of
+my little structure of buildings right
+now is now this base uh Railway base Uno
+why not make it nice and simple so after
+I do that part of course one of the
+things I like to do to try to kind of
+take it to the next level is I always
+love to populate certain vehicles or
+where things would be inside the base
+and usually a lot of times I'll keep
+this as a separate unit and now the
+reason I like to do this is it just
+makes it a little bit easier but let me
+show you really cool trick too I going
+to press the N9 key on my numpad I'm
+going to grab all of this shift right
+click I'm just going to go ahead
+scenario editor I'm going to make them
+not autod detectable uh the reason I've
+done that is it makes it much much more
+fun for people to actually identify
+things from the air if you get my drift
+there so what I'm going to do now is I
+always like to look for anything that
+looks like it could be a parking spot
+and thanks for parking spots fortunately
+because open street map does such a nice
+job here you can actually see a lot of
+little spots like these little kind of
+parking areas and again there's somebody
+sitting here going I work there don't
+blow that up and know it's kind of one
+of those you got kind of a little dead
+end streets and I always like try to
+kind of guess so I can come in here I
+can type in Depot here we can use the
+proper truck Depot this time cuz that
+makes a little bit more sense and of
+course if you want to have a little bit
+of fun I've actually seen people do
+things like this well they do actual
+parking spots one of the things you may
+or may not have known but um let's say I
+want to grab myself a pretty small
+medium aircraft here let's say that this
+particular parking spot I'm just going
+to move it to the middle here if I
+actually press contrl F6 on this I can
+actually add an airplane to this so if I
+wanted to I could put an MI 24 which
+would be the correct thing to add to it
+for whatever reason there's one of the
+using Cape Cod today ah it's too small
+fine all right let's remove that and
+let's add an sh2f because uh why not sh2
+we'll do United States Navy uh press
+okay press okay don't worry this is
+going to yell at you but believe it or
+not that helicopter is actually sitting
+there on that Runway actually very much
+like that picture that you can see in
+the upper right corner so the other
+thing I like to do too whenever I do
+that is just kind of sprinkle in some
+little vehicles in here uh one thing you
+could do is like we could pretend come
+over here we could type in car for
+example and when you type in car you got
+all sorts of fun things you have like a
+little car park again we could do this
+sort of thing if we want to simulate
+that as a little car park there um one
+of the things we have too is we have a
+railway yard right here so we could
+actually come in here and even though we
+can't technically do this we can
+technically do this but you can come in
+here and actually add some train engines
+so I could add a couple of these and do
+one of these things kind of across there
+like that so we have a train engine
+let's come over here I don't think we
+can do straight locomotive I don't think
+it's in this version ah take it back so
+we can go ahead and stick a locomotive
+right there and if we wanted to we could
+de and we could even get really
+Technical and come in here and say
+switcher kind of a thing like that
+if you want to get that technical but a
+lot of times people view these as
+targets they don't view them as oh
+what's the railro number on that
+particular unit uh that's just not how
+these things usually go but again this
+is just how I generally set these things
+up to make a nice yummy Target so when
+that's all done um the other thing I
+like to do is kind of sprinkle in some
+military vehicles where it makes sense
+to me like for me I'm just looking
+around this real quickly they like a
+really short range radar or something
+like that one of the things I'll do is
+I'll come over here just come in here
+and type in radar and get ourselves sort
+of a generic short range one you got
+plenty of like mpq and stuff like that
+which works really really well and one
+of the things you can do too is you can
+type in generic and then when you scroll
+down to generics uh let's see here
+building building building we don't want
+a building we want to come right in here
+here we go you can see you can actually
+plop down a generic 2D air search radar
+that's kind of short range and you can
+just park it right there and again I
+always like to keep it ungrouped so I
+can flip the sucker on so now we have
+just sort of a general search radar here
+and if you wanted to get technical you
+could come in here notice this is just a
+generic one if you want to add a
+specific flavor in there or you want to
+add like an hfdf or something like that
+I love coming in here and setting this
+like this and then typing the word
+generic and the reason why is they have
+so many great little things in here that
+you can come in here you can put some
+esm maybe there's a little like kind of
+Communication Center or something like
+that that they're kind of like listening
+and all sorts of different stuff got
+some mass in if you want to be really
+really simple we can do of course a
+mobile Jammer we can put a navigation
+radar like I said there's so many great
+things you know one of the nice amazing
+parts of this game is so much of this
+stuff is in here and I just love that uh
+let's see here I'm going to go down
+generic real quick here yeah here we go
+and you can see there's ACA Radars
+there's Coastal surveillance battery
+Radars there's so many different Tools
+in here and of course if I wanted to I
+could type in height it be HF would be
+Huff Duff uh we have to be careful which
+one we have but again you can come in
+here and du find any of these let's see
+here I just want a odd group prv we'll
+do an odd group it could be odd pair
+either one of these are height finders
+I'll toss that one in there too CU why
+not so now we have ourselves our little
+kind of a radar here and then we just
+got to populate a couple Vehicles come
+up to Riley Street here by the way you
+can always press the nine key in the
+numpad too if you have to come up here
+drop that one now we can I'll say uh
+I'll bmp2 oh why not grab this one uh
+say Soviet Union why not so we'll come
+over here we'll say that there's a
+couple t-64's over here T 64s because
+t64 are such a dumb tank H we'll make
+them that one too cuz why not we'll
+assume that somebody put an Aus over
+here zsu 23 uh she put this one down
+here looks pretty good to me got have a
+little bit of you organic air defense
+kind of a thing again he's just sort of
+chilling in there and then I'd come over
+here of course and there's always that
+one jerk who was an sa7 on his shoulder
+it's just one of those things there we
+go looks pretty good to me so there we
+have a really nice looking little base
+now where things get interesting here
+and I always find this super fun is that
+when you shut all that good stuff off
+and you flip your base Earth back on let
+me zoom out a little bit it's not going
+to look so good because unfortunately
+all this is going to have to regenerate
+back into the program which is basically
+kind of what it's doing right now and we
+can grab our satellite image and we can
+actually zoom in here again we've lost
+some MS ution here but that's okay cuzz
+um we have a really nice looking Target
+now that's all convincing and of course
+it's right next to the air base so we
+could put the air base in here and like
+have a beautiful beautiful operational
+area here now what I really really enjoy
+about stuff like this and let me go
+switch over to a blue team real quickly
+here let me grab myself something that's
+a little bit better at taking a look
+around in places like this real quick
+let's see here we don't need a facility
+uh we could grab a cut a bunch of
+different units that we could use for
+this but I'm going to use the You2 spy
+plane because uh we don't use them
+enough scroll on down here toward Wards
+the bottom u2r u2s I'll take the u2r I
+like this version better because it's
+got slar in it and slar is awesome so
+I'm going to go ahead and do a pass over
+the top I'm going to flip my SAR on real
+quickly soide looking Airborne radar and
+I'm going to go unpause this is what I
+love about this remember how we shut all
+those units off so that the units
+themselves weren't uh set up so they
+were autod detectable now the reason I
+love that is when we start cruising over
+the top here our guy is actually going
+to do legitimate reconnaissance now I
+know that sounds kind of like oh whoa
+legitimate reconnaissance what is this
+but you'll notice here I actually was
+able to spot that unit there and if I
+press nine we haven't actually spotted
+all the buildings here and I just find
+that so fast there it goes see how he
+had to get within visual range now if I
+actually click on this and again this is
+me just having fun because I can uh
+coming over here you can see he actually
+detected it with the optical camera now
+the real question is how is he able to
+develop the film during flight um sh
+nobody knows that but uh that's a
+different issue for a different day and
+the reason I love stuff like this is um
+let's say he turns around starts going
+back to Connecticut here hey turn around
+get out of here go get get going now all
+this information of course um we can
+still see him so we still have a pretty
+good way of sort of identifying these
+components and now keep in mind since
+his camera can still see him he still
+has the ability to have a look at him as
+he's going away now if I flat out and
+delete him right here if I click on
+these guys you'll notice it's detected
+by unknown but look at this look at this
+you'll notice that all the units here
+are now not confident so creates an
+awesome situation for you if you want to
+make a place where for example you want
+to make it so we have to DET the targets
+and then attack the targets with b52s or
+something like that it works so darn
+well now there's another way to do this
+and this is the part where everybody's
+like wow I spent a little amount of time
+there just to say there's another way to
+do it and the other way to do this is
+you could do this randomly and what I've
+actually done here oh because I'm a bad
+person as always is I went ahead and I
+played with a chat GPT or actually this
+is a GPT for Bing you can do this with
+chat GPT by the way and I basically
+wrote myself a script and what the
+script does is it generates a grid
+centered on one particular location with
+some DBS of buildings that I wanted to
+use so when we grab that script I'm
+going to go ahead and take this one up
+and don't worry I'll pop that over there
+if you want to play with it I simply put
+in my Center coordinates where I want
+things to happen I press the Run button
+like that I close my screen and then I
+can see that I get the world's most
+precise Grid in the middle of the
+Connecticut River here of all these cool
+buildings with all these different
+properties now what I could do is I
+could actually come in here and change
+this I could make them much closer
+together but if you need to quickly
+populate you know the entire country or
+an entire city that is absolutely going
+to be the way to do it if that's what
+you're trying to do now there are other
+ways to do this of course we could
+Jitter everything a little bit if you
+wanted to and yes I know people are
+screaming can I see the prompt you used
+okay I'll go through it all real slowly
+my first prompt looks like
+this then I fixed
+it then I fixed it
+again and then you have the final
+version so that's just another great use
+of AI for that particular purpose I
+haven't done it with Gemini yet but I'm
+definitely going to give it a try and
+this will create a plausible looking
+base and I keep in mind there are other
+ways to do it with heris models and
+stuff like that but I'm not going to get
+into that level of depth here because
+once I start going that that is like a
+three and a half hour live stream where
+I show you all the powerful ways you
+could use that maybe something for a
+little bit later this year but not just
+right now busy in the school year enjoy

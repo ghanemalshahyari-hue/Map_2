@@ -1,0 +1,192 @@
+diff --git a/UI_MOdified/client/app.html b/UI_MOdified/client/app.html
+index bd5c92b..b78f04d 100644
+--- a/UI_MOdified/client/app.html
++++ b/UI_MOdified/client/app.html
+@@ -56,6 +56,9 @@
+                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                     <span data-i18n="chat-btn">Chat</span>
+                 </button>
++                <button id="legend-toggle-btn" class="header-btn header-btn--text" type="button" aria-pressed="true" data-i18n-title="legend-toggle-title" title="Show or hide the map legend">
++                    <span data-i18n="legend-toggle-btn">Legend</span>
++                </button>
+                 <button id="lang-toggle-btn" class="header-btn" type="button" data-i18n-title="lang-toggle-title" title="Switch language">عربي</button>
+                 <div id="server-account-bar" class="server-account-bar hidden" aria-label="Server plans">
+                     <select id="server-plan-select" class="glass-select server-plan-select" title="Plans"></select>
+diff --git a/UI_MOdified/client/app.js b/UI_MOdified/client/app.js
+index 5240433..f6480bc 100644
+--- a/UI_MOdified/client/app.js
++++ b/UI_MOdified/client/app.js
+@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
+         'eraser-e-btn',
+         'lang-toggle-btn',
+         'chat-toggle-btn',
++        'legend-toggle-btn',
+         'top-favorites-btn'
+     ];
+ 
+@@ -17224,6 +17225,7 @@ document.addEventListener('DOMContentLoaded', () => {
+     // Light/Dark theme toggle (applied after server prefs pull when using http)
+     const THEME_KEY = 'nato-map-planner-theme';
+     const themeToggleBtn = document.getElementById('theme-toggle-btn');
++    const legendToggleBtn = document.getElementById('legend-toggle-btn');
+     function getTheme() {
+         return localStorage.getItem(THEME_KEY) || 'dark';
+     }
+@@ -17251,6 +17253,18 @@ document.addEventListener('DOMContentLoaded', () => {
+             setTheme(getTheme() === 'dark' ? 'light' : 'dark');
+         });
+ 
++        function syncLegendToggleButton() {
++            if (!legendToggleBtn) return;
++            const visible = window.AppAdjudicatorMap?.isLegendVisible?.() !== false;
++            legendToggleBtn.setAttribute('aria-pressed', visible ? 'true' : 'false');
++            legendToggleBtn.classList.toggle('active', visible);
++        }
++        syncLegendToggleButton();
++        legendToggleBtn?.addEventListener('click', () => {
++            window.AppAdjudicatorMap?.toggleLegend?.();
++            syncLegendToggleButton();
++        });
++
+         syncDistanceUnitToggleButton();
+         syncDistanceUnitSelect();
+         refreshTmgSidebarLengthForUnit();
+diff --git a/UI_MOdified/client/i18n.js b/UI_MOdified/client/i18n.js
+index 15c16b9..871deb8 100644
+--- a/UI_MOdified/client/i18n.js
++++ b/UI_MOdified/client/i18n.js
+@@ -131,6 +131,8 @@
+                                                 'plan-status-error': 'Save failed',
+                                                 'theme-toggle-title': 'Toggle light/dark theme',
+                                                 'settings-toggle-title': 'Settings & tools',
++                                                'legend-toggle-btn': 'Legend',
++                                                'legend-toggle-title': 'Show or hide the map legend',
+                                                 'lang-toggle-title': 'Switch language',
+                                                 'import-invalid-json': 'Invalid JSON file.',
+                                                 'import-invalid-format': 'Invalid format: not a recognised plan file.',
+@@ -2525,6 +2527,8 @@
+             'sidc-meta-echelon-region-theater': 'إقليم / مسرح عمليات',
+             'sidc-meta-echelon-command': 'قيادة',
+             'lang-btn': 'English',
++            'legend-toggle-btn': 'الدليل',
++            'legend-toggle-title': 'إظهار دليل الخريطة أو إخفاؤه',
+ 
+             'sidebar-title': 'رموز',
+             'sidebar-subtitle': 'خريطة تكتيكية غير متصلة',
+diff --git a/UI_MOdified/client/wargame/adjudicator-map.js b/UI_MOdified/client/wargame/adjudicator-map.js
+index 4663b70..a70ecbb 100644
+--- a/UI_MOdified/client/wargame/adjudicator-map.js
++++ b/UI_MOdified/client/wargame/adjudicator-map.js
+@@ -81,7 +81,8 @@
+     let blueMarkers = {};        // { 'BLUE_xxx': L.marker }
+     let pipelineLatLngs = null;  // cached lat/lng array for split computation
+     let pipelineSegmentKm = null;// cached cumulative km along pipeline per vertex
+-    let legendControl = null;    // Leaflet control (top-right legend panel)
++    let legendControl = null;    // Leaflet control (map legend panel)
++    let legendVisible = true;
+     let sitrepControl = null;    // Leaflet control (top-left SITREP banner)
+     let displayOffsetNotice = null; // Leaflet control (bottom-left display-offset info chip — PR-106)
+     let ewHalo = null;           // circle around RED_405EW sized by EW band
+@@ -2035,8 +2036,9 @@
+         try { updateUnitScale(); } catch (_) { /* ignore */ } // initial zoom-responsive symbol size
+         try { renderMovementTrails(0); } catch (_) { /* ignore */ } // AN4: record step-0 positions (no trail yet)
+ 
+-        // Add the legend control (top-right corner of the map).
+-        addLegend();
++        // Add the legend control near the lower-left edge so it stays out of
++        // the densest unit laydown and can be toggled from the app header.
++        showLegend();
+         // Add the SITREP banner (top-left corner of the map). Initial state
+         // is a placeholder; applyState() fills it as the trial progresses.
+         addSitrep();
+@@ -2046,7 +2048,7 @@
+ 
+     function addLegend() {
+         if (legendControl || !window.L) return;
+-        legendControl = window.L.control({ position: 'topright' });
++        legendControl = window.L.control({ position: 'bottomleft' });
+         legendControl.onAdd = function () {
+             const div = window.L.DomUtil.create('div', 'wg-adj-legend');
+             div.style.cssText = `
+@@ -2054,7 +2056,7 @@
+                 padding:8px 10px;border-radius:4px;border:1px solid #2a3140;
+                 box-shadow:0 0 6px rgba(0,0,0,.4);line-height:1.5;
+                 font-family:sans-serif;min-width:170px;max-width:200px;
+-                margin-right:340px;max-height:78vh;overflow:auto;
++                margin-left:10px;margin-bottom:56px;max-height:52vh;overflow:auto;
+             `;
+             const blsRow = (color, label) =>
+                 `<span style="display:inline-block;width:14px;height:8px;
+@@ -2109,6 +2111,12 @@
+         legendControl.addTo(window.map);
+     }
+ 
++    function showLegend() {
++        legendVisible = true;
++        addLegend();
++        return legendVisible;
++    }
++
+     function removeLegend() {
+         if (legendControl && window.map) {
+             try { window.map.removeControl(legendControl); } catch (_) {}
+@@ -2116,6 +2124,21 @@
+         legendControl = null;
+     }
+ 
++    function hideLegend() {
++        legendVisible = false;
++        removeLegend();
++        return legendVisible;
++    }
++
++    function toggleLegend(forceVisible) {
++        const nextVisible = typeof forceVisible === 'boolean' ? forceVisible : !legendVisible;
++        return nextVisible ? showLegend() : hideLegend();
++    }
++
++    function isLegendVisible() {
++        return legendVisible;
++    }
++
+     // ── SITREP banner (top-left of the map) ───────────────────────────
+     function addSitrep() {
+         if (sitrepControl || !window.L) return;
+@@ -3409,12 +3432,12 @@
+ 
+             const members = arcs.map(a => `${a.actor_uid || '?'} → ${a.target_uid || '?'}`).join(', ');
+             const arrow = createManeuverArrowPolygon(centerline, color, {
+-                bodyHalfPx:    5,
+-                headHalfPx:    12,
+-                headLenPx:     18,
++                bodyHalfPx:    3,
++                headHalfPx:    9,
++                headLenPx:     14,
+                 outline:       outlineColor,
+-                outlineWidthPx: 1.0,
+-                opacity:       0.70,
++                outlineWidthPx: 0.8,
++                opacity:       0.75,
+                 pane:          SCENARIO_GRAPHICS_PANE,
+             });
+             if (arrow) {
+@@ -3424,7 +3447,7 @@
+             } else {
+                 // Fallback: thin polyline + arrowhead when polygon builder is unavailable.
+                 const fb = window.L.polyline([[aLat, aLng], [tip.lat, tip.lng]], {
+-                    color, weight: 3, opacity: 0.70, interactive: false,
++                    color, weight: 2, opacity: 0.75, interactive: false,
+                     pane: SCENARIO_GRAPHICS_PANE,
+                 }).bindTooltip(`${label}: ${members}`, { sticky: true });
+                 fb.addTo(layerGroup);
+@@ -5355,6 +5378,10 @@
+         auditResolvedUnitSymbols,
+         renderMovementTrails,
+         renderEngagementMissionGraphics, // MG1: Attack/Counterattack mission graphics for the step's engagement_arcs
++        showLegend,
++        hideLegend,
++        toggleLegend,
++        isLegendVisible,
+         // Position primitives (so external callers can build their own
+         // step-resolved state without re-implementing the movement model)
+         computeRedPosition:  (meta, stepIndex, progress) => redPositionLonLat(meta, stepIndex, progress),

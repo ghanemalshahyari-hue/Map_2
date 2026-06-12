@@ -1,0 +1,747 @@
+# templates/staff_estimate.yaml
+# =============================
+# Doc 2 — تقديرات هيئة الركن (Staff Estimates).
+#
+# Retrieval groups (M3 deliverable — 4 groups, one per class):
+#   - INTELLIGENCE_ESTIMATE   (INTEL / G2-S2) — enemy analysis, terrain, weather
+#   - OPERATIONS_ESTIMATE     (OPS   / G3-S3) — own unit mission / method / force
+#   - PERSONNEL_ESTIMATE      (PERS  / G1-S1) — force coverage, morale, casualties
+#   - LOGISTICS_ESTIMATE      (LOG   / G4-S4) — classes of supply, maintenance
+#
+# Design references:
+#   - referencedocs/20_phase3_templates_and_kinds.md §3 (routing table),
+#     §5 (worked example)
+#   - referencedocs/18_phase3_generation.md §5 (classes), §6 (retrieval),
+#     §6.4 (collection scope)
+#   - NewClasses.md §"SECOND DOCUMENT" (INTELLIGENCE_ESTIMATE,
+#     OPERATIONS_ESTIMATE, PERSONNEL_ESTIMATE, LOGISTICS_ESTIMATE)
+#
+# Collection scope: single doctrine collection with per-manual narrowing
+# via filters.source_doc. Manuals marked with † in the routing table of
+# referencedoc 20 §3 are not currently ingested.
+#
+# Field-kind notes:
+#   - Most LOGISTICS_ESTIMATE fields default to "يُصدر لاحقاً"
+#     (published later) in NewClasses.md — represented as `kind: static`.
+#     If the user later wants doctrinal framing, flip them to `retrieved`.
+#   - Many PERSONNEL_ESTIMATE fields have fixed SOP boilerplate — `static`.
+#   - higher_unit_* fields in OPERATIONS_ESTIMATE are `derived` from
+#     MissionAndExecution (Doc 1) when both documents run in the same
+#     batch. If Doc 1 is not in the run, the dispatcher logs a warning
+#     and the field falls back to its `retrieved` shadow at generation
+#     time (not implemented in v1 — v1 just leaves the field empty and
+#     emits "غير متوفر" if the cross-doc reference is absent).
+
+# §18 C17 (2026-04-22) — deferred to v2.
+# Staff Estimates are the MDMP Steps 2–6 output. v1 ships MDMP Step 1
+# only (Time Analysis + Initial Planning Guidance). This template,
+# its schema module, and all M3 retrieval/drafter/critique code on
+# disk stay correct; the CLI v1-scope gate skips it. Flipping this
+# to `true` in a future v2 + removing the CLI filter re-enables the
+# full pipeline with zero code changes.
+v1_scope: false
+
+meta:
+  template_id: staff_estimate
+  template_version: 1
+  title_arabic: "تقديرات هيئة الركن"
+  document_slug: staff_estimate
+  output_filename: "{document_slug}.docx"
+  default_collections:
+    - ingest__operationalfiles__bgem3
+
+schemas:
+  # -----------------------------------------------------------------
+  # INTELLIGENCE_ESTIMATE (G2/S2) — one retrieval group, heavy on
+  # enemy analysis. 17 fields; environmental fields stay `input` (from
+  # operational annex), tactical analysis fields are `retrieved`.
+  # -----------------------------------------------------------------
+  INTELLIGENCE_ESTIMATE:
+    fields:
+      terrain:
+        kind: retrieved
+        group: INTELLIGENCE_ESTIMATE
+        query_seeds:
+          - "OAKOC terrain analysis area of operations"
+          - "terrain effects maneuver {operation.axis}"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-98-Reconnaissance-and-Security-Ops.pdf"
+            - "FM-3-90-2-Reconnaissance-Security.pdf"
+            - "FM-3-90-Tactics.pdf"
+        prompt_ar: >
+          اكتب تحليلاً للأرض باستخدام إطار (OAKOC / OCOKA) بناءً على
+          المقاطع. استشهد بعد كل جملة أساسية بالوسم الموجود بجانب
+          المقطع المصدر حرفياً. إذا لم تدعم المقاطع الحقل، اكتب
+          "غير متوفر في العقيدة المتاحة".
+        max_tokens: 300
+
+      weather:
+        kind: retrieved
+        group: INTELLIGENCE_ESTIMATE
+        query_seeds:
+          - "weather effects operations visibility trafficability"
+          - "environmental effects on ground maneuver"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-90-Tactics.pdf"
+        prompt_ar: >
+          صِف الأثر العام للطقس على العمليات اعتماداً على المقاطع. استشهد
+          حرفياً بوسم كل مقطع. إن لم تدعم المقاطع الحقل، اكتب
+          "غير متوفر في العقيدة المتاحة".
+        max_tokens: 200
+
+      first_light:
+        kind: input
+        path: timing.first_light
+        required: false
+        default: "حسب التقويم الفلكي للمنطقة"
+        label_ar: "أول ضوء (BMNT)"
+
+      last_light:
+        kind: input
+        path: timing.last_light
+        required: false
+        default: "حسب التقويم الفلكي للمنطقة"
+        label_ar: "آخر ضوء (EENT)"
+
+      moon_phase:
+        kind: input
+        path: timing.moon_phase
+        required: false
+        default: "حسب التقويم الفلكي للمنطقة"
+        label_ar: "طور القمر والإضاءة"
+
+      effect_of_environment_on_operations:
+        kind: retrieved
+        group: INTELLIGENCE_ESTIMATE
+        query_seeds:
+          - "environmental constraints operational limitations"
+          - "weather terrain restrictions maneuver"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-90-Tactics.pdf"
+        prompt_ar: >
+          ابدأ الحقل بقول: "لا يوجد أي تأثير كبير على العمليات من البيئة."
+          ثم أضف القيود التشغيلية الناتجة عن البيئة بناءً على المقاطع
+          المعطاة. استشهد حرفياً بوسم كل مقطع مصدر. إن لم تدعم المقاطع
+          قيداً محدداً، لا تخترع واحداً.
+        max_tokens: 250
+
+      enemy_composition:
+        kind: retrieved
+        group: INTELLIGENCE_ESTIMATE
+        query_seeds:
+          - "enemy composition force structure {operation.echelon}"
+          - "threat order of battle organization"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-98-Reconnaissance-and-Security-Ops.pdf"
+            - "FM-3-90-Tactics.pdf"
+        prompt_ar: >
+          صِف تشكيل قوات العدو (Composition) اعتماداً على المقاطع.
+          استشهد بعد كل جملة أساسية بوسم المقطع المصدر حرفياً. إن لم
+          تدعم المقاطع الحقل، اكتب "غير متوفر في العقيدة المتاحة".
+        max_tokens: 250
+
+      enemy_disposition:
+        kind: retrieved
+        group: INTELLIGENCE_ESTIMATE
+        query_seeds:
+          - "enemy disposition geographic distribution threat"
+          - "enemy positions battle positions {operation.axis}"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-98-Reconnaissance-and-Security-Ops.pdf"
+            - "FM-3-90-2-Reconnaissance-Security.pdf"
+            - "FM-3-90-Tactics.pdf"
+            - "FM-3-0-Operations.pdf"
+        prompt_ar: >
+          صِف توزيع قوات العدو جغرافياً (Disposition) اعتماداً على
+          المقاطع. استشهد حرفياً بوسم كل مقطع. إن لم تدعم المقاطع
+          الحقل، اكتب "غير متوفر في العقيدة المتاحة".
+        max_tokens: 250
+
+      enemy_strength:
+        kind: retrieved
+        group: INTELLIGENCE_ESTIMATE
+        query_seeds:
+          - "enemy strength combat power assessment"
+          - "threat capability estimate doctrine"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-98-Reconnaissance-and-Security-Ops.pdf"
+        prompt_ar: >
+          صِف قوة العدو (Strength) كمّاً ونوعاً بناءً على المقاطع. استشهد
+          حرفياً بوسم كل مقطع مصدر. إن لم تدعم المقاطع الحقل، اكتب
+          "غير متوفر في العقيدة المتاحة".
+        max_tokens: 200
+
+      enemy_readiness:
+        kind: retrieved
+        group: INTELLIGENCE_ESTIMATE
+        query_seeds:
+          - "enemy readiness preparation combat effectiveness"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-98-Reconnaissance-and-Security-Ops.pdf"
+        prompt_ar: >
+          صِف جاهزية قوات العدو استناداً إلى المقاطع. استشهد حرفياً
+          بوسم كل مقطع. إن لم تدعم المقاطع الحقل، اكتب "غير متوفر في
+          العقيدة المتاحة".
+        max_tokens: 180
+
+      enemy_training:
+        kind: retrieved
+        group: INTELLIGENCE_ESTIMATE
+        query_seeds:
+          - "enemy training proficiency level"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-98-Reconnaissance-and-Security-Ops.pdf"
+        prompt_ar: >
+          صِف مستوى تدريب قوات العدو استناداً إلى المقاطع. استشهد حرفياً
+          بوسم كل مقطع. إن لم تدعم المقاطع الحقل، اكتب "غير متوفر في
+          العقيدة المتاحة".
+        max_tokens: 150
+
+      recent_and_ongoing_activities:
+        kind: retrieved
+        group: INTELLIGENCE_ESTIMATE
+        query_seeds:
+          - "recent enemy activities tactical pattern"
+          - "ongoing threat operations {operation.axis}"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-98-Reconnaissance-and-Security-Ops.pdf"
+            - "FM-3-90-2-Reconnaissance-Security.pdf"
+            - "FM-3-0-Operations.pdf"
+        prompt_ar: >
+          صِف النشاطات الأخيرة والجارية لقوات العدو استناداً إلى المقاطع.
+          استشهد حرفياً بوسم كل مقطع مصدر. إن لم تدعم المقاطع الحقل،
+          اكتب "غير متوفر في العقيدة المتاحة".
+        max_tokens: 250
+
+      enemy_tactics_phase1_preparation:
+        kind: retrieved
+        group: INTELLIGENCE_ESTIMATE
+        query_seeds:
+          - "enemy shaping preparation phase operations"
+          - "threat phase 1 preparation indicators"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-90-Tactics.pdf"
+            - "FM-3-98-Reconnaissance-and-Security-Ops.pdf"
+        prompt_ar: >
+          صِف تكتيكات العدو خلال مرحلة التحضير (Shape / Prepare) استناداً
+          إلى المقاطع. استشهد حرفياً بوسم كل مقطع. إن لم تدعم المقاطع،
+          اكتب "غير متوفر في العقيدة المتاحة".
+        max_tokens: 220
+
+      enemy_tactics_phase2_shaping:
+        kind: retrieved
+        group: INTELLIGENCE_ESTIMATE
+        query_seeds:
+          - "enemy shaping operations phase tactics"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-90-Tactics.pdf"
+        prompt_ar: >
+          صِف تكتيكات العدو خلال مرحلة التشكيل (Shaping) استناداً إلى
+          المقاطع. استشهد حرفياً بوسم كل مقطع. إن لم تدعم المقاطع، اكتب
+          "غير متوفر في العقيدة المتاحة".
+        max_tokens: 220
+
+      enemy_tactics_phase3_decisive:
+        kind: retrieved
+        group: INTELLIGENCE_ESTIMATE
+        query_seeds:
+          - "enemy decisive operation tactics engagement"
+          - "threat main effort decisive phase"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-90-Tactics.pdf"
+            - "FM-3-90-1-Offense-and-Defense-Vol-1.pdf"
+            - "ADP-3-90-Offense-and-Defense.pdf"
+        prompt_ar: >
+          صِف تكتيكات العدو خلال المرحلة الحاسمة (Decisive) استناداً إلى
+          المقاطع. استشهد حرفياً بوسم كل مقطع. إن لم تدعم المقاطع، اكتب
+          "غير متوفر في العقيدة المتاحة".
+        max_tokens: 250
+
+      enemy_most_likely_coa:
+        kind: retrieved
+        group: INTELLIGENCE_ESTIMATE
+        query_seeds:
+          - "enemy most likely course of action MLCOA"
+          - "threat COA development intelligence preparation"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-98-Reconnaissance-and-Security-Ops.pdf"
+            - "FM-3-90-2-Reconnaissance-Security.pdf"
+            - "FM-3-0-Operations.pdf"
+        rerank_query_ar: "أكثر مسارات عمل العدو احتمالاً في منطقة العمليات"
+        prompt_ar: >
+          حدِّد أكثر مسارات عمل العدو احتمالاً (Most Likely COA) استناداً
+          إلى المقاطع. استشهد حرفياً بوسم كل مقطع. إن لم تدعم المقاطع،
+          اكتب "غير متوفر في العقيدة المتاحة".
+        max_tokens: 300
+
+      counter_intel_observations:
+        kind: retrieved
+        group: INTELLIGENCE_ESTIMATE
+        query_seeds:
+          - "counter-intelligence observations enemy capabilities"
+          - "threat intelligence collection capability"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-98-Reconnaissance-and-Security-Ops.pdf"
+            - "FM-3-0-Operations.pdf"
+        prompt_ar: >
+          اذكر ملاحظات الاستخبارات المضادة وقدرات العدو اعتماداً على
+          المقاطع. استشهد حرفياً بوسم كل مقطع. إن لم تدعم المقاطع، اكتب
+          "غير متوفر في العقيدة المتاحة".
+        max_tokens: 220
+
+  # -----------------------------------------------------------------
+  # OPERATIONS_ESTIMATE (G3/S3) — one retrieval group.
+  # higher_unit_* fields: derived from Doc 1 when both are generated
+  # together; `retrieved` fallback is handled by the dispatcher when
+  # Doc 1 is absent from the run.
+  # own_unit_end_state: derived from MissionAndExecution.desired_end_state
+  # per NewClasses.md note.
+  # -----------------------------------------------------------------
+  OPERATIONS_ESTIMATE:
+    fields:
+      higher_unit_mission:
+        kind: derived
+        reference: MissionAndExecution.higher_unit_mission
+        transform: null
+        label_ar: "مهمة القيادة الأعلى"
+
+      higher_unit_purpose:
+        kind: retrieved
+        group: OPERATIONS_ESTIMATE
+        query_seeds:
+          - "higher unit mission purpose commander intent"
+          - "{operation.echelon} higher headquarters end state"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-3-0-Operations.pdf"
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-90-Tactics.pdf"
+        prompt_ar: >
+          اكتب غرض القيادة الأعلى فقط (Purpose) بناءً على المقاطع.
+          استشهد حرفياً بوسم كل مقطع. إن لم تدعم المقاطع الحقل، اكتب
+          "غير متوفر في العقيدة المتاحة".
+        max_tokens: 150
+
+      higher_unit_method:
+        kind: retrieved
+        group: OPERATIONS_ESTIMATE
+        query_seeds:
+          - "higher unit method scheme of maneuver"
+          - "{operation.echelon} concept of operations higher"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-3-0-Operations.pdf"
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-90-Tactics.pdf"
+            - "FM-3-90-1-Offense-and-Defense-Vol-1.pdf"
+        prompt_ar: >
+          اكتب طريقة تنفيذ القيادة الأعلى فقط (Method) بناءً على المقاطع.
+          استشهد حرفياً بوسم كل مقطع. إن لم تدعم المقاطع، اكتب
+          "غير متوفر في العقيدة المتاحة".
+        max_tokens: 200
+
+      higher_unit_end_state:
+        kind: retrieved
+        group: OPERATIONS_ESTIMATE
+        query_seeds:
+          - "higher unit end state desired conditions"
+          - "commander desired end state doctrine"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-3-0-Operations.pdf"
+            - "FM-3-0-Operations.pdf"
+            - "ADP-3-90-Offense-and-Defense.pdf"
+        prompt_ar: >
+          اكتب النتيجة المرجوة من قِبل القيادة الأعلى فقط (End State)
+          بناءً على المقاطع. استشهد حرفياً بوسم كل مقطع. إن لم تدعم
+          المقاطع، اكتب "غير متوفر في العقيدة المتاحة".
+        max_tokens: 180
+
+      own_unit_mission:
+        kind: derived
+        reference: MissionAndExecution.mission
+        transform: null
+        label_ar: "مهمة الوحدة"
+
+      own_unit_purpose:
+        kind: derived
+        reference: MissionAndExecution.objective
+        transform: null
+        label_ar: "غرض الوحدة"
+
+      main_effort_tasks:
+        kind: retrieved
+        group: OPERATIONS_ESTIMATE
+        query_seeds:
+          - "main effort tasks {operation.echelon} {operation.operation_type}"
+          - "main effort shaping operations doctrine"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-3-0-Operations.pdf"
+            - "FM-3-90-Tactics.pdf"
+            - "FM-3-90-1-Offense-and-Defense-Vol-1.pdf"
+            - "ADP-3-90-Offense-and-Defense.pdf"
+            - "ATP-3-21-8-Infantry-Rifle-Platoon-and-Squad-2024.pdf"
+            - "ATP-3-21-18-Stryker-Rifle-Company.pdf"
+            - "ATP-3-20-15-Tank-Platoon.pdf"
+        rerank_query_ar: "مهام الجهد الرئيسي ومهام الجهود المساندة"
+        prompt_ar: >
+          اذكر مهام الجهد الرئيسي مع توضيح مهام الجهود المساندة المرتبطة
+          بها (أ) و (ب). اعتمد على المقاطع فقط. استشهد حرفياً بوسم كل
+          مقطع. إن لم تدعم المقاطع، اكتب "غير متوفر في العقيدة المتاحة".
+        max_tokens: 400
+
+      own_unit_end_state:
+        kind: derived
+        reference: MissionAndExecution.desired_end_state
+        transform: null
+        label_ar: "النتيجة المرجوة للوحدة"
+
+      ground_component_force:
+        kind: retrieved
+        group: OPERATIONS_ESTIMATE
+        query_seeds:
+          - "ground component force organization {operation.echelon}"
+          - "maneuver force task organization brigade battalion"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-0-Operations.pdf"
+            - "ADP-3-0-Operations.pdf"
+            - "ATP-3-21-8-Infantry-Rifle-Platoon-and-Squad-2024.pdf"
+            - "ATP-3-21-18-Stryker-Rifle-Company.pdf"
+            - "ATP-3-20-15-Tank-Platoon.pdf"
+        prompt_ar: >
+          صِف قوة المكون البرّي المنفذة للعملية استناداً إلى المقاطع.
+          استشهد حرفياً بوسم كل مقطع. إن لم تدعم المقاطع، اكتب
+          "غير متوفر في العقيدة المتاحة".
+        max_tokens: 250
+
+      attached_supporting_units:
+        kind: retrieved
+        group: OPERATIONS_ESTIMATE
+        query_seeds:
+          - "attached supporting units task organization doctrine"
+          - "reinforcing direct support units {operation.echelon}"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-90-Tactics.pdf"
+        prompt_ar: >
+          اذكر الوحدات الملحقة والمساندة حسب المقاطع. استشهد حرفياً بوسم
+          كل مقطع. إن لم تدعم المقاطع، اكتب "غير متوفر في العقيدة المتاحة".
+        max_tokens: 200
+
+      force_composition:
+        kind: retrieved
+        group: OPERATIONS_ESTIMATE
+        query_seeds:
+          - "force composition combat arms maneuver {operation.echelon}"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-0-Operations.pdf"
+            - "ATP-3-21-8-Infantry-Rifle-Platoon-and-Squad-2024.pdf"
+            - "ATP-3-21-18-Stryker-Rifle-Company.pdf"
+            - "ATP-3-20-15-Tank-Platoon.pdf"
+        prompt_ar: >
+          صِف التشكيل القوامي للقوة (Force Composition) استناداً إلى
+          المقاطع. استشهد حرفياً بوسم كل مقطع. إن لم تدعم المقاطع، اكتب
+          "غير متوفر في العقيدة المتاحة".
+        max_tokens: 220
+
+      training_readiness_level:
+        kind: input
+        path: operation.own_training_readiness
+        required: false
+        default: "مرتفع — حسب آخر تقييم للقيادة الأعلى"
+        label_ar: "مستوى التدريب والجاهزية"
+
+      combat_effectiveness:
+        kind: retrieved
+        group: OPERATIONS_ESTIMATE
+        query_seeds:
+          - "combat effectiveness assessment criteria {operation.echelon}"
+          - "unit combat power evaluation"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-0-Operations.pdf"
+            - "ADP-3-0-Operations.pdf"
+            - "FM-3-90-Tactics.pdf"
+        prompt_ar: >
+          قيِّم الفاعلية القتالية للوحدة بناءً على المقاطع. استشهد حرفياً
+          بوسم كل مقطع. إن لم تدعم المقاطع، اكتب "غير متوفر في العقيدة
+          المتاحة".
+        max_tokens: 200
+
+      operations_conclusions:
+        kind: retrieved
+        group: OPERATIONS_ESTIMATE
+        query_seeds:
+          - "operations estimate conclusions recommendations staff"
+          - "G3 S3 operational assessment conclusion"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-3-0-Operations.pdf"
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-90-Tactics.pdf"
+        prompt_ar: >
+          اكتب خلاصة تقدير العمليات ببيان قصير مركَّز على التوصيات
+          للقائد. اعتمد على المقاطع فقط. استشهد حرفياً بوسم كل مقطع.
+          إن لم تدعم المقاطع، اكتب "غير متوفر في العقيدة المتاحة".
+        max_tokens: 300
+
+  # -----------------------------------------------------------------
+  # PERSONNEL_ESTIMATE (G1/S1) — one retrieval group (only
+  # force_coverage + morale + personnel_conclusions). The remaining
+  # fields are SOP boilerplate per NewClasses.md defaults.
+  # -----------------------------------------------------------------
+  PERSONNEL_ESTIMATE:
+    fields:
+      force_coverage:
+        kind: retrieved
+        group: PERSONNEL_ESTIMATE
+        query_seeds:
+          - "force coverage manning requirements personnel readiness"
+          - "{operation.echelon} personnel strength reporting"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-6-0-Mission-Command.pdf"               # †
+            - "FM-3-39-Military-Police.pdf"               # †
+            - "ADP-3-0-Operations.pdf"
+            - "FM-3-0-Operations.pdf"
+        prompt_ar: >
+          صِف تغطية القوة من حيث التعداد والجاهزية البشرية بناءً على
+          المقاطع. استشهد حرفياً بوسم كل مقطع. إن لم تدعم المقاطع،
+          اكتب "غير متوفر في العقيدة المتاحة".
+        max_tokens: 220
+
+      morale:
+        kind: retrieved
+        group: PERSONNEL_ESTIMATE
+        query_seeds:
+          - "morale readiness cohesion combat units"
+          - "soldier morale assessment"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-6-0-Mission-Command.pdf"               # †
+            - "FM-3-0-Operations.pdf"
+            - "ADP-3-0-Operations.pdf"
+        prompt_ar: >
+          صِف الحالة المعنوية للقوات استناداً إلى المقاطع. استشهد
+          حرفياً بوسم كل مقطع. إن لم تدعم المقاطع، اكتب "غير متوفر في
+          العقيدة المتاحة".
+        max_tokens: 180
+
+      reinforcements:
+        kind: static
+        value: "يُصدر لاحقاً."
+
+      projected_casualties:
+        kind: static
+        value: "يُصدر لاحقاً."
+
+      control_and_coordination:
+        kind: static
+        value: "حسب الإجراءات العملياتية الثابتة (SOP)."
+
+      pows_detainees:
+        kind: static
+        value: "تتبع التعليمات الصادرة في بروتوكولات التعامل مع أسرى الحرب والمحتجزين."
+
+      civilian_refugees:
+        kind: static
+        value: "يتم التعامل مع المدنيين النازحين وفقاً للإرشادات الصادرة بذلك."
+
+      civilian_detainees:
+        kind: static
+        value: "يتم التنسيق مع الجهات المختصة للتعامل مع المحتجزين المدنيين."
+
+      personnel_conclusions:
+        kind: retrieved
+        group: PERSONNEL_ESTIMATE
+        query_seeds:
+          - "personnel estimate conclusions staff recommendations"
+          - "G1 S1 assessment conclusion personnel impact"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-6-0-Mission-Command.pdf"               # †
+            - "FM-3-39-Military-Police.pdf"               # †
+            - "ADP-3-0-Operations.pdf"
+        prompt_ar: >
+          اكتب خلاصة تقدير الموارد البشرية مع ذكر أي أثر متوقَّع على
+          العمليات. اعتمد على المقاطع. استشهد حرفياً بوسم كل مقطع.
+          إن لم تدعم المقاطع، اكتب "غير متوفر في العقيدة المتاحة".
+        max_tokens: 280
+
+  # -----------------------------------------------------------------
+  # LOGISTICS_ESTIMATE (G4/S4) — minimal retrieval, maximum static
+  # fallbacks. NewClasses.md makes every field default to "يُصدر لاحقاً"
+  # (published later). When ADP 4-0 is ingested, flip these to
+  # `retrieved` with the relevant `source_doc` allowlist.
+  # -----------------------------------------------------------------
+  LOGISTICS_ESTIMATE:
+    fields:
+      subsistence_class_i:
+        kind: static
+        value: "يُصدر لاحقاً."
+      general_sustainment:
+        kind: static
+        value: "يُصدر لاحقاً."
+      pol_class_iii:
+        kind: static
+        value: "يُصدر لاحقاً."
+      ammunition_class_v:
+        kind: static
+        value: "يُصدر لاحقاً."
+      repair_parts_class_ix:
+        kind: static
+        value: "يُصدر لاحقاً."
+      equipment_and_engineer_materiel:
+        kind: static
+        value: "يُصدر لاحقاً."
+      transportation:
+        kind: static
+        value: "يُصدر لاحقاً."
+      maintenance:
+        kind: static
+        value: "يُصدر لاحقاً."
+      medical_support_class_viii:
+        kind: static
+        value: "يُصدر لاحقاً."
+      logistics_conclusions:
+        kind: retrieved
+        group: LOGISTICS_ESTIMATE
+        query_seeds:
+          - "sustainment logistics estimate conclusions"
+          - "G4 S4 logistics support assessment {operation.echelon}"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-4-0-Sustainment.pdf"                   # †
+            - "FM-3-0-Operations.pdf"
+            - "ADP-3-0-Operations.pdf"
+        prompt_ar: >
+          اكتب خلاصة تقدير الإسناد اللوجستي استناداً إلى المقاطع. إن كانت
+          المقاطع لا تشمل دليل الإسناد المخصص (ADP 4-0)، اذكر أن التقدير
+          التفصيلي سيُصدر لاحقاً واستشهد بالإطار العام المذكور في المقاطع
+          المتاحة. استشهد حرفياً بوسم كل مقطع. إن لم تدعم المقاطع الحقل،
+          اكتب "غير متوفر في العقيدة المتاحة".
+        max_tokens: 280
+
+structure:
+  - kind: title
+    text: "تقديرات هيئة الركن"
+    alignment: center
+    underline: true
+
+  - kind: section
+    schema: INTELLIGENCE_ESTIMATE
+    heading:
+      text: "الاستخبارات"
+      underline: true
+      space_before_cm: 1.0
+    layout: staff_sections
+    citation_collection: true
+
+  - kind: section
+    schema: OPERATIONS_ESTIMATE
+    heading:
+      text: "العمليات"
+      underline: true
+      space_before_cm: 1.0
+    layout: staff_sections
+    citation_collection: true
+
+  - kind: section
+    schema: PERSONNEL_ESTIMATE
+    heading:
+      text: "الموارد البشرية"
+      underline: true
+      space_before_cm: 1.0
+    layout: staff_sections
+    citation_collection: true
+
+  - kind: section
+    schema: LOGISTICS_ESTIMATE
+    heading:
+      text: "الإمداد"
+      underline: true
+      space_before_cm: 1.0
+    layout: staff_sections
+    citation_collection: true

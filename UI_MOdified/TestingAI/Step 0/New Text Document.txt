@@ -1,0 +1,26 @@
+    Perfect! I've created a comprehensive MD file explaining Step 1 of the automation system. The file has been saved to /tmp/STEP1_EXPLANATION.md.
+    
+    Summary
+    
+    The MD file covers:
+    
+    Inputs:
+    - 2 required documents: Warning Order (الامر الانذاري.docx) and Intelligence Summary (الملخص الاستخباري.docx)
+    - 4 user parameters: brigade name, planning start time, H-hour timing, and decision process datetime
+    
+    Process:
+    - 16 parallel LangChain chains extract data simultaneously
+    - Uses async_main() function to orchestrate the pipeline
+    - Follows strict data fidelity principles (LLM never adds information not in source)
+    - Automatic document generation and download
+    
+    Outputs:
+    - 4 DOCX documents: Warning Order #1, Initial Staff Brief, Initial Planning Guide, and Timeline
+    - 4 JSON files: warning_order.json, Staff_Brief.json, time_estimates.json, initial_planning_guide.json
+    
+    Key Clarifications:
+    - /temp/analysis_operation.json is NOT a Step 1 output (it's a user input for Steps 3-7)
+    - "اعتماد العمل الممكن.docx" is NOT used in Step 1 (only in Steps 6-7)
+    - Step 1 and Step 2 can run independently with the same source documents
+    
+    The file includes troubleshooting tips, execution commands, best practices, and code references for developers.

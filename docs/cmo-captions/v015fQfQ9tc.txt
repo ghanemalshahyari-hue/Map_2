@@ -1,0 +1,187 @@
+# C: MO - Random Civil Air Traffic
+Video: https://www.youtube.com/watch?v=v015fQfQ9tc
+Video ID: v015fQfQ9tc
+
+hello everyone in today's video we're
+going to be showing you a quick tip to
+go ahead and create some random civilian
+air traffic now there's a bunch of
+different scenario reasons why you would
+do this so generally it's just to
+frustrate the player but I think it's
+kind of fun too
+so what we're going to do first is we're
+going to go ahead and add some aircraft
+each one of these random airports that
+I've created one thing you want to watch
+out for with the aircraft by the way is
+double check to confirm that the
+aircraft are going to have enough range
+to hit any of the airports that you're
+going to be dealing with an area
+otherwise you're going to interest I'll
+run into kind of an interesting problem
+you know you'll see what I mean if you
+try it so what I'm going to do now is
+I'm going to go ahead and drag a box
+around all the possible airports we can
+apply to number two is I'll press Ctrl
+f11 I'm going to have the option to go
+ahead and create myself a quick little
+Mission here oops helps out when you do
+that you don't deselect the airport that
+you're trying to select so I'm going to
+go ahead and click in a random chaos I
+think that's a pretty good way to name
+it we'll come down here to where it says
+Ferry that's going to be our lucky
+option press the OK button so what we're
+going to do now is we're going to go up
+to Mission settings we're going to set
+this to random random is a lot of fun
+because it basically makes them go in a
+kind of a random order which is exactly
+what we want so what I'm going to do is
+I'm going to reduce the flight size to
+one how you can get a little chaotic
+here if you want I'm Gonna Leave cruise
+that works perfectly fine for me I'm
+gonna leave all these options out
+because I don't really need them go over
+to M con we're dealing with City
+aircrafts of course we're going to flip
+on their Radars just to annoy everybody
+just a little bit and now we get to the
+tricky part we're going to go over to
+units and you can see a bunch of
+different aircraft all spread out
+through all the different airports here
+so if you go to the aircraft themselves
+go ahead and grab this group of air
+buses here you can come down here and
+hit ready selected AC now one of the
+buttons you're going to have here is
+enable quick if this is not enabled
+that's usually the universal sign for
+hey I forgot to do something in this
+case what is the thing we usually forgot
+to do if you actually press Ctrl shift
+F9 real fast you probably forgot to set
+the quick turnaround to yes otherwise
+again if we deal with just Fighters we
+can leave it on this but if you don't do
+this step you're not going to have as
+much chaos so I'm going to do is I'm
+going to add all those aircraft there
+open up my 707s this is the easiest way
+by the way to ready these we can come in
+here we can do passengers enable quick
+ready immediately go toss in my 707s
+yeah yeah I know they wouldn't use the
+707 Steel come in here uh passengers
+looks pretty good we'll enable the click
+on that one too again we're just trying
+to create as much chaos as possible come
+in here let's go ahead and grab all
+these and obviously you can set
+different ready times if you want to
+stagger their take off it actually works
+really well because you can say be ready
+in 10 minutes 20 minutes 30 minutes 40
+minutes for each one of these aircraft
+and that way they kind of distribute a
+little bit more spread out because one
+of the downsides to the method I'm going
+to show you here as you're going to see
+in a second is it tends to create quite
+a mess quite a messes of putting it very
+lightly there so let's go ahead and push
+this one here enable quick again like I
+said we're just trying to make sure that
+we keep these guys filled with airplanes
+ready selected aircraft I'll put them in
+the ferry why not enable quick looks
+good to me looks lovely all right that's
+it that's all we have to do
+now what I'm going to do is I'm going to
+go ahead and unpause so what's going to
+happen now of course is all these
+aircraft are immediately going to start
+taxing oh they're going to start up
+their engines simultaneously somehow
+their inertial guidance systems are
+going to load pretty much right away
+they're going to tax you up to the thing
+and then they're gonna go hey you know
+what we should do we should all go in
+the air at the same time and make air
+traffic controllers in this entire
+region insane so you'll notice uh
+moments later all these aircraft does
+start taking themselves off you know if
+I click that one right there I can see
+he just went up and climbed up just a
+little bit here I'm gonna go ahead and
+fast forward he's kind of doing his
+little thing here and look at this
+you can see immediately that these
+aircraft have all selected random
+destinations and then proceeding towards
+those random destinations pretty
+willy-nilly now if I pause for a second
+let's go ahead and add a new side again
+these guys will do this all afternoon by
+the way which makes it totally totally
+fun to play with you know it was a USA
+because why not I'm going to grab them
+real fast let's go over here and now put
+ourselves at tips 43 because that's the
+correct radar for everything let's go
+ahead and click on that sucker right
+there we'll flip it on for a second and
+you can see the lovely chaos we have
+created almost instantaneously because
+now there's all these new targets flying
+through the air and unfortunately we
+don't track any of them now some people
+of course say you know when you're
+dealing with civilian aircraft is there
+like a shortcut for tracking them like
+you know obviously City aircraft have
+transponders there actually is if you go
+up to editor real quick and go to edit
+size on the USA this little button
+actually doesn't matter what side you're
+doing it says can auto track civilians
+if you flip that switch any aircraft
+that has the commercial tag will
+actually appear automatically for you
+now the reason that's so fantastic
+useful for us is it's going to make them
+much much easier to identify and again
+if the aircraft that you have in that
+particular case it doesn't have that
+particular item let me go double check
+that one more time yeah we're all
+attracting civilians you want to keep
+that in mind that you won't get them
+otherwise you will only pick up the ones
+that are detectable with that little
+kind of special flag especially things
+like ships you'll be able to identify
+automatically there one other thing I
+want to throw out too is whenever you're
+dealing with civil sides if we don't
+care about what they say I really
+recommend you set their awareness level
+to Blind because it shuts off all the
+radar calculations the reason that's so
+incredibly useful is now we don't have
+to deal with it you know those little
+you know especially a thousand of these
+going at a time none of those
+calculations are actually going to hurt
+us we're still going to get the
+remission so that we can identify them
+accurately but like I said we're not
+going to get that added piece enjoy

@@ -1,0 +1,503 @@
+# C: MO - Aircraft Acceleration Changes
+Video: https://www.youtube.com/watch?v=d8Ni5mC4foU
+Video ID: d8Ni5mC4foU
+
+hello everyone in today's video we're
+going to be taking a look at one of the
+recent changes that has come to command
+by the way if you're curious we're in a
+106 build 132 8.11 rounded to the
+nearest decimal point but the big change
+that has happened recently has to do
+with aircraft acceleration now this is
+one of those things where if you know
+kind of following I call it the drama of
+the missile people versus they
+overpowered versus they underpowered
+it's interesting because um since
+missiles been changed in the fact that
+they take time to accelerate and
+everything you have shifted the balance
+away from the missile people in towards
+the aircraft people because all they
+have to do is turn around and run but
+one of the interesting changes that
+actually came out was that actually
+modifying the acceleration curve of
+aircraft to more closely show what
+actual aircraft accelerate at now for
+those of you who are flight simmer fans
+uh you're already familiar with this you
+get in your F-16 you climb up to 36,000
+ft and you take your throttle and you
+push it all the way to the stop and then
+you wait and you wait and you wait
+because the aircraft um actually takes a
+very very very long time to get up to
+speed especially if it has drag speaking
+of drag we have all sorts of fun little
+objects on the side of my aircraft here
+we're mounting a couple harms we got a
+GBU 38 we're pretty much ready to go
+against this lovely little sa5 here so
+what I'm going to do is I'm going to do
+what we do in DCs
+afterburner so what you'll observe is um
+we're picking up speed pretty quick here
+going mack one we're going up through
+Mack two're up to a Mack 1.2 we're uh
+picking up some speed here we're doing
+about 700 remember that's a true air
+speed that is not indicated uh speeds
+like this make me Twitch by the way when
+I see numbers that high and we're
+starting to we're
+uh we're we're
+going
+1.4
+1.1 all right we're going we're going
+don't worry it's happening you you've
+just got to let it happen it's going to
+happen at its own speed here and um I'm
+not going to say we're we're kind of
+tapping out here but I'm going to say
+that I'm now up to 5x speed and you're
+observing that we're out pushing a 1.51
+here the top speed of F16 by the way if
+you have nothing on on it is about Mach
+1.8 now one of the things we're probably
+going to see in a future build I'm not
+going to call it but if I had to guess
+it's probably going to happen is you're
+going to actually see where drag will
+prevent you from even getting over mach
+one that's probably going to be the next
+thing so people have internal stores
+like an F22 now have themselves a new
+Advantage so to speak because they're
+able to go those speeds whereas an F-16
+with everything dangling off the wings
+right now is absolutely struggling here
+we're getting up to about 1.57 if you're
+following the time that was about 4 and
+A2 minutes now I've actually recreated
+this experiment over in DCS and I
+discovered that it wasn't 4 and A2
+minutes it was closer to 11 so it's
+actually very interesting to uh see how
+that kind of curve is changing with time
+also in DCS you would never get up to
+the speed in the first place you just
+you couldn't just be too much drag and
+of course one of the things I was
+reading recently is um in the old
+aircraft certain fuses didn't like going
+this fast bad things happened to the
+aircraft now if you probably observe I'm
+going to go ahead and pop him down to
+loyer notice he basically gets thrown
+out the canopy of his little airplane
+here as we decelerate because of course
+we're going to drop down to this speed
+to 350 now where this gets really really
+interesting is if we want to attempt to
+zoom climb him right now by the way my
+sa5 is more than confident of my current
+position he's just probably thinking
+about whether or not he wants to take a
+pot shot at me oh let's make sure we
+didn't do the nuclear one I've always
+made that mistake before is this the
+nuclear one cuz it's going to be pretty
+embarrassing if it's the nuke you always
+got to watch out for these things uh
+let's see here uh no no no this is the
+big one 217 kilogram it's a big Warhead
+so what I'm going to do now is I'm going
+to order him down to mum maltitude and
+the reason I'm doing this is I'm
+basically going to demonstrate how we
+can also take a look at our impact on
+climbing performance now as you probably
+know in the past um it's actually all
+aircraft excess energy if you have any
+sort of angle of attack is basically
+going be translated into altitude now
+the reason that gets fun is because
+whenever you try to get an airplane up
+to altitude generally what you have to
+do is you have to build up a tremendous
+amount of energy and then basically
+punch through so that you're not
+creating extra drag by have increasing
+excessive angle of attack basically
+you're using speed to get you up to
+altitude versus using angle which you
+know that creates drag and induc problem
+and it's all very very messy so we're
+sitting down here at low altitude and
+I'm going to go ahead and order him to
+stomp wrong button I'm going to go ahead
+and now order him to go ahead and climb
+up to his max altitude here now in the
+real world of course if I ordered him up
+to a maximum altitude it would be a bit
+of a take some time especially at Mack
+Point 53 what would happen is that once
+you start climbing properly and you get
+up to about 27 28,000 your plane your
+nose would be like 12 13 degrees angle
+of attack in the plane you'd be a full
+After Burner and the thing is just
+tanking it would just oh barely be able
+to climb here so of course if we kicked
+on full After Burner I we be able to
+take advantage of that extra speed
+because we'd have reduced reduced
+induced drag got it and of course that
+would mean that we could go ahead and
+climb better and it's just kind of like
+the nature of the Beast especially with
+the SWAT back wings and we got a missile
+on the way I knew that was coming any
+second here so normally what we do of
+course is um I'm going to go ahead and
+let him evade here so what we do of
+course is we turn around as fast as we
+can we go ahead and jam on it after
+burner and get the heck out of here now
+what you'll see here is my F16 is doing
+two things at once which is usually not
+recommended he's gaining altitude and at
+the same time is he's trying to put on
+some speed here now for those of you who
+know the sa5 this is s200 I forget which
+missile this is this is a five Victor
+Yep this is a 20 this is the big one um
+so normally what would happen of course
+is we just burn and Say Goodbye you're
+an sa5 you can't touch me I'm just going
+to go full After Burner and get the heck
+out of here but what you're probably
+observing here is um rf-16 no longer has
+the ability to just burn out the missile
+as matter of fact you can see my range
+ring is starting to shrink drastically
+as those big missiles are actually
+catching up did you ever think this
+would happen but believe it or not my
+lovely little F-16 here the only reason
+he survived is probably because uh yeah
+we ran him out of energy now let's see
+here our range for ranning out of energy
+was 130 mil so my F16 had to travel
+almost 80 miles in order to get clear of
+that weapon and notice my current speed
+right now is um not particularly great
+it's actually a Mach 1.6 which isn't
+super duper so we're going to go ahead
+and turn my guy around here and we're
+going to send him back this way he's now
+at 45,000 ft now if I were to go ahead
+and take this plane we're actually going
+to edit him real quick we're going to
+give him some gas just cuz I'm being
+sort of generous as they like to say uh
+let's see here 999999 Boop okay we're
+full tanks kaching all right we're ready
+to go again so of course um when we're
+in this situation this is Optimum for a
+harm launch and if you probably wondered
+why I brought the harm with me it's to
+give you an idea of the new problem we
+now face so I'm going to press shift F1
+here actually first of all I'm going to
+click on if shift F1 now let's go ahead
+click on that one here and um we have
+one of these and I'm going to go ahead
+and do this cuz uh why not so we're
+going to continue cruising we're going
+to cruise that big bird D is I just
+watching me we're at a new altitude kind
+of a thing those of you who know our DCS
+folks or flight Sim folks you know of
+course to get a really really long range
+harm shot you have to get a ton of
+altitude you can actually Zoom climb so
+what I'm going to do is I'm kick on the
+After Burner here and you can see he
+starts to go ripping at these altitudes
+by the way at 45,000 ft this F16 would
+be tanking it would be like
+like that's a technical term for not
+being able to accelerate because it just
+it couldn't it just would not be able to
+but you're noticing again it's taking us
+forever to get up to speed here now my
+sa5 is going to fire and there it is so
+we have a new problem now um we need to
+get this harm off oh we don't have time
+so we're going to go ahead and get a
+little bit closer so we can desperately
+get that harm off and then we're going
+to turn around and run there we go go go
+go go go go go go get out of here get
+out of here get out of here go go go go
+go go go go go go and again I'm manually
+overriding all this stuff here so there
+it goes so um our hara's off and again
+remember the hara's got a pretty good
+range here you know it's going to have
+to climb up really really really really
+high and then kind of basically make its
+way back down so6 he's going to be smart
+here uh he's going to put a little bit
+of altitude on him obviously we can do a
+highp speed break and everything like
+that but we don't want to go too low
+here because then we're going to lose
+our speed advantage and we're basically
+going to try to outrun the missile oh we
+know it's back there and as a matter of
+fact we can do a God's eye view here and
+you can see it chasing us down now if we
+were smart of course we'd lose a little
+bit of altitude and try to get around
+the curvage of the earth and I'll go
+ahead and do that now go ahead F 16 go
+down down down down down down down down
+down down no don't climb don't climb
+minimum altitude my guy minimum altitude
+don't climb you have to get under you
+have to get into the thick part of the
+atmosphere and you can see our missiles
+coming at us real quick here rf6 is
+looking he's he's feeling pretty
+confident now now he's more than low
+enough that we can now beam the missile
+so we go ahead and now stay nice and low
+it's about 50 ft off the ground those
+missiles are gone nice try missiles not
+good enough not good enough and of
+course you can see that my armm got shot
+down and again that's OD just sort of to
+give you an idea of how tricky that has
+suddenly become so what I'm going to do
+now and again you can see that
+acceleration is I'm going to grab this
+guy now if you recall this one has no
+drag this is actually in the fery
+configuration I'm actually going to
+press the jettison button here yeah
+that's what that button does and I'm
+going to dump everything off my plane
+and I'm going to up to After Burner here
+and now we're absolutely going to stomp
+on it now notice so we pick up a speed
+pretty quick we have very little drag um
+okay there's no fuel tanks hanging off
+me but again as before we get about that
+1.5 1.2 and we just slow down toight
+nothing now the reason this is so handy
+here is because I built up all this
+extra speed and we're kind of cooking
+along here is when we go to go ahead and
+lose some altitude when he takes a shot
+at us the problem is not going to get
+any better as a matter of fact um let's
+see here do we have automatic evasion on
+we do so let's see if F-16 buddy is
+going to see these missiles and maneuver
+properly what I'm hoping to do is go for
+a gunshot here but I don't there it is
+oh boy there it is oh boy he's
+maneuvering notice look at how much
+speed he lost he lost half of his speed
+in that turn stay with it my guy oh oh
+oh here comes two more of course I
+meanwhile the sa5 crew is like do you
+have any idea how expensive these darn
+things are what do we do by the way we
+use the an Al e oh yeah that makes sense
+of course so we're going to get a little
+bit closer here comes another more here
+they come here they come these are
+really fun to watch by the way whoa
+you're doing fine keep going F16 you're
+doing it you're doing it you're doing it
+yeah that's what I'm talking about I'm
+maneuver those missiles oh yeah there it
+is get inside of his minimum
+range all right we're actually going to
+get a gun run I'm actually pretty
+excited nice all right we're going to
+press shift F1 one there and we're going
+to get him with a good oldfashioned gun
+run and we're going to go ahead and shut
+this off cuz he's going to have to lose
+a heck of a lot of altitude to pull that
+off oh here comes another
+one I bet those guys in the sa5 right
+now are like are you
+oh oh what a waste what a waste and you
+can see that one coming here too so as
+you can see those new acceleration
+mechanics create some interesting little
+tactical concerns I have the honest to
+God feeling that the next thing that's
+going to probably happen is the thrust
+is going to change because realistically
+these aircraft do not have the ability
+to produce that much thrust at those
+altitudes yes they can accelerate like
+that at low altitudes but once the air
+gets really really thin these things are
+like flying around like cruise ships on
+thin ice kind of a thing like that not
+thin ice it would be black ice I think
+that'd be a better expression for it so
+you probably be sitting here going so
+how do we take advantage of this
+information tactically here um obviously
+we have aircraft that it's going to be
+burning our fuel much higher if we're
+using After Burner the other problem
+we're of course going to be having with
+something like this is this means our
+classic technique of trying to just turn
+around and run is not going to be as
+effective as a matter of fact watch this
+what we've done is we've secret replaced
+the fold's Chris is a regular coffee
+with full no we haven't uh what we did
+do though is we did put a sa8 and we
+buried it into a tree so um the new
+problem now of course is like I said
+traditionally we could basically turn
+and run now because of these mechanical
+changes we're going to have a lot less
+time to respond so what I'm going to do
+is I'm going to grab my two handy n
+f-16s here you guys are going to help me
+out a little bit today control shift F9
+we're going to go ahead and say uh let's
+see here we're going to switch this over
+to nope ignore platic course thank you
+I'm going to press the good old fashion
+F1 key and click on the big bird click
+on this guy F1 big bird and I'm going to
+do automatic to I don't need them to do
+all this high altitude business all
+right so what they're going to do now is
+they're going to start rolling down I
+can see he's going to f his little stdu
+at the little big bird and we just got a
+new warning and it looks to be like it's
+a land roll it's a Baza radar o it's the
+Baza version and it's out there
+somewhere but I can't quite make it out
+what's it doing what could that Baza
+radar be doing if I had to guess I'd say
+it's probably trying to get a line of
+sight on this harm right here it's
+coming in oh oh boy we've got a lock now
+if you're wondering why we were suddenly
+able to see this by the way it's because
+we're looking in its direction and we
+can actually see it in action I don't
+think this guy's going to be able to get
+the deflection shot on I think his range
+is a little too short oh actually see
+what I want to do this is this is called
+learning by the way is I love to run
+over here and I love to find out why he
+did not take that shot oh the target was
+too fast okay okay I'll work with that
+I'll work with that so what we're going
+to have to do now is we're about to lose
+our little radar there so we might as
+well go turn on his radar which is
+considered kind of bad form because of
+course that means now he's exposed to
+everything else but whatev this is an
+exercise and Kaboom goodbye to that
+radar all right f-16s you have a new job
+to do apparently there's a Baza down
+there it's a land roll radar probably an
+sa8 let's go take a
+look all right it comes my two f16s the
+guy's sitting there with a little white
+wheel and he's rotating it really really
+slowly the radar operator clicks off the
+radar real quick they do some fast
+little geometry they're looking through
+the little camera right now and they can
+have little crosshairs locked off I kid
+you not this is a little tiny Speck of
+color inside of the heads up display not
+the heads up the little basically 1970s
+TV camera that they're looking through
+right now locking on to this guy but um
+we do know that it it's potentially
+pretty dangerous and we'll go ahead and
+see what happens when we get a little
+bit closer here getting closer getting
+closer and you'll probably say why is he
+not firing uh the reason he's not firing
+of course is I has to get kind of
+dynamic range and everybody knows of
+course the sa8 has a maximum altitude
+that it can fire at so in this
+particular case I think a Target
+altitude is 20,000 ft so somebody was
+being so tactical they accidentally blew
+their own demonstration because they
+flew at the correct altitud oh there it
+goes that took him no time so here they
+come and now we have the two guys and of
+course they're smart they're going to
+maneuver immediately there they go here
+comes the
+S8 punch it punch it punch it punch it
+punch it punch it go go go go go go go
+go step on it step on it full After
+Burner full After Burner go go go go go
+o that was close that oh maybe
+not that was
+close that was close so um that was very
+very very very close there um or they're
+actually very fortunate that they have
+managed to survive that attack um of
+course it's not over yet cuz my F16 now
+is going to get close and notice my sa8
+is just the distributor of missiles here
+here you can get one to oh lost another
+F16 this is a bad day for F-16 kind
+we've lost a lot of these things today
+so that makes me sad here you can have
+two of these get out of my way turn
+around After Burner go go go go go go go
+go
+go actually the safest thing to do would
+be to keep flying straight turning is
+actually a mistake a waste time come on
+After Burner After Burner After Burner
+go go go go go go go nope we're about to
+lose another F16 no look at how high he
+is this missile's like H this is a
+little weird for me but okay oh ran out
+of
+juice nicely done looks like our
+strategy is going to work here
+goodbye yeah there it is so as you can
+see the an new aircraft acceleration is
+a fun fun little thing that just makes
+things a little more realistic I get the
+feeling in the future that is probably
+going to be modified that're going to
+start probably looking at thrust curves
+on airplanes and jet engines and you're
+going to see this nice moment where high
+altitude becomes this like like I said
+kind of the Black Ice Zone as far as
+performance goes enjoy

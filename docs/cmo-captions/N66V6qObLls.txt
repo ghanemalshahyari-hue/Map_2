@@ -1,0 +1,727 @@
+# C: MO - Creating an Early Warning Network with radar and exclusion zones
+Video: https://www.youtube.com/watch?v=N66V6qObLls
+Video ID: N66V6qObLls
+
+hello everyone in today's video we're
+going to be showing you how you can
+create an early warning radar network
+with exclusion zones to kind of automate
+some of the early warning tasks that you
+may have in a given system so for the
+purposes of this video what I decided to
+do is pick the island of Cypress for
+this because it's an island uh there are
+definitely other ways we can do this and
+kind of other General strategies but I
+figured this was probably going to be a
+pretty good start for kind of getting
+everything set up obviously if you're
+picking a country such as Switzerland up
+here where you're going to have
+significantly more terrain to have to
+deal with it gets a little bit more
+complic ated especially because you're
+basically bordered people but for the
+purposes of this example I'm going to
+try to kind of keep it sort of simple
+here so the first things first is know
+what at the difference between an early
+warning radar is and basically a Fire
+Control radar the purpose of early
+warning is basically to give the rest of
+the air defense platforms time for the
+purposes of being able to actually
+identify a Target and determine whether
+or not it's actually dangerous um early
+warning radar doesn't have to be perfect
+uh we're not looking for Fire Control
+quality tracks we're just looking for
+something that's good enough that
+enables us to basically uh see if we
+even need to engage it so the first
+thing I'm going to do is I'm going to
+build us a really really simple
+exclusion Zone around our Island and I'm
+going to do two layers to this exclusion
+Zone and again for Simplicity sake I'm
+just going to make this quickly here so
+I'm going to go and grab this one real
+quickly and I'm going to go ahead and
+Define this as the don't cross this line
+otherwise we're not going to be happy
+with you line so what I'm going to go
+ahead and head over to your my reference
+points manager and I'm going to go ahead
+and create myself a Zone and again
+there's four different zones here I'm
+going to select exclusion zone I'm going
+to go ahead and go down here I'm going
+to add all the points here and you can
+notice here that we can go ahead and
+select the violators now the interesting
+thing is we have three different types
+of violators here we have unknown
+violators which just we haven't
+identified them yet blue violators
+that's the other team and of course we
+have civvy violators and one of the cool
+things here is we can actually Define
+what we want to do with each one so if
+we get an unknown in this range I'm
+going to go ahead and slap them into
+unfriendly if we get a blue in this
+range I'm going to say unfriendly and if
+we get obviously something that's
+defined as civie we're going to order to
+be no change for this particular Zone
+this is kind of the orange Zone if you
+will here so when to do is I'm going to
+try to make the Zone a little bit
+smaller because right now it's a little
+obnoxiously large here let's go back to
+the reference points manager real
+quickly here uh where's my zone
+exclusion zones I can go ahead and click
+on it and let's go ahead and validate I
+don't think I've actually validated it
+but that's okay uh let's see here draw a
+polygon you can do do it's going to go
+ahead and do this some this takes a
+second don't worry about it kind of a
+thing like that and one of the cool
+things with all these zones is we can
+actually come in here we can actually
+save these so if you want to kind of
+save it for later on that's something
+you could do if you need it to do um
+let's call this uh not a we'll call this
+it is why not air defense identification
+Zone yeah I like that so looks pretty
+good to me and I'm not worried about it
+too too much here all right so that
+looks pretty good and let me just whoops
+I grabbed that one extra point so when
+you grab points just watch out for it so
+I've got my initial Zone here that's
+looking pretty good I do want to shrink
+it down actually that's pretty good size
+it's going to be just big enough to kind
+of give us a heads up that hey there
+might be something we're interested in
+looking at again with time I can come in
+here and kind of clean these up and make
+them a little more accurate so what I'm
+going to do now is create my second
+layer of the Zone this is going to be
+the now you've done goofed up Zone so
+I'm going to go ahead and get this all
+kind of tightened up like this and I'm
+going to really really carefully attempt
+to select all these points and it's
+probably going to blow up in my face
+when I go to make this area itself but
+we'll see what happens when I actually
+build it so reference points manager
+exclusion zones I'm going to go ahead
+and create myself a new Zone and now
+let's see here this is we have AAS we
+have kind of the new one we're going to
+add all the selected points on the map
+here real quickly looks good to me I'm
+going to go ahead and call this shoot me
+Zone actually not shoot them but shoot
+it zone so if you're a violator you
+immediately go Red If You Blue you
+immediately go red and of of course if
+you're civvy we don't change civilan
+aircraft are not supposed to be shot at
+here so what we've done now is we've
+created two of these zones one is going
+to be our take a look at it Zone and the
+other one's going to be just kidding
+shoot it zone so that's actually going
+to work really well now what a lot of
+people do at this point too and I think
+this is a very good piece of advice is
+they'll come in here and they'll kind of
+clean this up a little bit kind of a
+thing kind of make it a little bit
+neater a lot of times they'll kind of
+add more points along the edge to make
+it better along the coastline stuff like
+that but again we're keeping this
+relatively simple for today's purposes
+so I'm pretty happy with that so I'm not
+going to change it or anything let's see
+here deselect all points looking pretty
+groovy there so next what I'm going to
+do is I'm going to be considering how
+we're going to detect targets now there
+are a lot of really really good choices
+here as far as how we're going to detect
+targets and the strategy I usually use
+when I'm building a scenario is I go
+ahead and shut off all these lovely
+layers like this and I go ahead and turn
+on the relief layer the reason I like
+the relief layer is because it makes it
+really really obvious where I need to
+put my big big big big Radars now when
+you analyze the terrain of Cyprus here
+you'll notice I've kind of got the the
+mountain range here in the middle I've
+got this really really long coastal
+range here and I've got kind of the flat
+spot sort of in between everything the
+other thing you'll notice of course is
+our biggest most important strategic
+targets are all along the southern coast
+here which makes it a little bit more
+challenging for us because we need to be
+thinking about protecting them more so
+than protecting things that we don't
+really care about so to speak so when I
+take my initial look here I always like
+to put my most powerful radar on the top
+of the highest thing I can get my hands
+on here and when I hold my mouse just
+there I just noticed I got something in
+the 6,000 ft range here let me zoom in a
+little bit see if we can get a little
+more resolution 6184 that looks pretty
+good to me I'm going to go and press the
+insert key and click now here's where
+things get tricky uh depending on your
+scenario you need to decide what
+particular radar you're going to slap
+here obviously I have the one I use for
+everything which is a TPS 43 but we need
+something that's got a little more reach
+and maybe even some anti- stealth
+capability now luckily for us there's a
+great website for this air power o here
+that gives us a beautiful list of kind
+of I guess you want to call them Eastern
+Radars for the purposes of detecting
+things that are difficult to detect so
+you can go ahead and down here kind of
+poke round through any of these see if
+anything looks pretty good I mean we got
+some old p9s we got kind of squat eyes
+oh that one looks kind of interesting
+look at the size of that radar that's a
+29 November 6 there I don't think we
+have a 29 November 6 29 November 6 I
+didn't think so but what we do have if
+you type in the word radar you can
+always add in a country for example if
+I'm want to do radar obviously we're not
+going to have any we might have some
+Cypress Radars we do so you'll see here
+that I actually have a good collection
+of these here I've got the big bird
+radar which is really linked to the sa20
+it's a really really really long range
+radar it's not bad at all 200 meter this
+resolution rather uh let's see here 300
+km that's actually pretty darn good for
+that we've got the Cher boak sa 17 is
+going to be smaller we have a score
+radar if I open this sucker up real
+quickly here I can see it's a 60 natic
+mile range we'll need him later going
+down here of course we have a snow drift
+the can7 and then we have a TRS 2215
+which is a pretty old school 3D phase
+array radar here now there's one thing I
+want to throw out real quick if you
+hadn't been aware of you'll notice that
+this is a 3D radar the other types of
+Radars you're going to cter from time to
+time are going to be what they call a 2d
+radar uh 2D a 2d radar is not going to
+give you height information a 3D radar
+is going to give you height information
+the reason that's relevant of course is
+whenever you have early warning height
+isn't as important um it's nice to have
+obviously you know a lot of times we can
+use a shorter range height filing radar
+finding radar to basically identify
+something that's oh okay that looks
+pretty good okay this is important
+because it's flying low for some reason
+but again we can go ahead and get kind
+of technical with that so this is
+definitely our most powerful radar so
+I'm going to go pop that r the tippy top
+of this hill here and again I'm just
+holding my mouse to see it and if I were
+to flip this thing on real quick isn't
+it so beautiful in relief mode it's
+pretty colors if I pop this thing on
+real fast you'll see that we get a range
+like that which is more than enough um
+that's fantastic and the nice thing of
+course is because we are on a hill here
+we can actually look down so we actually
+have line of sight down here into the
+coast so one of the neat things here is
+if I actually go into a line of sight
+tool real fast good way to cause massive
+lag
+here but oh boy here it comes you can
+see my line of sight is Fant fantastic
+the only limited line of sight I have is
+really going to be along this Coast
+which is what we expected but I will'll
+fix that in just a few moments here like
+I said so that's going to be kind of our
+chief early warning radar it's going to
+do really the work of everybody here
+because again we're we're on an island
+it makes it much much simpler but one
+thing we did notice is we did have a
+pretty long Gap along this Coast so we
+do have to provide some coverage in case
+uh somebody's basically going to skirt
+skirt low altitude down here so again
+I'm just going to come down here on the
+surface looking for something that has a
+little bit of redundancy this looks like
+a pretty good spot right here I'm just
+going to press the insert key again a
+lot of good choices here remember I
+mentioned the score radar this is at 60
+nautical miles it's also really modern
+technology which makes it a little bit
+more useful for us we also have the snow
+drift but um I'm actually going to go
+with the score radar here looks pretty
+good now if we were to come over here
+and actually flip this radar on real
+quick go ahead sensors turn it on you'll
+see it's a relatively limited range on
+this and unfortunately I think I just
+made a huge silly mistake here air and
+surface search I'm good good okay
+excellent actually this works really
+well for us cuz it keeps out for boats
+too so I like that but you'll see now we
+have a little bit of redund as far as
+production goes you know I've got this
+one over here I've got this one over
+here and let me just make sure that my
+map settings I really wish it wouldn't
+reset those now okay looks pretty good
+looks pretty good and we also have a
+little bit of coverage as far as the
+surface goes which works really really
+well because I'm going to follow up with
+that radar actually on the other side of
+the island as well to give us a little
+bit of surface monitoring on this side
+as well so let's go ahead and I'm going
+to again I'm protecting this particular
+unit so we go ahead and pause that right
+there let's go flip that sucker on let's
+see what we got here okay so we have
+some coverage there we have some
+coverage we kind of have a bubble of
+coverage up here as far as this whole
+Coast is now protected this whole Coast
+is mostly protected we have a blind spot
+in here you can just kind of see by the
+terrain and obviously once we get
+something on this corner here we will
+eliminate that blind spot as well so
+let's go ahead and eliminate that blind
+spot seems like the worst best place to
+put something but it's going to be a
+good spot for us so go ahead and toss
+that thing there it's going to get us
+good radar coverage in that direction
+and let's go ahead and put toss somebody
+on this other point here obviously this
+is the first Target for everybody with a
+weapon but hey that's what early warning
+is all about there okay so now we have
+actually really really good coverage
+here so this whole Coast is now covered
+this whole Coast is uh well not the
+coast so much but um obviously we'd have
+to put this up a little higher if we
+wanted better Coastal coverage but the
+key thing is here it's going to be very
+difficult to get an airplane in here
+without being spotted electronically in
+some way one thing I don't like those if
+I actually look here between these two
+Radars you can actually see very clearly
+that the range in that one's kind of
+limited the range in this one's wider
+because that one's mounted higher up but
+I'm noticing I have a little bit of a
+weak spot of coverage right there so you
+can see kind of that redundancy I've
+only got a little bit of overlap here so
+I'm actually going to toss one more of
+those right down here in this little tip
+too and the advantage to this actually
+we'll put it up on hill just to give it
+a little bit better coverage here and
+the advantage to this of course is is
+going to be able to see now we have a
+little bit of redundancy you basically
+can't sneak up on this island um let's
+see here I see another hole there's
+another hole obviously this guy's not
+going to be able to see what actually
+let's find out if he can see
+backwards and again whenever I do these
+things um this is usually what I do
+spend a long time running around making
+sure my coverages are good we'll give it
+a second to go ahead and calculate yeah
+we're perfect so this radar can actually
+see over its shoulder backwards into
+this region here and we have a little
+bit of extra coverage down in this
+direction as well all right I'm liking
+that um everything's looking pretty
+complete it's going to be very difficult
+to sneak up on this island so the next
+problem I always like to solve is the
+redundancy problem and now one of the
+things people forget is that the first
+Target of this conflict is going to be
+this
+radar he's going to have a tomahawk
+launched at it or whatever the
+equivalent of granite or something like
+that launch at it in the first 5 Seconds
+of any conflict which of course makes
+this a very very tasty Target which um
+once this is eliminated I lose that kind
+of long range coverage so one of the
+things I like to do is I always like to
+put a portable radar kind of out of the
+way assuming that the player isn't going
+to automatically know that it's there so
+it's very tempting to pop so yeah
+portable radar here but instead what I'm
+going to do is I'm going to head to
+nicasia here I'm going to go find the
+highest till I can locate right here and
+I'm going to go ahead and throw
+something that's a little more portable
+here and I think a chairback is pretty
+darn portable if I recall correctly late
+90 technology it's a fire control radar
+um it's very very short range it is
+guiding Radars again that's not too too
+bad again fire control surface control
+it's not going to be too too bad we can
+do a box spring that'll do it uh box
+spring those are massively long range
+yeah we'll stick with that so I'm going
+to go and toss a box spring there uh
+actually Big Bird we'll toss a big bird
+why not this is not considered mobile no
+it is considered mobile uh the reason I
+say mobile is important here is because
+this little box that says autod
+detectable this one's going to be an
+autod detectable radar which is not
+something we want so just for simulation
+purposes I'm actually not going to make
+it autod detectable I'm going to move it
+kind of you know it's probably downtown
+sitting on like a poll somewhere so at
+least the user might know that it's out
+there CU of ew but again one of the
+things we can do with um basically Lu as
+well is we can actually come in here and
+program this thing to only turn on if
+this one gets destroyed so that we have
+that kind of extra layer of protection
+so I'm liking this I'm liking this looks
+pretty good to me so what I'm going to
+do now is I'm going to hold down the
+shift key and I'm going to select all my
+Radars I just
+created let's see here I think I missed
+one yep as I always do and I'm going to
+press the G key to go ahead and group
+I'm going to call this ew group and the
+reason I like that is I can turn the
+whole group group on and off by a single
+press of a button and that is very
+useful I can actually sit up here press
+okay and I can click over here and press
+okay that flips the radar on and now you
+can see my lovely coverage which looks
+really really groovy right now so I'm
+happy with that I'm happy with that and
+that's a pretty good collection of ew
+now one of the last things I do with ew
+and again I've got all my zones here and
+we'll go simulate some action in a
+second here but uh one of the things I
+really like to do too is I like to set
+up a little bit of redundancy with some
+visual sensors as well and know one of
+the greatest visual sensors that you
+have at your disposal by the way I'm
+pressing that the nine key here so I can
+kind of ungroup everybody so I can see
+what it looks like is the classic
+Watchtower so what I like to do is I
+like to go to facility and if you
+actually type in watch I'm sorry got to
+get out of Cyprus here sorry Cyprus uh
+we'll do Watchtower and one of the
+things you'll see is there's literally a
+generic Watchtower and the generic
+Watchtower it's literally this little
+thing on a pole basically and
+unfortunately for us our Watchtower only
+has a generic Spotlight which is very
+very limited so one of the things I like
+to do is I like to come over here and
+like to throw on something really basic
+like nit Vis goggles or something like
+that so say night vision and you can see
+some you know nice third generation
+night vision goggles let's just say
+they're nice kind of a thing and one of
+the things I'll do is after I'll plop
+that down I'll hold down shift and c and
+basically I'll create a bunch of Coast
+Watchers so I can basically have people
+kind of keep an eye on anything that's
+not supposed to be there so I'm going to
+go ahead and grab that one it's not
+really a lot of stuff to stand on here
+go ahead and grab that one and we'll go
+ahead and toss another one he'll
+basically be watching the coast here uh
+right there looks pretty good and my
+Coast Watchers because I press shift C
+if I open this up you'll notice it keeps
+my n vision goggles which makes them
+slightly better and again it's just that
+extra layer of a redundancy the final
+thing I'm going to do is kind of a new
+thing you know this is kind of fun to
+play with of course and that's adding
+pickles I'm going go ahead and press
+insert here and pcls passive coherent
+location system and of course we only
+have a couple different groups that can
+do pickles uh pickles are really really
+fun because it's basically going to be
+using radio signals that we just kind of
+picked up from any just about anywhere
+for the purposes of detecting it
+including things like FM broadcast so
+which is really good we have UHF and we
+have FM this is pretty cool we're
+basically going to be using radio
+signals to detect something passively I
+really like these units they're great
+way to kind of annoy people who use too
+many stealth planes so to use pickles of
+course we have to have line of sight on
+multiple locations so I'm actually just
+going to go ahead and duplicate this a
+bunch of times so I have one two three
+four total pickles receivers and
+basically we need some kind of of
+Civilian broadcast of some kind to
+detect it there's no active sensors here
+it's just automatic but the important
+thing is you'll notice that it picks up
+f M so if it picks up FM that means we
+need to go ahead and throw in some
+civilian transmitters that are FM so I'm
+going to go over here to civilian I'm
+going to go switch back over to our
+relief mode again relief is going to be
+the way to do this go ahead and shut all
+this stuff off looks good I'm going to
+go ahead and press insert and I'm just
+going to go throw in some FM Towers here
+so if I type in FM you have these lovely
+little analog and digital ones I'm just
+going to grab this one and the cool
+thing with these of course is um you
+have to actually turn them on that's
+important that's one of those goofy
+things that I always forget to do it's a
+non-d detecting emitter so just be
+mindful of that so one do is I'm going
+to toss these around you know this is
+Radio Cyprus kind of a thing like that
+just kind of chilling like that looks
+pretty good to me looks pretty good to
+me they're all turned on that's what I
+want them to be doing and now we have a
+little bit of redundancy for that
+particular purpose let's go ahead and
+save and now we have ourselves a really
+really really effective uh little kind
+of early warning net honestly it's
+probably too sophisticated for this
+purpose but you can have an idea of how
+to make things difficult for the players
+so Red's ready to go I'm happy with this
+so let's go ahead and simulate now what
+happen so I'm going to go switch to the
+other team here I'm going to go up to
+Adonna go press Adonna we're going to go
+ahead and add an Airfield here Airfield
+I'll grab myself one of these kind of
+situations I'm going to press okay I'm
+going to go ahead and I just need
+something to start we'll grab a couple
+different aircraft just for the purposes
+of kind of showing you what this looks
+like in action we'll grab ourselves an
+F22 because science uh let's see I know
+put some J dams in it internal standard
+internal that sounds good to me and the
+purpose of this guy of course is just to
+basically irritate the air defense and
+I'll come back home and of course we'll
+grab a little more conventional and
+naturally F16 CM B 52 this is the
+correct F16 and grab that one real right
+fast um keep it simple here actually
+what I will do is I'll grab the harm
+there's a reason for that I'm not going
+to shoot the harm or anything like that
+I'm just going to kind of do one of
+these
+things let's go ah a and switch to the
+the team real fast here red team
+who we can shut the relief map off
+that's going to burn my eyeballs ah
+there we go this is the map actually
+probably like the best so one of the
+things you'll notice is immediately we
+pick up our lovely boki here and he gets
+picked up by the Big Bird which is
+actually the radar here which is exactly
+what we expected to do so one of the
+things I'm actually going to do is let
+me grab one more aircraft here uh fine
+we'll do another F6 doesn't bother me oh
+whatever like I said keep it simple
+today we're going to go ahead and do
+nice and low altitude like this we're
+going to go do minimum altitude just to
+make our little system a little harder
+and you know what we might as well add a
+little boat too uh surface ship what we
+going to do here ELC equ be fun we'll do
+FFG 7 07 actually oh fine be that way
+we'll just grab an Adelaide whatever
+Australia yes
+and we're just going to go like this and
+the automatic uh pathf finding we'll
+have to see the path finding basically
+freaking out trying to figure out how to
+make that work it's okay though all
+right let switch to red and see what we
+got so a couple things we notice
+immediately first of all all the
+aircraft that we had flying at the time
+we've actually detected at this point
+they're all marked as unknown at this
+moment we can see one poy we have no
+idea again the big birds doing the work
+here we got this one right here you'll
+notice our pickles is what's doing the
+detection here told you it works and of
+course if we go to this one too you'll
+notice both our pickles and our big
+birds doing all the work here and keep
+in mind there's going to be very little
+warning from that particular chap with
+this so what I'm going to do is I'm let
+them go ahead and dive you can see my
+F16 dropped off of course that makes
+perfect sense to us the reason we know
+that naturally is because um our radar
+Big Bird doing all the work here can't
+see through this mountain range which is
+just part of the fun one thing we notice
+is that we got an enemy skunk that's
+just kind of working its way down the
+coast here look at these two here again
+just kind of skirt skirting and at this
+point they's still unknown targets
+they're just a little oh we picked up
+the guy at low altitude here and we got
+picked up again the pickles is doing all
+the work here isn't that awesome that
+technology is amazing now the cool thing
+here is remember we have a little Zone
+here which is supposed to automatically
+flip them over when they cross the magic
+line here so it's a kind of one of those
+things oh you see how it automatically
+turned orange so the cool thing here is
+we don't know what this target is yet
+but we know that they crossed our
+magical defensive line here which is
+naughty naughty and the interesting
+thing is if they accidentally cross
+within our middle line here their status
+even though we don't know what type of
+aircraft is is going to shift to the
+other status as well just kind of one of
+those convenient things now one of the
+things I really like and going go flip
+over to the other team real quickly here
+is how much we know and how much we
+don't know one thing we do know is we
+know the presence of the watchtowers but
+we don't know where any of The Radars
+are you know I'm just kind of looking
+like this and you see there's a couple
+of The Radars we picked up right away
+because those are the ones that are
+fixed and detectable the other ones we
+didn't so this just kind of gives you a
+good idea of just how effective our
+little defense is at making things a
+little more exciting for us so let's go
+back to Red here uh this guy's about to
+cross into our Inner Line there inner
+territory if you want to think about it
+that's that exclusion Zone and again we
+still haven't mechanically identified
+this target yet there's too much cloud
+coverage at this point we have a bunch
+of low clouds today to make things
+interesting but the moment he crosses
+into that other Zone he's going to
+switch over to the other
+color uh
+oh so now we know that he's a hostile
+Target of course if we had Radars and
+missiles we could go start popup kind of
+a thing like that so as you can see it's
+pretty cool it's a neat little process
+and obviously this is going to take a
+lot of effort for the purposes of
+disassembling um if we didn't kind of
+take the time to sort of find all those
+blind spots this wouldn't work as well
+naturally if you were disassembling it's
+most of your work is going to be on
+finding where I put all of it then you
+can start the process of actually
+disassembling it enjoy

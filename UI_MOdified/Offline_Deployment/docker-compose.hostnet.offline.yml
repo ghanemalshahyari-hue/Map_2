@@ -1,0 +1,116 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  RMOOZ — Offline Deployment Compose (HOST NETWORKING variant)
+#
+#  USE THIS ONLY when the container cannot reach LiteLLM on the default bridge
+#  network even though the HOST can (confirmed by:
+#     docker exec rmooz-offline /opt/rmooz-venv/bin/python /app/server/diag-litellm.py
+#  showing a DNS / TCP / route failure). With network_mode: host the container
+#  shares the host's network namespace — same DNS, /etc/hosts, routes, and VPN —
+#  so if `curl --cacert ... https://YOUR-LITELLM-HOST/...` works on the host,
+#  generation will reach LiteLLM identically.
+#
+#  TRADE-OFFS of host networking:
+#    • Docker port mapping is IGNORED. The web server binds the host port directly
+#      via PORT (set to 8640 below); the tile server binds host 8080.
+#    • Less network isolation than the bridge compose. Use only if needed.
+#
+#  Usage (from UI_MOdified/ — or wherever the bundle lives on the server):
+#    docker compose -f Offline_Deployment/docker-compose.hostnet.offline.yml \
+#                   --env-file Offline_Deployment/.env.offline up -d
+#
+#  App  → http://<server-ip>:8640   Tiles → http://<server-ip>:8080
+#  (Same .env.offline as the bridge compose; WEB_PUBLIC_PORT mapping is unused here.)
+# ─────────────────────────────────────────────────────────────────────────────
+version: "3.9"
+
+services:
+  rmooz-offline:
+    image: rmooz-offline:latest
+    container_name: rmooz-offline
+
+    # ── Host networking: inherit the host's DNS / routes / VPN ────────────────
+    # This is the whole point of this variant. `ports:` is intentionally omitted
+    # (it is ignored under host networking). The web server binds PORT directly.
+    network_mode: "host"
+
+    environment:
+      # Web server binds THIS port directly on the host (no mapping under host net).
+      # Browsers reach the app at http://<host-ip>:8640.
+      PORT:                  "8640"
+      WEB_PUBLIC_BASE_URL:   "${WEB_PUBLIC_BASE_URL:-}"      # e.g. http://<server-ip>:8640
+      TILE_PUBLIC_BASE_URL:  "${TILE_PUBLIC_BASE_URL:-}"     # e.g. http://<server-ip>:8080
+      RMOOZ_TILE_DATASET_NAME: "${RMOOZ_TILE_DATASET_NAME:-satellite-2017-11-02_asia_gcc-states}"
+      RMOOZ_AUTH_BACKEND:    "${RMOOZ_AUTH_BACKEND:-ldap}"
+
+      LDAP_SERVER:           "${LDAP_SERVER:-}"
+      LDAP_PORT:             "${LDAP_PORT:-389}"
+      LDAP_DOMAIN:           "${LDAP_DOMAIN:-sss.dir}"
+      LDAP_TIMEOUT:          "${LDAP_TIMEOUT:-5}"
+      LDAP_USE_SSL:          "${LDAP_USE_SSL:-0}"
+
+      OFFLINE_TILES:         "${OFFLINE_TILES:-1}"
+      TILE_URL:              "${TILE_URL:-}"
+      RMOOZ_MAPS_DIR:        "${RMOOZ_MAPS_DIR:-/app/maps}"
+      MAP_SOURCE_MODE:       "${MAP_SOURCE_MODE:-local}"
+      LOCAL_TILE_URL:        "${LOCAL_TILE_URL:-http://localhost:8080/services/satellite-2017-11-02_asia_gcc-states/{z}/{x}/{y}.png}"
+      FALLBACK_TILE_URL:     "${FALLBACK_TILE_URL:-}"
+      MAP_HEALTHCHECK_URL:   "${MAP_HEALTHCHECK_URL:-}"
+      MAP_FALLBACK_ENABLED:  "${MAP_FALLBACK_ENABLED:-0}"
+      OFFLINE_MAP_DATA_DIR:  "${OFFLINE_MAP_DATA_DIR:-/app/offline_map_data}"
+      DEM_PATH:              "${DEM_PATH:-/app/dem_data/libya_demx5.tif}"
+
+      RMOOZ_ALLOW_SIM_RUN:   "${RMOOZ_ALLOW_SIM_RUN:-0}"
+      RMOOZ_TESTINGAI_DIR:   "${RMOOZ_TESTINGAI_DIR:-/app/TestingAI}"
+      RMOOZ_PYTHON:          "${RMOOZ_PYTHON:-/opt/rmooz-venv/bin/python}"
+      RMOOZ_SIM_MODEL:       "${RMOOZ_SIM_MODEL:-qwen2.5:7b}"
+      OLLAMA_HOST:           "${OLLAMA_HOST:-http://localhost:11434}"
+
+      # ── AI provider (LiteLLM) — identical to the bridge compose ───────────
+      RMOOZ_AI_PROVIDER:     "${RMOOZ_AI_PROVIDER:-ollama}"
+      RMOOZ_AI_BASE_URL:     "${RMOOZ_AI_BASE_URL:-}"
+      RMOOZ_AI_API_KEY:      "${RMOOZ_AI_API_KEY:-}"
+      RMOOZ_AI_MODEL:        "${RMOOZ_AI_MODEL:-}"
+      RMOOZ_OLLAMA_URL:      "${RMOOZ_OLLAMA_URL:-http://localhost:11434}"
+      RMOOZ_OLLAMA_MODEL:    "${RMOOZ_OLLAMA_MODEL:-qwen2.5:7b}"
+      RMOOZ_AI_TIMEOUT_MS:   "${RMOOZ_AI_TIMEOUT_MS:-300000}"
+
+      RMOOZ_AI_CA_CERT_PATH: "${RMOOZ_AI_CA_CERT_PATH:-}"
+      SSL_CERT_FILE:         "${SSL_CERT_FILE:-}"
+      REQUESTS_CA_BUNDLE:    "${REQUESTS_CA_BUNDLE:-}"
+      NODE_EXTRA_CA_CERTS:   "${NODE_EXTRA_CA_CERTS:-}"
+      RMOOZ_AI_TLS_VERIFY:   "${RMOOZ_AI_TLS_VERIFY:-}"
+
+      RMOOZ_AI_CLIENT_CERT_PATH:     "${RMOOZ_AI_CLIENT_CERT_PATH:-}"
+      RMOOZ_AI_CLIENT_KEY_PATH:      "${RMOOZ_AI_CLIENT_KEY_PATH:-}"
+      RMOOZ_AI_CLIENT_CERT_PASSWORD: "${RMOOZ_AI_CLIENT_CERT_PASSWORD:-}"
+
+      SESSION_SECRET:        "${SESSION_SECRET}"
+      RMOOZ_BOOTSTRAP_PASSWORD: "${RMOOZ_BOOTSTRAP_PASSWORD:-disabled}"
+      RMOOZ_ROADMAP_ADMINS: "${RMOOZ_ROADMAP_ADMINS:-admin}"
+
+    # Identical volumes to the bridge compose (same host paths).
+    volumes:
+      - ./data_runtime:/app/data
+      - ./map_data/base:/app/maps:ro
+      - rmooz_uploads:/app/uploads
+      - ./map_data:/app/offline_map_data:ro
+      - ./map_data/dem:/app/dem_data:ro
+      - ./certs:/app/certs:ro
+      - ./TestingAI_Runtime/import_from_rmooz:/app/TestingAI/import_from_rmooz
+      - ./TestingAI_Runtime/export_to_rmooz:/app/TestingAI/export_to_rmooz
+      - ./TestingAI_Runtime/runs:/app/TestingAI/WarGamingGEN/runs
+
+    restart: unless-stopped
+
+    # Healthcheck targets the host-bound web port (8640), not 5006.
+    healthcheck:
+      test: ["CMD", "node", "-e",
+             "require('http').get('http://127.0.0.1:8640/api/auth/me', r => process.exit(r.statusCode === 401 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  rmooz_uploads:
+    driver: local

@@ -1,0 +1,104 @@
+# prompts/time_analysis/template.yaml
+# ===================================
+# Y-approved shape: 10 flat fields keyed exactly like
+# /Users/hextechkraken/Desktop/y/time_estimates_edited.txt.
+#
+# Field kinds in use:
+#   computed               — time_math.* (H-hour, durations, MDMP splits)
+#   source_file_extracted  — time_now pulled from the Warning Order
+#
+# No doctrine retrieval in this document — timing facts come from the
+# source file, MDMP math is computed from them.
+
+meta:
+  template_id: time_analysis
+  template_version: 2
+  title_arabic: "تحليل الوقت"
+  document_slug: time_analysis
+  output_filename: "{document_slug}.docx"
+  default_collections: []
+
+schemas:
+  TimeAnalysis:
+    fields:
+      time_Y:
+        kind: computed
+        function: time_math.format_gregorian_hijri_pair
+        arguments:
+          when: "{{input: timing.reporting_date_gregorian}}"
+
+      mission_start:
+        kind: computed
+        function: time_math.format_h_hour
+        arguments:
+          when: "{{input: timing.h_hour_gregorian}}"
+          time_zone: "{{input: timing.time_zone}}"
+
+      total_available_time:
+        kind: computed
+        function: time_math.format_duration_hours
+        arguments:
+          minutes: "{{input: timing.total_available_minutes}}"
+
+      allocated_planning_time:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: planning_minutes_display
+
+      available_time_for_subordinate_units:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: subordinate_minutes_display
+
+      time_for_mission_receipt:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: step_1_display
+
+      time_for_development:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: step_2_display
+
+      time_for_mission_analysis:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: step_3_display
+
+      time_for_plan:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: step_4_display
+
+      time_now:
+        kind: source_file_extracted
+        source_hint: warning_order
+
+structure:
+  - kind: title
+    text: "تحليل الوقت"
+    alignment: center
+    underline: true
+
+  - kind: section
+    schema: TimeAnalysis
+    layout: y_time_analysis
+    citation_collection: false

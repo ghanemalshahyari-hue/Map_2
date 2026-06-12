@@ -1,0 +1,116 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  RMOOZ offline Docker — build context exclusions
+#  Build context: UI_MOdified/ (the project root)
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Git and IDE ───────────────────────────────────────────────────────────────
+.git
+.gitignore
+.claude
+*.claude/
+
+# ── Node.js ───────────────────────────────────────────────────────────────────
+# node_modules will be rebuilt inside the container via npm install
+node_modules
+npm-*.log
+*.log
+# `*.log` is NOT recursive in Docker ignore (a `*` never crosses `/`), so nested
+# logs like server/logs/web-server.err.log slipped through and baked Windows dev
+# paths into the image. Catch logs recursively + exclude EVERY runtime log dir at
+# any depth (incl. the offline overlay's server tree). These never belong in the image.
+**/*.log
+**/*.log.*
+logs/
+server/logs
+server/logs/
+offline_app/server/logs/
+Offline_Deployment/offline_app/server/logs/
+**/logs
+**/logs/
+# Runtime state pointers that record absolute host paths (scenario watcher writes
+# the active-scenario pointer with a machine path). Pure runtime — never baked.
+_active.json
+**/_active.json
+
+# ── Python caches ─────────────────────────────────────────────────────────────
+**/__pycache__
+**/*.pyc
+**/*.pyo
+
+# ── TestingAI exclusions ──────────────────────────────────────────────────────
+# Windows .venv — NOT compatible with Linux container; container gets its own
+# Python venv at /opt/rmooz-venv built from requirements.offline.txt
+TestingAI/.venv
+
+# SmartSearch is 2.2 GB (torch, transformers, fastembed models, Qdrant data).
+# Excluded to keep image size manageable. WarGamingGEN uses Markdown fallback
+# for doctrine retrieval when SmartSearch is absent.
+TestingAI/SmartSearch
+
+# Runtime I/O directories — mounted as volumes at compose time
+TestingAI/export_to_rmooz
+TestingAI/import_from_rmooz
+TestingAI/WarGamingGEN/runs
+
+# Stale dev artifact: WarGamingGEN/.env carries a Windows dev path + localhost
+# Ollama creds. MUST NEVER bake into the image. config.py only load_dotenv()s it
+# when present, and the bridge injects LLM_* at spawn time, so excluding it is safe
+# (the offline LiteLLM env comes from .env.offline → buildLlmChildEnv).
+TestingAI/WarGamingGEN/.env
+TestingAI/WarGamingGEN/.env.*
+TestingAI/WarGamingGEN/runs/
+**/.env
+**/.env.*
+
+# TestingAI top-level dev notes / screenshots are NOT runtime artifacts (the
+# WarGamingGEN Python pipeline imports none of them). SESSION_WARGAMINGGEN_REVIEW_
+# HANDOFF.md also carries an absolute C:\Users dev path — must never bake.
+TestingAI/*.md
+TestingAI/*.png
+TestingAI/.__archive
+# macOS AppleDouble resource-fork droppings (committed from a Mac) — pure junk.
+**/._*
+
+# Large, OPTIONAL, gitignored GIS data (DEM raster + terrain/imagery layers, ~960 MB).
+# NOT part of origin/main; gis_loader treats elevation/terrain as optional and
+# degrades gracefully when absent. Excluded so the image reflects committed source
+# and stays lean. If terrain-aware generation is wanted, mount inputs/gis at runtime.
+TestingAI/WarGamingGEN/inputs/gis
+
+# Step 0 planning artifacts — not needed at runtime
+TestingAI/Step 0
+TestingAI/_archive
+
+# ── Runtime data (mounted as volumes) ─────────────────────────────────────────
+data
+uploads
+maps
+
+# ── Offline_Deployment runtime directories (not needed in image) ──────────────
+Offline_Deployment/map_data/base
+Offline_Deployment/map_data/terrain
+Offline_Deployment/map_data/styles
+Offline_Deployment/map_data/attribution
+Offline_Deployment/TestingAI_Runtime
+Offline_Deployment/.env.offline
+
+# ── Docs and tests (not needed in runtime image) ─────────────────────────────
+docs
+test-*.js
+**/test-*.js
+scripts/test-*.js
+*.test.js
+
+# ── Build output / transfer bundle (never belongs in the image context) ──────
+Offline_Deployment/dist
+
+# ── Development artifacts ─────────────────────────────────────────────────────
+# DOC-UNDERSTANDING-1: devtools verify harnesses / fixtures are never runtime.
+devtools
+**/devtools
+*.bat
+*.tar.gz
+*.tar
+web-server.log
+web-server.err.log
+.runtime-logs/

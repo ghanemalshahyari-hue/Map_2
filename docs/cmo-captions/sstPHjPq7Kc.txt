@@ -1,0 +1,387 @@
+# C: MO - Striking Multiple Targets with one Mission
+Video: https://www.youtube.com/watch?v=sstPHjPq7Kc
+Video ID: sstPHjPq7Kc
+
+hello everyone in today's video we're
+going to go over a couple little things
+that sort of came up with some of the
+strike tutorials as well as kind of how
+to solve the classic problem of um I'm
+ordering my group to attack something
+but they're all concentrating on one
+Target when I really wanted them to
+split their fire and I don't want to sit
+there and Fiddle with everything so
+let's go ahead and show you what your
+problem probably was so I'm going to
+press control f11 here and I'm just
+going to create a simple Mission here
+strike this because uh this is what I
+call it we'll make this one a land
+strike press Okie do and what we're
+going to do is we're going to select
+some targets these two Targets look
+nominal I'm going to go over here add
+them to the map it's going to say some
+weapons might need a detected emission
+to engage that's a non-issue they're
+just giving you a heads up to say that
+that radar if you were hitting with it
+basically an arm you'd have to make sure
+we detected at first so what I'm going
+to do is I'll do everything smart here
+I'll set my flight size to two I'll come
+down here and add my two f-16s CU of
+course F16 why would you not use an F-16
+for this Mission and you know just to
+check things out real fast I'm just
+going to go over down here and press
+create or update flight plans and let's
+go take a look here so I click on flight
+bacon 28 that's a fabulous name for that
+and I can see that they take off uh they
+migrate over to the Target they drop
+some bombs or end points right here
+obviously we could tweak this thing left
+or right or anything perfect I'm not
+complaining about that at all it's
+everything that I wanted it to be except
+so if we were go to Mission settings
+here and like well I I there's two f-16s
+they got plenty of bombs there's no
+reason for me to concentrate everything
+on the p19 here I really want them to go
+after this observing building here too
+so you come over here you come down to a
+formation single aim you're like I'm
+just going to get smart here I'll go
+ahead and do a trail attack then I'll
+update my flight plans oh look at that
+it looks gorgeous you can see very very
+clearly that they're going to split
+their fire and they're all targeting the
+same Target I really want this guy down
+here to be over here and dropping the
+bomb on him while this guy gets dropped
+over here no okay okay so you say well
+I'm I'm going let the mission editor fix
+it I'll go down to my targets I'll make
+sure they return to base I'll make sure
+they actually continue Mission here so
+when they do do their opportunities
+they're going to do it and they're going
+to run back obviously we w't engage
+until Winchester cuz if we got bombs
+left over we want to use them right we
+don't just rush home by the way if you
+do engage shotgun they basically drop
+one strike and go home Winchester means
+keep it at it so you're like you've got
+everything set up the way that you want
+it you go ahead and unpause the game
+you're sitting there looking excited U
+f16s take off you can see they changed
+targets you can see they also updated
+those lovely flight plans they drop
+their bombs and they run home now you
+just saw a blur of motion but the good
+news is we can see everything that
+happened here and we can see very
+clearly that every single bomb which
+already obliterated the p19 obliterated
+the p19 on the first hit meaning our
+lovely small building of Observer was
+never even a
+act bummer so you say well that sucked
+let me reload the scenario I did exactly
+what you told me last week I made sure I
+always save games after editing missions
+oh my gosh folks select this is the
+correct option here this should be
+default in my opinion but anyway so you
+come back to this and say well I guess I
+could do a manual attack but that'd be
+pretty tedious you just show us what to
+do here well we could use a mission
+that's one way to do it and that's how
+I'm going to do it so I'm going to go do
+the same thing again I'll do a strike it
+twice I'm going to go down here make it
+a land strike and I'm just going to get
+a little sneaky this time so I can see
+my two targets are ready I'm going to
+engage into Winchester I don't want to
+like waste my passes so to speak here oh
+that looks good to me that looks good to
+me I'm going to set my flight size to
+one uhoh what did you do that for well I
+did that because that will cause
+different flights to Target different
+groups in the game of command modern
+operations all Targets are attacked by
+flight they're not attacked by unit
+unless you're using standoff weapons
+which means if I'm using unguided bombs
+like my F16 buddies down there they're
+all going to gank up on one target do
+their thing and then rush back home
+which means if I have more than one
+flight I get to strike more than one
+target see how that works watch this so
+I'm going to come over here I'm going to
+add my two
+f16s create update flight plans
+delightful we can see here we have one
+unit here this is a Reno 42 and we can
+see the second unit Reno I should say
+Slugger 79 and what you'll observe here
+is both of these units are now striking
+separate targets because they're now
+considered separate
+flights now one of the problems you're
+probably going to sit here and go it's
+like whoa whoa slow down there buddy
+that that's sketchy if you do something
+like that that means you're going to be
+kind of staggered and kind of going all
+over the sky at the same time you've got
+to do something to make that better I
+totally agree with you as a matter of
+fact what I'm going to do is I'm going
+to adjust my time on target so that I
+know everybody gets there at the same
+time so right now it's 12:30 we could
+probably do 10 without much of an issue
+here so do looks good to me and go ahead
+and click away whenever you edit the
+time you might want to go back and
+update flight plans cuz now their Flight
+Plan time is going to change as well as
+well just kind of be mindful of that now
+while we're showing you all this
+goofiness here which I call goofiness
+because eh it feels unintuitive but I
+get it I get it especially with unguided
+weapons obviously if for using missiles
+this is a different scenario but one of
+the things I like to share here is let
+me pull this out of the way so you all
+can see so in case I know you can't see
+off screen but basically I'm selecting
+between the two do you notice that
+there's this little holding pattern
+right here that basically they're
+getting ready to make sure they get to
+the right top one of these really fun
+tricks that I like to do is if you click
+on Waypoint two here and hit F2 one of
+the things you'll notice here is we
+loitering at 3,000 ft now anybody knows
+anything about airplanes noce if you
+loiter at 3,000 ft you're basically
+wasting gas so what you can do is you
+can actually come in here and tell them
+to loiter at high altitude so if I grab
+this other guy here let me grab him real
+quick Pride 5 Z come down here I'm going
+order him to loiter at a high altitude
+here 36,000 ft again these are things I
+feel like there should be options for
+but I I don't know I've got a couple
+hours in this game there's always little
+things with anything in the universe
+anyway so what that means is they're
+actually going to Loy to make sure
+they're hit there at the right time at
+high altitude and actually save some gas
+which is kind of helpful if you ask me
+so everything else is set that's all I
+need to do so goe and unpause again I'll
+speed up time gently gently gently I'm
+trying not to go too fast here I do want
+you to see the action but I also don't
+want to have you sit around for 45
+minutes waiting for these star things to
+take off you know what we should do we
+should see what time they're actually
+launching see that would be smrt let's
+see here I'll strike it twice what is
+your takeoff time today your takeoff
+time is time On Target local time is
+5:00 a.m. takeoff time is 4:37 a.m. is
+that nice so it's about a minute from
+now watch this watch this says
+4:36 437 they're just right on time
+delightful now this is so cool because
+if I click on one of my F-16 buddies
+here you'll see that he's climbing up to
+36,000 ft before he hits his holding
+pattern now strategically sometimes you
+can't pull things like this off
+obviously because the enemy could see
+you at altitudes like this but the fact
+of the matter is they're not wasting gas
+uh chilling at 3 ,000 ft and they are
+still loitering right now so they're
+just sipping which is exactly what we
+want them to do so they're basically
+getting ready to make sure they strike
+the target at exactly the correct time
+got to do this carefully got to do there
+they go on and they're off now the
+interesting thing here now I think you
+get a kick out of this is that they're
+going to be cruising around 36,000 ft
+here which is awfully high and they just
+started descending to get ready but
+you'll notice they're still targeting
+separately even though this is the same
+Mission doing this operation because
+they're split they're going to be
+dropping their bombs number one s
+multaneously number two on separate
+targets and number three they're all
+together for Collective defense on my
+mark get set bombs away
+everyone oh no let's see here why did
+you not drop your bombs 99% chance I was
+at the wrong altitude so one of the
+things you cannot see easily here is the
+fact that we're actually up really high
+this is 1756 ft when he went to drop his
+bombs he was at 400 feet so he was
+actually below his drop his bomb's
+altitude but we can't have that on a
+mission of course Let Me Go a and grab
+him pause grab him pause and put them
+back so one of the things you always
+have to watch out for is stuff like that
+my bad for putting them too high in the
+mountains you did say before you launch
+the mission right if you learn anything
+from me do that so what I'm going to do
+here is I'm going to go double check
+this let's see here we are at 1,62 so
+one of the quickest ways to fix this
+problem see how he's just too darn low
+is you can actually put them to terrain
+following you can put them at like 2,000
+ft that will lock them in such a way
+that they are going to always be at the
+correct altitude for that particular
+component so I'm just going to come over
+here manual override train following 1 I
+could do 2,000 ft kind of a thing like
+that so if I shift F1 click on this guy
+again I let's go ahead and I'll drop
+them all click on this guy again yes I
+know technically this is how to not have
+to do all these things allocate L but I
+can't leave a mission where we're just
+going to like sit there and Sail by we
+got to do our thing so he's going to pop
+up a little higher and there's his bombs
+and there's his bombs just like I
+promised and of course I will go ahead
+and let those drop down like that bam
+nice so the cool thing here obviously
+other than my little boo boo with the
+altitudes there was the fact that they
+struck super targets at this exact same
+time which is exactly what we want now
+because that's embarrassing and because
+I can let's go ahead and show you how to
+fix that for next time so that doesn't
+happen to you too so let's go ahead and
+create that same Mission Again really
+quickly all right and voila I've got
+this one over here I've got zoom out a
+little bit I've got this one over here
+you can see the two missions are looking
+pretty darn groovy right there targeting
+the two so one of the things we'll do is
+we'll make a quick little adjustment to
+our logic here to prevent that from
+happening now there's a couple little
+things we could do here to fix that one
+thing I would do normally is I come to
+the endpoint Point here going initial
+Point not end point that's something I
+always say it's an a a falcon thing but
+one of the things we can do here is
+there's a manual override for altitude
+so what I'm going to do is I'm just
+going to do terrain following 2,000 fet
+go to the Target terrain following 2,000
+ft uh that'll prevent that from
+happening I'll swing over to this guy
+real quick F2 we're going to go all the
+way over to our initial point we're
+going to do train following 2,000 ft
+we're going to cruise over to way point
+6 uh terrain following 2,000 ft so
+basically we're manually overriding our
+strike out to dude so let's see if that
+one works a little better this time go
+and close that I think the takeoff time
+is what
+437 there they go I don't know I always
+get Mission Impossible in my head
+whenever I think about these things
+there they go slow down slow down no
+need to rush folks no need to rush oh oh
+oh oh look at how coordinated it
+looks all right so theoretically if
+everything works correctly you want to
+see some really pretty terrain by the
+way oh this is the Glen Falls region fun
+thing that I did not know when I went to
+Glen Falls they changed the name of the
+airport when I flew into there one time
+and I was very confused as to why the
+airport diagram said one airport Floyd
+and the other one of course said Glenn
+Falls which was what everybody was
+calling it basically on the radio there
+and it was a little confuzzled it was
+the first time it ever flown up there in
+the real world so you know how that goes
+so anyway uh we can see here that
+they're about 400 ft AGL you can see
+he's going to come in there he jumps up
+to his 2,000 ft AGL just like I asked
+him to they're going to get themselves
+in range and they're going to fly right
+over the top of the target which means
+something caused them to miss their
+target switching to our opportunity
+Target they're going to come back around
+again all right third time is the charm
+so the only thing I changed this time is
+I made sure that my Waypoint was set to
+5,000 ft absolute I actually went over
+here and checked the altitude of this
+target it's at 1762 5,000 minus 762
+should 1,762 I should say should give us
+plenty of margin as far as dropping the
+bombs so is the only thing I changed so
+we overfly the Target and there's the
+bombs ah ah bam and that was delightful
+perfect in every way and everybody did a
+nice job so as you can see there's a lot
+of little traps uh that you have to
+really really really really watch out
+for military planners of course uh they
+don't just sit here and uh basically
+just say Yoo just go kind of a thing in
+two minutes there's quite a bit of
+Target study involved uh determining the
+best optimal angles and everything along
+those lines and making sure the target
+makes sense you know all those things go
+into it but the important thing that we
+saw there especially after I fixed it
+twice was the fact that when you are
+dealing with targets like that you can
+do that and if you need to split your
+forces you split your forces enjoy

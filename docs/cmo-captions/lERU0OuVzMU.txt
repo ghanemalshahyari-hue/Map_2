@@ -1,0 +1,295 @@
+# C: MO - Pilot Exhaustion Modeling
+Video: https://www.youtube.com/watch?v=lERU0OuVzMU
+Video ID: lERU0OuVzMU
+
+hello everyone in today's video we're
+going to be taking a look at a couple
+new features introduced in 1265.1
+uh the first feature of course which i
+find very very interesting is the fact
+that ships are now at the immersive to
+see if you go up into settings and go
+into scenario features and activate
+weather effects ship speeds but the more
+interesting thing that we've gotten
+added is now the fact that you have
+exhaustion so what i did is i actually
+created the most cheesy scenario that i
+possibly could here we forgot ourselves
+our little combat air patrol as well as
+the seed and what i did inside of this
+zone is actually designed it so units
+only leave if they run out of ammunition
+which means they're going to keep
+getting gas from my kc-135s and they're
+never ever ever going to land in the old
+days you could get away with that but
+now we've got something new that's going
+to prevent that from happening so what
+i'm going to do is i'm going to go ahead
+and let everybody go
+don't mind the tomahawks uh
+they do that sometimes
+one of my favorite things about
+tomahawks look at him he's going up to
+the tomahawks rather than paying
+attention to the m rams that are coming
+for him and of course my big pack of
+kc135s are coming in here so again all
+we're doing is setting up a seed indeed
+and a cap we're not doing any special
+strikes or anything like that i was
+playing around with the operation
+planner and having a lot of fun with it
+and also getting so frustrated that i
+said i'm never going to touch that thing
+again until they play with some of the
+features on it but that's okay so here's
+what's going to happen um i my clams are
+going to come in and they're going to do
+a lot of damage to the stuff on the
+ground which is why i launched them i
+mean why else would you launch them and
+then meanwhile everybody else is going
+to come zipping around and they're going
+to start doing their cap thing
+now here's how this usually goes these
+aircraft will come running in now
+they'll start doing their thing they'll
+fly around they'll spot some targets
+they'll drop a bunch of am rams on
+people who are literally just took off
+from the ground like that's almost not
+fair
+i think it's fair it's just not fair
+when you're on the receiving end
+obviously so they're going to sit up
+here and they're going to cause all
+sorts of nasty spam and not do a bunch
+of damage here chasing a bunch of these
+guys i think i got some big 31s in there
+too so there's definitely going to be
+some casualties and what'll happen is
+they're going to slowly start running
+out of fuel you know that's just this is
+what happens you know it's just the
+nature of aircraft in general and
+obviously while they're up here they're
+going to probably wipe out most of the
+enemy air forces before they even manage
+to get a shot off but hey that happens
+sometimes and every once in a while
+we're going to take some casualties that
+guy right there holy smokes look at him
+go look at him go go go go go go go go
+go one dead engine keep going keep going
+he made it
+now one of the things you're going to
+see down here is that this new thing
+this is flying time 48 minutes 13
+seconds eight hours what does that mean
+that is how long your aircraft can
+remain in the air and still have a pilot
+that can function uh the more practical
+sense is is when you roost up that timer
+the aircraft will no longer keep going
+what it will actually do is it will
+automatically run back to base as fast
+as it can
+so let's go ahead and run the meter by
+the way we have a double fireballs now
+which is freaking awesome notice all
+these guys ran low on fuel so they come
+running to the tank
+they go ahead and fill themselves up all
+the way they're looking great they run
+back to the patrol area and they're
+doing a great job looks like somebody
+tried to launch
+and they're going to go ahead and
+ungauge by the way like i said i want
+them for maximum cheese here they
+automatically return to base if they run
+themselves out of ammunition so that
+means that if they run out cool whatever
+but that also means that it's going to
+give everybody plenty of opportunity to
+stay up in the air as well so again
+they're all going to run back home
+they're going to load up all sorts of
+fuel here a lot of these guys took some
+damage so unfortunately they're going to
+go ahead and land and get that going so
+they land they recover themselves get
+themselves the new pilots and then
+they're going to go ahead and deploy the
+next round now we'll go ahead and cheat
+a little bit here in order to keep the
+ball rolling so to speak now we're going
+to send you guys up airborne oh my gosh
+do you see how many of these i lost
+oh that's bad that's bad congratulations
+on the team uh you you deserved it and
+just to sort of help things along a
+little bit here what i'm going to do is
+i'm going to grab all these d models i'm
+going to give them the heaviest missiles
+i possibly can actually assign them to
+this mission as well so they can kind of
+prove my point a little more
+aggressively here you know we'll grab
+all these ease as well then we'll we'll
+stock them up with a bunch of stuff that
+they can do just uh
+you know ground stuff ready arm let's
+grab some arguments from this thing and
+we'll do that why not let's go ahead and
+set them looks good submission i'll put
+them on seed again my whole purpose here
+is to run the exhaustion meter go
+and off they go
+so they're going to fly around they're
+going to annoy a bunch of things we're
+going to drop some long-range munitions
+and do a bunch of spam and everybody's
+going to use all sorts of amounts of
+fuel here and then we run into like i
+call like the ant colony here sort of
+like when you're walking on the sidewalk
+and he's like a million little ants kind
+of doing like their little dance over a
+particular point so you can see these
+guys they're doing a little ant colony
+thing here oh somebody took off somebody
+took off get him get him get him get him
+get him get him don't let him live nope
+nope nope nope nope nope splash splash
+i don't think that guy expected that i
+know he expected he's probably in
+trouble as soon as he took off and saw
+nothing but uh the radar warning
+receiver turning bright red but in
+general it's whatever oh here comes
+another one here comes another one nice
+job guys nice job
+so we're gonna relax uh these guys are
+just going to go ahead and run the meter
+a little bit every once in a while
+they're going to be like i think i could
+use some combustibles so they're going
+to head over here to my refueling track
+they're going to suck down a bunch of
+combustibles
+and they're going to go right back to
+annoying the heck out of anything that
+survived that initial engagement there
+although i think probably at this point
+they're pretty much done now if i did
+this as a close air support mission it
+would have been a little bit different
+because um you tend to not see anything
+until you see something oh somebody got
+hurt so he's got to go home now and
+notice he's broken off from everybody
+else but now notice if i select this guy
+and i scroll down a little bit you can
+see that this particular plane is
+grabbed just this airplane right here
+you can see that he's been airborne for
+three hours nine minutes he's still
+feeling pretty good though he's turning
+a little yellow there you know i'd feel
+a little yellow after that amount of
+time as well so they're going to go over
+they're going to fly around the target
+area every once in a while something's
+going to come up and say hello and then
+some time will pass
+and then all of a sudden everybody gets
+really really tired and you take a look
+over here and you'll see down this is
+the flying time is eight hours and five
+minutes and notice his return to base
+status is exhaustion these guys
+literally ran out of i have the desire
+to fly meanwhile of course our buddies
+in these gigantic kc-135 you can see
+that they have a 12-hour limitation
+which gives them a substantially longer
+amount of time meanwhile these guys
+they've been flying for quite a while
+here but notice they have a one-day
+limitation of how long they can stay in
+the air before they start getting too
+tired so they're able to stay airborne
+for a really really really long time
+which actually surprises me i figured
+the kc-135s would have yeah 12 hours
+you'd expect this to be a little bit
+more
+so the other thing we're going to take a
+look at real quick is the fact they've
+changed the way that boats work in the
+ocean actually well anybody of water
+really so i got myself a little rigid
+raider here and if you take a look at
+the database page real quick and you
+take a look scroll down a little bit you
+see this is maxi state three hmm let's
+see what happens so i'm gonna go ahead
+and grab my weather controllers here and
+i'm gonna go ahead and set my c state to
+three so now what you probably noticed
+is because it's c state three he has to
+slow himself down uh previously he was
+going quite a bit faster than this as a
+matter of fact if i came in here and
+said flank flank speed is about 22 and
+you can see that he has a 22 knot limit
+for c state 3. so let's be rude
+click
+sorry sorry sorry sorry so now we're in
+c state 4 and he has to reduce the speed
+down to 20 knots although in my opinion
+i don't think you could i mean you could
+try and see state 5 to be able to power
+through that but it's going to be pretty
+messy so let's go ahead and crank this
+up a few more clicks and you can now see
+that his best speed is going to be 15
+knots actually probably gonna be less
+than that's 14 knots now if he were to
+be operating inside of a hurricane i
+feel like it would destroy him but the
+reality is in a hurricane it's going to
+reduce his speed now his flanks his new
+capable speed is going to be zero
+because he can't even move because the
+weather is literally that bad now this
+is an interesting factor and i'd be very
+curious to see how this is going to have
+bigger impacts later on uh things that i
+expect to see
+would be like not being able to fire not
+be able to operate ships not be able to
+launch aircraft all those different
+things would be definitely impacted by
+having a sea state like that also notice
+that um even though we're at sea this
+little rigid raider here could stay at
+sea for weeks meanwhile everybody else
+are back on the aircraft carrier
+sleeping soundly hopefully this video is
+interesting like i said just to show you
+that new exhaustion feature it pretty
+much eliminates that cheese tactic i was
+using a little bit you really do have to
+go home and rearm and reload once in a
+while and i'd be very curious to see if
+they have like two stages of it like
+it's the pilot is eight hours for one
+mission however it's you know 18 hours
+in a two-day period like you could see
+that start to happen and you could
+really maybe think about operational
+accidents we'll say enjoy

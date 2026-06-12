@@ -1,0 +1,85 @@
+# C: MO - Making a unit move, pause, and then move again
+Video: https://www.youtube.com/watch?v=xhmuBfBQ_DY
+Video ID: xhmuBfBQ_DY
+
+hello everyone sorry for the strange
+voice but I have none at the moment and
+am making do that being said in today's
+video we're going to be taking a look at
+a question I received last week about
+getting ground units to pause for a
+moment as they are making a trip from
+one place to
+another I pondered this problem for a
+little while and came up with three
+basic
+approaches using a set of speed changed
+waypoints using a mission which is
+something that that will require a
+Target to work easily or using some kind
+of Luis
+scripting since Luis scripting isn't
+really something you can do in situ I
+figured to go with the simplest
+method what we have here is a mobile
+group consisting of three generic
+Vehicles along the Mexico US border I'm
+going to have them approach the border
+and then move very slowly for a bit
+before charging across it using a
+combination of three way points the
+first will consist of the initial
+position the second will be a short ways
+away but with the speed set incredibly
+low and the third will be our let's go
+to finish the
+move the thing that makes this tricky is
+that our first wayp point will be set to
+the minimum speed while our initial
+throttle will be set to full if we want
+to control exactly how long we pause we
+can simply do the division we can also
+make a little holding box for our folks
+to wait weit in if we don't want to
+travel very
+far many clever experts on Modern
+Warfare will point out that a moving
+ground unit is easier to detect than a
+still one but the reality is that if
+you're detectable by something like an
+E8 jar with its side looking Airborne
+radar it won't matter if you're going
+fast or slow as long as you're out there
+it'll have little difficulty in finding
+you even the Fox flat Shole radar on a
+MIG 25 RBS can pick up a ground vehicle
+at a reasonable distance even if it is
+not
+moving we'll now take a look at a
+different option where we'll use a
+delayed mission to have a unit pause and
+then get moving the setup here requires
+that our ground units start out of range
+of their targets otherwise they'll
+simply start firing the moment we give
+them the go ahead to do this we'll set
+up a basic strike Mission as usual but
+either add a start time or if we prefer
+a Time On
+Target it is important that we set the
+mission as inactive before we start
+going to town on the details otherwise
+we may run into issues where it tries
+kickoff the mission before we are
+completely ready you can see here how we
+ordered the ground units to move and at
+the prescribed time they got rolling
+again once more towards the target
+Zone as you can see the two methods work
+fairly well for a delayed move and there
+is no real reason why you can't use this
+same method for the purposes of
+controlling submarines for ships
+aircraft are a little tougher but the
+general principle Remains the Same other
+than that enjoy and thanks for watching

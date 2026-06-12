@@ -1,0 +1,693 @@
+# C: MO - Air to Ground Rocket Weapons and Tactics
+Video: https://www.youtube.com/watch?v=dSKMM3N3-P4
+Video ID: dSKMM3N3-P4
+
+Hello everyone. In today's video, we're
+going to be taking a look at rockets,
+rocket tactics, rocket salvos, and of
+course, sort of when to use what for
+particular types here. So, we have a
+pretty straightforward scenario for us
+today. Now, you can see we've lined up a
+bunch of targets along the lovely coast
+of southern Portugal here. And when I
+think of rockets, of course, I always
+think of everybody's favorite, the Sukoy
+25, because the Seoy 25 is a Russian
+airto ground aircraft, kind of like an
+A-10. Again, I could have done the A-10.
+I could have done the Apache for this,
+but I specifically chose this aircraft
+because it carries a comical number of
+rockets. If you notice here, for
+example, pepper spray on the left
+carries these little tiny 57 mm rockets,
+but it carries 256
+of them. There are very few things in
+this game that you carry 256 of, much
+less several. We also have, of course,
+us kicking up, we have Octo Punch here.
+He's packing the more common one.
+There's 160 S8s. S8s are kind of sort of
+in the middle. Uh they are heat rockets,
+so they're a little bit better against
+like targets that are armored. Of
+course, we have concrete argument here.
+He's packed in the S13B. This is getting
+a little bigger. Uh these rockets are
+much much larger. You can see they have
+a little bit more of a kick when they do
+hit things. It's about a 6 kilogram
+warhead on this thing. So quite a kick
+up here. But then of course we get the
+comical rockets. We have one hit wonder
+here, of course, the S24B. You'll notice
+this rocket is 38.25. It is a massive 25
+kg warhead. And if that weren't enough,
+of course, you have OP police nerf. And
+you can see he packs the absurd 266 mm
+rocket. Look at that. 87 damage points.
+Now, for you, you're sitting there
+going, "Well, that doesn't really mean
+anything to me." Well, let's go take a
+look at something real quick, shall we?
+Let's go grab ourselves that Iron Bomb
+real fast. Let's grab ourselves a Mark
+82. As you can see, a Mark 82 is only
+marginally more powerful than the
+largest of these rockets here. Now, the
+interesting thing with rockets is the
+fact they're not very accurate weapons.
+And for anybody who's ever played a
+flight sim, everybody thinks they can
+hit a tank with a rocket. The reality is
+you're probably not going to get it
+unless you're cheating and using
+something like the Vicer rocket, which
+is laser guided, or using App Quiz, of
+course, which is also laser guided,
+which actually works well, but slightly
+disappointing. You know, maybe we'll
+take a look at those later. So, what
+we're going to do is kind of take a look
+at the general tactics here and kind of
+get around things. But, there's one
+thing I need to address right away. I'm
+going to take pepper spray down here.
+He's uh looking pretty good. He's got
+256 rockets. And I'm going say, "Hey,
+Pepper Spray, do us a favor and go ahead
+and go right after that group of trucks
+on the left there." Pepper Spray is
+like, "Yeah, no problem. Give me a
+second." So, you can see he's rotating.
+By the way, I've got them already at
+3,000 ft. I have them at 3,000 ft for a
+reason. You'll see why in a couple
+moments here. So, Pepper Spray is going
+to come lining himself up. He's looking
+out the window. He's looking through the
+thing and he fires
+one rocket at a time. Now, you're
+sitting here with your brain going,
+"What? Why would you do it that way? You
+know, I just unloaded an entire Not
+really. You unloaded eight rockets of
+your 256.
+In my mind, um, they're charging by the
+rockets right now. So, you're sitting
+here going, "Ah, that doesn't make
+sense. Uh, there's something wrong with
+my WRA." So, let's go take a look. So,
+I'm going to go pop up my real quick.
+Here's my 57mm rockets. And I go ahead
+and pop that sucker open. And what
+you'll observe here is nope, it's set
+correctly. It is designed to go ahead
+and have the system default of firing
+all weapons at a time. The problem is it
+can only fire each one of those rockets
+internally so fast. So when you watch
+those great videos when you watch the
+airplane diving in and it unloads like
+256 rockets as fast as you can snap your
+fingers. We just don't have that. Uh we
+have the ability to basically uh squeeze
+one off every once in a while. Of course
+depending on the type. Now this extends
+a little bit too. So for example, if I
+were to grab the uh let's go grab blue
+real fast here. Let's go zoom back in.
+Let's grab something in the middle. A
+concrete argument here has 40 of these
+lovely 122mm rockets. If I were to take
+a look at kind of the default on these
+uh there we go. The 113B. You'll see
+it's also configured to one weapon here.
+So if I were to say go ahead and uh
+shoot it, this would be an absurd
+exercise. Let's get a 122 mm rocket and
+shoot it at a bunch of trucks. Uh fun
+story by the way. Did you notice the
+fact we got these little numbers in the
+corner? That's how many units is left in
+case you're ever curious. I don't think
+I've ever actually addressed that in a
+video. So, there are actually four
+trucks down here, three, and then of
+course four in my tank platoon here. So,
+concrete argument is coming down here,
+and you'll notice it's the same basic
+story. Uh, he's basically unloading a
+single rocket at a time, and probably
+making quite a mess of the ground around
+this guy. Although, I think we did just
+get a direct hit. It's going to pass
+right over the top. It did not matter in
+the end. Uh, he went ahead and blasted
+that thing. So, you're sitting there
+going, "Okay, so how is that going to
+impact the way that I approach things?
+You know, what am I going to be using
+these rockets for? What am I going how
+am I going to employ them effectively?"
+Well, there's a bunch of things that are
+going to change how effective a rocket
+is. The simplest, of course, is going to
+be the size of the warhead. Then, of
+course, we're going to be looking at
+basically the range at which you operate
+them. So, if you take a look at pepper
+spray real quickly here, again, we're
+firing the S5s. These are again, any
+rocket will cut you in half, but keep in
+mind that these things are pretty small,
+relatively speaking. And you notice it
+has an effective range of about one and
+one about 1.3 nautical miles. You can
+see that range pretty much out there.
+basically not quite two kilometers if
+you want to kind of have a general idea.
+Now, the crazy thing here is is not only
+are you dealing with the problem of
+being able to hit a target horizontally,
+but you also have to consider it
+vertically. Now, if I were to quickly
+open up our little page here on rockets
+here, you'll see that our launch
+altitude is considered a one,000 10,000
+ft here. That is above ground level
+about 3 km up if you're looking for a
+specific altitude there. Now, you're
+probably sitting here going, "Where'd
+you get 3,000 ft from? That's not like a
+standard altitude." Well, most of the
+time when you read the literature, it
+always talks about a thousand meters
+basically being a kilometer up for these
+strikes. And that's actually pretty
+fair. That does a pretty nice job of
+kind of giving you an idea of what you
+need to do. So, the key thing here is
+this is already basically optimum range
+for this weapon. Uh you could definitely
+take it out a little bit further forward
+if you wanted, but again, if you're
+going to do that, you're basically
+saturating the area. So, we're already
+more or less at optimum range. Now, some
+of you are like, well, I want to well,
+why make it more optimum? Okay, I'll
+make it more optimum if that's what you
+like. So, I'll come up to here and I'll
+actually have the range. Now, you're
+sitting here going, "Why would you do
+that?" And you'll notice you can't.
+There is no having of the range. The
+range is the range on this weapon.
+That's just the nature. Now, when you
+get up to the hilarious uh 266 mm rocket
+here, you will notice none of these have
+adjustable ranges, which means the only
+thing you can do to control how accurate
+a rocket is is going to be your
+altitude. Let me show you what I mean
+there. So, let's go ahead and grab this
+guy and pop him up to I'm going to go up
+to uh basically 3 km here. We'll do
+9,000 ft. Yes, I know that's not 3 km.
+Get over it. So, what we're going to do
+is we're going to order him to do an
+automatic attack on this fellow over
+here on the left. There's actually some
+really comedic things you can do with
+this, but don't worry about it. Go
+ahead, climb up pepper spray. And again,
+I think you can guess why I called him
+pepper spray here. All right, we're
+going to pop you right up to 9,000 ft.
+Isn't that so much fun when you do it
+that way? Notice, by the way, that my
+rockets have a longer effective range.
+That's not unusual at all because I'm up
+so much higher. And you can actually see
+here it goes up to two nautical miles
+now that I've got this extra bit of
+reach. And again, you can see the arc of
+that basically right to here. So, now
+that I'm up a little higher, I'm going
+to go ahead and order that automatic
+attack that I did before. Now, what
+we're doing here is we're going to be
+exchanging the fact we're going to get
+more rockets off in exchange for the
+fact that we're now at a higher altitude
+and we have reduced accuracy. So,
+unfortunately, our fellow here is he's
+out coming in. You can see he's got a
+bit of a dive going about 3°. That's a
+little shallow. You'll notice he's going
+to get off an awful lot of rockets until
+the basically he has to pull himself up.
+And you can see he's at zero degrees
+pitch and they all come raining down.
+And if I zoom in a little bit, you can
+see my spread is it's not awful. Again,
+the other thing you'll notice is because
+we got that extra um basically half a
+mile of range there, we were able to get
+off another seven rockets. But you'll
+notice the difference in accuracy is
+very, very, very, very substantial. So,
+if I were to go grab this one again,
+again, we got twice as many rockets off
+this time. But let's go ahead and reduce
+that altitude down to that 3,000 ft you
+saw me do earlier. And watch what
+happens this time. And again, all we've
+done here is we're trading horizontal
+distance for a little bit better
+accuracy. Now, take a look what happens
+here. Fire.
+Delightful. Well done. Well done. Good
+job, Pepper Spray. You'll notice pepper
+spray only got off eight a minute ago.
+We got a heck of a lot more. We got an
+extra. We got 15 rockets off at 10,000
+ft. But what you'll observe here is my
+truck vehicles have been shot up pretty
+bad. And they've taken quite a few hits
+here. These were mostly near misses. And
+anybody who's ever done any work with
+rockets knows the fact that a near miss
+is considered a good day. And again, why
+do they call it near miss? Shouldn't be
+a near hit, but that's just me. So, now
+that you kind of have that concept in
+your head, let's go ahead and take a
+look at what happens when you spread it
+across the caliber of rocket. First of
+all, you got to realize that pepper
+spray here isn't going to do much to a
+hardened target. So, for example, if I'm
+like, "Hey, pepper spray, go against my
+tougher ammo bunker here." So, the good
+news is pepper spray is going to have a
+really easy time hitting something that
+big. Oh, actually you can see took a
+couple freebies as you kind of went by
+here. Hey, we're going for this one.
+Thank you. I mean, I appreciate the fact
+he's being an overachiever.
+And you'll see the fact that um we
+basically took some opportunity shots. I
+mean, they were there on the way down,
+so like why not do it, right? But if I
+were to go to god eye view mode, you
+will notice the bunker took zero damage.
+It literally didn't even scrape the
+paint on this thing. So, um that rocket
+just does not work for it. So, uh, one
+of the things you probably noticed is
+I'm using eastern designs here. And the
+reason I chose that is because whereas
+the kind of western philosophy for
+almost everything is to come up with,
+you know, something in the middle that
+can kind of do everything, the eastern
+philosophy is we have a different tool
+for different jobs. So, as you can see,
+our little pepper spray, this thing is
+fabulous against infantry formations
+because it could just keep going over
+and over and over, which we'd never do
+in the real world, by the way. Good way
+to get a a man pad basically shot up
+your tailpipe there. But the reality is
+we can get away with it in this game. So
+pepper spray here worthless against
+anything that has armor. But if you have
+a bunch of infantry in the open, pepper
+spray could def just one of these guys
+could defeat an entire division. Now the
+interesting thing is when we get a
+little bit closer to I call it kind of
+the NATO size rocket which is kind of
+this 80 mm and again it depends on which
+American rocket or you know Russian
+rocket, British rocket that you're
+dealing with but generally the between
+60 and 90 mm is kind of the sweet spot
+there. Now, this is a slightly bigger
+rocket, but um what is fascinating about
+it, let's go ahead and lock on the ammo
+bunker again, is again all we've done is
+add a little bit of extra weight.
+Slightly bigger warhead, but look what
+happens when we go up against our friend
+the ammo bunker this time. Oh,
+opportunity shot. I mean, I appreciate I
+appreciate the effort. Appreciate the
+effort. It was a good trick shot, too.
+There it is. All right, take a look. We
+scratched the paint.
+And that's one of the important things
+you have to realize is that if you're
+going to be using these little teeny
+tiny things, even the 80s, you're not
+going to do anything to anything that
+has any real armor. Now, the interesting
+thing is those are considered the small
+rockets of kind of the Russian rocket
+family here. Basically, these two here,
+you got, like I said, you got your 80,
+you've got your tiny little 57. The
+standard rockets, like the one that kind
+of gets the job done, is when we're
+stealing with 122 mm and up. Now, one of
+the things you probably noticed is the
+fact that these all turn green. That was
+weird. Uh, but the reason actually I
+know why they turn green. So, the
+interesting thing here is that when I
+look at this one, you'll notice my 122mm
+rocket sounds suspiciously like another
+rocket that happens to be fired from a
+truck because it's essentially the same
+rocket. Again, same limitations of
+accuracy, but we have 40 of them, which
+allows us to get away with some really,
+really fun tricks. So, let's go ahead
+and tweak my view a little bit here. I'm
+going to try to center it up. I love the
+little 3D view, but man, it can make it
+a little tricky to line things up. So,
+let me show you a fun trick here. So,
+I've got everybody in a line here, and
+I'm going to select all of these units
+at once. Actually, I think there's one
+that I'm not allowed to engage. Uh,
+which one can I not? I can't shoot at
+the runway, I don't think. Oh, nope.
+It's not going to let me do that either.
+Okay, good enough. We're going to target
+the mobile targets. Let's grab my
+rockets, and I'm going to go ahead and
+allocate uh we'll keep it keep it simple
+here. We'll go four rockets each. So,
+we're going to go fire off 12 rockets
+here. You know, while I'm at it too, we
+might as well do inconvenience these
+guys, too. Let's see here. Um, you'll
+get four because I'm feeling generous.
+And you'll also get four because I'm
+feeling generous. All right. Now, the
+122 rocket. Uh, this is a bigger rocket.
+Obviously, it's almost twice the size.
+The thing you have to remember about it
+is you carry less of them, and it's
+actually a less accurate weapon. I know
+that sounds silly, but your speeds are
+totally different when you're dealing
+with things that are a little bit
+heavier. Now, for those of you who've
+ever tried to use these, like a DCS or
+something like that, you're probably
+very familiar with the fact that uh when
+you pull things like this, you hit some
+of them and usually run out of time, you
+run out of room. You'll actually see
+here that as we're doing our little line
+here, we blew the BTR out of the way cuz
+we actually hit it. We're going against
+the T80. We're barely able to strike it.
+Taking our shots against our ammo bunker
+on the surface there. You can see we hit
+it a couple times. And of course, you
+can see our runway here. We struck
+several times as a concrete argument
+kind of goes ripping by here. Now, if I
+open up my guide's eye view, you can see
+we did a little bit better than scratch
+the paint, but it was also a very, very
+clean hit there. And our runway actually
+got damaged really, really badly because
+runways are so big. You basically can't
+miss them with a rocket. And that is one
+of the reasons why they opted for even
+larger rockets. Now, this is where it
+gets really comical. So, the big
+rockets, these are your 240s and these
+are your 266s. These are big big big big
+rockets. And these are your anti-runway
+and anti- big building rockets. They're
+not really supposed to be used against
+ground targets. Like you'll notice I
+only carry eight of them here. This guy
+here only carries eight of them as well.
+Again, 266s are only slightly bigger.
+And one of the things I find really
+fascinating about these weapons is if
+you open them up, they're both going to
+be two, let's see here. I believe I
+don't want to make a lie out of me here.
+Yeah, they're both two nautical mile
+weapons with the same general idea. But
+the cool thing is this has got a nice
+little proxy fuse which makes it just
+slightly more accurate. So let's go
+ahead and grab one hit wonder and just
+kind of show you. And again, this group
+here, the 122 concrete argument there,
+that is kind of the generic I can do
+anything with a rocket kind of a rocket.
+These two folks over in the corner,
+they're great against big uh soft group
+targets, especially if you're in the
+open like we are here. These two are
+really designed to wreck runways.
+They're really designed to wreck
+buildings. So, for example, if I grab
+one hit wonder here and order him to
+attack the ammo bunker, I'll grab OP,
+please nerf. And I'll go ahead and order
+him to attack the runway. Now, remember,
+these weapons were designed. Where you
+going, OP?
+Did I break something somehow? I'm
+pretty famous for that. Ah, I did break
+something somehow. Typical.
+There we go. Actually, I don't think
+he's allowed to engage the runway. Not
+allowed to engage the runway. Oh, that's
+right. Ah, I can see my mistake right
+away. Let's go take a look at our WR
+here. Let's go to my 266 rockets. And it
+says do not use against What? That's a
+little I'm not going to lie, that's
+seems a little strange in my mind. Uh,
+the reason I find that a little strange
+is because that's basically what this
+weapon is designed for. Unless, of
+course, it's the silly um, which fuse is
+this? Which fuse is this? Hang on. I
+might be It's a high explosive air
+burst. Okay, so that's the fuse. It's
+basically designed to blow up an area.
+Parked airplanes is the absolute winner.
+So, I disregard OP Ply's nerf here
+because he's going to disappoint me
+because yeah, we're shooting at a runway
+with it, but that's not really what it's
+supposed to be. That warhead is
+specifically designed basically to
+explode over an area. All right, one hit
+wonder. This is a huge weapon. Look at
+this. I can click on this thing. It's so
+huge. That gives you an idea. All right,
+so you'll see several of our weapons
+malfunctioned. We came through. We got a
+nice clean hit there. Oh, fly over the
+top. We're going to do a little BDA as
+we fly over. And you can see how this
+chap is like, I'm not firing anything at
+that. Are you kidding me, my friend?
+It's a runway. It's a runway. Just shoot
+the runway. It doesn't matter that you
+air burst. There he goes. Look at the
+size of this thing.
+That's what I'm talking about.
+There we go. Fantastic. Looks like we
+got some freebies as we went by, too.
+All right, let's take a look. So, ammo
+bunker, as you can see, um, we did some
+damage to it. And again, we barely even
+hit it. And when I open up the little
+like hit log, you realize I didn't
+actually hit it coming over here with
+the runway. That's a lot of damage. And
+again, if I came by, especially with uh
+where is he? Oh, no. No. Where'd he go?
+Octop. Yeah, right. That'd be pretty
+hilarious. Uh, where are you? Where's
+one hit wonder here? Ah, here he is. Oh,
+he's out of ammo. Oh well, we'll play
+with that in a minute. But what you can
+see here is we probably missed a lot. As
+a matter of fact, if I go to weapon
+endgame here, this one's so nice. I like
+this one. You'll notice a couple of them
+hit. Uh the 240s mostly missed. And by
+missed, 60 ft. And again, that 60 ft is
+really good. I've got a really talented
+pilot. If we can keep it within 60 ft,
+that's not bad. And keep in mind, I'm at
+optimum altitude. Now, you're sitting
+here going, "Okay, so I I kind of get
+the I get the theme. I get it. I get
+it." So basically the big rockets used
+against ground targets that don't move.
+The little rockets um just use them to
+absolutely spam anything that's
+dangerous that's soft. It's like yeah
+basically but one of the things I find
+really really interesting about uh
+rockets other than like I said the fact
+you can't spam them all in one long
+salvo at least not right now. They'll
+probably change that in the future. But
+one of the things I really really get a
+kick out of with any rocket is the idea
+that you can get a perfect hit if you
+get as close to the target as possible.
+Now you're sitting there going, "Okay, I
+think I know where you're going to go
+with that." Yeah, you're right. So,
+let's go ahead and grab my favorite uh
+OP, please. Actually, we'll grab this
+one. One hit wonder. Honestly, I think
+is like the best here. I'm going to
+order him to go down to minimum
+altitude. Now, you're sitting there
+going, "Why would you do that?"
+Actually, it's too low. Let's do like
+500 ft. I think that's enough. Um, let's
+go ahead and make that AGL, too, because
+we're basically ripping around. I'm also
+going to reduce my speed. I'm going to
+stack the deck a little bit here. So,
+we're going to be very low. We're going
+to be very, very slow. And our goal is
+to try to do as much damage as we
+possibly can on my flyby here. Now, the
+interesting thing is because you're
+going to be coming in so much lower,
+you're going to have less time to
+actually fire the weapon. You'll
+actually notice as I come down in
+altitude that my actual range is
+decreasing. Remember a few minutes ago I
+was showing you the fact that, you know,
+you're coming in when we did high
+altitude, we got to drop the whole rack
+on them, but we basically missed half
+the time. And then the 3,000 ft was more
+or less optimum. Well, you'll notice
+here when I start getting a little low,
+again, we're going minimum fire range
+here. We're down to a th00and feet.
+We're not very high off the ground here.
+He's going to have to use his TFR. He's
+going to have less time to fire the
+rockets off. So, you can see we got What
+do we got here? About 1.6° dive. Bunch
+of hits. Bunch of hits. Bam. Bam. Bam.
+Bam. He actually got his whole rack off.
+I'm I'm pretty impressed there. You get
+an A today. You did a nice job. you'll
+see it actually worked okay because um
+basically what happened is we didn't
+have a lot of rockets and we had really
+big rockets. But again, if we were
+trying to get as many rockets on the
+target as we can with like little pepper
+spray over there, you would notice that
+we'd not have been nearly as successful.
+Now, one of the things I was talking
+about earlier was the concept of the
+guided rockets. Now, some of you say,
+"Isn't it a missile?" I'd say, "Don't
+tell anybody." But one of the things
+that both the east and the west came up
+with is realizing that those rockets are
+kind of hard to use. And if we just
+increase the precision just a little
+bit, we can do a lot more damage. So,
+one of the things they tried to do
+pretty early on is actually use the
+lovely Vicor missiles rockets. And these
+are pretty cool cuz uh basically what
+they are is they're if you want to think
+about it another way, they're kind of
+data length little line of sight limited
+miniature missiles. And they're
+absolutely fantastic because you can see
+they've got the tandem warheads which
+makes them extremely effective against
+armored units. And they're also really
+really accurate. And if you come down
+here, you'll notice my C is 2 m, which
+means I'm very unlikely to miss. It is
+also a commandguided weapon, which means
+we need none of that shenanigans when it
+comes to things like using laserg guided
+weapons. Now, this is a pretty
+interesting weapon, and I had to use it
+because you just got to see this thing
+in action because it's just so curious.
+All right. So, I'm going to grab
+everybody. I'm going grab it. Oh, you're
+going to be a jerk to me, aren't you?
+I'm going to give you get a missile. And
+you get two missiles. And you get a
+missile. And you get a missile. Now,
+this is kind of fun. Now, let me uh go
+ahead. Actually, it's a good position.
+I'm going to set him to loiter speed
+here because if I send them to loiter
+speed, he basically has more time to
+fake take the shots. Now, check these
+little things out. They're little Fisher
+Price rockets. But the crazy thing is is
+even though the warhead on this thing is
+so tiny, the reality is is that each one
+of these is so accurate that it almost
+doesn't matter. So you can see here we
+have the three BTRs basically chilling.
+We have one missile and bam, that
+creamed one of those BTRs. You got to
+imagine this thing just slamming in,
+1200 knots, just crashes into the side
+of it. Now the crazy thing is even
+though these things are so tiny, we've
+taken a shot at our bunker. See, notice
+we're able to get a few of these off at
+a time. Where are you going?
+Where are you going?
+I guess he just You can't fire me. I
+quit. So, of course, as you probably
+noticed, until we turned away and
+basically lost the ability to take our
+shot there, that we were able to
+basically get direct hits, which made
+them even more effective. So, as we've
+seen, rockets are effective weapons.
+Little rockets, um, basically get down
+3,000 ft is kind of the sweet spot.
+Shoot as many of them as you can. The
+bigger rockets, again, the 3,000 ft is
+pretty optimum. If you go up a little
+bit higher if you're using guided
+weapons, you can go a little bit lower
+if you're using less of them and you
+want more of a kick.

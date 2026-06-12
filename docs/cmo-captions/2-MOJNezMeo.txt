@@ -1,0 +1,344 @@
+# C: MO - Effects of platform speed on SONAR detection.
+Video: https://www.youtube.com/watch?v=2-MOJNezMeo
+Video ID: 2-MOJNezMeo
+
+hello everyone in today's video we're
+going to be taking a look at the impact
+of
+own noise on trying to detect a
+submerged target
+so um often you know that when we're
+doing some kind of asw work
+anti-submarine warfare we're going to be
+kind of tooling around the ocean at low
+speeds and constantly
+listening for anything that can possibly
+come along our lines so that we can go
+ahead and detect it and hopefully
+identify and hopefully engage it as
+early as possible
+another advantage of course you have
+going relatively slow is the fact that
+makes you more difficult to detect
+so what we're going to take a look at
+today is just how much of an impact
+you actually have when you have a
+different speed and you're trying to
+detect something underwater
+so let's take a look at a little
+scenario here so right now we have a
+group of
+oliver hauser perry's apparently this is
+the entire perry fleet i know there's a
+few more but i was having some fun here
+and each one of these is cruising along
+at a different speed this one right here
+is at 0
+5 10 15 20 25 30 and 33 knots
+speed which is the absolute maximum
+flank speed for these particular vessels
+it'll do each one of these vessels now
+but there is a boomer basically sitting
+underneath them in this case it is a pr
+pla659t echo1 which is a pretty
+old-school
+combat submarine as a matter of fact
+then we will confirm that to make sure
+i'm not insane
+yes it's a pla so it's atomic got it so
+this particular operation we're simply
+going to have our two items
+run over each other and see when the
+other one gets detected
+now this should be interesting because
+there might be a couple little surprises
+here
+the first thing we'll notice is the fact
+that this particular ship this one
+this one but not these have the ability
+to deploy their tow to race sonars now
+if you remember total race sonars have a
+specific depth that they're operating at
+in this case all of our tech submarines
+here all operating at about 200 feet
+shallow so as a result our wonderful
+wonderful towed array system and may
+see over them and that kind of creates
+an interesting little situation but
+you'll see what i mean when we do this
+all right let's go see if the results
+work out the way we expect
+so again we're just kind of cruising
+along cruising along just cruising
+nothing bad happened
+we've made no detections at this point
+i'm using god's eye view so you can see
+everything pretty clearly here
+just cruising just screws in nothing not
+getting any angry alarms or anything
+along those lines go ahead and bring up
+the messes log in case anything comes
+we'll actually clear out the message log
+as well let's see here game i'll go
+ahead and clear that out later
+i'm going to worry about it later all
+right pause so let's see what just
+happened
+so we sailed over the top of this
+submarine and never even began to detect
+it
+this guy right here is about to sail
+over that submarine let's see what
+happens no detection
+okay so 30 knots is right out for an asw
+let's see what happens at 25 knots
+nothing so 25 is out for asw looks like
+in this case
+we're gonna have to adjust our alignment
+a little bit here just to make it fair
+let's see what happens at 20 knots
+ah there we go we got something all
+right so what distance did we detect
+them at so we detected this ssn
+at a distance of 1.1 nautical miles okay
+so we know that 20 knots is viable if
+you can get within a mile of something
+all right let's see how things are doing
+i'm sorry 25 knots let's see how things
+are at 20 knots
+so we're still cruising we're cruising
+we're cruising
+bingo we've detected an ssn all right
+this one is at a distance of 1.5
+that one if you recall we detected at a
+distance of about 1.6
+in this case that we're just estimating
+how far away it's gotten away from us
+interesting so the difference between
+these two speeds is actually not that
+much
+20 and 25 both will get you about a
+three or four mile detection on a good
+day
+let's see what happens now when you
+throw in a 10 knob movement i should say
+you can oh i'm sorry i missed this one a
+moment ago we should take a look
+we also have the one that detected it at
+15 knots let's see how he did as far as
+his detection goes
+uh detected at 1.5 so 10 15 20 and 25
+knots are all within point three
+nautical miles of making a detection
+interesting now what about our folks
+with the total ray sonar zone what
+happens when this guy gets into range
+let's see what happens here cruising
+along cruising along he's
+only doing 10 knots which is considered
+to be a pretty safe listening speed
+still no detection oh we got an event
+yeah it's just me out changing no vision
+modes here still no detection and there
+it is
+we have a brand new platform underwater
+we detected them at a distance of
+19 nautical miles that's actually pretty
+impressive let me zoom in
+quite a bit here of course it wasn't
+actually 19 nautical miles i think our
+detection time came at about three and a
+half nautical miles
+so i believe that may have just been a
+misprint there when it was doing the
+initial analysis
+but we were able to identify it as that
+particular class in this case uh we got
+about 3.5 nautical miles that's more of
+what i expected
+so even with our tote array it took us
+till we got to three and a half miles so
+half the speed gave us twice the
+detection radius
+all right so now we're taking our five
+not one this is one we're really
+expecting to be
+a wildly wildly successful here and now
+let's see what happens
+so again he's doing five knots which is
+that sweet asw
+speed kind of move and kind of move and
+kind of move in
+make sure that he gets close enough to
+actually cover over the top of this guy
+there we go
+clean out my message log again
+i heard something all right contact
+change so we did detect something let's
+take a look
+we detected them at 5.7 nautical miles
+this has been a spectacular
+difference so in this particular one if
+you recall we basically picked them up
+at about 4.6 or so
+this guy we've gained almost a mile 1.8
+nautical miles
+in exchange for five knots of speed so
+we're doing
+half the distance but we're not getting
+more than twice the detection range
+now what you're probably most interested
+in is going to be this guy up here the
+um
+one that is actually parked so we'll go
+ahead and fast forward things a little
+bit here and see if the guy who's parked
+has the ability to go ahead and identify
+that one underwater he's just chilling
+just chilling oop there we go we got an
+event i think this is just god's eye
+view yeah that was me
+oh contact change let's see what we got
+here ssn one vanished yeah they got a
+little far away doesn't surprise me
+all right speed up time here
+you would think this guy would pick him
+up really early right
+i think you'll actually be surprised to
+see just how close you can get with a
+submarine before you'll rely
+up there he is let's see here it was
+detected
+at 6.3 so as you can see
+going five knots or zero knots gives you
+the exact same detection radius
+however going at 10 knots takes about
+two nautical miles off your detection
+radius for about four nautical miles
+and doing any of these speeds of a 15 20
+um basically is going to reduce your
+maximum detection radius to about one
+mile or so nautical mile
+so that's sort of interesting but what
+happens if we try to do this with active
+sonar as opposed to passive sonar so
+let's go ahead and
+open everything back up again
+get it all warmed up and i'm gonna order
+my entire side to go ahead and go with
+active sonar now fortunately the folks
+underwater are smart enough to know
+don't freak out now we would expect the
+detection ranges to be about the same
+even though we're using a slightly
+different technique here so let's kind
+of see how things play out i think we've
+got our first detection here remember
+this guy's doing flank speed
+come on flank speed blink speed
+and he sails right over the top of him
+that happens
+all right our next buddy he's doing 30
+knots remember we had no detection last
+time sail's over the top of them
+25 knots we had a last second detection
+if you recall last time
+so go ahead adjust him to make sure i'm
+not hitting him at a funky angle or
+anything like that we actually have to
+make sure he's in the range of the
+active sonar
+let's see here i'll go just make a quick
+little adjustment here make a quick
+little adjustment here
+oh these guys way off i'll do a little
+adjustment here make sure they're
+crossing paths
+that looks good and we're not going to
+worry about that other one yet okay back
+to what we see all right let's do the 25
+now remember this guy detected him at a
+little less than oh there it is
+so um we never let's see here a and sqs
+and sqs 56 is active passive
+so we're actually able to detect him at
+1.4 nautical miles which is exactly the
+same
+so let's go ahead and see what happens
+at 20 knots here
+pause all right see how we did here we
+were able to detect them at
+1.9 so actually we did a little bit
+better active sonar is actually
+more effective even though we are still
+hauling ass right now basically doing
+let's see here we got a total speed of
+20 knots okay
+let's see how this guy does right here
+remember this 20 knots uh we detected
+him at two nautical miles so these
+speeds don't matter much if you're at
+active sonar between 20 and 25 knots
+so let's see what happens when we get to
+i should say 15 20 and 25 knots
+let's see what happens when we get all
+the way down to 10 knots
+now you're probably sitting there going
+eh you're not going to detect them and
+say right on top of them
+let's go ahead and find out
+remember these guys all have active
+sonar right now pause
+let's see we detected him at five
+nautical miles which was actually the
+best we've detected so far
+at 10 knots all right let's go ahead and
+see what happens at our 5.6 here
+again this shows you how garbage active
+sonar really is
+make sure they don't hit at a funny
+angle here
+incredible pause let's see our initial
+was about five nautical miles so we
+actually have expanded our range a teeny
+tiny bit using active sonar but it's
+basically a negligible increase
+now meanwhile this guy is not making any
+noise at all he's just chilling here
+let's see how long it takes him to
+actually detect that other submarine
+now keep in mind all subs are the same
+they're all moving at 10 knots imagine
+how difficult this would be if they're
+moving at two knots
+or they're diesels right into rain yep
+there he is
+let's see here initial range 5.6 so you
+can see that our active sonar enables us
+to detect targets out to six miles
+up to about 15 knots now once we cross
+the kind of into the cavitation range
+we lose our ability to actively reliably
+engage so hopefully this video is
+helpful
+generally if you're looking for some
+takeaways here the one thing you want to
+keep in mind is if you're doing anything
+greater than 20 knots
+you're probably detectable but you can
+increase a little teeny tiny bit of your
+detection radius if you use active sonar
+anything under 15 knots is going to be
+pretty ideal the difference between five
+and 10 knots worked out to be about one
+it's about a twenty percent increase in
+detection range if you lose five knots
+obviously those that twenty percent can
+be massive if you're dealing with a very
+very quiet target
+we were also able to identify the fact
+that our big old frigate here
+not moving at all had no specific
+benefit for its ability to go ahead and
+listen underwater
+enjoy

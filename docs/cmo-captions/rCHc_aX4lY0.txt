@@ -1,0 +1,322 @@
+# C: MO - Bearing only Launches
+Video: https://www.youtube.com/watch?v=rCHc_aX4lY0
+Video ID: rCHc_aX4lY0
+
+hello everyone in today's video we're
+going to take a look at bearing only
+launch weapons and some of their
+tactical implications so what does a
+bearing only launch that simply means
+that we pick a vector and we fire the
+weapon and hope it hits something so
+there's a couple different ways we can
+do bearing only launches inside of
+command the simplest method is you
+simply grab by unit right click on it
+and you go to attack options and this is
+saying this is bol
+the other option of course you can press
+ctrl f1 it gives you this little
+crosshair now this little crosshair is
+actually doing two things for you it's
+providing us a direction it's also
+providing us a go here so in the sense
+of if i'm launching for example bearing
+only launch torpedo i'd be launching it
+to a position and then turning on the
+sensor once it reached that if i'm
+launching a bearing only launch let's
+say like a nuclear weapon obviously this
+is going to be the thing i'm shooting at
+such as you know the ground or something
+like that unfortunately there's a lot
+less bearing only launch options that we
+have at disposal in my opinion i should
+be able to give a coast to macarthur
+haircut with artillery but they don't
+let us do that yet which is ah that
+sucks because i like the macarthur
+haircut i find it entertaining so let's
+see what this looks like in action so
+i'm going to go ahead and spacebar and
+we're going to do some listening there's
+a sam site don't worry we'll deal with
+that later listening i'm just doing some
+listening i got my uns rosanante here
+taking a nice quiet listen to the water
+you know i'm just looking around not
+doing anything too excessive let's go
+pop up oh we've detected something fire
+so what i'm going to do is i'm going to
+fire a weapon and down this bearing so
+i'm going to go ahead and press ctrl f1
+i have no idea where the target is on
+this bearing so i'm just going to pick
+it randomly click right there and book
+and i'll go ahead and put a little bit
+of a spread on this one here we'll fire
+one there we'll fire one there and we'll
+fire one there firefighter firefighter
+so what's gonna happen now is i'm going
+to fire those weapons down that bearing
+now for those of you who are very very
+familiar with games like dangerous
+waters
+apparently he must have spotted
+something and panicked oh look at that
+there happens to be something there so
+if you notice now from those who
+familiar with dangerous waters this is
+basically that snapshot you always take
+when somebody shoots a torpedo at you so
+now what's going to happen is this
+weapon's going to go ahead and turn on
+its sensor and it's going to go
+basically live once it hits this point
+here luckily for us we did detect a
+vessel up there a few moments earlier
+the reason we picked that up is because
+of course the rosanante got high enough
+so that my handy-dandy milling vanilli
+chili willy was able to go ahead and
+detect them so that we could go ahead
+and pass that information on
+so of course normally you wouldn't do a
+bearing launch here you just click on
+the sub hit f1 and let it rip so we're
+going to take a look at another bearing
+launch weapon and that is going to be
+everybody's favorite the harm missile so
+what i'm going to do is i'm going to go
+to aircraft real quick i'm going to give
+my f-16 bo i feel like if i type this
+one more time the game is just going to
+say you're not allowed to use these
+anymore but too bad so what i'm going to
+do is i'm going to grab everybody's
+favorite little weapon here and let's
+see if i can find it ah here we are
+press ok and now i can actually bearing
+only launch this too so i'm going to go
+pause for just half a second here so i
+notice that the sam site has an active
+air search radar now normally i could
+press f1 go ahead and click on him and
+he'd go ahead and engage that missile
+but let's say that i was trying to sneak
+up on this site and trick it into firing
+so what i'm gonna do is i'm actually
+gonna go like this
+and i'm gonna order him to start moving
+i'm not gonna fire yet it's very
+tempting to take a pot shot at the early
+warning radar but that'll be a waste of
+weapons in my opinion instead what i'm
+gonna do is i'm gonna creep up on him
+and i'm gonna fire a bearing only launch
+weapon at him so that the moment his
+radar goes active that missile basically
+homes in on them and i think of it as a
+preemptive strike
+all right so control f1 click on them
+fire chunk now notice when i launched
+it's going to say it has no emission
+lock this weapon's just traveling so
+what's going to happen now is it's going
+to keep on going and our f-16 buddy is
+going to accidentally get itself let me
+get a little bit closer here it's going
+to accidentally put itself into harm's
+way no i guess the other guy would be
+putting himself in harm's way so what's
+going to happen is this missile on its
+own is just going to keep cruising
+towards here and of course what's going
+to happen in just a moment is this
+battery is going to start using its
+targeting radar to go ahead and engage
+this f16 but look what's already on the
+way we have a big angry arm so rf16 is
+well within range here go ahead and get
+a little bit closer so it doesn't mess
+me up here there goes fire
+now notice my f-16 is now being engaged
+but now my little harm which i
+preemptively launched is going to
+attempt to get an emission lock and go
+ahead and pop itself onto that radar so
+in this case you can see that the
+mission lock was not successful oh there
+goes check it out check it out check it
+out check it out look look look watch
+this
+f16 you might want to turn and run
+run run run run run run run run
+watch this cheap shot bam and those two
+ray missiles go dumb
+got it
+so that is an excellent use of the
+bearing only launch attack obviously you
+have to time it better than i did but
+this is just a demonstration you'll get
+better at those things up with time i
+think it's called a pbl launch i don't
+remember the exact name for it so now
+let's take a look at one more use of a
+brand only weapon and that is to go
+ahead and use decoys which is kind of
+fun so i've got myself the good old
+fashion enterprise here and i got a
+bunch of puking dogs actually we had one
+of these at a local air museum it always
+cracked me up with just how big that
+airplane is like you think f14 you don't
+realize that thing's gigantic so what
+i'm gonna do is i'm gonna launch these
+three groups real fast
+i don't think you can launch at two
+knots that'd be kind of dangerous we'll
+send these guys over here
+let's grab these guys and send them over
+here
+and let's grab these guys and well if
+they launch there we go and send them
+over here okay so now we're going to use
+decoys so the way decoys work it depends
+on the decoy first of all is we bearing
+only launched down a vector and
+theoretically the enemy should go over
+to that and go ahead and fire a bunch of
+weapons and waste an awful lot of
+ammunition uh in that process so i'm
+gonna go ahead and grab my decoy
+launchers here you can see i've got a
+pretty long radius and what i'm going to
+do is i'm just going to kind of saturate
+the coast with some decoys here i'll
+fire two over here
+i'll fire two over here let's see a fire
+i'll go grab this guy right here i'll
+fire two over here i'll fire one a
+little bit short this one's always kind
+of a fun trick here click this over here
+we'll find one that's going to be a
+little on the long side and i will save
+four just for the purposes of kind of
+getting along here so now what i'm going
+to do is i'm going to grab my bombers
+which are these guys here of course this
+is my cap so i'm going to get my cap in
+position i'm gonna go ahead and grab my
+bombers i'm just gonna put myself a
+little note here that just says hey by
+the way this is the cutoff point so what
+i'm gonna do is i'm gonna grab my
+bombers i'm gonna slow them down and i'm
+gonna let my decoys kind of head down to
+the ground there so there goes the
+decoys
+and i expect these guys to loiter until
+i need you later
+so here's what's going to happen our
+airplanes i'm actually going to have to
+break off here the reason i'm going to
+break off is because if i enter into the
+sam's effective range what's going to
+happen is the same is going to start
+taking pot shots on the f-14s here
+rather than trying to attack these
+decoys now these decoys right now are
+tracking pretty high they're about 36
+000 feet here so they're basically
+simulating a pack of aircraft now in the
+real world of course if i switch to the
+other team real quick you can see this
+very clearly you can see we can only see
+one of these bogeys reliably and you can
+see we've just engaged it so that's
+awesome the moment that missile got
+launched is the clue to have my other
+attackers swing around and do their job
+so now they're thinking from the ground
+that these guys are actually enemy
+airplanes and they're popping missiles
+up at it obviously players tend to be a
+lot more clever than this you know
+they'll see this as a ploy they'll know
+something does not look right about the
+flight path or more importantly look at
+how fast they travel
+that's it that's the clue that's how you
+know you're being decoyed so here's what
+happens the same site's going to fire
+two of those and then it's going to go
+ahead and fire more of course every time
+it fires a missile it has one less
+missile in its battery right now so in
+this case it's still attacking my decoys
+meanwhile my main crew is getting into
+position to go ahead and do their attack
+now here's a fun thought
+how many missiles does a fan song e have
+the answer is quite a few however we
+know that it only has six ready and for
+those of you who've been keeping track
+this whole time you can see that it
+wasted six of its missiles already which
+now means my f-14s can come ripping in
+here in a true f-14 fashion in below
+that site to pieces without even being
+shot at once of course i'm going to say
+that with a qualifier here and i know
+the fact that all stamp sites always
+have some jerk face who's got himself a
+handy dandy little uh you know one of
+those little kind of shoulder launch
+dealies you know like one of those sa-7s
+or say 14s or something like that so as
+they pass over this site and uh drop all
+their weapons which unfortunately looks
+like they did not do
+uh you guys were supposed to attack that
+so uh sometimes there's a little bit of
+issues oh there it is there's the sam
+told you that would be essential to
+launch something or other as he went by
+and these guys of course are
+disappointing me terribly by not
+dropping the ordinance i think i grabbed
+the correct crew i certainly did let's
+go ahead and pop them up to a slightly
+higher altitude i think they're too low
+to safely strike here
+you guys gonna like oh there we go
+i was waiting for that so this chap
+right here decided to get the first sets
+of bombs off uh this one's not gonna
+come spinning around you better not get
+tapped i would be very disappointed if
+you get hit
+and that sam site is obliterated all
+because instead of starting the thing it
+was supposed to target it got distracted
+by those decoys
+so hopefully this uh helps you out as
+far as seeing how you can use bearing
+only launches certain nuclear weapons
+also have bearing only launch capability
+which is actually a lot of fun as well
+but again you want to make sure you use
+them appropriately another thing to
+watch out for is if you are going to do
+that trick it did with the harm remember
+the harm has to be able to see the radar
+in order to lock on and the cone of the
+arm is kind of tiny so if you shoot too
+high with that weapon what it will do is
+it'll basically look over the target
+it's supposed to engage and it won't do
+anything but you got to see what it
+looked like in action and i basically
+cheap shot at that radar which is pretty
+fun other than that enjoy

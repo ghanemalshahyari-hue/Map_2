@@ -1,0 +1,930 @@
+# C: MO - Designing a cold war scenario part 2
+Video: https://www.youtube.com/watch?v=3IgCJs1m0O4
+Video ID: 3IgCJs1m0O4
+
+hello everyone in today's video we're
+going to be picking up where we left off
+with our ADC scenario that's Air Defense
+command and kind of working on uh both
+adding more units kind of filling in the
+rest of the scenario here as well as
+taking a look at some ways we can use
+Lua in order to save a little bit of
+time so uh let's go ahead and get
+started all right so last time we did
+this we basically went through and
+discovered where all these air bases
+were at each one of these air bases of
+course we went ahead and loaded them all
+up so we'd have a good number of
+different aircraft at each location one
+thing that actually found kind of
+interesting and I ended up reporting
+this as a bug is the f-86d is in all
+weather all day in time and nighttime
+aircraft but um unfortunately for
+whatever reason it just doesn't want
+much to behave so just just to answer a
+question a couple people had last week
+so the first things first um we need to
+now fill in the rest of the United
+States defense here so uh let's think
+about that for a second again the year
+is on 1955 we put in all the Air Defense
+command aircraft that literally exist if
+you want to see something really
+terrifying here you press the o key you
+can actually see just how many aircraft
+we have of course when you're sitting
+there you're going that's not that much
+of a list press up 11 I have 600 f-86s
+240 f94 264
+89s it's a lot of aircraft so now that
+that's been done let's start thinking
+about the surfaced a missile systems now
+the United States at the time used
+basically two different types of
+surfaced a missile systems they had the
+bowar system which was basically a
+cruise missile that also blew up when it
+got to its destination and we also had
+the Nike Ajax which was actually a
+pretty slick little platform let me you
+a picture go to the facilities we'll
+type in Ajax Boop there's actually a
+bunch of differents versions of Nike but
+the Ajax version was the Army's
+basically Premier surfaced ter missile I
+kind of like think of this as the sa2
+American version kind of a thing so it's
+actually kind of fun so the Army
+controlled the sa I should say the Nike
+ajax's and the bow Mark was controlled
+by the Air Force now the neat thing
+about bowar like I was saying is this
+thing is basically a cruise missile with
+a nuclear weapon on the top of it so
+what we're going to do is we're going to
+bring in those different sites but I'm
+going to do things a little bit
+differently here now the silly thing for
+me to do of course we go ahead and put a
+bunch of missiles all along here here or
+to use my imports function to go ahead
+and grab a bunch of these different
+missile silos the problem with that is
+is when I go to select objects for
+Missions I'm going to end up with a lot
+of junk on that menu so what I'm going
+to do instead is bring them into their
+own side all right so to do that we're
+going to go up to editor add edit size
+and I'm going to go ahead and be a
+little more specific here I'm going to
+call this a US Army we'll use these guys
+for the Ajax sites so I'm actually going
+to rename these guys real quick I'm
+going to call this a US Air Force USAF
+there we go so now we'll go ahead and
+make it so the postures between the Army
+and the Air Force hostile no depends on
+who's asking so we go ahead and set this
+up so that they're both friendly I'm
+going to select US Army I'm going to go
+up to editor I'm going to click on
+import export units and I'm going to go
+ahead and import these units directly
+now this is like I said a little bit of
+an interesting way to do it but it takes
+the control away from the players which
+a lot of times is something you actually
+want to do so let's go ahead and grab
+those Ajax sites and now all the Nike
+ajax's are now maintained separate from
+our radar sites and our individual
+batteries and stuff like that now like I
+said the huge advantage to this is the
+fact they're not going to clutter up our
+screen when we go to pick missions on
+the other side one thing we do want to
+do though is we want to go over to the
+um Doctrine control page and enable
+nuclear weapons you know I know that's
+wonderfully safe but deal we also want
+to make sure that our rules here make
+sense now the reality is it's going to
+be Air Force's job to identify things
+it's going to be the Army's job to knock
+them out of the sky so as a result if we
+make this only hostile targets we have
+to hope we can identify anything coming
+in so that they can engage it
+successfully this is a very realistic
+scenario you know players of course come
+in here and set it's a free fire but um
+we're going to make it a little more
+difficult for ourselves and leave this
+as tight other thing I'm going to do is
+I'm going to go ahead and engage
+optimistic targets that's pretty useful
+opportunity targets uh absolutely if you
+get a free chance go for it one thing we
+do want to think about though kind of
+scrolling through all these obviously we
+don't have any worry about any of this
+stuff down here is we want to think
+about our mcon settings now this is one
+of those things that you have to watch
+out for if I go ahead and make this
+active mcon that means all 128 Nike
+batteries is going to engage five
+separate radar systems at the same time
+now I can't do math quickly but that
+sounds like a little bit north of 600
+radar calculations for something that
+doesn't need that level of fidelity
+remember each one of Aires has its own
+air traffic control radar on it so we'll
+always be able to keep an eye on things
+so I feel like that step might be a
+little bit redundant but you could come
+in here and turn it onto active if you
+really really want to slow the scenario
+down WR of course you want to come in
+here and decide how many missil you want
+to launch per Target remember with Nike
+it was kind of tricky because you can
+only track a missile at a time and
+obviously we don't have to worry about
+any of this withdraw stuff so I'm pretty
+happy with US Army right now they're
+going to go ahead and immediately start
+getting ready anything we identify as
+hostile they'll automatically an
+attack so now we're going to look at the
+bowmark sites now the bow Mark sites
+were controlled by the United States Air
+Force which means let me go save my
+scenario in case something bad happens
+here which means we can import them
+directly into it and give player control
+over it so I'm going to go ahead and
+load Army Air Force we'll go back to
+United States I think it's great
+somebody took the time to grab these bow
+Mark Boop and now we've got our bowmark
+sites now these bowmark sites are kind
+of weird because on this older version
+of the bow Mark let actually grab the
+weapons so you can take a look at it
+here you know this is basically all
+there is to it it's a cruise missile
+with a tremendously long range and it
+has an active radar Seeker on the nose
+which is supposed to lock onto things
+this fortunately is the conventionally
+armed bow mark it is not the new one the
+B model of the bowmark let me grab the
+nuclear warhead version can see is a
+little bit more deadly here what we
+could do if we're real jerks is we could
+actually unpause here grab one of the
+bow Mark sites go to weapons and
+actually order that you use the nuclear
+one here but you can see the nuclear
+ones are already selected so we as soon
+as these fire it'll be nuclear weapons
+go speaking of nuclear weapons go let's
+confirm the fact that we are allowed to
+use nuclear weapons now something the
+player might do is they might run in
+here and change it so that anybody could
+attack You may wish able to disable this
+so the player does not have that choice
+uh speaking of taking away play your
+choice one thing you want to think about
+too is we don't want to play as the US
+Army this is a computer only side let's
+go ahead and save this real fast and now
+we're looking like we are getting
+somewhere this is awesome so one
+interesting thing too and you're
+probably wondering a little bit about
+this is the fact that I've got myself my
+pine tree line which is a bunch of
+Radars to keep an eye on things coming
+out of the North I actually deleted the
+do line because when I was doing a
+little bit of testing with this earlier
+I found that the DU line gave you a nice
+7-hour warning that you're about to get
+bombed that doesn't do much for you
+because it you know the airplanes in the
+US have the range to rebase so it really
+didn't matter from a grand playay
+perspective if you had that much extra
+warning leaving these Radars in on the
+flip side gave you about a two hours
+warning which was a pretty good amount
+of warning especially if the incoming
+bombers went up the coast and like hit
+in the mountains and everything like
+that so actually really prefer keeping
+it here like this so now we need to
+think a little bit about the civilian
+targets so our civilian targets of
+course are going to be cities and um I'm
+I hate nuclear weapons I think they're
+the worst thing ever I'm sure we're
+going to invent something worse than
+nuclear weapons in a couple years you
+know we're going to have a portable
+antimatter hand grenades that can
+destroy continents I'm sure that's going
+to be my next least favorite thing but
+for the scenario let's keep it authentic
+so I'm going to go ahead and import all
+the cities in the United States and
+again this is something that's like oh
+my you know you're this that's a bit of
+a can of worms remember this is a
+simulation we could be any country here
+so before I do that I don't want to
+import the cities into the United States
+Air Force side if you do that you're
+going to be adding about 600 more units
+to something that already has 1,00 units
+so instead I'm going to go back up to
+add edit sides go ahead and press add
+again and I'm going to type on civil
+press okay make sure that these are
+everybody's a friend so the United
+States Air Force I consider these to be
+friends US Army I consider them to be
+friends again this isn't the 60s we
+don't have to worry about peace protests
+just yet we'll go to 19 Army that looks
+good looks good grab these folks I make
+sure they're in Friendly to civil in the
+United States Air Force we're going to
+make them friendly one thing I am going
+to do is I'm going to set the Civil to
+be blind there's no reason to calculate
+visibility from the Civil side it just
+doesn't matter if you've already seen
+the bomber you've already gotten blown
+up and again the USAF and the US Army
+should be doing all the work here anyway
+interesting thing you think about too is
+um adjusting proficiency now the United
+States Air Force in 1955 is not the
+United States Air Force that will be in
+the middle of the Vietnam War or the air
+force that was the end of World War II
+you it had some ex- Korean Pilots but in
+general your proficiency at a regular
+level assumes that you're well trained
+plus you've seen experience so you have
+to actually think about this a little
+bit I don't think there' be any veterans
+I really don't think there'd be many
+aces left from World War II at this
+point but again that could be something
+you want to consider as a scenario
+designer let's go ahead and save
+everything now we have my civilian side
+switch to civil let's go ahead and
+import those cities all right import
+export load units from the sou file
+let's scroll down to I think I put it
+under us I went and created myself
+myself a little tiny import here that
+has all the different cities they've all
+been preconfigured to work in the Cold
+War click this little check box press to
+load selected installations now look at
+how many cities I generated now the
+first thing you want to do is you want
+to find cities like over here and get
+rid of them and you're probably saying
+hey hey what about Puerto Rico why'd you
+do that well the problem is all of our
+bombers are going to be attacking out of
+this direction which means to travel
+from there to there is going to get you
+3,800 n miles we just don't have
+anything that has a range like that
+ancorage of course is a very very
+tempting Target as well and of course we
+have Hawaii or Honolulu I should say and
+this would also be a very very tempting
+Target because it's basically a straight
+shot to get to it boy would they get a
+bit of a surprise here I'm actually
+going to remove Honolulu because it was
+not a US state at the time and I'm Alka
+I don't remember what year we
+incorporated Alaska so I'm not 100% sure
+I necessarily want that one either so
+this is going to simplify my targeting
+challenging
+here all right looks good so at this
+point now we have three different sides
+we have the Army which is responsible
+for the Ajax we have the Air Force which
+is you know obviously this is going to
+be us we're also going to go into here
+and we're going to send that they are
+computer only so the player does not
+have a choice of that I'll go ahead and
+save that and now we're looking really
+really good as a scenario now we need to
+start thinking about the other guys
+which is going to be are Invaders so
+let's take a look at a couple different
+ways we could approach this so if you
+guys remember from way in the beginning
+let's go ahead and grab myself a new
+team I'll go add edit side since this
+will be a simulation I'll type in red
+four which is just not the good guys set
+their postures I'm going to assume
+they're not going to be friendly with
+anybody you know States Air Force
+hostile United States Army hostile we'll
+switch over to civil we're just going to
+assume that they're hostile again in the
+real world you don't get such a pleasant
+you know black and right as far as how
+morality goes here we're going to Su red
+for is hostile we're going to go to the
+US Army we're going to assume the red
+force is also hostile civil is friendly
+US Air Force is friendly delightful
+double click okay so what are we going
+to do with these guys so there's a right
+answer and a wrong answer for this I
+shouldn't say there's a wrong answer
+this is a less right answer let's be
+more specific and what we could do is we
+could come up here and we could put all
+the Russian bases that existed that we
+knew about during the Cold War into here
+we could load them up individually with
+individual squadrons and everything like
+that uh doing so of course would
+probably consume 8 to 10 hours of time
+that really doesn't do anything for a
+scenario the other option of course we
+could do is we could come in here and
+remember we're afraid of the 1,000
+bomber raid in reality it would probably
+be closer to about 300 bombers so it
+wouldn't be that bad the other thing we
+could do of course is we could come in
+here and we could start inserting
+individual aircraft I'll just show you
+how awful this would be so it's said in
+here let's go ahead and get myself
+Badger a which is kind of the original
+slap in an rn42 which is a pretty good
+size I believe that's one of the little
+ones if I remember yeah 200 kilotons
+which is that's about 10 hirosima right
+there and we can just have it kind of
+chilling and we sit here and we on the
+bomber let's go ahead and un pause for a
+sec Boop and now we've got plenty of
+targets to select from let me just go
+fix my timing real quick I was make that
+mistake nice so now we could click on
+that bomber and we could press to the F1
+key and we could pick in obviously we're
+not hit Orlando Florida from there we'll
+pick uh let Winston Salem there and then
+of course we could unpause and that
+bomber would start floating towards the
+Target now you're probably sitting there
+going ho ho ho ho whoa slow down a
+second you said 600 bombers that's going
+to be a lot of work so then people are
+like well I got this i got this i got
+this so what they would do is they do do
+something like this they come in here
+and press contr f11 and they say
+bomba so they come in here and say I
+really want a land strike they press the
+okay button they pick all the Targets in
+the United States the ones they didn't
+want and they'd add themselves 600
+individual bombers now this strategy is
+totally viable however and anybody who's
+played with command long enough knows
+what happens is the fact that all the
+bombers will then approach the first
+Target it blow it up then approach the
+next Target blow it up then approach the
+next Target blow it up the problem is
+when you do this with 600 indiv ual
+bombers it tends to waste an awful lot
+of jet fuel and gives us plenty of
+opportunities to shoot them down not to
+mention in case you haven't noticed I'm
+at the maximum limits of my range here
+so basically uh this would be an
+exercise and a wasted time or I should
+say it wouldn't give you the most
+effective creation so we're kind of at
+an impass here and you're sitting there
+going huh no he's going to set us up
+with something smart here well I'm not a
+smart person I'm just really lazy so
+let's go ahead and get ourselves some
+Lua going to go to Lu script console
+looks pretty good to me and let's go to
+town on this so two problems we have to
+solve the first one is we need to create
+an awful lot of bombers the second thing
+is we need to give them something to do
+so let's go ahead and start with the
+easy one create some bombers now I don't
+have exact numbers on what the Soviet
+Union had at that time I know it wasn't
+as many as we thought there were so I'm
+just going to settle with 200 so what
+I'm going to do is I'm going to create
+myself a handy dandy for Loop here I'm
+going to say 4K = 1 to 200 do I'll type
+in the word n down there so what I'm
+going to do is I'm going to use the add
+unit command so I'm going to do send
+edit add units go get myself a little
+table here I'll type in type equals
+air now go actually got to be more
+careful with your things here I'm type
+in type equals err um let's see we're
+going to say unit name equals I don't
+know
+tu6 we'll add a number to it just cuz
+I'm a nice guy again K is simply that K
+value uh we'll say load out ID I made a
+note of this a little while ago is 7381
+our database ID is going to be 62 Niner
+our side is going to be red four I know
+some of you are sitting there going
+can't you do it like this and do one
+space for each ah I'm just oldfashioned
+I came from the days of C which you know
+makes me not a good programmer but oh
+well what do you got to do about it uh
+let's see here we need to give it a
+position latitude equals I don't know
+it's going to be
+66.25 our longitude is going to equal I
+think it's minus 170 is what I settled
+on and our altitude of course since it's
+in meters is going to be
+72.8 and this will go ahead and generate
+for us 200 Tu of 16s so what I'm going
+to do is I'm going to quickly go through
+and type this out for the other the b209
+I should say the tup fours as well all
+right that looks pretty good so now we
+have ourselves our generator that will
+produce a bunch of tup 16s and I'm
+talking a lot of tup 16s you know 200
+and we're also going to be producing
+ourselves 400 tup 4S which are going to
+be actually they're technically 4 A's if
+I want to be a little more specific and
+they're going to be generating them
+basically over here and over here here
+now it's great that we have this huge
+conglomeration of different aircraft I'm
+actually going to save my mission before
+I demonstrate how nasty this is going to
+be when I press this button let's go ah
+and test and see if it works Boop all
+right so you're probably sitting there
+going hey you only made yourself two
+airplanes try again Watch oh my gosh I
+basically have a supercomputer and um
+woo we just made 600 airplanes as a
+matter of fact if you want don't believe
+me you can actually come in here and see
+that I just made 600 airplanes in uh
+what was that a few seconds I'm going to
+go ahead and delete them cuz we don't
+need them right now so that's a quick
+and easy way to make a lot of airplanes
+I love that technique so now what we
+have to do is give the airplanes
+something to do so let's see here so
+first things first we could probably
+assign each aircraft one target if we
+wanted to do that we'd probably say
+something like uh local targets equals
+uh VP which is the command get side
+actually we want to get good contacts to
+this particular actually no I was right
+we could say something like get side and
+then we could say something along the
+lines of uh name equals OB so we want
+the the contacts from Red four which is
+redfor is contact. contacts and what
+this would do for us is this would get a
+list of every single person on the
+entire map this is awesome because then
+basically I could Loop through every
+single one of these aircraft and go
+ahead and assign one target per
+different aircraft that's an absolutely
+solid way to do that the only problem
+with that is that you're going to run
+into some of these contacts are out of
+the way the other thing too is I love
+the concept of you not being consistent
+by the way if you're looking for the
+code for something like that my next
+step would be to do something like
+number targets equals # targets then I
+simply come in here and type in 4k comma
+V and I Pairs and I'd say targets
+actually what we wanted to do is collect
+all the units on the other side first
+excuse me so we'd say local uh red units
+equals vpg side boop boop we' say name
+equals red 4 do units there we go so
+then we say red units so what this code
+would do is it would say get me each and
+every one of the bombers so then all we
+have to do here it would be something
+like this do end and we simply come in
+here and do something like uh send I can
+put myself set there send edit uh Tac
+contact and then we'd say something uh
+very simple we do vgid which is the
+attacker and then for our Target we'd
+simply say targets of k. goid our attack
+mode of course would be mode it would be
+an automatic attack so we do mode
+zero let me just check my math here yeah
+it's good so yeah there you go this
+would be the code to go ahead and issue
+each and every one of our bombers one
+Target in a list of targets that we have
+now the good thing is we have less
+bombers than we have targets so as a
+result this will actually work pretty
+well I'm definitely going to uh control
+see control a control C in the case this
+blows up on me but we might as well test
+to see if it works right Boop uh oh I
+missed something on line 14 I have only
+done this 1 million times so you can
+imagine how many times I've missed this
+so that looks pretty good that looks
+pretty good all all right where's my boo
+boo here I always make that one teeny
+tiny little thing here tars of K which
+would be the position inside of the
+array that would be correct uh let's see
+attempt to index a nil field ah I see my
+mistake so my mistake here was realizing
+that there's actually more targets than
+there are bombers uh that's definitely
+something that I would do about 100
+times so unfortunately what I'm going to
+do is I'm going to tweak the number of
+bombers here I'm going to drop this down
+to 150 tup of 16s which is going to help
+me just a little bit here and I'm going
+to go ahe and take this group and
+remember I have about 500 targets ah
+that was definitely a newbie mistake on
+my part but eh it's something I've done
+before I forgot that I deleted a whole
+set of radar sites and unfortunately
+that brought the unit count down a
+little bit so 500 minus 150 is going to
+be 350 let's see if we got it this
+time ha so now what I have done is I've
+issued attack commands for every single
+one of the aircraft that I just created
+you're going to have to put up with my
+little lag Spike here as I kind of Click
+directly on this just to demonstrate how
+well this works now if you want to hurt
+your eyeballs oh look at that
+uh oh it's freaking out a little bit H
+there we go so now of course if we sat
+here and unpaused the scenario each and
+every one of these 500 individual
+bombers when they go rushing down and
+attacking their targets but uh we're
+going to run into an interesting little
+problem in a second so I'm actually
+going to go ahead and unpause our
+scenario I'm just going to let it run
+for a moment whoosh look at all the
+bombers isn't that amazing can you
+imagine how long that would have taken
+us to sit there and crank out the
+oldfashioned way so one thing you're
+probably noticing is the fact that I had
+this weird weird group of bombers that
+are absolutely refusing to do their
+job now the reason this is going on is
+because there's a lot of different
+factors that impact whether or not a
+Target can be attacked there are things
+related to visibility there are things
+related to range do I have the
+appropriate weapons am I allowed to use
+the appropriate weapons as a result
+you're always going to end up with this
+weird little group of bombers that just
+kind of w kind of zinging around in a
+little bom hop I call it the circle
+basically so usually what I do with that
+group of bombers is I rep pause the
+scenario and I pick something that I
+know is in range and I kind of miss you
+know abuse it just a teeny tiny bit
+there we go now that group of bombers
+has something to do let's go over run
+over to our duple of 16s here and go
+grab this group real quickly this is my
+other circly bombers go ahead and find
+them a good little group of targets that
+they're in range that looks pretty good
+to me and now of course if we unpause
+our scenario let's go speed up time a
+teeny tiny bit here you can see that all
+the bombers now will happily start chwo
+cheing towards their target to deliver
+their nuclear Mayhem look at that so we
+basically did something that would have
+taken by hand probably four or five
+hours and did it in about oh I don't
+know six minutes which isn't too bad if
+you ask me so now all these bombers are
+each going to individually attack a
+single one of these visual targets now
+the nice thing here is you're probably
+sitting here going well that's actually
+pretty cool cuz now it's going to be a
+nice Dynamic scenario it's going to be
+very
+unpredictable is it going to be
+unpredictable the answer is actually no
+let me show you why so I'm going to go
+switch to the other side real quick let
+me go and pause real fast let me go grab
+my USAF and let me go ahead and put god
+mode on here now if I take one of these
+bombers let's say I pick pick this one
+right here again they're awfully far
+away so it's going to be very difficult
+for you to see this clearly but again
+I'm going to do the best I can here and
+I were to draw a line from the position
+of that bomber straight in this
+direction it makes it very easy to
+actually identify the targets that the
+particular bomber is going to be
+engaging obviously we don't know exactly
+which one of these it's going to go for
+but we have a pretty confident idea that
+it's probably going to go for one of
+those in the real world of course these
+bombers would do a ziggy zag kind of a
+thing like this to try to make a little
+bit more difficult for us to go ahead
+and identify by what particular Target
+it's going to attack but for the
+purposes of Simplicity that was really
+the easy way to go the other option we
+could have done too is let me go Ahad
+and grab the other side real quick red
+force is we could have actually had them
+randomly select the Target now randomly
+selecting a Target is a little bit more
+complicated so let me go ahead and grab
+my script console here uh This Is The
+Code by the way um I don't know how well
+you can see that again I've got a pretty
+high resolution screen here so this
+might be tricky so what I can actually
+do is have them randomly attack a Target
+as well so what I'm going to do is I'm
+going to leave all this stuff in here
+and I'm just kind of kind of Pop That
+code down here in the bottom and explain
+what that looks like so the first thing
+we would do is we'd set up just the way
+we did it before we'll do KV in I pairs
+red units do I always like to type in
+the end at the end just to make my life
+a little bit simpler so what we would
+have to do is we'd have to get ourselves
+a random number but of course if you're
+going to do anything involving random
+numbers you always want to randomly
+generate the seed here so this is the
+code that I always used for it it's what
+I was taught to do was called randomized
+timer back in quick basic when I was
+working back in the 80s and 90s it you
+know it still works here so what I would
+do is I generate a random number so i'
+say math. random and obviously my random
+number would be between zero and how
+many units targets I can go ahead and
+attack so I'll type in number of targets
+just like that next what I would do is
+I'd set a range variable now you're
+probably wondering what that has to do
+with anything well the reason I would
+create that is I can't attack a Target
+that's out of range so what I would do
+is I check to make sure the target I
+selected is in range before actually
+ordering up the attack see clever so
+next what I would do is I go ahead and
+get myself uh the actual Target itself I
+dat Target of Target equals targets of
+RN see I've picked a random Target here
+this is a super duper easy way to pick a
+random Target afterwards I'm going to
+set my max range to zero now you're
+probably wondering why the problem is I
+have two different types of bombers here
+if I was working with a single type of
+bomber this would be a lot simpler but
+since I made it complicated for myself I
+need to consider both ranges so what I
+would do is i' start by getting which is
+the max max range of a particular unit
+so I'll say uh let's see here if go
+ahead and grab all the code that I'm
+going to need that was just one of those
+things it takes a minute to type out so
+I quickly typed it out if get unit the
+red Force the current unit that I'm
+working on equals database ID 62 Niner
+that simply means I'm working with a
+dupal of 16 all I have to do is say max
+range equals 2200 then I'd say else max
+range logically would be the range of R2
+4 a and then just say end so now all I
+have to do is go ahead and create a loop
+that continually Loops to see whether or
+not the target I picked randomly is in
+range so the way I do that is I come in
+here and type in uh let's see here while
+range is bigger than max range then I'd
+say do which I don't know it feels weird
+to me uh if it's within I'd say give me
+a random number again oh we did that
+earlier math. random number
+targets then I would say let's see
+Target equals targets of my random
+number and then I'd simply say range
+equals tool range this is the best thing
+ever V guid which would be my bomber and
+I compare it with the target guid so
+what that will do is give me the range
+in nautical miles between me and the
+target so logically if the range of the
+target is going to be less than the max
+range we're good to go so I'm going to
+go ahead and type an end there then all
+we have to do is order up my attack I'll
+grab that one I had a minute ago Boop
+and now I am good to go so what this
+will do is instead of selecting targets
+off the list it'll simply randomly
+select the target now you're still going
+to run into the circly circles here
+because you're always going to pick a
+Target that you can't attack just for
+whatever reason it could even be
+something to do with the actual game
+engine itself that is a limit on the
+number of attacks but again this works
+fairly well so now we have our little s
+outed attack targets and this code gives
+me the random by the way if you're going
+to use the random version make sure
+you're not accidentally picking the
+regular version although what I see a
+lot of people do and this is super
+clever is they'll actually set it up so
+that the random version fires after the
+main version just to give yourself a
+little bit of redundancy in the um
+trying to eliminate the cires is what I
+like to call them the other thing we can
+do too is move these targets closer so
+that you're less likely to accidentally
+pick a Target that is just a little out
+of range by the way if you do create air
+bases for these units you'll never be
+able to execute this Mission because
+they'll always have to return to base uh
+to work at that problem by the way is
+actually pretty simple too go ahead and
+close that out press control shift F
+ding again to fix that oh by the way
+don't forget to set your red force to be
+able to use nuclear weapons if they
+can't use nuclear weapons the scenario
+is going to be a lot shorter what you
+can actually do is come in here and
+basically eliminate all the B logic so I
+can say units do not return to base when
+they run out of fuel obviously that's
+super dangerous but that would be a way
+to kind of get around that problem if
+you did create some sort of air base or
+something like that so now that
+everybody's have been given permission
+to use our nuclear weapons the nuclear
+weapons are now armed and ready to rock
+we've given them a perfect permission to
+go ahead and use those nuclear weapons
+I'm also going to say they can shoot at
+anybody they want don't turn on
+opportunity targets by the way if you
+choose to do that you're going to find
+your scenario much shorter one thing I
+do like to do is shut off automatic
+evasion this is the 50s you don't need
+to evade a missile it's just not
+something you need to worry about yet so
+now all we have to do is fix the time of
+day you can see that my time is fast
+forwarded by 13 minutes here so let's go
+ahead and do 930 no copy okay and now
+I'm going to press save one more time so
+now we have a massive bomber attack all
+attacking different things throughout
+the United States we've eliminated the
+circly units now you're going well just
+a minute ago you were showing us that
+stuff with that random why don't you use
+that well the reality is I'm going to
+leave this for the pros you know this is
+something we can use here if we want to
+make so every time you run the scenario
+you get a different Target the way we do
+that is we go up to editor event editor
+we go to events create a new event and
+we call this one scenario
+started starg remember scenario starg
+scenario star gated so we come in here
+and we'd add a pretty basic trigger well
+let see scenario has started Boop go
+ahead and create that one you don't even
+have to do anything special with that
+you just have to make sure scenario is
+loaded then I come in here I go ahead
+and add that one in here scenario is
+loaded then next condition I always like
+to do scenario har started
+yes press okay go ahead and close that
+one I can come in here and say yes so
+the scenario is loaded and the scenario
+has started then we come down here and
+we create that Lis script just like that
+so I do Lis script create new
+action bombers a go go so then I just
+come in here grab that beautiful code
+that I created a minute agoop and paste
+it right in here and you can see now
+I've got myself when I start the
+scenario it will randomly send my
+bombers out every single time which is
+actually pretty cool because if you've
+already put the bombers and everything
+completely into place we're basically
+ready to go and again that's basically
+going to be the easy version of this
+scenario so I'm going go ahead and close
+all that out I'm actually going to go
+ahead and delete that I don't need that
+but again you can see just how easy that
+would be and I have got some tutorials
+from way back in the day that does this
+so this is getting on about half an hour
+ago so it's probably a good idea just go
+ahead and pause this one uh next time uh
+we we take scenario and actually give it
+for a test run and we'll look for ways
+to go ahead and kind of clean up some of
+the uh what's about best way to describe
+it scenario weirdness that you're
+probably going to encounter every time
+you start out to send a scenario like
+this enjoy

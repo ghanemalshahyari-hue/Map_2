@@ -1,0 +1,247 @@
+{
+  "phase": 5,
+  "engine_metrics": {
+    "force_ratio_local": 0.22,
+    "force_ratio_operational": 1.45,
+    "advantage_label": "BLUE_ADV"
+  },
+  "scene": "At D-H, Red's amphibious assault faced significant challenges as they approached the coast, with Blue maintaining a strong defensive posture. Despite Red's efforts, the overwhelming Blue firepower and intact minefields hindered Red's advance, indicating a potential culmination point for Red forces.",
+  "red_action": {
+    "phase": 5,
+    "side": "RED",
+    "strategic": {
+      "actor": "R-d0-500-077",
+      "what": "Launch 36 surface-to-surface missiles targeting Blue's coastal defense installations and air defense systems.",
+      "why": "To saturate and degrade Blue's layered air and coastal defenses, reducing their intercept capacity.",
+      "intended_effect": "Compromise Blue's air defense network and create openings for follow-on air and naval operations.",
+      "doctrine_cited": [
+        "WarReferences.md §1 'saturation strikes'",
+        "WarReferences.md §2 'magazine depletion'"
+      ]
+    },
+    "maritime": {
+      "actor": "R-d3-60-028",
+      "what": "Deploy 60 medium landing ships to approach the designated landing zones under cover of missile and air strikes.",
+      "why": "To initiate amphibious landings, exploiting gaps in Blue's coastal defenses.",
+      "intended_effect": "Secure beachheads for follow-on forces to establish a foothold on the coast.",
+      "doctrine_cited": [
+        "WarReferences.md §1 'multi-vector strike'",
+        "WarReferences.md §3 'fleet withdrawal trigger'"
+      ]
+    },
+    "air": {
+      "actor": "R-d3-11-049",
+      "what": "Deploy MiG-29 squadron to provide air superiority over the landing area and intercept Blue air threats.",
+      "why": "To ensure air dominance and protect landing forces from Blue's air attacks.",
+      "intended_effect": "Maintain air superiority to support the amphibious assault.",
+      "doctrine_cited": [
+        "WarReferences.md §3 'layered AD intercept rate'"
+      ]
+    },
+    "mines": {
+      "actor": "R-d3-2-045",
+      "what": "Deploy mine sweepers to clear a path through the sea minefields for the landing ships.",
+      "why": "To ensure safe passage for amphibious forces and prevent delays in the landing operation.",
+      "intended_effect": "Establish secure lanes for landing craft to reach the beach.",
+      "doctrine_cited": [
+        "WarReferences.md §1 'saturation strikes'"
+      ]
+    },
+    "usv_uav": {
+      "actor": "R-d3-16-056",
+      "what": "Launch 48 explosive UAVs in a coordinated wave targeting Blue's naval and coastal installations.",
+      "why": "To saturate and overwhelm Blue's intercept capabilities, forcing them to deplete their defenses.",
+      "intended_effect": "Disrupt Blue's naval operations and reduce their ability to counter the landing.",
+      "doctrine_cited": [
+        "WarReferences.md §1 'saturation rule'",
+        "WarReferences.md §2 'magazine depletion'"
+      ]
+    },
+    "sof": {
+      "actor": "R-d2-211-074",
+      "what": "Insert SOF teams behind Blue's coastal defenses to disrupt C2 nodes and logistics.",
+      "why": "To create chaos in Blue's rear areas and facilitate the main assault by disrupting their command structure.",
+      "intended_effect": "Degrade Blue's ability to coordinate a coherent defense.",
+      "doctrine_cited": [
+        "WarReferences.md §3 'hybrid SOF + airborne C2 seizure'"
+      ]
+    },
+    "land": null,
+    "ew": {
+      "actor": "R-d3-405-014",
+      "what": "Conduct continuous electronic jamming of Blue's communications and radar systems.",
+      "why": "To degrade Blue's situational awareness and reduce their ability to coordinate defense efforts.",
+      "intended_effect": "Achieve persistent disruption of Blue's C2 capabilities.",
+      "doctrine_cited": [
+        "WarReferences.md §1 'EW persistent throughout'"
+      ]
+    },
+    "overall_intent": "Execute a multi-vector saturation strike to overwhelm Blue defenses and enable amphibious landings. Utilize strategic missile strikes, naval maneuvers, air support, and electronic warfare to disrupt Blue's C2 and air defense capabilities, paving the way for successful landing operations."
+  },
+  "blue_reaction": {
+    "phase": 5,
+    "side": "BLUE",
+    "strategic": null,
+    "maritime": null,
+    "air": {
+      "actor": "B-d2-1-052",
+      "what": "Deploy Rafale squadron to intercept Red's MiG-29s and maintain air superiority over the landing area.",
+      "why": "Counter Red's air superiority efforts and protect Blue's air assets and coastal installations from aerial threats.",
+      "intended_effect": "Achieve air superiority, allowing Blue to protect its assets and disrupt Red's coordinated strike.",
+      "doctrine_cited": [
+        "ATP 3-01.8 Combined Arms for Air Defense (2016) — RDL Army"
+      ]
+    },
+    "mines": {
+      "actor": "B-d1-400-045",
+      "what": "Maintain the integrity of the sea minefield and monitor Red's mine-clearing operations.",
+      "why": "The sea minefield is a critical passive defense that can inflict significant losses on Red's landing forces.",
+      "intended_effect": "Ensure the minefield remains effective in disrupting Red's landing operations.",
+      "doctrine_cited": [
+        "WarReferences.md - Mine clearance under your overwatch is your biggest passive killer."
+      ]
+    },
+    "usv_uav": {
+      "actor": "B-d2-85-063",
+      "what": "Utilize air defense artillery to intercept Red's explosive UAVs targeting naval and coastal installations.",
+      "why": "Protect critical infrastructure and naval assets from UAV threats, preserving interceptor magazines for high-value targets.",
+      "intended_effect": "Neutralize the UAV threat, preventing damage to Blue's installations and maintaining operational capability.",
+      "doctrine_cited": [
+        "ATP 3-01.81 C-UAS (Aug 2023) — FAS"
+      ]
+    },
+    "sof": null,
+    "land": null,
+    "ew": {
+      "actor": "B-d1-505-022",
+      "what": "Counter Red's electronic jamming with Blue's electronic warfare capabilities to maintain communications and radar functionality.",
+      "why": "Ensure continuous C2 and situational awareness despite Red's jamming efforts.",
+      "intended_effect": "Maintain operational effectiveness and coordination across Blue forces.",
+      "doctrine_cited": [
+        "Doctrines.md - Joint multi-service tactics for suppressing enemy SAM and AAA systems."
+      ]
+    },
+    "overall_intent": "Defend against Red's coordinated multi-domain strike by leveraging layered air defenses and coastal artillery. Preserve interceptor magazines for critical threats and disrupt Red's mine-clearing operations to maintain the integrity of the sea minefield."
+  },
+  "resolution": {
+    "phase": 5,
+    "combined_effect": "Red's multi-vector saturation strike was largely intercepted by Blue's layered defenses. 36 Red SSMs were launched, but Blue's air defense systems intercepted the majority, with minimal impact on coastal defenses. Red's MiG-29s were engaged by Blue's Rafale squadron, resulting in airframe losses on both sides. Red's mine-clearing efforts were severely hampered by Blue's intact sea minefield, leading to significant minesweeper losses. Red's UAV swarm was partially successful, but Blue's air defense artillery mitigated the threat, preserving critical infrastructure.",
+    "unit_outcomes": [
+      {
+        "unit_uid": "R-d0-500-077",
+        "status_change": "unchanged",
+        "damage_pct": 0.0,
+        "cause_actor": "B-d2-1-052",
+        "cause_what": "Intercepted by Blue's air defense systems",
+        "cause_doctrine": "Houthi 2024: 99% intercept rate with layered AD"
+      },
+      {
+        "unit_uid": "R-d3-11-049",
+        "status_change": "damaged_partial",
+        "damage_pct": 0.25,
+        "cause_actor": "B-d2-1-052",
+        "cause_what": "Engaged by Blue's Rafale squadron",
+        "cause_doctrine": "Cyprus 1974: 5-8% loss when alerted"
+      },
+      {
+        "unit_uid": "R-d3-2-045",
+        "status_change": "destroyed",
+        "damage_pct": 1.0,
+        "cause_actor": "B-d1-400-045",
+        "cause_what": "Minesweeper losses due to intact minefield",
+        "cause_doctrine": "Wonsan 1950: 50% MCM attrition under fire"
+      },
+      {
+        "unit_uid": "R-d3-16-056",
+        "status_change": "damaged_partial",
+        "damage_pct": 0.3,
+        "cause_actor": "B-d2-85-063",
+        "cause_what": "UAVs intercepted by Blue's air defense artillery",
+        "cause_doctrine": "Black Sea 2024: USV survival 25-30%"
+      },
+      {
+        "unit_uid": "B-d2-1-052",
+        "status_change": "damaged_partial",
+        "damage_pct": 0.1,
+        "cause_actor": "R-d3-11-049",
+        "cause_what": "Engaged by Red's MiG-29 squadron",
+        "cause_doctrine": "Cyprus 1974: 5-8% loss when alerted"
+      },
+      {
+        "unit_uid": "B-d1-400-045",
+        "status_change": "unchanged",
+        "damage_pct": 0.0,
+        "cause_actor": "R-d3-2-045",
+        "cause_what": "Minefield remained intact against Red's clearance",
+        "cause_doctrine": "Wonsan 1950: Mine clearance days (per 100 mines, 4 sweepers)"
+      },
+      {
+        "unit_uid": "B-d2-85-063",
+        "status_change": "damaged_partial",
+        "damage_pct": 0.2,
+        "cause_actor": "R-d3-16-056",
+        "cause_what": "UAV swarm partially successful",
+        "cause_doctrine": "Black Sea 2024: USV survival 25-30%"
+      }
+    ],
+    "step_advantage": "BLUE_ADV",
+    "advantage_reason": "Force ratio 0.22:1 < 1.5:1 per FM 3-90 — Red approaching culmination with insufficient local superiority.",
+    "force_ratio_local": 0.22,
+    "force_ratio_operational": 1.45,
+    "mines_remaining": 400,
+    "ew_strength_red": 0.0,
+    "ew_strength_blue": 0.0
+  },
+  "checks": [
+    [
+      "Red active components ≥ 3 (Claude3 baseline)",
+      true
+    ],
+    [
+      "Blue active components ≥ 2 (Claude3 baseline)",
+      true
+    ],
+    [
+      "Red actors ≥ 80% real UIDs",
+      true
+    ],
+    [
+      "Blue actors ≥ 80% real UIDs",
+      true
+    ],
+    [
+      "Adjudicator outcomes ≥ 80% real UIDs",
+      true
+    ],
+    [
+      "Adjudicator has ≥ 2 unit_outcomes",
+      true
+    ],
+    [
+      "Force ratio echoed verbatim",
+      true
+    ],
+    [
+      "Mines remaining echoed verbatim",
+      true
+    ],
+    [
+      "Combined effect ≥ 80 chars",
+      true
+    ],
+    [
+      "Advantage call matches engine",
+      true
+    ],
+    [
+      "Doctrine citations present in Red actions",
+      true
+    ],
+    [
+      "Doctrine citations present in Blue actions",
+      true
+    ]
+  ],
+  "passed": 12,
+  "total": 12
+}

@@ -32,10 +32,13 @@ var WS3 = require(path.join(SHELL, 'world-state-transition.js')); // applyDecisi
  */
 function project(scenario, stepIndex, opts) {
     opts = opts || {};
+    // PR-WS-DET1-A: deriveWorldState now includes DB1 enrichment (before DERIVATIONS)
+    // and computes contacts in DERIVATIONS. No need to call DB1 or DET directly.
     var ws = WS1.deriveWorldState(scenario, stepIndex);
-    ws = DB1.enrichWorldState(ws, opts.db || {});
-    try { ws.contacts = DET.computeContacts(ws, opts.det || {}) || []; }
-    catch (_) { ws.contacts = ws.contacts || []; }
+    // For backward compat: expose derived contacts as ws.contacts fallback
+    if (ws.derived && ws.derived.contacts) {
+        ws.contacts = ws.derived.contacts;
+    }
     return ws;
 }
 

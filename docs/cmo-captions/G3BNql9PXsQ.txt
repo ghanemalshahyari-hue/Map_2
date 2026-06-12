@@ -1,0 +1,309 @@
+# C: MO - ROF (Rate of Fire)
+Video: https://www.youtube.com/watch?v=G3BNql9PXsQ
+Video ID: G3BNql9PXsQ
+
+hello everyone in today's video we're
+going to be taking a look at rate of
+fire AKA rof now rate of fire is a
+relatively straightforward concept but
+what makes it a little complicated is
+there are different units with different
+types of rate of fire in command modern
+operations so let's go a and take a look
+at my lucky unit here we of course the
+FFG this is the Oliver Hazard Perry
+class it's actually the Underwood I like
+this version a little better because
+it's a bit longer that simply means you
+get a longer helicopter which is always
+handy for those of you who play
+Dangerous Waters back in the day but
+what we're going to be doing today is
+we're going to be showing you the
+different parts of the rate of fire so
+what I'm going to do first is I'm going
+to go ahead and open up my handy dandy W
+weapons page and take a look at the
+weapons on board this ship one thing
+you'll notice here is if I go down to
+the bottom you'll see that we have a
+mark 13 mod 4 single rail for those of
+you who can almost see this picture here
+right where my mouse is up in the upper
+right corner here you can see this a
+little tiny little missile that just
+sort of chills on this little Mount that
+can rotate quickly it is uh you know not
+the fastest firing missile Mount
+basically it fires a missile then has to
+go vertical jumps down and the next
+missile come kind of slides out from a
+little magazine in here and it fires
+again so it is not you know vertical
+launch system by any means but it's
+quick enough now if I come in here and
+open up the actual weapon itself what
+you're going to see here is I have a
+total of 34 of these suckers plus I have
+one sitting on the rail right now that
+actually works really really well for us
+now if I pull this aside real quick and
+go ahead and open up the magazines page
+uh let's see here magazines there we go
+you'll notice that I have a missile
+Mount basically magazine for it and if I
+open the sucker up you will see the fact
+that I have 34 of these things basically
+chilling on that magazine so if you come
+down here you see I have 34 on the mount
+mag check and you can also see that I
+have one basically ready to fire so what
+I'm going to do is I'm going to fire
+this weapon now I need to find something
+to put a hole into first here this is
+the latest beta by the way the 1436
+version it it it started and there was
+music playing and I didn't know what was
+going on so anyway so I'm going to grab
+this one shift F1 go ahead and click on
+this bogey here oh you can see I'm
+pretty much ready to go um go ahead and
+fire just one and we have to time this
+carefully cuz when we do launch we need
+to tap that space bar pretty much
+immediately ready Oh I thought it was
+going to
+launch all right let's see where the
+hold up is a 50/50 shot that we're just
+out of deals yeah I had a feeling we're
+just not quite in range yet for this
+weapon it's an interesting Weapon by the
+way it's a definitely an early version
+of the SM but man it works great got to
+get ready almost in range if you're
+wondering by the way how I'm tracking
+this I have myself a radar barge so what
+I did is everybody knows I use the TPS
+43e for everything I finally just got
+smart and put it on a barge I really I
+should make a specific request for you
+know just the patcom unit it's just TPS
+43 sitting on a you know relatively fast
+moving bar there we goes pause nice so
+we have here are the weapons on the way
+it just fired just a moment ago you can
+see it has even picked up enough speed
+here so let's go back to the Underwood
+real quick so I'm going to go ahead and
+open up our weapons one more time here
+and what you'll see here if I scroll
+down is that we're pretty much ready to
+fire the next one it's already slid up
+into position ready to go and you can
+see down here from the magazine that it
+is also ready to go and again that was a
+total of a 4C Rel reload time and you're
+sitting here going how did you know that
+it was a 4C reload time well watch this
+let's say we wanted to add a weapon well
+first of all let's let the weapon go do
+what it's supposed to do there go do
+your thing this is an sm1 too this is a
+little short- range one but don't don't
+don't think it's not going to snap that
+little drone in half there Told You So
+what I'm going to do now is I'm going to
+grab my little ship here I'm going to go
+ahead and open up my magazines page real
+fast and one of the things you can do
+here is you can actually adjust what's
+on magazine I'm going to come down here
+where it says add weapons and when I
+click on ADD weapons and press filter by
+keyword let's say I want to do a rim 66
+E6 what you're going to observe here is
+there are two distinctive rate of fires
+of this weapon now you have this
+particular one here this is the block
+one you'll notice it's got a rate of
+fire of one you'll also notice that
+these two here have a little bit more
+missiles here this actually represents a
+different version of that same Mount but
+you'll see it's rate of fire eight which
+means it has the ability to reload one
+of these missiles every 8 seconds now
+that's a going to be kind of tricky for
+us now I know you're sitting here going
+well what about the mount itself doesn't
+that also have a rate of fire the answer
+is absolutely so if we were to pop open
+the weapons one more time here and let's
+go to our little uh Mark 13 let's say we
+wanted to add on another missile to our
+Mark 13 so if I came down here and add
+weapon record filter oh let's see we
+want Rim 66 E6 you're going to notice
+here as confusing as this is going to
+seem this is actually the same system
+the only difference here is this rate of
+fire one would mean that I could fire
+one of these a second this rate of fire
+fire eight would now mean that I could
+fire one every 8 seconds now you can see
+how the magazines will definitely
+confuse you compared to what we have
+over in weapons land here so you always
+have to kind of be mindful of that
+combination now where things get
+interesting is when you start dealing
+with things like
+vlss now if we take a look over here at
+our lovely Arley brick scroll down we
+have the lovely VLS system now a VLS
+system of course is designed to crank
+missiles out and it will definitely do
+that and if we actually take a look here
+you can see that we've got all sorts of
+fun missiles here again this is our
+weapon record our Mount not our weapon
+record if I come down here you'll see
+they're all the way down here one of the
+other things You observe is there are no
+reloads and the reason there are no
+reloads of course is because once
+they're in the slot they basically chill
+there until they're fired or somebody
+comes by with a crane and pulls the
+thing out now the reason that's so
+fascinating for us is if we wanted to
+try to figure out the rate of fire we'd
+have to go in here and try to identify
+that particular weapon for example from
+doing the room 174 you can see the alpha
+model here you can see almost every
+single one of these is a rate of fire of
+two that means you can get one of these
+off every two seconds aha you know
+exactly what we're about to do with
+those don't you oh boy oh golly good
+thing uh we don't need two of those but
+anyway we'll go ahead and give it a few
+moments here to acquire our pesky
+targets one more time here oh there they
+are that didn't take very long so what
+we're going to do is we're going to
+shift F1 we're going to go select them
+real quick and uh let's just let's ruin
+their day here uh you get let's see here
+what is the maximum range on those I
+always forget essmss I will give you two
+because I'm rude and we're going to go
+ahead and give you two because I'm also
+equally rude that sounds pretty good to
+me so it's going to take him a few
+seconds of course that's your Udo Loop
+limitation he's going to swing around
+we'll help him out just a little bit
+here by basically turning on all The
+Radars on you know on the ship it's
+there's a lot of stuff going board here
+give it just a moment and what we're
+going to observe here is when we do
+start firing I think we have just a few
+moments before they're going to start
+ripping off in a second of course we can
+use the essm actually we get a little
+bit closer cheap pause so that one fired
+at uh 28 so if you give it two seconds
+there goes the other one and then there
+goes the other one and then there goes
+the other one all bang bang bang bang
+just like that now the reason this is so
+interesting is the fact that a lot of
+these mounts actually give you a bonus
+to the rate of fire so even though it
+would be 2 seconds it'll actually get
+have down to 1 second or even less in
+some cases depending on the particular
+amount that it is now fortunately these
+are these are cheap drones so I do not
+feel bad shooting them now we really
+really feel rate of fire more than
+anything however
+it's when you're in a submarine
+situation now what we have here is our
+lovely little kilo and of course the
+pesky Underwood of the dgg actually not
+the Underwood we're done with them we're
+done with the O work now and one of the
+fun things of course is you have these
+big old torpedo tubes and they take a
+long time to reload so forever to go
+ahead and do actually we'll do an F1
+action not a shift F1 action here I
+don't actually trust anything so we'll
+go ahead and let those rip and of course
+now that they have fired if I press my
+weapons button go ahead and take a look
+you'll see it's got a TW minute reload
+time here uh so if you want to imagine
+that from a rate of fire perspective
+you're talking a 120 rate of fire
+because it is taking that long to
+basically get the next one ready to fire
+and you can see they've already got one
+of those the physics ones love they're
+called physics great touch there so if I
+were to come in here for example let's
+say I want to add a uh let's see here
+5365 for example you'll see that some of
+the times that it takes to reloads are
+pretty darn substantial but the time to
+actually fire individual shots are
+pretty quick now when to go back to the
+magazine this is really where the magic
+happens go in here and all of these
+different weapons have that nice long
+long reload time another thing I want to
+mention as well is several Crews
+depending on the ship will have their
+reload times Modified by the crew
+Proficiency in this case I have a crew
+that is incredibly talented this is an
+um this is a regular crew you know if
+these were Cadets things would be even
+slower so there goes my two Torpedoes
+and it's going to take them quite a
+while to kind of get their thing going
+here if I go down here you can see I got
+about a minute and 15 seconds uh one
+thing I will add before we kind of
+finish things up here is if you do tend
+to have a specific weapon loaded it's
+really really important that you click
+the little box for it for example if I
+actually want to reload this one it'll
+actually scream at you to say hey didn't
+have any of those is that what you meant
+so we can't set that as the reload
+priority but if we did we'd be able to
+quickly do that of course our arly bar
+here is turning I don't know if this is
+going to work but I get the feeling it's
+actually going to oh look at that look
+at that that's a one that's a two and of
+course we couldn't hear anything
+underwater after explosions at that
+range whoopsies you can tell I'm running
+the beta here I I had the time to kind
+of go through and clean that up but
+ah sigh it is a sad day so as you can
+see rate of fire smaller numbers the
+better and it's important that you think
+about the rate of fire in terms of
+almost like if is it mounted to
+Something in which case it's going to be
+faster than it says or is it just
+sitting there in which case it's going
+to be about what it says enjoy

@@ -1,0 +1,380 @@
+# C: MO - How to calculate Torpedo Performance
+Video: https://www.youtube.com/watch?v=njLblgsMRuM
+Video ID: njLblgsMRuM
+
+Hello everyone. In today's video, we're
+going to be answering the age-old
+question, how far could my torpedo go
+and still hit a target? Now, that sounds
+like kind of an obvious sort of thing.
+You know, depending on what you've done
+in previous videos, especially if you
+played plenty of Silent Hunter, you have
+a pretty good idea of roughly how far a
+torpedo can travel, but it actually is a
+complicated geometrical problem. And I
+don't think that's a word, but I just
+used it anyway. So, we're going to go
+ahead and grab our victory here. Now,
+we're creeping up on an American Knox
+ship here. And what we want to do is we
+want to strike it with one of these
+brand new Physic 1 torpedoes. Now, the
+Physic 1 is a really cool torpedo. It
+has a two big things that it does well.
+You'll notice that it has a cruise speed
+of 70 knots for 11 miles, and it has a
+slow speed. This is McKinatic range they
+call it, for 30 knots. It certainly
+isn't a Mark 48 as far as range goes,
+but 70 knots is an awful lot of speed.
+Now, if I scroll down here, you also
+notice that when we're cruising at full
+speed here, we're using 4.66 fuel points
+per second. If you do the math on that,
+I think it's like 9 minutes of fuel time
+if you want to think about it. And of
+course, if you're doing cruise, kind of
+chilling here. We got these kind of low
+speed sort of stuff here. So, you're
+looking here at our scenario going, "Ah,
+we want to go ahead and strike that
+target." So, I'm going to click this
+one. And you'll notice they're at a
+range of about 10 miles for us. And
+you're sitting here going, "All right,
+go ahead and press that shift F1. Let's
+blast that sucker." So, I click on it,
+and you will observe the fact that this
+weapon will not fire. The reason it
+won't fire is because it's outside of
+its DLZ range, a dynamic launch zone.
+You're like, "Ba." I say, "Ba." It
+should work anyway. So, you say, "Okay,
+then let me make sure my settings are
+set correctly." Let's see here. Torpedo
+range. Use kinematic range for
+torpedoes. Manual fire only.
+Interesting. It's already been preset to
+allow us to do that. And it still says
+it's outside of the DLC range. That's
+because you have an interesting little
+math problem here. If we take a shot at
+a target that is less than 11 miles
+away, we're going to be using 70 knots.
+But that also means that my effective
+range of my torpedo is exactly 11 miles.
+Now, if you do the math on that real
+quick, let me go ahead and pop that
+right here. This is the maximum range of
+the torpedo. Meaning, if this ship
+crosses past this point, in the time it
+takes the torpedo, keep in mind that's
+about 9-minute travel time, by the way.
+In the time it takes to get here, this
+guy automatically wins because he just
+outran the torpedo because the torpedo
+would run out of fuel before it gets to
+him. Start to see why this gets a little
+complicated. So, you're like, "Ah, fine.
+It's a Nox class. Its top speed is only
+27 knots. I'm going to take the long
+range shot." Okay, let's see. Long range
+says we get 22 nautical miles. Go right
+here.
+Now, you're sitting here going, "This
+math problem just got a lot harder." If
+I take a shot at the maximum speed of
+the torpedo, he gets from here to here,
+I miss. If I take a shot at the minimum
+speed of my torpedo, he gets from here
+to here. That's a whole 11 nautical
+miles he gets to travel before my
+torpedo will get to him, assuming he
+goes flank speed as soon as he picks up
+the incoming torpedo. So, you're sitting
+here doing the math in your head going,
+"Yeah, there's no way he could get that
+far away from me in that time." Except
+that he can. Let me show you why. Let's
+think for a second here that he detects
+our torpedo launch immediately and spins
+up to 27 knots. Our torpedo, which is
+traveling 30 knots, is now chasing it
+down. As a matter of fact, we can even
+demonstrate this. Let's go ahead and do
+a bearing only launch here. I'll go
+ahead and pop one of these things off,
+and it will do a great little
+demonstration for me as it comes
+ripping. That is an interesting problem
+because that means for every 27 nautical
+miles this travels, this one travels 30
+nautical miles. Meaning over the course
+of an entire hour, I only travel three
+nautical miles farther than this target.
+So, you're going, "Uh-oh, I know what
+that means." Yeah, exactly. That means
+my effective chase speed is 3 knots. If
+you want to see the math on that real
+quickly, 30 knots of the torpedo minus
+27 knots of the target is 3 knots.
+That's it. That's the only speed
+difference I have on the target, which
+means it's going to be chasing this guy
+down effectively at this speed. Now, it
+gets really, really interesting here
+because the fact is you can actually see
+my target starting to turn. Smart
+target, by the way. That means he has to
+travel this distance in that time. So,
+let's see here. 11 nautical miles. You
+can do the math immediately in your
+head. 11 nautical miles. But keep in
+mind, we're only going to gain three
+nautical miles over the course of 1
+hour, which means our effective distance
+that we have to travel is about there in
+that amount of time, and we will
+basically have outrun our torpedo. Just
+to give you a visual for how far and how
+long it's actually going to take to
+track this thing down. Now, the
+interesting thing here, as you'll point
+out as well, is by the time the target
+gets to about here, uh, right about
+where my mouse is, this torpedo is just
+going to be running out of room, which
+is, like I said, kind of interesting. to
+demonstrate this. What I'm actually
+going to do is I'm going to grab the
+other side here. I'm going to go ahead
+and uh set the entire side to blind
+because you got to you got to see this
+to believe this. Like I said, once you
+see it, you'll know exactly what I mean.
+So, I'm going to set them to blind. They
+can't see anything. I'm going to go and
+unassign. I'm going to go like this. I'm
+going to go flank speed. That way, you
+can actually see it side by side. Now,
+watch this. Watch this. Watch how
+disappointing this is. All right. So,
+here we go. Uh I don't want you um
+dodging. You are not allowed to dodge.
+Let me go ahead and drop all my targets
+here because I want to demonstrate this
+beautifully. Now, get up. Unassign.
+You're not allowed. F3. Go, go, go, go.
+Maximum speed. Go, go, go, go, go. All
+right. Watch this. Watch this. Go the
+other way. Now, check it out. Check it
+out. Check it out. So, this target is
+now being chased down by a torpedo. This
+torpedo here is doing 70 knots. Uh, it
+was fired at its high speed. Now, watch
+this. This will put a smile on your
+face. So, this thing is going to travel
+this far from the range target. But
+watch what happens to our friend the
+torpedo here. I'm going to get you. I'm
+going to get you. Watch this. Watch
+this. Targeting. Targeting. Scanning.
+Scanning. Scanning. Scanning. Scanning.
+A.
+As you could see, our torpedo completely
+ran out of fuel just like I told you it
+would. Now, look at how embarrassing
+this part is. You thought that was
+silly. Watch how silly this is. So, I'm
+going to go ahead and now put on my
+God's eye view again. No, go ahead and
+set up the shot. Let's go do uh what do
+we say? I think we started at about 10.
+Let's put him right there. Watch this.
+So, you're going to be like, "Okay,
+let's see the long range shot." You just
+go ahead and embarrass us. Okay, long
+range shot. Here we go. Bam.
+Did I launch a missile? Oh, that was
+embarrassing.
+I don't know. It's just exciting. It's
+the first thing I saw on the list. All
+right, fire. So, now we're firing the
+same torpedo. And like I said before,
+we're going to be firing at the low
+speed. We're only going to be doing 30
+knots. All right, watch this. This is
+Look at how sad this is. Go torpedo. Go,
+go, go.
+See, actually, we got a little more
+range out of it than it was advertised.
+I'm actually kind of excited about that.
+But look at this. And it ran out of
+fuel.
+So, what is the practical takeaway from
+this? Uh, the practical takeaway is
+this. If you were going to be taking a
+shot at a target, what you need to do is
+you need to know how fast that target
+can go, which again, since you
+identified already, it should be pretty
+easy. You need to know exactly how far
+it can travel in the difference in time
+for it. Let's go ahead and reset our
+scenario and actually run a practical
+example here. Now that you kind of get
+the gist, let's go take a look at it.
+So, we're going to take a shot and we're
+going to do a tail shot at something
+that's uh probably cannot run from us.
+So, we'll go ahead and do uh we'll do 11
+miles. We'll do 11 and a half miles
+away. Looks good to me. I'm going to go
+ahead and do a cargo ship here.
+Something nice and slow. Panamax. We'll
+do Panamax here. Actually, uh, we'll do
+Panax. We'll do Panamax. That's fine.
+All right. Um, that's good for me. Let's
+go. Press. Okay. Of course, here's the
+joke. One hit will not do any damage to
+this thing. Uh, that's fine. All right.
+So, we'll point him this way like this.
+We're going to put him up to flank speed
+and we'll work out the example directly.
+All right. Unbause. Now, of course, it's
+going to take a half a second for
+everybody to like detect stuff. Hey,
+there he is. Of course, I made a boo boo
+there because he's right next to me.
+Go away. All right, let's get that.
+What' I say about 11 miles?
+There we go. All fixed.
+All right, so let's do it.
+So, we have our shot now. And again, we
+can actually be kind of fun here. We can
+come up to periscope depth and like not
+feel self-conscious about it. I'm
+actually going to kick my speed up a
+little bit here. Um, you would never
+periscope depth and cruise speed because
+you'd leave his massive feather in the
+water. It'd be very obvious where you
+are, but I'm an idiot and I'm just I
+know I can get away with this. So, I'm
+going to get away with it. I'm going to
+pop up to the surface and take a look
+around with my scope. Look at that.
+There he is. Just looking at him through
+my little periscope here. Feeling pretty
+confident. I'm probably reading off his
+serial number right now. Getting ready.
+All right, let's do it. So, we're going
+to go ahead and take a shot. And as you
+probably would guess, if I do shift F1
+right now and click on him, I am still
+Well, I've got another five seconds
+before I can take the shot. Take the
+shot. Come on, torpedo cruise. I'm
+waiting on you. I'm waiting on you. All
+right, let's try that again. You'll
+notice I can actually take the shot now.
+And uh the game is smart enough to know
+that because I'm in uh that range
+because that target is moving as slow as
+it is, it can probably get to the target
+in time here. But keep in mind, I am
+going to be firing at that lovely uh
+basically 20 knots speed there. But
+we're going to do it anyway because uh
+this is going to be a great
+demonstration of math in action here.
+Fire.
+Okay, so this target is traveling four
+knots. Uh the top speed on this one, I
+believe. Let's get the top speed here.
+Four knots. We'll grab this one. What do
+we get? Cuz he's going to be running uh
+16 knots. Delightful. So that means,
+let's do the math. As this thing's on
+its way,
+30 knot torpedo minus a 16 knot target
+is an effective speed of 14 knots. 14
+knots is pretty handy there. So that
+means my chase here is actually going to
+be taking place at 14 knots, not at 30
+knots, of course. So all we have to do
+now is work out how long is it going to
+take to cover this distance. So if I
+measure that again real quick, that's 11
+nautical miles. So let's see here. 11
+nautical miles at 14 knots. That's oh my
+goodness,
+that's 47 minutes.
+That is a very long time. But like I
+said, that's part of the fun. So, it's
+going to take 47 minutes for our target
+to actually hit the uh two weapons
+because it's a tail chase here. So,
+looking up a time it is is 9:31. Uh we
+can do the math on that real quick. 31
+and 41 mod 60 is going to be Oh, boy.
+That's uh 10. Oh my goodness. Uh - 60.
+Yeah, that's going to be 12 after Oh my
+goodness. So, that's Yeah. So, it's
+going to be basically 12 after 10:00 by
+the time this torpedo gets to the
+target. Don't believe me? Watch.
+He's running.
+You're sitting there looking at the W.
+You're looking at your stopwatch now and
+I'm looking at my stopwatch and we're
+both getting panicky on each other
+going, "Who's going to be right here?
+Look at how long this takes.
+Oh my goodness. Oh my goodness. Now
+you're going to get mad at me. You're
+going to get mad at me. Here it comes.
+Here it comes. Here it comes." Bam. So,
+you're mad at me and you're saying, "But
+you said it was going to be 12 minutes
+past the hour hot shot. Why is it 4
+minutes past the hour?" The reason is
+actually really simple. If you notice my
+target, it took a left turn and started
+running left on the torpedo, which
+created a little bit of a geometrical
+challenge for it, which actually reduced
+the distance between the torpedo and the
+target, which actually made it easier
+and saved me six minutes. So, as you can
+see, torpedoes are not nearly as
+effective as you expected them to be in
+range, which is one of the reasons why
+they list a lot of those torpedo ranges
+as um basically an effective range.
+Again, your effective range is so much
+less than your real range, and you could
+see that in action. Now, I know you're
+dying to see me do it again and actually
+get it at 12 minutes, but that was some
+pretty quick back of the envelope/
+Windows calculator math that
+demonstrated beautifully. Now, here's
+kind of a fun thing. Did you notice how
+far we just traveled to get to where we
+went? Let me see if I can turn this on
+real quick. I don't know if it's going
+to track that. Uh, let's see here. Unit
+trails. A see, because it didn't have
+trails on before. You can't see it, but
+keep in mind in that time we travel that
+far. And it gives you an idea of how
+insane these kinds of shots are and just
+how incredibly powerful modern torpedo
+batteries are to be able to hold on to a
+chase that long. Now, the cool thing
+here is you're going, "Hey, this is kind
+of cool." Yeah. Here's the fun part.
+This works with missiles, too. But
+that's for another day.

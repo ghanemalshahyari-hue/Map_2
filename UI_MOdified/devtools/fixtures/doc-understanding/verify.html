@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOC-UNDERSTANDING-1 — AI Understanding review (devtools verify)</title>
+    <!--
+      DEVTOOLS-ONLY harness — NOT part of the production client bundle and excluded
+      from the offline image (.dockerignore: devtools/). To run it, serve UI_MOdified/
+      as a static root (e.g. `node scripts/verify-server.js`) and open
+      /devtools/fixtures/doc-understanding/verify.html, or copy this file into client/
+      temporarily. It renders POST /api/wargame-sim/analyze with the same
+      shell/doc-understanding-review.js the wizard uses, falling back to the bundled
+      sample.json when no live server is reachable.
+    -->
+    <style>
+        body { background:#0b0f0d; color:#e8eaed; font-family:'Segoe UI',Tahoma,Arial,sans-serif; margin:0; padding:18px; }
+        .hdr { font-size:15px; color:#7fd6a0; font-weight:600; margin-bottom:4px; }
+        .sub { font-size:12px; color:#9aa3ad; margin-bottom:12px; }
+        .wrap { max-width:760px; margin:0 auto; }
+        #status { font-size:12px; color:#c5ddf0; margin-bottom:8px; }
+        button#reload { font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#22303f;color:#cfe6ff;border-radius:6px;padding:6px 12px;margin-bottom:10px; }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="hdr">AI Understanding — Verify Harness (devtools)</div>
+        <div class="sub">DOC-UNDERSTANDING-1 — renders the live <code>POST /api/wargame-sim/analyze</code> payload
+            via the shared <code>/shell/doc-understanding-review.js</code>, with a static <code>sample.json</code> fallback. Read-only.</div>
+        <button id="reload" type="button">Re-run analyze</button>
+        <div id="status">Loading…</div>
+        <div id="review" style="border:1px solid #2e5d7d;border-radius:8px;background:#0e1620;padding:12px;"></div>
+    </div>
+
+    <script src="/shell/doc-understanding-review.js?v=1"></script>
+    <script>
+        (function () {
+            var statusEl = document.getElementById('status');
+            var reviewEl = document.getElementById('review');
+            function paint(body, source) {
+                statusEl.textContent = source + ' · set_type=' + body.set_type + ' · docs=' + (body.documents || []).length;
+                window.RmoozDocReview.render(reviewEl, body, {
+                    onGenerate: function () { alert('Generate clicked (verify harness — no generation here).'); },
+                    onUploadMore: function () { alert('Upload More clicked (verify harness).'); },
+                    onCancel: function () { reviewEl.style.display = 'none'; }
+                });
+            }
+            function loadStatic() {
+                statusEl.textContent = 'Live endpoint unavailable — loading static sample (real analyze output)…';
+                return fetch('./sample.json').then(function (r) { return r.json(); }).then(function (j) { paint(j, 'static sample (real analyze output)'); });
+            }
+            function run() {
+                statusEl.textContent = 'Analyzing staged documents…';
+                fetch('/api/wargame-sim/analyze', { method: 'POST', credentials: 'same-origin' })
+                    .then(function (r) { return r.json(); })
+                    .then(function (j) { if (j && j.ok) { paint(j, 'live /api/wargame-sim/analyze'); } else { return loadStatic(); } })
+                    .catch(function () { return loadStatic(); });
+            }
+            document.getElementById('reload').addEventListener('click', run);
+            run();
+        })();
+    </script>
+</body>
+</html>

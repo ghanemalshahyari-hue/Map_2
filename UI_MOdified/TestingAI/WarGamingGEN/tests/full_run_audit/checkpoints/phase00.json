@@ -1,0 +1,317 @@
+{
+  "phase": 0,
+  "time_label": "D-7",
+  "phase_name_ar": "تمهيد - الوضع قبل العمليات",
+  "phase_name_en": "",
+  "kind": "shaping",
+  "phase_line_km": 0.0,
+  "scene": "At D-7, Red forces are in the initial stages of their amphibious assault operation, focusing on shaping the battlefield. Despite their efforts, they face a significant disadvantage in local force ratio and combat power, with Blue forces maintaining a strong defensive posture along the coast.",
+  "metrics_before": {
+    "phase": 0,
+    "red_power_in_contact": 18.5,
+    "blue_power_in_contact": 85.5,
+    "red_power_total": 160.5,
+    "blue_power_total": 166.5,
+    "force_ratio_local": 0.22,
+    "force_ratio_operational": 1.45,
+    "ew_strength_red": 0.0,
+    "ew_strength_blue": 0.0,
+    "blue_mines_remaining": 400,
+    "advantage_label": "BLUE_ADV",
+    "advantage_reason_brief": "force ratio 0.22:1 < 1.5:1 — Red approaching culmination"
+  },
+  "red_action": {
+    "phase": 0,
+    "side": "RED",
+    "strategic": {
+      "actor": "R-d0-500-077",
+      "what": "Held in reserve — preserving SSM magazine for H-hour saturation salvo per opening-day concentration doctrine.",
+      "why": "To ensure maximum impact during initial assault, aligning with the doctrine of saturation strikes.",
+      "intended_effect": "Maximize effectiveness of SSMs at a critical moment.",
+      "doctrine_cited": [
+        "WarReferences.md",
+        "Doctrines.md"
+      ]
+    },
+    "maritime": {
+      "actor": "R-d3-2-045",
+      "what": "Deploy mine sweepers to clear lanes in the approach corridor.",
+      "why": "Establish sea control by clearing mines, enabling safe passage for landing forces as per sea control doctrine.",
+      "intended_effect": "Secure a safe maritime corridor for amphibious operations.",
+      "doctrine_cited": [
+        "Doctrines.md",
+        "JP 3-02 Amphibious Operations"
+      ]
+    },
+    "air": {
+      "actor": "R-d3-12-055",
+      "what": "Deploy UAVs for ISR to map Blue's defensive positions and minefields.",
+      "why": "Gather intelligence to inform the landing plan and identify potential threats, following the principle of operational tempo.",
+      "intended_effect": "Accurate intelligence on Blue's defenses and minefield layout.",
+      "doctrine_cited": [
+        "AJP-3.3 Air & Space Operations"
+      ]
+    },
+    "mines": null,
+    "usv_uav": {
+      "actor": "R-d3-16-067",
+      "what": "Deploy kamikaze UAVs to target Blue's naval assets in port.",
+      "why": "Disrupt Blue's naval capabilities early, aligning with saturation strike doctrine.",
+      "intended_effect": "Reduce Blue's naval threat to Red's amphibious operations.",
+      "doctrine_cited": [
+        "Doctrines.md",
+        "WarReferences.md"
+      ]
+    },
+    "sof": {
+      "actor": "R-d2-211-074",
+      "what": "Insert SOF teams to conduct reconnaissance and sabotage on Blue's C2 nodes.",
+      "why": "Disrupt Blue's command and control to facilitate Red's operational tempo and vertical envelopment.",
+      "intended_effect": "Degrade Blue's C2 effectiveness and create confusion.",
+      "doctrine_cited": [
+        "WarReferences.md",
+        "Doctrines.md"
+      ]
+    },
+    "land": null,
+    "ew": {
+      "actor": "R-d3-405-014",
+      "what": "Initiate continuous electronic warfare operations to jam Blue's C2.",
+      "why": "Maintain pressure on Blue's communications to support Red's operational tempo and mass at the decisive point.",
+      "intended_effect": "Continuous disruption of Blue's communications.",
+      "doctrine_cited": [
+        "Doctrines.md"
+      ]
+    },
+    "overall_intent": "Initiate shaping operations to weaken Blue's defenses and establish conditions for a successful amphibious assault. Focus on clearing maritime lanes, disrupting Blue's C2, and gathering intelligence to inform future phases. Preserve strategic assets for decisive moments."
+  },
+  "blue_reaction": {
+    "phase": 0,
+    "side": "BLUE",
+    "strategic": {
+      "actor": "B-d0-99-000",
+      "what": "Held position — preserving strategic strike capability for decisive counterattack when Red culminates.",
+      "why": "Red has not yet committed strategic assets, and our advantage lies in countering at culmination.",
+      "intended_effect": "Preserve strategic strike capability for future decisive action.",
+      "doctrine_cited": [
+        "Doctrines.md - Tenet: Defense types: area defense, mobile defense, retrograde."
+      ]
+    },
+    "maritime": {
+      "actor": "B-d1-4-035",
+      "what": "Deploy coastal radars to monitor and target Red mine sweepers.",
+      "why": "To ensure that Red's mine clearance efforts are disrupted and our sea mines remain effective.",
+      "intended_effect": "Prevent Red from clearing minefields, maintaining the integrity of our maritime defense.",
+      "doctrine_cited": [
+        "Doctrines.md - Tenet: Obstacle types: existing, reinforcing (mines, wire, antitank ditch).",
+        "Doctrines.md - Tenet: Countermobility = terrain reinforcement + obstacle employment."
+      ]
+    },
+    "air": {
+      "actor": "B-d2-3-048",
+      "what": "Deploy fighter squadron to intercept and neutralize Red's ISR UAVs.",
+      "why": "To prevent Red from mapping our defensive positions and gaining intelligence on our minefields.",
+      "intended_effect": "Deny Red ISR capabilities, maintaining the secrecy of our defensive layout.",
+      "doctrine_cited": [
+        "Doctrines.md - Tenet: Air defense planning at brigade and below."
+      ]
+    },
+    "mines": null,
+    "usv_uav": {
+      "actor": "B-d1-8-031",
+      "what": "Deploy corvettes with CRAM systems to intercept kamikaze UAVs targeting naval assets.",
+      "why": "To protect naval assets in port from Red's kamikaze UAV attacks.",
+      "intended_effect": "Preserve naval strength by neutralizing incoming UAV threats.",
+      "doctrine_cited": [
+        "Doctrines.md - Tenet: C-UAS defeats Group 1-5 UAS through detect, identify, decide, defeat."
+      ]
+    },
+    "sof": {
+      "actor": "B-d1-504-021",
+      "what": "Deploy signal battalion to detect and counter Red SOF reconnaissance and sabotage attempts.",
+      "why": "To protect C2 nodes from sabotage and maintain operational integrity.",
+      "intended_effect": "Prevent Red SOF from disrupting our command and control capabilities.",
+      "doctrine_cited": [
+        "Doctrines.md - Tenet: Defense types: area defense, mobile defense, retrograde."
+      ]
+    },
+    "land": null,
+    "ew": {
+      "actor": "B-d1-505-022",
+      "what": "Initiate counter-EW operations to mitigate Red's jamming efforts.",
+      "why": "To ensure continued communication and coordination among Blue forces.",
+      "intended_effect": "Maintain effective C2 despite Red's electronic warfare operations.",
+      "doctrine_cited": [
+        "Doctrines.md - Tenet: Air defense planning at brigade and below."
+      ]
+    },
+    "overall_intent": "Maintain a hold-and-attrit posture to force Red's culmination. Preserve key assets and counter Red's ISR and sabotage attempts while leveraging prepared defenses."
+  },
+  "resolution": {
+    "phase": 0,
+    "combined_effect": "Red's initial shaping operations faced significant challenges. Blue's coastal radars effectively targeted Red's mine sweepers, causing attrition and maintaining the integrity of Blue's minefields. Red's UAV ISR efforts were largely neutralized by Blue's fighter squadron, preventing significant intelligence gathering. Red's kamikaze UAVs faced heavy interception by Blue's corvettes with CRAM systems, resulting in minimal damage to Blue's naval assets. Red's SOF teams encountered strong resistance from Blue's signal battalion, limiting their impact on Blue's C2 nodes.",
+    "unit_outcomes": [
+      {
+        "unit_uid": "R-d3-2-045",
+        "status_change": "damaged_partial",
+        "damage_pct": 0.4,
+        "cause_actor": "B-d1-4-035",
+        "cause_what": "Coastal radar targeting of mine sweepers",
+        "cause_doctrine": "Wonsan 1950: 50% MCM attrition under coastal artillery overwatch"
+      },
+      {
+        "unit_uid": "R-d3-12-055",
+        "status_change": "damaged_partial",
+        "damage_pct": 0.3,
+        "cause_actor": "B-d2-3-048",
+        "cause_what": "Fighter squadron intercept of ISR UAVs",
+        "cause_doctrine": "Falklands air-to-air loss ratio 1:3 attacker:defender"
+      },
+      {
+        "unit_uid": "R-d3-16-067",
+        "status_change": "expended",
+        "damage_pct": 0.7,
+        "cause_actor": "B-d1-8-031",
+        "cause_what": "CRAM interception of kamikaze UAVs",
+        "cause_doctrine": "Black Sea 2024 USV survival 25-30% × 60-70% hit rate"
+      },
+      {
+        "unit_uid": "R-d2-211-074",
+        "status_change": "suppressed",
+        "damage_pct": 0.5,
+        "cause_actor": "B-d1-504-021",
+        "cause_what": "Signal battalion counter-SOF operations",
+        "cause_doctrine": "Doctrines.md - Tenet: Defense types: area defense, mobile defense, retrograde"
+      },
+      {
+        "unit_uid": "B-d1-4-035",
+        "status_change": "unchanged",
+        "damage_pct": 0.0,
+        "cause_actor": "R-d3-2-045",
+        "cause_what": "Mine sweeper attempts to clear lanes",
+        "cause_doctrine": "JP 3-02 Amphibious Operations"
+      },
+      {
+        "unit_uid": "B-d2-3-048",
+        "status_change": "unchanged",
+        "damage_pct": 0.0,
+        "cause_actor": "R-d3-12-055",
+        "cause_what": "ISR UAV deployment",
+        "cause_doctrine": "AJP-3.3 Air & Space Operations"
+      },
+      {
+        "unit_uid": "B-d1-8-031",
+        "status_change": "unchanged",
+        "damage_pct": 0.0,
+        "cause_actor": "R-d3-16-067",
+        "cause_what": "Kamikaze UAV attack",
+        "cause_doctrine": "Doctrines.md - Tenet: C-UAS defeats Group 1-5 UAS"
+      },
+      {
+        "unit_uid": "B-d1-504-021",
+        "status_change": "unchanged",
+        "damage_pct": 0.0,
+        "cause_actor": "R-d2-211-074",
+        "cause_what": "SOF reconnaissance and sabotage",
+        "cause_doctrine": "WarReferences.md - SOF operations"
+      }
+    ],
+    "step_advantage": "BLUE_ADV",
+    "advantage_reason": "Force ratio 0.22:1 < 1.5:1 per FM 3-90 — Red approaching culmination",
+    "force_ratio_local": 0.22,
+    "force_ratio_operational": 1.45,
+    "mines_remaining": 400,
+    "ew_strength_red": 0.0,
+    "ew_strength_blue": 0.0
+  },
+  "snapshot_after": {
+    "phase": 0,
+    "red_alive": 84,
+    "blue_alive": 89,
+    "red_power_total": 158.65,
+    "blue_power_total": 111.0,
+    "red_power_in_contact": 18.25,
+    "blue_power_in_contact": 57.0,
+    "ew_red": 0.7,
+    "ew_blue": 0.7,
+    "blue_mines_remaining": 400,
+    "losses_to_date": 8
+  },
+  "inventory_red": {
+    "by_domain": {
+      "strategic": {
+        "alive": 1,
+        "total": 1,
+        "power": 1.5
+      },
+      "naval": {
+        "alive": 18,
+        "total": 18,
+        "power": 17.6
+      },
+      "air": {
+        "alive": 21,
+        "total": 21,
+        "power": 85.8
+      },
+      "ground": {
+        "alive": 40,
+        "total": 40,
+        "power": 51.0
+      },
+      "sof": {
+        "alive": 4,
+        "total": 4,
+        "power": 2.75
+      }
+    },
+    "alive_total": 84,
+    "destroyed_total": 0,
+    "power_total": 158.65
+  },
+  "inventory_blue": {
+    "by_domain": {
+      "strategic": {
+        "alive": 0,
+        "total": 0,
+        "power": 0
+      },
+      "naval": {
+        "alive": 6,
+        "total": 6,
+        "power": 6.0
+      },
+      "air": {
+        "alive": 19,
+        "total": 19,
+        "power": 48.0
+      },
+      "ground": {
+        "alive": 64,
+        "total": 64,
+        "power": 57.0
+      },
+      "sof": {
+        "alive": 0,
+        "total": 0,
+        "power": 0
+      }
+    },
+    "alive_total": 89,
+    "destroyed_total": 0,
+    "power_total": 111.0
+  },
+  "cum_losses_red": 4,
+  "cum_losses_blue": 4,
+  "ammo_red": {
+    "magazines_remaining": 396,
+    "airframes_remaining": 225,
+    "hulls_remaining": 412
+  },
+  "ammo_blue": {
+    "magazines_remaining": 240,
+    "airframes_remaining": 166,
+    "hulls_remaining": 9
+  },
+  "wall_seconds": 47.3
+}

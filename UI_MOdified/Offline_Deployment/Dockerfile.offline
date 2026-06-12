@@ -1,0 +1,169 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  RMOOZ — Offline Deployment Dockerfile  (OFFLINE-IMAGE-1B)
+#
+#  ISOLATION DESIGN (OFFLINE-ISOLATION-0/1):
+#    Phase 1: copy CLEAN main app (no LDAP, standard local login)
+#    Phase 2: overlay offline_app/ files (LDAP + offline fonts + map resolver)
+#  The main app source is NEVER modified. LDAP code lives only in offline_app/.
+#
+#  Build context: UI_MOdified/  (the project root)
+#  Build command (from UI_MOdified/):
+#    docker compose -f Offline_Deployment/docker-compose.offline.yml \
+#                   --env-file Offline_Deployment/.env.offline build
+#  Or direct:
+#    docker build -f Offline_Deployment/Dockerfile.offline \
+#                 -t rmooz-offline:latest .
+#
+#  See .dockerignore at UI_MOdified/.dockerignore for excluded paths.
+# ─────────────────────────────────────────────────────────────────────────────
+
+FROM node:20-slim
+
+# ── OS build dependencies ─────────────────────────────────────────────────────
+# • python3 / python3-venv / python3-dev: WarGamingGEN runtime + venv creation
+# • make / g++: required by node-gyp (better-sqlite3 native binding)
+# • ca-certificates: for LDAP TLS and HTTPS connections
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        python3 \
+        python3-venv \
+        python3-dev \
+        python3-pip \
+        make \
+        g++ \
+        ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# ── Python venv (installed at BUILD time — never at container startup) ─────────
+# All WarGamingGEN Python deps go into /opt/rmooz-venv.
+# RMOOZ_PYTHON env var points here so the bridge spawns the correct interpreter.
+RUN python3 -m venv /opt/rmooz-venv
+
+COPY Offline_Deployment/requirements.offline.txt /tmp/requirements.offline.txt
+RUN /opt/rmooz-venv/bin/pip install --no-cache-dir \
+        --upgrade pip \
+    && /opt/rmooz-venv/bin/pip install --no-cache-dir \
+        -r /tmp/requirements.offline.txt
+
+# ── Node.js dependencies (installed at BUILD time) ────────────────────────────
+# Use offline_app/package.json which includes ldapjs in addition to main deps.
+COPY Offline_Deployment/offline_app/package.json ./package.json
+# Copy main lock file as base; npm install resolves new deps (ldapjs ^3.0.7).
+COPY package-lock.json ./package-lock.json
+# --omit=dev: excludes electron, electron-builder, jimp, png-to-ico
+# npm install (not ci): resolves ldapjs which is not in the lock file yet
+RUN npm install --omit=dev
+
+# ── Phase 1: Copy CLEAN main app source ───────────────────────────────────────
+COPY server/   ./server/
+COPY client/   ./client/
+COPY lib/      ./lib/
+COPY vendor/   ./vendor/
+# scripts/ required by server (e.g. wargame-sim-bridge.js → scripts/port-wargame.js)
+# .dockerignore excludes test-*.js and *.bat, keeping only runtime scripts
+COPY scripts/  ./scripts/
+
+# ── TestingAI / WarGamingGEN ──────────────────────────────────────────────────
+# SmartSearch (2.2 GB) is excluded via .dockerignore.
+# export_to_rmooz, import_from_rmooz, and runs/ are also excluded (mounted as volumes).
+# WarGamingGEN uses Markdown fallback for doctrine retrieval when SmartSearch absent.
+COPY TestingAI/ ./TestingAI/
+
+# ── Phase 2: Overlay offline_app files ────────────────────────────────────────
+# LDAP authentication module
+COPY Offline_Deployment/offline_app/server/auth/          ./server/auth/
+# LDAP-aware + offline API app-data.js (replaces main version)
+COPY Offline_Deployment/offline_app/server/app-data.js    ./server/app-data.js
+# Offline map config handler
+COPY Offline_Deployment/offline_app/server/offline-map-config.js \
+                                                            ./server/offline-map-config.js
+# CDN-free app.html + LDAP-aware index.html + landing-auth.js
+COPY Offline_Deployment/offline_app/client/app.html        ./client/app.html
+COPY Offline_Deployment/offline_app/client/index.html      ./client/index.html
+COPY Offline_Deployment/offline_app/client/landing-auth.js ./client/landing-auth.js
+# Local font CSS (no Google Fonts CDN)
+COPY Offline_Deployment/offline_app/client/assets/         ./client/assets/
+# Offline map source resolver (runs first, exposes window.__RMOOZ_OFFLINE_MAP__)
+COPY Offline_Deployment/offline_app/client/wargame/offline-map-source.js \
+     ./client/wargame/offline-map-source.js
+# Offline Cesium view overlay: local Cesium only, offline tile imagery only.
+COPY Offline_Deployment/offline_app/client/wargame/cesium-view.js \
+     ./client/wargame/cesium-view.js
+# Global Leaflet tile guard — intercepts ALL L.tileLayer() calls, blocks OSM/localhost
+COPY Offline_Deployment/offline_app/client/offline-leaflet-tile-guard.js \
+     ./client/offline-leaflet-tile-guard.js
+# Offline map patch (runs after app.js — replaces any remaining bad tile layers)
+COPY Offline_Deployment/offline_app/client/offline-map-patch.js \
+     ./client/offline-map-patch.js
+# Scenario import wizard overlay — uses offline tile source instead of OSM
+COPY Offline_Deployment/offline_app/client/shell/scenario-import-wizard.js \
+     ./client/shell/scenario-import-wizard.js
+# Brand logo and assets
+COPY Offline_Deployment/offline_app/client/assets/ ./client/assets/
+# Offline web-server with /api/offline/* route (replaces main version)
+# ONE line added at request dispatch: routes /api/offline/* to handleOfflineApi
+COPY Offline_Deployment/offline_app/server/web-server.js ./server/web-server.js
+# Tile server overlay — binds 0.0.0.0 so Docker port mapping exposes port 8080
+COPY Offline_Deployment/offline_app/server/tile-server.js ./server/tile-server.js
+# OFFLINE-GEN-RUN-FIX-1: bridge overlay — injects LiteLLM/Ollama LLM_* into the
+# WarGamingGEN Python child and writes redacted error.log on failure.
+COPY Offline_Deployment/offline_app/server/wargame-sim-bridge.js ./server/wargame-sim-bridge.js
+# LiteLLM connectivity diagnostic — operator runs:
+#   docker exec rmooz-offline /opt/rmooz-venv/bin/python /app/server/diag-litellm.py
+COPY Offline_Deployment/offline_app/server/diag-litellm.py ./server/diag-litellm.py
+# Startup script — runs both tile-server (8080) and web-server (5006)
+COPY Offline_Deployment/offline_app/start-offline.sh ./start-offline.sh
+# Strip Windows CRLF line endings and make executable
+RUN sed -i 's/\r$//' ./start-offline.sh && chmod +x ./start-offline.sh
+
+# ── Runtime environment defaults ─────────────────────────────────────────────
+# All values here can be overridden by docker-compose or --env-file.
+# LDAP_SERVER is intentionally empty — operator MUST set it in .env.offline.
+ENV PORT=5006 \
+    RMOOZ_AUTH_BACKEND=ldap \
+    LDAP_SERVER="" \
+    LDAP_PORT=389 \
+    LDAP_DOMAIN=sss.dir \
+    LDAP_TIMEOUT=5 \
+    LDAP_USE_SSL=0 \
+    OFFLINE_TILES=1 \
+    MAP_SOURCE_MODE=auto \
+    LOCAL_TILE_URL=/offline-tiles/{z}/{x}/{y}.png \
+    FALLBACK_TILE_URL="" \
+    MAP_FALLBACK_ENABLED=1 \
+    OFFLINE_MAP_DATA_DIR=/app/offline_map_data \
+    DEM_PATH=/app/dem_data/libya_demx5.tif \
+    RMOOZ_MAPS_DIR=/app/maps \
+    RMOOZ_ALLOW_SIM_RUN=0 \
+    RMOOZ_TESTINGAI_DIR=/app/TestingAI \
+    RMOOZ_PYTHON=/opt/rmooz-venv/bin/python \
+    RMOOZ_SIM_MODEL=qwen2.5:7b \
+    RMOOZ_BOOTSTRAP_PASSWORD=disabled \
+    NODE_ENV=production
+
+# ── Writable / volume-mounted directories ─────────────────────────────────────
+# NOTE: do NOT pre-create /app/TestingAI/WarGamingGEN/runs here. The pure-image
+# audit requires it absent (`test ! -d .../runs`), and pre-creating an empty dir
+# fails that check. At runtime the orchestrator does run_dir.mkdir(parents=True,
+# exist_ok=True) and the compose file bind-mounts ./TestingAI_Runtime/runs over
+# it, so the directory always exists when generation actually runs.
+RUN mkdir -p \
+    /app/data \
+    /app/maps \
+    /app/uploads \
+    /app/offline_map_data \
+    /app/dem_data \
+    /app/TestingAI/import_from_rmooz/forces \
+    /app/TestingAI/export_to_rmooz
+
+# Port 5006: web server — Port 8080: MBTiles tile server
+EXPOSE 5006 8080
+
+# Healthcheck: web server responds (tile server checked separately)
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=25s \
+    CMD node -e "require('http').get('http://127.0.0.1:5006/api/auth/me', r => process.exit(r.statusCode === 401 ? 0 : 1)).on('error', () => process.exit(1))"
+
+# Run tile-server (8080) + web-server (5006) together
+CMD ["sh", "./start-offline.sh"]

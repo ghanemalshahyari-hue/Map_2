@@ -1,0 +1,328 @@
+# C: MO - Beta 1405 Updates
+Video: https://www.youtube.com/watch?v=pKplBmeft4k
+Video ID: pKplBmeft4k
+
+hello everyone in today's video we're
+going to be taking a look at beta 1405
+for command modern operations now this
+is one of those betas that's got a
+couple little things kind of here and
+there nothing like catastrophically
+weird or anything like that there's
+definitely some bugs that um I know
+they're already working on diligently to
+make sure that we can kind of address
+but like anything beta expect things to
+be broken that's part of the fun first
+things first off if you do want to go
+ahead and install the beta it's really
+easy you just simply come over to the
+beta itself you right click you hit the
+properties button and if you scroll down
+to betas you'll notice there's an option
+here you can actually just select open
+Beta at that point it'll actually go
+ahead and grab all the critical files
+that you need and basically toss them up
+there and make it a little bit easier
+for you to go ahead and get now what
+does this beta add well there's a couple
+little kind of I call them under the
+hood things and then there's a sort of
+more user interface things and there's
+of course something very amusing to fire
+but we'll get there when we get there so
+the first thing you're going to notice
+here is if you open up anything that is
+HTML based such as the database viewer
+you're going to observe that everything
+moves a lot smoother depending on your
+existing system here you know when I
+click on things this is much much much
+more responsive than it is and when you
+take a look at the formatting the
+formatting is also just a little bit
+cleaner than it used to be making your
+life a little bit better as far as a lot
+of these things goes and I think that's
+kind of a neat one as far as um you know
+Basics like that another thing you're
+probably going observe is H this little
+tiny thing that's going to be hanging on
+the side of certain units inside the map
+you'll notice here it says con and it
+has a little letter s there the other
+thing you'll probably observe is if we
+go over God's eye view real quickly here
+you will see that you'll see something
+on the the side of ships as well now if
+I were to move you'll see this new thing
+that pops up that Now says Wake L now
+the interesting thing is this is simply
+going to be representation of the fact
+that that particular unit is producing a
+giant white line of some variety
+obviously if you're dealing with an
+airplane the giant white line is going
+to be a contrail and of course if you're
+dealing with a ship you're going to be
+dealing with it basically the long white
+line behind you that is going to build
+that water that you turned up one of the
+things you find very very interesting
+here is if I take something like the
+kits of and I go ahead and order him
+down to creep speed it don't matter yeah
+he's doing one knot and he's already got
+a wake on the flip side my OSI here is
+doing 14 knots if I send him down to
+Creek speed you'll notice that as he
+starts to slow down here the wake of
+course we'll speed up time just a little
+bit you can see the Wake disappears
+entirely you actually can now use this
+tactically you can basically reduce the
+visibility of this particular unit
+simply basically by slowing down a
+little bit now obviously big ships like
+the quis itself which is the reason I
+grab this one there's no speed you can
+go at that's not going to give you a
+wake whereas Little Ships of course you
+can slow down substantially and
+basically reduce your ability to be
+spotted now that's kind of a tricky
+thing here now the other thing I
+probably have if you take a look over
+here is I have two tupf 142s you'll
+notice one here is at 28,000 and the
+other one's at 27,000 you can see we're
+getting a very large contrail
+here now if I had to quickly switch over
+to my other team here um this Hawkeye by
+the way is just sort of chilling as a
+matter of fact I'm going to go tell him
+to go up here so he doesn't accidentally
+ruin the fun so I have a watchtower here
+and I just want to quick show you
+something here as we get a little bit
+closer and what we're basically waiting
+for is our two buddies to get into
+visual range here and it's it's it's
+going to take them a minute I don't want
+to go like do one of those like you know
+kind of a thing like I just kind of make
+it go this is a pretty substantial
+distance I think this is yeah this 100
+miles so even at 15x so that's it's
+going to take about a minute to get
+there kind of a thing so we'll give them
+a few moments to kind of go cutch up
+here let's see go check that any second
+now any second now again my little dude
+to my Watchtower it's perfectly good
+time of day we also have an excellent
+sensor so it shouldn't be any issue as
+far as detection goes getting closer
+getting
+closer oh you can feel
+it there we go pause nice so what we see
+here is we can observe that this
+particular one here if I go ahead and
+turn on this view here our contrail
+buddy here you can actually see here
+that we have an estimate of his altitude
+of 28,000 ft you can see we picked him
+up at 50 miles with the mark one ey
+eyeball we did not identify him with my
+special fancy low light TV but we were
+able to pick him up at an insane
+distance because of the contrail he is
+currently making of course if I pause
+this for a second here give it a few
+moments even though he's that far away I
+can basically identify him at this point
+my lltv is kicking in here you know that
+works well again the LL TV does not have
+unlimited range the eyeball picked them
+up now the cool thing you'll notice here
+is that other two live visually we have
+not picked up at all even though he's
+literally right there and again we're
+sweeping the sky we're sweeping the sky
+and he's basic basically going to
+overfly before we're actually going to
+be able to identify him because of the
+fact that he is not marking with that
+Contra you can see I was able to pick
+him up just about 10 on the nose so now
+we have new visual tactical things to be
+thinking about as well now of course
+this beta brought us one more thing
+which is a ton of fun and um we have to
+reset the scenario here so we can show
+how goofy fun it is so let's go ah a and
+grab our blue team here real fast open
+this one up and they added um a rather
+amusing weapon I guess that's the best
+way to say it so I'm gonna go and flip
+my radar on here I'm also going to flip
+on the radar here actually we don't need
+all these Radars but that's okay because
+it I will need it but I have a pair of
+f8s here and what I'm going to do is I'm
+actually going to order my two f18s to
+get airborne we have enemy targets to
+shoot at and you can see my Hawkeye here
+has no difficulty identifying all the
+different targets that are flying
+actually not only did it see them it's
+actually already identified them making
+my di a little easier come on f18s
+coming out there we go so the f18s of
+course are equipped with this rather
+amusing new weapon on go and open this
+one up real fast here known as the aim
+174 Bravo this is you know it's pretty
+standard um if you want to think about
+it another way basically someone I said
+I got an idea let's take an sm6 and put
+it on an
+airplane this thing's a little absurd um
+not only does it talk to like you know
+ships and stuff like that through data
+link technology and all those other
+components it's got all the usual kind
+of modern stuff it can actually shoot
+down ballistic missiles it's got a
+really really really big Warhead on it
+and uh when you scroll down here you can
+see that it has some cap ability getting
+pretty high um what is that about
+147,000 ft so there's basically no place
+you can hide from this thing as far as
+altitude goes which is kind of amusing
+but my favorite part of this weapon is
+its range of 23 Nal miles now to give
+you an idea of this um keep in mind I
+did not tell him to fire but um you can
+see he's already launched two of these
+missiles at our little tup 42s here and
+we can see that this thing is it's about
+80 90,000 fet and it's just going to
+basically travel in a parabolic Arc and
+it's basically going to drop down from
+the sky on these up poort tup SE the way
+this weapon basically works is it chills
+in the upper atmosphere and drops that's
+kind of how it does its magic it's also
+an enormous weapon which has a big
+impact but you can see they flipped on
+automatically and I basically got to
+pause I don't know that we're going to
+get connect and H oh we got one we got
+two now check this out so there's
+another enemy Target over here um that's
+a distance of uh let's see here we got
+about 218 miles there that's enough
+we'll go ahead and lock on to him like
+that oh we have all sorts of the par
+here uh we'll go ahead and launch a one
+I'm pretty pretty confident we're not
+going to hit it at that range but
+because science so we're going to try it
+anyway so what he's going to do here is
+he's going to try to close into a range
+we can actually utilize the weapon uh
+just because it can go that distance
+does not necessarily mean you're not
+dealing with the Target that can
+maneuver so we do have to get ourselves
+a little bit closer here also I don't
+know why we're so low must have bit a
+button I pushed at some point let's go
+double check to make sure it did oh
+there it goes fire in the hole fire in
+the hole fire in the hole let's go grab
+our 3D view here some lovely tack view
+action people always ask me uh you know
+tack you worth it kind of a thing like
+that I I won't comment but yeah watch
+this this is so cool basically what this
+weapon is going to do is just going to
+go up and you can see the curvature of
+our lovely Earth there as it comes
+arcing around go zoom out just a little
+bit and it just goes up and up and up
+and up and now one of the W things you
+probably notied is my two f18s turned
+away and at no point did my f-18s ever
+actually lock onto the target they
+didn't even turn their Radars on because
+they didn't have to because the Hawkeye
+is the thing that is actually guiding
+this weapon to the Target
+which is just it's it's absurd I mean
+this is like bowmark ranges for those of
+you familiar with that particular
+platform now we're going up oh my
+goodness look at all hi that thing fires
+up that's
+insane my gosh what a range in that
+weapon and again this is an air launched
+weapon it is a little absurd but um I
+think it's just kind of amusing too all
+right there it goes so we got the little
+contrail notice it actually lost its
+contrail because there's basically no
+water vapor in the upper atmosphere for
+it to react with so here it comes it's a
+drop it in you can see that lovely tup
+142 he was like I'm well into safe range
+did you notice he just spotted it and I
+did some quick aggressive turns there
+trying to desperately get out of the way
+oh boy here it comes oh see the problem
+is my brain immediately goes into uh
+like you know like those little James
+Bond like strings you get it the last
+thing kind of a thing like that whenever
+you're about to see the missile you know
+goes quiet for just a
+moment and then of course it plays like
+the you know I mean you know what I'm
+talking about about of course our weapon
+did not hit so which did not surprise me
+though same thing we can actually see
+here that it was chaff that defeated our
+missile it wasn't any fancy maneuvering
+or anything like that one thing I find
+kind of fun though uh what is the no it
+was actually seduced so we don't
+actually know if the weapon was actually
+going to make connection but you can see
+my f-18s already fired a second one
+there well we don't want to leave people
+without I'll give the people what they
+want right woo Splat let's see what the
+final to hit was there uh let's see here
+uh SRAM is a 90% po which makes sense
+it's modern and
+agility our probability to hit was
+89% at a range of let's get the range
+there 124 miles that's incredible
+remember this F-18 never turned on its
+radar this was all Guided by the E2
+which makes me think these are much much
+more important platforms than they did
+so as you can see some quick little
+updates here kind of little things here
+and there I know there's bigger things
+to come so to speak but it's pretty cool
+and I really really enjoy this little
+guy uh definitely will need an option to
+adjust that of course it would be great
+if we had an option if I could like
+press f2 and like right here it would
+show me like where my contrails start or
+something that would be awesome enjoy

@@ -1,0 +1,245 @@
+{
+  "ok": true,
+  "document_set_id": "ds_ee6b50da23c4484a",
+  "set_type": "mixed_operational",
+  "set_label_ar": "وثيقة عمليات مختلطة",
+  "set_label_en": "Mixed Operational Document",
+  "documents": [
+    {
+      "filename": "red_team_realistic_ar.docx",
+      "slots": [
+        "red"
+      ],
+      "hash": "c85a1c7061d04c907b6f5ddc21b6e7558392cc2145faa68f6611ad3555b7729c",
+      "detected_type": "enemy_orbat",
+      "type_label_ar": "النظام القتالي للعدو",
+      "type_label_en": "Enemy ORBAT",
+      "language": "ar",
+      "confidence": 0.7
+    },
+    {
+      "filename": "blue_team_realistic_ar.docx",
+      "slots": [
+        "blue"
+      ],
+      "hash": "ee0d9208a21a5978e8c929f6e97c404440e38f06d44e47c803d37a31510b87ab",
+      "detected_type": "friendly_orbat",
+      "type_label_ar": "النظام القتالي لقواتنا",
+      "type_label_en": "Friendly ORBAT",
+      "language": "ar",
+      "confidence": 0.7
+    }
+  ],
+  "dedupe": {
+    "input_count": 2,
+    "unique_count": 2,
+    "duplicates_removed": 0,
+    "same_in_both_slots": false
+  },
+  "brief": {
+    "document_set_id": "ds_ee6b50da23c4484a",
+    "documents": [
+      {
+        "filename": "red_team_realistic_ar.docx",
+        "slots": [
+          "red"
+        ],
+        "hash": "c85a1c7061d04c907b6f5ddc21b6e7558392cc2145faa68f6611ad3555b7729c",
+        "detected_type": "enemy_orbat",
+        "type_label_ar": "النظام القتالي للعدو",
+        "type_label_en": "Enemy ORBAT",
+        "language": "ar",
+        "confidence": 0.7
+      },
+      {
+        "filename": "blue_team_realistic_ar.docx",
+        "slots": [
+          "blue"
+        ],
+        "hash": "ee0d9208a21a5978e8c929f6e97c404440e38f06d44e47c803d37a31510b87ab",
+        "detected_type": "friendly_orbat",
+        "type_label_ar": "النظام القتالي لقواتنا",
+        "type_label_en": "Friendly ORBAT",
+        "language": "ar",
+        "confidence": 0.7
+      }
+    ],
+    "operational_brief": {
+      "mission": "تدافع قوة الواجب المشتركة عن الساحل ومحاور البريقة، وتمنع RED Team من تثبيت رأس شاطئ صالح للإمداد أو الوصول إلى الهدف X، مع المحافظة على احتياط قادر على تنفيذ هجوم مضاد محدود. عمل BLUE Team الأكثر احتمالا.",
+      "commander_intent": "",
+      "area_of_operations": {},
+      "friendly": {
+        "summary": "BLUE TEAM\nأ. قوة الواجب المشتركة الزرقاء JTF-1. قيادة دفاع ساحلي مشتركة مكلفة بمنع الإنزال المعادي، حماية ممر البريقة، ومنع RED Team من الوصول إلى الهدف X.\nب. المكون البري 99. يتألف من:\n(1) لواء المشاة الآلي 51. مسؤول عن قطاع الساحل الغربي ومواقع الإنزال المحتملة، ويتألف من:\n(أ) كتيبة مشاة آلية 511، ثلاث سرايا مشاة آلية.\n(ب) كتيبة مشاة آلية 512، ثلاث سرايا مشاة آلية.\n(جـ) سرية دبابات ملحقة، فصيل مضاد دروع، وفصيل طائرات مسيرة استطلاع.\n(2) لواء المشاة الآلي 52. مسؤول عن القطاع الأوسط ومداخل الطرق ",
+        "units": [],
+        "tasks": []
+      },
+      "enemy": {
+        "summary": "RED TEAM\nأ. قيادة القوة المشتركة الحمراء. قيادة عمليات ساحلية/برمائية مسؤولة عن التخطيط والسيطرة على عملية إنزال محدودة باتجاه منطقة البريقة والهدف X.\nب. مجموعة الإنزال البرمائي. تتألف من العناصر التالية:\n(1) قيادة مجموعة الإنزال البرمائي وسرية اتصال مشتركة للربط بين القوات البرية والبحرية والجوية.\n(2) لواء مشاة بحري 41 معزز. مؤلف من:\n(أ) كتيبة مشاة بحرية 411، ثلاث سرايا مشاة بحرية + فصيل استطلاع ساحلي.\n(ب) كتيبة مشاة بحرية 412، ثلاث سرايا مشاة بحرية + فصيل قناصة/مراقبة أمامية.\n(جـ) كتيبة مدرعة ",
+        "units": [],
+        "assessed_capabilities": [],
+        "tasks": []
+      },
+      "neutral": {
+        "civilian": [],
+        "infrastructure": []
+      },
+      "objectives": [
+        {
+          "name": "الهدف X",
+          "source": "document"
+        }
+      ],
+      "phases": [
+        {
+          "index": 1,
+          "label": "(أ) المرحلة الأولى: استطلاع وتمهيد لمدة 12 - 24 ساعة، تشمل مسح الشواطئ، تعطيل الرادارات الساحلية، وف"
+        },
+        {
+          "index": 2,
+          "label": "(ب) المرحلة الثانية: إنزال كتيبتي المشاة البحرية لتأمين رأس شاطئ بعمق 3 - 5 كم، مع أولوية لتأمين مخر"
+        },
+        {
+          "index": 3,
+          "label": "(جـ) المرحلة الثالثة: إدخال لواء المشاة الآلي 42 تدريجياً بعد تأكيد صلاحية الطرق، ثم دفع كتيبة الاست"
+        },
+        {
+          "index": 4,
+          "label": "(د) المرحلة الرابعة: تثبيت رأس الشاطئ، حماية الجناحين، وتطوير الهجوم باتجاه الهدف X فقط إذا بقيت الخ"
+        }
+      ],
+      "timeline": [],
+      "constraints": [
+        {
+          "text": "(1) نجاح العملية يعتمد على حالة البحر، بقاء ممر الإمداد البحري، وتحييد الدفاع الجوي الأزرق القريب.",
+          "source": "constraints-section"
+        },
+        {
+          "text": "(2) لا تستطيع القوة المدرعة الثقيلة العمل بكفاءة قبل فتح مخارج الشاطئ وإزالة العوائق.",
+          "source": "constraints-section"
+        },
+        {
+          "text": "(3) خسارة سفينة إنزال كبيرة أو تعطيل الميناء المؤقت تؤخر المرحلة الثالثة 24 - 48 ساعة.",
+          "source": "constraints-section"
+        },
+        {
+          "text": "BLUE TEAM",
+          "source": "constraints-section"
+        },
+        {
+          "text": "أ. قوة الواجب المشتركة الزرقاء JTF-1. قيادة دفاع ساحلي مشتركة مكلفة بمنع الإنزال المعادي، حماية ممر البريقة، ومنع RED Team من الوصول إلى الهدف X.",
+          "source": "constraints-section"
+        },
+        {
+          "text": "ب. المكون البري 99. يتألف من:",
+          "source": "constraints-section"
+        },
+        {
+          "text": "(1) لواء المشاة الآلي 51. مسؤول عن قطاع الساحل الغربي ومواقع الإنزال المحتملة، ويتألف من:",
+          "source": "constraints-section"
+        },
+        {
+          "text": "(أ) كتيبة مشاة آلية 511، ثلاث سرايا مشاة آلية.",
+          "source": "constraints-section"
+        }
+      ],
+      "assumptions": [],
+      "ambiguities": [],
+      "source_citations": []
+    }
+  },
+  "understanding": {
+    "set_type": "mixed_operational",
+    "set_label_ar": "وثيقة عمليات مختلطة",
+    "set_label_en": "Mixed Operational Document",
+    "mission": "تدافع قوة الواجب المشتركة عن الساحل ومحاور البريقة، وتمنع RED Team من تثبيت رأس شاطئ صالح للإمداد أو الوصول إلى الهدف X، مع المحافظة على احتياط قادر على تنفيذ هجوم مضاد محدود. عمل BLUE Team الأكثر احتمالا.",
+    "commander_intent": "",
+    "friendly": {
+      "summary": "BLUE TEAM\nأ. قوة الواجب المشتركة الزرقاء JTF-1. قيادة دفاع ساحلي مشتركة مكلفة بمنع الإنزال المعادي، حماية ممر البريقة، ومنع RED Team من الوصول إلى الهدف X.\nب. المكون البري 99. يتألف من:\n(1) لواء المشاة الآلي 51. مسؤول عن قطاع الساحل الغربي ومواقع الإنزال المحتملة، ويتألف من:\n(أ) كتيبة مشاة آلية 511، ثلاث سرايا مشاة آلية.\n(ب) كتيبة مشاة آلية 512، ثلاث سرايا مشاة آلية.\n(جـ) سرية دبابات ملحقة، فصيل مضاد دروع، وفصيل طائرات مسيرة استطلاع.\n(2) لواء المشاة الآلي 52. مسؤول عن القطاع الأوسط ومداخل الطرق ",
+      "source": "BLUE slot / friendly ORBAT"
+    },
+    "enemy": {
+      "summary": "RED TEAM\nأ. قيادة القوة المشتركة الحمراء. قيادة عمليات ساحلية/برمائية مسؤولة عن التخطيط والسيطرة على عملية إنزال محدودة باتجاه منطقة البريقة والهدف X.\nب. مجموعة الإنزال البرمائي. تتألف من العناصر التالية:\n(1) قيادة مجموعة الإنزال البرمائي وسرية اتصال مشتركة للربط بين القوات البرية والبحرية والجوية.\n(2) لواء مشاة بحري 41 معزز. مؤلف من:\n(أ) كتيبة مشاة بحرية 411، ثلاث سرايا مشاة بحرية + فصيل استطلاع ساحلي.\n(ب) كتيبة مشاة بحرية 412، ثلاث سرايا مشاة بحرية + فصيل قناصة/مراقبة أمامية.\n(جـ) كتيبة مدرعة ",
+      "source": "RED slot / enemy ORBAT"
+    },
+    "neutral": {
+      "civilian": [],
+      "infrastructure": []
+    },
+    "objectives": [
+      {
+        "name": "الهدف X",
+        "source": "document"
+      }
+    ],
+    "phases": [
+      {
+        "index": 1,
+        "label": "(أ) المرحلة الأولى: استطلاع وتمهيد لمدة 12 - 24 ساعة، تشمل مسح الشواطئ، تعطيل الرادارات الساحلية، وف",
+        "source": "phase-heading"
+      },
+      {
+        "index": 2,
+        "label": "(ب) المرحلة الثانية: إنزال كتيبتي المشاة البحرية لتأمين رأس شاطئ بعمق 3 - 5 كم، مع أولوية لتأمين مخر",
+        "source": "phase-heading"
+      },
+      {
+        "index": 3,
+        "label": "(جـ) المرحلة الثالثة: إدخال لواء المشاة الآلي 42 تدريجياً بعد تأكيد صلاحية الطرق، ثم دفع كتيبة الاست",
+        "source": "phase-heading"
+      },
+      {
+        "index": 4,
+        "label": "(د) المرحلة الرابعة: تثبيت رأس الشاطئ، حماية الجناحين، وتطوير الهجوم باتجاه الهدف X فقط إذا بقيت الخ",
+        "source": "phase-heading"
+      }
+    ],
+    "constraints": [
+      {
+        "text": "(1) نجاح العملية يعتمد على حالة البحر، بقاء ممر الإمداد البحري، وتحييد الدفاع الجوي الأزرق القريب.",
+        "source": "constraints-section"
+      },
+      {
+        "text": "(2) لا تستطيع القوة المدرعة الثقيلة العمل بكفاءة قبل فتح مخارج الشاطئ وإزالة العوائق.",
+        "source": "constraints-section"
+      },
+      {
+        "text": "(3) خسارة سفينة إنزال كبيرة أو تعطيل الميناء المؤقت تؤخر المرحلة الثالثة 24 - 48 ساعة.",
+        "source": "constraints-section"
+      },
+      {
+        "text": "BLUE TEAM",
+        "source": "constraints-section"
+      },
+      {
+        "text": "أ. قوة الواجب المشتركة الزرقاء JTF-1. قيادة دفاع ساحلي مشتركة مكلفة بمنع الإنزال المعادي، حماية ممر البريقة، ومنع RED Team من الوصول إلى الهدف X.",
+        "source": "constraints-section"
+      },
+      {
+        "text": "ب. المكون البري 99. يتألف من:",
+        "source": "constraints-section"
+      },
+      {
+        "text": "(1) لواء المشاة الآلي 51. مسؤول عن قطاع الساحل الغربي ومواقع الإنزال المحتملة، ويتألف من:",
+        "source": "constraints-section"
+      },
+      {
+        "text": "(أ) كتيبة مشاة آلية 511، ثلاث سرايا مشاة آلية.",
+        "source": "constraints-section"
+      }
+    ],
+    "assumptions": [],
+    "ambiguities": [
+      "Map bounds / منطقة العمليات not specified in the document — operator must set the objective position."
+    ],
+    "proposed_unit_counts": {
+      "red": 53,
+      "blue": 53,
+      "neutral": 0
+    },
+    "proposed_map_bounds": null
+  },
+  "llm_fill": {
+    "available": false,
+    "reason": "LLM endpoint not reached from this host; deterministic JS-gate brief only."
+  }
+}

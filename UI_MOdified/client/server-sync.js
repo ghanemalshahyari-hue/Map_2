@@ -7,22 +7,12 @@
 
     const isHttpOrigin = /^https?:$/i.test(window.location.protocol || '');
 
-    // Session cookie is host-scoped: http://127.0.0.1:8000 and http://localhost:8000 do not share it.
-    // Use localhost as the canonical dev URL (matches the server banner). Redirect loopback only.
-    if (isHttpOrigin) {
-        const host = window.location.hostname;
-        if (host === '127.0.0.1' || host === '::1' || host === '[::1]') {
-            try {
-                const next = new URL(window.location.href);
-                next.hostname = 'localhost';
-                if (next.href !== window.location.href) {
-                    window.location.replace(next.href);
-                }
-            } catch (_) { /* ignore */ }
-        }
-    }
+    // Session cookies are host-scoped, so we keep the current loopback host
+    // instead of forcing 127.0.0.1 -> localhost. On some workstations a
+    // different process may be bound on localhost/IPv6, and rewriting the host
+    // silently sends the app to the wrong API server.
 
-    /** Same-origin API URL (explicit origin so login/session always match the page host, e.g. localhost:8000). */
+    /** Same-origin API URL (explicit origin so login/session always match the page host). */
     function apiUrl(path) {
         const p = (path && path.charAt(0) === '/') ? path : '/' + String(path || '');
         return (window.location && window.location.origin ? window.location.origin : '') + p;
@@ -74,7 +64,7 @@
     function collectPrefsFromLocalStorage() {
         const prefs = {};
         try {
-            prefs.theme = localStorage.getItem(THEME_KEY) || 'dark';
+            prefs.theme = localStorage.getItem(THEME_KEY) || 'light';
             prefs.lang = typeof window.getCurrentLang === 'function' ? window.getCurrentLang() : 'en';
             prefs.distanceUnit = localStorage.getItem(DIST_KEY) === 'nm' ? 'nm' : 'km';
             prefs.coordSystem = localStorage.getItem(COORD_SYSTEM_KEY) || 'wgs84';

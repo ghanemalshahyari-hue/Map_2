@@ -40,6 +40,8 @@
         PIPELINE: '#a45ec8',
         RED_UNIT: '#d23a3a',
         BLUE_UNIT: '#3a96d2',
+        RED_BASE: '#d23a3a',       // RED base color (same as RED units)
+        BLUE_BASE: '#3a96d2',      // BLUE base color (same as BLUE units)
         DESTROYED: '#7a7a7a',     // gray applied via CSS grayscale filter on destroyed units
     };
 
@@ -93,6 +95,8 @@
     let detectionContactsEnabled = false; // off by default — read-only overlay, toggled from the HUD
     let engagementLines = [];    // ENG1: per-step firing-solution lines (L.polyline)
     let engagementsEnabled = false; // off by default — read-only overlay, toggled from the HUD
+    let taskingOverlayMarkers = []; // TASK2C: per-step tasking badge markers (L.circleMarker)
+    let taskingOverlayEnabled = false; // off by default — read-only overlay, toggled from HUD
     let aoLayers = [];           // dashed blue polygons for AO boundaries
     let advanceArrows = [];      // L.polylines with arrow tips, BLS → tip
     let attackArrows = [];       // per-step engagement arrows (red kill + blue counterattack pulse)
@@ -111,6 +115,11 @@
     // progress WITHIN one step; we only recompute attrition when the step
     // index actually changes. Reset to -1 on clearScenario / resetMap.
     let playbackAttritionStep = -1;
+    // MAP-CLARITY-1: the step index of the most recent render, so the shared
+    // marker-status pass (refreshAllMarkerStatuses) can merge the current
+    // scenario step's destroyed data with the live registry — same destroyed
+    // result in BOTH the workspace (applyStepProgress) and HUD (applyState) paths.
+    let lastRenderStepIndex = 0;
 
     // AN4: movement trails. unitStepPos records each unit's DISPLAYED position
     // per step it has been rendered at (uid → { stepIdx: [lat,lng] }), so a
@@ -136,6 +145,11 @@
     // px-per-km for the current view.
     let lastAppliedState    = null;
     let lastAppliedScenario = null;
+    // PR-WS2: live World State snapshot (AppWorldState.deriveWorldState) for the
+    // current step. Reconciled from `lastAppliedState` in applyState; objective
+    // status is read from it (the first render field sourced from World State).
+    // Null when WS1 is absent/throws → render falls back to the legacy `state.*`.
+    let lastWorldState      = null;
 
     // setTimeout handles for the in-flight staggered-death scheduler so a
     // step change can cancel anything still queued from the previous step.
@@ -146,7 +160,60 @@
     let scenarioRef    = null;
     let blsCoordByName = {};     // { 'BLS-1': [lon,lat] }
     let objCoord       = null;   // [lon, lat]
+    let objName        = null;   // PR3: current scenario's objective label (legend + fallbacks)
     let objDepthKm     = 95;     // OBJ NASSER nominal depth from coast
+
+    function isFiniteLonLatCoord(coord) {
+        return Array.isArray(coord) && coord.length >= 2 &&
+               Number.isFinite(coord[0]) && Number.isFinite(coord[1]);
+    }
+
+    function resolveCurrentObjectiveCoord(scenario) {
+        const sc = scenario || scenarioRef;
+        if (sc && sc.obj && isFiniteLonLatCoord(sc.obj.coord)) {
+            return [sc.obj.coord[0], sc.obj.coord[1]];
+        }
+        if (isFiniteLonLatCoord(objCoord)) return [objCoord[0], objCoord[1]];
+        return null;
+    }
+
+    function objectiveIdentityTokens(scenario) {
+        const sc = scenario || scenarioRef;
+        const obj = sc && sc.obj ? sc.obj : null;
+        const vals = [
+            obj && obj.id,
+            obj && obj.name,
+            obj && obj.name_en,
+            obj && obj.name_ar,
+            objName,
+            'OBJ-X',
+            'objective',
+            'objective_0',
+        ];
+        return vals
+            .filter(v => v !== undefined && v !== null && String(v).trim())
+            .map(v => String(v).trim().toLowerCase());
+    }
+
+    function isObjectiveRef(ref, scenario) {
+        if (ref === undefined || ref === null) return false;
+        const s = String(ref).trim().toLowerCase();
+        if (!s) return false;
+        return objectiveIdentityTokens(scenario).some(t => s === t || s.indexOf(t) >= 0);
+    }
+
+    function resolveEngagementArcCoordinates(arc, scenario) {
+        const coords = arc && Array.isArray(arc.coordinates) ? arc.coordinates : null;
+        if (!coords || coords.length < 2) return null;
+        const src = coords[0];
+        let dst = coords[1];
+        if (!isFiniteLonLatCoord(src) || !isFiniteLonLatCoord(dst)) return null;
+        if (isObjectiveRef(arc.target_uid || arc.target_id || arc.objective_id, scenario)) {
+            const objective = resolveCurrentObjectiveCoord(scenario);
+            if (objective) dst = objective;
+        }
+        return [[src[0], src[1]], [dst[0], dst[1]]];
+    }
 
     // ── km / lon-lat helpers (mirror wargame.py offset_lonlat / lerp) ─
     // We work in [lon, lat] inside this block so it ports 1:1 from the
@@ -568,7 +635,8 @@
     // (Fixing 0.35, Support 0.55, Follow-on idle until step 6, etc.).
     function redPositionLonLat(meta, stepIndex, progress) {
         const blsCoord = blsCoordByName[meta.bls];
-        if (!blsCoord || !objCoord) return meta.baseCoord;
+        const objectiveLL = resolveCurrentObjectiveCoord(scenarioRef);
+        if (!blsCoord || !objectiveLL) return meta.baseCoord;
         const role = String(meta.role || '');
 
         // Static-role support: never advance toward OBJ.
@@ -597,7 +665,7 @@
         else if (role === 'Follow-on'    && stepIndex < 6)     unitProgress = 0;
         else if (role === 'Exploitation' && stepIndex < 8)     unitProgress = 0;
 
-        let pos = lerpLonLat(blsCoord, objCoord, unitProgress);
+        let pos = lerpLonLat(blsCoord, objectiveLL, unitProgress);
         const redOff = computeDisplayOffset({ mode: 'red-spread', uid: meta.uid });
         if (stepIndex >= 3 && redOff) {
             pos = offsetLonLat(pos, redOff.eastKm, redOff.northKm);
@@ -706,7 +774,8 @@
         if (!hasMap()) return false;
         try {
             const aoPts = [];
-            if (Array.isArray(objCoord) && objCoord.length === 2) aoPts.push([objCoord[1], objCoord[0]]);
+            const objectiveLL = resolveCurrentObjectiveCoord(scenarioRef);
+            if (objectiveLL) aoPts.push([objectiveLL[1], objectiveLL[0]]);
             Object.keys(blsCoordByName).forEach((k) => {
                 const c = blsCoordByName[k];
                 if (Array.isArray(c) && c.length === 2) aoPts.push([c[1], c[0]]);
@@ -797,14 +866,14 @@
         let svg = '';
         try {
             if (window.ms && typeof window.ms.Symbol === 'function') {
-                const sym = new window.ms.Symbol(sidc, { size: 34 });
+                const sym = new window.ms.Symbol(sidc, { size: 20 });
                 if (sym.isValid && sym.isValid()) svg = sym.asSVG();
             }
         } catch (_) { /* fall back below */ }
-        const inner = svg || ('<div style="width:34px;height:24px;border:2px solid ' + color + ';background:rgba(0,0,0,0.05);"></div>');
+        const inner = svg || ('<div style="width:20px;height:14px;border:2px solid ' + color + ';background:rgba(0,0,0,0.05);"></div>');
         const html = '<div class="wg-adj-aggregate-inner" style="position:relative;display:inline-block;">' + inner +
             '<span class="wg-adj-aggregate-badge" style="background:' + color + ';">' + count + '</span></div>';
-        return window.L.divIcon({ className: 'wg-adj-aggregate', html: html, iconSize: [42, 42], iconAnchor: [21, 21] });
+        return window.L.divIcon({ className: 'wg-adj-aggregate', html: html, iconSize: [28, 28], iconAnchor: [14, 14] });
     }
 
     // Render the roll-up for the current zoom. Idempotent: clears + rebuilds
@@ -1070,7 +1139,9 @@
                 const prev = unitStepPos[uid][idx - 1];
                 if (!prev || _trailKm(prev, cur) < TRAIL_MIN_KM) continue;
                 const line = window.L.polyline([prev, cur], {
-                    color, weight: 2, opacity: 0.5, dashArray: '1 6', lineCap: 'round',
+                    // MAP-CLARITY-1: faint, sparse trails so movement reads as a hint,
+                    // not a dotted curtain competing with the unit symbols.
+                    color, weight: 1.5, opacity: 0.3, dashArray: '1 9', lineCap: 'round',
                     interactive: false, className: 'wg-adj-trail', pane: SCENARIO_GRAPHICS_PANE,
                 });
                 line.addTo(layerGroup);
@@ -1311,12 +1382,22 @@
     // JSON fields that otherwise sit unused (`score`, `terrain_friction`,
     // `nearest_blue_km`, `throughput`, `capacity`) so the operator can read
     // why a beach was picked.
-    function buildBlsTooltip(bls, status) {
+    function buildBlsTooltip(bls, status, unitCounts) {
         if (!bls) return '';
         const parts = [
             `<strong>${esc(bls.name)} — ${esc(status || 'STAGED')}</strong>`,
             `<em>${esc(bls.role || '')}</em>`,
         ];
+        if (bls.side) {
+            const sideLabel = bls.side === 'BLUE' ? '🔵 BLUE' : '🔴 RED';
+            parts.push(`Side: ${sideLabel}`);
+        }
+        if (unitCounts) {
+            const redCount = unitCounts.red || 0;
+            const blueCount = unitCounts.blue || 0;
+            const total = redCount + blueCount;
+            if (total > 0) parts.push(`Units: RED ${redCount} · BLUE ${blueCount} (${total} total)`);
+        }
         if (Number.isFinite(bls.score))            parts.push(`Score: ${bls.score}`);
         if (bls.terrain_friction)                  parts.push(`Terrain: ${esc(bls.terrain_friction)}`);
         if (Number.isFinite(bls.throughput))       parts.push(`Throughput: ${bls.throughput}`);
@@ -1617,10 +1698,10 @@
     // Icon size by Blue echelon — division biggest, company smallest.
     function blueIconSize(echelon) {
         switch (echelon) {
-            case 'division':  return 38;
-            case 'brigade':   return 34;
-            case 'battalion': return 30;
-            default:          return 26; // company
+            case 'division':  return 20;
+            case 'brigade':   return 18;
+            case 'battalion': return 16;
+            default:          return 14; // company
         }
     }
 
@@ -1673,10 +1754,10 @@
     // echelons. Visually parity with Blue: division big, company small.
     function redIconSize(echelon) {
         switch (echelon) {
-            case 'division':  return 38;
-            case 'brigade':   return 34;
-            case 'battalion': return 30;
-            default:          return 26; // support / company
+            case 'division':  return 20;
+            case 'brigade':   return 18;
+            case 'battalion': return 16;
+            default:          return 14; // support / company
         }
     }
 
@@ -1740,6 +1821,7 @@
     // graphics (520) and unit markers (600) — they annotate units, never occlude.
     const CONTACTS_PANE = 'rmoozContactsPane';
     const ENGAGEMENTS_PANE = 'rmoozEngagementsPane';
+    const TASKING_OVERLAY_PANE = 'rmoozTaskingOverlayPane'; // TASK2C: sits above contacts (430), below graphics (520)
     function ensureScenarioGraphicsPane() {
         const m = window.map;
         if (!m || typeof m.createPane !== 'function') return;
@@ -1762,6 +1844,13 @@
             const p = m.createPane(ENGAGEMENTS_PANE);
             p.style.zIndex = '425';
             p.style.pointerEvents = 'none'; // read-only annotation, never intercepts clicks
+        }
+        // TASK2C: Tasking order badges sit above contact dots (430) but below
+        // scenario graphics (520). Read-only annotation; never intercepts clicks.
+        if (!m.getPane(TASKING_OVERLAY_PANE)) {
+            const p = m.createPane(TASKING_OVERLAY_PANE);
+            p.style.zIndex = '435';
+            p.style.pointerEvents = 'none';
         }
     }
 
@@ -1788,7 +1877,8 @@
         for (const b of (scenario.bls_template || [])) {
             if (b && b.name && Array.isArray(b.coord)) blsCoordByName[b.name] = b.coord;
         }
-        objCoord   = (scenario.obj && Array.isArray(scenario.obj.coord)) ? scenario.obj.coord : null;
+        objCoord   = resolveCurrentObjectiveCoord(scenario);
+        objName    = (scenario.obj && (scenario.obj.name || scenario.obj.id)) || null;   // PR3: scenario-derived label
         objDepthKm = (scenario.obj && Number.isFinite(scenario.obj.target_depth_km))
                      ? scenario.obj.target_depth_km : 95;
 
@@ -1798,7 +1888,14 @@
         // Blue brigade rear and the two battalion flanks. Same source as
         // the Python renders (nato-map-layers.geojson, autoFlank metadata).
         for (const ao of (scenario.ao_boundaries || [])) {
-            const polys = ao.type === 'MultiPolygon' ? ao.coordinates : [ao.coordinates];
+            // PR3: tolerate BOTH GeoJSON (type/coordinates) and the bare `coords`
+            // ring shape. Normalize to polys = [ [ring,...], ... ] for the loops
+            // below; unknown/malformed → [] (skip, never throw).
+            const polys = ao.type === 'MultiPolygon'
+                ? (Array.isArray(ao.coordinates) ? ao.coordinates : [])
+                : Array.isArray(ao.coordinates) ? [ao.coordinates]
+                : (Array.isArray(ao.coords) && Array.isArray(ao.coords[0]) && typeof ao.coords[0][0] === 'number') ? [[ao.coords]]
+                : [];
             const roleLabel = ao.role ? displayRole(ao.role) : '';
             const lengthTxt = Number.isFinite(ao.lengthKm) ? `${ao.lengthKm} km` : '';
             const pillHtml = (roleLabel || lengthTxt)
@@ -1806,6 +1903,7 @@
                 : '';
             for (const poly of polys) {
                 for (const ring of poly) {
+                    if (!Array.isArray(ring) || ring.length < 2 || !Array.isArray(ring[0])) continue;
                     const latlngs = ring.map(c => [c[1], c[0]]);
                     const line = window.L.polygon(latlngs, {
                         color: '#5da9e8',
@@ -1857,16 +1955,26 @@
         // Role + score + terrain are stashed on the marker so subsequent
         // setIcon calls (status updates) can re-render the role tag and
         // tooltip rebuilds can pull the full site assessment.
+        // Phase 4C-2: Support BLUE bases with distinct color and unit counts.
         for (const bls of scenario.bls_template || []) {
+            // Calculate unit counts assigned to this base
+            const redCount = (scenario.red_units || []).filter(u => u.bls === bls.name).length;
+            const blueCount = (scenario.blue_units_initial || []).filter(u => u.base_id === bls.name).length;
+            const unitCounts = { red: redCount, blue: blueCount };
+
+            // Choose base color based on side (BLUE or RED)
+            const baseColor = (bls.side === 'BLUE') ? COLORS.BLUE_BASE : COLORS.RED_BASE;
+
             const m = window.L.marker(
                 [bls.coord[1], bls.coord[0]],
                 {
-                    icon: blsIcon(COLORS.BLS.STAGED, bls.name.replace('BLS-', ''), bls.role),
+                    icon: blsIcon(baseColor, bls.name.replace('BLS-', ''), bls.role),
                     title: `${bls.name} — ${bls.role}`,
                 },
-            ).bindTooltip(buildBlsTooltip(bls, 'STAGED'), { permanent: false, sticky: true });
+            ).bindTooltip(buildBlsTooltip(bls, 'STAGED', unitCounts), { permanent: false, sticky: true });
             m._wgBls = {
                 name:             bls.name,
+                side:             bls.side || 'RED',
                 role:             bls.role,
                 score:            bls.score,
                 terrain_friction: bls.terrain_friction,
@@ -1874,6 +1982,8 @@
                 nearest_blue_km:  bls.nearest_blue_km,
                 throughput:       bls.throughput,
                 capacity:         bls.capacity,
+                red_unit_count:   redCount,
+                blue_unit_count:  blueCount,
             };
             m.addTo(layerGroup);
             blsMarkers[bls.name] = m;
@@ -1910,15 +2020,36 @@
         // glance how big the objective area is relative to the red
         // advance.
         const obj = scenario.obj;
-        if (obj && obj.coord) {
+        const objectiveLL = resolveCurrentObjectiveCoord(scenario);
+        if (obj && objectiveLL) {
+            const displayObj = Object.assign({}, obj, { coord: objectiveLL });
             objMarker = window.L.marker(
-                [obj.coord[1], obj.coord[0]],
-                { icon: targetIcon(COLORS.OBJ.DORMANT, obj.name), title: obj.name },
-            ).bindTooltip(buildObjTooltip(obj, 'DORMANT'), { permanent: false, sticky: true });
+                [objectiveLL[1], objectiveLL[0]],
+                { icon: targetIcon(COLORS.OBJ.DORMANT, obj.name),
+                  title: obj.name + ' — click for objective evidence (combat / readiness / doctrine)',
+                  riseOnHover: true },
+            ).bindTooltip(buildObjTooltip(displayObj, 'DORMANT'), { permanent: false, sticky: true });
+
+            // OBJ-C: Click handler for objective evidence panel.
+            // FIX: `stepIdx` was undefined here (ReferenceError on click → panel never
+            // opened). Read the live current step from the last applied state instead.
+            objMarker.on('click', function() {
+                const _si = (lastAppliedState && Number.isFinite(lastAppliedState.step_index))
+                    ? lastAppliedState.step_index : 0;
+                document.dispatchEvent(new CustomEvent('rmooz:objective-selected', {
+                    detail: { objective: displayObj, objective_id: obj.id || 'objective_0', step_index: _si }
+                }));
+            });
+
             objMarker.addTo(layerGroup);
+            // OBJ-C: make the objective discoverably clickable — it opens the evidence panel.
+            try {
+                const _objEl = objMarker.getElement && objMarker.getElement();
+                if (_objEl) { _objEl.style.cursor = 'pointer'; _objEl.classList.add('rmooz-objective-clickable'); }
+            } catch (_e) { /* non-fatal */ }
 
             if (Number.isFinite(obj.radius_km) && obj.radius_km > 0) {
-                objSecurityRing = window.L.circle([obj.coord[1], obj.coord[0]], {
+                objSecurityRing = window.L.circle([objectiveLL[1], objectiveLL[0]], {
                     radius:      obj.radius_km * 1000,
                     color:       COLORS.OBJ.DORMANT,
                     weight:      1.5,
@@ -2019,18 +2150,14 @@
             const size = redIconSize(unit.echelon);
             const _sym = resolveUnitSymbolProfile(unit); // SYM2: remap unsupported SIDCs to family symbols
             const icon = sidcIcon(_sym.resolved_sidc, size) || diamondIcon(COLORS.RED_UNIT, unit.label);
+            const _redTT = `${unit.label || displayRedId(unit.uid)} — ${displayRole(unit.role)} — STAGED` +
+                // PR-109: Red staging-cluster transparency note.
+                `<div style="margin-top:4px;padding-top:3px;border-top:1px solid #3a2a2a;font-size:9px;color:#8a6a6a;font-style:italic;">${esc((window.t && window.t('tooltip-red-staging-note')) || 'Multiple Red units may be intentionally staged at this assembly area.')}</div>`;
             const m = window.L.marker(
                 [initialLonLat[1], initialLonLat[0]],
                 { icon, title: (unit.label || displayRedId(unit.uid)) + ' — ' + displayRole(unit.role) },
-            ).bindTooltip(
-                `${unit.label || displayRedId(unit.uid)} — ${displayRole(unit.role)} — STAGED` +
-                // PR-109: Red staging-cluster transparency note.
-                // Informs the operator that co-located Red markers are intentional
-                // staging-area groupings, not a display error.
-                // No raw coords exposed, no Event Log entries, no storage writes.
-                `<div style="margin-top:4px;padding-top:3px;border-top:1px solid #3a2a2a;font-size:9px;color:#8a6a6a;font-style:italic;">${esc((window.t && window.t('tooltip-red-staging-note')) || 'Multiple Red units may be intentionally staged at this assembly area.')}</div>`,
-                { permanent: false }
-            );
+            ).bindTooltip(_redTT, { permanent: false });
+            m._baseTooltip = _redTT; // TASK2B: base content; _refreshTaskingTooltips() appends tasking line on top
             m._wgRedMeta = meta;
             // Expose the same hooks the Units feature attaches to drag-placed
             // markers, so red-team-controller.scanMapForUnits() can discover
@@ -2041,6 +2168,7 @@
             m._sidc          = _sym.resolved_sidc || sidc; // SYM2: render+attrition use the resolved SIDC
             m._symbolProfile = _sym;
             m._iconSize = size;
+            m._baseIcon = icon;   // MAP-CLARITY-1: compose the destroyed-X from this
             m._unitId   = unit.uid;
             m._unitData = {
                 id:    unit.uid,
@@ -2085,17 +2213,14 @@
             const sidc = unit.sidc || blueSidcFor(unit);
             const _symB = resolveUnitSymbolProfile(unit); // SYM2: remap unsupported SIDCs to family symbols
             const icon = sidcIcon(_symB.resolved_sidc, size) || squareIcon(COLORS.BLUE_UNIT, unit.base_id, Math.max(10, Math.round(size / 2)));
+            const _blueTT = `${displayBlueId(unit.base_id)}${unit.echelon ? ' (' + unit.echelon + ')' : ''} — ACTIVE` +
+                // PR-107: display-offset transparency footer (Blue units only).
+                `<div style="margin-top:4px;padding-top:3px;border-top:1px solid #2a3a4a;font-size:9px;color:#6a7a8a;font-style:italic;">${esc((window.t && window.t('tooltip-display-offset-notice')) || 'Displayed position is offset for readability.')}</div>`;
             const m = window.L.marker(
                 [unit.coord[1], unit.coord[0]],
                 { icon, title: displayBlueId(unit.base_id) + (unit.role ? ' · ' + displayRole(unit.role) : '') + (unit.echelon ? ' (' + unit.echelon + ')' : '') },
-            ).bindTooltip(
-                `${displayBlueId(unit.base_id)}${unit.echelon ? ' (' + unit.echelon + ')' : ''} — ACTIVE` +
-                // PR-107: display-offset transparency footer (Blue units only).
-                // textContent-equivalent: esc() encodes the i18n string before
-                // inserting into the template. No raw coords, no event log, no storage.
-                `<div style="margin-top:4px;padding-top:3px;border-top:1px solid #2a3a4a;font-size:9px;color:#6a7a8a;font-style:italic;">${esc((window.t && window.t('tooltip-display-offset-notice')) || 'Displayed position is offset for readability.')}</div>`,
-                { permanent: false }
-            );
+            ).bindTooltip(_blueTT, { permanent: false });
+            m._baseTooltip = _blueTT; // TASK2B: base content; _refreshTaskingTooltips() appends tasking line on top
             m._wgBlueMeta = {
                 uid:       unit.unit_uid,
                 side:      'BLUE',
@@ -2111,6 +2236,7 @@
             m._sidc          = _symB.resolved_sidc || sidc || null; // SYM2: resolved SIDC
             m._symbolProfile = _symB;
             m._iconSize = size; // needed so the damaged/active SIDC rebuild keeps the same scale
+            m._baseIcon = icon;   // MAP-CLARITY-1: compose the destroyed-X from this
             m._unitId   = unit.unit_uid;
             m._unitData = {
                 id:    unit.unit_uid,
@@ -2163,6 +2289,12 @@
         // is a placeholder; applyState() fills it as the trial progresses.
         addSitrep();
 
+        try {
+            document.dispatchEvent(new CustomEvent('rmooz:scenario-visibility-changed', {
+                detail: { drawn: true }
+            }));
+        } catch (_) { /* ignore */ }
+
         return true;
     }
 
@@ -2202,7 +2334,7 @@
                 <hr style="border:none;border-top:1px solid #2a3140;margin:6px 0;">
                 <div><span style="color:${COLORS.RED_UNIT};font-weight:700;">◆</span>&nbsp;Red unit (hostile, APP-6)</div>
                 <div><span style="color:${COLORS.BLUE_UNIT};font-weight:700;">▮</span>&nbsp;Blue unit (friendly, APP-6)</div>
-                <div><span style="color:#888;">⊕</span>&nbsp;OBJ&nbsp;NASSER</div>
+                <div><span style="color:#888;">⊕</span>&nbsp;<span class="wg-adj-legend-obj">Objective</span></div>
                 <hr style="border:none;border-top:1px solid #2a3140;margin:6px 0;">
                 <div><span style="display:inline-block;width:18px;border-top:2px dashed ${COLORS.PIPELINE};vertical-align:middle;margin-right:6px;"></span>Pipeline (planned)</div>
                 <div><span style="display:inline-block;width:18px;border-top:3px solid ${COLORS.RED_UNIT};vertical-align:middle;margin-right:6px;"></span>Red advance</div>
@@ -2234,6 +2366,12 @@
     function showLegend() {
         legendVisible = true;
         addLegend();
+        // PR3: the legend control is cached, so refresh the scenario-derived
+        // objective label here on every (re)draw. textContent auto-escapes.
+        try {
+            const oe = document.querySelector('.wg-adj-legend-obj');
+            if (oe) oe.textContent = objName || 'Objective';
+        } catch (_) {}
         return legendVisible;
     }
 
@@ -2494,6 +2632,14 @@
     }
     function deriveDisplayOutcome(state) {
         if (!state) return 'DORMANT';
+        // PR-WS2.5: the objective-status evidence rule now lives in World State
+        // (AppWorldState.computeObjectiveStatusDisplay, run via applyDerivations).
+        // Read the World-State-computed value for the live state; the inline rule
+        // below is kept VERBATIM only as the fallback when WS1 is absent.
+        const ws = (lastWorldState && state === lastAppliedState) ? lastWorldState : null;
+        if (ws && ws.derived && ws.derived.objective_status_display) {
+            return ws.derived.objective_status_display;
+        }
         const status = state.objective_status || 'DORMANT';
         // Only re-litigate CAPTURED — the others (DENIED, THREATENED,
         // CONTESTED, DORMANT) describe Red NOT dominating, and the
@@ -2567,9 +2713,8 @@
         const progress = progressFromState(state);
         if (progress <= 0) return;
 
-        const obj = scenario.obj;
-        if (!obj || !Array.isArray(obj.coord)) return;
-        const objLL = obj.coord;
+        const objLL = resolveCurrentObjectiveCoord(scenario);
+        if (!objLL) return;
 
         const accent = outcomeAccent(state);
         const reach = Math.min(progress, 1.0) * (accent.reachFactor != null ? accent.reachFactor : 1.0);
@@ -2583,11 +2728,14 @@
             const ring = bls.map(b => [b.coord[1], b.coord[0]])
                 .concat(deep.slice().reverse().map(p => [p[1], p[0]]));
             salientLayer = window.L.polygon(ring, {
+                // MAP-CLARITY-1: the control band is context, not a focal element —
+                // keep it faint so unit symbols stay visually dominant (avoids the
+                // red/purple "curtain" effect over a dense laydown).
                 color:       accent.color,
-                weight:      1.5,
-                opacity:     accent.opacity * 0.6,
+                weight:      1,
+                opacity:     accent.opacity * 0.35,
                 fillColor:   accent.fillColor,
-                fillOpacity: accent.fillOpacity,
+                fillOpacity: accent.fillOpacity * 0.5,
                 dashArray:   accent.dashArray,
                 interactive: false,
             }).bindTooltip(
@@ -3316,10 +3464,13 @@
                 lines.push(`<div style="margin-top:3px;font-size:10px;">${stateBits.join(' · ')}</div>`);
             }
 
-            // Actor narrative (what this unit DID this phase)
+            // Actor narrative (what this unit DID this phase).
+            // TASK2B: prefer component_label from world state (human-readable) over raw action_component.
             if (actor && actor.action_what) {
+                const _wsT = lastWorldState && lastWorldState.derived && lastWorldState.derived.unit_tasking;
+                const _compLabel = (_wsT && _wsT[uid] && _wsT[uid].component_label) || actor.action_component || 'action';
                 lines.push(`<div style="margin-top:6px;padding-top:4px;border-top:1px solid #345;font-size:11px;">
-                    <strong style="color:#9bd6a3;">▶ ${esc(actor.action_component || 'action')}:</strong> ${esc(actor.action_what)}
+                    <strong style="color:#9bd6a3;">▶ ${esc(_compLabel)}:</strong> ${esc(actor.action_what)}
                 </div>`);
                 if (actor.action_intended_effect) {
                     lines.push(`<div style="font-size:10px;color:#bcd;font-style:italic;">→ ${esc(actor.action_intended_effect)}</div>`);
@@ -3583,7 +3734,7 @@
         // Group arcs by actor so count distributes across all targets
         const byActor = new Map();
         for (const arc of arcs) {
-            if (!arc?.coordinates || arc.coordinates.length < 2) continue;
+            if (!resolveEngagementArcCoordinates(arc, sc)) continue;
             if (!byActor.has(arc.actor_uid)) byActor.set(arc.actor_uid, []);
             byActor.get(arc.actor_uid).push(arc);
         }
@@ -3597,7 +3748,9 @@
             const perTarget = Math.max(1, Math.min(5, Math.round(total / actorArcs.length)));
 
             actorArcs.forEach((arc, arcIdx) => {
-                const [src, dst] = arc.coordinates;
+                const resolved = resolveEngagementArcCoordinates(arc, sc);
+                if (!resolved) return;
+                const [src, dst] = resolved;
                 const startLL = [src[1], src[0]];
                 const endLL   = [dst[1], dst[0]];
                 for (let i = 0; i < perTarget; i++) {
@@ -3614,7 +3767,7 @@
     function groupArcsByTargetCluster(arcs, clusterKm) {
         const clusters = [];
         for (const arc of arcs) {
-            const coords = arc && Array.isArray(arc.coordinates) ? arc.coordinates : null;
+            const coords = resolveEngagementArcCoordinates(arc, scenarioRef);
             if (!coords || coords.length < 2) continue;
             const [src, dst] = coords;
             if (!Array.isArray(src) || !Array.isArray(dst)) continue;
@@ -3689,8 +3842,8 @@
         if (!allArcs.length) return;
 
         const isBlueArc = a => { const s = (a.actor_side || '').toUpperCase(); return s === 'BLUE' || s === 'B' || s === 'FRIEND'; };
-        const redArcs  = allArcs.filter(a => !isBlueArc(a) && Array.isArray(a.coordinates) && a.coordinates.length >= 2);
-        const blueArcs = allArcs.filter(a =>  isBlueArc(a) && Array.isArray(a.coordinates) && a.coordinates.length >= 2);
+        const redArcs  = allArcs.filter(a => !isBlueArc(a) && !!resolveEngagementArcCoordinates(a, sc));
+        const blueArcs = allArcs.filter(a =>  isBlueArc(a) && !!resolveEngagementArcCoordinates(a, sc));
 
         // ONE arrow per side: centroid of all actor positions → centroid of all
         // target positions. Multiple units attacking the same general area are one
@@ -3698,12 +3851,17 @@
         function drawAxisArrow(arcs, color, outlineColor, label) {
             if (!arcs.length) return;
             let aLat = 0, aLng = 0, tLat = 0, tLng = 0;
+            let used = 0;
             for (const arc of arcs) {
-                const [src, dst] = arc.coordinates;
+                const resolved = resolveEngagementArcCoordinates(arc, sc);
+                if (!resolved) continue;
+                const [src, dst] = resolved;
                 aLat += src[1]; aLng += src[0];
                 tLat += dst[1]; tLng += dst[0];
+                used++;
             }
-            const n = arcs.length;
+            const n = used;
+            if (!n) return;
             aLat /= n; aLng /= n; tLat /= n; tLng /= n;
 
             // Pull tip back so arrowhead stops before the target cluster.
@@ -3721,13 +3879,17 @@
             ];
 
             const members = arcs.map(a => `${a.actor_uid || '?'} → ${a.target_uid || '?'}`).join(', ');
+            // MAP-CLARITY-1: keep the engagement axis SECONDARY to unit symbols.
+            // Slim shaft + modest arrowhead + reduced opacity so one axis per side
+            // reads clearly without a heavy red/blue band dominating the map.
+            // (Reverses the earlier 5/12/18 enlargement, which read too heavy.)
             const arrow = createManeuverArrowPolygon(centerline, color, {
                 bodyHalfPx:    3,
                 headHalfPx:    9,
-                headLenPx:     14,
+                headLenPx:     13,
                 outline:       outlineColor,
-                outlineWidthPx: 0.8,
-                opacity:       0.75,
+                outlineWidthPx: 0.6,
+                opacity:       0.55,
                 pane:          SCENARIO_GRAPHICS_PANE,
             });
             if (arrow) {
@@ -4007,7 +4169,8 @@
             parentId,
             rootId,
             side:     'friendly',
-            status:   UNIT_STATUS.ACTIVE,
+            // Generic: honor a static destroyed flag on the unit object.
+            status:   resolveUnitDestroyedState(unit) ? UNIT_STATUS.DESTROYED : UNIT_STATUS.ACTIVE,
             strength: 1.0,
             canMove:  true,
             canFight: true,
@@ -4025,7 +4188,8 @@
             parentId: unit.parent_uid || null,
             rootId:   unit.formation_uid || unit.parent_uid || uid,
             side:     'hostile',
-            status:   UNIT_STATUS.ACTIVE,
+            // Generic: honor a static destroyed flag on the unit object.
+            status:   resolveUnitDestroyedState(unit) ? UNIT_STATUS.DESTROYED : UNIT_STATUS.ACTIVE,
             strength: Number.isFinite(unit.strength) ? unit.strength : 1.0,
             canMove:  true,
             canFight: true,
@@ -4102,16 +4266,12 @@
         };
 
         if (effStatus === UNIT_STATUS.DESTROYED) {
-            // Restore the active SIDC first (so we don't render the damaged
-            // bar AND the destroyed X stacked), then apply the destroyed
-            // treatment to the resulting fresh element.
+            // Clear any damaged-icon state, then swap to the COMPOSED destroyed
+            // icon: markUnitAsDestroyed rebuilds the marker icon with the grayed
+            // base symbol + kill-X baked into the icon HTML (atomic via setIcon,
+            // always on top, can't be wiped by a later re-render), z-lifts it
+            // above overlaps, and sets the "Destroyed" title. Base size unchanged.
             unmarkUnitAsDamaged(marker);
-            const el2 = refreshEl();
-            if (el2) {
-                el2.style.opacity = '';
-                el2.style.filter  = '';
-                el2.classList.add('wg-destroyed');
-            }
             markUnitAsDestroyed(marker);
             destroyedMarkers.set(marker._leaflet_id, marker);
             dbg('render destroyed', {
@@ -4128,6 +4288,7 @@
             // Hostile: opacity-based fade only — red icon stays unambiguous.
             const isFriendly = entry && entry.side === 'friendly';
             unmarkUnitAsDestroyed(marker);
+            try { marker.setZIndexOffset(0); } catch (_) {}
             if (isFriendly) {
                 markUnitAsDamaged(marker);
                 const el2 = refreshEl();
@@ -4159,6 +4320,7 @@
         } else {
             unmarkUnitAsDestroyed(marker);
             unmarkUnitAsDamaged(marker);
+            try { marker.setZIndexOffset(0); } catch (_) {}
             const el2 = refreshEl();
             if (el2) {
                 el2.style.opacity = '';
@@ -4188,28 +4350,67 @@
     // treatments plus reset, so we map to those and DO NOT fabricate finer
     // states the data/renderer don't support. The granular status_change is
     // preserved verbatim on marker._attrition for tooltips/panels (no loss).
-    //   destroyed / killed / sunk            → DESTROYED (gray + X overlay)
-    //   anything else explicitly flagged     → DEGRADED  (conservative "affected")
-    //   unchanged / missing                  → no change (active)
+    //   destroyed / killed / sunk / eliminated / neutralized → DESTROYED (gray + X)
+    //   anything else explicitly flagged                     → DEGRADED  ("affected")
+    //   unchanged / missing                                  → no change (active)
+    //
+    // Generic kill vocabulary (data-shape, NOT scenario-name based): matches any
+    // existing scenario's "destroyed" status_change synonyms. Kept as a single
+    // resolver so every code path (HUD + playback) agrees on what "destroyed"
+    // means. Does NOT invent status — only classifies values the data supplies.
+    const _KILL_WORDS = ['destroy', 'killed', 'sunk', 'eliminat', 'neutraliz'];
+    function isDestroyedStatusChange(statusChange) {
+        if (!statusChange || typeof statusChange !== 'string') return false;
+        const s = statusChange.toLowerCase();
+        if (s === 'unchanged') return false;
+        return _KILL_WORDS.some(w => s.indexOf(w) !== -1);
+    }
     function attritionStatusOf(statusChange) {
         if (!statusChange || typeof statusChange !== 'string') return null;
         const s = statusChange.toLowerCase();
         if (s === 'unchanged') return null;
-        if (s.indexOf('destroy') !== -1 || s === 'killed' || s === 'sunk') {
-            return UNIT_STATUS.DESTROYED;
-        }
+        if (isDestroyedStatusChange(s)) return UNIT_STATUS.DESTROYED;
         // Explicitly flagged but not a kill → conservative "affected"/degraded.
         return UNIT_STATUS.DEGRADED;
     }
 
-    // Does this scenario carry per-step engagement data we can render? Non-W3
-    // scenarios without affected[]/engagement_arcs[] are left completely
-    // untouched (applyStepAttrition becomes a no-op for them).
+    // MAP-CLARITY-1: generic per-unit "is this unit destroyed?" resolver. Works
+    // for ANY uploaded scenario shape — checks every common destroyed signal a
+    // unit object (or per-step unit_state entry) might carry. Used at unit
+    // registration (static destroyed) and per-step attrition (unit_state), so a
+    // destroyed unit gets the kill-X regardless of which field the producer used.
+    // Reads only existing data; invents nothing.
+    function resolveUnitDestroyedState(u) {
+        if (!u || typeof u !== 'object') return false;
+        if (u.destroyed === true) return true;
+        if (isDestroyedStatusChange(u.status)) return true;
+        if (isDestroyedStatusChange(u.state)) return true;
+        if (isDestroyedStatusChange(u.status_change)) return true;
+        if (Number.isFinite(u.strength) && u.strength <= 0) return true;
+        if (Number.isFinite(u.current_strength) && u.current_strength <= 0) return true;
+        return false;
+    }
+
+    // MAP-CLARITY-1: normalize a unit's identity across every producer shape so
+    // status data and markers join on the SAME key. Generic — no scenario logic.
+    function getUnitIdentity(u) {
+        if (u == null) return null;
+        if (typeof u === 'string') return u;
+        return u.uid || u.unit_uid || u.id || u.unitId || u.target_uid || u.actor_uid || null;
+    }
+
+    // Does this scenario carry per-step engagement data we can render? Scenarios
+    // with none of affected[] / engagement_arcs[] / a destroyed unit_state entry
+    // are left completely untouched (applyStepAttrition becomes a no-op).
+    // MAP-CLARITY-1: unit_state is included so generic uploads that only flag
+    // destroyed via per-step unit_state still drive the kill-X.
     function scenarioHasAttritionData(scenario) {
         const steps = scenario && Array.isArray(scenario.steps) ? scenario.steps : [];
         return steps.some(s => s && (
             (Array.isArray(s.affected) && s.affected.length) ||
-            (Array.isArray(s.engagement_arcs) && s.engagement_arcs.length)
+            (Array.isArray(s.engagement_arcs) && s.engagement_arcs.length) ||
+            (s.unit_state && typeof s.unit_state === 'object' &&
+                Object.keys(s.unit_state).some(uid => resolveUnitDestroyedState(s.unit_state[uid])))
         ));
     }
 
@@ -4260,6 +4461,13 @@
                     cause_doctrine: arc.cause_doctrine || null,
                 });
             });
+            // MAP-CLARITY-1: generic per-step unit_state — a unit flagged
+            // destroyed here (destroyed:true / status / state / strength<=0) gets
+            // the kill-X even when the producer emits no affected[]/arcs[] rows.
+            const us = (row.unit_state && typeof row.unit_state === 'object') ? row.unit_state : {};
+            for (const uid in us) {
+                if (resolveUnitDestroyedState(us[uid])) consume(uid, 'destroyed', i, {});
+            }
         }
         return { status, info };
     }
@@ -4396,10 +4604,25 @@
     // registry. Destroyed parents reach their children through the chain
     // walk in getEffectiveUnitStatus — no extra plumbing needed.
     function refreshAllMarkerStatuses() {
+        // Generic merge: a unit is DESTROYED if the live registry (per_unit_deltas
+        // cascade) OR the current scenario step (unit_state / affected[] /
+        // engagement_arcs[]) says so. This makes the in-icon kill-X appear on the
+        // unit marker for ANY scenario shape and in BOTH render paths — the X is
+        // no longer dependent on the forward-only death-effect choreography.
+        let stepStatus = null;
+        try {
+            if (scenarioRef && scenarioHasAttritionData(scenarioRef)) {
+                const r = computeStepAttrition(scenarioRef, lastRenderStepIndex);
+                stepStatus = r && r.status;
+            }
+        } catch (_) { stepStatus = null; }
         for (const m of collectAllMarkers()) {
             const uid = m._wgUnit && m._wgUnit.id;
             if (!uid) continue;
-            const eff = getEffectiveUnitStatus(uid);
+            let eff = getEffectiveUnitStatus(uid);
+            if (eff !== UNIT_STATUS.DESTROYED && stepStatus && stepStatus.get(uid) === UNIT_STATUS.DESTROYED) {
+                eff = UNIT_STATUS.DESTROYED;
+            }
             renderMarkerByStatus(m, eff);
         }
     }
@@ -4622,30 +4845,26 @@
     function scheduleRedDestructions(state, isForward) {
         if (!isForward || !state) return;
         const affected = Array.isArray(state.affected) ? state.affected : [];
-        const redDeaths = affected.filter(a => a && a.side === 'RED' && a.status_change === 'destroyed');
-        console.log('[DBG] redDestructions: isForward=', isForward, 'redDeaths=', redDeaths.length, redDeaths.map(a=>a.uid), 'redMarkerKeys sample:', Object.keys(redMarkers).slice(0,3));
+        const redDeaths = affected.filter(a => a && a.side === 'RED' && isDestroyedStatusChange(a.status_change));
         redDeaths.forEach((a, idx) => {
             const marker = redMarkers[a.uid];
-            console.log('[DBG] red uid', a.uid, '→ marker found?', !!marker);
             if (!marker) return;
             let ll; try { ll = marker.getLatLng(); } catch (_) { return; }
             const dmg = Number.isFinite(a.damage_pct) ? a.damage_pct : 1;
             const t = 120 + idx * 220;
+            // Transient event effects only (explosion + ring). The PRIMARY kill-X
+            // lives on the unit marker icon and is applied via the registry +
+            // refreshAllMarkerStatuses below — NOT by graying the marker element
+            // directly (which would also gray the X overlay).
             effectTimers.push(setTimeout(() => {
                 spawnExplosion(ll, 600, dmg);
                 spawnDeathRing(ll);
             }, t));
             effectTimers.push(setTimeout(() => {
                 spawnSmoke(ll, 2200);
-                // Stamp X and dim the red marker
-                try {
-                    markUnitAsDestroyed(marker);
-                    const el = marker.getElement();
-                    if (el) {
-                        el.style.filter  = 'grayscale(100%) brightness(0.35)';
-                        el.style.opacity = '0.55';
-                    }
-                } catch (_) {}
+                const reg = unitRegistry[a.uid];
+                if (reg) { reg.status = UNIT_STATUS.DESTROYED; reg.strength = 0; reg.canFight = false; reg.canMove = false; }
+                refreshAllMarkerStatuses();   // composes the in-icon X (correct dimming)
             }, t + 250));
         });
     }
@@ -4655,12 +4874,10 @@
     function scheduleHitEffects(state, isForward) {
         if (!isForward || !state) return;
         const affected = Array.isArray(state.affected) ? state.affected : [];
-        const nonDestroyed = affected.filter(a => a && a.status_change !== 'destroyed');
-        console.log('[DBG] hitEffects: affected=', affected.length, 'nonDestroyed=', nonDestroyed.length, nonDestroyed.map(a=>a.uid+'('+a.status_change+')'));
+        const nonDestroyed = affected.filter(a => a && !isDestroyedStatusChange(a.status_change));
         affected.forEach((a, idx) => {
-            if (!a || a.status_change === 'destroyed') return;
+            if (!a || isDestroyedStatusChange(a.status_change)) return;
             const marker = redMarkers[a.uid] || blueMarkers[a.uid];
-            console.log('[DBG] hit uid', a.uid, a.status_change, '→ marker?', !!marker);
             if (!marker) return;
             let ll; try { ll = marker.getLatLng(); } catch (_) { return; }
             const dmg = Number.isFinite(a.damage_pct) ? a.damage_pct : 0.3;
@@ -4740,7 +4957,6 @@
             ? opts.deaths
             : (state && state.per_unit_deltas && Array.isArray(state.per_unit_deltas.blue_destroyed))
                 ? state.per_unit_deltas.blue_destroyed : [];
-        console.log('[DBG] staggeredDeaths: deaths=', deaths.length, deaths, 'blueMarkerKeys sample:', Object.keys(blueMarkers).slice(0,3));
         if (!deaths.length) return;
 
         const mainRedMarker = Object.values(redMarkers).find(m =>
@@ -4839,47 +5055,100 @@
     // (215,28,28) at full opacity. We use an SVG overlay rather than a
     // Unicode '✕' so the strokes scale with the marker, stay sharp at
     // any zoom, and read unambiguously as a destruction mark.
+    // The kill-X SVG markup, sized to the marker via viewBox. Drawn as a sibling
+    // AFTER the base symbol so it is always on top (cannot hide behind the SIDC
+    // SVG); bright white halo + dark-red core so it reads over any background.
+    const _DESTROYED_X_SVG =
+        '<svg class="wg-adj-x" viewBox="0 0 100 100" preserveAspectRatio="none" ' +
+        'style="position:absolute;top:-15%;left:-15%;width:130%;height:130%;display:block;overflow:visible;pointer-events:none;z-index:1000;">' +
+        '<line x1="0" y1="0" x2="100" y2="100" stroke="#ffffff" stroke-width="16" stroke-linecap="round" opacity="0.9"/>' +
+        '<line x1="100" y1="0" x2="0" y2="100" stroke="#ffffff" stroke-width="16" stroke-linecap="round" opacity="0.9"/>' +
+        '<line x1="0" y1="0" x2="100" y2="100" stroke="#c0140e" stroke-width="10" stroke-linecap="round"/>' +
+        '<line x1="100" y1="0" x2="0" y2="100" stroke="#c0140e" stroke-width="10" stroke-linecap="round"/>' +
+        '</svg>';
+
+    // MAP-CLARITY-1: build a destroyed divIcon by COMPOSING the kill-X into the
+    // marker's own icon HTML (not a fragile appended DOM child). The base symbol
+    // is wrapped in a grayed, slightly-faded layer at the SAME iconSize, with the
+    // X drawn on top. Because the X is part of the icon HTML, setIcon() makes it
+    // atomic — it can't be wiped by a later re-render or hidden behind the SVG.
+    function buildDestroyedIcon(baseIcon) {
+        if (!baseIcon || !window.L || !baseIcon.options) return null;
+        const o = baseIcon.options;
+        const size = Array.isArray(o.iconSize) ? o.iconSize : [24, 24];
+        const anchor = Array.isArray(o.iconAnchor) ? o.iconAnchor : [size[0] / 2, size[1] / 2];
+        const baseHtml = o.html || '';
+        const html =
+            '<div class="wg-destroyed" style="position:relative;width:' + size[0] + 'px;height:' + size[1] + 'px;">' +
+                // Base symbol (same size), grayed + lightly faded so the kill reads
+                // without making the unit disappear. Inline filter — no reliance on
+                // external CSS that could be overridden or missing.
+                '<div style="position:absolute;inset:0;width:100%;height:100%;filter:grayscale(1) brightness(0.85);opacity:0.85;">' + baseHtml + '</div>' +
+                _DESTROYED_X_SVG +
+            '</div>';
+        return window.L.divIcon({
+            html: html,
+            className: ((o.className || '') + ' wg-destroyed-icon').trim(),
+            iconSize: size,            // SAME base size — unit is not resized
+            iconAnchor: anchor,
+        });
+    }
+
+    // MAP-CLARITY-1: one generic marker-icon builder used for any unit on any
+    // side. Returns the destroyed-composed icon (base symbol + in-icon kill-X,
+    // same size) when status is DESTROYED, else the base icon unchanged. Works
+    // for SIDC/milsymbol, RED diamond, and BLUE square base icons alike because
+    // it only wraps the base icon's own html at its own size.
+    function buildUnitMarkerIcon(baseIcon, status) {
+        if (status === UNIT_STATUS.DESTROYED) {
+            return buildDestroyedIcon(baseIcon) || baseIcon;
+        }
+        return baseIcon;
+    }
+
     function markUnitAsDestroyed(marker) {
-        if (!marker) return;
-        try {
-            const el = marker.getElement();
-            if (!el || el.querySelector('.wg-adj-x')) return; // already marked
-            const x = document.createElement('div');
-            x.className = 'wg-adj-x';
-            x.style.cssText = `
-                position:absolute;
-                top:-10%;left:-10%;
-                width:120%;height:120%;
-                pointer-events:none;
-                z-index:10;
-            `;
-            // Two diagonal strokes, full-opacity red, with a slightly thicker
-            // white halo underneath so the X stays visible against any
-            // background (matches the Python halo via overdraw).
-            x.innerHTML = `
-                <svg width="100%" height="100%" viewBox="0 0 100 100"
-                     preserveAspectRatio="none"
-                     style="position:absolute;top:0;left:0;display:block;overflow:visible;">
-                    <line x1="0"   y1="0"   x2="100" y2="100"
-                          stroke="#ffffff" stroke-width="12" stroke-linecap="round" opacity="0.85"/>
-                    <line x1="100" y1="0"   x2="0"   y2="100"
-                          stroke="#ffffff" stroke-width="12" stroke-linecap="round" opacity="0.85"/>
-                    <line x1="0"   y1="0"   x2="100" y2="100"
-                          stroke="#1a1a1a" stroke-width="8"  stroke-linecap="round"/>
-                    <line x1="100" y1="0"   x2="0"   y2="100"
-                          stroke="#1a1a1a" stroke-width="8"  stroke-linecap="round"/>
-                </svg>
-            `;
-            el.appendChild(x);
-        } catch (_) { /* ignore */ }
+        if (!marker || marker._sidcDestroyed) return;
+        // Primary path: rebuild the icon with the X composed in (robust).
+        const di = marker._baseIcon ? buildDestroyedIcon(marker._baseIcon) : null;
+        if (di) {
+            try { marker.setIcon(di); marker._sidcDestroyed = true; } catch (_) { /* fall through */ }
+        }
+        if (!marker._sidcDestroyed) {
+            // Fallback (no base icon captured): append the X overlay directly.
+            try {
+                const el = marker.getElement();
+                if (el && !el.querySelector('.wg-adj-x')) {
+                    const x = document.createElement('div');
+                    x.style.cssText = 'position:absolute;top:-15%;left:-15%;width:130%;height:130%;pointer-events:none;z-index:1000;';
+                    x.innerHTML = _DESTROYED_X_SVG;
+                    el.appendChild(x);
+                    marker._sidcDestroyed = true;
+                }
+            } catch (_) { /* ignore */ }
+        }
+        // Float the destroyed symbol above overlapping live units + label it.
+        try { marker.setZIndexOffset(2000); } catch (_) {}
+        try { const el2 = marker.getElement(); if (el2) el2.setAttribute('title', 'Destroyed'); } catch (_) {}
     }
 
     function unmarkUnitAsDestroyed(marker) {
+        if (!marker) return;
+        // Restore the original (active) icon if we swapped it.
+        if (marker._sidcDestroyed && marker._baseIcon) {
+            try { marker.setIcon(marker._baseIcon); } catch (_) {}
+        }
+        marker._sidcDestroyed = false;
+        try { marker.setZIndexOffset(0); } catch (_) {}
         try {
-            const el = marker && marker.getElement();
-            if (!el) return;
-            const x = el.querySelector('.wg-adj-x');
-            if (x) x.remove();
+            const el = marker.getElement();
+            if (el) {
+                const x = el.querySelector('.wg-adj-x');   // remove any appended fallback X
+                if (x && x.parentNode) x.parentNode.removeChild(x);
+                // Restore the unit's own title (Leaflet re-applies it on setIcon,
+                // but the appended-fallback path has no setIcon — so restore here).
+                const orig = marker.options && marker.options.title;
+                if (orig) el.setAttribute('title', orig); else el.removeAttribute('title');
+            }
         } catch (_) { /* ignore */ }
     }
 
@@ -5110,19 +5379,19 @@
     function renderDetectionContacts(state) {
         clearDetectionContacts();
         if (!detectionContactsEnabled || !layerGroup || !window.L) return;
-        if (!window.AppDetection || typeof window.AppDetection.computeContacts !== 'function') return;
-        const { units, posByUid } = buildDetectionUnits(state);
-        if (!units.length) return;
-        let contacts = [];
-        try { contacts = window.AppDetection.computeContacts({ units }) || []; } catch (_) { return; }
+        // PR-WS-DET1-A: read contacts from World State (computed once per step in DERIVATIONS),
+        // not direct DET1 call. Still build posByUid for marker placement.
+        const { posByUid } = buildDetectionUnits(state);
+        let contacts = (lastWorldState && lastWorldState.derived && lastWorldState.derived.contacts) || [];
+        if (!contacts.length) return;
         for (const c of contacts) {
             const ll = posByUid[c.target_uid];
             if (!ll) continue;
             const firm = c.confidence === 'firm';
             // colour by the side HOLDING the contact (blue sees red, red sees blue)
-            const color = c.detected_by_side === 'blue' ? '#3a96d2' : '#c41e1e';
+            const color = c.detected_by_side === 'BLUE' ? '#3a96d2' : '#c41e1e';
             const method = (c.method || 'radar').toUpperCase();
-            const sideLbl = c.detected_by_side === 'blue' ? 'Blue' : 'Red';
+            const sideLbl = c.detected_by_side === 'BLUE' ? 'Blue' : 'Red';
             const dot = window.L.circleMarker(ll, {
                 radius: firm ? 9 : 11,
                 color, weight: firm ? 2 : 1.4,
@@ -5151,14 +5420,11 @@
     // These are COMPUTED firing solutions — distinct from the scenario's authored
     // engagement_arcs (adjudicated kill outcomes) drawn elsewhere.
     function computeEngagementRecords(state) {
-        if (!window.AppDetection || typeof window.AppDetection.computeContacts !== 'function') return null;
-        if (!window.AppEngagement || typeof window.AppEngagement.computeEngagements !== 'function') return null;
-        const { units, posByUid } = buildDetectionUnits(state);
-        if (!units.length) return null;
-        let contacts = [], recs = [];
-        try { contacts = window.AppDetection.computeContacts({ units }) || []; } catch (_) { return null; }
-        try { recs = window.AppEngagement.computeEngagements({ units }, contacts) || []; } catch (_) { return null; }
-        return { recs, posByUid };
+        const { posByUid } = buildDetectionUnits(state);
+        // PR-WS-ENG1-A: read engagement outcomes from World State (computed once per decision),
+        // not direct ENG1 call. No recomputation.
+        let recs = (lastWorldState && lastWorldState.derived && lastWorldState.derived.engagement_outcomes) || [];
+        return recs.length ? { recs, posByUid } : null;
     }
 
     function clearEngagements() {
@@ -5194,6 +5460,81 @@
         }
     }
 
+    // TASK2C: Read-only tasking orders overlay.
+    // Small circleMarker badges placed at each tasked unit's position.
+    // Off by default; toggled from the HUD. Never modifies markers, icons, or state.
+    function clearTaskingOverlay() {
+        for (const m of taskingOverlayMarkers) {
+            if (m && layerGroup) { try { layerGroup.removeLayer(m); } catch (_) {} }
+        }
+        taskingOverlayMarkers = [];
+    }
+
+    function renderTaskingOverlay() {
+        clearTaskingOverlay();
+        if (!taskingOverlayEnabled || !layerGroup || !window.L) return;
+        if (!lastWorldState || !lastWorldState.derived) return;
+        const tasking = lastWorldState.derived.unit_tasking || {};
+        const allMarkers = Object.assign({}, redMarkers, blueMarkers);
+        for (const uid of Object.keys(tasking)) {
+            const marker = allMarkers[uid];
+            if (!marker) continue;
+            const ll = marker.getLatLng && marker.getLatLng();
+            if (!ll) continue;
+            const t = tasking[uid];
+            const comp = t.component_label || t.action_component || '';
+            const isBlue = String(t.side || '').toUpperCase() === 'BLUE';
+            const dotColor = isBlue ? '#3a96d2' : '#c41e1e';
+            const badge = window.L.circleMarker(ll, {
+                radius: 5,
+                color: dotColor,
+                weight: 1.5,
+                opacity: 0.92,
+                fillColor: dotColor,
+                fillOpacity: 0.55,
+                interactive: false,
+                pane: TASKING_OVERLAY_PANE,
+            }).bindTooltip(
+                `Orders: ${esc(comp)}${t.action_what ? '<br>' + esc(t.action_what) : ''}`,
+                { sticky: true, direction: 'top' }
+            );
+            badge.addTo(layerGroup);
+            taskingOverlayMarkers.push(badge);
+        }
+    }
+
+    // TASK2B: Read-only tasking evidence appended to existing hover tooltips.
+    // Reads ws.derived.unit_tasking[uid] from the last computed World State and
+    // re-binds each scenario marker's tooltip to include a compact tasking line.
+    // Always rebuilds from m._baseTooltip so calling twice is idempotent.
+    // No marker icons, no simulation state, no unit objects are mutated.
+    function _refreshTaskingTooltips() {
+        if (!lastWorldState || !lastWorldState.derived) return;
+        const tasking = lastWorldState.derived.unit_tasking || {};
+        _applyTaskingToMarkerMap(redMarkers, tasking);
+        _applyTaskingToMarkerMap(blueMarkers, tasking);
+    }
+
+    function _applyTaskingToMarkerMap(markerMap, tasking) {
+        for (const uid of Object.keys(markerMap)) {
+            const m = markerMap[uid];
+            if (!m || !m._baseTooltip) continue;
+            const t = tasking[uid];
+            if (!t) {
+                // No tasking this step — restore to base (removes any previous task line).
+                try { m.unbindTooltip().bindTooltip(m._baseTooltip, { permanent: false }); } catch (_) {}
+                continue;
+            }
+            const comp = t.component_label || t.action_component || '';
+            const what = t.action_what || '';
+            const taskLine = '<div style="margin-top:4px;padding-top:3px;border-top:1px solid #4a4a3a;font-size:9px;color:#c8c080;font-family:monospace;">'
+                + '<span style="opacity:.7;">Orders:</span> ' + esc(comp)
+                + (what ? '<br><span style="opacity:.7;">Mission:</span> ' + esc(what) : '')
+                + '</div>';
+            try { m.unbindTooltip().bindTooltip(m._baseTooltip + taskLine, { permanent: false }); } catch (_) {}
+        }
+    }
+
     function clearScenario() {
         if (layerGroup && window.map) {
             window.map.removeLayer(layerGroup);
@@ -5216,6 +5557,7 @@
         coverageRings = [];
         detectionContacts = [];
         engagementLines = [];
+        taskingOverlayMarkers = [];
         contactHalo = null;
         aoLayers = [];
         advanceArrows = [];
@@ -5231,7 +5573,10 @@
         scenarioRef = null;
         blsCoordByName = {};
         objCoord = null;
+        objName = null;
         unitRegistry = {};
+        lastAppliedState = null;
+        lastAppliedScenario = null;
         runningDestroyedUids = new Set();
         lastAppliedStepIndex = -1;
         playbackAttritionStep = -1; // AN1: clear per-step attrition tracking
@@ -5242,6 +5587,11 @@
         engagementGraphicsStep = 0; // MG1: reset engagement mission-graphic step tracker
         for (const t of pendingDeathTimers) { try { clearTimeout(t); } catch (_) {} }
         pendingDeathTimers = [];
+        try {
+            document.dispatchEvent(new CustomEvent('rmooz:scenario-visibility-changed', {
+                detail: { drawn: false }
+            }));
+        } catch (_) { /* ignore */ }
         clearSuppressionHalos();
         clearSalvoAnimations();
         for (const t of effectTimers) { try { clearTimeout(t); } catch (_) {} }
@@ -5315,11 +5665,54 @@
         // choreography. Backward or equal step index snaps to the new
         // cumulative state silently — no replay of past kills.
         const stepIdx = Number.isFinite(state.step_index) ? state.step_index : 0;
+        lastRenderStepIndex = stepIdx;   // shared with refreshAllMarkerStatuses
         const isForward = stepIdx > lastAppliedStepIndex;
         const instant = !isForward;
         lastAppliedStepIndex = stepIdx;
         lastAppliedState     = state;
         lastAppliedScenario  = scenario || scenarioRef || null;
+
+        // PR-WS2: derive a live World State snapshot from the running scenario at
+        // this step, then route objective status through it (read in
+        // deriveDisplayOutcome). The snapshot MIRRORS the live `state` for now —
+        // ownership stays with `state`; WS4 inverts the fill direction so World
+        // State OWNS. Pure read-through, fully guarded: a missing/throwing engine
+        // → null → the renderer uses the legacy `state.*` path (zero regression).
+        lastWorldState = null;
+        if (window.AppWorldState && lastAppliedScenario) {
+            try {
+                const ws = window.AppWorldState.deriveWorldState(lastAppliedScenario, stepIdx);
+                if (ws) {
+                    // PR-WS2.5: project the LIVE inputs the derived-field rules
+                    // consume (raw objective status + force ratio + losses), then
+                    // let World State recompute ALL derived outputs generically
+                    // (same Inputs→Rule→Output path every field uses). World State
+                    // owns the derivation; `state` still owns the raw inputs until
+                    // WS4 computes those from WS units too. Value is identical to
+                    // the renderer's old inline rule, so the display is unchanged.
+                    ws.derived = ws.derived || {};
+                    if (state.objective_status) {
+                        ws.derived.objective_status = state.objective_status;
+                        if (ws.objectives && ws.objectives[0]) {
+                            ws.objectives[0].status = state.objective_status;
+                        }
+                    }
+                    ws.balance = ws.balance || {};
+                    if (state.force_ratio != null) ws.balance.force_ratio = state.force_ratio;
+                    if (state.losses_cumulative) {
+                        ws.balance.losses = {
+                            blue_destroyed: state.losses_cumulative.blue_destroyed,
+                            blue_total: state.losses_cumulative.blue_total,
+                            red_company_equivalent: state.losses_cumulative.red_company_equivalent
+                        };
+                    }
+                    if (typeof window.AppWorldState.applyDerivations === 'function') {
+                        window.AppWorldState.applyDerivations(ws);
+                    }
+                    lastWorldState = ws;
+                }
+            } catch (_) { lastWorldState = null; }
+        }
 
         if (scenario && scenario !== scenarioRef) {
             // Defensive: keep the per-step movement model in sync with whatever
@@ -5332,7 +5725,7 @@
                     if (b && b.name && Array.isArray(b.coord)) blsCoordByName[b.name] = b.coord;
                 }
             }
-            if (scenario.obj && Array.isArray(scenario.obj.coord)) objCoord = scenario.obj.coord;
+            objCoord = resolveCurrentObjectiveCoord(scenario);
             if (scenario.obj && Number.isFinite(scenario.obj.target_depth_km)) objDepthKm = scenario.obj.target_depth_km;
         }
 
@@ -5453,6 +5846,7 @@
         renderCoverageRings(state); // CMO rings: after unit positions update (~:5150), no-op when toggle off
         renderDetectionContacts(state); // DET1 contacts: after positions update, no-op when toggle off
         renderEngagements(state); // ENG1 firing solutions: after contacts, no-op when toggle off
+        renderTaskingOverlay(); // TASK2C: orders badges — after lastWorldState set, no-op when toggle off
         updateAdvanceArrows(state, scenario || scenarioRef, { instant });
         updateAttackArrows(state, scenario || scenarioRef);
         // W3-rich: explicit engagement mission graphics replace the nearest-red
@@ -5482,13 +5876,18 @@
         // FIRST step a BLS goes from STAGED to anything contested/secure.
         // The badge represents the red force breaching the coastal defense
         // at that landing site; it's stamped once and persists.
-        if (state.bls_status) {
-            for (const [name, status] of Object.entries(state.bls_status)) {
+        // PR-WS-BLS-A: World State owns BLS status when available; authored
+        // state.bls_status is the fallback (parity / non-W3 scenarios).
+        const wsBls = lastWorldState && lastWorldState.derived && lastWorldState.derived.bls_status;
+        const activeBls = wsBls || state.bls_status;
+        if (activeBls) {
+            for (const [name, status] of Object.entries(activeBls)) {
                 const m = blsMarkers[name];
                 if (!m) continue;
                 const blsMeta = m._wgBls || {};
                 m.setIcon(blsIcon(COLORS.BLS[status] || '#888', name.replace('BLS-', ''), blsMeta.role));
-                m.setTooltipContent(buildBlsTooltip({ name, ...blsMeta }, status));
+                const unitCounts = { red: blsMeta.red_unit_count || 0, blue: blsMeta.blue_unit_count || 0 };
+                m.setTooltipContent(buildBlsTooltip({ name, ...blsMeta }, status, unitCounts));
                 // Breach badge: when this BLS first leaves STAGED, stamp a
                 // small NATO-style breach marker just offshore of it.
                 if (status !== 'STAGED' && !breachBadges[name] && !instant) {
@@ -5710,6 +6109,12 @@
         // is purely a UX layer; data is already on state.actors /
         // state.affected / state.unit_state via the adjudicator.
         applyW3UnitNarrative(state);
+        // TASK2B: For non-W3 scenarios, applyW3UnitNarrative is a no-op so
+        // _refreshTaskingTooltips adds tasking evidence to the static base tooltips.
+        // For W3-rich, applyW3UnitNarrative already shows component_label + action_what.
+        if (!scenarioRef || scenarioRef.schema_variant !== 'w3-rich') {
+            _refreshTaskingTooltips();
+        }
 
         // 4e. Schedule the staggered explosion + delayed X re-mark for the
         // new kills (no-op on rewind / when there are no new kills).
@@ -5801,6 +6206,8 @@
             reg.canMove  = true;
         }
         runningDestroyedUids = new Set();
+        lastAppliedState = null;
+        lastAppliedScenario = null;
         lastAppliedStepIndex = -1;
         playbackAttritionStep = -1; // AN1: clear per-step attrition tracking
         try { clearEchelonAggregates(); } catch (_) {} // echelon roll-up: drop aggregates
@@ -5829,7 +6236,8 @@
         for (const [name, m] of Object.entries(blsMarkers)) {
             const blsMeta = m._wgBls || {};
             m.setIcon(blsIcon(COLORS.BLS.STAGED, name.replace('BLS-', ''), blsMeta.role));
-            m.setTooltipContent(buildBlsTooltip({ name, ...blsMeta }, 'STAGED'));
+            const unitCounts = { red: blsMeta.red_unit_count || 0, blue: blsMeta.blue_unit_count || 0 };
+            m.setTooltipContent(buildBlsTooltip({ name, ...blsMeta }, 'STAGED', unitCounts));
         }
         if (objMarker) {
             const obj = (scenarioRef && scenarioRef.obj) || null;
@@ -5929,12 +6337,21 @@
     // synthetic state so the planner HUD doesn't need a server response.
     function applyStepProgress(stepIndex, progress) {
         if (!isScenarioDrawn()) return false;
+        lastRenderStepIndex = Number.isFinite(stepIndex) ? stepIndex : lastRenderStepIndex;
         const syntheticState = {
             step_index:    stepIndex,
             progress:      Math.max(0, Math.min(1, progress || 0)),
             phase_line_km: (objDepthKm || 95) * Math.max(0, Math.min(1, progress || 0)),
             blue_actions:  null,   // fall back to the local schedule
         };
+
+        if ((Number.isFinite(stepIndex) ? stepIndex : 0) <= 0) {
+            resetMap();
+            updateUnitPositions(syntheticState);
+            try { renderEchelonRollup(); } catch (_) { /* ignore */ }
+            return true;
+        }
+
         updateUnitPositions(syntheticState);
         // AN1: refresh per-unit attrition visuals, but only when the step
         // index actually changes (this is called repeatedly with fractional
@@ -6193,6 +6610,7 @@
         _getStepEventCount: (idx) => buildStepEvents(scenarioRef || {}, Number.isFinite(idx) ? idx : 0).length,
         resolveUnitSymbolProfile,
         auditResolvedUnitSymbols,
+        resolveCurrentObjectiveCoord: () => resolveCurrentObjectiveCoord(scenarioRef),
         renderMovementTrails,
         renderEngagementMissionGraphics, // MG1: Attack/Counterattack mission graphics for the step's engagement_arcs
         // CMO-style indicative sensor/threat coverage rings (estimated radii from
@@ -6232,15 +6650,14 @@
             return detectionContactsEnabled;
         },
         isDetectionContactsVisible: () => !!detectionContactsEnabled,
-        // Diagnostics / 3D parity: computed contacts for `state` with each
-        // target's CURRENT lon/lat, so callers (Cesium, tests) reuse the same
-        // detection.js engine + DB-Lite rather than re-deriving the picture.
+        // Diagnostics / 3D parity: read contacts from World State (DERIVATIONS),
+        // not direct DET1 call. Adds lon/lat from current marker positions.
         getDetectionContacts: (state) => {
-            if (!window.AppDetection || typeof window.AppDetection.computeContacts !== 'function') return [];
-            const { units, posByUid } = buildDetectionUnits(state || lastAppliedState);
-            if (!units.length) return [];
-            let contacts = [];
-            try { contacts = window.AppDetection.computeContacts({ units }) || []; } catch (_) { return []; }
+            // PR-WS-DET1-A: read from World State snapshot
+            const ws = lastWorldState || (state ? lastAppliedState : null);
+            let contacts = (ws && ws.derived && ws.derived.contacts) || [];
+            if (!contacts.length) return [];
+            const { posByUid } = buildDetectionUnits(state || lastAppliedState);
             return contacts.map((c) => {
                 const ll = posByUid[c.target_uid];
                 return Object.assign({}, c, { lon: ll ? ll.lng : null, lat: ll ? ll.lat : null });
@@ -6264,6 +6681,22 @@
             return engagementsEnabled;
         },
         isEngagementsVisible: () => !!engagementsEnabled,
+        // TASK2C: Read-only tasking orders overlay — small colored dot per tasked unit.
+        // Mirrors the coverage-rings / detection-contacts / engagements toggle pattern.
+        // Off by default; toggling re-renders against the last applied state.
+        renderTaskingOverlay,
+        clearTaskingOverlay,
+        setTaskingOverlay: (on) => {
+            taskingOverlayEnabled = (on !== false);
+            try { taskingOverlayEnabled ? renderTaskingOverlay() : clearTaskingOverlay(); } catch (_) {}
+            return taskingOverlayEnabled;
+        },
+        toggleTaskingOverlay: () => {
+            taskingOverlayEnabled = !taskingOverlayEnabled;
+            try { taskingOverlayEnabled ? renderTaskingOverlay() : clearTaskingOverlay(); } catch (_) {}
+            return taskingOverlayEnabled;
+        },
+        isTaskingOverlayVisible: () => !!taskingOverlayEnabled,
         // Diagnostics / 3D parity: computed engagement records for `state`, each
         // augmented with shooter + target lon/lat, so callers (Cesium, tests)
         // reuse the same engine rather than re-deriving the firing picture.
@@ -6303,5 +6736,9 @@
         // Cesium 3D sync — last state/scenario from applyState()
         get _lastState()    { return lastAppliedState; },
         get _lastScenario() { return lastAppliedScenario; },
+        // PR-WS2: live World State snapshot for the current step (read-only).
+        // The first live consumer of WS1 on the client; exposed for tests, 3D
+        // parity, and the future formula layer. Null until the first applyState.
+        getWorldState: () => lastWorldState,
     };
 })();

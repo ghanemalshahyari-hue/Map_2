@@ -1,0 +1,205 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  RMOOZ — Offline Deployment Compose File  (OFFLINE-IMAGE-1B)
+#
+#  Usage (from UI_MOdified/):
+#    cp Offline_Deployment/.env.offline.example Offline_Deployment/.env.offline
+#    # Edit Offline_Deployment/.env.offline — set LDAP_SERVER, SESSION_SECRET, etc.
+#    docker compose -f Offline_Deployment/docker-compose.offline.yml \
+#                   --env-file Offline_Deployment/.env.offline up -d
+#
+#  Requirements:
+#    - Offline_Deployment/.env.offline must exist (copy from .env.offline.example)
+#    - Container must reach LDAP_SERVER:LDAP_PORT (for LDAP auth)
+#    - Ollama must be running on host for WarGamingGEN (RMOOZ_ALLOW_SIM_RUN=1)
+# ─────────────────────────────────────────────────────────────────────────────
+version: "3.9"
+
+services:
+  rmooz-offline:
+    build:
+      context: ..
+      dockerfile: Offline_Deployment/Dockerfile.offline
+    image: rmooz-offline:latest
+    container_name: rmooz-offline
+
+    # ── Port mapping ──────────────────────────────────────────────────────────
+    # ONLY the web port is published. In the default in-app tile-proxy mode
+    # (RMOOZ_TILE_PROXY_MODE=web) the browser fetches tiles from the web port and
+    # the web-server proxies them to the tile-server on the container-internal
+    # 127.0.0.1:8080 — so the tile port does NOT need to be published to the host.
+    # Users need ONLY  http://<server-ip>:${WEB_PUBLIC_PORT:-5006}  (e.g. :8640).
+    #   Set WEB_PUBLIC_PORT=8640 in .env.offline if the site uses port 8640.
+    # Container still listens on 5006 (web) and 8080 (tiles) INTERNALLY.
+    #
+    # Need the tile server published directly on the host (direct tile debugging,
+    # or RMOOZ_TILE_PROXY_MODE off)? Layer the optional override file:
+    #   docker compose -f Offline_Deployment/docker-compose.offline.yml \
+    #                  -f Offline_Deployment/docker-compose.tiles-debug.yml \
+    #                  --env-file Offline_Deployment/.env.offline up -d
+    ports:
+      - "${WEB_PUBLIC_PORT:-5006}:5006"
+
+    # ── Environment ───────────────────────────────────────────────────────────
+    # All values read from .env.offline (passed via --env-file).
+    environment:
+      PORT:                  "5006"                          # container always 5006
+      WEB_PUBLIC_PORT:       "${WEB_PUBLIC_PORT:-5006}"      # host port (informational)
+      WEB_PUBLIC_BASE_URL:   "${WEB_PUBLIC_BASE_URL:-}"      # e.g. http://<server-ip>:8640
+      TILE_PUBLIC_BASE_URL:  "${TILE_PUBLIC_BASE_URL:-}"     # e.g. http://<server-ip>:8080
+      RMOOZ_TILE_DATASET_NAME: "${RMOOZ_TILE_DATASET_NAME:-satellite-2017-11-02_asia_gcc-states}"
+      RMOOZ_AUTH_BACKEND:    "${RMOOZ_AUTH_BACKEND:-ldap}"
+
+      # LDAP — site-specific. LDAP_SERVER has no safe default; must be set.
+      LDAP_SERVER:           "${LDAP_SERVER:-}"
+      LDAP_PORT:             "${LDAP_PORT:-389}"
+      LDAP_DOMAIN:           "${LDAP_DOMAIN:-sss.dir}"
+      LDAP_TIMEOUT:          "${LDAP_TIMEOUT:-5}"
+      LDAP_USE_SSL:          "${LDAP_USE_SSL:-0}"
+
+      # Map source — tile server + DEM
+      OFFLINE_TILES:         "${OFFLINE_TILES:-1}"
+      TILE_URL:              "${TILE_URL:-}"
+      RMOOZ_MAPS_DIR:        "${RMOOZ_MAPS_DIR:-/app/maps}"
+      MAP_SOURCE_MODE:       "${MAP_SOURCE_MODE:-auto}"
+      # In-app tile proxy: when "web", the browser fetches tiles from the RMOOZ
+      # web port (WEB_PUBLIC_BASE_URL) and the web-server proxies them to the
+      # internal tile-server. Users then need ONLY the web port — the internal
+      # 8080 is never exposed. Set to "" to fall back to the TILE_PUBLIC_BASE_URL
+      # / LOCAL_TILE_URL (:8080) behaviour. Default: web.
+      RMOOZ_TILE_PROXY_MODE: "${RMOOZ_TILE_PROXY_MODE:-web}"
+      # LOCAL_TILE_URL points to the MBTiles tile server at port 8080.
+      # Tileset name = MBTiles filename without extension.
+      LOCAL_TILE_URL:        "${LOCAL_TILE_URL:-http://localhost:8080/services/satellite-2017-11-02_asia_gcc-states/{z}/{x}/{y}.png}"
+      FALLBACK_TILE_URL:     "${FALLBACK_TILE_URL:-}"
+      MAP_HEALTHCHECK_URL:   "${MAP_HEALTHCHECK_URL:-}"
+      MAP_FALLBACK_ENABLED:  "${MAP_FALLBACK_ENABLED:-1}"
+      OFFLINE_MAP_DATA_DIR:  "${OFFLINE_MAP_DATA_DIR:-/app/offline_map_data}"
+      # DEM elevation file for 3D terrain (Cesium) and /api/dem/* endpoints
+      DEM_PATH:              "${DEM_PATH:-/app/dem_data/libya_demx5.tif}"
+
+      # WarGamingGEN / Simulation
+      # Set RMOOZ_ALLOW_SIM_RUN=1 in .env.offline to enable simulation.
+      # Ollama must be running on host at OLLAMA_HOST for generation to work.
+      RMOOZ_ALLOW_SIM_RUN:   "${RMOOZ_ALLOW_SIM_RUN:-0}"
+      RMOOZ_TESTINGAI_DIR:   "${RMOOZ_TESTINGAI_DIR:-/app/TestingAI}"
+      RMOOZ_PYTHON:          "${RMOOZ_PYTHON:-/opt/rmooz-venv/bin/python}"
+      RMOOZ_SIM_MODEL:       "${RMOOZ_SIM_MODEL:-qwen2.5:7b}"
+      OLLAMA_HOST:           "${OLLAMA_HOST:-http://host.docker.internal:11434}"
+
+      # ── AI provider (LiteLLM / OpenAI-compatible) ─────────────────────────
+      # Set RMOOZ_AI_PROVIDER=litellm to use a LiteLLM HTTPS endpoint.
+      # RMOOZ_AI_API_KEY is read server-side only — never exposed to browsers.
+      RMOOZ_AI_PROVIDER:     "${RMOOZ_AI_PROVIDER:-ollama}"
+      RMOOZ_AI_BASE_URL:     "${RMOOZ_AI_BASE_URL:-}"
+      RMOOZ_AI_API_KEY:      "${RMOOZ_AI_API_KEY:-}"
+      RMOOZ_AI_MODEL:        "${RMOOZ_AI_MODEL:-}"
+      # Ollama (used when RMOOZ_AI_PROVIDER=ollama)
+      RMOOZ_OLLAMA_URL:      "${RMOOZ_OLLAMA_URL:-http://host.docker.internal:11434}"
+      RMOOZ_OLLAMA_MODEL:    "${RMOOZ_OLLAMA_MODEL:-qwen2.5:7b}"
+
+      # ── LiteLLM generation timeout ────────────────────────────────────────
+      # Large models can take several minutes per phase.
+      # Default 300 000 ms (5 min). Increase for slower models.
+      RMOOZ_AI_TIMEOUT_MS:   "${RMOOZ_AI_TIMEOUT_MS:-300000}"
+
+      # ── Internal CA certificate (OFFLINE-LITELLM-CA-1) ───────────────────
+      # Set these to the container path of the internal CA PEM certificate.
+      # The cert file is mounted via the certs/ volume below.
+      # Leave blank to use the system trust store (works for public CAs).
+      RMOOZ_AI_CA_CERT_PATH: "${RMOOZ_AI_CA_CERT_PATH:-}"
+      SSL_CERT_FILE:         "${SSL_CERT_FILE:-}"
+      REQUESTS_CA_BUNDLE:    "${REQUESTS_CA_BUNDLE:-}"
+      NODE_EXTRA_CA_CERTS:   "${NODE_EXTRA_CA_CERTS:-}"
+      # Emergency TLS override — set to 0 ONLY if cert mounting is impossible.
+      # Default is blank (TLS ON). Setting to 0 disables verification with a
+      # loud warning in the server logs. NEVER use in production if avoidable.
+      RMOOZ_AI_TLS_VERIFY:   "${RMOOZ_AI_TLS_VERIFY:-}"
+
+      # ── Optional client certificate / mutual TLS (OFFLINE-LITELLM-MTLS-1) ─
+      # Only needed if the LiteLLM endpoint REQUIRES RMOOZ to present its own
+      # client certificate. Leave all three blank for a normal HTTPS + Bearer
+      # connection (behaviour is then identical to CA-trust-only). Place the
+      # client cert + key in certs/ (mounted at /app/certs). The password is
+      # read server-side only and is NEVER returned by any API or logged.
+      RMOOZ_AI_CLIENT_CERT_PATH:     "${RMOOZ_AI_CLIENT_CERT_PATH:-}"
+      RMOOZ_AI_CLIENT_KEY_PATH:      "${RMOOZ_AI_CLIENT_KEY_PATH:-}"
+      RMOOZ_AI_CLIENT_CERT_PASSWORD: "${RMOOZ_AI_CLIENT_CERT_PASSWORD:-}"
+
+      SESSION_SECRET:        "${SESSION_SECRET}"
+      RMOOZ_BOOTSTRAP_PASSWORD: "${RMOOZ_BOOTSTRAP_PASSWORD:-disabled}"
+
+      # ── Roadmap admins (ROADMAP-4) ────────────────────────────────────────
+      # Comma-separated usernames allowed to EDIT the development roadmap status
+      # (GET is read-only for any logged-in user; POST is admin-only). A user is
+      # also an admin if their account role is "admin" (e.g. the local bootstrap
+      # admin). For LDAP sites, list the employee numbers here, e.g.
+      #   RMOOZ_ROADMAP_ADMINS=s1234567,s7654321
+      # These are usernames, not secrets. Default: the bootstrap "admin" account.
+      RMOOZ_ROADMAP_ADMINS: "${RMOOZ_ROADMAP_ADMINS:-admin}"
+
+    # ── Persistent volumes ────────────────────────────────────────────────────
+    volumes:
+      # App runtime data — bind-mount so scenarios/journal persist on the host
+      # and can be pre-populated (e.g. wargame3.json in data_runtime/scenarios/).
+      - ./data_runtime:/app/data
+      # MBTiles satellite map tiles — bind-mounted from map_data/base/
+      # Run prepare-map-bundle.ps1 first to copy satellite MBTiles here.
+      # tile-server.js auto-discovers *.mbtiles files in this directory.
+      - ./map_data/base:/app/maps:ro
+      # File uploads (staged DOCX files)
+      - rmooz_uploads:/app/uploads
+
+      # Offline map tile package root (read-only — for offline resolver health check)
+      - ./map_data:/app/offline_map_data:ro
+
+      # Libya DEM elevation file — for 3D terrain + /api/dem/* endpoints
+      # Run prepare-map-bundle.ps1 first to stage the .tif file here.
+      # If empty, DEM endpoints return flat terrain; Cesium 3D still opens.
+      - ./map_data/dem:/app/dem_data:ro
+
+      # ── Internal CA certificate (OFFLINE-LITELLM-CA-1) ───────────────────
+      # Mount the WHOLE certs/ directory (read-only) at /app/certs. The operator
+      # drops the internal CA PEM at host certs/ca-chain.crt → it appears at
+      # /app/certs/ca-chain.crt (the path RMOOZ_AI_CA_CERT_PATH points to).
+      #
+      # Why a directory mount, not a single-file mount: a bind mount of a single
+      # file whose source does NOT yet exist makes Docker auto-create an empty
+      # DIRECTORY at that path, which then breaks cert loading and pollutes the
+      # bundle. The certs/ directory always exists (it ships a README), so this
+      # mount is safe whether or not the operator has placed the cert yet.
+      # If the cert is absent, /api/ai/generation-health reports caCertPathExists=false.
+      - ./certs:/app/certs:ro
+
+      # WarGamingGEN runtime directories (mounted writable for I/O)
+      # Operator copies DOCX OOB files to TestingAI_Runtime/import_from_rmooz/
+      # before triggering generation.
+      - ./TestingAI_Runtime/import_from_rmooz:/app/TestingAI/import_from_rmooz
+      - ./TestingAI_Runtime/export_to_rmooz:/app/TestingAI/export_to_rmooz
+      # runs/ contains per-run checkpoint and output subdirectories:
+      #   runs/<timestamp>/checkpoints/  — resumable phase snapshots
+      #   runs/<timestamp>/outputs/      — CSV, Markdown, GeoJSON outputs
+      - ./TestingAI_Runtime/runs:/app/TestingAI/WarGamingGEN/runs
+
+    # ── Restart policy ────────────────────────────────────────────────────────
+    restart: unless-stopped
+
+    # ── Health check ─────────────────────────────────────────────────────────
+    healthcheck:
+      test: ["CMD", "node", "-e",
+             "require('http').get('http://127.0.0.1:5006/api/auth/me', r => process.exit(r.statusCode === 401 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+# ── Named volumes ─────────────────────────────────────────────────────────────
+volumes:
+  rmooz_uploads:
+    driver: local
+# All bind-mounts (no named volumes for data — everything persists on host):
+#   ./data_runtime          → /app/data               (SQLite + scenarios + journal)
+#   ./map_data/base         → /app/maps               (MBTiles — run prepare-map-bundle.ps1 first)
+#   ./map_data/dem          → /app/dem_data            (Libya DEM — run prepare-map-bundle.ps1 first)
+#   ./map_data              → /app/offline_map_data    (read-only tiles root)
+#   ./certs                → /app/certs                (CA cert dir, optional; place ca-chain.crt inside)
+#   ./TestingAI_Runtime/*  → /app/TestingAI/*          (writable runtime I/O)

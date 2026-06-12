@@ -1,0 +1,477 @@
+# C: MO - C-RAM
+Video: https://www.youtube.com/watch?v=gDeOE5SJRVQ
+Video ID: gDeOE5SJRVQ
+
+hello everyone in today's video we're
+going to be taking a look at cram of
+course when I think of cram I think of
+like spam but it really stands for
+counter Rockets artillery and mortar
+these are basically dedicated weapons
+that were designed to basically stop you
+know important targets from getting hit
+with these kinds of projectiles now one
+cool thing is I'm looking at this tur
+right here and immediately go sweet um
+isn't this thing like on like a hover
+tank from Hammer Slammers or something
+like that um we wish we had that
+technology you know the power gun fired
+great series by the way if you haven't
+had a chance to read it so what do these
+things do and basically their purpose is
+to shoot down incoming mortar shells and
+incoming Rockets now inside of command
+this is a relatively new thing that was
+added I actually believe it was like a
+week and a half ago and I played with it
+quite a bit and I want to kind of share
+some of the things that I found out when
+I was experimenting with it first things
+first is um what they have done here as
+I'm I'll scroll in a little bit you'll
+see a bunch of different systems I've
+got NSA 15 I've got myself NSA 22 I've
+got myself the good old fashion 35mm
+this is the Mantis version coming over
+here I've got the Centurion which is the
+one I've actually seen videos of this
+thing in action and of course swinging
+over here we have the Mantis cram mod
+with the little Sky guard fcr which
+cracks me up a little bit because those
+of you who n know 1950s air defense go
+he it's back but what we're going to be
+doing is we're going to be shooting some
+things of course if you zoom out we're
+in Sian here know the reason I picked
+saan is because St wver to interestingly
+enough Japanese artillery actually fired
+at American troops who were Landing On
+Sian all the way from down here which I
+think is actually kind of a neat little
+touch on tenan by the way so what we're
+going to do here is we're going to go
+ahead and take some shots and um we're
+going to see what we can shoot at and
+why it works and why it doesn't work as
+you're going to see in a minute so what
+I'm going to do is I'm going to grab my
+mortar crew here this is 120 mm mortar
+pretty standard anybody who knows
+mortars knows the fact that this is the
+big one this when you have to break into
+four individual pieces and the
+ammunition is heavy that being said it's
+surprisingly high damage cuz mortars
+have short range which means most of the
+shell can be the explody bits this is a
+pretty big shell believe it or not so
+I'm going to Target my medium building
+here and I've got 240 rounds that I can
+fire at this thing uh that's going to be
+a little disrespectful so I'm going to
+fire 239 there we go that should work
+perfectly fine let's go ahead and switch
+back to the other team real quickly here
+and unpause now one of the downsides of
+course of any artillery crew in
+existence is it takes them a lifetime to
+first of all calculate where they need
+to aim then they've got to point them
+order in the correct direction they've
+got to get everything loaded and ready
+to go and then when they finally have
+all those boxes checked they can
+actually start popping these things off
+so oh there it goes nice now what you'll
+notice right away let me go ahead and
+pause so you can see what's going on
+here this is a projectile in Flight here
+one of the things I hope they do someday
+is they kind of clean up this graphic I
+love this to death and it's very clear
+what the projectile is doing and the
+path is taking but part of me almost
+like wants it to be like a little dot
+right here but obviously we couldn't see
+that little dot or um let's see here
+6200 met up so we can be able to see
+that so this thing right now is
+traveling through the air and um from
+our perspective here we can actually see
+this thing visually now you'll notice if
+I grab one of these handy Dand C RAM
+Systems there's nothing for me to click
+on to actually shoot at here I'm on F1
+by the way so if I go and unpause my
+mortar continues taking its path
+continues taking its path um those
+people in the little building down there
+are looking up at this Mortor shell
+actually probably couldn't see it let's
+be realistic it be a little black dot
+you couldn't even notice and it gets
+closer and I we're within the effective
+range of all my systems and the mortar
+sails right over the top of these
+systems and goes Wham directly on the
+ground now that was pretty embarrassing
+from a aiming perspective here I think
+um see the original Target here that was
+about 250 M off which actually for
+mortars that's not bad for the first
+couple that's not bad again they'll go
+probably be closer and closer depending
+on where my well guy basically looking
+through the binoculars but you'll see
+here if I speed up time here this mortar
+just it just does its thing just just
+kind of fires all afternoon and my C Ram
+doesn't do much the M part of C Ram
+doesn't exist and the reason for that is
+in command these projectiles are not
+in-game objects are they're basically
+representation of a calculation of this
+particular trajectory to to this target
+so there's nothing to shoot at yet so
+let's go ahead and restart our scenario
+one more time we'll go fire back up here
+go back to red team and this time we're
+going to fire a rocket so now Rockets
+are different and they actually change
+these if you actually look what the
+change log was talking about now I'm
+going to be generous here I'm going to
+fire one rocket this is uh being very
+very very generous but it's important
+you see the difference between a rocket
+in a mortar shell here so speed up time
+again the rocket crew doing a little
+beep beep you know kind of lining the
+thing up the GU holding down the little
+hydraulic lift button and it's making
+this little whiz and pause so we'll
+notice a couple things that are
+immediately different if we switch to uh
+the red team here you'll observe the
+fact that this is the traditional rocket
+icon but you'll notice watch what
+happens when my mouse clicks on it it's
+an actual object now so they integrated
+this into the universe as an actual
+physical object that actually exists one
+of the cool things if you click here you
+can actually see this is the rocket and
+you can actually see all the details of
+the actual projectile now if you take a
+look through here they had to go through
+and create all of these in order to make
+this possible now if I switch back to
+the other team of course we don't know
+that it's a grad the only thing we know
+is we're being fired at by a rocket now
+the interesting thing is a lot of folks
+are like how can you tell this from a
+rocket from some other types of
+projectiles we'll get there relax we're
+going to get there so now let's go
+around over here real fast so I have my
+handy dandy tour and again the tour is
+designed it's a fantastic system they
+call it the gauntlet it's a great name
+for it now if I press shift and F1 and
+click on this incoming rocket you'll
+observe I cannot engage that rocket uh
+there's nothing I could do my tour is
+just going to sit here relaxing as a
+matter of fact when I click on the
+weapon itself if you take a look at
+valid targets you got missiles and
+guided bombs down here that's okay
+that's okay and one other thing let me
+see if I can pull that for you yeah
+that's good now let's go ahead and grab
+our the system here this is the
+Greyhound this is the paner and if I
+click on him nothing to fire at as well
+however watch what happens when I click
+on one of my cram systems like the
+Mantis here shift F1 go ahead and left
+click Tada you'll notice here that it is
+a valid Target that I can now fire at
+the only thing we have an issue of here
+is we're a little out of range but
+that's fine cuz this system takes no
+time in the universe and as a matter of
+fact when I bring it up you'll notice
+the fact that we've got um basically the
+same stuff in here but it has a special
+little flag in here we can't see that
+says it can be used against rockets so
+we un pause here and I'll watch the
+rocket kind of complete its trajectory
+it's going to get a little high I don't
+think these things go very high these
+are relatively low rockets and yes if
+you're wondering how I'm tracking this
+rocket I've got a radar on the mountain
+here to keep an ey on so now you're
+going to see cam in action here now I
+have three different cram systems here
+it comes here it comes into range
+fire nice try you're not getting
+anywhere in the neighborhood with that
+many crams that's okay though because um
+we we have ways of dealing with these
+things so against individual targets
+cram systems are fantastic but things
+get a little more challenging once you
+attempt to saturate said tar targets so
+let's do a 90 Rockets to you click on
+you I want you to get 90 Rockets come to
+you I'd like you to get 90 Rockets as
+well
+fire now this is one of those situations
+where I'm going to turn my volume down
+there don't mind me you can see that
+this would create a bit of a panic uh we
+start tracking these incoming weapons
+and we start programming calculating
+their trajectories our cram crews are
+sitting there keep in mind these things
+are not Ultra automated they're
+partially automated you can see the big
+old radar off the fa LS here this thing
+starts gliding you know like swear that
+came off one of the blowers from Hammer
+Slammers I'm sorry go read that series
+it's fantastic and of course this thing
+comes down it's a raining down it's a
+rocket all these guys are sitting there
+going uhoh as they're looking up
+directly so um let's see how this goes
+and uh
+[Music]
+begin
+oh oh
+boy well that didn't work very well so
+as you can see U one of the biggest
+limitating factors that's not word um
+limiting factors on a cram system is its
+ability to only engage a single Target
+at a time this also has very very very
+limited range which is going to mean
+that even though it's fairly effective
+it's actually very effective against
+individual weapons it it's not going to
+matter if you want to sit here and
+saturate it and you can see my grad is
+doing a wonderful job of fitting
+everything but the target I assigned it
+but it did do a pretty good job against
+all the soft stuff that was kind of in
+the neighborhood like you can see my
+little Sam sites have all been wrecked
+they're all kind of wrecked and again
+it's a pretty good spread there we have
+about um about 330 Metter which is
+pretty accurate for a rocket system so
+now of course you're sitting here saying
+well that kind of sucked uh what else is
+it good against well luckily for us the
+Russian government allowed us to use a
+scub missile launcher left over from the
+war for the purposes of demonstrating my
+next thing that we can do so what I'm
+going to do is I'm going to go ahead and
+launch one of these suckers right at
+this building here keep in mind it's a
+60 seconds 70 seconds before that rocket
+will actually fire now this presents an
+interesting new problem which I actually
+really really love that they've changed
+inside over here in command and that's
+the fact that these particular weapons
+now we can no longer identify them as
+RVs entering the atmosphere we identify
+them as Fireballs which is actually
+completely accurate because when they
+enter the atmosphere they get pretty hot
+they get really hot and they basically
+look like a streak of light as they come
+through the atmosphere so anyway we have
+a fireball number
+three it's on its way up it's about
+67,000 ft here it's going up pretty high
+I absolutely love watching the
+trajectory of these projectiles um
+obviously um the reason I love these is
+because it just it's amazing cuz you're
+sitting down here on the ground and like
+you're like airplane altitudes and I
+zoom out and you can just see this thing
+just slowly climbing upwards and you can
+see uh we're we're moving we're moving
+let's actually take a look here uh yeah
+we're pretty high pretty darn high it's
+140,000
+ft so anyway we have our lovely little
+cram systems of course they have about a
+second to fire at this incoming missile
+that's going to be dropping from the sky
+the one thing we do have going for us
+right now is the fact that the scut
+missile is probably one of the least
+accurate things that we could probably
+have launched at us here as a matter of
+fact I would be impressed if it hits the
+island of sipan I would not be surprised
+if it ends up in the drink or it ends up
+down there on tenan which would be
+pretty embarrassing but we'll find out
+so one of the cool things here is if I
+grab one of my cram systems I'll grab
+this one shift F1 left click you'll
+notice I actually can fire uh this is a
+considered a valid Target even though
+I'm going to have about a millisecond to
+take a shot at it one of the difficult
+things here is this of course who joins
+in the fun here one of my Sam sites is
+that taking a pot shot I nah n no no no
+no we want the see Rams by the way this
+is going to be in real time watch how
+long you have to shoot at this
+thing as you could see um it was it was
+never going to happen there's just no we
+had you know two and a half seconds of a
+window to Fire and like our bullets
+physically could not get to the Target
+in that time so fortunately against
+weapons like that we're at a heck of a
+disadvantage as far as engagement goes
+so as you can see they're not foolproof
+systems so they're pretty cool but uh um
+I'm not
+satisfied Ah that's a little
+better all right so um we're going to do
+our little earlier experiment again in
+this time of course I've improved our
+air defense slightly so uh yeah I don't
+think this is going to work but it'll be
+pretty fun to watch so let's go ahead
+and grab that all of the little grad
+down here press shift F1 drag a box hey
+they fixed it no no no that was the
+other one never mind never mind all
+right so we're going to do I can't do
+math sometimes uh 24 that's going to be
+80 each allocate 80 you get 80 and you
+get 80 there we go what a great
+thing so um I think we'll get the first
+25 or so I don't think we're going to
+get anything more than that cuz once
+they start dropping they we're never
+going to be able to keep up with all of
+them but we're going to try anyway and
+see what happens Al of the fact we know
+roughly where this is how like I must
+have some kind of oh oh here we go here
+we
+go so of course incoming Rockets these
+are all Rockets we can identify them
+just by holding our Mouse over and we
+know that they're Rockets I can't read
+the you know manufacturer serial number
+off the side of them but I know they're
+Rockets based on their trajectory and
+speed as they enter the atmosphere so
+we've tried to stack the deck here um
+we've got plenty of air defense now I
+even threw in one of these guys which
+are really really fun to play with
+because uh they've got some really
+really cool little kind of tricks here
+but I don't think it's going to make
+that much of a difference all right here
+they come prepare for fireworks
+begin uh-oh oh
+no oh boy let me pause for a second here
+why are we struggling to hit these guys
+um you guys can fire at anything like
+you don't have to wait for me let me go
+ahead and say this let say yes I'm
+actually going to let them go nuts here
+um feel free oh look at that last
+one well my original estimate was uh
+closer to 25 but it looks like uh in the
+end here um we we blocked a few of them
+but uh it's not going so well for us
+it's not going so well for us us oh man
+it's it's it's trying it's trying oh
+there's another one ah there goes
+another one so as we can see uh this is
+very very challenging because um we can
+only fire so many of these at a time and
+once you start saturating and once the
+first rocket gets through and basically
+splatters everything around you you'll
+realize just kind of how hopeless the
+situation goes here and even if I were
+to grab these and try like manually
+allocate they're basically in panic mode
+because as they're trying to Target that
+one they've already missed that once so
+then they changed Target to this one and
+they've already missed that one and then
+they've changed and it's a big disaster
+they just can't fire control their way
+through that many weapons that quickly I
+guess hypothetically I could try to like
+manually allocate like try to guess
+which one's going to get through but
+it's the same problem in the real world
+you're never going to be able to
+intercept that many at a time of course
+now we have Laser Technology which we
+actually saw a couple of those fire if
+you're watching carefully there but even
+that technology is it's still immature
+it's going to have to get better with
+time so my final conclusions here is
+they're really really neat systems um
+you really really have to make sure
+you're close to the thing you're trying
+to protect the other thing is they're
+very very easy to defeat because their
+Fire Control just cannot keep up
+obviously if you use multiple units like
+we did it becomes a bit of a panic
+because one has to finish targeting that
+one before the next one can Target that
+one and it becomes kind of a nightmare
+of trying to Target all those at the
+same time so that's not an optimal
+solution at least at this time again a
+little later on you might have things
+like you know targeting priorities or
+command priorities or allocation
+priorities or maybe you'll have like one
+Central Computer that tells which one
+should fire next rather than getting
+overwhelmed where everybody targets the
+same guy then the next one targets but
+he doesn't get it but he doesn't fire
+cuz he's still waiting and you can see
+exactly how that kind of breaks down
+that communication resulting in a bunch
+of rockets hitting us so again a pretty
+cool systems I'd love to see how they
+evolve the mortar shell aspect of this
+I'm kind of curious about that because
+theoretically if you can hit a mortar
+shell you can also hit a shell from a
+battleship and um I don't know how well
+that would go but that's part of the fun
+enjoy

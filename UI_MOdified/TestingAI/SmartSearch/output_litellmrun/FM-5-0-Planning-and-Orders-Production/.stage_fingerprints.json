@@ -1,0 +1,8 @@
+{
+  "chunks.jsonl": "d1b5d0e660fd9373954dda356dbbd4f23dcf1d5d173755bb2c9cc95b9d76c774",
+  "diagnostics.json": "d1b5d0e660fd9373954dda356dbbd4f23dcf1d5d173755bb2c9cc95b9d76c774",
+  "embeddings.npz": "d1b5d0e660fd9373954dda356dbbd4f23dcf1d5d173755bb2c9cc95b9d76c774+doctrine:4567f0cf5911",
+  "enriched_chunks.jsonl": "d1b5d0e660fd9373954dda356dbbd4f23dcf1d5d173755bb2c9cc95b9d76c774+doctrine:4567f0cf5911",
+  "initial_pages.md": "d1b5d0e660fd9373954dda356dbbd4f23dcf1d5d173755bb2c9cc95b9d76c774",
+  "parsed.json": "d1b5d0e660fd9373954dda356dbbd4f23dcf1d5d173755bb2c9cc95b9d76c774"
+}

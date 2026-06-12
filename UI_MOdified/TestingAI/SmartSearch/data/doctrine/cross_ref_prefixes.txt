@@ -1,0 +1,29 @@
+# data/doctrine/cross_ref_prefixes.txt
+#
+# One prefix per line. Blank lines and # comments are ignored.
+#
+# Used as the single source of truth for:
+#   - graph/post_processors/cross_ref_extractor.py  (ingestion regex)
+#   - ui/app.py                                      (retrieval UI chips)
+#
+# The extractor regex is built dynamically in graph/doctrine_vocab.py:
+#   \b(?:PREFIX1|PREFIX2|...)\s?\d+(?:[.\-]\d+)*\b
+# so references like "ADP 5-0", "ATP 3-01.8", "JP3-13", "FM 3-0"
+# all match.
+
+# US Army Doctrine Publications
+ADP
+ADRP
+ATP
+FM
+TC
+DA
+
+# Joint / Allied Publications
+JP
+AJP
+
+# US Marine Corps Doctrine Publications
+MCDP
+MCWP
+MCRP

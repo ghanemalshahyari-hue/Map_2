@@ -1,0 +1,13 @@
+services:
+  litellm:
+    image: litellm:latest
+    network_mode: host
+    volumes:
+      - ./litellm_config.yaml:/app/config.yaml
+    environment:
+      - DATABASE_URL=postgresql://litellm:litellm@localhost:5433/litellm
+      - REDIS_URL=redis://localhost:6379
+      - LITELLM_MASTER_KEY=sk-1234
+      - LITELLM_LOCAL_MODEL_COST_MAP="True"
+    command: [ "--config", "/app/config.yaml", "--port", "4000", "--telemetry", "False", "--detailed_debug" ]
+    restart: unless-stopped

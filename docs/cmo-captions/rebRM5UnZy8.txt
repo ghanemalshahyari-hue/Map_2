@@ -1,0 +1,292 @@
+# C: MO - Target Motion Analysis
+Video: https://www.youtube.com/watch?v=rebRM5UnZy8
+Video ID: rebRM5UnZy8
+
+hello everyone in today's video we're
+going to be taking a look at a quick tip
+to improve your target motion and
+Analysis now you're saying now what are
+you referring to I'm simply referring to
+whenever you have a passive track it's
+going to be to try to identify where the
+passive track is as well as key details
+about that passive track now one of the
+things we have here Rosa you can see we
+have a little Los Angeles not just sort
+of chilling down here and we've detected
+a passive track for those of you who are
+not familiar with the way passive sonar
+Works basically we're listening uh
+whenever we listen the only thing I can
+tell you is the direction the sound is
+coming from and to a lesser extent
+there's actually some pretty cool
+electronic magic we can do to it to
+basically identify the speed of a
+contact which is triple pretty cool if
+you ask me it's called demodulated noise
+and of course we can determine now is it
+getting away is it turning left is it
+going right but that's all we can really
+identify about a contact so what we need
+to do is we need to improve the quality
+of my contact my estimated position of
+this somehow without actually popping up
+to the surface and taking a look or
+using something like active sonar Active
+Radar along those lines now you're
+wondering um now why is this a contact
+bouncing around so much here and the
+reason it is is my little TMA officer
+Target motion analysis is basically
+trying to estimate the path that this
+particular contact is making now there's
+a bunch of things we can do like I
+mentioned a moment ago we've already
+identified the speed of the target the
+reason we did that is basically if we
+know how many blades the propeller has
+we can basically listen to the swish
+swish swish Swish and divide by the
+number of blades to identify the turns
+per knot if you have it on the peach you
+can actually get a really good estimate
+of the speed that's awesome because if
+we know speed we've eliminated one of
+the three variables that we need for the
+purposes of being able to identify where
+a Target is now notice my contact is
+getting progressively better I now know
+that it's a large crude Kanger it's a
+very very very very very very very very
+big ship and I know it's chugging along
+it's got we've got the course basically
+which I'm actually sort of impressed
+that we have the chorus if we have
+course in speed we also have position
+but um again there's my guy basically
+trying to work out the estimations so
+there are a couple good things that we
+know right away here now the first one
+of course is the fact that as we're
+swimming down here we know what we can
+hear in the distances we can hear things
+so if we ever picked up a Target that
+was over here for example um that's just
+mechanically not possible because we
+literally can't hear it so we can
+eliminate that ambiguity uh the other
+thing of course we can consider is if
+he's right here um we'd probably have a
+very very good idea of how quickly he's
+moving so the question is how do we
+improve the quality of this track like I
+was saying earlier without going active
+and the answer to that is actually very
+very simple and this is one of the
+things I love that I picked up from
+Dangerous Waters years ago all we have
+to do is change our own course now
+you're sitting there going wait what now
+remember if I take a quick bearing here
+in a couple moments later take another
+bearing and it's like this and I take
+another bearing like this you notice how
+we're just getting a bunch of parallel
+lines here that's going to mean that
+we're not 100 sure exactly of course we
+know it's a relative position here so we
+could do something like that and try to
+kind of work it out but it's still we're
+not 100 sure what it is so what I'm
+going to do is I'm going to order my
+best I'll go ahead and pause for a
+second here to go ahead and execute a
+turn now there's a bunch of different
+ways philosophically that people like to
+approach this again depending on your
+experience with submarine and of course
+the quality of your acoustic gear which
+on this submarine is fantastic this is
+one step removed from the Los Angeles
+basically so what I'm going to do is I'm
+going to grab this and accordingly our
+course is at 86 degrees so what we want
+to do is we want to make at least a 45
+degree turn away from our present course
+now we can turn into it that's fine but
+people are like wait why would you not
+turn into it that seems to make sense to
+me well the thing you have to remember
+with the sub here is I have a long wire
+trailing behind me for those of you who
+have must that before let me open that
+sucker up real quick I'm going to close
+that I don't need it but the thing with
+that long wire that's basically being
+pulled behind me right now is the fact
+that my submarine can block it so if I
+turn towards him my wire would get
+blocked by my own sub and then I
+couldn't anything so that's not going to
+work so well for us so what I'm going to
+do is I'm simply going to order up a new
+course here I'm going to press F3 I
+remember 80 and uh what would be 86
+degrees originally so we're just going
+to go forward a little bit and then
+we're going to execute a turn all right
+so I'm going to yell at the MIT for my
+watch here to basically I take us up
+another 300 and then 45 to the right
+whoa we don't have it right and left in
+a boat uh this would not be 45 to the
+right this would be yeah 45 to starboard
+let's see here we want to go about 86
+degrees that's about 235 meters and
+we're just going to go ahead and take a
+turn here and again not an aggressive
+turn and then we're going to run in that
+direction about half a kilometer like
+that so we've got to unpause so my sub
+is going to start executing my turn I'm
+actually going to stretch this out a
+little bit um I'm like my dive officer
+and my uh Helmsman I got a little
+aggressive there I said we want to go a
+quarter of a mile then you want to turn
+but you just grab the wheel and cranked
+it over kind of a thing like that
+so now my sub is going to go ahead and
+execute a turn which now is going to
+cause his bearing this bearing now will
+sweep like this relative to us now of
+course absolute to us you can see that
+the target remains in exactly the same
+position because you know we're doing
+the math so to speak now what's going to
+happen is as we start to put some
+distance on him and now that we're
+traveling at a different you're going to
+notice the ambiguity of my target is
+going to start to shift now notice by
+the way I'm picking this up from the
+tote array as the tote array is now
+catching up to us and you can see for a
+couple moments there we had a very very
+very confident bearing so what we can do
+now is if we really really really want
+to go all out here and this is one of
+those fun little strategies that we used
+to see in the dangerous water days is
+you could actually build yourself a
+little miniature ladder like this and
+what that miniature ladder will do is as
+we take those turns we'll get a better
+idea of where the target is so we'll
+come speed up time here
+laughs
+notice as soon as we have broke about 90
+degrees there we have a really really
+confident confident position on this
+target here as a matter of fact if we
+want to start thinking about sneaking up
+on this guy for an attack we could
+actually turn ourselves around and as we
+go around here uh we'll be even more
+confident of the position of the target
+look at that we were very very confident
+for a secondary now one of the things I
+like to do is if you get something
+that's this confident you can actually
+right click on the Target and say a mark
+position and basically what that will do
+is that will cause that opposition to be
+known oh we had them perfectly for a
+second there give it just a moment for
+the TMA guy to do his math come on come
+on TMA man give me something a little
+more confident and now we have a pretty
+darn good turn so I'm going to turn with
+him again and you can see look at how
+accurate our position estimation on this
+guy is now and we went from a giant
+orange line to something that is a very
+very small this is more than enough for
+a torpedo shot for us you know if I went
+to grab my guy right now for shift up
+one and click on them you're gonna
+notice well sure we'll take the shot
+kind of a thing now let me give you a
+quick little piece of advice here I'll
+just from playing this game for a little
+while um when I go to do this if I were
+to actually take the shot
+you're going to notice as my torpedo
+travels my position on my knowledge of
+this position will change and the
+torpedo will do a funny little torpedo
+day so I'll show you what it looks like
+when it happens all right see my
+Torpedoes are going pretty straight here
+but if I actually notice you see how it
+says wire on the bottom of my sub here
+I'm actually guiding this torpedo from
+My Submarine so if the target suddenly
+changes position or gains position or
+loses position oh look at how confident
+we are in its position look at that
+and again it's all because of those
+little turns that we executed in order
+to make it so it was a little bit easier
+to lock on so my Torpedoes on the way
+it's obviously going to be a pretty long
+journey for this torpedo to get there
+but because I have such a confident
+position on him I'm pretty sure once we
+go active with this torpedo it's a kind
+of surprise this guy quite a bit and
+again I don't know what he's doing in
+the middle of the Atlantic here and I
+don't know why we're shooting a torpedo
+at him but uh that's beyond what we need
+to worry about here notice by the way
+that we're actually leading this
+position in everything you've seen so
+far has all been completely done
+passively this guy has no idea he's been
+launched on now here's another really
+fun um I like to call this a command
+trick but if you notice here how the
+Torpedoes rocking back and forth It's
+actually searching for the Target here
+and now one of the fun things you'll see
+is it'll suddenly latch onto the Target
+and if we had any doubt in our mind
+where the target is we will immediately
+know exactly where it is now the
+interesting thing here is I can actually
+turn this torpedo by ordering at an
+actual Waypoint check this out
+so now the torpedo will actually take a
+turn there and um go ahead and continue
+its track okay we're getting close we're
+getting close he's also wasting a ton of
+energy here so let me go give him a
+little push here there we go again this
+is one of the great things about wire
+Torpedoes is that you can do silly
+things like this all right sneak it in
+I'm gonna zoom out a little bit here
+all right so in just a moment he's going
+to go back to his own tracking device
+right there
+what a clean hit what a clean hit now
+remember everything you just saw was out
+without me putting my Periscope up all
+of these things were done completely
+passively identification position all
+that just by adding a little teeny tiny
+turn kind of taking a different course
+for a little while that improves
+drastically enjoy

@@ -166,11 +166,59 @@
         };
     }
 
+    // ── APP-FLOW-2: in-app scenario run controls ──────────────────
+    // The current scenario name comes from the single load choke point
+    // (window.RmoozScenario, set by loadLiveScenarioFromJson). We read it
+    // (no mutation) to label the bar and gate the placeholder transport.
+    const NO_SCENARIO = 'No scenario loaded · لا يوجد سيناريو محمّل';
+    function currentScenarioName() {
+        try {
+            const s = window.RmoozScenario && window.RmoozScenario.scenario;
+            return s ? (s.scenario_label || s.name || s.id || null) : null;
+        } catch (_) { return null; }
+    }
+    function refreshScenarioLabel() {
+        const nameEl = $('tl-scenario-name');
+        if (nameEl) {
+            const nm = currentScenarioName();
+            nameEl.textContent = nm || NO_SCENARIO;
+            nameEl.classList.toggle('is-empty', !nm);
+        }
+        // Playback hint: when no scenario is loaded, dim the transport group and
+        // explain why (non-destructive — does not touch the per-button titles).
+        const transport = document.querySelector('.timeline-group--transport');
+        if (transport) {
+            const has = !!currentScenarioName();
+            transport.style.opacity = has ? '' : '0.45';
+            if (has) transport.removeAttribute('title');
+            else transport.setAttribute('title', tr('tl-load-first', 'Load a scenario first · حمّل سيناريو أولاً'));
+        }
+    }
+    function nsl() { return window.AppNativeScenarioLoader || null; }
+    function bindScenarioControls() {
+        const loadBtn = $('tl-load-scenario');
+        const importBtn = $('tl-import-scenario');
+        loadBtn?.addEventListener('click', function () {
+            const n = nsl();
+            if (n && typeof n.openScenarioPicker === 'function') n.openScenarioPicker();
+            setTimeout(refreshScenarioLabel, 400);
+        });
+        importBtn?.addEventListener('click', function () {
+            const n = nsl();
+            if (n && typeof n.openImportScenario === 'function') n.openImportScenario();
+        });
+        refreshScenarioLabel();
+        // Light poll so the label also tracks Quick Demo / Resume / restore /
+        // import loads that don't route through these buttons. Cheap, read-only.
+        setInterval(refreshScenarioLabel, 1200);
+    }
+
     function init() {
         if (!$('timeline-strip')) return;
         bindTransport();
         bindSegmented('tl-speed-group', 'speed-changed', 'data-tl-speed');
         bindSegmented('tl-phase-group', 'phase-changed', 'data-tl-phase');
+        bindScenarioControls();
         bindLanguageChain();
         // Default visual state — Play active, x1, start phase. Matches
         // the markup defaults; this is a defensive re-apply so a future

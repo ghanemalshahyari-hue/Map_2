@@ -1,0 +1,387 @@
+# templates/staff_brief.yaml
+# ==========================
+# Doc — إيجاز هيئة الركن (Staff Brief — Step-1 running-estimate brief).
+#
+# §18 C21 (2026-04-23) — NEW v1 document. This is NOT the full
+# Staff Estimate (Steps 2–6); that document stays behind
+# ``staff_estimate.yaml``'s ``v1_scope: false`` flag. The Step-1 brief
+# populates only fields that the commander can reasonably support at
+# Receipt-of-Mission time:
+#
+#   * Environment + intel-analysis inputs from the operation brief
+#     (first_light / last_light / moon_phase, terrain / weather
+#     reference lines).
+#   * Enemy composition / disposition / strength / COA and recent
+#     activity — doctrinally supported via retrieval against ADP 2-0
+#     + FM 6-0.
+#   * Operations-process fields that live at the commander's intent
+#     level — main-effort tasks, combat effectiveness, running-estimate
+#     conclusions.
+#   * Personnel + Logistics rows stay "يُصدر لاحقاً" at Step 1 by
+#     design — those estimates mature after COA analysis (Steps 3–5).
+#
+# Schema classes reused from graph/generation/schema/schemas.py:
+#   INTELLIGENCE_ESTIMATE, OPERATIONS_ESTIMATE, PERSONNEL_ESTIMATE,
+#   LOGISTICS_ESTIMATE.
+#
+# Labels come from graph/generation/schema/field_catalog.py (overlay).
+# Drafting prompts for retrieved fields come from
+# graph/generation/prompts_ar.py (overlay). Both files are the single
+# editable surface; this YAML stays structural.
+
+meta:
+  template_id: staff_brief
+  template_version: 1
+  title_arabic: "إيجاز هيئة الركن"
+  document_slug: staff_brief
+  output_filename: "{document_slug}.docx"
+  default_collections:
+    - ingest__doctrine__bgem3
+
+schemas:
+  # =================================================================
+  # INTELLIGENCE_ESTIMATE — G2 / S2 section of the brief. Environment
+  # rows come from timing inputs; the six enemy-analysis fields are
+  # retrieved (one group).
+  # =================================================================
+  INTELLIGENCE_ESTIMATE:
+    fields:
+      terrain:
+        kind: static
+        value: "كما في تقدير الاستخبارات — الملحق (أ)."
+      weather:
+        kind: static
+        value: "كما في تقدير الاستخبارات — الملحق (أ)."
+      first_light:
+        kind: input
+        path: timing.first_light
+        default: "يُصدر لاحقاً"
+      last_light:
+        kind: input
+        path: timing.last_light
+        default: "يُصدر لاحقاً"
+      moon_phase:
+        kind: input
+        path: timing.moon_phase
+        default: "يُصدر لاحقاً"
+      effect_of_environment_on_operations:
+        kind: static
+        value: "لا يوجد أي تأثير كبير على العمليات من البيئة."
+
+      enemy_composition:
+        kind: retrieved
+        group: INTELLIGENCE_ESTIMATE
+        query_seeds:
+          - "enemy composition order of battle analysis"
+          - "intelligence preparation of the battlefield enemy forces"
+          - "adversary unit organization and equipment"
+        collections:
+          - ingest__doctrine__bgem3
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-2-0-Intelligence.pdf"
+            - "FM-6-0-Commander-Staff-Organization.pdf"
+        max_tokens: 250
+
+      enemy_disposition:
+        kind: retrieved
+        group: INTELLIGENCE_ESTIMATE
+        query_seeds:
+          - "enemy disposition geographic deployment positions"
+          - "adversary force laydown and dispositions IPB"
+        collections:
+          - ingest__doctrine__bgem3
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-2-0-Intelligence.pdf"
+            - "FM-6-0-Commander-Staff-Organization.pdf"
+        max_tokens: 220
+
+      enemy_strength:
+        kind: retrieved
+        group: INTELLIGENCE_ESTIMATE
+        query_seeds:
+          - "enemy strength estimate combat power"
+          - "adversary quantitative qualitative assessment"
+        collections:
+          - ingest__doctrine__bgem3
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-2-0-Intelligence.pdf"
+            - "FM-6-0-Commander-Staff-Organization.pdf"
+        max_tokens: 220
+
+      enemy_readiness:
+        kind: static
+        value: "يُصدر لاحقاً"
+      enemy_training:
+        kind: static
+        value: "يُصدر لاحقاً"
+
+      recent_and_ongoing_activities:
+        kind: retrieved
+        group: INTELLIGENCE_ESTIMATE
+        query_seeds:
+          - "enemy recent activities indicators and warnings"
+          - "ongoing adversary operations current situation"
+        collections:
+          - ingest__doctrine__bgem3
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-2-0-Intelligence.pdf"
+            - "FM-6-0-Commander-Staff-Organization.pdf"
+        max_tokens: 220
+
+      enemy_tactics_phase1_preparation:
+        kind: static
+        value: "يُصدر لاحقاً"
+      enemy_tactics_phase2_shaping:
+        kind: static
+        value: "يُصدر لاحقاً"
+      enemy_tactics_phase3_decisive:
+        kind: static
+        value: "يُصدر لاحقاً"
+
+      enemy_most_likely_coa:
+        kind: retrieved
+        group: INTELLIGENCE_ESTIMATE
+        query_seeds:
+          - "enemy most likely course of action COA MLCOA"
+          - "threat course of action analysis IPB"
+          - "adversary intent likely action assessment"
+        collections:
+          - ingest__doctrine__bgem3
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-2-0-Intelligence.pdf"
+            - "FM-6-0-Commander-Staff-Organization.pdf"
+            - "FM-5-0-Planning-and-Orders-Production.pdf"
+        max_tokens: 300
+
+      counter_intel_observations:
+        kind: retrieved
+        group: INTELLIGENCE_ESTIMATE
+        query_seeds:
+          - "counterintelligence observations adversary capabilities"
+          - "counter-reconnaissance considerations planning"
+        collections:
+          - ingest__doctrine__bgem3
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-2-0-Intelligence.pdf"
+            - "FM-6-0-Commander-Staff-Organization.pdf"
+        max_tokens: 220
+
+  # =================================================================
+  # OPERATIONS_ESTIMATE — G3 / S3 section. Higher-unit block is input;
+  # own-unit mission is input; three commander-level fields are
+  # retrieved (one group).
+  # =================================================================
+  OPERATIONS_ESTIMATE:
+    fields:
+      higher_unit_mission:
+        kind: input
+        path: operation.higher_unit_mission
+        default: "يُصدر لاحقاً"
+      higher_unit_purpose:
+        kind: static
+        value: "يُصدر لاحقاً"
+      higher_unit_method:
+        kind: static
+        value: "يُصدر لاحقاً"
+      higher_unit_end_state:
+        kind: static
+        value: "يُصدر لاحقاً"
+      own_unit_mission:
+        kind: input
+        path: mission_intent_free_text
+        default: ""
+      own_unit_purpose:
+        kind: static
+        value: "يُصدر لاحقاً"
+      own_unit_end_state:
+        kind: static
+        value: "يُصدر لاحقاً"
+
+      main_effort_tasks:
+        kind: retrieved
+        group: OPERATIONS_ESTIMATE
+        query_seeds:
+          - "main effort tasks supporting efforts mission statement"
+          - "decisive shaping sustaining operations planning"
+          - "commander's intent main effort purpose"
+        collections:
+          - ingest__doctrine__bgem3
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-6-0-Commander-Staff-Organization.pdf"
+            - "FM-5-0-Planning-and-Orders-Production.pdf"
+            - "ADP-5-0-Operations-Process.pdf"
+        max_tokens: 280
+
+      ground_component_force:
+        kind: input
+        path: operation.unit
+        default: "يُصدر لاحقاً"
+      attached_supporting_units:
+        kind: input
+        path: operation.attached_detached_units
+        default: "يُصدر لاحقاً"
+      force_composition:
+        kind: input
+        path: operation.task_units
+        default: "يُصدر لاحقاً"
+      training_readiness_level:
+        kind: input
+        path: operation.own_training_readiness
+        default: "يُصدر لاحقاً"
+
+      combat_effectiveness:
+        kind: retrieved
+        group: OPERATIONS_ESTIMATE
+        query_seeds:
+          - "combat effectiveness assessment running estimate"
+          - "unit combat power readiness planning considerations"
+        collections:
+          - ingest__doctrine__bgem3
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-6-0-Commander-Staff-Organization.pdf"
+            - "ADP-5-0-Operations-Process.pdf"
+        max_tokens: 220
+
+      operations_conclusions:
+        kind: retrieved
+        group: OPERATIONS_ESTIMATE
+        query_seeds:
+          - "operations running estimate conclusions recommendations commander"
+          - "staff estimate operations conclusions MDMP"
+        collections:
+          - ingest__doctrine__bgem3
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-6-0-Commander-Staff-Organization.pdf"
+            - "FM-5-0-Planning-and-Orders-Production.pdf"
+            - "ADP-5-0-Operations-Process.pdf"
+        max_tokens: 300
+
+  # =================================================================
+  # PERSONNEL_ESTIMATE — G1 / S1. All "يُصدر لاحقاً" at Step 1 by
+  # doctrine (the estimate matures after COA analysis, Steps 3–5).
+  # =================================================================
+  PERSONNEL_ESTIMATE:
+    fields:
+      force_coverage:
+        kind: static
+        value: "يُصدر لاحقاً"
+      morale:
+        kind: static
+        value: "يُصدر لاحقاً"
+      reinforcements:
+        kind: static
+        value: "يُصدر لاحقاً"
+      projected_casualties:
+        kind: static
+        value: "يُصدر لاحقاً"
+      control_and_coordination:
+        kind: static
+        value: "حسب الإجراءات العملياتية الثابتة (SOP)."
+      pows_detainees:
+        kind: static
+        value: "تتبع التعليمات الصادرة في بروتوكولات التعامل مع أسرى الحرب والمحتجزين."
+      civilian_refugees:
+        kind: static
+        value: "يتم التعامل مع المدنيين النازحين وفقاً للإرشادات الصادرة بذلك."
+      civilian_detainees:
+        kind: static
+        value: "يتم التنسيق مع الجهات المختصة للتعامل مع المحتجزين المدنيين."
+      personnel_conclusions:
+        kind: static
+        value: "يُصدر لاحقاً"
+
+  # =================================================================
+  # LOGISTICS_ESTIMATE — G4 / S4. All "يُصدر لاحقاً" at Step 1.
+  # =================================================================
+  LOGISTICS_ESTIMATE:
+    fields:
+      subsistence_class_i:
+        kind: static
+        value: "يُصدر لاحقاً"
+      general_sustainment:
+        kind: static
+        value: "يُصدر لاحقاً"
+      pol_class_iii:
+        kind: static
+        value: "يُصدر لاحقاً"
+      ammunition_class_v:
+        kind: static
+        value: "يُصدر لاحقاً"
+      repair_parts_class_ix:
+        kind: static
+        value: "يُصدر لاحقاً"
+      equipment_and_engineer_materiel:
+        kind: static
+        value: "يُصدر لاحقاً"
+      transportation:
+        kind: static
+        value: "يُصدر لاحقاً"
+      maintenance:
+        kind: static
+        value: "يُصدر لاحقاً"
+      medical_support_class_viii:
+        kind: static
+        value: "يُصدر لاحقاً"
+      logistics_conclusions:
+        kind: static
+        value: "يُصدر لاحقاً"
+
+structure:
+  - kind: title
+    text: "إيجاز هيئة الركن"
+    alignment: center
+    underline: true
+
+  - kind: section
+    schema: INTELLIGENCE_ESTIMATE
+    heading:
+      text: "تقدير الاستخبارات"
+      underline: true
+      space_before_cm: 1.0
+    layout: numbered_fields
+    citation_collection: true
+
+  - kind: section
+    schema: OPERATIONS_ESTIMATE
+    heading:
+      text: "تقدير العمليات"
+      underline: true
+      space_before_cm: 1.0
+    layout: numbered_fields
+    citation_collection: true
+
+  - kind: section
+    schema: PERSONNEL_ESTIMATE
+    heading:
+      text: "تقدير الموارد البشرية"
+      underline: true
+      space_before_cm: 1.0
+    layout: numbered_fields
+    citation_collection: false
+
+  - kind: section
+    schema: LOGISTICS_ESTIMATE
+    heading:
+      text: "تقدير الإسناد اللوجستي"
+      underline: true
+      space_before_cm: 1.0
+    layout: numbered_fields
+    citation_collection: false

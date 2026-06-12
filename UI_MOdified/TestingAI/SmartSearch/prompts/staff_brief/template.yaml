@@ -1,0 +1,237 @@
+# prompts/staff_brief/template.yaml
+# ==================================
+# Y-approved shape: 53 flat fields keyed exactly like
+# /Users/hextechkraken/Desktop/y/staff_brief_edited.txt.
+#
+# Field kinds in use:
+#   source_file_extracted  — dominant kind.  Extraction from the user's
+#                            Warning Order + Intel Report (+ any additional
+#                            files passed through Phase 1/2).  The per-
+#                            field `source_hint` steers the extractor.
+#   retrieved (doctrine)   — used only for the 4 "Conclusions / Effects"
+#                            framing fields, so doctrine grounds them
+#                            when the Intel Report doesn't supply an
+#                            explicit conclusions paragraph.
+
+meta:
+  template_id: staff_brief
+  template_version: 2
+  title_arabic: "إيجاز هيئة الركن"
+  document_slug: staff_brief
+  output_filename: "{document_slug}.docx"
+  default_collections:
+    - ingest__operationalfiles__bgem3
+
+schemas:
+  StaffBrief:
+    fields:
+      # ---------------- environment ----------------
+      Terrain:
+        kind: source_file_extracted
+        source_hint: intel_report
+      Weather:
+        kind: source_file_extracted
+        source_hint: intel_report
+      First_light:
+        kind: source_file_extracted
+        source_hint: either
+      Last_light:
+        kind: source_file_extracted
+        source_hint: either
+      Moon:
+        kind: source_file_extracted
+        source_hint: either
+
+      Effect_of_Weather_and_Terrain_on_Operations:
+        kind: retrieved
+        group: conclusions
+        query_seeds:
+          - "تأثير الأرض والطقس على العمليات"
+          - "weather terrain effects on operations"
+        collections:
+          - ingest__operationalfiles__bgem3
+        rerank_query_ar: "تأثير الأرض والطقس على العمليات التكتيكية"
+
+      # ---------------- enemy situation ----------------
+      Composition:
+        kind: source_file_extracted
+        source_hint: intel_report
+      Deployments:
+        kind: source_file_extracted
+        source_hint: intel_report
+      Force_Coverage:
+        kind: source_file_extracted
+        source_hint: intel_report
+      Morale:
+        kind: source_file_extracted
+        source_hint: intel_report
+      Training:
+        kind: source_file_extracted
+        source_hint: intel_report
+      Recent_and_Ongoing_Activities:
+        kind: source_file_extracted
+        source_hint: intel_report
+      Enemy_Tactics_in_Exposure_Operations_Phase1_Preparation:
+        kind: source_file_extracted
+        source_hint: intel_report
+      Enemy_Tactics_in_Exposure_Operations_Phase2_Preparation:
+        kind: source_file_extracted
+        source_hint: intel_report
+      Enemy_Tactics_in_Exposure_Operations_Phase3_Main_Attack:
+        kind: source_file_extracted
+        source_hint: intel_report
+      Intentions_and_Objectives:
+        kind: source_file_extracted
+        source_hint: intel_report
+      Counter_Intelligence_Observations:
+        kind: source_file_extracted
+        source_hint: intel_report
+
+      # ---------------- personnel / human forces ----------------
+      Force_Cover:
+        kind: source_file_extracted
+        source_hint: either
+      Combat_Morale:
+        kind: source_file_extracted
+        source_hint: warning_order
+      Reinforcements:
+        kind: source_file_extracted
+        source_hint: warning_order
+      Projected_Casualties:
+        kind: source_file_extracted
+        source_hint: either
+      Control_and_Coordination:
+        kind: source_file_extracted
+        source_hint: warning_order
+      Prisoners_of_War:
+        kind: source_file_extracted
+        source_hint: warning_order
+      Civilian_Users:
+        kind: source_file_extracted
+        source_hint: either
+      Civilian_Prisoners_and_Detainees:
+        kind: source_file_extracted
+        source_hint: warning_order
+
+      Human_Force_Conclusions:
+        kind: retrieved
+        group: conclusions
+        query_seeds:
+          - "استنتاجات تقدير الأفراد"
+          - "personnel estimate conclusions"
+        collections:
+          - ingest__operationalfiles__bgem3
+        rerank_query_ar: "تأثير الأرض والطقس على العمليات التكتيكية"
+
+      # ---------------- logistics ----------------
+      Logistical_Rations:
+        kind: source_file_extracted
+        source_hint: either
+      Logistical_sustainment:
+        kind: source_file_extracted
+        source_hint: either
+      Fuel:
+        kind: source_file_extracted
+        source_hint: either
+      ammunition:
+        kind: source_file_extracted
+        source_hint: either
+      Spare_parts:
+        kind: source_file_extracted
+        source_hint: either
+      Engineering_materiel:
+        kind: source_file_extracted
+        source_hint: either
+      Transportation:
+        kind: source_file_extracted
+        source_hint: either
+      Maintenance:
+        kind: source_file_extracted
+        source_hint: either
+      Field_Hospitals:
+        kind: source_file_extracted
+        source_hint: either
+
+      Supply_Conclusions:
+        kind: retrieved
+        group: conclusions
+        query_seeds:
+          - "استنتاجات التقدير اللوجستي"
+          - "logistics estimate conclusions"
+        collections:
+          - ingest__operationalfiles__bgem3
+        rerank_query_ar: "تأثير الأرض والطقس على العمليات التكتيكية"
+
+      # ---------------- intel capabilities + conclusions ----------------
+      Enemy_Capabilities:
+        kind: source_file_extracted
+        source_hint: intel_report
+      Conclusions:
+        kind: source_file_extracted
+        source_hint: intel_report
+
+      # ---------------- joint ops (Warning Order) ----------------
+      join_op_mission:
+        kind: source_file_extracted
+        source_hint: warning_order
+      Join_op_purp:
+        kind: source_file_extracted
+        source_hint: warning_order
+      joint_ops_how:
+        kind: source_file_extracted
+        source_hint: warning_order
+      joint_ops_desired_end:
+        kind: source_file_extracted
+        source_hint: warning_order
+
+      # ---------------- executive command (Warning Order) ----------------
+      Exc_command_mission:
+        kind: source_file_extracted
+        source_hint: warning_order
+      Exc_command_purp:
+        kind: source_file_extracted
+        source_hint: warning_order
+      Exc_command_main_mission:
+        kind: source_file_extracted
+        source_hint: warning_order
+      joint_ops_desired_end2:
+        kind: source_file_extracted
+        source_hint: warning_order
+
+      # ---------------- own force (Warning Order) ----------------
+      Land_component_force:
+        kind: source_file_extracted
+        source_hint: warning_order
+      Attached_units:
+        kind: source_file_extracted
+        source_hint: warning_order
+      Force_Composition:
+        kind: source_file_extracted
+        source_hint: warning_order
+      Training_Readiness_Level:
+        kind: source_file_extracted
+        source_hint: warning_order
+      Combat_Effectiveness:
+        kind: source_file_extracted
+        source_hint: either
+
+      Operational_Conclusions:
+        kind: retrieved
+        group: conclusions
+        query_seeds:
+          - "استنتاجات تقدير العمليات"
+          - "operations estimate conclusions"
+        collections:
+          - ingest__operationalfiles__bgem3
+        rerank_query_ar: "تأثير الأرض والطقس على العمليات التكتيكية"
+
+structure:
+  - kind: title
+    text: "إيجاز هيئة الركن"
+    alignment: center
+    underline: true
+
+  - kind: section
+    schema: StaffBrief
+    layout: y_staff_brief
+    citation_collection: true

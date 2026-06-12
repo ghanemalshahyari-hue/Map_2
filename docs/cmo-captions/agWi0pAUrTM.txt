@@ -1,0 +1,231 @@
+# C: MO - Simplifying Airstrikes on Complex Targets with Patrol Missions
+Video: https://www.youtube.com/watch?v=agWi0pAUrTM
+Video ID: agWi0pAUrTM
+
+Hello everyone. In today's video, we're
+going to be showing you a quick and easy
+way to make it a little bit easier to
+strike complex targets so you can
+prioritize the things you want to blow
+up and deprioritize the things you don't
+want to blow up without having a
+thousand individual strike missions. So,
+let's go ahead and do that now. I was
+fiddling around with this a little bit
+earlier. So, we have an air base up
+here. I feel like I've blown this one up
+more than once. Um, they have a really
+good uh sushi place, by the way, right
+at this air base in the real world. And
+what I'm going to do is create an anti-
+ground mission on the air base itself.
+So, I'm going to go press control insert
+here. Go ahead and click that. Click
+that. Control insert. Control insert.
+Control insert. And this is going to be
+my blow stuff up area. Now, as you can
+see in the upper left corner, we have a
+number of targets here. And there's
+quite a few hanger spaces. For example,
+there's hangers, all sorts of things.
+And we're going to build a mission that
+prioritizes, like I said, what we want
+to get. So, I'm going to press Ctrl F11.
+I'm going to go ahead and create my
+mission here. Strike a lot. Why not,
+right? Come down here. We're going to do
+uh not strike. We're going to do patrol.
+And we're going to make this an anti-
+ground patrol. You can see it's asa if
+you want to think about another way. We
+have ourselves a bunch of F-15 Strike
+Eagles. These things are fantastic for
+missions like this. So, I'm just going
+to bring them right down into here. Add
+them to our mission. We're going to go
+ahead and keep them in squads of We'll
+do squads of three here. We'll do cells
+today is kind of the fancy term for
+that. That's all set to go. That's all
+set to go. And that is going to be my
+patrol zone. Now, if I let this mission
+go as it stands right this second, uh
+they're going to have no problem blowing
+up whatever looks good. Uh, the other
+thing they're going to have a problem
+with is a munitions usage. So, what I'm
+going to do is actually sneak over to MC
+Con real quick. And what I'm going to do
+is come down here where it says weapon
+state. I'm going to make sure that they
+get a chance to use all of their weapons
+and then they go home. So, in this case,
+you can see mission specific weapons
+have been expended. Allow targets of
+opportunity. Ah, yeah, why not? They're
+F-15s. They're good at that. So, we're
+going to let them go ahead and do that
+option as well. Cool. All these things
+are set. But now, here's where the magic
+becomes. I'm going to head over to
+targeting priority. This is going to
+allow you to define the targets you wish
+to blow up prioritized. So, I'm going to
+click on create. You're going to see any
+any any. Don't worry, that's perfectly
+fine. Instead, going to press add item.
+Target type. I'm going to come down to
+facility target subtype. Ah, look at all
+these ones. Now, if you're in the
+scenario editor, which I almost
+recommend always playing this game in
+the scenario editor, but I'm a cheater,
+so oh well. I'm going to click this
+button real quick here. And now, watch
+what happens when I go to facility real
+quick. See how it's only the mission
+objects? So, let's say we want to
+target, for example, bunkers. Uh, we can
+come to building bunkers and have them
+prioritize that. Maybe I want to do
+surface buildings. I could have them
+prioritize that. You can see there's a
+wealth of different buildings here. So,
+what I'm going to do is I'm going to
+quickly add all these buildings
+individually. I'll show you why. All
+right, there we go. Now, the reason I
+took the time to break this out into
+individuals is I prefer to kind of
+prioritize. For example, the AV gas
+doesn't actually have a priority yet. We
+don't simulate fuel supplies at air
+bases, which is kind of a shame. And I'm
+sure at some point we'll have that
+feature, but at this point it's not a
+big priority. However, all these hangers
+are and which ones are we most
+interested in? Obviously, we'd be
+interested in the biggest hangers first,
+followed by probably the next biggest
+hangers, and then we work our way down
+to the medium small hangers, and so on
+and so forth. So, those will be our
+priorities in this order. So, I'm going
+to go ahead and add a new item here.
+We'll go into Whoops, I do that every
+time. I don't think we have any
+submarines in this. I've done goofed.
+So, from there, you can have air base.
+Obviously, we don't want to fiddle with
+that. Where are my access points? I have
+bunkers. Let's go ahead and say we want
+to do some ammo bunkers. This is
+something worth blowing up. And I'm
+actually going to prioritize it over the
+AV gas tanks here. Uh that's going to be
+intentional. Now, from here, what we're
+going to do is we're going to add in all
+the actual surface items that we can go
+after. Keep in mind, surface items are
+great if you can see something. Now, a
+lot of times you just don't. You can see
+both of these are equally prioritized.
+So, I'm just going to press the button
+add. And you can see it's going to add
+open structure. So, you can see here
+we're prioritizing big hangers. Then,
+we're going to go for medium ones. Then,
+we're going to go for the weather
+shelters. We're going to do any open
+structure, which basically means
+anything on the surface. Then we're
+going to do the ammo on down. Everything
+else is going to be at the very end.
+Meaning our bombers are basically going
+to be concentrating on this stuff in
+this order, which is awesome because
+they have a lot of weapons on board,
+which is going to make quite a mess for
+us. All right, unit settings. So, one
+thing I'm going to do is shut off the
+1/3 rule. The reason being is I want all
+my aircraft to launch at the same exact
+time. So, we'll go ahead and get that.
+Sometimes what I'll do is I'll actually
+set a specific takeoff time. The reality
+is they're going to work fine here, but
+you know, just for the sake of argument,
+we'll go ahead and dial that in
+directly. So, let's see here. It is 4:30
+in the morning. Uh, we're going to say
+takeoff time is going to be 0936
+in 2 minutes there. That looks good to
+me. And that'll set things up. We can
+now create and edit the flight plans. Of
+course, like I said, we haven't taken
+off yet, so it's not relevant. And we're
+just going to confirm that the time
+looks okay. 2008 888. Good to go. Now,
+here's where the magic starts.
+What you're going to observe here is as
+they come swinging and screaming across
+the world here is they're going to
+disregard all those aircraft. And the
+cool thing here is they're actually
+going to start engaging the ground
+targets. Now, if I grab this laser jam
+right here, you're going to notice what
+is it prioritizing? Oh, surprise. Barnes
+aircraft hanger 4x large hang air
+aircraft. So, it's intentionally
+prioritizing the targets that we did in
+the order we gave it. Now, what's kind
+of fun here is you're going to see that
+he's going to drop a bunch of these off
+and he's probably going to go get
+distracted by those aircraft over there
+that were causing shenanigans. All
+right, here we go. Here comes the first
+round of Jams. There's going to be a lot
+of explosions.
+There we go. So, of course, after he's
+finished up his run, he's going to come
+swinging back in here. He's still got
+plenty of JD dams to go. And you can see
+everybody's piling on. And if I were to
+click on one of these JD dams randomly,
+you'll see that it is intentionally
+prioritizing the second set of hangers,
+which are the ones that survived our
+first run of explosions. And you can see
+here that we've got these pinpoint
+explosions going on. This is probably a
+pretty good picture for the title card
+here. Oh my goodness. This is so unfair
+for the four folks on the ground. Oh.
+Oh. Ow. Ow. Ow. Ow. Oh, this is so
+unfair. This is such amazing bombing
+skill here with like deliberate
+perfection. not wasting a single round
+of ammunition. You could never get away
+with this in the real world, by the way.
+You You get one strike and then you
+leave kind of a thing like that. And
+that looks fantastic. Let's go ahead and
+see how we did. We'll go switch teams
+real fast here. And we have God's eye
+view on, obviously, she'll shut that
+down. Check this out. Check this out.
+Wow, this place doesn't look anything
+like it did earlier. Let's go look up my
+losses and expenditures. And as you can
+see, the targets that we prioritized
+were the exact targets we want. And the
+total time it took us to set that
+mission up is about three minutes. Now,
+if I wanted to do it traditionally, I'd
+have to build individual groups and
+prioritize from there, and that would
+have taken a really long time. As you
+can see, it works. Enjoy.

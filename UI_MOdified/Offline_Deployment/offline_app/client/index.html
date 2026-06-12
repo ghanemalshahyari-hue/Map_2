@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="landing-html" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>rmooz — رموز</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        html.landing-html,
+        body.landing-html,
+        .landing-shell,
+        .landing-logo {
+            background-color: #121212;
+            background-image:
+                linear-gradient(
+                    90deg,
+                    #2a2a2a 0%,
+                    #1a1a1a 14%,
+                    rgba(24, 24, 24, 0) 32%,
+                    rgba(24, 24, 24, 0) 68%,
+                    #1a1a1a 86%,
+                    #2a2a2a 100%
+                ),
+                radial-gradient(
+                    ellipse 85% 120% at 50% 48%,
+                    rgba(55, 55, 55, 0.22) 0%,
+                    transparent 58%
+                ),
+                repeating-linear-gradient(
+                    45deg,
+                    rgba(255, 255, 255, 0.028) 0px,
+                    rgba(255, 255, 255, 0.028) 1px,
+                    transparent 1px,
+                    transparent 6px
+                ),
+                repeating-linear-gradient(
+                    -45deg,
+                    rgba(0, 0, 0, 0.35) 0px,
+                    rgba(0, 0, 0, 0.35) 1px,
+                    transparent 1px,
+                    transparent 6px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    rgba(255, 255, 255, 0.018) 0px,
+                    rgba(255, 255, 255, 0.018) 1px,
+                    transparent 1px,
+                    transparent 5px
+                ),
+                linear-gradient(180deg, #161616 0%, #0e0e0e 50%, #141414 100%);
+            background-repeat: no-repeat, no-repeat, repeat, repeat, repeat, no-repeat;
+            background-size: 100% 100%, 100% 100%, auto, auto, auto, 100% 100%;
+            background-position: center;
+        }
+
+        html.landing-html,
+        body.landing-html {
+            margin: 0;
+            min-height: 100%;
+            height: auto;
+            color: var(--text-main, #e5e7eb);
+        }
+
+        .landing-shell {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            padding: 24px 16px 32px;
+            box-sizing: border-box;
+        }
+
+        .landing-lang-toggle {
+            position: absolute;
+            top: 16px;
+            inset-inline-end: 16px;
+            min-width: 60px;
+        }
+
+        .landing-brand {
+            flex: 0 1 auto;
+            width: min(420px, 88vw);
+            max-height: min(40vh, 280px);
+        }
+
+        .landing-logo {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-height: min(40vh, 280px);
+            object-fit: contain;
+            object-position: center;
+            border-radius: var(--radius, 12px);
+        }
+
+        .landing-auth-panel {
+            width: min(400px, 100%);
+            padding: 22px 24px;
+            border-radius: 14px;
+            border: 1px solid var(--panel-border, rgba(148, 163, 184, 0.2));
+            box-sizing: border-box;
+        }
+
+        .landing-auth-title {
+            margin: 0 0 18px;
+            font-size: 1.25rem;
+        }
+
+        .landing-auth-label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+        }
+
+        .landing-auth-label input {
+            width: 100%;
+            margin-top: 6px;
+            box-sizing: border-box;
+        }
+
+        .landing-auth-hint {
+            display: block;
+            margin-top: 4px;
+            font-size: 0.75rem;
+            opacity: 0.65;
+        }
+
+        .landing-auth-msg {
+            min-height: 1.2em;
+            font-size: 0.88rem;
+            margin: 6px 0;
+        }
+        .landing-auth-msg.is-error { color: #f87171; }
+        .landing-auth-msg.is-success { color: #86efac; }
+
+        .landing-auth-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .glass-btn[disabled], .glass-btn[aria-busy="true"] {
+            opacity: 0.55;
+            cursor: progress;
+        }
+    </style>
+    <script defer src="landing-auth.js"></script>
+</head>
+
+<body class="landing-html">
+    <div class="landing-shell">
+        <button type="button" id="rmooz-landing-lang" class="header-btn landing-lang-toggle" title="">عربي</button>
+        <div class="landing-brand">
+            <img src="../assets/brand-logo.jpeg" alt="rmooz" class="landing-logo" decoding="async">
+        </div>
+        <form class="landing-auth-panel glass-panel" id="rmooz-landing-auth" autocomplete="on" novalidate>
+            <h1 class="landing-auth-title" id="rmooz-landing-title">Sign in</h1>
+            <label class="landing-auth-label" for="rmooz-landing-user">
+                <span id="rmooz-landing-user-label">Username</span>
+                <input type="text" id="rmooz-landing-user" name="username" autocomplete="username"
+                       class="glass-input" autofocus required minlength="2" maxlength="64"
+                       aria-describedby="rmooz-landing-err">
+            </label>
+            <label class="landing-auth-label" for="rmooz-landing-pass">
+                <span id="rmooz-landing-pass-label">Password</span>
+                <input type="password" id="rmooz-landing-pass" name="password" autocomplete="current-password"
+                       class="glass-input" required minlength="4"
+                       aria-describedby="rmooz-landing-pass-hint rmooz-landing-err">
+                <span id="rmooz-landing-pass-hint" class="landing-auth-hint">At least 4 characters</span>
+            </label>
+            <p id="rmooz-ldap-mode-hint" class="landing-auth-hint" style="display:none;margin-top:8px;margin-bottom:2px"></p>
+            <p id="rmooz-landing-err" class="landing-auth-msg" role="status" aria-live="polite"></p>
+            <div class="landing-auth-actions">
+                <button type="submit" id="rmooz-landing-submit" class="glass-btn primary">Login</button>
+                <button type="button" id="rmooz-landing-register" class="glass-btn secondary">Register</button>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

@@ -38,7 +38,13 @@
             air_search:     { type: 'radar', ref_range_nm: 160 },
             surface_search: { type: 'radar', ref_range_nm: 60  },
             fire_control:   { type: 'radar', ref_range_nm: 90  },
-            esm_intercept:  { type: 'esm',   ref_range_nm: 0   }   // passive: see rule below
+            esm_intercept:  { type: 'esm',   ref_range_nm: 0   },   // passive: see rule below
+            // Phase 5D-1: Soviet air-defense variant sensor classes
+            S300_SEARCH_RADAR: { type: 'radar', ref_range_nm: 108 },  // ~200 km strategic SAM search
+            S75_RADAR:         { type: 'radar', ref_range_nm: 40  },  // ~75 km tactical SAM search
+            ZSU_RADAR:         { type: 'radar', ref_range_nm: 21  },  // ~40 km AAA gun radar
+            P37_RADAR:         { type: 'radar', ref_range_nm: 135 },  // ~250 km strategic early-warning
+            AAA_RADAR:         { type: 'radar', ref_range_nm: 8   }   // ~15 km generic AAA search
         },
         rcs_class: {                           // σ in m² (our values)
             very_large: { sigma_m2: 1000 },    // ship / large structure

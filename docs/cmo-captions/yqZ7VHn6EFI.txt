@@ -1,0 +1,294 @@
+# C: MO - Helicopter Cargo Operations
+Video: https://www.youtube.com/watch?v=yqZ7VHn6EFI
+Video ID: yqZ7VHn6EFI
+
+Hello everyone. In today's video, we're
+going to be taking a look at a quick
+hellet drop mission. We're going to take
+some units from a helport. We're going
+to go and load them up and then we're
+going to bring them over to an LZ and do
+what they usually do at LZ's. We're
+going to be doing quite a bit of stuff
+with ground units in the next few weeks,
+I think, cuz a lot of people have been
+asking questions about that. So, first
+things first, I have myself a helport
+here. Just kind of chilling here on the
+coast. I built it myself. There's
+nothing special about it. It has a bunch
+of helellipads. It has a barracks, an
+ammo pad, and of course, some AV gas in
+the event that this thing became a
+target. You'll also notice here that
+I've got a platoon here of US Marines
+just sort of hanging out here basically
+catching some sun on the beach kind of
+thing like that. So, the first thing I
+want to show you is whenever you're
+working with cargo, one of the things
+you need to know is how to get cargo in
+and out of things. Now, one of the uh
+good things bad things about the way
+cargo is handled in command modern
+operations is it has to come from
+somewhere and has to go to somewhere.
+So, for example, if I had this little US
+Marine platoon here, and I wanted to add
+them to the helicopter mission here,
+theoretically, what I could do is launch
+a helicopter, pick them up, and then go
+fly them off. The other thing I could
+do, too, is I could load them directly
+into the hellase so that I could load
+them directly onto the helicopters.
+Let's show you how to do that. So, the
+first thing I'm going to do is I'm going
+to switch over here to basically a
+non-group view. I want to see individual
+units and I'm going to pick something.
+In this case, the barracks. I'm going to
+grab that barracks. Now, there's a
+couple different ways I can take this
+and load infantry. Basically, load these
+guys up. One thing I wish the command
+team would do is they'd have a little
+icon to show you that it's carrying like
+infantry or something like that. Yeah,
+we'll get that someday, maybe. So, what
+we're going to do is we're going to
+order this units to get loaded into this
+building. It's actually really easy to
+do. So, the simple way if you right
+click, you have a thing that says select
+units to pick up. That's okay. I find
+that kind of irritating actually.
+Instead, what I'd recommend is click on
+the building, click on the button that
+says cargo. Notice there's already some
+cargo in there. You won't have this
+button, by the way, if you're playing
+outside of the scenario editor. So, if I
+click on cargo, it pops up this little
+cargo operations page here. You can see
+all the different stuff that's going on
+here. You've got unload, you've got
+transfer cargo, and of course, if you
+transfer cargo, you can actually move
+the cargo between the different
+buildings that you have in your
+environment like you have. Now, notice
+here, if I go over to edit cargo button,
+there's the ability to basically click
+on it and press load selected. Now, if I
+press that, that's going to go ahead and
+toss those people in there just like
+that instantly. If I actually came here
+and press unload selected, you'll see
+that it promptly rejects them. Now, like
+I said, since you don't have that
+button, what you're going to have to do
+instead is grab the building, right
+click, load unit, just like that. And if
+you give it a little bit of time to pass
+here, he disappears. And now he is
+inside of the cargo of this particular
+unit. If I were to click on it now,
+you'll see my little infantry platoon
+here, US Marines, is sitting there ready
+to rock, ready to do their thing, kind
+of deal. Now, let's get ready for the
+cargo operation itself. So, what we want
+to do is we want to attack this target
+over in this region. Now, it's a little
+weird to think that we'd be just flying
+there directly without some kind of air
+support or something like that. So, what
+we'll do is we'll land a little bit far
+out and we'll just kind of make a
+strike. So, let's see here. That looks
+good. That's about 1.6 miles about this
+is a pretty long distance to have to
+hike, but we'll make it work. So, the
+way we like to do this is control
+rightclick. You're going to define
+yourself an area. And this is going to
+be your LZ. I'm just going to call this
+LZ. Keep it nice and simple. Biggest
+mistake I've always made with LZ's is
+making them too big. Um, that's just a
+common newbie mistake. Double check when
+you make an LZ, by the way. Like if I
+hold my mouse over this, make sure it's
+not too steep. Like I can see here, it's
+a little bit high up, but there's no
+like crazy slope or something we have to
+worry about. And again, this works for
+parachute operations, too, if you chose.
+So now all we have to do is set up the
+mission. Crl F11. Uh, we'll say LZ
+Alpha. Why not? We'll set this to cargo.
+We'll make this a delivery. Press Okie
+do. And now we have to do is pick the
+units we want to fly in, which case we
+have all these lovely ospreys. So, I'm
+going to grab all these ospreys, toss
+them in here. Now, you'll notice when I
+come over here that it automatically
+shows me all the different options here,
+as well as all the issues, including the
+one at the top saying no more emission
+available. Check it to make sure you've
+done move all cargo. Now, the simplest
+simplest simplest way to do this is to
+push that button. As soon as you push
+that button, it selects all the cargo
+here and it orders them up to be moved,
+including this one group, which I
+probably didn't need to order them.
+You'll notice here ground units and
+cargo may self transfer if it needs to
+be done, which is actually kind of nice
+if it needs to be done. Doesn't need to
+be done in this case, so don't worry
+about that. All right, so I pause and
+pause. I'm going to go and fast forward
+time. I'm try to be careful with my fast
+forwarding of time. The biggest mistake
+I've always made with this one is
+basically going, "Oh, it takes him 15
+minutes to load up the cargo." Speaking
+of which, and let's give them another
+minute here. And that's going to be 45
+51. That's enough time, I think. Let's
+press F6. You'll see that it's taking
+them another 50 44 seconds to load
+troops on the helicopters. That makes
+sense. Whereas our mortar teams aren't
+going to be ready for about 15 minutes.
+Like I said, that works pretty well. So,
+what I will do is I will use the magical
+capabilities of our teleportation here.
+Go ahead and skip a minute at a time in
+order to make this a little bit safer.
+Uh, let's see here. I've got that all
+saved. There we go. Hey, there we go.
+And I just skipped ahead a couple
+minutes. Excellent. So, our helicopters
+now, you'll notice, are individual
+units. If you launch them as a group, it
+will not work. And each one of these
+units, of course, if I were to take a
+look at their cargos. Remember, we won't
+have the edit cargo button there. You
+can see they have a different group in
+there and they've already self-loaded.
+Now, the cool thing is if I run back to
+this base real quick, you'll see here if
+I go to my barracks now, go into my uh
+we'll go to regular cargo that there's
+only a few things left. There's like the
+marine squad, like my stingers and stuff
+like that, but they'll get picked up in
+a minute. So, I'm going to unpause here.
+Unfortunately, all of our important
+assault equipment, the stuff we really
+need for this battle is all waiting for
+us back at home. Set the back to 1x. Ah,
+it's doing the thing on me again.
+Ah, I feel like that's auto pausing.
+Auto pausing off.
+H, I see. I don't need auto pause. Auto
+pause. Auto pause. I don't need you to
+auto pause. Oh, well, it does that
+sometimes.
+There we go. They're heading into LZ
+Alpha there. We'll skip another minute
+ahead.
+Looks good. Go ahead. Right over to LZ
+Alpha. There it goes. They're going to
+go get ready. This is kind of the fun
+part. What they try to do is find a
+place to actually park. See how they all
+sort of park sort of randomly is the
+best way to describe it.
+There it goes. They're just sort of
+hanging out. They're dropping the troops
+off. Again, you can't drop your troops
+off instantaneously.
+And they take back off. Fantastic. All
+right. Good. All right, Marines. We got
+a job to do. So, unfortunately, with no
+support equipment, this is uh pretty
+stupid, but we'll make do with what we
+have here. All right. Uh we're going to
+go and edit that guy there. We're going
+to order him here. Unfortunately,
+they're going to have to hoof it that
+last mile with no mortar support. This
+is a really foolish way to do a mission,
+but hey, sometimes that happens. All
+right, Marines, you've got a job to do.
+Get to it.
+And they're on their way. It's going to
+take them a few minutes to get there,
+unfortunately.
+I like how since they're pointing to the
+right, but uh clearly they're basically
+just kind of huffing. Oh boy, this is
+going to go horribly. We'll go ahead and
+now skip 15 minutes ahead this time.
+Go ahead, Marines. All right, we'll skip
+another five minutes. I love the little
+skip ahead button since when it works.
+It works great. All right, we're just
+about in range here. About another Whoa.
+Uh-oh.
+And of course, uh, while this is going
+on, they're about to get a big old
+gunfight here, which is kind of the fun
+part. Uh, meanwhile, if you come back
+here, you can see that in about a few
+minutes here, we'll be ready to go ahead
+and ship out those mortars and the heavy
+weapons. Actually, what am I saying? The
+heavy weapons have arrived.
+All
+right, heavy weapons. Let's do what
+heavy weapons are best at. Go ahead and
+hit that. Like that. So, I'm going to go
+ahead and grab that one. F1. I'm just
+going to hold down the shift and like
+that. Hold down shift and like that.
+Like that. Release. And after they get
+their targets all kind of squared away
+there, they're going to go ahead and
+take some shots. There's the mortar fire
+I was promised.
+And of course, we can have our infantry
+join in for the fun, too, as well to
+kind of deal with the enemy units here.
+There we go. There we go. Fantastic.
+We'll skip ahead another minute of our
+battle here. Look at this. Look at this.
+Go mortar teams. Go mortar teams. Go
+mortar teams. Actually, we can probably
+grab everybody. Press the F1 key. Click
+right there. Like that. Well, actually,
+shift F1. We're going to go and do one
+of those. All right, there goes my
+Marines. Go do it, Marines. Get to it,
+Marines. Oh, come on. You forgot that
+guy. And it's gone. Mission
+accomplished.
+All right, let's see how we did here.
+Uh, we fired 300. That's enough. That's
+enough. That's enough. We also fired
+some of these laws. I assume we got all
+the enemy units. If I come down here, I
+can see the two mortar sections did a
+beautiful, beautiful job going through
+about half their ammunition. Next time,
+we're going to have to take a look at
+how to load ammo in the field, but
+that's a video for another day. Enjoy.

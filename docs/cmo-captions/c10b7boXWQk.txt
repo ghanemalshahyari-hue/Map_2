@@ -1,0 +1,631 @@
+# C: MO - Using decoys for SEAD and DEAD
+Video: https://www.youtube.com/watch?v=c10b7boXWQk
+Video ID: c10b7boXWQk
+
+hello everyone in today's video we're
+going to take a look at an interesting
+case where we're going to use a
+combination of decoys as well as
+Conventional Weapons to attack a Sam
+site so let's take a look at our
+scenario so we have a pair of aircraft
+one's an f-18c the other one is an F-16
+cm of course which you know you knew
+this one was coming rf's 18 of course is
+located with a bunch of active decoys
+and our honey our buddy over here the
+F-16 is located with some cluster bombs
+so the problem is we have an sa6
+somewhere around the sanaki region here
+and now we want to destroy it using what
+we have here now some of you of course
+we've got well if it's in sa6 you can
+just drop a jdam on it from about 40
+miles away and you're good to go well
+you're not completely wrong so let's do
+it the wrong way and then let's go ahead
+and come back to it and try to do it the
+right way let's get started so what I'm
+going to do is I'm gonna grab my F18
+buddy I've already noticed that I've got
+myself a Sam site ready to go so that
+looks pretty good we'll grab my F-18
+we'll go ahead and press Ctrl F1 go
+ahead and click and we're gonna go ahead
+and launch four of our decoys right away
+which is it could be pretty effective
+and then what we're going to do is we're
+going to take our F16 buddy and we're
+going to go ahead and reduce this speed
+of my F16 a little bit so that it
+matches the speed of our decoys so our
+decoys right now are traveling 480 or
+F16 buddy right here is traveling about
+480 as well we're actually going to do
+is I'll pull them back just the tiny bit
+here just slow down of course at this
+point f-18c is done so he's going to
+head back to Batumi there and meanwhile
+a little F-16 is basically got a fly
+formation with our buddies these decoys
+now one thing you have to keep in mind
+here is that these decoys are at an
+altitude of a whopping 36 000 feet in
+R16 buddy is also at an altitude of 36
+000 feet now you're probably saying well
+what does this look like from the other
+perspective well let me show you it
+looks a little bit like this so I'm
+looking right now while we can identify
+this bunch of unknown aircraft there's a
+bunch all stacked on top of each other
+which would immediately make me
+suspicious as a human player that you're
+dealing with something untoward here so
+what do I do is I'm going to flag these
+all as hostile and it'll allow the sa6
+to start its engagement process speed up
+time a little bit kind of cruise along
+getting a little closer getting within
+that dangerous range and then if this
+little guy right here and getting real
+close here we're getting some Fire
+Control radar blasts every once in a
+while and you're probably observing that
+our sa6 is not firing oh just sitting
+there going wait what and that's
+perfectly within range so I thought fa6
+is so we're good up to 36 000 feet well
+it's actually a little more complicated
+than that and if we actually open up the
+little link real quickly head to the
+sa6b I say you probably notice that his
+range is 13 nautical miles and its
+maximum is 38 000 feet but we have an
+interesting complication about
+kinematics here and that's the fact that
+when that missile goes to shoot it has
+to travel through seven or eight miles
+of air to get up to the range where it
+can actually start doing damage this is
+called the snap up altitude so
+ironically this 16 up here and these
+decoys are completely invulnerable
+there's nothing that bad can happen to
+them so what I'm going to do is I'm
+going to delete this real quick and grab
+my F16 I'm going to go ahead and order
+up a manual attack here so what F16 is
+going to do is he's going to put himself
+in a very dangerous place
+let's pop it over to 3D view real quick
+so I can kind of prove my point so he's
+going to basically drop off the face of
+the Earth basically pitch the plane
+straight down while the little decoys
+are kind of doing their thing way way up
+there now the sa6 crew of course once
+the F-16 drops within the snap up
+altitude now there's the world's
+tightest window between where it can
+take a shot at the F-16 because it's not
+outside its minimum range and the shot
+where it can actually go ahead and
+strike it like I said because that snap
+about to do surf 16 Buddy as you can see
+it's basically pitched straight down and
+now he's going to basically do a die
+bombing run on this guy which you know
+that's got to be pretty risky if you ask
+me uh let's see here as you take a shot
+now there's no way that sa6 is going to
+get a shot off in time here zoom in yep
+that sa6 is going to get Chris
+splattered
+so our F-16 oh oh missile launched
+called it so as you can see R16 is now
+going to panic he's not going to try to
+lose as much altitude as possible and
+he's going to cross his fingers royally
+that this would work like I said once
+you get into that minimum range there
+we're safe again but the thing is our
+F-16 buddy is never going to get within
+the minimum range before he could
+potentially be struck by that sa6 so our
+little dive bombing taking advantage of
+the snapdown altitude method did not
+work so well for us on account of the
+fact that this is out there I'm actually
+going to order him to go ahead and not
+evade because if he does evade
+unfortunately Frosty is just going to
+fade right into a more dangerous region
+all right F1 collect yeah now he's
+within the minimum range of that
+particular Target so I'm not that
+worried about it
+come around come on F-16 stay within
+it's minimum range there we go so now
+we're going to come in now again we got
+four or five missiles launched at us and
+we're gonna not drop in time ugh
+let's see here uh let's see here we need
+a minimum altitude here what is our
+current minimum altitude we're too high
+oh man this is uh complicated and again
+you can see just how tricky this
+particular strike is it's not to say we
+couldn't get away with it it's just to
+say that notice how hard and how many
+little details we have to get perfect
+here let's see here altitude too high I
+did order him to go a little lower
+didn't I so I'm actually a little
+surprised with this get back down to
+your altitude you had one job man one
+job minimum altitude there we go also
+you took a shot with this cannon which I
+thought was a nice touch there and cbu'd
+oh then do the job cool so let's reset
+this and try a different strategy
+let's go so same thing as we had before
+the only difference this time is we'll
+change the altitudes some grab my F16 my
+handy dandy F-18 and I'm going to drop
+them down to an altitude where they can
+actually deploy their weapons whoa
+apparently I got a little carried away
+with the fast forwarding there let's try
+that again so what I'm going to do is
+grab them real quick go ahead and drop
+their altitude down to a range where the
+sa6 can actually fire at them and what
+we're going to try to do is basically
+saturate the target here and then go
+ahead and try to do our sneaky Attack
+One More Time keep in mind at this
+altitude we can be engaged which means
+our decoys as useful as they're going to
+be are engageable
+grab that real quickly here's the tip by
+the way uh don't order your decoys to go
+right to the Target instead go right
+outside of the minimum range so the
+minimum range is like uh let's call it
+an I don't know something around those
+lines click that real quick launch my
+decoys and we'll grab our F16 buddy and
+we're going to go ahead and order him to
+again slow down just a teeny tiny bit
+because we want those decoys to get
+there first so the first priority of the
+Sam site
+all right decoys are on the way you can
+see rf16 it's just kind of sliding ahead
+I say six crew now has a much more
+interesting problem on their hands let
+me show you why they're looking out the
+window and we can see we have some
+people basically the same altitude and
+traveling at about the same speed again
+here's the fun thing with playing with
+human players versus a computer player
+computer's not going to know any better
+it's going to see both those targets and
+treat them basically as the same so
+we're going to get a little closer again
+speed up time just a teeny tiny bit here
+we really don't want that F16 to get
+there first that is a really important
+concept for us so I'm actually going to
+slow down even more again we can cheat
+just a teeny tiny bit with stuff like
+this
+slow down let's see how fast these
+things are traveling they go in 480. I'm
+doing 450 like I said we need to make
+the targeting complicated and obviously
+on older systems is a little bit
+trickier as well getting pretty close
+getting pretty close now we need to go
+ahead and order up the attack let's see
+here we need I think it was what four
+thousand feet something like that so we
+need to make sure we drop down before we
+get there so avoid that kind of oopsie
+we did before
+all right we need a times 10 speed I
+swear
+so I say six Crews I've got to start
+launching pretty much any second now
+we're definitely within range here
+switch to his perspective uh see if he's
+got an idea of what's going on here
+um nope snap up altitude no good so in
+this particular case it's still too high
+so these guys right here will never be
+engaged by the sa6 crew because the
+angle that we're dealing with right now
+if I speed up time just a tiny bit I
+still don't think they're going to be
+able to take that shot they might try to
+take the shot at the F-16 but I don't
+think that's going to happen so you can
+see again because it doesn't take that
+upward shot it's not going to do
+anything again
+all right this time we'll order them to
+an even lower altitude we'll pop down to
+000 feet before we launch our weapons
+now 12 000 feet is starting to get kind
+of into the sweet range for most of
+these classic Sam systems so even though
+we're going to be able to get our shots
+off here we're going to have a kind of a
+new problem created so I'm going to
+order our F-16 buddy to hold back a
+little bit he's already doing 450 which
+is perfect control f11 we're going to
+shoot just shy we're going to fire all
+these off at the same time and we'll go
+ahead and order our F-18 friends and
+kind of head on out
+weapons on the way and let's take a look
+at how things are going from the sa6
+here obviously we've required everybody
+just like we expected the altitudes are
+well within our range and the snap up
+snap down altitude is not a concern my
+good friend the F-16 here I'll make sure
+I've already allocated the attack which
+I have we're going to get nice and close
+now keep in mind our altitude for the
+particular attack is what's going to
+dictate when we have to dive at the last
+possible second here so if I go through
+real quickly you can see a 4000 is my
+maximum maximum so what I have to do is
+actually take this guy and Order him
+down to let's call 3 500 feet and we'll
+also order that to be AGL now notice I
+saw several explosions all of a sudden
+in just a moment you're going to see
+another explosion now one thing we're
+not seeing very well here is the
+presence of those missiles that are now
+targeting these two craft but notice one
+of these gets really really really close
+and our F-16 goes ahead and drops and he
+needs to stop an afterburner if he's
+going to survive
+gotcha so let's make this even better so
+that was a pretty good strategy we did
+succeed at going ahead and destroying
+the target we didn't get a single F-16
+to get launched at this time so we're
+going to do now is we're going to make
+it even better so I'm going to grab
+these two I'm actually going to grab we
+have a nice little Ridge line right here
+I'm gonna order my F16 buddy so we can
+go right here and kind of just sort of
+hang out once he gets there also set his
+altitude to basically super duper low
+here you can see exactly where we're
+going next what I'm going to do is I'm
+going to waste a bunch of ammunition on
+the sa6 here and then try to strike at
+the same time it's going to require a
+little bit of handiwork as far as
+thinking here so we know that the
+maximum range is out to here so if we
+launch anything around here at the sa6
+it's going to waste shots on deflection
+trying to hit it as a matter of fact if
+we were to take our F6 18c and draw draw
+a line like this this shot right here
+around Kobe would be the optimum waste
+of ammunition because of how much of a
+deflection shot you'd be taking with the
+weapon so what I'm going to do is hit
+control F1 I'm just like we always do
+grab F18 go to Kobe click right there
+and we're going to launch one of our
+Seekers or one of our decoys there I'm
+gonna go ahead and fire another one on
+this side and then I'm going to recreate
+the same oblique effect here and go
+ahead and launch another one over here
+and then I'll go ahead and launch one
+more right down the center here this
+will be the first victim as they joke so
+what I've done is now on these essay six
+is fire they will waste ammunition
+trying to hit a Target that's not
+Optimum meanwhile F16 buddy of course is
+going to make its way down and basically
+sneak up the valley to go ahead and do
+the DDR
+let's go ahead and speed up time a
+little bit here
+and you can see there goes my decoys and
+you can also see my F16 who's going to
+be well concealed in that mountain way
+way before the fireworks even start here
+going over op4 you can see we have that
+nice little split going on it looks like
+there's a group of airplanes rather than
+a bunch of decoys we're basically
+cheating with here let's go ahead and
+kick it up to military speed
+and like I said we have to basically
+come around the corner there
+all right
+go ahead and grab my F-16 order him to
+do one of those
+shift F1 he's already ready to allocate
+fantastic
+so now if we switch over to the other
+side and take a look at things from sa6
+now we've got a bunch of targets who are
+beautifully within our firing no they're
+not 36 000 feet ah now we're in business
+so now I have 16 is getting in position
+and all of our decoys are the correct
+altitude this time
+hey nobody said this would be easy
+so let's go and take a look at things
+from the sa6's perspective op4 grab onto
+them we can see we have a bunch of
+unknowns we also had this one who just
+disappeared pretty confident this looks
+like a pretty well spread out strike
+formation that's coming directly towards
+us and a couple of those of course are
+going to run into the fact that they're
+going to be destroyed before anything
+happens so now what I'm going to do is
+I'm going to pick up the speed a little
+bit on our little F16 here he's doing
+about 600 and he's had a bit of an
+oblique like I said we have to just
+about match the Motions here we can't
+get there too soon and we definitely
+can't get there too late otherwise the
+sa6 will kind of catch on to us so we'll
+finish up our turn there go ahead and
+level ourselves back out meanwhile I'll
+swing back over to op4 here we can see
+that we've got them and we're starting
+to launch missiles now what he's done is
+he's picked the first Target which is
+the Target that is going to be the one
+that is most directly at him you also
+can see that he's dumped quite a deck of
+missiles here we also have two missiles
+coming over in this direction as well
+trying to strike a different Target so
+we fired four missiles so far keep in
+mind that most of those missiles will
+probably miss and then we pick up our
+f60 anybody who's hanging out over here
+one thing we have to do with our F-16
+buddy is prevent him from doing any sort
+of evasive actions if you let him do
+evasive actions he will turn himself
+away when the missiles fire and he will
+not be very successful let's drop down
+to a loiter here
+notice one of the missiles was
+completely obliterated notice the other
+missile is going pretty strong here so
+now we're gonna go ahead and fire off
+another big stack of missiles and rf16
+again needs to be farther away than what
+we have here of course now that the
+radar and the F-16 is running we have a
+pretty good idea of what we're dealing
+with here now notice this deflection
+shut right here that's a very difficult
+shot for a missile to make so I believe
+this shot won't be missed at both times
+now we've already started firing back at
+that Target our F16 is starting to close
+but now notice we're wasting even more
+Interceptor missiles because we're
+trying to take this impossible
+deflection shot here and then we've got
+this beautiful oblique shot here which
+is just that is not going to happen I'm
+sorry if you're wondering what I mean by
+that by the way if you open up and take
+a look at kind of missile end game here
+uh missile end game poop you can see
+that uh this attacking Miss again
+because they're going to be a reduced
+shot because of how difficult it is
+let's take a look open this one up yeah
+because it's going to be a reduction in
+that particular shot so now F16 buddy
+unfortunately has been launched on and
+you can see that he's about to receive a
+sa6 right to the face on account of the
+fact that the last missile that went
+bye-bye here basically went by at the
+last possible second so ref 16 is
+obliterated so you can see here that
+even though we were able to distract the
+crew successfully for the purposes of
+making them basically waste their
+ammunition unfortunately because of how
+much time they had in which to engage it
+was not difficult for them to put enough
+rounds out destroy everything even with
+these really obnoxious deflection shots
+and then still take a shot at our F-16
+what we could have done of course is had
+our F-16 try to be a super sneaky kind
+of a thing like that and kind of come
+around but that would require slightly
+different setup let's try it all right
+so we've tried it a couple different
+ways we've seen a couple things that
+work we know that deflection shots don't
+go well we know that the minimum range
+of the F-16 kind of a thing like that it
+just didn't work you know basically flew
+head first into an sa6 how do you faded
+there'd just been another sa6 waiting
+for him we also noticed even though we
+wasted a bunch of the interceptors of
+competent sa6 crew because of the short
+flight time of that particular weapon it
+didn't really do much for us so we need
+to be even more tactical here so what
+I'm going to do is grab my handy dandy
+F-18 here and I'm going to drop it down
+to a strange altitude of 18 000 feet
+now you're going okay and I'm pretty
+sure I can know where you got 18 000
+feet from good 18 000 feet is going to
+be a nice little uh RMS value between uh
+snap down altitude and maximum range of
+the sa6 meaning this aircraft I should
+say the Sam system is going to waste
+that much more effort trying to wreck
+our aircraft the second thing we're
+going to do is we're going to take
+advantage of the fact that we have a
+very very low altitude device here
+um or it's not only going to be shooting
+up to 36 000 feet which means if we
+chill above 36 000 feet we're basically
+immune from any sort of attack so if you
+take a look at the range here I know
+that it can basically skirt skirt around
+this hide behind these little mountains
+that are located right here and go
+surprise and then drop all sorts of
+nastiness on our Target here that's
+exactly what I'm gonna do I'm actually
+going to go like this and head up this
+way let's see here we want to take a
+look at the range that's going to put me
+just outside of that range I'm actually
+going to drop my altitude here to try to
+basically tempt it with a shot
+all right grab my handy dandy F-18 let's
+go ahead and take our shots oh control
+F1 fire one to Kobe fire the next one
+over here try the next one over here and
+then fire the next one over here so it's
+going to waste the maximum number of
+interceptors here unpause boom There
+Goes My interceptors
+so now what's going to happen is our sa6
+crew is going to Target the one that's
+closest to itself first and then what
+will happen is it'll go for that really
+really impossible shot last see how my
+F16 is slightly farther away than the uh
+this guy right here heading over for
+Kobe so what will happen is I'll take my
+F16 and kind of come around the corner
+which would probably notice like I was
+saying is the sa6 battery is now trying
+to attack the closest Targets this shot
+is basically going to be impossible on
+account of the fact that there's so much
+deflection involved it's not to say it
+can't do it because it's proven time and
+time again and also if you look really
+carefully you'll notice it's already
+shot down two missiles just to give you
+an idea this is the world's most
+competent sa6 crew so that one's
+destroyed and we know our little F-16
+buddy needs to get a little bit of
+altitude and pick up some speed so that
+it can run behind this a cover that I
+have basically positioned here so grab
+onto them F3 kind of come around like
+this and then we'll give them a little
+surprise attack at the last second here
+so this sa6 I completely expect him to
+be firing his next Interceptor which is
+exactly what he's doing step up to
+afterburner minimum altitude and now our
+F-16 buddy is watching this little white
+finger of death basically reaching
+directly towards him notice by the way
+that all of the decoys have been
+destroyed here
+let's see here we have a relative
+elevation of 150 feet our F-16 is
+hovering down at about 400 feet that's
+going to be a really tight shot yeah
+rsa6 is a lost view here swinging back
+down to cruise and then we'll finish the
+job here F-16 kind of sneaks around the
+back
+remember we have to do a pop-up attack
+here so the safest way to do a pop-up
+attack we can grab this last Waypoint go
+up to our pop-up attack altitude and
+then we can come back the other side and
+then drop back down to whatever our
+minimum altitude is After Burner we'll
+go and grab this one here we'll set this
+to afterburner and then when he starts
+is a turn in here we'll do minimum
+altitude in military speed that way we
+don't have to sit here and micromanage
+every little aspect of the strike here
+all right he's turning around I don't
+know why he's turning around did he run
+out of fuel now he's got plenty
+there we go okay staying low staying low
+551 feet
+all right make sure we've designed the
+attack
+why not we'll let him fire everything as
+he pops over so right now this is A6
+crew right here is immediately
+regretting its decision to hide in this
+Valley versus try to kind of chill
+somewhere else so let's say we're going
+to pop up that is the pop-up Point After
+Burner hit
+It's Gonna Come ripping over and there's
+the sa6 shots there's the CPUs we fire
+some cannon fire at it as we RIP by the
+whole entire stamp set has to do a 180
+as it gets Chris bloated out of
+existence
+so uh what have we learned here a couple
+different things first of all trying to
+do the sort of bait and switch DCS
+method doesn't work especially when
+you're working against human players who
+are going to know which one's a decoy
+especially if they go through the weapon
+list the second thing we saw is even
+though those decoys work they're so slow
+that they basically all get shot down
+before they're effective
+the one thing we did get out of this
+however is realizing that we can use
+those decoys to basically waste
+interceptors as we get another aircraft
+into a position keep in mind too that
+because of the way they've changed the
+weight radar logic works now what will
+happen is if I'm firing Targets in this
+direction my F-16 cannot be fired upon
+at all by the way I'm impressed by how
+fast that crew spun their entire radar
+around and took that shot I did it I
+certainly couldn't pull something like
+that maybe with an sa8 you could pull it
+off with an sa6 I'm impressed enjoy

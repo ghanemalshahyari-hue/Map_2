@@ -1,0 +1,397 @@
+{
+  "$defs": {
+    "DocumentSelection": {
+      "additionalProperties": false,
+      "properties": {
+        "initial_planning_guidance": {
+          "default": true,
+          "title": "Initial Planning Guidance",
+          "type": "boolean"
+        },
+        "operation_order": {
+          "default": false,
+          "title": "Operation Order",
+          "type": "boolean"
+        },
+        "staff_estimate": {
+          "default": false,
+          "title": "Staff Estimate",
+          "type": "boolean"
+        },
+        "time_analysis": {
+          "default": true,
+          "title": "Time Analysis",
+          "type": "boolean"
+        }
+      },
+      "title": "DocumentSelection",
+      "type": "object"
+    },
+    "Locations": {
+      "additionalProperties": false,
+      "properties": {
+        "area_of_interest": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Area Of Interest"
+        },
+        "area_of_operations": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Area Of Operations"
+        },
+        "assembly_area": {
+          "title": "Assembly Area",
+          "type": "string"
+        },
+        "civil_considerations": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Civil Considerations"
+        }
+      },
+      "required": [
+        "assembly_area"
+      ],
+      "title": "Locations",
+      "type": "object"
+    },
+    "Operation": {
+      "additionalProperties": false,
+      "properties": {
+        "attached_detached_units": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attached Detached Units"
+        },
+        "axis": {
+          "title": "Axis",
+          "type": "string"
+        },
+        "department": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Department"
+        },
+        "echelon": {
+          "title": "Echelon",
+          "type": "string"
+        },
+        "higher_unit_mission": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Higher Unit Mission"
+        },
+        "movement_order": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Movement Order"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "operation_type": {
+          "title": "Operation Type",
+          "type": "string"
+        },
+        "organization": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Organization"
+        },
+        "own_training_readiness": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Own Training Readiness"
+        },
+        "task_units": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Units"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        }
+      },
+      "required": [
+        "name",
+        "echelon",
+        "axis",
+        "operation_type"
+      ],
+      "title": "Operation",
+      "type": "object"
+    },
+    "Output": {
+      "additionalProperties": false,
+      "properties": {
+        "output_root_override": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Root Override"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "Output",
+      "type": "object"
+    },
+    "References": {
+      "additionalProperties": false,
+      "properties": {
+        "header_line": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Header Line"
+        },
+        "letter_ref_number": {
+          "title": "Letter Ref Number",
+          "type": "string"
+        },
+        "maps": {
+          "title": "Maps",
+          "type": "string"
+        },
+        "warning_order_ref_number": {
+          "title": "Warning Order Ref Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "letter_ref_number",
+        "warning_order_ref_number",
+        "maps"
+      ],
+      "title": "References",
+      "type": "object"
+    },
+    "Retrieval": {
+      "additionalProperties": false,
+      "properties": {
+        "collections": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Collections",
+          "type": "array"
+        }
+      },
+      "required": [
+        "collections"
+      ],
+      "title": "Retrieval",
+      "type": "object"
+    },
+    "Timing": {
+      "additionalProperties": false,
+      "properties": {
+        "first_light": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Light"
+        },
+        "h_hour_gregorian": {
+          "format": "date-time",
+          "title": "H Hour Gregorian",
+          "type": "string"
+        },
+        "last_light": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Light"
+        },
+        "moon_phase": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Moon Phase"
+        },
+        "reporting_date_gregorian": {
+          "format": "date-time",
+          "title": "Reporting Date Gregorian",
+          "type": "string"
+        },
+        "time_zone": {
+          "title": "Time Zone",
+          "type": "string"
+        },
+        "total_available_minutes": {
+          "title": "Total Available Minutes",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "reporting_date_gregorian",
+        "h_hour_gregorian",
+        "total_available_minutes",
+        "time_zone"
+      ],
+      "title": "Timing",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "document_selection": {
+      "$ref": "#/$defs/DocumentSelection",
+      "default": {
+        "initial_planning_guidance": true,
+        "operation_order": false,
+        "staff_estimate": false,
+        "time_analysis": true
+      }
+    },
+    "locations": {
+      "$ref": "#/$defs/Locations"
+    },
+    "mission_intent_free_text": {
+      "title": "Mission Intent Free Text",
+      "type": "string"
+    },
+    "operation": {
+      "$ref": "#/$defs/Operation"
+    },
+    "output": {
+      "$ref": "#/$defs/Output"
+    },
+    "references": {
+      "$ref": "#/$defs/References"
+    },
+    "retrieval": {
+      "$ref": "#/$defs/Retrieval"
+    },
+    "timing": {
+      "$ref": "#/$defs/Timing"
+    }
+  },
+  "required": [
+    "operation",
+    "references",
+    "locations",
+    "timing",
+    "retrieval",
+    "mission_intent_free_text",
+    "output"
+  ],
+  "title": "Phase3Inputs",
+  "type": "object"
+}

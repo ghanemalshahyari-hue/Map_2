@@ -1,0 +1,753 @@
+# templates/operation_order.yaml
+# ==============================
+# Doc 1 — أمر العمليات (Operation Order / OPORD).
+#
+# Retrieval groups (M4 deliverable — 3 Pydantic-class-level groups;
+# MissionAndExecution is the biggest and may later be split into
+# sub-groups if the prompt / token budget demands it):
+#   - OperationalSituation         → enemy / terrain / civil framing
+#   - MissionAndExecution          → mission statement + concept of ops
+#   - SustainmentAndCoordination   → sustainment + command & signal
+#
+# The other three classes are non-retrieved:
+#   - HeaderSection                → all user input
+#   - MetadataSection              → user input + static references
+#   - Annexes                      → input with static placeholder text
+#
+# Design references:
+#   - referencedocs/20_phase3_templates_and_kinds.md §3 (routing),
+#     §5 (worked example), §7-§8 (structure + layout kinds)
+#   - referencedocs/18_phase3_generation.md §5 (classes),
+#     §6.4 (collection scope), §7 (prompt shape)
+#   - NewClasses.md §"Document 1" (HeaderSection, MetadataSection,
+#     OperationalSituation, MissionAndExecution,
+#     SustainmentAndCoordination, Annexes)
+#
+# Collection scope: single doctrine collection with per-manual
+# narrowing via filters.source_doc. Manuals marked with † in the
+# routing table of referencedoc 20 §3 are not currently ingested.
+
+# §18 C17 (2026-04-22) — deferred to v2.
+# OPORD is the MDMP Step 7 output. v1 ships MDMP Step 1 only
+# (Time Analysis + Initial Planning Guidance). This template, its
+# schema module, and all M4-planned retrieval/drafter code stay on
+# disk; the CLI v1-scope gate skips it. Flipping this to `true` in
+# a future v2 + removing the CLI filter re-enables OPORD generation.
+v1_scope: false
+
+meta:
+  template_id: operation_order
+  template_version: 1
+  title_arabic: "أمر العمليات"
+  document_slug: operation_order
+  output_filename: "{document_slug}.docx"
+  default_collections:
+    - ingest__operationalfiles__bgem3
+
+schemas:
+  # -----------------------------------------------------------------
+  # HeaderSection — five input fields. No retrieval, no LLM.
+  # -----------------------------------------------------------------
+  HeaderSection:
+    fields:
+      header:
+        kind: input
+        path: references.header_line
+        required: false
+        default: "نسخة رقم ( ) إلى ( )"
+        label_ar: "رأس الأمر"
+
+      organization:
+        kind: input
+        path: operation.organization
+        required: false
+        default: "القوات البرية"
+        label_ar: "القيادة المُصدِرة"
+
+      department:
+        kind: input
+        path: operation.department
+        required: false
+        default: ""
+        label_ar: "التشكيل الرئيسي"
+
+      unit:
+        kind: input
+        path: operation.unit
+        required: false
+        default: ""
+        label_ar: "الوحدة المنفذة"
+
+      assembly_area:
+        kind: input
+        path: locations.assembly_area
+        required: true
+        label_ar: "موقع مركز العمليات (TOC)"
+
+  # -----------------------------------------------------------------
+  # MetadataSection — input + static references.
+  # -----------------------------------------------------------------
+  MetadataSection:
+    fields:
+      date_time:
+        kind: computed
+        function: time_math.format_h_hour_narrative_ar
+        arguments:
+          when: "{{input: timing.h_hour_gregorian}}"
+          time_zone: "{{input: timing.time_zone}}"
+        label_ar: "التاريخ والوقت لبدء تنفيذ الأمر"
+
+      letter_ref_number:
+        kind: input
+        path: references.letter_ref_number
+        required: true
+        label_ar: "الرقم المرجعي للأمر"
+
+      warning_order_ref_number:
+        kind: input
+        path: references.warning_order_ref_number
+        required: false
+        default: "أمر تحذير رقم (أضف الرقم)"
+        label_ar: "رقم أمر التحذير الأصلي"
+
+      references:
+        kind: static
+        value: "FM 3-0 Operations، FM 3-90 Tactics، ADP 6-0 Mission Command، ADP 3-0 Operations"
+
+      maps:
+        kind: input
+        path: references.maps
+        required: true
+        label_ar: "الخرائط المستخدمة"
+
+      task_organization:
+        kind: static
+        value: "يُصدر لاحقاً في الملحق (أ)."
+
+      time_zone:
+        kind: input
+        path: timing.time_zone
+        required: true
+        label_ar: "التوقيت المحلي للعملية"
+
+  # -----------------------------------------------------------------
+  # OperationalSituation — retrieval group (2 retrieved fields).
+  # Worked in referencedoc 20 §5.
+  # -----------------------------------------------------------------
+  OperationalSituation:
+    fields:
+      situation_summary:
+        kind: retrieved
+        group: OperationalSituation
+        query_seeds:
+          - "operational situation enemy disposition {operation.axis}"
+          - "commander situation overview doctrine"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-98-Reconnaissance-and-Security-Ops.pdf"
+            - "FM-3-90-2-Reconnaissance-Security.pdf"
+            - "ADP-3-0-Operations.pdf"
+        rerank_query_ar: "الموقف التشغيلي ونوايا العدو في منطقة العمليات"
+        prompt_ar: >
+          اكتب ملخصاً تشغيلياً في فقرتين قصيرتين يصف الموقف العام ونوايا
+          العدو بناءً على المقاطع المقدَّمة. استشهد بعد كل جملة أساسية
+          بالوسم الموجود بجانب المقطع المصدر حرفياً — لا تُعدِّل الوسم
+          ولا تخترع واحداً. إن لم تدعم المقاطع الحقل، اكتب
+          "غير متوفر في العقيدة المتاحة".
+        max_tokens: 400
+
+      area_of_interest:
+        kind: input
+        path: locations.area_of_interest
+        required: false
+        default: ""
+        label_ar: "منطقة الاهتمام"
+
+      area_of_operations:
+        kind: static
+        value: "كما في شفاف العمليات — الملحق (م)."
+
+      terrain:
+        kind: static
+        value: "كما في تقدير الاستخبارات — الملحق (أ)."
+
+      weather:
+        kind: static
+        value: "كما في تقدير الاستخبارات — الملحق (أ)."
+
+      civil_considerations:
+        kind: input
+        path: locations.civil_considerations
+        required: false
+        default: ""
+        label_ar: "اعتبارات مدنية"
+
+      enemy_profile:
+        kind: retrieved
+        group: OperationalSituation
+        query_seeds:
+          - "enemy composition disposition strength {operation.echelon}"
+          - "threat assessment enemy forces doctrine"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-98-Reconnaissance-and-Security-Ops.pdf"
+            - "FM-3-90-2-Reconnaissance-Security.pdf"
+        prompt_ar: >
+          اكتب وصفاً مفصَّلاً لتشكيل قوات العدو وتوزيعها وقوتها استناداً
+          إلى المقاطع المعطاة. استشهد بعد كل جملة أساسية بالوسم الموجود
+          بجانب المقطع المصدر حرفياً. إن لم تدعم المقاطع الحقل، اكتب
+          "غير متوفر في العقيدة المتاحة".
+        max_tokens: 350
+
+  # -----------------------------------------------------------------
+  # MissionAndExecution — biggest class (19 fields). Single group in
+  # v1; if the structured-output call blows the context budget, split
+  # into mission-statement / coordination / execution sub-groups by
+  # giving those three field subsets distinct `group:` labels (the
+  # template loader allows group names that don't match a class name).
+  # -----------------------------------------------------------------
+  MissionAndExecution:
+    fields:
+      task_units:
+        kind: input
+        path: operation.task_units
+        required: false
+        default: ""
+        label_ar: "الوحدات المكلَّفة"
+
+      mission:
+        kind: retrieved
+        group: MissionAndExecution
+        query_seeds:
+          - "{operation.echelon} {operation.operation_type} mission statement task purpose"
+          - "mission analysis essential tasks {operation.axis}"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-0-Operations.pdf"
+            - "ADP-3-0-Operations.pdf"
+            - "FM-3-90-Tactics.pdf"
+            - "FM-3-90-1-Offense-and-Defense-Vol-1.pdf"
+            - "ADP-3-90-Offense-and-Defense.pdf"
+        # No rerank_query_ar — the MissionAndExecution group has too
+        # many diverse sub-topics (mission statement, coordination,
+        # execution, CCIR) for one canonical Arabic rerank query.
+        # Fallback: " | ".join(resolved_seeds) per §6.2 step 4.
+        prompt_ar: >
+          اكتب بيان المهمة الأساسي للوحدة (مهمة وقصد القائد) بصيغة
+          "من، ماذا، متى، أين، لماذا" بناءً على مدخلات المستخدم
+          والمقاطع. استشهد حرفياً بوسم كل مقطع مصدر. إن لم تدعم
+          المقاطع الحقل، اكتب "غير متوفر في العقيدة المتاحة".
+        max_tokens: 300
+
+      objective:
+        kind: retrieved
+        group: MissionAndExecution
+        query_seeds:
+          - "operation objective purpose commander intent doctrine"
+          - "deny enemy freedom of maneuver {operation.axis}"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-3-0-Operations.pdf"
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-90-Tactics.pdf"
+        prompt_ar: >
+          اكتب غرض المهمة فقط (Purpose) بجملة واحدة مركَّزة استناداً إلى
+          المقاطع. استشهد حرفياً بوسم المقطع المصدر. إن لم تدعم المقاطع،
+          اكتب "غير متوفر في العقيدة المتاحة".
+        max_tokens: 150
+
+      method:
+        kind: retrieved
+        group: MissionAndExecution
+        query_seeds:
+          - "scheme of maneuver method {operation.operation_type}"
+          - "main effort supporting efforts concept"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-90-Tactics.pdf"
+            - "FM-3-90-1-Offense-and-Defense-Vol-1.pdf"
+            - "ADP-3-90-Offense-and-Defense.pdf"
+            - "ATP-3-21-8-Infantry-Rifle-Platoon-and-Squad-2024.pdf"
+            - "ATP-3-21-18-Stryker-Rifle-Company.pdf"
+            - "ATP-3-20-15-Tank-Platoon.pdf"
+        prompt_ar: >
+          اكتب طريقة تنفيذ المهمة فقط (Method) — المناورة الرئيسية،
+          الجهود المساندة، والإسناد الناري إن كان مذكوراً. اعتمد على
+          المقاطع. استشهد حرفياً بوسم كل مقطع. إن لم تدعم المقاطع،
+          اكتب "غير متوفر في العقيدة المتاحة".
+        max_tokens: 300
+
+      desired_end_state:
+        kind: retrieved
+        group: MissionAndExecution
+        query_seeds:
+          - "desired end state {operation.operation_type} decisive point"
+          - "terminate operation successful conclusion doctrine"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-3-0-Operations.pdf"
+            - "FM-3-0-Operations.pdf"
+            - "ADP-3-90-Offense-and-Defense.pdf"
+        prompt_ar: >
+          اكتب النهاية المرغوبة للمهمة فقط (End State) — ما الذي يدل
+          على نجاح التنفيذ. اعتمد على المقاطع. استشهد حرفياً بوسم كل
+          مقطع. إن لم تدعم المقاطع، اكتب "غير متوفر في العقيدة المتاحة".
+        max_tokens: 200
+
+      higher_unit_mission:
+        kind: input
+        path: operation.higher_unit_mission
+        required: false
+        default: ""
+        label_ar: "مهمة القيادة الأعلى"
+
+      civil_military_operations:
+        kind: retrieved
+        group: MissionAndExecution
+        query_seeds:
+          - "civil-military operations coordination civilians area of operations"
+          - "civil affairs host nation interaction doctrine"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-0-Operations.pdf"
+            - "ADP-3-0-Operations.pdf"
+        prompt_ar: >
+          اذكر التنسيق العسكري-المدني الواجب اتخاذه اعتماداً على
+          المقاطع. استشهد حرفياً بوسم كل مقطع. إن لم تدعم المقاطع،
+          اكتب "غير متوفر في العقيدة المتاحة".
+        max_tokens: 220
+
+      interagency_coordination:
+        kind: static
+        value: "يُصدر لاحقاً في الملحق المختص."
+
+      host_nation_coordination:
+        kind: static
+        value: "يُصدر لاحقاً في الملحق المختص."
+
+      ngo_io_coordination:
+        kind: static
+        value: "يُصدر لاحقاً في الملحق المختص."
+
+      attached_detached_units:
+        kind: input
+        path: operation.attached_detached_units
+        required: false
+        default: "كما في التنظيم للمهمة — الملحق (أ)."
+        label_ar: "الوحدات الملحقة / المفصولة"
+
+      planning_assumptions:
+        kind: retrieved
+        group: MissionAndExecution
+        query_seeds:
+          - "planning assumptions operations process MDMP"
+          - "doctrine assumptions mission analysis"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-5-0-Operations-Process.pdf"             # †
+            - "FM-5-0-Planning.pdf"                        # †
+            - "ADP-3-0-Operations.pdf"
+            - "FM-3-0-Operations.pdf"
+        prompt_ar: >
+          اذكر افتراضات التخطيط المبنية على العقيدة المعطاة. استشهد
+          حرفياً بوسم كل مقطع. إن لم تدعم المقاطع، اكتب "غير متوفر في
+          العقيدة المتاحة".
+        max_tokens: 250
+
+      ground_component_mission:
+        kind: retrieved
+        group: MissionAndExecution
+        query_seeds:
+          - "ground component mission maneuver {operation.echelon}"
+          - "ground force scheme of maneuver"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-90-Tactics.pdf"
+            - "ATP-3-21-8-Infantry-Rifle-Platoon-and-Squad-2024.pdf"
+            - "ATP-3-21-18-Stryker-Rifle-Company.pdf"
+            - "ATP-3-20-15-Tank-Platoon.pdf"
+        prompt_ar: >
+          صِف مهمة المكون البرّي استناداً إلى المقاطع. استشهد حرفياً
+          بوسم كل مقطع. إن لم تدعم المقاطع، اكتب "غير متوفر في العقيدة
+          المتاحة".
+        max_tokens: 250
+
+      execution_purpose:
+        kind: retrieved
+        group: MissionAndExecution
+        query_seeds:
+          - "execution purpose desired effects doctrine"
+          - "operational purpose {operation.operation_type}"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-3-0-Operations.pdf"
+            - "FM-3-0-Operations.pdf"
+        prompt_ar: >
+          اكتب غرض التنفيذ فقط (Execution Purpose) استناداً إلى المقاطع.
+          استشهد حرفياً بوسم كل مقطع. إن لم تدعم المقاطع، اكتب
+          "غير متوفر في العقيدة المتاحة".
+        max_tokens: 200
+
+      concept_of_operations:
+        kind: retrieved
+        group: MissionAndExecution
+        query_seeds:
+          - "concept of operations {operation.operation_type} scheme maneuver"
+          - "decisive shaping sustaining operations doctrine"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-3-0-Operations.pdf"
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-90-Tactics.pdf"
+            - "FM-3-90-1-Offense-and-Defense-Vol-1.pdf"
+            - "ADP-3-90-Offense-and-Defense.pdf"
+        # rerank_query_ar omitted — see note on MissionAndExecution.mission
+        # above. Group-level rerank query is computed from seeds at runtime.
+        prompt_ar: >
+          اكتب مفهوم العمليات مقسَّماً إلى (العمليات الحاسمة، العمليات
+          التشكيلية، العمليات المساندة) اعتماداً على المقاطع. استشهد
+          حرفياً بوسم كل مقطع. إن لم تدعم المقاطع، اكتب "غير متوفر في
+          العقيدة المتاحة".
+        max_tokens: 500
+
+      subordinate_unit_tasks:
+        kind: retrieved
+        group: MissionAndExecution
+        query_seeds:
+          - "subordinate unit tasks {operation.echelon} main effort"
+          - "task organization subordinate missions"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-90-Tactics.pdf"
+            - "ATP-3-21-8-Infantry-Rifle-Platoon-and-Squad-2024.pdf"
+            - "ATP-3-21-18-Stryker-Rifle-Company.pdf"
+            - "ATP-3-20-15-Tank-Platoon.pdf"
+            - "ADP-3-0-Operations.pdf"
+        prompt_ar: >
+          اذكر مهام الوحدات الفرعية باختصار مركَّز، مفصولة بتعداد أبجدي
+          (أ) ، (ب) ، (جـ) ... استناداً إلى المقاطع. استشهد حرفياً
+          بوسم كل مقطع. إن لم تدعم المقاطع، اكتب "غير متوفر في العقيدة
+          المتاحة".
+        max_tokens: 450
+
+      combat_support_tasks:
+        kind: retrieved
+        group: MissionAndExecution
+        query_seeds:
+          - "combat support tasks fires signal engineer"
+          - "supporting tasks maneuver operation"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-09-Field-Artillery.pdf"                # †
+            - "FM-3-01-Air-Defense.pdf"                    # †
+            - "FM-6-02-Signal-Support.pdf"                 # †
+            - "FM-3-34-Engineer-Operations.pdf"            # †
+            - "FM-3-11-CBRN-Operations.pdf"
+            - "FM-3-0-Operations.pdf"
+        prompt_ar: >
+          اذكر مهام الإسناد القتالي اللازمة للعملية (نيران، إشارة،
+          هندسة، CBRN) بناءً على المقاطع. استشهد حرفياً بوسم كل مقطع.
+          إن لم تدعم المقاطع، اكتب "غير متوفر في العقيدة المتاحة".
+        max_tokens: 350
+
+      execution_timeline:
+        # Narrative Arabic sentence anchoring the OPORD to H-Hour.
+        # We resolve this from inputs directly (not from the Doc 3
+        # MISSION_TIMELINE) so the OPORD stays valid when generated
+        # alone, without Doc 3 in the same run.
+        kind: computed
+        function: time_math.format_h_hour_narrative_ar
+        arguments:
+          when: "{{input: timing.h_hour_gregorian}}"
+          time_zone: "{{input: timing.time_zone}}"
+        label_ar: "الإطار الزمني للتنفيذ"
+
+      commanders_critical_information_requirements:
+        kind: retrieved
+        group: MissionAndExecution
+        query_seeds:
+          - "commander's critical information requirements CCIR PIR FFIR"
+          - "priority intelligence requirements friendly force information"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-6-0-Mission-Command.pdf"                # †
+            - "FM-3-0-Operations.pdf"
+            - "ADP-3-0-Operations.pdf"
+            - "FM-3-98-Reconnaissance-and-Security-Ops.pdf"
+        prompt_ar: >
+          اذكر متطلبات المعلومات الحرجة للقائد (CCIR) مقسَّمة إلى
+          متطلبات الاستخبارات ذات الأولوية (PIR) ومتطلبات المعلومات
+          الصديقة (FFIR). اعتمد على المقاطع فقط. استشهد حرفياً بوسم
+          كل مقطع. إن لم تدعم المقاطع، اكتب "غير متوفر في العقيدة
+          المتاحة".
+        max_tokens: 350
+
+  # -----------------------------------------------------------------
+  # SustainmentAndCoordination — 10 fields, one retrieval group.
+  # Sustainment and command-and-signal manuals are mostly not yet
+  # ingested (ADP 4-0, FM 3-09, FM 3-01, FM 6-02, ADP 6-0); the
+  # allowlist elision rule keeps the group functional today via
+  # FM 3-0 / ADP 3-0 / FM 3-11 fallbacks.
+  # -----------------------------------------------------------------
+  SustainmentAndCoordination:
+    fields:
+      fire_support_coordination:
+        kind: retrieved
+        group: SustainmentAndCoordination
+        query_seeds:
+          - "fire support coordination measures doctrine"
+          - "fires coordination maneuver {operation.echelon}"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-09-Field-Artillery.pdf"                # †
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-90-Tactics.pdf"
+        prompt_ar: >
+          اذكر إجراءات تنسيق الإسناد الناري استناداً إلى المقاطع.
+          استشهد حرفياً بوسم كل مقطع. إن لم تدعم المقاطع، اكتب
+          "غير متوفر في العقيدة المتاحة".
+        max_tokens: 280
+
+      air_support_coordination:
+        kind: retrieved
+        group: SustainmentAndCoordination
+        query_seeds:
+          - "air support coordination close air support doctrine"
+          - "air defense coordination {operation.echelon}"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-01-Air-Defense.pdf"                    # †
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-90-Tactics.pdf"
+        prompt_ar: >
+          اذكر إجراءات تنسيق الإسناد الجوي والدفاع الجوي استناداً إلى
+          المقاطع. استشهد حرفياً بوسم كل مقطع. إن لم تدعم المقاطع، اكتب
+          "غير متوفر في العقيدة المتاحة".
+        max_tokens: 250
+
+      risk_assessment:
+        kind: retrieved
+        group: SustainmentAndCoordination
+        query_seeds:
+          - "risk assessment operational mission analysis"
+          - "hazard mitigation force protection"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "FM-3-0-Operations.pdf"
+            - "FM-3-11-CBRN-Operations.pdf"
+            - "ADP-3-0-Operations.pdf"
+        prompt_ar: >
+          اكتب تقييم المخاطر العام للعملية استناداً إلى المقاطع، مع
+          تصنيف المخاطر (تكتيكي، لوجستي، مدني، بيئي) بإيجاز. استشهد
+          حرفياً بوسم كل مقطع. إن لم تدعم المقاطع، اكتب "غير متوفر في
+          العقيدة المتاحة".
+        max_tokens: 300
+
+      rules_of_engagement:
+        kind: static
+        value: "تتبع قواعد الاشتباك الصادرة من القيادة الأعلى — الملحق (هـ)."
+
+      media_and_information_operations:
+        kind: retrieved
+        group: SustainmentAndCoordination
+        query_seeds:
+          - "information operations media coordination public affairs"
+          - "messaging narrative {operation.echelon}"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-6-0-Mission-Command.pdf"                # †
+            - "FM-3-0-Operations.pdf"
+            - "ADP-3-0-Operations.pdf"
+        prompt_ar: >
+          صِف إجراءات عمليات المعلومات والتنسيق الإعلامي استناداً إلى
+          المقاطع. استشهد حرفياً بوسم كل مقطع. إن لم تدعم المقاطع،
+          اكتب "غير متوفر في العقيدة المتاحة".
+        max_tokens: 250
+
+      coordination_meetings:
+        kind: static
+        value: "وفقاً لإجراءات هيئة الركن المعتمدة — الملحق (ب)."
+
+      execution_priorities:
+        kind: retrieved
+        group: SustainmentAndCoordination
+        query_seeds:
+          - "execution priorities commander intent {operation.operation_type}"
+          - "priority of effort operations process"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-3-0-Operations.pdf"
+            - "FM-3-0-Operations.pdf"
+            - "ADP-3-90-Offense-and-Defense.pdf"
+        prompt_ar: >
+          اذكر أولويات التنفيذ بترتيبها استناداً إلى المقاطع. استشهد
+          حرفياً بوسم كل مقطع. إن لم تدعم المقاطع، اكتب "غير متوفر في
+          العقيدة المتاحة".
+        max_tokens: 250
+
+      movement_order:
+        kind: input
+        path: operation.movement_order
+        required: false
+        default: "يُصدر لاحقاً — الملحق (ج)."
+        label_ar: "أمر الحركة"
+
+      sustainment_paragraph:
+        kind: retrieved
+        group: SustainmentAndCoordination
+        query_seeds:
+          - "sustainment paragraph OPORD logistics personnel medical"
+          - "support operations {operation.echelon} classes of supply"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-4-0-Sustainment.pdf"                    # †
+            - "FM-3-0-Operations.pdf"
+            - "ADP-3-0-Operations.pdf"
+        rerank_query_ar: "الفقرة الرابعة — الإسناد (اللوجستيات، الموارد البشرية، الطبابة)"
+        prompt_ar: >
+          اكتب الفقرة الرابعة (الإسناد) في أمر العمليات، متضمنةً
+          اللوجستيات، الموارد البشرية، والطبابة استناداً إلى المقاطع.
+          استشهد حرفياً بوسم كل مقطع. إن لم تدعم المقاطع، اكتب
+          "غير متوفر في العقيدة المتاحة".
+        max_tokens: 450
+
+      command_and_signal:
+        kind: retrieved
+        group: SustainmentAndCoordination
+        query_seeds:
+          - "command and signal paragraph OPORD mission command"
+          - "communications signal support {operation.echelon}"
+        collections: [ingest__operationalfiles__bgem3]
+        filters:
+          chunk_type: body
+          source_doc:
+            - "ADP-6-0-Mission-Command.pdf"                # †
+            - "FM-6-02-Signal-Support.pdf"                 # †
+            - "FM-3-0-Operations.pdf"
+            - "ADP-3-0-Operations.pdf"
+        prompt_ar: >
+          اكتب الفقرة الخامسة (القيادة والإشارة) متضمنةً موقع القيادة،
+          خط الإمرة، وإجراءات الاتصال استناداً إلى المقاطع. استشهد
+          حرفياً بوسم كل مقطع. إن لم تدعم المقاطع، اكتب "غير متوفر في
+          العقيدة المتاحة".
+        max_tokens: 350
+
+  # -----------------------------------------------------------------
+  # Annexes — static placeholders referencing attachment letters.
+  # -----------------------------------------------------------------
+  Annexes:
+    fields:
+      appendices:
+        kind: static
+        value: "أ — التنظيم للمهمة، ب — الاستخبارات، ج — العمليات، د — الإسناد، هـ — قواعد الاشتباك."
+      overlays:
+        kind: static
+        value: "م — شفاف العمليات، ن — شفاف الإسناد الناري."
+
+structure:
+  - kind: title
+    text: "أمر العمليات"
+    alignment: center
+    underline: true
+
+  - kind: section
+    schema: HeaderSection
+    heading: null
+    layout: header_block
+    citation_collection: false
+
+  - kind: section
+    schema: MetadataSection
+    heading:
+      text: "البيانات الوصفية والمرجعية"
+      underline: true
+      space_before_cm: 1.0
+    layout: numbered_fields
+    citation_collection: false
+
+  - kind: section
+    schema: OperationalSituation
+    heading:
+      text: "(1) الموقف"
+      underline: true
+      space_before_cm: 1.0
+    layout: numbered_fields
+    citation_collection: true
+
+  - kind: section
+    schema: MissionAndExecution
+    heading:
+      text: "(2) المهمة و (3) التنفيذ"
+      underline: true
+      space_before_cm: 1.0
+    layout: numbered_fields
+    citation_collection: true
+
+  - kind: section
+    schema: SustainmentAndCoordination
+    heading:
+      text: "(4) الإسناد و (5) القيادة والإشارة"
+      underline: true
+      space_before_cm: 1.0
+    layout: numbered_fields
+    citation_collection: true
+
+  - kind: approval_block
+    lines:
+      - "عن / قائد اللواء"
+      - "رئيس الأركان"
+
+  - kind: section
+    schema: Annexes
+    heading:
+      text: "الملاحق والشفافيات"
+      underline: true
+      space_before_cm: 1.0
+    layout: numbered_fields
+    citation_collection: false
+
+  - kind: appendices_list
+    source: appendices

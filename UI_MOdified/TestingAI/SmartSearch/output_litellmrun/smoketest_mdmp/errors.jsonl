@@ -1,0 +1,1 @@
+{"stage": "upsert_to_qdrant:skipped", "file": "smoketest_mdmp.md", "traceback": "doc_content_hash unchanged (f358e51f477101c4…) — skipping re-ingest (no changes detected)", "ts": "2026-05-07T12:00:21.750119+00:00"}

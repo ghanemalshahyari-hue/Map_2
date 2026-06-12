@@ -1,0 +1,223 @@
+# C: MO - Using ASAT Weapons such as the ASM-135
+Video: https://www.youtube.com/watch?v=ZI33voJYRpE
+Video ID: ZI33voJYRpE
+
+Hello everyone. In today's video, we're
+going to be trying to use one of the
+more curious weapons that the US Air
+Force came up with, and that is the
+anti-satellite missile. This is the ASM
+154, and we're going to be taking a pot
+shot at this lovely satellite here. This
+is a USA 6. It is a keyhole block 2, and
+we're going to try to do the deed. Now,
+in order to make this work, uh there's a
+lot of little things we have to get
+right. Uh the first thing, of course, we
+have to do is we have to make sure we're
+in the appropriate, uh basically DLZ.
+That's going to be problem number one.
+The second problem is we're going to
+have to make sure that we have the
+correct alignment. Now, if you take a
+look at the satellite real quick, you'll
+observe here it is traveling at one I'm
+sorry, not 1,00 15,123
+knots. Uh, that's a pretty fast target.
+And if you just watch it kind of go
+around the planet a little bit, you
+realize it only takes 90 minutes to go
+all the way around. That's hauling.
+Meanwhile, what do we have on our side?
+We have ourselves a globe. No, we have
+ourselves, of course, the F-15. This is
+the special anti-satellite version. It
+actually is called an anti-satellite.
+It's a highly modified F-15A. One of the
+things you'll observe is it's at 80,000
+ft right now. Um that is the basically
+the launch altitude if you want to think
+about it another way. But the weird
+thing is because the way they programmed
+it, we can use it at 80,000 ft all the
+time, which makes it a really good
+reconnaissance platform actually. But
+the reality is it can only I'm sorry,
+the ASM 135. I got my numbers confused
+there, but you can see exactly what that
+looks like. All right, so what are we
+going to have to do? Um we're going to
+have to hit this thing. So the way I'm
+going to do it is I'm first going to go
+and click on the satellite and I'm going
+to observe its orientation. If I zoom
+out a little bit, you can kind of see
+those lines there. Now, in order to make
+this nice and easy for us, so what
+they've done is they've done a projected
+course line that you can actually see
+here. And now the thing you got to be
+mindful of is this parallax problem.
+When I move this line, do you see how
+you can see the coarse line through the
+planet? We're trying to get it so that
+those coarse lines overlap each other.
+Now, as you go like this and kind of
+fiddle with it, do you see how there's
+an intersection point between the course
+lines? Right about here, you can see
+where they all kind of line up with each
+other. This means that these particular
+courses are basically going to cross.
+Now, that's good because that's going to
+provide us with our shooting point. So,
+what I'm going to do is I'm going to go
+in here and add myself a little point
+just so I know where that is. This basic
+shooting point. I'm going to call it
+here. Make it a little bit simpler for
+us. Again, I'll go confirm that visually
+one more time here. And I'm going to
+play the little overlapping game for a
+moment. And that looks good to me. So
+that's where we're going to take a shot.
+And again, this is going to be pretty
+easy once we get there. So then all I
+have to do is I have to get myself to
+that shooting point. Now, before I do
+that, I'm actually going to click it one
+more time. We're going to create a
+second point, which is going to act as
+basically our alignment point. And
+again, if you're off by a couple miles,
+it's not going to break the game, but
+it's um going to be a harder shot,
+you'll see. So I'm going to come down
+here, and we're going to use this point
+as basically the alignment point. Align
+point. I've just invented a new word.
+Cool. So, what we're going to do is take
+our F-15 with our anti-satellite weapon,
+and we're going to aim it at the
+alignment point, and we're going to have
+it proceed towards the shooting point.
+Now, keep in mind, we're doing this what
+appears to be early. But the reality is
+is remember this thing's traveling
+15,000 knots, which means the distance
+here, if you measure that real quick, of
+2,00 346, let's do the math here. Uh,
+look at that. The calculator didn't mess
+me up this time. 3046 divided by what do
+we say about 15,000 * 60. That means
+it'll be over us in 12 minutes. That's
+how long that's going to take to get to
+us. So, that's not a lot of time, but
+that gives us plenty of time to get
+ready to fire the weapon. All right,
+let's go ahead and get our lovely F-15
+going here. There's no requirement that
+you're traveling in high speed or
+anything on like the real one, which
+require basically a Mach 1.35 launch, I
+believe it was kind of a thing.
+Although, the fact it's an IRK.
+[laughter]
+All right, let's take a look. Launch
+altitude, we're within that parameter.
+Fine. Target altitude, we're within
+that. Uh, we've got a pretty long range
+of 250 nautical miles. It is a basically
+a hit to kill, which is interesting
+because you don't want to make more
+space junk, but they didn't think of
+that when they developed this weapon.
+Now, apparently the Air Force wasn't
+really thrilled about this weapon. It's
+not that they didn't like it. It's just
+that they thought it was like, you know,
+kind of like a waste of time kind of a
+thing, you know, like, whoa, I missed my
+first shot. Give me a second here.
+There we go. So, what I want to do is
+wait until we're just about in critical
+range. fire.
+So, what this is going to do is is going
+to get this weapon up in the air. Now,
+one of the most crazy things is, and
+this is the first mistake people make,
+is do you notice that we're never going
+to get an intercepting shot here. Uh,
+we're moving at about 2x that weapons.
+Oh, no. We might have a shot. Apologies,
+but one of the problems you're probably
+noticing is this is a heck of a
+deflection angle. And again, since we
+don't have a true 3D here, yes, I could
+have used tio. It's very difficult to
+see how much of an angle this thing is
+really arriving at. But you can see just
+like that, it splattered that satellite.
+And granted, I had to do it a little bit
+far back from what I originally
+intended, but the same concept is
+exactly true. Now, one of the things
+worth mentioning while we're talking
+about ASATs here is the fact that there
+are other ASEAT weapons that don't have
+to be launched from an F-15. One of my
+favorites, of course, are silly things
+like this guy here. Uh, this is a lovely
+SM3. Believe it or not, has no
+capability, but if you look carefully,
+it is actually an anti-satellite weapon.
+Yes, this is little tiny thing can
+actually shoot at satellites. And what's
+even more terrifying is if you look at
+the SM6 here, if you scroll down a
+little bit, you will also notice that it
+is able to engage satellites. Problem
+with ships, of course, is you have to be
+at the right place at the right time.
+You also see we have an incredible range
+here. So, if I shift F1, click on the
+satellite, I'm going to fire a pair of
+these. I'm going to press the execute
+button to say okay. Now, if I own pause,
+you will notice this weapon launches.
+And it's a stupid weapon because it is
+got a range of Yes, [laughter] that's
+what my buddy would basically say. So,
+what I will do is I'll watch this thing
+get launched. And uh you can see it's uh
+not having to work very hard. I I did
+day and night land. I meant to do 3D
+view. My apologies. And um this is an
+incredible weapon. And I will go ahead
+and grab tac view for the purposes of
+seeing this thing in action because you
+simply cannot believe how far this
+missile can actually travel to engage a
+target. One, two, three. I will try hard
+not to accidentally fast forward past
+the critical component for the 900th
+time, [laughter]
+but you can see very clearly the what
+this engagement looks like. And it is um
+a little one-sided. You'll actually
+notice that the weapons had to level off
+because like again the curvature of the
+earth. If we go this way, we're actually
+going that way. Don't think too hard.
+It's just an interesting problem. But we
+can see here if I pop up on the top view
+here as we're coming in for our
+engagement that these weapons are
+traveling oh I don't know Machu 13 and
+you can see it easily slap that
+satellite out of the sky. Interesting
+stuff. So the key thing is make sure you
+know where the target's going to be.
+Make sure you get there pointing towards
+the target before it gets there and you
+should have no difficulty. Enjoy.

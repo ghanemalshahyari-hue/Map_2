@@ -1,0 +1,381 @@
+# C: MO - Setting up a ground strike with individual strikers and missions
+Video: https://www.youtube.com/watch?v=luwcD04-3jY
+Video ID: luwcD04-3jY
+
+hello everyone in today's video we're
+going to be showing you an easy way to
+stay organized when attacking large
+multi-part targets such as an Airfield
+so let's go ahead and take a look at the
+problem so we have here up in lovely
+Nevada is this rather complicated Target
+consisting of many many different units
+sort of spread all around all the
+different places that we have here and
+one of the problems we have with this of
+course is we want to blow it up and we
+want to do a really thorough job so
+normally what we do is we do something
+like this I call this strike this kind
+of a thing come over here to Land strike
+I press the Oak button I've got plenty
+of aircraft to do this with I grab my
+f16s mark them as escorts kind of a
+thing like that um I'd say time on
+targets and we'll go ahead and say that
+it's a 13 15 Target time I think that's
+fair just to make sure they're nice and
+organized then of course you go under
+Mission settings you set the strikers to
+be single Strikers which is going to be
+the way to do it we come to escorts we
+probably set a groups of three here just
+to kind of keep it sort of like a nice
+even size kind of a thing like that the
+next thing of course we would do is we
+come down here and we'd say we want to
+do a stacked attack with a pretty
+typical we'll do split 30 seconds we'll
+do this one split distance so we'll keep
+this one pretty all set the other thing
+we would do because we're super careful
+is we come over to escorts we'd set this
+to be like a 30 nautical mile we don't
+want them to go running halfway across
+Nevada to chase down a MIG 21 kind of a
+thing and we'd be happy with it and we
+go ahead and close the screen and we're
+like a this is a good day this is a good
+day we fast forward time you can see
+everybody uh grouping up right there
+they getting their big big big big posy
+here and uh they're getting ready for
+time they're getting ready for time
+everybody's all kind of taking off give
+them a few moments and there's 13:15 uh
+we seem to be having a bit of an issue
+with our takeoff time here uh what do we
+work task on Mission did somebody not
+launch aha you folks did not launch cuz
+I poked in the wrong time of day that's
+okay though that was my mistake I'll go
+ahead and do a launch individually here
+kind of a thing like that and that'll
+get everybody kind of Airborne sort of a
+thing and they'll be on their way and
+you'll see where the problems start
+pretty much right away once we get up in
+the air there all right go ahead and
+pause time oh here we go mission's
+on if you take a look now you can see
+all of my bombers have done exactly what
+I've asked them to do they're all
+splitting into individual targets and
+they're breaking into different
+components all getting ready to go ahead
+and turn at the same time my escorts are
+running and doing what my escorts do
+best which is be useless kind of you
+know typical sort of stuff here but of
+course boom boom boom did I mention that
+I might have a couple enemy airplanes to
+defend this location here which is part
+of the point by the way also as we can
+see here my escorts doing their thing
+they're firing away again everybody set
+to DLC my B5 2s are kind of going wide
+here um of course I'm looking at the
+B-52s over here and they're taking kind
+of the long way in a few moments they're
+going to be turning in to go ahead and
+do their attack uh some missiles are
+arriving some people are getting there a
+little early some people are getting
+there a little bit late um you can see
+here there's even more airc taken off
+our a little last minute F16 kind of
+doing this little thing here and of
+course we have these two bombers which
+are pretty much heading up to Washington
+State here again causing all sorts of
+fundable issues with us and um again
+messy messy messy messy messy messy so
+let's go ahead and reopen our scenario
+here yes I name all my scenarios the
+same thing too bad and um let's see if
+we can make that a little bit better and
+again I could did a little bit of
+hyperbole here just to give you an idea
+of you know how these things can go kind
+of too far too quickly but again we'll
+deal with that in a second so let's try
+a new approach so what I'm going to do
+is I'm going to take my target I'm going
+to press control f11 here I'm going to
+go ahead and type this shall say buff
+one and I'm going to go ahead and call
+this one in now land strike I'm going to
+set this one to inactive that'll looks
+pretty groovy to me press okay and now
+what we're going to do is we're going to
+create a mission template and we're
+going to take that template and use it
+to go ahead and set up the rest of our
+missions so Time On Target I'm going to
+make sure this is inactive so I don't
+accidentally I'm going to come in here
+I'm going to say that the time on target
+is going to be 13:30 I think that's
+going to be plenty let's make sure it's
+8:15 August 15th uh that looks pretty
+good to me I'm going to go to my mission
+settings I'm going to do flights of one
+flights of one and we come down here I'm
+going to be a little realistic here
+we'll say go ahead and expand all
+ordinance kind of a thing like that we
+could do per Loadout setting eh just let
+a
+rip all right let's see here mcon I'm
+going to turn on the radar for the last
+actually I'm not going to mess with this
+because I know what happens if you M
+with it so Active Radar incress yep that
+sounds good to me this looks good to me
+we're going to go ahead and say
+formation single aim which you're all
+going what why I'm going to come down
+here and allow off axis attack uh next
+one I'm going to do is I'm going to go
+pop over my escorts real quickly I'm
+going to do flight sizes of
+three and what I'm going to do now is um
+you notice I have a lot of Targets in
+here and they're all looking pretty
+solid here and don't worry we're going
+to be striking them very shortly but
+what I do want to do is I want to go to
+my escort real quick and I just want to
+confirm really really quickly notice
+there's no no WR in here is the fact
+that there's nothing that's been kind of
+like set right or wrong in here just
+just quick little double check but one
+thing that's really really important is
+I have my weapon state pre-planned you
+just have to keep in mind that um you
+want to make sure they can use all the
+weapons they can sometimes they don't so
+in this case I'm actually going to do
+something super scandalous and say it's
+okay for them to use the air to air
+cannons the ref 16s they're going to be
+okay in an air to air dog fight I'm
+pretty sure they're good at that so
+that's all been set up and now I'm ready
+to go so this is my mission template so
+what I'm going to do is I'm going to
+come in here I'm actually to clone this
+sub Mission now as you know I have a
+total of let's see here I believe I have
+eight Buffs Ah that's a little better so
+one of the coolest things that we have
+here is this great new feature that'll
+actually let you know if you're already
+targeting a Target you'll actually see
+here that all these missions here say
+that all of these targets are being
+struck by seven other strike missions
+now you're sitting here going oh I see
+what you're going to do and the answer
+is yes what I'm going to do is delete
+the target out of all of these missions
+Anda so now I know know that all the
+targets are now ready to be utilized for
+the purposes of this Mission and one of
+the really really cool things here I'm
+going to go a and zoom in a little bit
+here so you can kind of sort of see this
+sort of side by side one of the things
+I'm going to do is I'm actually going to
+press the nine key on my numpad and what
+that's going to do is open it up so it
+makes it a little bit more obvious which
+targets are going to be right the other
+thing I'm going to do is I'm going to go
+ahead and press the aster key and that's
+going to go ahead and turn on my labels
+here so check out this really really fun
+trick here I'll go ahead and clean this
+one out so what I'm going to do is I'm
+going to pick a Target here um I'm going
+to pick this group of targets real
+quickly here I'm going to go ahead and
+select that group real fast and I'm
+going to go ahead and add those targets
+to the map it's going to scream at you
+so now I've gone ahead and popped them
+in there so I know the fact that they're
+ready to go so now all I have to do is
+go over to my units and go ahead and add
+in my bombers so I add in my bomber I
+grab one two three f-16s I mark my f-16s
+as escort so that mission is done so now
+I can go ahead and come down here just
+for safety sake and activate it so now
+let's pop over to the next mission so
+now I have a different group of aircraft
+to go ahead and bring that one down
+unfortunately one of the things it does
+is it tries to highlight the aircraft as
+you add them so some people wait to the
+end so I'm looking down here and I've
+targeted this group up here and the
+reason I know I've targeted is if I come
+in here again and go to no targets if I
+go add units on map what it will do is
+it'll warn me that I've already put them
+on an existing strike Mission so I'm
+going to come down here I'm going to add
+this little posy real quickly it's got
+to scream at me again and again I'm just
+going to repeat the same process I'm
+going to go into my B52 I'm going to go
+ahead and pop that one down here grab my
+three f-16s pop them down click on them
+Mark selected as escorts so Buff 2 is
+now ready to be activated and again
+remember my time on target is the same
+as it was from before you can kind of
+see the way this goes so you're going to
+be doing this ad nauseum except for one
+check at the end a that was all set that
+entire process probably took me about a
+minute and that's about as much time as
+a one now the one check you can do at
+the end is you can actually create a
+fake mission to confirm that all the
+targets that you selected in that areas
+are actually being struck let me show
+you what I mean there so if I were to
+grab this target real quickly and just
+start fake Mission here I'll call this a
+fake Mission that's how you spell any of
+that don't worry about that though press
+okay one of the things you can do is if
+you go to that fake Mission real quick
+here I can actually see this there are
+new targets selected for it so if I add
+those targets whoopsies I bet you I
+picked a Target though I bet you I did
+what I wasn't supposed to do I picked
+myself so what I'm going to do is I'm
+going to run up here select that one
+again real fast I'll call this one again
+we'll be a little more careful this time
+fake Mission and that's how you spell
+that either but oh well strike land
+strike press okay one of the things I
+can do is I can take a look at this just
+to make sure my fake mission is covering
+every single Target and I can see here
+that every single one of these targets
+is being struck by at least one
+particular attacker so I'm going to go
+ahead and remove this Mission no we
+don't need this Mission here but one of
+the things I love is everything's nice
+and neatly spread out all the mcon set
+up my aircraft I have all the proper
+escorts the time on target is all nice
+and squared away everything is all
+beautifully set up for us so now I can
+just sit here and how's your week it's
+been a busy week for me let's go ahead
+and I'll go ahead and shut those little
+warnings out there it looks pretty good
+to me it's fun to watch the f-16s in
+action here they're already having some
+fun with some of the m21s and oh they're
+having a good time and you can see here
+my Buffs are naturally spreading out
+exactly like we asked them to do some of
+them are speeding up some of them are
+automatically slowing down and now what
+you're probably observing is a lot of am
+Rams and I'm glad I'm not going to get
+the bill for that because uh that makes
+me feel pretty bad here and of course
+every time somebody comes up to launch
+again one of the things you probably
+observe is our f16s are having no
+difficulty going up to come up and say
+hello several f-16s have definitely done
+the dog fighting thing here which has
+been very entertaining to watch so one
+of the cool things here is you can see
+all my bombers are arriving on scene
+from from weird directions striking
+well-clustered targets that are away
+from everybody else while my f-16s who
+are nice and neatly spread out each one
+escorting their own charges are neatly
+and relaxing just doing their thing you
+can see each one of my groups just comes
+in they're within 30 seconds of each
+other they're coming from opposite
+directions my escorts are doing a
+perfect job of kind of keeping busy you
+can see my last couple bombers are
+coming look at that perfect synchronous
+there doing their thing and of course
+we're striking all sorts of different
+targets around this Airfield without
+stressing about like hitting the
+individual ones and meanwhile I still
+have escort aircraft just kind of doing
+their thing staying up in a here so
+let's fast forward time here you can see
+everybody's heading home everybody's
+going to land now I know you're all
+sitting here going okay that was
+actually pretty cool not bad not bad so
+what is the result of all this so let's
+take a look here so I'm going to go to
+losses and expenditures here and there's
+a bunch of things I see first of all we
+got 23 of the Mig 17s 24 of the Mig 21s
+nice the other thing I notied is I lost
+two f-16s that's going to happen
+especially when you throw 48 enemy
+aircraft at them but the most
+interesting part here is I lost no b52s
+and now you can see just how many am
+Rams I went through here but my favorite
+part of this entire thing here is if we
+actually switch to the other side let me
+pause my scenario for a second here if I
+go back to Red I go press the nine key
+you can see that my bombers did their
+job perfectly they did everything I
+asked them to do and you can see how it
+neatly spread out all the damage
+throughout this particular place rather
+than accidentally concentrating
+everything on one spot is it perfect no
+i' need a few more bombers and I'd have
+to use each one of these f like
+tactically dropping one bomb at a time
+but you can see that we've absolutely
+devastated this including us smooshing
+one of their runways which apparently I
+caught it on fire I don't know how that
+works but we'll just we'll imagine it
+does but you can see just how much
+damage I was able to do to this facility
+very quickly and easily accurately and
+how my escorts were carefully precisely
+metered out to prevent any sort of uh
+you know basically getting ahead of
+ourselves like we saw in that original
+scenario enjoy

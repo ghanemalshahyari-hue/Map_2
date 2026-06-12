@@ -1,0 +1,194 @@
+# C: MO - Formation Editor (version 1243.5)
+Video: https://www.youtube.com/watch?v=BC75Tsf2i1g
+Video ID: BC75Tsf2i1g
+
+hello everyone in today's video we're
+going to be taking a look at the new
+formation editor in the new command 124
+3.5 now it's worth noting that this is a
+pretty useful tool it can be used for
+all units i can do this with houses i
+can do this with airplanes i can do this
+ground units i can do this with ship
+does not make that bigger difference so
+the key thing is that just kind of
+playing with it so what i'm going to do
+is i'm going to grab my group of f16s
+i'll pause everybody and press the level
+of the g key to go ahead and put them in
+a group click on one of them and we'll
+go up to the formation editor
+alternatively you can hit the f4 key if
+you want now before you start messing
+with the formation editor the new one a
+couple things you want to keep an eye
+out for is make sure the lead unit is
+the lead unit that you want to have as
+the lead unit so for example if i'm
+going to grab this one and make him the
+lead unit i'm going to click him go
+set group lead just like that so how
+does this work it's pretty simple all
+you're going to do is you're going to
+come up here select the formation you
+want to be in for example let's do wedge
+i set the spacing in this case i'll
+let's say i want them to be one nautical
+mile apart and then you set the default
+heading let's say they're heading north
+and then click on the assign key now as
+soon as they do that you're like well
+that's not very exciting well it isn't
+very exciting because i'm still inside
+the formation editor so what i'm going
+to do is i'm going to go ahead and order
+these guys to come up here like this if
+i want to be a little more aggressive
+with them i could do one of those or the
+move key again keep in mind them in the
+scenario editor and you can see they
+immediately associate themselves into
+the correct formation let's bring up the
+formation editor again now you can do
+like a whole air show here you can come
+in here and say all right form echelon
+writes so as soon as you do that of
+course they're going to immediately not
+do anything because you have to remember
+when you do that you have to tell them
+to actually get into that particular
+position so if you click on the assign
+key what they're going to do now is
+they're all going to start breaking up
+like i said this is my little formation
+air show here and you can see them
+starting to form into that new position
+right away now if you're in the scenario
+editor you have an added bonus which is
+really really cool and that's the
+ability to actually immediately place
+them into a formation so if i actually
+come over here and click place boing
+it'll set everybody into the correct
+shape immediately so you know if it's
+like diamond and click on place boom
+they instantly that's a funky looking
+pattern jump into the correct formation
+that i want to use one thing you want to
+watch out for is with your spacing it's
+in meters or nautical miles so if you're
+really really silly you're going to come
+here like this and do something like
+this because you weren't paying
+attention to what you were doing you're
+like where did it roll everybody's down
+there now
+be careful with these because um when
+you break these formations into these
+mega spheres like this you have issues
+as far as command and control but one of
+the neat advantages here is probably for
+another day is you can create
+massively long lines of fighters and you
+can do silly things like this or you
+grab the lead fighter and you order them
+to go ahead and turn on their radars for
+the entire group there i noticed we
+can't do that because we're bang m khan
+i don't want you to obey mcon i don't
+want you to turn your radar on man turn
+it on so now we have an extremely long
+line of radar
+coverage here so it actually is kind of
+a neat little trick that you can now use
+because now if i order the formation to
+go this way everybody turns just like
+they would with a ship and starts
+pointing in the new direction
+now another thing we want to talk about
+with the formation editor is if somebody
+is removed from the formation it will
+break your formation so let me show you
+what i mean by that so i'm gonna press
+f4 i'm gonna go ahead and i'll fix my
+spacing which is ridiculous i'll place
+them into a little line like this now
+let's say this guy right here decides to
+drop out of the formation
+goodbye
+go home go get some nice hot tea or
+something like that takes out take some
+relaxing nap so no notice this hole is
+not filled in that's just you know i
+don't know if you want to call it a
+limitation or you want to call it a
+feature it doesn't matter it's not
+filled in so we would actually have to
+do is go back to the formation if we
+want to fix that and we'd have to go
+ahead and reassign them when you
+reassign them of course you give it a
+little bit of time and boeing everybody
+should be back in the new correct shape
+after having filled up that gap now i
+know what you're thinking you're saying
+well it's pretty neat that we have all
+those formations in there but what if
+you want to make your own turns out you
+can make your own if that's something
+that you're desiring to do inside the
+command modern operations folder all you
+can see is steam library and all that
+other good stuff you can see that if you
+go to the resources folder and you go to
+formation there's actually this little
+document here and i'm going to grab it
+for you it looks a little bit like this
+this gives you the ability to actually
+edit the formations that you're working
+on but basically um you can follow the
+instructions here some of these are
+pretty weird to work with this will tell
+you how many formations we have this is
+the name of the formation now this is
+going to give you a general idea of what
+formation type that you're going to be
+dealing with here and then you're going
+to be defining the different number of
+entries in it and then the last field
+that you're going to have there are
+going to be things that are going to
+tell you exactly what you're going to do
+with it each one of these entries is
+pretty straightforward again i've got
+two entries past here the first one's
+going to be 90 degrees the next one's
+going to be 270 degrees off my right and
+then down here it's going to describe
+the formation types which is going to
+kind of explain how the different
+formations are formed so like you know
+your four sided formations you're going
+to have your relatively proceeding and
+you can see you can actually get very
+very very very sophisticated with these
+particular formations you know our
+little diamond pattern you've got one at
+135 degrees another 225 degrees another
+225 but he's on the opposite side
+another one 135 but he's the opposite
+side and back into the right so you can
+have a lot of fun with these and this is
+definitely something i will have to sit
+down and probably make an application
+for like in python or something because
+it would make this whole process of
+generating these a lot easier so
+hopefully this video is helpful and
+encourages you to play with these
+formations there's definitely some
+tactics involved with formations and
+it's things i'm going to kind of play
+with later on and see if i can come up
+with a good video for that one but other
+than that enjoy

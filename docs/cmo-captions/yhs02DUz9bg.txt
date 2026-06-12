@@ -1,0 +1,326 @@
+# C: MO - Cloud Cover's Effects on Spotting
+Video: https://www.youtube.com/watch?v=yhs02DUz9bg
+Video ID: yhs02DUz9bg
+
+hello everyone in today's video we're
+going to be taking a look at the impact
+of clouds on spotting units now clouds
+are kind of an interesting thing in this
+game because they're fairly well
+abstracted uh when we normally have
+clouds of course people think the big
+puffy things like we see in the sky and
+anybody's flown a lot of flight
+simulators can tell you how wonderful it
+is to not be able to see things because
+clouds are basically blocking your view
+now one of the things that makes it kind
+of interesting is if we actually open up
+our editor real quick and we pop down to
+our edit weather kind of a thing like
+that what you're going to notice is the
+fact that we only have one bar for
+clouds we can't say we want clouds at
+5,000 and 8,000 and they're broken into
+a couple different categories the first
+one is going to be basically the light
+clouds you can see here Light low clouds
+5 to 7,000 ft the cge of VFR Pilots when
+I drag this bar up a little bit further
+you'll notice we get the word moderat I
+pull it a little bit further we get very
+moderate clouds if I pull it any further
+than that you get what they call solid
+clouds and of course past solid you get
+straight up thick fog now the notice the
+interesting thing here is a thin fog is
+basically going to be pretty Prett nasty
+but when people think of like overclass
+like if you're thinking sort of like a
+rainstorm a rainstorm is basically this
+line right here and we can actually like
+that and create a bit of rain too if
+you're doing that kind of weather
+modeling now for us this is going to
+have a big impact on spotting things so
+what I'm going to do is I'm going to
+drag this all the way to the left here
+to delete all the clouds I'm leaving the
+SE State alone and we have our nice jet
+here this jet is now 50 years old uh
+look it up it's sad isn't it actually it
+might not be sad it might actually be
+kind of lukewarm so what we're going to
+do here is we're going to kind of scoot
+across going see if you notice anything
+whoa pull stop pull stop pull stop we
+spotted some things so let's see what we
+have here ah of course it's an U was by
+the way is the magic word for that one
+so we take a look at this one and we
+spotted it at about 19.3 tical miles as
+a matter of fact let's make this
+slightly more scientific today so what
+I'm going to do is go up to game options
+real quick message log when we spot a
+new unit um we're actually going to go
+ahead and say something here new weapon
+contact let's see a new contact we're
+going to make it actually stop the game
+so that we can see very clearly make it
+again for scientist purposes so anyway
+we spotted them about 20 stop and we
+also spotted these guys at about about 8
+to 10 or something like that about yeah
+about 10 nautical miles not bad so what
+we're going to do now is we're going to
+go ahead and grab this here go ahead and
+I hit Testa again we're going to go grab
+the wrong side for about the 50th time
+here grab our block and now we're going
+to introduce some clouds uh the first
+cloud of course we're going to be
+interested in introducing is going to be
+the light kind of crunchy clouds if you
+take a look here when I hold my mouse
+you'll see this light high clouds
+between 20 and 23,000 ft one of the cool
+things here is if I click here and press
+f2 it actually shows you A visual
+representation of the clouds right here
+to make it a little bit simpler if we
+wanted to hide in the clouds we could
+actually drag this into the middle here
+now if we wanted to cheat a little of
+course we could drag this below the
+clouds and get a really good look but uh
+we're interested to see if you're still
+able to acquire those Targets on the
+ground and in the water here we
+go
+ah interesting thing so you immediately
+sit here and go wait what those high
+clouds completely blocked my F-16 from
+spotting anything is that supposed to
+work that way yes it actually gets more
+interesting and let me show you why so
+I'm going to go ahead and load
+everything back up again real quickly
+I'll make sure my clouds are exactly the
+same as they were a few moments ago
+which I believe they are looks good
+looks good looks good looks good I'm
+going to go ahead and let my F16 scoot
+scoot across the sky sky again and uh
+watch completely completely invisible so
+in this case U once we have introduced
+clouds We have basically made it
+impossible to see things through them
+now it gets a little more fascinating at
+least again things I find fascinating
+things you find fascinating might be a
+little bit different but that's okay but
+let's go ahead and grab our F-16 buddy
+again and this time we're actually going
+to change his altitude a little bit you
+cannot see through Cloud layers that's
+the first thing so what I'm going to do
+instead is I'm going to shove him into
+the cloud layer like this so I have 16
+bud is actually going to fly right in
+the dead center of the
+clouds and and you'll notice once again
+we didn't see anything and okay maybe
+these are light broken clouds we're
+dealing with here and we're flying right
+over the heads of the potential targets
+that we actually have and we have a pod
+to make our life a little bit simpler so
+what I'm going to do now is I'm going to
+grab it I'm actually going to pull him
+below the clouds I we'll do a nice
+18,000 now flight level 18 180 here
+looks pretty good to me let's go ahead
+unpause now he's underneath that cloud
+layer ah also did you notice the new
+contact didn't show up I'm actually a
+little annoyed about that I must have
+messed something up I probably did not
+click the button no I definitely did not
+click the button when to click no I
+definitely did that huh oh yes it worked
+it worked I'm sorry I'm sorry it puts
+time scale to one it doesn't freeze the
+game but we can see very clearly that we
+picked them up at exactly the same
+distance because of the fact we're now
+underneath that cloud layer so as we can
+see clouds actually act as almost like a
+physical barrier which is actually very
+interesting but we're in this for
+science so we're going to keep going
+with a little example here and we're
+going to make things a little different
+what if our targets down here on the
+ground had some kind of queuing for the
+vision device we have on board our
+aircraft so let's help them out a little
+bit so what I'm going to do is I'm going
+to get the help of a good old fashioned
+295 RT now now the reason I like the t95
+RT is because it's got a big old school
+radar on it and it's going to work
+perfectly for examples here so what I'm
+going to do is I'm going to flip on that
+radar just like that and he's going to
+start looking around now one of the cool
+things here is he's going to communicate
+with our F-16 buddy over here to say hey
+I spotted a bunch of skunks uh can you
+identify those skunks so I'm going to go
+grab my F16 buddy here and we go speed
+up time a little bit
+and what I'm going to try to do is see
+if rf-16 can actually identify them as
+he flies over remember this is the same
+Li high clouds that we saw before above
+those Li high clouds and you'll notice
+my F-16 had no ability to identify those
+targets it still could not physically
+see through these clouds for the purpose
+of actually engaging a Target now people
+are saying well that's actually starting
+to get a little tricky that could be a
+bit of a problem yes and it gets more
+fun too cuz if I actually were to move
+forward out just a little bit here we
+have a pretty hefty range on that let me
+get a little bit closer there we go one
+of the things we actually are packing on
+my lovely little F-16 here is we
+actually have these Maverick KS these
+are pretty cool Mavericks they have this
+fantastically long range on them and
+they also have the ability of course to
+use an inference Seeker so the question
+becomes if I press shift F1 and I left
+click on the skunk you're going to
+notice that I must detect the target
+prior to firing so now if I were to just
+let this thing rip I'll go ahe and do
+that just for the purpose of
+demonstration you'll notice that we
+targeted a a bad guy and we're just
+going to sail right over its head you're
+sitting here going no that makes no
+sense it it what why why didn't you
+attack him because our F-16 has no
+concept of where that Target physically
+is the only thing the F-16 sees is
+there's a data link Target being
+provided for him now I know what you're
+saying you're saying here well what if
+the F16 used his radar 2 would he be
+able to fire well let's take a look
+sensors Radars now remember the F16 has
+a very good air to ground radar and it
+will have no difficulty spotting
+especially a little wasp those are not
+not the hardest targets to see so let's
+go ahead and press shift tab again or
+shift f one and you'll notice we're out
+of range this time we're not out of
+detection so we'll get a little bit
+closer we'll get a little tiny bit
+closer F16 is getting into range I'm
+trying to line this up as evenly as I
+possibly can all right let's shift F1
+one more time uh notice Target must
+weapon must detect Target prior to
+firing the problem here now is remember
+that IR Seeker on the nose of this is
+also having the same limitation as our
+aircraft does we cannot physically see
+the target for the purposes of engaging
+him so what I can do here is I can go
+ahead and now drop his altitude let's go
+down to flight level 180 again go ahead
+and now back him up just a tiny bit here
+so we can go basically dive through the
+clouds here we have a really fun new
+thing they added to command by the way
+but that's okay so we're in the cloud
+layer if you wonder where that cloud
+layer is here you can see it's right
+there we're about to sip through it now
+the interesting thing here is if I prush
+shift step one and click it it just says
+we're out of range so let's get a little
+bit closer
+here of course he's going to fired the
+moment he gets in a range and ruin my
+fun here but that's okay that happens
+sometimes it's a little bit closer cool
+I like that so if I click on him you
+will now see I can fire as a matter of
+fact off it goes now the question you're
+probably asking yourself is is one
+Maverick good enough to wreck an osak
+here and um here it comes let's see here
+AGM Maverick it's got some pretty good
+explosive potential here let's see here
+it does 61 damage points my Osa let's
+take a look here my Osa how many damage
+points in an Osa you want to watch the
+explosion you know that was going to
+happen right and if you come down here
+to our damage points you'll see at 64 it
+takes more than that of course and but
+you'll notice he promptly sunk as a
+matter of fact one of the fun things we
+can do here is we can actually go over
+here we can click on him we can go over
+here and now we can see that he
+basically sunk was initial damage was
+pretty serious damage and if you
+actually go to damage control obviously
+he's splattered here but um significant
+component damage uh there radi got
+boasted as diesels got smoked is yeah
+one of your um engines get hit that
+usually means you're flooding in the
+engine room is pretty bad additional
+heavy damage and he decided to go
+swimming also kind of interesting here I
+have a BDA report here that says the
+damage he's no fire and he's flooding
+you
+think oh one fun thing by the way is we
+have a little thing now that tells us
+what our rud setting is Isn't that cool
+it's just sort of one of those things so
+as you can see the clouds in this system
+are basically going to be a fixed object
+we can't visualize the clouds you know
+if they're big puffy kind of poofs or
+something like that that we could
+basically look and be able to figure out
+oh I want to make my guy like go like
+this through the air to get through the
+clouds we don't have that yet we have
+simply a more simplified kind of way of
+handling it and certain Radars of course
+have a difficult time penetrating
+through clouds especially systems that
+are really really high frequencies like
+weapons and stuff that were guiding up
+into the air now you're sitting here
+going okay that makes satellites
+basically useless if there's a cloud in
+the air and I
+yeah but the key thing is there's other
+types of satellites out there and of
+course and then everybody else of course
+says well is it possible to make a cloud
+here and a cloud here the answer is yes
+but that is for another video enjoy

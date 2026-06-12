@@ -1,0 +1,264 @@
+# templates/warning_order.yaml
+# =============================
+# Doc — الأمر الإنذاري (Warning Order / WARNO).
+#
+# §18 C21 (2026-04-23) — NEW v1 document. Authored as a **mapped-only**
+# template: every field resolves via ``static`` / ``input`` / ``computed``,
+# and zero fields are ``retrieved``. No LLM drafting calls, no Phase 2
+# retrieval, no citations. This matches the WARNO's doctrinal purpose —
+# it is a structured directive built from facts the commander already
+# knows (from the operation brief + time analysis), not a doctrinally-
+# grounded essay.
+#
+# Schema classes reused from graph/generation/schema/schemas.py:
+#   HeaderSection, MetadataSection, OperationalSituation,
+#   MissionAndExecution, Annexes. The schema-module parity pass is OK
+#   with the same module backing both warning_order.yaml and
+#   operation_order.yaml — each YAML declares only the classes it
+#   needs, unreferenced classes are not checked.
+#
+# Labels and drafting instructions:
+#   Arabic labels come from graph/generation/schema/field_catalog.py
+#   (overlay at load time). This file can omit ``label_ar`` entries
+#   and the loader fills them in. No ``prompt_ar`` appears here since
+#   the document has no retrieved fields.
+#
+# Fields the WARNO at Step 1 cannot know yet fall to a ``static`` value
+# of "يُصدر لاحقاً" (published later). The renderer prints that verbatim
+# so the receiving unit understands the gap is deliberate, not a bug.
+
+meta:
+  template_id: warning_order
+  template_version: 1
+  title_arabic: "الأمر الإنذاري"
+  document_slug: warning_order
+  output_filename: "{document_slug}.docx"
+  default_collections: []                # no retrieval in this document
+
+schemas:
+  # -----------------------------------------------------------------
+  # HeaderSection — unit identification block at the top of the order.
+  # -----------------------------------------------------------------
+  HeaderSection:
+    fields:
+      header:
+        kind: input
+        path: references.header_line
+        default: "نسخة رقم () إلى ()"
+      organization:
+        kind: input
+        path: operation.organization
+        default: "القوات البرية"
+      department:
+        kind: input
+        path: operation.department
+        default: ""
+      unit:
+        kind: input
+        path: operation.unit
+        default: ""
+      assembly_area:
+        kind: input
+        path: locations.assembly_area
+        required: true
+
+  # -----------------------------------------------------------------
+  # MetadataSection — references, maps, time zone.
+  # -----------------------------------------------------------------
+  MetadataSection:
+    fields:
+      date_time:
+        kind: computed
+        function: time_math.format_h_hour_narrative_ar
+        arguments:
+          when: "{{input: timing.h_hour_gregorian}}"
+          time_zone: "{{input: timing.time_zone}}"
+      letter_ref_number:
+        kind: input
+        path: references.letter_ref_number
+        required: true
+      warning_order_ref_number:
+        kind: input
+        path: references.warning_order_ref_number
+        required: true
+      references:
+        kind: static
+        value: "عقيدة تخطيط العمليات العسكرية (MDMP) وإدارة القيادة وهيئة الركن."
+      maps:
+        kind: input
+        path: references.maps
+        required: true
+      task_organization:
+        kind: input
+        path: operation.task_units
+        default: "يُصدر لاحقاً في الملحق (أ)"
+      time_zone:
+        kind: input
+        path: timing.time_zone
+        required: true
+
+  # -----------------------------------------------------------------
+  # OperationalSituation — short-form in a WARNO (full detail lives in
+  # the later OPORD Staff Estimates).
+  # -----------------------------------------------------------------
+  OperationalSituation:
+    fields:
+      situation_summary:
+        kind: input
+        path: mission_intent_free_text
+        default: ""
+      area_of_interest:
+        kind: input
+        path: locations.area_of_interest
+        default: ""
+      area_of_operations:
+        kind: input
+        path: locations.area_of_operations
+        default: "كما في شفاف العمليات — الملحق (م)."
+      terrain:
+        kind: static
+        value: "كما في تقدير الاستخبارات — الملحق (أ)."
+      weather:
+        kind: static
+        value: "كما في تقدير الاستخبارات — الملحق (أ)."
+      civil_considerations:
+        kind: input
+        path: locations.civil_considerations
+        default: ""
+      enemy_profile:
+        kind: static
+        value: "كما في تقدير الاستخبارات — الملحق (أ)."
+
+  # -----------------------------------------------------------------
+  # MissionAndExecution — the mission sketch. At WARNO time most
+  # execution detail is "يُصدر لاحقاً"; the commander's intent /
+  # objective / end state lines are populated from the brief.
+  # -----------------------------------------------------------------
+  MissionAndExecution:
+    fields:
+      task_units:
+        kind: input
+        path: operation.task_units
+        default: "يُصدر لاحقاً في الملحق (أ)"
+      mission:
+        kind: input
+        path: mission_intent_free_text
+        default: ""
+      objective:
+        kind: input
+        path: mission_intent_free_text
+        default: ""
+      method:
+        kind: static
+        value: "يُصدر لاحقاً"
+      desired_end_state:
+        kind: input
+        path: mission_intent_free_text
+        default: ""
+      higher_unit_mission:
+        kind: input
+        path: operation.higher_unit_mission
+        default: ""
+      civil_military_operations:
+        kind: static
+        value: "يُصدر لاحقاً"
+      interagency_coordination:
+        kind: static
+        value: "يُصدر لاحقاً"
+      host_nation_coordination:
+        kind: static
+        value: "يُصدر لاحقاً"
+      ngo_io_coordination:
+        kind: static
+        value: "يُصدر لاحقاً"
+      attached_detached_units:
+        kind: input
+        path: operation.attached_detached_units
+        default: "يُصدر لاحقاً"
+      planning_assumptions:
+        kind: static
+        value: "يُصدر لاحقاً"
+      ground_component_mission:
+        kind: static
+        value: "يُصدر لاحقاً"
+      execution_purpose:
+        kind: static
+        value: "يُصدر لاحقاً"
+      concept_of_operations:
+        kind: static
+        value: "يُصدر لاحقاً"
+      subordinate_unit_tasks:
+        kind: static
+        value: "يُصدر لاحقاً في الملحق (ب)"
+      combat_support_tasks:
+        kind: static
+        value: "يُصدر لاحقاً في الملحق (ج)"
+      execution_timeline:
+        kind: static
+        value: "راجع وثيقة تحليل الوقت المرفقة."
+      commanders_critical_information_requirements:
+        kind: static
+        value: "راجع دليل التخطيط الأولي المرفق."
+
+  # -----------------------------------------------------------------
+  # Annexes — high-level list only; contents come later.
+  # -----------------------------------------------------------------
+  Annexes:
+    fields:
+      appendices:
+        kind: static
+        value: "الملحق (أ) — التنظيم للمهمة\nالملحق (ب) — مهام الوحدات الفرعية\nالملحق (ج) — مهام الإسناد القتالي"
+      overlays:
+        kind: static
+        value: "الشفاف (م) — العمليات"
+
+structure:
+  - kind: title
+    text: "الأمر الإنذاري"
+    alignment: center
+    underline: true
+
+  - kind: section
+    schema: HeaderSection
+    heading:
+      text: "الرأس"
+      underline: true
+      space_before_cm: 1.0
+    layout: numbered_fields
+    citation_collection: false
+
+  - kind: section
+    schema: MetadataSection
+    heading:
+      text: "البيانات المرجعية"
+      underline: true
+      space_before_cm: 1.0
+    layout: numbered_fields
+    citation_collection: false
+
+  - kind: section
+    schema: OperationalSituation
+    heading:
+      text: "الموقف العام"
+      underline: true
+      space_before_cm: 1.0
+    layout: numbered_fields
+    citation_collection: false
+
+  - kind: section
+    schema: MissionAndExecution
+    heading:
+      text: "المهمة والتنفيذ"
+      underline: true
+      space_before_cm: 1.0
+    layout: numbered_fields
+    citation_collection: false
+
+  - kind: section
+    schema: Annexes
+    heading:
+      text: "الملاحق والشفافيات"
+      underline: true
+      space_before_cm: 1.0
+    layout: numbered_fields
+    citation_collection: false

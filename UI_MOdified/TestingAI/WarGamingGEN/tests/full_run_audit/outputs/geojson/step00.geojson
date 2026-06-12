@@ -1,0 +1,324 @@
+{
+  "type": "FeatureCollection",
+  "name": "step00",
+  "properties": {
+    "phase": 0,
+    "time_label": "D-7",
+    "phase_name_ar": "تمهيد - الوضع قبل العمليات",
+    "kind": "shaping",
+    "phase_line_km": 0.0,
+    "combined_effect": "Red's initial shaping operations faced significant challenges. Blue's coastal radars effectively targeted Red's mine sweepers, causing attrition and maintaining the integrity of Blue's minefields. Red's UAV ISR efforts were largely neutralized by Blue's fighter squadron, preventing significant intelligence gathering. Red's kamikaze UAVs faced heavy interception by Blue's corvettes with CRAM systems, resulting in minimal damage to Blue's naval assets. Red's SOF teams encountered strong resistance from Blue's signal battalion, limiting their impact on Blue's C2 nodes.",
+    "step_advantage": "BLUE_ADV",
+    "force_ratio_local": 0.22,
+    "force_ratio_operational": 1.45
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.55,
+          29.74
+        ]
+      },
+      "properties": {
+        "kind": "objective",
+        "id": "OBJ-X",
+        "name_ar": "الهدف X (نقطة الناصر-البريقة)",
+        "name_en": "Objective X (Nasser-Brega pipeline midpoint)",
+        "phase": 0,
+        "depth_km_from_coast": 90.1
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.3,
+          32.5
+        ]
+      },
+      "properties": {
+        "kind": "affected_unit",
+        "uid": "R-d3-2-045",
+        "side": "RED",
+        "domain": "naval",
+        "type": "mine_sweeper",
+        "name_ar": "2 كاسحة ألغام",
+        "phase": 0,
+        "status_change": "damaged_partial",
+        "damage_pct": 0.4,
+        "cause_actor": "B-d1-4-035",
+        "cause_what": "Coastal radar targeting of mine sweepers",
+        "cause_doctrine": "Wonsan 1950: 50% MCM attrition under coastal artillery overwatch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.0,
+          33.0
+        ]
+      },
+      "properties": {
+        "kind": "affected_unit",
+        "uid": "R-d3-12-055",
+        "side": "RED",
+        "domain": "air",
+        "type": "uav_isr",
+        "name_ar": "سرب طائرات مسيَّرة  مراقبة واستطلاع     (12 طائرة)",
+        "phase": 0,
+        "status_change": "damaged_partial",
+        "damage_pct": 0.3,
+        "cause_actor": "B-d2-3-048",
+        "cause_what": "Fighter squadron intercept of ISR UAVs",
+        "cause_doctrine": "Falklands air-to-air loss ratio 1:3 attacker:defender"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.0,
+          33.0
+        ]
+      },
+      "properties": {
+        "kind": "affected_unit",
+        "uid": "R-d3-16-067",
+        "side": "RED",
+        "domain": "air",
+        "type": "air_unit",
+        "name_ar": "سرب طائرات مسيَّرة  متفجرة         (16 طائرة)",
+        "phase": 0,
+        "status_change": "expended",
+        "damage_pct": 0.7,
+        "cause_actor": "B-d1-8-031",
+        "cause_what": "CRAM interception of kamikaze UAVs",
+        "cause_doctrine": "Black Sea 2024 USV survival 25-30% × 60-70% hit rate"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.0,
+          32.0
+        ]
+      },
+      "properties": {
+        "kind": "affected_unit",
+        "uid": "R-d2-211-074",
+        "side": "RED",
+        "domain": "sof",
+        "type": "sof_bn",
+        "name_ar": "كتيبة العمليات الخاصة 211",
+        "phase": 0,
+        "status_change": "suppressed",
+        "damage_pct": 0.5,
+        "cause_actor": "B-d1-504-021",
+        "cause_what": "Signal battalion counter-SOF operations",
+        "cause_doctrine": "Doctrines.md - Tenet: Defense types: area defense, mobile defense, retrograde"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.4,
+          29.1
+        ]
+      },
+      "properties": {
+        "kind": "affected_unit",
+        "uid": "B-d1-4-035",
+        "side": "BLUE",
+        "domain": "naval",
+        "type": "naval_unit",
+        "name_ar": "4 أجهزة رادار ساحلي",
+        "phase": 0,
+        "status_change": "unchanged",
+        "damage_pct": 0.0,
+        "cause_actor": "R-d3-2-045",
+        "cause_what": "Mine sweeper attempts to clear lanes",
+        "cause_doctrine": "JP 3-02 Amphibious Operations"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.6,
+          29.3
+        ]
+      },
+      "properties": {
+        "kind": "affected_unit",
+        "uid": "B-d2-3-048",
+        "side": "BLUE",
+        "domain": "air",
+        "type": "fighter_ad",
+        "name_ar": "السرب 3 أف 16 دفاع جوي(12 طائرة)",
+        "phase": 0,
+        "status_change": "unchanged",
+        "damage_pct": 0.0,
+        "cause_actor": "R-d3-12-055",
+        "cause_what": "ISR UAV deployment",
+        "cause_doctrine": "AJP-3.3 Air & Space Operations"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.4,
+          29.1
+        ]
+      },
+      "properties": {
+        "kind": "affected_unit",
+        "uid": "B-d1-8-031",
+        "side": "BLUE",
+        "domain": "naval",
+        "type": "corvette",
+        "name_ar": "8 كورفيت",
+        "phase": 0,
+        "status_change": "unchanged",
+        "damage_pct": 0.0,
+        "cause_actor": "R-d3-16-067",
+        "cause_what": "Kamikaze UAV attack",
+        "cause_doctrine": "Doctrines.md - Tenet: C-UAS defeats Group 1-5 UAS"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.57,
+          30.03
+        ]
+      },
+      "properties": {
+        "kind": "affected_unit",
+        "uid": "B-d1-504-021",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "signal_bn",
+        "name_ar": "الاتصالات .  كتيبة الاشارة 504  ( 3 ) سرايا إشارة)",
+        "phase": 0,
+        "status_change": "unchanged",
+        "damage_pct": 0.0,
+        "cause_actor": "R-d2-211-074",
+        "cause_what": "SOF reconnaissance and sabotage",
+        "cause_doctrine": "WarReferences.md - SOF operations"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.0,
+          32.0
+        ]
+      },
+      "properties": {
+        "kind": "actor_unit",
+        "uid": "R-d0-500-077",
+        "side": "RED",
+        "domain": "strategic",
+        "type": "ssm_brigade",
+        "name_ar": "لواء صواريخ أرض/أرض متوسط المدى (500 - 600) كيلومتر",
+        "phase": 0,
+        "component": "strategic",
+        "action": "Held in reserve — preserving SSM magazine for H-hour saturation salvo per opening-day concentration doctrine.",
+        "doctrine_cited": [
+          "WarReferences.md",
+          "Doctrines.md"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.0,
+          32.0
+        ]
+      },
+      "properties": {
+        "kind": "actor_unit",
+        "uid": "R-d3-405-014",
+        "side": "RED",
+        "domain": "ground",
+        "type": "ew_bn",
+        "name_ar": "كتيبة حرب الكترونية 405.  (4) سرايا",
+        "phase": 0,
+        "component": "ew",
+        "action": "Initiate continuous electronic warfare operations to jam Blue's C2.",
+        "doctrine_cited": [
+          "Doctrines.md"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.57,
+          30.03
+        ]
+      },
+      "properties": {
+        "kind": "actor_unit",
+        "uid": "B-d0-99-000",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "المكون البري 99. يتألف من :",
+        "phase": 0,
+        "component": "strategic",
+        "action": "Held position — preserving strategic strike capability for decisive counterattack when Red culminates.",
+        "doctrine_cited": [
+          "Doctrines.md - Tenet: Defense types: area defense, mobile defense, retrograde."
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.57,
+          30.03
+        ]
+      },
+      "properties": {
+        "kind": "actor_unit",
+        "uid": "B-d1-505-022",
+        "side": "BLUE",
+        "domain": "ground",
+        "type": "unknown",
+        "name_ar": "الحرب الالكترونية. كتيبة الحرب الإلكترونية 505 وتتألف من :",
+        "phase": 0,
+        "component": "ew",
+        "action": "Initiate counter-EW operations to mitigate Red's jamming efforts.",
+        "doctrine_cited": [
+          "Doctrines.md - Tenet: Air defense planning at brigade and below."
+        ]
+      }
+    }
+  ]
+}

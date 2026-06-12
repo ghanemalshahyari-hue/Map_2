@@ -1,0 +1,277 @@
+# C: MO - Using the F-35 and F-15EX For an ambush
+Video: https://www.youtube.com/watch?v=eXHNVauGqw8
+Video ID: eXHNVauGqw8
+
+Hello everybody. In today's video, we're
+going to be taking a look at using
+cooperative engagement with a stealth
+platform, a hard to detect radar, and an
+awful lot of missiles combined all into
+one awesome strike package. So, what we
+have today is a really, really large
+group of Tupelv M 22 M3s. We have some
+Sukoy 27s, and they're all looking
+pretty nasty. They're heading towards
+our little defensive bunker over here.
+So, I'm going to unpause.
+I'm going to repause. All right. So, uh,
+what can you tell me about the tactical
+situation from the perspective of my
+striking aircraft? I keep in mind, my
+strikers are equipped with the latest
+and greatest of modern air-to-air
+warfare. They've got infrared sensors.
+They've got everything under the sun.
+What they don't realize is the fact that
+just beyond their range, there is a
+single F-35 sitting here with a
+handydandy phased array radar, but with
+its low probability of intercepts. One
+of the great things about the F-35 is it
+sensor suite. I'm not going to lie, that
+is its survivability. It's not that it's
+well armed or maneuverable. It's the
+fact that it's hard to detect and it's
+the fact that it can see things really
+well. We also, of course, have ourselves
+a pair of F-15EXs.
+For those of you who are unfamiliar with
+that version of the F-15, basically they
+took the regular F-15E and said, you
+know what's cool? 20 AM RAMs, which
+means between the two aircraft, we have
+40 AM RAMs. Now, if you do the math on
+that really quickly, you realize that is
+a total of two AM RAMs per target. Now,
+the thing here is I cannot turn on the
+radars of these F-15s. If I were to do
+that, I would immediately give myself
+away and we get in a really nasty AA12
+versus A120 basic kind of a thing, you
+know, dog fight. I don't want to do
+that. But what I do want them to do is I
+do want them to engage all these lovely
+targets here. So, what I'm going to do
+is I'm going to use the F-35's radar to
+guide the F15's missiles. Now, this is
+going to be a little tricky. Uh, right
+now, we are not using any radars on
+this. Remember, that's the important
+part. You don't want to give yourself
+away here. So, I'm going to press shift
+F1. I'm going to go ahead and hold down
+shift again. Drag a box around all of
+these targets. Select them all. This is
+important. And uh what I'm going to do
+is I'm going to come down here. I'm
+click this. Set this to one. Click that
+twice. Come down here. And I go ahead
+and do that again. So, um we're firing
+an awful lot of weapons here. So, let's
+see here. That's a 20 allocated for
+both. That's 40 AM RAM missiles for
+those of you who can do the math on that
+real quick. Now, I want to stack the
+deck on this engagement a little bit
+here. And now, one of the things you
+probably noticed is the weather's not
+great. Let's take advantage of the fact
+the weather's not great to put the
+missiles into the clouds. So, I'm going
+to go ahead and unpause here. Keep in
+mind, my F-35s at no point, actually, I
+should say my F-35 is running its radar.
+My F-15s at no point will activate the
+radar because to do so would basically
+give up this entire conspiracy that I'm
+basically applying here. So, I'm going
+to go speed them up a little bit here.
+I'm not speeding up time. They're
+they're F-15s. They go plenty fast
+enough. Now, keep in mind things like
+infrared sensors, flurs, and all those
+kind of things do a really, really good
+job seeing the big flare of an
+afterburner when it's behind it, number
+one. And number two, it's also going to
+see the big flare of an afterburner when
+it's in a scenario that it's not flying
+through a cloud. And now, this is one of
+the few times where weather is actually
+on our side here. So, I'm going to tell
+my two F-15s to step it up a bit because
+they're wasting the viewers time here.
+And again, remember, they're not
+activating their radars at any moment.
+The only thing they're really doing
+here, and I actually have to give them a
+slight lead pursuit here, and yes, Lead
+Pursuit was the company that produced
+the fantastic Falcon series, is
+basically what we're doing is trying to
+get ourselves a little bit closer in
+range. Notice none of our interceptor
+aircraft have responded at any point.
+They are 100% oblivious. And here comes
+the fireworks. Now, the interesting
+thing here is you'll notice they did
+flip their radar on. And the other thing
+you'll notice is at no point did I make
+sure that I actually change my volume.
+So, because it's turning its radar on,
+let me go ahead and adjust my volume
+first. I have a new button for this. I
+have a new keyboard, by the way. Um, so
+it should be a little quieter, I hope.
+So, they're just going to spam spam.
+Spam RAM is the classic thing we always
+like to say for those of you who play a
+lot of DCS here. And let's go switch to
+the other side real fast. Now, do you
+notice the fact the other side at no
+point has detected the incoming attacks.
+Oh, missiles. Ready for some fireworks?
+This is the fun part because our
+interceptors are basically this, if I
+had to guess, was detected by visual.
+Yes, the Iris picked it up. So, our Seoy
+27s, of course. Actually, this is the
+Tupel of 22. Well, they're immediately
+going to start maneuvering here. But
+look, there's more. Spam RAM. Spam ram.
+Spam ram. Spam ram. Spam ram. Spam ram.
+Going to get spam ram. And as you can
+see, there was never ever ever a
+detection at any point of the F-15s
+launching their weapons. Now, the
+problem, of course, is you're sitting
+here going, "Um, you've obviously
+discharged those weapons at the wrong
+range." Yes. And now, as a matter of
+fact, since the F-15s basically followed
+through, this doesn't work either
+because now the F-15s are going to get
+themselves in a dog fight. It's not
+going to work. Boo. So, what we'll do,
+of course, is go load it back up again.
+Now, blue, I believe I have everybody
+set up. Yeah. And this time, what we'll
+do is we'll shrink the range to our
+engagement to something a little more
+threatening. So, what we'll do is we'll
+sneak them back on the clouds. We'll
+kick them back up to after burner. And
+we're just going to be a little more
+careful with them this time. We're going
+to creep up a little bit creepier. All
+right, get to it. Can I do this without
+fast forwarding to the point that it get
+detected? Let's find out.
+Remember, we're only seeing Oh,
+sigh. So, the reason they fired, of
+course, is uh because they were ordered,
+too. So, I'm actually going to press
+control shift F9. I'm going to come in
+here and I'm actually going to order
+them to hold fire because if they fire,
+they're going to give the jig up before
+I can actually like make this work. All
+right, here we go. I swear this will
+work this time. Here we go. Here we go.
+All right. So, let's get our altitude
+down to something that's a little bit
+more reasonable. We'll do 34,000 ft
+because it's between the two cloud
+layers and go. Here we go. This time,
+definitely. This time, definitely. Here
+we go. Here we go. Dot dot dot dot dot
+dot dot dot dot. Remember, the F-35 is
+providing us with the picture that we
+see here.
+Come on. Come on. All right. That's not
+quite point blank range, but for me,
+that's plenty.
+Now, remember, we're going to be firing
+these weapons through the clouds, and
+the F-35 is going to be providing us
+with all of the required goodas that's
+going to make this power actually pull
+off. All right, here we go. Here we go.
+Here we go. All right, shift F1, hold
+down shift, drag a box around them. Um,
+we're going to grab everybody. It helps
+if you hold the shift key. You all get
+one missile. Allocate weapons. You, on
+the flip side, we're going to select
+backwards here. Um, you all get one
+missile. That way, we know the backfires
+get the missiles. You all get one
+missile. And I'm going to turn my volume
+down again because uh the fireworks are
+going to get pretty exciting. Ladies and
+gentlemen, this is Oh, calculator. Can
+you tell I have a new keyboard? Fire.
+Let's go back to the perspective of our
+opponents for a moment here. Keep in
+mind the Sukoys in the front are going
+to start maneuvering. Remember, there's
+clouds. So, if you're wondering why
+they're not racing again, at no point
+are they getting any warning, they've
+been fired upon. No points. They're just
+aiming for their target. They're
+checking their INS. Um, it's probably
+early in the morning. Yeah, actually
+it's Yeah. So, they'd be seeing the sun
+just start to come up. Hey, we got a
+detection of a missile warning. That's a
+problem. But surprise, it's not the only
+one.
+What are you supposed to do about that?
+Oh, somebody returned fire. I'm
+impressed.
+&gt;&gt; And of course, you're probably very
+disappointed that that wasn't more
+effective than it should have been. Uh
+the reality is is once you know a
+missile is launched at you, especially
+at any sort of real range, it's uh
+pretty maneuverable. There's all sorts
+of fun things you can do. But the fact
+of the matter is, and again, if we pop
+this open for just a moment and take a
+look at our losses and expenditures, uh
+they're down six airplanes um and all
+the stuff that goes with it, we haven't
+lost anything, but it cost us um the
+taxpayers a lot.
+So, not so good in that. Now, one of the
+fun things we can do here, too, and this
+again is if we were going Ultimate
+Tactics uh volume one, which I'm not. We
+could have actually ordered the F-35 to
+join him with the fun. We could have had
+them start firing into the crowd as
+well. And again, you got to be really
+careful. Like these F-15s, the best
+thing they can do is after burner and
+get the heck out of there as fast as
+they can, staying in that cloud to stay
+covered. But keep in mind, our F-35 now
+is adjoining the excitement. So now
+there's all the Seoy 27s that are
+probably firing all sorts of nasties.
+But check this out. Surprise. They
+weren't the only people who had some
+none of those missiles worked.
+Look at how many people. Did I mention I
+have a new calculator? No. Did I mention
+I have a new keyboard? All right, let's
+go ahead and grab these guys and send
+them up there. They have to run for
+their lives. But here's the thing. The
+F-35 now has a bunch of backfires that
+are completely unescorted. So, from a
+tactical perspective, this battle's over
+because this F-35 could basically go up
+and knock. Enjoy.

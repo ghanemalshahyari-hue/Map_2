@@ -574,7 +574,7 @@
         try { contacts = map2d.getDetectionContacts(state) || []; } catch (_) { return; }
         for (const c of contacts) {
             const firm = c.confidence === 'firm';
-            const cssColor = c.detected_by_side === 'blue' ? '#3a96d2' : '#c41e1e';
+            const cssColor = c.detected_by_side === 'BLUE' ? '#3a96d2' : '#c41e1e';
             const color = Cesium.Color.fromCssColorString(cssColor);
             const e = viewer.entities.add({
                 position: Cesium.Cartesian3.fromDegrees(c.lon, c.lat, 0),

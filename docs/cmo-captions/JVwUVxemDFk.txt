@@ -1,0 +1,398 @@
+# C: MO - Getting there as fast as possible without running out of gas
+Video: https://www.youtube.com/watch?v=JVwUVxemDFk
+Video ID: JVwUVxemDFk
+
+Hello everyone, in today's video we're
+going to be answering a quick question
+that somebody had as far as uh figuring
+out how do you get somewhere as fast as
+you can without running out of gas. I
+thought this was actually kind of cool,
+so it'd be great opportunity to show you
+how there's some nice interface features
+built into Command Modern Operations to
+make this a little bit easier. First of
+all, as we all know uh most things don't
+have unlimited fuel unless you're of
+course sail powered or you're nuclear
+powered. So in the case of our lovely
+FFG 36 Underwood here, uh we know that
+we have a pretty substantial amount of
+fuel. So let's see here, 586 tons
+basically, which is quite a bit. But the
+question is um I need to get myself all
+the way over here to Ireland and I need
+to do it without running out of fuel. So
+how do I figure this out? And there's a
+couple different ways built in to do
+this directly. Uh the first thing we can
+do is we actually click on my Oliver
+Hazard Perry and I go ahead to find a
+course like you can see that I've done
+here. If I were to click on the final
+waypoint and press the F2 key, you'll
+notice it'll bring up a little screen.
+Hang on a second. A screen you can read
+that will actually show you here the
+total fuel quantity required. Uh you can
+see here very clearly it's 375034.
+If you do the math on that one real
+quick, uh you'll realize that we're
+pretty safe. As a matter of fact, let's
+go get my calculator out and actually do
+the math for you really quick here.
+minus 375034
+enter. Boo boo. That leaves us with 211
+tons of fuel remaining, which is uh
+plenty of fuel to basically safely get
+us to our destination. You say, "Well, I
+want to get there in a hurry. Um what am
+I supposed to do about this? I mean it's
+it's awfully long distance kind of
+thing." Well, this is where things get a
+little tricky. Uh if I were to sit here
+for example and press F2 and say, "Go
+full speed, full speed." And of course
+I'll give the Oliver Hazard Perry a few
+moments to actually spin up his full
+speed here. Uh that looks pretty good
+here. When I come back over to this dot
+real quick and press F2, uh you'll see
+here my new fuel consumption is 475040.
+Now if you remember a moment ago we
+calculated we have 586,000.
+So we actually have enough fuel to get
+there even though we're doing 30 knots
+now. So uh we're moving pretty quick and
+you can actually see the fuel quantity
+required is slowly coming down here. So,
+we actually have enough fuel to make
+that trip still. So, let's go over to
+this guy real quickly. And I'll just
+crank him up to flank speed. Whoa, we're
+booking. And I'll give him a few moments
+there. And by the way, a ship uses it's
+a V to the 3 as far as um speed or
+energy required to go flank speed on a
+ship. So, now if we go run over here and
+press this dot real quick, we can see
+that it's um 852.
+&gt;&gt; [laughter]
+&gt;&gt; That's a little too much. So, we can't
+make this trip cuz it's a way over our
+586. So, what you can do, of course, is
+you can come in here and start fiddling
+a little bit. You can say, "Well, what
+if I do 31 knots?" And you know, you
+crank it out just a little bit down to
+31 knots here. And can go back over to
+this, click F2. You say, "No, it's not
+the optimum trial." And we're at 608
+again. Did you notice that two knots
+made the difference of 100 tons of fuel?
+That's exactly how ships are. So, you're
+like, "Whoops, I guess I'll bump it back
+to 30." And as you notice, this is our
+full throttle one more time. So, if I
+hit F2, go to the last position here,
+you can see clearly that we're 474. Yes,
+believe it or not, one knot of
+difference adds 100 tons of fuel at
+those kinds of distances. Isn't that
+kind of cool? So, you're sitting there
+going, "Well, that was neat. Um that
+took a long time though. And uh heaven
+forbid I'd want to like do it like the
+really long way, which is I'd have to
+click here. And I'd have to scroll down
+here. And I'd have to like sit there
+going, 'Uses 174 kg per minute.' And I'd
+have to calculate Ah, that's Ah, too
+much work."
+So, if you're dealing with aircraft,
+it's a little bit easier.
+And the reason for that is is you'll
+notice there's this blue circle being
+projected around the world right here. I
+really wish we had ships that did this.
+This would be much more convenient for
+us. But one of the things is is if
+that's not visible for you, uh this is
+This is aircraft range. I hope someday
+that Uncle Demetrius adds this to ships
+as well, and submarines for that matter.
+Cuz it makes things really easy. So, if
+you take a look here, uh we want to get
+this Airbus over Europe. And uh you can
+see very clearly right now that it's
+going to get to Europe no problem. Uh of
+course, we want to go to Ireland, which
+is beautiful country for those of you
+who have not been. But we want to get
+there in our hurry. So, I'm going to
+kind of real quickly here. And as you
+can see, if I were to press F2, he's uh
+cruising. If I cruise right here, he's
+going to try to get his optimum ratio
+between speed and his ability to
+basically get there in a hurry. I mean,
+that makes some sense. Not burn too much
+fuel. There we go.
+So, the question is, what if I want to
+get there sooner? So, you kind of do the
+same thing. You come over here on this
+panel. I you see this button that says
+military. I didn't realize an Airbus had
+a military setting, but we're going to
+push it and see what happens. What
+you'll notice is that range ring has
+shrunk immediately. So, if I click
+cruise, it gets big. If I press loiter,
+watch what happens. You can actually see
+instantly and dynamically the change of
+the range of the aircraft as I clicked
+it. So, now that I cranked him up to his
+uh new speed, let's give him a moment.
+What you will observe is that when I
+clicked it, it did not immediately show
+the actual correct range. And the reason
+it didn't show the correct range is
+because we hadn't actually spun up
+enough of that actual speed yet. You'll
+notice now that I'm cruising that that
+ring shrank substantially. As a matter
+of fact, you're not going to have a good
+reading on that ring until you get to
+your cruise speed. But, one of the
+things you'll observe here is this gets
+us exactly enough range to get to
+Ireland. And you're watching right now
+as this thing is slowly starting to
+shrink. So, you're sitting here going,
+"Okay. I I feel it. Okay. I I get what
+you I I'm I know where you're going with
+this." But, the key thing here is you'll
+notice as his drag increases, as he gets
+closer and closer to his peak speed of
+470 kn, you will notice this range ring
+will shrink with it. It's not because I
+jammed on the gas that the range ring
+shrunk. It's because the way that it
+calculates is it basically bases it on
+your speed at that moment. So, if I
+speed up time a little bit more, what
+you're going to observe here is as I
+crawl to 470 kn, I suddenly am not going
+to have enough range. However,
+here's the cool part. I know that I'm
+doing 464 kn right now. That means if I
+go 464 kn, I can still get to Ireland.
+So, I'm going to press F2 4. I'm going
+to press 464, press enter, close that
+screen, and as you observe, even though
+he's going, figure quote, full speed,
+you can't see the quotes, I'm still
+going to get to Ireland. As a matter of
+fact, if I speed up time here, you'll
+observe that we are going to have
+exactly the same range all the way there
+because that range was based on that
+speed that we were going at that
+specific time. Now, anybody who flies
+airplanes knows they would really rather
+not have to land in Ireland with this
+little range remaining. So, what you can
+do for safety, and this is just
+operational, is you can come down here
+and go 462 and press enter, and you'll
+notice here instantly that gets us
+another almost, wow, what was that? That
+was quite a bit. How much was that? That
+was 105 nautical miles of additional
+range like that. Hopefully, you got the
+good snap of my fingers there. I thought
+that came out pretty well.
+So, this is just a quick little way to
+do this. Like I said, it's a point maybe
+ships will have this capability, too. Uh
+for those of you who want to see the
+hard way to do this, I'm going to go
+ahead and show you the hard way as well.
+And the reason I want to is cuz I know
+most people want the kind of the quick
+and easy, lazy way, but we'll show you
+the hard way as well. So, let's get that
+set up.
+All right, hard way time. So, we have
+this poor FA-18, and uh he's going to
+have to do a transatlantic crossing. And
+uh we want to get him all the way down
+into uh Central Germany. Let's Let's
+make it interesting for us. This is a
+pretty long flight, I'm not going to
+lie. And if you actually scroll down
+here, you can get an idea immediately
+what all of our range estimations are.
+For example, I notice that at this exact
+moment, he's got 7 hours and 10 minutes
+remaining. I can see what his mission
+fuel is and all those kinds of things.
+But, let's say for some reason now we
+wanted to do this the hard way. Let me
+go ahead and pause. So, the first thing
+we need to know is we're going to have
+to know how far we need to travel. So,
+for example, if I'm going to Central
+Germany like that, again, I can come
+over here and press F2 and actually get
+those distances. Uh this is going to be
+3,100 nautical miles. So, I'm going to
+go 3,100. I'm going to grab my handy
+little notepad. Let me hold on a second.
+There we go. So, we know it's 3,100
+nautical miles to go. So, the thing we
+have to note about this particular thing
+is we want to add some kind of buffer to
+it. So, 3,100 * 0.05 is going to be 155
++ 3,100,
+which is going to be 3,255. That's 3,255
+with 5% reserve, which gives us enough
+if we need to like do like a holding
+pattern or something. It's not a lot. Uh
+that's what you have to know. So, right
+now if we were cruising at cruise speed,
+if I bring up the little tactical map,
+again, you can come down here and read
+this real quick. We're at 30.96, which
+again, kind of handy. We're going to go
+all the way down to the bottom real
+quickly here.
+Whoa. Oh my goodness. Keep in mind this
+is modified by external stores. So,
+whatever the number actually says down
+here can be very different than the
+actual number. So, make sure you're
+using the right number when you do this.
+I think I would have to work the thrust
+out, but that's a lot of work. All
+right, we are above 36,000 ft here, and
+according to this we burn 30.96 kg per
+minute. And keep in mind that is
+including all that nasty stuff. So,
+30.96 per minute, 30. 96 per minute, kg
+a min. And our current fuel on board, as
+you can see, is 1286. Oh my god, that's
+a lot of fuel.
+&gt;&gt; Thoroughly impressed with that. That's a
+lot of fuel.
+Wow, that's a lot.
+So, now what we need to do is we need to
+figure out based on our current speed
+what that's going to do for us. So, we
+know we're 460 kn. So, if I do 4 300
+3,255, actually 3,100, which is our
+original range, divide I don't know,
+let's be technical. 3255 divided by our
+current speed is 460, and that's going
+to get us how many Let's time we're
+going to be spending in the air,
+basically. All right, 3255 / 460 enter.
+That's 7.0. Obviously, we need that in
+minutes because we can't change the unit
+to minutes or hours, I should say, which
+is kind of a bummer. I sort of wish we
+had got like tons per hour or something.
+All right, so we're going to multiply
+that by 60. So, that's 424.
+Uh let's see, kilograms. And I've lost
+my train of thought here.
+So, that's going to give us our time in
+minutes. So, that's a 424 minutes of
+flying to get there.
+A fly.
+That's good stuff. So, uh, we know now
+that if it's 424 minutes of flying, if
+we were to multiply that by our 30.96,
+that tells us that we get 13144.
+So, that's uh, means that do do do,
+is going to be our total there, which is
+uh, quite a bit if you do the math on
+that real fast.
+Now, you're probably going, "Well, wait
+a minute. Uh, that doesn't make sense.
+Uh, we don't have enough fuel on board."
+You know, if you come down here, we're
+12863. We need to be able to travel this
+distance and still get there. But, one
+of the things that we're missing in the
+calculation here is the fact that as you
+get lighter, you will burn less fuel.
+So, that's going to have an impact on
+that. And, uh, one of the things you'll
+probably notice here, if you look real
+quickly, is the fact that it gives us
+12863 total fuel, which is 7 hours and 8
+minutes, which is incredibly close to
+our original calculation there. So, 3255
+/ 460, you can see 0.07 * 60, uh, that's
+uh, 7 hours and 4.2 minutes. So, uh, you
+can see we're actually pretty much on
+the same page as far as fuel consumption
+goes. Again, at any point I can hit this
+jettison button and kind of kick all
+those other guys off to give you an idea
+of that. But, that also makes you
+realize how tight our actual calculation
+is. Now, if we wanted to improve this
+calculation a little little tiny bit,
+one of the things we could actually do
+to our lovely F-18 here is we could back
+it up a couple knots here. For example,
+if I want to do 470 knots, then go ahead
+and unpause that. Let me speed up time a
+little bit here.
+There we go. You can see what that does
+for us is that brings that fuel
+consumption down basically a minuscule
+amount. Uh, we're now down to 30.48
+kilograms, which is uh, means we're
+going to lose 10 knots per hour, but our
+fuel economy is going to increase
+basically 2 or 3%, which is you can tell
+by the giant blue line here, is not
+much. So, just kind of be sort of
+cognizant of that kind of a thing like
+that. Now, one of the things some people
+say is, "Why can't we just put this
+thing on creeping or loiter speed and
+get there, um, you know, burn less
+fuel?" Well, watch what happens. If I
+switch this to loiter, you're going to
+notice there that I get an initial huge
+boost of range, but as my aircraft slows
+down,
+you're going to notice that we're not
+going to even come close to getting
+there, and we're going to be burning
+substantial amounts of fuel because
+basically we're going to be sitting on
+our nose or we're sitting on our tail
+right now trying to make that up. And
+trying to pick something in between,
+you're going to see it's going to have
+the exact same impact. Aircraft are
+designed for their cruise speeds. If you
+don't keep them at their cruise speeds,
+you're going to lose that optimum. And
+again, us goofing around, I feel sorry
+for this guy who's got to cross the
+entire Atlantic for our demonstration
+purposes here. Again, cruise speeds are
+awesome, and as we saw earlier, we could
+adjust that just a little bit. But be
+really, really careful with your
+numbers. As you probably saw from our
+little worked example there, this thing
+does a really, really good job, but you
+have to be really careful on those
+margins. Enjoy.

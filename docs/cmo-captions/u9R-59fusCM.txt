@@ -1,0 +1,465 @@
+# C: MO - Determining a point in terrain with the best LOS
+Video: https://www.youtube.com/watch?v=u9R-59fusCM
+Video ID: u9R-59fusCM
+
+hello everyone in today's video we're
+going to do something a little bit
+different somebody was asking some
+interesting lua questions the question
+basically was along the lines of is it
+possible to identify the largest spot in
+an area and we can use the line of sight
+tool to determine how good that
+particular position is i said
+uh yeah there must be a way so i got out
+the code and started playing around with
+it and experimenting a couple of
+versions and i found a bunch of
+different variations on a theme but i
+found something that kind of works and i
+thought i'd share with everybody today
+so what i'm going to do is i'm going to
+start off by go ahead and creating a new
+side here i'm going to call this side a
+marker keep it super simple today and
+i'm also going to go ahead and open up
+the lua script console here keep it nice
+and simple one thing i would like to do
+though is i like to make my stuff a
+little tiny bit bigger so that everybody
+can see so what are we going to have to
+do here oh boy so what we're going to do
+is design a few different algorithms
+here the first one we're going to do is
+to be able to go through a zone and find
+the highest points that's pretty easy to
+do afterwards we're going to design an
+algorithm that goes through them and
+picks a bunch of them and then we're
+going to design an algorithm that goes
+through each item and actually checks to
+see the line of sight with those which
+means you have to do a little bit of
+shenanigans and i'll go ahead and get
+started so let's do it so first thing
+i'm going to do is i'm going to create a
+variable for the starting latitude and
+i'll go ahead and also create a variable
+for this ending latitude these are going
+to be required for the purposes of doing
+my actual loops so i'll go ahead and
+create the same exact thing for
+longitude i'll start lawn we'll set that
+to minus 74. i'll do a local start
+actually end along right this is for
+longitude equals uh we'll go to 70 minus
+72. i remember positive numbers are
+going to have to come later so that
+happens so we're going to need some kind
+of how thorough our search is going to
+be our granularity for that particular
+one i'm going to go ahead with the
+granularity i'm just going to call it
+step and i'll set it equal to 0.01 if
+you need ultra granularity you can set
+that to 0 0 1 but all you're doing is
+increasing your time to process again if
+you need that much fidelity uh
+i don't know so next thing we're going
+to do is we're going to create a
+variable to keep track of which spot we
+found is already the highest point
+obviously if you set it at zero makes it
+easy if you're working with death valley
+you might want to set that to minus a
+thousand um then of course we're going
+to need a couple other things we're
+going to need to know what the maximum
+latitude we detected was we're going to
+need to detect where the maximum
+longitude was
+and this is the important part since
+later on we're going to scan the line of
+sight we're going to have to create a
+unit at those particular positions
+randomly and then we're going to measure
+the line of sight so we're going to need
+a list of both latitudes and longitudes
+so i'm going to say local
+lat lists again keeping this easy and
+we'll create this as an empty list then
+we'll do a local long list
+and we'll set that one as a nice empty
+one as well perfect so those are our
+initialized variables everything's
+looking pretty good i don't have to
+worry about it too too much yet so let's
+get to our loop so we're going to use an
+s to loop for this i'm going to say 4x
+equals
+start long because that's going to be a
+starting point we're going to stop it at
+the end long and of course we're going
+to go ahead and use step as how far of a
+step we're going to be taking in the
+world here
+so next what i'm going to do is i'm
+going to set my next for a loop here
+i'll do for y equals start lat remember
+a latitude is up and down like a ladder
+and lat step and then we're going to do
+do again and now we're going to get to
+the actual thinking so what i'm going to
+do is i'm going to create a local
+variable called elevation and i'm going
+to use the get elevation command
+latitude equals y longitude equals x
+and that's going to go ahead and get my
+elevation so then what i'm going to say
+is if the elevation of the thing i'm
+checking is is bigger than my max
+elevation
+then that means we've found a new high
+point in the terrain so we're going to
+say lap max equals x
+we're going to say lawn max oops sorry
+almost got myself confused that should
+be y
+law max equals x
+then we're going to go ahead and insert
+these values into a table the reason we
+need to enter these into a table is
+because later on we're going to go hey
+you know we should probably go about
+this let's see lat max
+we'll go ahead and do the same thing for
+the longitude variable
+long lists
+and it's like a laundry list
+and then of course we want to make sure
+the max elevation gets reset to the new
+value of the elevation that we just
+discovered so let's go ahead and end
+that
+let's end that
+and let's end that
+sweet
+so what does this do so we're basically
+going to go ahead and go through all the
+x coordinates one two three four five
+six and then we're going to go through
+all the y coordinates blah blah blah
+blah
+just like that and once we've identified
+the maximum elevation of a position
+we're going to add them onto a table oh
+apparently a tablet in this case a table
+that we can go ahead and use later on so
+let's go ahead and copy paste that
+sucker run it we should be getting some
+things here uh we got a bad four limit
+here which is uh 99 of the time means i
+missed something simple uh start lawn is
+this not a value i have i'm pretty sure
+it was a value and ah i found it right
+there
+got it good so this now went ahead and
+scanned that region and identified those
+zones so now we've got to go to the next
+thing we're going to have to decide how
+many mountains or high points we want to
+check
+we're missing an end point here
+sometimes i always miss one we have an
+end we have an end we have an nd ever
+good so now i'm going to go ahead and
+create myself a simple variable we'll
+call it the number of samples for
+example and we'll do 10 for now you can
+increase that number if you feel
+necessary and then i'm going to say if
+the size the latitude list is less than
+number of samples
+then we need to
+set the number of samples
+equal to the size of the latitude list
+this is important because if we have
+less things in the list then we can
+sample you're going to blow it up in
+your face so kind of be mindful of that
+cool so now we're going to go through
+and we're going to take some samples
+here uh we only need a total of 10 so
+i'm just going to use another quick loop
+here i'm going to say for x equals 1
+number of samples would be how many
+samples we're going to take
+we're going to go up by one and then
+we're going to do so we're going to do
+is we're going to say local y equals lat
+list
+of math.floor
+the number of items in lat list divided
+by x so what did that just do all that
+did is it said take the items my lat
+list see how many there are and then
+divide that by the number that we're
+currently on inside of our loop here now
+then once you've done that go ahead and
+give me that particular value and then
+save it into this local variable called
+y so we'll do the same thing with x
+and you know we should probably make
+sure it's working
+let's just try that always ctrl a
+control c in case you blow up boop ah
+look at that now we have all the values
+and we've taken a sample of 10 of the
+values we discovered in this loop into
+this group right here that's actually
+looking pretty good sweet all those
+values are kind of concentrated one
+region knowing this part of the country
+i think i know what region it's going to
+be concentrated in excellent so we know
+this works so what we're going to do now
+is we're going to add a units
+to those points now you're like why well
+if we have a unit we can use the unit to
+check for line of sight so we'll just
+create a temporary unit now let's create
+a facility here
+uh unit's name let's keep it super
+simple here a high point that makes
+sense to me a dbid we're going to plug
+this up let's see here database viewer
+what do we got here facilities
+uh there's got to be a marker for like
+something oh here we go geographic two
+three four nine got it
+itb id equals two three four nine um
+side
+remember our marker as our side a
+latitude equals x
+longitude equals y i'll get those
+backwards about 100 times trust me and
+we should be able to actually test this
+so let's see what happens ctrl a ctrl c
+just in case
+and we
+what did we do there did the units get
+created
+all right
+oh
+boy all right so um
+somebody i used south instead of north
+uh that definitely seems like something
+i would do
+[Laughter]
+well it's good to we just discovered
+these high points in the middle of
+antarctica in case you had any doubt
+where those points were um we've
+successfully identified them
+that's funny all right let's see here
+longitude latitude that was good that
+was the correct latitude oh let's see
+here longitude what were those numbers
+hmm minus 74 9 to 74 is that x or y x or
+y
+just check to make sure i didn't get my
+x's and y's confused here and that's
+definitely something i would do oh i did
+whoopsies let's try that again
+hey
+and would you look at that it found bear
+mountain perfectly up here no just north
+of salisbury connecticut there sweet so
+okay so this is working so far i've
+grabbed a bunch of points over here in
+new york doesn't surprise me again it's
+going to grab every other every 10th
+item it finds it's going to grab so in
+this case grab the 10 grab the 10th grab
+the 10th and then wham it found this
+really really really high point which is
+good that's what we want cool so that's
+working excellent
+alrighty then so let's make my screen a
+little bit bigger here in case you're
+trying to steal all this as i'm going
+don't worry i'll paste in comments
+all right so let's keep going so now
+we've done the easy part we've found the
+highest points we've now created a list
+of random sampling of well that's not
+technically a random sampling we've
+created a sampling of that list and now
+what we're going to do is we're going to
+use our line of sight tool to determine
+which one of those spots has the best
+line of sight pretty easy let's do it so
+we're going to create ourselves a couple
+different things here we'll create our
+best lat
+we'll create ourselves a best long
+and we'll create ourselves a best
+horizon this just refers to how far a
+horizon it can see
+so now what we're going to do is we're
+going to create ourselves a handy dandy
+kv in ipairs i'm just oh wait a minute i
+can't do that yet i have to actually
+grab the units whoops
+so let's go ahead and grab the side
+vpn get sides
+then we'll go ahead and say local units
+equals sides remember we only have one
+unit a side in this one side of one dot
+units perfect so now we have the units
+now we can do that loop k v and i pairs
+we're going to do let's see here we're
+doing units remember the only units in
+the world that exist are those markers
+so i don't have to do anything silly
+here
+let's see our do
+and
+let's do it so what do we need to do
+each iteration we need to calculate the
+horizon that we can see so to do that
+i'm going to type in horizon tool los
+we're going to do observer equals um
+guid us which is v guid
+our target is going to be an awkward
+altitude in this case i'll do an
+altitude of 100 why not
+we'll say mode equals zero because we
+want a distance horizon equals one
+because we're using visual horizon use
+range limits equals false that's really
+important because our markers don't have
+sensors otherwise we'd have issues so
+what is this going to do it's going to
+say my observer is the marker i'm
+testing it's going to say give me a fake
+target that's 100 meters up
+go ahead and tell me the radar horizon
+or the visual horizon make sure you use
+this on visual mode and don't use any
+range limits so this will give us a
+number and if the bigger this number is
+the farther we can see from that
+particular observer so now what we're
+going to do is we're simply just going
+to create a classic thing we're going to
+say if the horizon
+is bigger than the best horizon
+that means we've found something that
+can see the farthest so far
+then
+do an end
+let's see here so best lat uh we're
+gonna have to do a little bit of fancy
+work here send edits uh we'll use the
+get unit command we'll say duid equals
+guid remember that's the one we're using
+right now aside obviously we have to use
+the side here we'll do side equals
+marker dot latitude never work harder
+than you need to
+there we go this is going to be best
+longitude
+and we're going to say best longitude
+like that and then this is the part i
+always forget best horizon
+now equals horizon otherwise it's not
+going to give us our up-to-date one if
+we wanted to we could print it out or
+something like that
+okay cool so let's control a control c
+run
+okay so it looks like it worked we don't
+know so what i'll do now is i'll create
+a unit at the point where the best
+position is keep it super simple so i'll
+do send edit
+add unit
+let's see here we want to do
+hey see here type equals a facility
+then we're going to say unit name equals
+best point
+i will go to dbid we'll keep it the same
+2249 side equals marker
+latitude equals best let
+longitude equals best lawn
+close that up and let's see what happens
+first of all i should probably delete
+all the units i've created it's probably
+a few now
+all right let's press the run button
+boop
+now theoretically i should be able to
+press o and now we should have ourselves
+a unit here ah we don't have ourselves a
+unit um interesting so now we're going
+to find out exactly what happened here
+so let's delete all that uh so did it
+not add it because it didn't have this
+hmm
+i'm not sure we'll have to step through
+it real quick and see exactly what
+happened
+let's do something simple here uh let's
+uh print best horizon why not pour eyes
+on
+just in case just in case all right ctrl
+a ctrl c run
+64.6722
+okay
+oh here it is
+i'm totally blind it was right there
+so interestingly enough uh the object
+that has the best horizon by no surprise
+is also the highest point that we have
+here in this case our best point here
+this uh i believe if i recall correctly
+yeah this is gonna be bear mountain in
+connecticut it's pretty high so just to
+show i can flip this on to line of sight
+tool to show you how this works
+and you can see it can see pretty darn
+lagging my computer
+yeah you can see from this mountain you
+can see way way way way up into there
+into those other spots like that now if
+we picked one of these just to confirm
+that it did indeed work or did not work
+click there again i'll do line of sight
+tool boop and you can see its line of
+sight is significantly more limited
+nice
+so uh for this particular project like i
+said i just thought it would be kind of
+a neat little thing you can see my
+little cheat sheet there that i was
+playing around a little bit earlier to
+make sure to miss anything but um this
+is a neat little project and there's a
+couple cool little things that you
+probably can take away from this being
+able to identify you know spots this way
+works really well taking a random sample
+of things that works really really well
+as well as you can kind of see the way i
+suck this in creating that unit for the
+purposes of checking it was pretty good
+one of the things i should do is delete
+the unit right here after i test it
+because that way it just generates it
+does its thing and then ungenerates it
+kind of i'm just leaving this one right
+here but at the same time is it works
+pretty well i'll leave this code down in
+the comments below but other than that
+enjoy

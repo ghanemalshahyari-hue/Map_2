@@ -1,0 +1,1137 @@
+{
+  "scenario_id": "coastal-shield-training-v1",
+  "name": "Coastal Shield",
+  "scenario_label": "Strategic Facility Defense (Training)",
+  "year": 2029,
+  "theater": "Meridian Region",
+  "region_code": "meridia-coastal",
+  "authoring_status": "draft",
+  "scenario_source": "Community Scenario Pack (Abstracted & Sanitized)",
+  "design_intent": "RMOOZ authoring training; multi-side air campaign exercise",
+  "sides": [
+    {
+      "id": "BLUE",
+      "name_en": "Andor Coalition",
+      "name_ar": "联盟",
+      "color": "#0066cc",
+      "doctrine": "Offensive air campaign, precision strikes, force sustainment via tankers",
+      "posture": {
+        "readiness": "HIGH",
+        "alert_status": "DEPLOYED"
+      }
+    },
+    {
+      "id": "RED",
+      "name_en": "Meridia",
+      "name_ar": "梅瑞迪亚",
+      "color": "#cc0000",
+      "doctrine": "Static defense, air superiority denial, facility protection",
+      "posture": {
+        "readiness": "RAISED",
+        "alert_status": "ALERT"
+      }
+    }
+  ],
+  "postures": {
+    "BLUE": {
+      "BLUE": "FRIENDLY",
+      "RED": "HOSTILE"
+    },
+    "RED": {
+      "BLUE": "HOSTILE",
+      "RED": "FRIENDLY"
+    }
+  },
+  "map_bbox": [
+    155,
+    -22,
+    165,
+    -15
+  ],
+  "map": {
+    "bbox": {
+      "north_lat": -15,
+      "south_lat": -22,
+      "west_lon": 155,
+      "east_lon": 165
+    },
+    "crs": "WGS84",
+    "scale_km": "800 x 1000",
+    "terrain": "Coastal island state with inland plateaus",
+    "note": "Fictional Meridian region (South Pacific analog). No real-world correspondence."
+  },
+  "obj": {
+    "name": "Meridian Coastal Region AOI",
+    "coord": [
+      160,
+      -18.5
+    ],
+    "target_depth_km": 200,
+    "carver": 30,
+    "radius_km": 100
+  },
+  "pipeline": [
+    [
+      155,
+      -18.5
+    ],
+    [
+      165,
+      -18.5
+    ]
+  ],
+  "phase_table": [
+    {
+      "index": 0,
+      "time_label": "P0",
+      "elapsed_hours": 0,
+      "phase": "PRE-STRIKE",
+      "kind_native": null
+    },
+    {
+      "index": 1,
+      "time_label": "P1",
+      "elapsed_hours": 0.33,
+      "phase": "STRIKE-1",
+      "kind_native": null
+    },
+    {
+      "index": 2,
+      "time_label": "P2",
+      "elapsed_hours": 0.83,
+      "phase": "ASSESS",
+      "kind_native": null
+    },
+    {
+      "index": 3,
+      "time_label": "P3",
+      "elapsed_hours": 1.5,
+      "phase": "COMPLETE",
+      "kind_native": null
+    }
+  ],
+  "objectives": [
+    {
+      "id": "NORD",
+      "name": "Meridian North Power Station",
+      "owner": "RED",
+      "type": "strategic_facility",
+      "location": {
+        "lat": -16.2,
+        "lon": 159.5
+      },
+      "description": "Strategic dual-use power generation facility, 8 years old. Regional infrastructure hub.",
+      "damage_threshold_percent": 60,
+      "defenses": {
+        "aaa_count": 45,
+        "sam_count": 4,
+        "fighter_cap_likely": true,
+        "defense_description": "Long-range SAM battalion, medium-range SAM coverage, AAA ring"
+      },
+      "constraints": [
+        "Do NOT damage civilian power distribution grid",
+        "Collateral constraint: Urban area nearby"
+      ],
+      "difficulty_rating": "HIGH",
+      "value": "High (regional dominance infrastructure)"
+    },
+    {
+      "id": "EAST",
+      "name": "Meridian East Power Station",
+      "owner": "RED",
+      "type": "strategic_facility",
+      "location": {
+        "lat": -18.1,
+        "lon": 162.3
+      },
+      "description": "Coastal power generation facility, 5 years old. Port city infrastructure.",
+      "damage_threshold_percent": 60,
+      "defenses": {
+        "aaa_count": 38,
+        "sam_count": 3,
+        "fighter_cap_likely": true,
+        "defense_description": "Medium-range SAM coverage, AAA ring, coastal fighter base nearby"
+      },
+      "constraints": [
+        "Minimize civilian casualties (coastal town 8 km away)",
+        "Collateral constraint: High population density nearby"
+      ],
+      "difficulty_rating": "MEDIUM_HIGH",
+      "value": "Medium (port infrastructure support)"
+    },
+    {
+      "id": "CENT",
+      "name": "Meridian Central Power Station",
+      "owner": "RED",
+      "type": "strategic_facility",
+      "location": {
+        "lat": -19.3,
+        "lon": 160.1
+      },
+      "description": "Inland power generation facility, 3 years old. Most heavily defended. Core infrastructure.",
+      "damage_threshold_percent": 60,
+      "defenses": {
+        "aaa_count": 62,
+        "sam_count": 6,
+        "fighter_cap_likely": true,
+        "defense_description": "Long-range + medium-range SAM layered defense, concentrated AAA, nearby fighter base"
+      },
+      "constraints": [
+        "Do NOT damage civilian infrastructure within 15 km radius",
+        "Collateral constraint: Complex urban/industrial area"
+      ],
+      "difficulty_rating": "VERY_HIGH",
+      "value": "Very High (central power hub, hardest defended)"
+    },
+    {
+      "id": "SOUT",
+      "name": "Meridian South Power Station",
+      "owner": "RED",
+      "type": "strategic_facility",
+      "location": {
+        "lat": -20.8,
+        "lon": 157.2
+      },
+      "description": "Offshore/coastal power generation facility, 2 years old. Most remote. Lowest air defense density.",
+      "damage_threshold_percent": 60,
+      "defenses": {
+        "aaa_count": 28,
+        "sam_count": 2,
+        "fighter_cap_likely": false,
+        "defense_description": "Medium-range SAM coverage, AAA ring, farthest from fighter bases"
+      },
+      "constraints": [
+        "Minimal collateral (remote offshore location)",
+        "Access constraint: Longer logistics routes for coalition"
+      ],
+      "difficulty_rating": "MEDIUM",
+      "value": "Medium (remote, less critical infrastructure)"
+    }
+  ],
+  "sides_bases": {
+    "BLUE": [
+      {
+        "id": "bretania_forward",
+        "name": "Bretania Forward Air Base",
+        "location": {
+          "lat": -17.5,
+          "lon": 156
+        },
+        "type": "coalition_forward_base",
+        "description": "Coalition staging base in friendly territory. Primary strike staging.",
+        "capacity_aircraft": 60,
+        "runway_length_m": 3000,
+        "fuel_storage": "High (pre-positioned tankers)",
+        "munitions_storage": "Full complement"
+      },
+      {
+        "id": "diego_analog",
+        "name": "Diego-Analog Remote Base",
+        "location": {
+          "lat": -21,
+          "lon": 150
+        },
+        "type": "coalition_remote_base",
+        "description": "Ultra-remote coalition base. Strategic bombers and tanker staging only.",
+        "capacity_aircraft": 20,
+        "runway_length_m": 3500,
+        "fuel_storage": "Very High (bomber endurance)",
+        "munitions_storage": "Heavy ordnance for penetrating strikes"
+      }
+    ],
+    "RED": [
+      {
+        "id": "meridia_north",
+        "name": "Meridia North Air Base",
+        "location": {
+          "lat": -16,
+          "lon": 160
+        },
+        "type": "fighter_base",
+        "aircraft_based": "F-4 Phantom II variants (older generation fighters)",
+        "aircraft_count": 16,
+        "runway_length_m": 2800,
+        "readiness": "ALERT (likely scramble on coalition approach)"
+      },
+      {
+        "id": "meridia_east",
+        "name": "Meridia East Air Base",
+        "location": {
+          "lat": -18.2,
+          "lon": 162.5
+        },
+        "type": "fighter_base",
+        "aircraft_based": "F-4 Phantom II variants (older) + F-5 Tiger II variants (older)",
+        "aircraft_count": 24,
+        "runway_length_m": 2800,
+        "readiness": "ALERT (coastal location, immediate intercept capability)"
+      },
+      {
+        "id": "meridia_central",
+        "name": "Meridia Central Air Base",
+        "location": {
+          "lat": -19,
+          "lon": 160.5
+        },
+        "type": "fighter_base",
+        "aircraft_based": "MiG-29 Fulcrum A (modern fighters, most dangerous)",
+        "aircraft_count": 14,
+        "runway_length_m": 3000,
+        "readiness": "HIGH (some aircraft likely airborne, nearest to Central Power Station)"
+      },
+      {
+        "id": "meridia_northwest",
+        "name": "Meridia Northwest Air Base",
+        "location": {
+          "lat": -17.5,
+          "lon": 157
+        },
+        "type": "fighter_base",
+        "aircraft_based": "MiG-29 Fulcrum A (modern fighters)",
+        "aircraft_count": 12,
+        "runway_length_m": 3000,
+        "readiness": "ALERT (secondary interceptor base)"
+      },
+      {
+        "id": "meridia_southwest",
+        "name": "Meridia Southwest Air Base",
+        "location": {
+          "lat": -20,
+          "lon": 157.5
+        },
+        "type": "fighter_base",
+        "aircraft_based": "F-5 Tiger II variants (older generation fighters)",
+        "aircraft_count": 12,
+        "runway_length_m": 2600,
+        "readiness": "ALERT (covers southern approach)"
+      }
+    ]
+  },
+  "units": {
+    "BLUE": [
+      {
+        "id": "BLUE_fighters_air_superiority",
+        "side": "BLUE",
+        "unit_type": "fighter_air_superiority",
+        "name": "Andor Air Superiority Squadron",
+        "count": 30,
+        "base": "bretania_forward",
+        "doctrine": "Combat air patrol, intercept Meridian fighters, protect strike package",
+        "readiness": "FULL",
+        "role": "Primary air-to-air defense",
+        "capability_profile": "High speed, long-range missiles, radar tracking",
+        "fuel_requirement": "Mid-range tanker support needed"
+      },
+      {
+        "id": "BLUE_strikers_multirole",
+        "side": "BLUE",
+        "unit_type": "fighter_bomber_multirole",
+        "name": "Andor Strike Squadron",
+        "count": 28,
+        "base": "bretania_forward",
+        "doctrine": "Primary strike against power stations; secondary air-to-air",
+        "readiness": "FULL",
+        "role": "Strike aircraft, precision ordnance delivery",
+        "capability_profile": "Medium range, precision air-to-ground, some air-to-air",
+        "fuel_requirement": "Heavy tanker support (long missions from distant bases)"
+      },
+      {
+        "id": "BLUE_bombers_long_range",
+        "side": "BLUE",
+        "unit_type": "bomber_strategic_penetration",
+        "name": "Bretania Strategic Bomber Wing",
+        "count": 6,
+        "base": "diego_analog",
+        "doctrine": "Strike most heavily-defended objectives (Central, possibly East)",
+        "readiness": "FULL",
+        "role": "Heavy penetrating strike, hardened target destruction",
+        "capability_profile": "Strategic penetration, heavy payload, long range",
+        "fuel_requirement": "Minimal (own-aircraft refueling capability assumed)",
+        "note": "Limited quantity; high value targets only"
+      },
+      {
+        "id": "BLUE_ew_flights",
+        "side": "BLUE",
+        "unit_type": "electronic_warfare",
+        "name": "Andor EW Flight",
+        "count": 4,
+        "base": "bretania_forward",
+        "doctrine": "Suppress Meridian air defense radars during strike",
+        "readiness": "FULL",
+        "role": "Radar suppression, SAM site jamming",
+        "capability_profile": "Radar jamming, communications disruption",
+        "fuel_requirement": "Minimal"
+      },
+      {
+        "id": "BLUE_early_warning",
+        "side": "BLUE",
+        "unit_type": "early_warning",
+        "name": "Andor Early Warning Flight",
+        "count": 2,
+        "base": "bretania_forward",
+        "doctrine": "Detect Meridian fighter launch, guide coalition air superiority fighters",
+        "readiness": "FULL",
+        "role": "Air surveillance, fighter guidance, tactical assessment",
+        "capability_profile": "Air surveillance, fighter guidance, tactical assessment",
+        "fuel_requirement": "Continuous tanker support (airborne for 8+ hours)"
+      },
+      {
+        "id": "BLUE_tankers",
+        "side": "BLUE",
+        "unit_type": "tanker",
+        "name": "Coalition Tanker Flight",
+        "count": 8,
+        "base": "bretania_forward",
+        "doctrine": "Enable long-range strike, sustain air superiority CAP, recover damaged aircraft",
+        "readiness": "FULL",
+        "role": "Aerial refueling support",
+        "capability_profile": "Aerial refueling, large payload, continuous orbits",
+        "fuel_requirement": "Own-aircraft (baseline)",
+        "constraint": "Limited number; mission planning must account for refuel windows"
+      },
+      {
+        "id": "BLUE_transport",
+        "side": "BLUE",
+        "unit_type": "transport",
+        "name": "Coalition Transport Squadron",
+        "count": 4,
+        "base": "bretania_forward",
+        "doctrine": "Supply, ammunition, fuel resupply",
+        "readiness": "FULL",
+        "role": "Logistics support",
+        "capability_profile": "Large cargo capacity, medium range"
+      },
+      {
+        "id": "BLUE_csar",
+        "side": "BLUE",
+        "unit_type": "combat_search_rescue",
+        "name": "Andor CSAR Flight",
+        "count": 6,
+        "base": "bretania_forward",
+        "doctrine": "Rescue downed pilots (if CSAR mode enabled)",
+        "readiness": "CONDITIONAL",
+        "role": "Downed aircrew recovery (optional scenario feature)",
+        "capability_profile": "Short-range, hover-capable, low-speed rescue operations",
+        "fuel_requirement": "Significant (short range, tanker support needed)"
+      }
+    ],
+    "RED": [
+      {
+        "id": "RED_fighters_older_gen",
+        "side": "RED",
+        "unit_type": "fighter_older_generation",
+        "name": "Meridian Fighter Corps (Older Generation)",
+        "count": 45,
+        "bases": [
+          "meridia_north",
+          "meridia_east",
+          "meridia_southwest"
+        ],
+        "doctrine": "Point defense (protect nearby facilities), limited range",
+        "readiness": "ALERT (likely scramble on coalition approach)",
+        "role": "Area defense, secondary interceptor role",
+        "capability_profile": "Medium range, older missiles (16-20 nm range), limited avionics",
+        "note": "F-4 Phantom II and F-5 Tiger II variants"
+      },
+      {
+        "id": "RED_fighters_modern",
+        "side": "RED",
+        "unit_type": "fighter_modern",
+        "name": "Meridian Fighter Corps (Modern)",
+        "count": 26,
+        "bases": [
+          "meridia_central",
+          "meridia_northwest"
+        ],
+        "doctrine": "Offensive CAP, attempt to intercept coalition strikes",
+        "readiness": "HIGH (some aircraft likely airborne during alert)",
+        "role": "Primary air defense, offensive intercept",
+        "capability_profile": "Long-range missiles (35-50 nm), modern avionics, higher performance",
+        "note": "MiG-29 Fulcrum A (most dangerous threat)"
+      },
+      {
+        "id": "RED_sams_long_range",
+        "side": "RED",
+        "unit_type": "sam_long_range",
+        "name": "Meridian Long-Range SAM System",
+        "count": 4,
+        "distribution": "Concentrated around North, East, Central facilities",
+        "doctrine": "Layered defense, protect high-value targets",
+        "readiness": "FULL (manned, continuous surveillance)",
+        "role": "Air defense against bombers at distance",
+        "capability_profile": "Long-range SAM (S-300 analog), ~80 km effective range",
+        "coverage": "Medium-to-low altitude bands"
+      },
+      {
+        "id": "RED_sams_medium_range",
+        "side": "RED",
+        "unit_type": "sam_medium_range",
+        "name": "Meridian Medium-Range SAM System",
+        "count": 6,
+        "distribution": "Distributed around all 4 facilities",
+        "doctrine": "Mid-layer defense, work with AAA for point defense",
+        "readiness": "FULL",
+        "role": "Air defense against fighters and fighter-bombers",
+        "capability_profile": "Medium-range SAM (Patriot analog), ~30-40 km effective range"
+      },
+      {
+        "id": "RED_aaa_fixed",
+        "side": "RED",
+        "unit_type": "aaa_fixed_facility_defense",
+        "name": "Meridian Fixed AAA Batteries (Facility Defense)",
+        "count": 250,
+        "distribution": "45 (Nord), 38 (East), 62 (Central), 28 (South) + dispersed sites",
+        "doctrine": "Innermost defense ring, protect facility itself from low-altitude strikes",
+        "readiness": "FULL",
+        "role": "Point defense against low-altitude attackers",
+        "capability_profile": "Anti-aircraft guns (various calibers), ~2-8 km range"
+      },
+      {
+        "id": "RED_radars_early_warning",
+        "side": "RED",
+        "unit_type": "radar_early_warning",
+        "name": "Meridian Early Warning Radar Network",
+        "count": 5,
+        "distribution": "Scattered across Meridian territory for overlapping coverage",
+        "doctrine": "Provide fighter-control center with tactical picture",
+        "readiness": "CONTINUOUS",
+        "role": "Air surveillance, fighter direction",
+        "capability_profile": "Long-range radar (~200+ km detection, ~100+ km tracking)"
+      }
+    ]
+  },
+  "bls_template": [
+    {
+      "name": "Meridia North Base",
+      "coord": [
+        160,
+        -16
+      ],
+      "role": "Fighter Base",
+      "throughput": 100,
+      "terrain_friction": 0.1,
+      "side": "RED"
+    },
+    {
+      "name": "Meridia East Base",
+      "coord": [
+        162.5,
+        -18.2
+      ],
+      "role": "Fighter Base",
+      "throughput": 100,
+      "terrain_friction": 0.1,
+      "side": "RED"
+    },
+    {
+      "name": "Meridia Central Base",
+      "coord": [
+        160.5,
+        -19
+      ],
+      "role": "Fighter Base",
+      "throughput": 100,
+      "terrain_friction": 0.1,
+      "side": "RED"
+    },
+    {
+      "name": "Meridia Northwest Base",
+      "coord": [
+        157,
+        -17.5
+      ],
+      "role": "Fighter Base",
+      "throughput": 80,
+      "terrain_friction": 0.1,
+      "side": "RED"
+    },
+    {
+      "name": "Meridia Southwest Base",
+      "coord": [
+        157.5,
+        -20
+      ],
+      "role": "Fighter Base",
+      "throughput": 80,
+      "terrain_friction": 0.1,
+      "side": "RED"
+    },
+    {
+      "name": "Bretania Forward Air Base",
+      "side": "BLUE",
+      "coord": [
+        155.5,
+        -20
+      ],
+      "role": "Forward Operating Base (BLUE)",
+      "throughput": 120,
+      "terrain_friction": 0.2
+    },
+    {
+      "name": "Diego-Analog Airfield",
+      "side": "BLUE",
+      "coord": [
+        151,
+        -21.5
+      ],
+      "role": "Strategic Air Base (BLUE)",
+      "throughput": 150,
+      "terrain_friction": 0.15
+    }
+  ],
+  "red_units": [
+    {
+      "uid": "R-mig29-001",
+      "label": "MiG-29 Fulcrum Flight 1",
+      "echelon": "flight",
+      "role": "fighter_interceptor",
+      "domain": "air",
+      "bls": "Meridia Central Base",
+      "sidc": "10041000201211010000",
+      "coord": [
+        160.5,
+        -19
+      ],
+      "name_ar": "رحلة MiG-29 فولكروم 1",
+      "appear": 0,
+      "strength": 1
+    },
+    {
+      "uid": "R-mig29-002",
+      "label": "MiG-29 Fulcrum Flight 2",
+      "echelon": "flight",
+      "role": "fighter_interceptor",
+      "domain": "air",
+      "bls": "Meridia Central Base",
+      "sidc": "10041000201211010000",
+      "coord": [
+        160.6,
+        -19.1
+      ],
+      "name_ar": "رحلة MiG-29 فولكروم 2",
+      "appear": 0,
+      "strength": 1
+    },
+    {
+      "uid": "R-f4-001",
+      "label": "F-4 Phantom Flight 1",
+      "echelon": "flight",
+      "role": "fighter_sweep",
+      "domain": "air",
+      "bls": "Meridia North Base",
+      "sidc": "10041000201211010000",
+      "coord": [
+        160,
+        -16
+      ],
+      "name_ar": "رحلة F-4 فانتوم 1",
+      "appear": 0,
+      "strength": 0.9
+    },
+    {
+      "uid": "R-f4-002",
+      "label": "F-4 Phantom Flight 2",
+      "echelon": "flight",
+      "role": "fighter_sweep",
+      "domain": "air",
+      "bls": "Meridia North Base",
+      "sidc": "10041000201211010000",
+      "coord": [
+        160.1,
+        -16.1
+      ],
+      "name_ar": "رحلة F-4 فانتوم 2",
+      "appear": 0,
+      "strength": 0.9
+    },
+    {
+      "uid": "R-f5-001",
+      "label": "F-5 Tiger II Flight 1",
+      "echelon": "flight",
+      "role": "fighter_light",
+      "domain": "air",
+      "bls": "Meridia East Base",
+      "sidc": "10041000201211010000",
+      "coord": [
+        162.5,
+        -18.2
+      ],
+      "name_ar": "رحلة F-5 تايجر 2 رقم 1",
+      "appear": 0,
+      "strength": 0.8
+    },
+    {
+      "uid": "R-f5-002",
+      "label": "F-5 Tiger II Flight 2",
+      "echelon": "flight",
+      "role": "fighter_light",
+      "domain": "air",
+      "bls": "Meridia East Base",
+      "sidc": "10041000201211010000",
+      "coord": [
+        162.6,
+        -18.3
+      ],
+      "name_ar": "رحلة F-5 تايجر 2 رقم 2",
+      "appear": 0,
+      "strength": 0.8
+    },
+    {
+      "uid": "R-mig29-003",
+      "label": "MiG-29 Fulcrum Flight 3",
+      "echelon": "flight",
+      "role": "fighter_interceptor",
+      "domain": "air",
+      "bls": "Meridia Northwest Base",
+      "sidc": "10041000201211010000",
+      "coord": [
+        157,
+        -17.5
+      ],
+      "name_ar": "رحلة MiG-29 فولكروم 3",
+      "appear": 0,
+      "strength": 1
+    },
+    {
+      "uid": "R-f5-003",
+      "label": "F-5 Tiger II Flight 3",
+      "echelon": "flight",
+      "role": "fighter_light",
+      "domain": "air",
+      "bls": "Meridia Southwest Base",
+      "sidc": "10041000201211010000",
+      "coord": [
+        157.5,
+        -20
+      ],
+      "name_ar": "رحلة F-5 تايجر 2 رقم 3",
+      "appear": 0,
+      "strength": 0.8
+    },
+    {
+      "uid": "R-sam-001",
+      "label": "S-300 SAM Battalion (Meridia Central)",
+      "echelon": "battalion",
+      "role": "air_defense_sam",
+      "domain": "air_defense",
+      "bls": "Meridia Central Base",
+      "sidc": "10061000411111010000",
+      "coord": [
+        160.55,
+        -19.05
+      ],
+      "name_ar": "كتيبة S-300 SAM (مركز ميريديا)",
+      "appear": 0,
+      "strength": 1,
+      "weapon_range_km": 165,
+      "sensor_range_km": 200,
+      "coverage_role": "strategic_sam",
+      "sensor_class": "S300_SEARCH_RADAR",
+      "weapon_class": "S300_MISSILE",
+      "range_class": "strategic"
+    },
+    {
+      "uid": "R-sam-002",
+      "label": "S-300 SAM Battalion (Meridia North)",
+      "echelon": "battalion",
+      "role": "air_defense_sam",
+      "domain": "air_defense",
+      "bls": "Meridia North Base",
+      "sidc": "10061000411111010000",
+      "coord": [
+        160.05,
+        -16.05
+      ],
+      "name_ar": "كتيبة S-300 SAM (شمال ميريديا)",
+      "appear": 0,
+      "strength": 1,
+      "weapon_range_km": 165,
+      "sensor_range_km": 200,
+      "coverage_role": "strategic_sam",
+      "sensor_class": "S300_SEARCH_RADAR",
+      "weapon_class": "S300_MISSILE",
+      "range_class": "strategic"
+    },
+    {
+      "uid": "R-sam-003",
+      "label": "S-75 Dvina SAM (Meridia East)",
+      "echelon": "battalion",
+      "role": "air_defense_sam",
+      "domain": "air_defense",
+      "bls": "Meridia East Base",
+      "sidc": "10061000411111010000",
+      "coord": [
+        162.55,
+        -18.25
+      ],
+      "name_ar": "نظام S-75 Dvina SAM (شرق ميريديا)",
+      "appear": 0,
+      "strength": 0.8,
+      "weapon_range_km": 35,
+      "sensor_range_km": 75,
+      "coverage_role": "tactical_sam",
+      "sensor_class": "S75_RADAR",
+      "weapon_class": "S75_MISSILE",
+      "range_class": "tactical"
+    },
+    {
+      "uid": "R-aaa-001",
+      "label": "ZSU-23-4 Shilka AAA (Meridia Northwest)",
+      "echelon": "company",
+      "role": "point_defense_aaa",
+      "domain": "air_defense",
+      "bls": "Meridia Northwest Base",
+      "sidc": "10061000421111010000",
+      "coord": [
+        157.05,
+        -17.55
+      ],
+      "name_ar": "ZSU-23-4 Shilka AAA (شمال غرب ميريديا)",
+      "appear": 0,
+      "strength": 0.7,
+      "weapon_range_km": 3.5,
+      "sensor_range_km": 40,
+      "coverage_role": "point_defense_aaa",
+      "sensor_class": "ZSU_RADAR",
+      "weapon_class": "ZSU_GUN",
+      "range_class": "point_defense"
+    },
+    {
+      "uid": "R-aaa-002",
+      "label": "23mm AAA (Meridia Southwest)",
+      "echelon": "company",
+      "role": "point_defense_aaa",
+      "domain": "air_defense",
+      "bls": "Meridia Southwest Base",
+      "sidc": "10061000421111010000",
+      "coord": [
+        157.55,
+        -20.05
+      ],
+      "name_ar": "مدفع 23mm AAA (جنوب غرب ميريديا)",
+      "appear": 0,
+      "strength": 0.6,
+      "weapon_range_km": 2.5,
+      "sensor_range_km": 15,
+      "coverage_role": "point_defense_aaa",
+      "range_class": "point_defense"
+    },
+    {
+      "uid": "R-radar-001",
+      "label": "P-37 Flatface Radar (Meridia Central)",
+      "echelon": "detachment",
+      "role": "early_warning_radar",
+      "domain": "air_defense",
+      "bls": "Meridia Central Base",
+      "sidc": "10061000431111010000",
+      "coord": [
+        160.52,
+        -19.02
+      ],
+      "name_ar": "رادار P-37 Flatface (مركز ميريديا)",
+      "appear": 0,
+      "strength": 0.95,
+      "sensor_range_km": 250,
+      "coverage_role": "early_warning_radar",
+      "sensor_class": "P37_RADAR",
+      "range_class": "strategic"
+    }
+  ],
+  "blue_units_initial": [
+    {
+      "unit_uid": "B-f15c-001",
+      "base_id": "Bretania Forward Air Base",
+      "label": "F-15C Eagle CAP 1",
+      "role": "fighter_air_superiority",
+      "domain": "air",
+      "echelon": "flight",
+      "sidc": "10030000201211010000",
+      "coord": [
+        156,
+        -17.5
+      ],
+      "name_ar": "F-15C Eagle CAP 1",
+      "appear": 0
+    },
+    {
+      "unit_uid": "B-f15c-002",
+      "base_id": "Bretania Forward Air Base",
+      "label": "F-15C Eagle CAP 2",
+      "role": "fighter_air_superiority",
+      "domain": "air",
+      "echelon": "flight",
+      "sidc": "10030000201211010000",
+      "coord": [
+        156.1,
+        -17.6
+      ],
+      "name_ar": "F-15C Eagle CAP 2",
+      "appear": 0
+    },
+    {
+      "unit_uid": "B-f16-001",
+      "base_id": "Bretania Forward Air Base",
+      "label": "F-16 Strike Package 1",
+      "role": "attack_fighter",
+      "domain": "air",
+      "echelon": "flight",
+      "sidc": "10030000281211010000",
+      "coord": [
+        155.9,
+        -17.4
+      ],
+      "name_ar": "F-16 Strike Package 1",
+      "appear": 0
+    },
+    {
+      "unit_uid": "B-f16-002",
+      "base_id": "Bretania Forward Air Base",
+      "label": "F-16 Strike Package 2",
+      "role": "attack_fighter",
+      "domain": "air",
+      "echelon": "flight",
+      "sidc": "10030000281211010000",
+      "coord": [
+        155.8,
+        -17.3
+      ],
+      "name_ar": "F-16 Strike Package 2",
+      "appear": 0
+    },
+    {
+      "unit_uid": "B-kc135-001",
+      "base_id": "Bretania Forward Air Base",
+      "label": "KC-135 Stratotanker (Bretania Forward)",
+      "role": "tanker_support",
+      "domain": "air",
+      "echelon": "flight",
+      "sidc": "10030000131211010000",
+      "coord": [
+        156.2,
+        -17.7
+      ],
+      "name_ar": "KC-135 Stratotanker (Bretania Forward)",
+      "appear": 0
+    },
+    {
+      "unit_uid": "B-awacs-001",
+      "base_id": "Bretania Forward Air Base",
+      "label": "E-3 Sentry AWACS",
+      "role": "early_warning_control",
+      "domain": "air",
+      "echelon": "flight",
+      "sidc": "10030000141211010000",
+      "coord": [
+        156.3,
+        -17.8
+      ],
+      "name_ar": "E-3 Sentry AWACS",
+      "appear": 0
+    },
+    {
+      "unit_uid": "B-b52-001",
+      "base_id": "Diego-Analog Airfield",
+      "label": "B-52 Stratofortress (Diego-Analog Remote)",
+      "role": "heavy_bomber",
+      "domain": "air",
+      "echelon": "flight",
+      "sidc": "10030000321211010000",
+      "coord": [
+        150,
+        -21
+      ],
+      "name_ar": "B-52 Stratofortress (Diego-Analog Remote)",
+      "appear": 0
+    },
+    {
+      "unit_uid": "B-kc135-002",
+      "base_id": "Diego-Analog Airfield",
+      "label": "KC-135 Stratotanker (Diego-Analog)",
+      "role": "tanker_support",
+      "domain": "air",
+      "echelon": "flight",
+      "sidc": "10030000131211010000",
+      "coord": [
+        150.1,
+        -21.1
+      ],
+      "name_ar": "KC-135 Stratotanker (Diego-Analog)",
+      "appear": 0
+    }
+  ],
+  "blue_units_base_ids": [
+    "B-f15c-001",
+    "B-f15c-002",
+    "B-f16-001",
+    "B-f16-002",
+    "B-kc135-001",
+    "B-awacs-001",
+    "B-b52-001",
+    "B-kc135-002"
+  ],
+  "steps": [
+    {
+      "index": 0,
+      "time_label": "P0",
+      "elapsed_hours": 0,
+      "id": 1,
+      "title": "H+0:00 — Pre-Strike Setup",
+      "phase": "Deployment",
+      "duration_minutes": 20,
+      "description": "Coalition air campaign commander reviews situation, plans strike package.",
+      "player_decisions": [
+        "Select which objectives to strike (1, 2, 3, or all 4 power stations)",
+        "Allocate aircraft by type to selected objectives",
+        "Plan tanker support orbit schedule and timing",
+        "Decide electronic warfare posture (full suppression vs. limited jamming)",
+        "Set rules of engagement (ROE) for collateral damage tolerance"
+      ],
+      "events": [
+        "Meridia begins fighter scramble from all bases",
+        "Meridian SAM system radars activated and powered up",
+        "Coalition early warning aircraft achieving orbit and initial surveillance"
+      ],
+      "victory_condition_check": "Player selects objectives and commits forces"
+    },
+    {
+      "index": 1,
+      "time_label": "P1",
+      "elapsed_hours": 0.33,
+      "id": 2,
+      "title": "H+0:20 — First Wave Strike Execution",
+      "phase": "Initial Attack",
+      "duration_minutes": 30,
+      "description": "First wave of coalition aircraft departs bases and conducts initial strikes against selected targets.",
+      "expected_outcomes": [
+        "Coalition aircraft losses: 2-6 (fighters from AAA, bombers from SAM)",
+        "Meridian fighter losses: 4-8 (to coalition air superiority)",
+        "Facilities struck: 1-2 (Meridian South likely success, North/East possible, Central difficult)"
+      ],
+      "tactical_events": [
+        "Air superiority fighters engage Meridian intercept attempts (multiple engagements)",
+        "Long-range bombers penetrate defenses against Central Power Station (high risk)",
+        "Fighter-bombers conduct precision strikes on lower-defended South facility",
+        "SAM systems engage coalition bombers (significant threat phase)",
+        "AAA defenses engage low-altitude fighter-bombers (expected attrition phase)",
+        "Coalition EW flights suppress Meridian radars for 8-12 minute windows"
+      ],
+      "scoring_milestones": [
+        "+10 points per facility damaged to 60%+",
+        "-5 points per friendly fighter lost (after first 5)",
+        "-15 points per strategic asset lost (tanker, EW, early warning)"
+      ]
+    },
+    {
+      "index": 2,
+      "time_label": "P2",
+      "elapsed_hours": 0.83,
+      "id": 3,
+      "title": "H+0:50 — Consolidation & Wave 2 Decision",
+      "phase": "Tactical Assessment",
+      "duration_minutes": 40,
+      "description": "Coalition assesses first-wave damage, decides on continuation strategy.",
+      "player_decisions": [
+        "Continue with planned second wave (higher risk, higher reward)?",
+        "Abort and consolidate damage achieved (lower risk, mission reduced scope)?",
+        "Shift targeting (strike East/Central instead of North if first wave losses high)?",
+        "Rearm and relaunch available fighter-bombers from forward base?",
+        "Launch second bomber wave or hold bombers in reserve?"
+      ],
+      "critical_decision_point": "This decision point tests scenario design feasibility and player decision support",
+      "tactical_events_if_continue": [
+        "Recover damaged aircraft to tanker orbits for emergency refueling",
+        "Rearm available fighter-bombers at bretania_forward (assume 15-20 min turnaround)",
+        "Launch second bomber wave if aircraft available and damage assessment supports targeting",
+        "Adjust fighter CAP posture based on Meridian air threat remaining",
+        "Expect increased Meridian SAM effectiveness (targets concentrated, defenses alert)"
+      ],
+      "expected_cumulative_losses_if_continue": [
+        "Coalition total losses: 6-12+ aircraft by end of Phase 3",
+        "Meridian total losses: 10-15+ fighters, SAM sites degraded"
+      ]
+    },
+    {
+      "index": 3,
+      "time_label": "P3",
+      "elapsed_hours": 1.5,
+      "id": 4,
+      "title": "H+1:30 — Battle Damage Assessment & Mission Complete",
+      "phase": "Mission Conclusion",
+      "duration_minutes": 30,
+      "description": "Final scoring, outcome determination, after-action assessment.",
+      "scoring_determination": [
+        "Count total coalition aircraft losses (final tally)",
+        "Assess each facility damage percentage (0%, 25%, 50%, 75%, 100%)",
+        "Determine victory level based on objectives achieved"
+      ],
+      "victory_determination": {
+        "strategic_victory": "All 4 facilities damaged to 60%+, <5 friendly losses → 100 points",
+        "operational_victory": "3 of 4 facilities damaged to 60%+, <8 friendly losses → 75 points",
+        "tactical_victory": "2 of 4 facilities damaged to 60%+, <10 friendly losses → 50 points",
+        "failure": "<2 facilities neutralized OR >10% civilian casualties → 0 points"
+      },
+      "post_game_analysis": [
+        "Evaluate force readiness for potential Phase 2 (follow-up operations)",
+        "Assess feasibility of extended campaign if required by higher command",
+        "Review collateral damage impact on civilian infrastructure",
+        "Record lessons learned for next scenario iteration"
+      ]
+    }
+  ],
+  "victory_conditions": {
+    "strategic_victory": {
+      "description": "Neutralize all 4 power stations to 60%+ damage",
+      "constraints": "With <5 friendly aircraft lost AND civilian casualties <5%",
+      "points": 100,
+      "scenario_outcome": "Coalition decisively degrades Meridian strategic power infrastructure"
+    },
+    "operational_victory": {
+      "description": "Neutralize 3 of 4 power stations to 60%+ damage",
+      "constraints": "With <8 friendly aircraft lost AND civilian casualties <8%",
+      "points": 75,
+      "scenario_outcome": "Coalition successfully strikes majority of objectives; limited air losses"
+    },
+    "tactical_victory": {
+      "description": "Neutralize 2 of 4 power stations to 60%+ damage",
+      "constraints": "With <10 friendly aircraft lost",
+      "points": 50,
+      "scenario_outcome": "Coalition achieves partial success; significant air losses reduce mission effectiveness"
+    },
+    "failure": {
+      "description": "Neutralize <2 power stations OR inflict >10% civilian casualties",
+      "constraints": "Any outcome not meeting tactical victory threshold",
+      "points": 0,
+      "scenario_outcome": "Mission fails; insufficient force or excessive collateral damage"
+    }
+  },
+  "readiness_assumptions": {
+    "BLUE_coalition": {
+      "assumption_air_superiority": "Andor coalition has air superiority fighters capable of longer-range engagement",
+      "assumption_tanker_support": "Tanker flights enable long-range operations; loss of tankers severely degrades capability",
+      "assumption_early_warning": "Early warning aircraft provide fighter control and tactical picture for intercepting Meridian fighters",
+      "assumption_logistics": "Supply, ammunition, and fuel logistics pre-positioned; assume unlimited munitions for scenario duration",
+      "assumption_coordination": "Coalition coordination between air superiority, strike, and support flights is assumed seamless"
+    },
+    "RED_meridia": {
+      "assumption_alert_status": "Meridian alert status RAISED due to detected coalition buildup",
+      "assumption_fighter_scramble": "Meridian fighters can scramble within 5-10 minutes of coalition approach detection",
+      "assumption_sam_readiness": "SAM systems manned and ready; not in active fire mode initially but can engage on radar lock",
+      "assumption_radar_coverage": "Early warning radars provide overlapping coverage of Meridian airspace; fighter-control center active",
+      "assumption_air_defense_doctrine": "Meridian will NOT launch preemptive strike; defensive posture only"
+    }
+  },
+  "design_notes": {
+    "learning_intent": "This scenario teaches RMOOZ scenario authoring patterns: multi-side conflict, defended objectives, readiness constraints, phased timeline, decision support.",
+    "scope_simplification": "Designed as viable RMOOZ pilot; reduced from full CMO scenario (fewer aircraft, consolidated SAM sites, shorter timeline).",
+    "geographic_abstraction": "Fictional Meridian region used to avoid real-world operational specificity. Scenario teaches structure, not targeting.",
+    "mechanical_testing": "Tests RMOOZ capabilities: 2-side conflict (not yet in public demos), objective damage mechanics, loss penalties, phase-based timeline.",
+    "extensibility": "Can extend to: 3-side conflict (add neutral civilian side), multi-day campaign (add Phase 5+), carrier operations (add naval units), dynamic weather (currently static)."
+  },
+  "metadata": {
+    "created_date": "2026-06-04",
+    "source_inspiration": "Iran Strike 2022 (CMO Community Scenario Pack 51) — abstracted to fictional Meridian region",
+    "sanitization_level": "Complete (no real-world operational specificity)",
+    "rmooz_compatibility": "Draft (requires testing in RMOOZ edit mode; steps 1-4 implemented; briefing text TBD)",
+    "next_steps": "Import to RMOOZ edit mode, validate step structure, test objective mechanics, verify victory condition evaluation"
+  }
+}

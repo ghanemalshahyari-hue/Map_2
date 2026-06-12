@@ -1,0 +1,164 @@
+{
+  /* ----------- introduction (template `prompt_template_introduction`) ----------- */
+  "date_time": "<تاريخ ووقت الرسالة>",
+  "letter_ref_number": "<رقم المرجع من النص، مثال: ع/1/2>",
+  "letter_ref_number2": "<أمر إنذاري رقم …>",
+  "References": "كراسات عقائد القوات البرية، والمرشد التدريبي للقوات البرية لعام 2025 والتعليمات التعبوية المستديمة لمجاميع الألوية.",
+  "Maps": "<إدراج اسم أو وصف الخريطة>",
+  "task_assembly": "<يصدر لاحقاً>",
+  "time_zone": "<UTC+4> ",
+
+  /* ----------- introduction1 (template `prompt_template_introduction1`) ----------- */
+  "header": "نسخة رقم () الي ()",
+  "header2": "قيادة المكون البري",
+  "header3": "مجموعة لواء الامارات",
+  "header4": "ركن أول عمليات",
+  "Assembly_Area": "إحداثي (R CN 64215 7114840)",
+
+  /* ----------------------- situation (template `prompt_template_situation`) ----------------------- */
+  "situation": "<ملخص عام للموقف>",
+  "area_interest": "<أراضي العدو، الدولة الشقيقة، الخليج العربي، أراضي دولتنا>",
+  "operations_area": "كما في الشفاف ' م 'شفاف العمليات.",
+  "terrain": "<طبيعة الأرض>",
+  "weather": "<الطقس>",
+  "civil_considerations": "",
+  "enemy_forces": "<قوات العدو في الدولة الحمراء>",
+
+  /* ------------------- joint‑leadership (template `prompt_template_joint_leadership`) ------------------- */
+  "friendly_forces": "<نص الوحدات الصديقة كما هو في المصدر>",
+  "join_op_mission": "<مهمة القيادة المشتركة (المهمة)>",
+  "Join_op_purp": "فقط الغرض",
+  "joint_ops_how": "فقط الطريقة",
+  "joint_ops_desired_end": "فقط النهاية المرغوبة",
+  "mission_of_supporting_unit": "<مهام وحدات الإسناد>",
+  "gov_and_nongov_org": "<المؤسسات الرسمية والمنظمات غير الحكومية>",
+  "CIVILIAN_CONSIDERATIONS": "<الاعتبارات المتعلقة بالمدنيين>",
+  "Units_Duty": "<واجبات وحدات المناورة>",
+  "Timings": "<التوقيتات كما في الفقرة>",
+  "join_op20_mission": "<مهمة قوة الواجب المشتركة/20>",
+  "Join_op20_purp": "فقط الغرض",
+  "joint_op20_how": "فقط الطريقة",
+  "joint_op20_desired_end": "فقط النهاية المرغوبة",
+  "report_production": "<تقتصر عملية صنع القرار ...>",
+  "coordination_duties": "<التنسيق مع المكونات البحرية…>",
+  "authorized_movements": "<أولويات استكمال متطلبات التنفيذ>",
+  "staff_duties": "<التنسيق مع السلطات المدنية…>",
+  "times_locations_planning": "<بداية التخطيط التعاوني…>",
+  "commander_intel_req": "<متطلبات الاستخبارات الأولية>",
+  "commander_intel_req2": "<متطلبات معلومات القوات الصديقة>",
+
+  /* ----------------------- implementation (template `prompt_template_implementation`) ----------------------- */
+  "Fire_support_coordination": "<إجراءات تنسيق نيران الإسناد>",
+  "Air_support_coordination": "<إجراءات تنسيق المجال الجوي>",
+  "Risk_assy": "<المخاطر>",
+  "ROE": "<قواعد الاشتباك>",
+  "Other_coordination_media": "<وسائل الإعلام وخطة الخداع>",
+  "Other_coordination_meeting": "<معلومات اجتماع قسم الأمر>",
+  "Other_coordination_Excu": "<أولويات استكمال متطلبات التنفيذ>",
+  "Other_coordination_movem": "<وقت الحركة إلى المواقع الدفاعية>",
+  "Sustainment": "<الإدامة>",
+  "ACCS": "<القيادة والسيطرة>",
+
+  /* ----------------------- concept‑of‑support (template `prompt_template_Concept_of_support`) ----------------------- */
+  "Appendices": "<الملاحق كما هي في المصدر>",
+  "Viewports": "<الشفافات كما هي في المصدر>",
+
+  /* ---------------------------- INTEL‑SUMMARY (template `prompt_template_intel_brief`) ---------------------------- */
+  "Terrain": "<الأرض>",
+  "Weather": "<الطقس>",
+  "First_light": "<الضوء الأول>",
+  "Last_light": "<الضوء الأخير>",
+  "Moon": "<القمر>",
+  "Effect_of_Weather_and_Terrain_on_Operations": "لا يوجد أي تحديد كبير على عمليات الطرفين.<…> (القيود التشغيلية)",
+  "Composition": "<التكوين>",
+  "Deployments": "<التوزيعات>",
+  "Force_Coverage": "<غطاء القوة>",
+  "Morale": "<المعنويات>",
+  "Training": "<التدريب>",
+  "Recent_and_Ongoing_Activities": "<النشاطات الحديثة>",
+  "Enemy_Tactics_in_Exposure_Operations_Phase1_Preparation": "<أساليب العدو – مرحلة 1>",
+  "Enemy_Tactics_in_Exposure_Operations_Phase2_Preparation": "<أساليب العدو – مرحلة 2>",
+  "Enemy_Tactics_in_Exposure_Operations_Phase3_Main_Attack": "<أساليب العدو – مرحلة 3>",
+  "Intentions_and_Objectives": "<نوايا واطماءات العدو>",
+  "Counter_Intelligence_Observations": "<ملاحظات الاستخبارات المضادة>",
+
+  /* ---------------------------- INTEL‑SUMMARY2 (template `prompt_template_intel_brief2`) ---------------------------- */
+  "Enemy_Capabilities": "<قائمة قدرات العدو (الإلكترونية، الحركة، الهندسة، الكيميائية، الضربات الجوية…) ",
+  "Conclusions": "<استنتاجات>",
+
+  /* ---------------------------- Operations1 (template `prompt_template_Operations`) ---------------------------- */
+  "join_op_mission": "<مهمة قوة الواجب المشتركة>",
+  "Join_op_purp": "<غرض القوة المشتركة>",
+  "joint_ops_how": "<طريقة تنفيذ القوة المشتركة>",
+  "joint_ops_desired_end": "<النهاية المرغوبة للقوة المشتركة>",
+  "Exc_command_mission": "<مهمة التنفيذ>",
+  "Exc_command_purp": "<غرض التنفيذ>",
+  "Exc_command_main_mission": "<واجبات التنفيذ الرئيسية>",
+  "joint_ops_desired_end2": "<نهاية مشتركة ثانية>",
+  "Land_component_force": "<قوة المكون البري>",
+  "Attached_units": "<الوحدات الملحقة>",
+  "Force_Composition": "<تكوين القوة>",
+  "Training_Readiness_Level": "<مستوى الجاهزية للتدريب>",
+  "Combat_Effectiveness": "<الكفاءة القتالية>",
+  "Operational_Conclusions": "<استنتاجات تشغيلية>",
+
+  /* ---------------------------- HR (template `prompt_template_HR`) ---------------------------- */
+  "Force_Cover": "<غطاء القوة (من معلومات القوات الصديقة)>",
+  "Combat_Morale": "<معنويات القتال>",
+  "Reinforcements": "يصدر لاحقاً.",
+  "Projected_Casualties": "يصدر لاحقاً.",
+  "Control_and_Coordination": "حسب الأوامر المستدامة.",
+  "Prisoners_of_War": "تتبع التعليمات الصادرة في الأوامر المستدامة حول التعامل مع أسرى الحرب.",
+  "Civilian_Users": "يتم التعامل مع المستخدمون المدنيون وفقاً للأوامر الصادرة بذلك.",
+  "Civilian_Prisoners_and_Detainees": "يتم التنسيق مع أجهزة الأمن المختصة لتعامل مع السجناء والاعتقالات المدنية.",
+  "Human_Force_Conclusions": "<استنتاجات حول حركة النازحين وتنسيق الأجهزة الأمنية>",
+
+  /* ---------------------------- Logistics (template `prompt_template_Logistics`) ---------------------------- */
+  "Logistical_Rations": "يصدر لاحقاً",
+  "Logistical_sustainment": "يصدر لاحقاً",
+  "Fuel": "يصدر لاحقاً",
+  "ammunition": "يصدر لاحقاً",
+  "Spare_parts": "يصدر لاحقاً",
+  "Engineering_materiel": "يصدر لاحقاً",
+  "Transportation": "يصدر لاحقاً",
+  "Maintenance": "يصدر لاحقاً",
+  "Field_Hospitals": "يصدر لاحقاً",
+  "Supply_Conclusions": "يصدر لاحقاً",
+
+  /* ---------------------------- INTEL‑SUMMARY3 (template `prompt_template_intel_brief3`) ---------------------------- */
+  "time_Y": "<يوم ي‑X>",
+  "mission_start": "<يوم ي HHMM>",
+  "total_available_time": "<عدد الساعات المتاحة>",
+  "allocated_planning_time": "<الساعات المتاحة ÷ 3>",
+  "available_time_for_subordinate_units": "<allocated_planning_time × 2>",
+  "time_for_mission_receipt": "<allocated_planning_time × 30%>",
+  "time_for_development": "<allocated_planning_time × 20%>",
+  "time_for_mission_analysis": "<allocated_planning_time × 30%>",
+  "time_for_plan": "<allocated_planning_time × 20%>",
+
+  /* ---------------------------- INTEL‑SUMMARY4 (template `prompt_template_intel_brief4`) ---------------------------- */
+  "time_now": "<الساعة الحالية>",
+
+  /* ---------------------------- INTEL‑SUMMARY5 (template `prompt_template_intel_brief5`) ---------------------------- */
+  "time_Y": "<يوم ي‑X>",
+  "mission_start": "<يوم ي HHMM>",
+  "total_available_time": "<عدد الساعات المتاحة>",
+  "allocated_planning_time": "<الساعات المتاحة ÷ 3>",
+  "available_time_for_subordinate_units": "<allocated_planning_time × 2>",
+  "time_for_mission_receipt": "<allocated_planning_time × 30%>",
+  "time_for_development": "<allocated_planning_time × 20%>",
+  "time_for_mission_analysis": "<allocated_planning_time × 30%>",
+  "time_for_plan": "<allocated_planning_time × 20%>",
+
+  /* ---------------------------- INTEL‑SUMMARY6 (template `prompt_template_intel_brief6`) ---------------------------- */
+  "time_now": "<الساعة الحالية>",
+
+  /* ---------------------------- Operations_7 (template `prompt_template_Operations7`) ---------------------------- */
+  "report_production": "<ملخص ما يقتصر عليه صنع القرار>",
+  "coordination_duties": "<واجبات التنسيق>",
+  "authorized_movements": "<الأولوية لاستكمال متطلبات التنفيذ>",
+  "staff_duties": "<واجبات الموظفين>",
+  "times_locations_planning": "<بداية التخطيط التعاوني>",
+  "commander_intel_req": "<متطلبات الاستخبارات الأولية>",
+  "commander_intel_req2": "<متطلبات معلومات القوات الصديقة>"
+}

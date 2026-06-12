@@ -1,0 +1,250 @@
+# C: MO - Working with Ice
+Video: https://www.youtube.com/watch?v=scdM3RA2uXo
+Video ID: scdM3RA2uXo
+
+hello everyone in today's video we're
+going to be taking a look at
+ice it is the middle of the winter for
+us so that' be fun time to take a look
+at some of the Tactical implications of
+uh dealing with big nasty ice flows
+especially when it comes to things like
+submarines and ships obviously with
+aircraft you just kind of fly across it
+you don't have to worry about it very
+much uh ground units unfortunately at
+this time have no ability to cross the
+ice so you can't just kind of leave
+Greenland and kind of scoot scoot over
+here to Northern Russia that's just not
+a possibility so one of the things you
+need to know here is if you look really
+carefully at our map there's this little
+yellow line that just kind of chills
+this is our ice cap line now the
+interesting thing about this ice cap
+line naturally is of course if you
+change the time of year the ice cap line
+isn't necessarily going to adjust itself
+it's just going to always be sort of
+chilling there no matter what you're
+doing now that line is kind of
+interesting because one of the fun
+things is if you zoom in here it becomes
+really hard to see that line if you zoom
+out it becomes a little easier now what
+is the immediate impact of it well the
+first one is navigation so if I grab
+myself my lovely FFG 36 is the Underwood
+here and I go ahead and press F3 to plot
+of course if I were to double click like
+that you will notice the game does not
+allow me to plot a course instead if I
+want to do a conventional course I can
+just do a conventional course like that
+and you'll see that it has no issue we
+basically can't force the ship directly
+into the ice itself that's just not
+mechanically possible however if you
+happen to have a ship uh let's say maybe
+the Arctica this is an ice breaker and
+it has no difficulty working with the
+ice as matter of fact if I press F3 and
+go ahead and pick something in here
+you'll notice it doesn't care the fact
+that there's ice there and as a matter
+of fact you can make full speed through
+this ice which is something I find kind
+of interesting now of course it doesn't
+matter if I just kind of crank this G to
+full and I pop them in the ice itself
+you'll see that there is no issue with
+his ability to basically cruise through
+all this it's actually pretty easy I
+actually find it neat to get a little
+like wake and everything like that and
+obviously he's making a ton of noise now
+the other practical implication of this
+of course is it's very difficult to drop
+things onto the ice now there's some
+interesting other problems this is going
+to cause but let's say I wanted to do an
+ASW Mission Control right click uh let's
+go ahead and final layer I'm going to go
+drag a box over here I'm pretty sure
+there's a typhoon in there I would know
+I put it there so I'm going to go ahead
+and do as control f11 and what I'm going
+to do is grab myself uh Patrol we'll do
+ASW Patrol here find a boat so I'm going
+to go and press okay go ahead and add my
+C Sprites now my C Sprites are great U
+because of course this is the HF model
+yes I know don't don't pay no attention
+to the dates here but one of the things
+about the C Sprite is they carry two
+things that are very useful first of all
+dipping sonar second sonab Bo now watch
+what happens when attempt to find the
+submarine inside this region actually
+there's one thing I'm going to change
+real quickly here cuz I always make this
+mistake oh let's see here Mission
+settings ah here we go station altitude
+should be minimum altitude we want to
+keep these things darn low usually lower
+than 150 ft the other thing I'm going to
+do is I'm going to allow them to use the
+dipping star because you know why not
+they're pretty useful go to General I'm
+just going to confirm that dipping star
+is enabled which it is and I'm going go
+ahead unpause now that's what happens so
+my submarines of course are he's looking
+by the way right now so here comes my
+little helicopter he flies into the
+region of search mode he drops down
+about 55 knots he drops down to a very
+low altitude okay for the record
+helicopters don't cruise at 12,000 ft
+that's just not a thing but anyway he's
+going to come down here and uh you know
+this seems like a really good spot to
+drop a dipping buoy so I'm just going to
+WR click on them ASW and I'm going to go
+ahead and drop an active they have
+diecast I push the button and as you'll
+observe no Soni com shooting off the
+side because it was going thunk on the
+ice and it basically be chilling there
+uh literally and of course it does
+nothing for us so unfortunately my ASW
+Mission got a little more challenging
+now what about submarines well
+submarines have new problems I'm sure
+you've seen this old videos where the
+submarine breaks through the ice that is
+exceptionally thin ice and also you tend
+to damage the submarine when you do that
+but one of the things you'll notice is
+my sub down here is a seaw wolf chilling
+at minus 213 if I say hey I want you to
+come to the surface Watch What Happens
+here he scoots up and he goes wonk and
+basically runs into the ice at minus 82
+ft so he has no ability to get high
+enough to even stick his Periscope up or
+any of his sensors now for those of you
+who are familiar with the scenario
+options I have to be very careful this
+as a designer by the way one of the
+options here is Communications
+disruption do you realize the problem
+that creates you can no longer talk to
+your sub if you have this button checked
+and you happen to be under the ice so
+you can't do it you have to wait until
+they find a safer spot to basically talk
+to you talk about autonomy of mission oh
+my gosh so the next interesting thing
+we're going to have to deal with of
+course is going to be if we do find
+something underwater that seems
+interesting to put holes in so let's go
+speed up time a little bit here I give
+it a little bit of more moments ah we
+found something hey the typhoon is where
+I expected it to be cool let me go aead
+and close that I've got little typhoon
+here we have himself at a range of about
+5 meters and of course I'm sitting here
+going man it'd be really funny if I had
+a rocket
+torpedo nope can't do that because it
+get stuck in the ice when I shoot it so
+the cool thing here is you have to
+actually get oldfashioned so if I want
+to go ahead and try to get this Goblin
+typhoon I think does 35 knots if I
+recall correctly oh was our range here
+that's about five natica miles that's a
+oh my goodness that's like a 40 mile
+chck yeah we got to sneak up on this guy
+all right let's go pick up a couple
+knots here one of the great things about
+the seaw wolf is it's so stupid quiet so
+we'll go just underneath the layer we're
+going to come down a little bit here
+we're going to creep up on this guy
+there we go there we go that's better
+there now we're making 46 DB here we're
+getting a little closer we actually have
+a better idea where he is I'm glad we
+didn't take that shot it's about seven
+nautical miles away and we're behind him
+which means we can be a
+jerk yes so uh this nothing nothing
+beats the cheap shot here actually what
+I want him to do is not cavitate of
+course we could send a maximum depth if
+I absolutely had to do that uh Sprint
+DFT cavitate do not cavitate there we go
+he'll slow down a little bit this is the
+greatest thing about the seaw wolf
+though this thing is like it's like
+cheat codes oh there we go sneak up
+we're making 30 knots right now just
+creeping up on him of course if he had
+anything else we got to slow down just
+so we can take a quick listen here let's
+slow down a little bit here 20 knots is
+still pretty darn fast slow down there
+he is oh we're a lot closer than I
+thought no no we're about where we
+expected this guy has no idea all right
+let's go all out here let's go maximum
+depth and we come sneak up on him at
+full speed here go go go go go go go
+keep in mind he does have Torpedoes they
+will shoot back at us there we go we're
+only making 88 DB and we're like doing
+30 knots this is absolutely fantastic
+got to kind of sneak up here might as
+well do a little bit of a red October
+ring here there we go making about 28
+knots that's it's pretty pretty
+comfortably fast here let's drop down to
+creep and take a look listen there he is
+oh I'm surprised we're not able to well
+we know he's in ssbn all right let's
+skip to the fun part oops he's the auto
+thing I fired a torpedo that was not a
+good one you have fire one ready fire
+fire now the interesting thing here is I
+get a kick out of this if I look at my
+range we're only about a mile 1.6 natico
+miles away and the joke is he didn't
+detect us yet now he'll detect us
+because we just fired two Torpedoes at
+him now one of the fun things that
+always happens here is you'll notice you
+can't hear him because my Torpedoes are
+making so much racket right now but he's
+going to pick up as much speed as you
+possibly can but unfortunately it's the
+typhoon he has a lot of inera so if
+you'll notice here he's actually trying
+to like kind of bounce off the surface
+here it it's not going to matter that
+was clean nice go Sea Wolf so as you can
+see the ice presents some kind of
+interesting problems for us obviously
+surface vessels can't really operate in
+it if you're trying to shoot things in
+and out of it it's not going to work
+very well but it also means that
+submarines have a really really fun time
+of it because a lot of the really really
+dangerous anti-submarine weapons can't
+be used and things like the friets that
+usually launch them can't touch us enjoy

@@ -1,0 +1,219 @@
+# prompts/initial_planning_guidance/template.yaml
+# ================================================
+# Y-approved shape: 18 flat fields keyed exactly like
+# /Users/hextechkraken/Desktop/y/initial_planning_guide_edited.txt.
+#
+# Field kinds in use:
+#   computed               — timing fields (same math as time_analysis)
+#   source_file_extracted  — time_now, CCIR/PIR, FFIR, ROE from Warning Order
+#   retrieved (doctrine)   — report_production, coordination_duties,
+#                            authorized_movements, staff_duties,
+#                            times_locations_planning
+
+meta:
+  template_id: initial_planning_guidance
+  template_version: 2
+  title_arabic: "دليل التخطيط الأولي"
+  document_slug: initial_planning_guidance
+  output_filename: "{document_slug}.docx"
+  default_collections:
+    - ingest__operationalfiles__bgem3
+
+schemas:
+  InitialPlanningGuidance:
+    fields:
+      # --- timing (same math as time_analysis.yaml) ---
+      time_Y:
+        kind: computed
+        function: time_math.format_gregorian_hijri_pair
+        arguments:
+          when: "{{input: timing.reporting_date_gregorian}}"
+
+      mission_start:
+        kind: computed
+        function: time_math.format_h_hour
+        arguments:
+          when: "{{input: timing.h_hour_gregorian}}"
+          time_zone: "{{input: timing.time_zone}}"
+
+      total_available_time:
+        kind: computed
+        function: time_math.format_duration_hours
+        arguments:
+          minutes: "{{input: timing.total_available_minutes}}"
+
+      allocated_planning_time:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: planning_minutes_display
+
+      available_time_for_subordinate_units:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: subordinate_minutes_display
+
+      time_for_mission_receipt:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: step_1_display
+
+      time_for_development:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: step_2_display
+
+      time_for_mission_analysis:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: step_3_display
+
+      time_for_plan:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: step_4_display
+
+      time_now:
+        kind: source_file_extracted
+        source_hint: warning_order
+
+      # --- planning directives ---
+      # Doctrine retrieval for the 5 framing directives.
+      # §C32 — first tier-aware group opt-in. Every retrieved field
+      # in this group declares the same policy + doctrine fallback so
+      # the loader's group-consistency invariant holds.
+      # Flow: operationalfiles fan-out first (4 MDMP manuals); coverage
+      # gate runs; if weak/empty, doctrine library (21 manuals) fans out
+      # as fallback. Citation tags become [O:]/[D:]; endnote renders
+      # three sub-headings. Pre-Phase-7 legacy fast-path remains
+      # available via PHASE3_TIERED_RETRIEVAL=0 (kill-switch).
+      # §C33 — source_files channel opt-in. Each retrieved field declares
+      # a ``source_files_field_map`` that tells the dispatcher to pull a
+      # scenario fact from the per-doc ``extracted_values`` dict (filled
+      # by ``extract_for_document`` from the user's uploaded warning
+      # order + intel report) and feed it to the drafter as a labelled
+      # FactSnippet.  Empty / placeholder values are filtered out by
+      # ``build_evidence_bundle`` so the drafter only ever sees real
+      # scenario facts.  ``[S: <field> §extracted]`` citation tags appear
+      # inline alongside ``[O:]`` and ``[D:]``; the rendered endnote
+      # gains the ``ملفات مرفوعة من المستخدم`` sub-heading.
+      report_production:
+        kind: retrieved
+        group: planning_directives
+        query_seeds:
+          - "إنتاج التقارير في مرحلة التخطيط"
+          - "تواتر تقارير الأركان"
+          - "report production MDMP planning reports"
+        collections:
+          - ingest__operationalfiles__bgem3
+        policy: operationalfiles_then_doctrine
+        doctrine_collections:
+          - ingest__doctrine__bgem3
+        source_files_field_map:
+          report_production: commander_intel_req
+        rerank_query_ar: "توجيهات إنتاج التقارير خلال التخطيط"
+
+      coordination_duties:
+        kind: retrieved
+        group: planning_directives
+        query_seeds:
+          - "واجبات التنسيق بين الأركان"
+          - "مسؤوليات التنسيق في MDMP"
+          - "staff coordination duties MDMP planning"
+        collections:
+          - ingest__operationalfiles__bgem3
+        policy: operationalfiles_then_doctrine
+        doctrine_collections:
+          - ingest__doctrine__bgem3
+        source_files_field_map:
+          coordination_duties: commander_intel_req
+        rerank_query_ar: "توجيهات إنتاج التقارير خلال التخطيط"
+
+      authorized_movements:
+        kind: retrieved
+        group: planning_directives
+        query_seeds:
+          - "الحركات المأذون بها قبل الأمر"
+          - "تحرك القوات خلال التخطيط"
+          - "authorized pre-order movements MDMP"
+        collections:
+          - ingest__operationalfiles__bgem3
+        policy: operationalfiles_then_doctrine
+        doctrine_collections:
+          - ingest__doctrine__bgem3
+        source_files_field_map:
+          authorized_movements: ROE
+        rerank_query_ar: "توجيهات إنتاج التقارير خلال التخطيط"
+
+      staff_duties:
+        kind: retrieved
+        group: planning_directives
+        query_seeds:
+          - "واجبات الأركان خلال استلام المهمة"
+          - "مسؤوليات الشعب خلال خطوة 1 MDMP"
+          - "staff duties receipt of mission MDMP"
+        collections:
+          - ingest__operationalfiles__bgem3
+        policy: operationalfiles_then_doctrine
+        doctrine_collections:
+          - ingest__doctrine__bgem3
+        source_files_field_map:
+          staff_duties: commander_intel_req
+        rerank_query_ar: "توجيهات إنتاج التقارير خلال التخطيط"
+
+      times_locations_planning:
+        kind: retrieved
+        group: planning_directives
+        query_seeds:
+          - "التخطيط التشاركي أوقات ومواقع"
+          - "collaborative planning times locations MDMP"
+        collections:
+          - ingest__operationalfiles__bgem3
+        policy: operationalfiles_then_doctrine
+        doctrine_collections:
+          - ingest__doctrine__bgem3
+        source_files_field_map:
+          times_locations_planning: time_now
+        rerank_query_ar: "توجيهات إنتاج التقارير خلال التخطيط"
+
+      # Commander's critical info reqs come from the Warning Order.
+      commander_intel_req:
+        kind: source_file_extracted
+        source_hint: warning_order
+
+      commander_intel_req2:
+        kind: source_file_extracted
+        source_hint: warning_order
+
+      # ROE — try Warning Order first. (Doctrine fallback is a v2 hook.)
+      ROE:
+        kind: source_file_extracted
+        source_hint: warning_order
+
+structure:
+  - kind: title
+    text: "دليل التخطيط الأولي"
+    alignment: center
+    underline: true
+
+  - kind: section
+    schema: InitialPlanningGuidance
+    layout: y_initial_planning_guidance
+    citation_collection: true

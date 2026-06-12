@@ -1,0 +1,147 @@
+{
+  "name": "sample-sahil-corridor",
+  "scenario_label": "Sahil Corridor — Coastal Corridor Defense (CMO build-order sample)",
+  "model_version": "cmo-playbook-v1",
+  "ported_from": "docs/cmo-functional-rules/5-build-playbook.md",
+
+  "sides": [
+    { "id": "BLUE",    "name_en": "Blue (Defender)",            "name_ar": "الأزرق (المدافع)",        "color": "#3a76c2" },
+    { "id": "RED",     "name_en": "Red (Amphibious Assault)",   "name_ar": "الأحمر (الإنزال البرمائي)", "color": "#c23a3a" },
+    { "id": "NEUTRAL", "name_en": "Neutral",                    "name_ar": "محايد",                    "color": "#9aa0a6" }
+  ],
+  "postures": {
+    "BLUE":    { "BLUE": "FRIENDLY", "RED": "HOSTILE",  "NEUTRAL": "NEUTRAL" },
+    "RED":     { "BLUE": "HOSTILE",  "RED": "FRIENDLY", "NEUTRAL": "NEUTRAL" },
+    "NEUTRAL": { "BLUE": "NEUTRAL",  "RED": "NEUTRAL",  "NEUTRAL": "FRIENDLY" }
+  },
+
+  "map_bbox": [18.0, 29.8, 19.8, 30.9],
+  "terrain_note": "Coastal plain with wadis that channel the mechanized advance toward the harbor; sabkha (salt flats) west of BLS-WEST restricts heavy vehicles, slowing any axis routed through it.",
+
+  "obj": {
+    "name": "OBJ HARBOR",
+    "coord": [19.20, 30.45],
+    "target_depth_km": 40,
+    "carver": 6,
+    "radius_km": 6
+  },
+
+  "pipeline": [
+    [18.70, 30.20],
+    [18.85, 30.24],
+    [19.00, 30.30],
+    [19.10, 30.36],
+    [19.18, 30.42],
+    [19.20, 30.45]
+  ],
+
+  "bls_template": [
+    { "name": "BLS-WEST",   "coord": [18.55, 30.18], "role": "supporting", "throughput": 600,  "terrain_friction": 0.55, "permanently_limited": true },
+    { "name": "BLS-CENTER", "coord": [18.85, 30.22], "role": "main",       "throughput": 1200, "terrain_friction": 0.20 },
+    { "name": "BLS-EAST",   "coord": [19.10, 30.28], "role": "supporting", "throughput": 800,  "terrain_friction": 0.30 }
+  ],
+  "throughput_ceilings_km": { "H12": 8, "H24": 18, "H48": 30, "H72": 38, "H120": 42 },
+
+  "red_units": [
+    { "uid": "RED-1", "label": "1st Mech Bde",   "bls": "BLS-CENTER", "appear": 0, "role": "Main effort",          "coord": [18.85, 30.22], "echelon": "brigade",  "strength": 1.0, "sidc": "10061000001211000000" },
+    { "uid": "RED-2", "label": "2nd Mech Bn",    "bls": "BLS-WEST",   "appear": 0, "role": "Fixing",               "coord": [18.55, 30.18], "echelon": "battalion","strength": 1.0, "sidc": "10061000001211000000" },
+    { "uid": "RED-3", "label": "Recon Coy",      "bls": "BLS-EAST",   "appear": 0, "role": "Recon",                "coord": [19.10, 30.28], "echelon": "company",  "strength": 1.0, "sidc": "10061500001213000000" },
+    { "uid": "RED-4", "label": "Armor Bn",       "bls": "BLS-CENTER", "appear": 1, "role": "Exploitation",         "coord": [18.88, 30.25], "echelon": "battalion","strength": 1.0, "sidc": "10061000001205000000" },
+    { "uid": "RED-5", "label": "Follow-on Regt", "bls": "BLS-WEST",   "appear": 2, "role": "Follow-on",            "coord": [18.58, 30.20], "echelon": "regiment", "strength": 1.0, "sidc": "10061000001211000000" },
+    { "uid": "RED-6", "label": "Flank Det",      "bls": "BLS-EAST",   "appear": 1, "role": "External envelopment", "coord": [19.12, 30.31], "echelon": "company",  "strength": 1.0, "sidc": "10061000001205000000" }
+  ],
+
+  "blue_units_base_ids": ["HQ", "B1", "B2", "B3", "B4", "ARTY", "BCO", "RES"],
+  "blue_units_initial": [
+    { "unit_uid": "BLUE-HQ",   "base_id": "HQ",   "coord": [19.15, 30.55], "echelon": "brigade",  "sidc": "10031000001211000000" },
+    { "unit_uid": "BLUE-1",    "base_id": "B1",   "coord": [18.95, 30.40], "echelon": "battalion","sidc": "10031000001211000000" },
+    { "unit_uid": "BLUE-2",    "base_id": "B2",   "coord": [19.05, 30.42], "echelon": "battalion","sidc": "10031000001211000000" },
+    { "unit_uid": "BLUE-3",    "base_id": "B3",   "coord": [19.12, 30.44], "echelon": "battalion","sidc": "10031000001211000000" },
+    { "unit_uid": "BLUE-4",    "base_id": "B4",   "coord": [18.88, 30.38], "echelon": "battalion","sidc": "10031000001211000000" },
+    { "unit_uid": "BLUE-ARTY", "base_id": "ARTY", "coord": [19.20, 30.58], "echelon": "battalion","sidc": "10031000001505000000" },
+    { "unit_uid": "BLUE-BCO",  "base_id": "BCO",  "coord": [19.00, 30.46], "echelon": "company",  "sidc": "10031000001213000000" },
+    { "unit_uid": "BLUE-RES",  "base_id": "RES",  "coord": [19.25, 30.60], "echelon": "battalion","sidc": "10031000001205000000" }
+  ],
+
+  "ao_boundaries": [
+    { "name": "AO SAHIL", "coords": [[18.2, 29.95], [19.6, 29.95], [19.6, 30.75], [18.2, 30.75]] }
+  ],
+
+  "phase_table": [
+    { "index": 0, "time_label": "H-3",   "elapsed_hours": -3,  "phase": "PRE-H" },
+    { "index": 1, "time_label": "H+0",   "elapsed_hours": 0,   "phase": "PHASE 1" },
+    { "index": 2, "time_label": "H+12",  "elapsed_hours": 12,  "phase": "PHASE 2A" },
+    { "index": 3, "time_label": "H+36",  "elapsed_hours": 36,  "phase": "PHASE 2B" },
+    { "index": 4, "time_label": "H+72",  "elapsed_hours": 72,  "phase": "PHASE 3" },
+    { "index": 5, "time_label": "H+120", "elapsed_hours": 120, "phase": "RESOLUTION" }
+  ],
+
+  "steps": [
+    {
+      "index": 0, "time_label": "H-3", "elapsed_hours": -3, "phase": "PRE-H",
+      "phase_line_km_baseline": 0,
+      "objective_status_baseline": "DORMANT",
+      "bls_status_baseline": { "BLS-WEST": "STAGED", "BLS-CENTER": "STAGED", "BLS-EAST": "STAGED" },
+      "force_ratio_baseline": "Not engaged",
+      "ew_effect_baseline": "Idle",
+      "logistics_state_baseline": "Pre-assault staging offshore",
+      "narrative_en_baseline": "Red amphibious group holds offshore; Blue is in prepared coastal defenses awaiting the assault.",
+      "narrative_ar_baseline": "تتمركز مجموعة الإنزال الحمراء قبالة الساحل، بينما يتمركز الأزرق في دفاعات ساحلية محضّرة بانتظار الهجوم."
+    },
+    {
+      "index": 1, "time_label": "H+0", "elapsed_hours": 0, "phase": "PHASE 1",
+      "phase_line_km_baseline": 5,
+      "objective_status_baseline": "THREATENED",
+      "bls_status_baseline": { "BLS-WEST": "CONTESTED", "BLS-CENTER": "CONTESTED", "BLS-EAST": "STAGED" },
+      "force_ratio_baseline": "2.5:1",
+      "ew_effect_baseline": "Active",
+      "logistics_state_baseline": "Landing in progress",
+      "narrative_en_baseline": "First wave lands at BLS-CENTER and BLS-WEST; recon screens east. Blue forward companies engage the beachhead.",
+      "narrative_ar_baseline": "تنزل الموجة الأولى عند الموقعين المركزي والغربي مع استطلاع يغطي الشرق، وتشتبك السرايا الزرقاء الأمامية مع رأس الجسر."
+    },
+    {
+      "index": 2, "time_label": "H+12", "elapsed_hours": 12, "phase": "PHASE 2A",
+      "phase_line_km_baseline": 15,
+      "objective_status_baseline": "CONTESTED",
+      "bls_status_baseline": { "BLS-WEST": "LIMITED", "BLS-CENTER": "SECURE", "BLS-EAST": "CONTESTED" },
+      "force_ratio_baseline": "3.0:1",
+      "ew_effect_baseline": "Heavy",
+      "logistics_state_baseline": "Building combat power ashore",
+      "narrative_en_baseline": "Main effort breaks out of BLS-CENTER along the wadi axis; armor exploits forward. Blue trades space for time on the corridor.",
+      "narrative_ar_baseline": "ينطلق الجهد الرئيسي من الموقع المركزي عبر محور الوادي وتستثمر المدرعات إلى الأمام، فيما يقايض الأزرق المساحة بالوقت على الممر."
+    },
+    {
+      "index": 3, "time_label": "H+36", "elapsed_hours": 36, "phase": "PHASE 2B",
+      "phase_line_km_baseline": 28,
+      "objective_status_baseline": "CONTESTED",
+      "bls_status_baseline": { "BLS-WEST": "LIMITED", "BLS-CENTER": "SECURE", "BLS-EAST": "LIMITED" },
+      "force_ratio_baseline": "2.2:1",
+      "ew_effect_baseline": "Moderate",
+      "logistics_state_baseline": "Sustaining the advance",
+      "narrative_en_baseline": "Follow-on regiment commits; flank detachment attempts an envelopment east. Blue counterattacks with reserves to blunt the penetration.",
+      "narrative_ar_baseline": "يُدفع فوج المتابعة وتحاول مفرزة الجناح تطويقاً شرقاً، فيشن الأزرق هجوماً مضاداً بالاحتياطي لتفتيت الاختراق."
+    },
+    {
+      "index": 4, "time_label": "H+72", "elapsed_hours": 72, "phase": "PHASE 3",
+      "phase_line_km_baseline": 38,
+      "objective_status_baseline": "CONTESTED",
+      "bls_status_baseline": { "BLS-WEST": "LIMITED", "BLS-CENTER": "SECURE", "BLS-EAST": "DENIED" },
+      "force_ratio_baseline": "1.5:1",
+      "ew_effect_baseline": "Low",
+      "logistics_state_baseline": "Culminating — throughput ceiling near",
+      "narrative_en_baseline": "Red nears the harbor but throughput ceilings and attrition bite; the eastern envelopment is denied. Decision point: press or consolidate.",
+      "narrative_ar_baseline": "يقترب الأحمر من الميناء لكن سقوف الإمداد والاستنزاف تضغط عليه، ويُحبَط التطويق الشرقي. نقطة القرار: الضغط أم التثبيت."
+    },
+    {
+      "index": 5, "time_label": "H+120", "elapsed_hours": 120, "phase": "RESOLUTION",
+      "phase_line_km_baseline": 40,
+      "objective_status_baseline": "DENIED",
+      "bls_status_baseline": { "BLS-WEST": "DENIED", "BLS-CENTER": "LIMITED", "BLS-EAST": "DENIED" },
+      "force_ratio_baseline": "0.8:1",
+      "ew_effect_baseline": "Idle",
+      "logistics_state_baseline": "Red culminated short of OBJ HARBOR",
+      "narrative_en_baseline": "Red culminates short of OBJ HARBOR; Blue holds the corridor. Objective denied.",
+      "narrative_ar_baseline": "يبلغ الأحمر ذروته قبل بلوغ هدف الميناء، ويحتفظ الأزرق بالممر. تم منع الهدف."
+    }
+  ]
+}

@@ -334,7 +334,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Probe the tile server with a HEAD request. We accept ANY response
     // (including 404) as proof the server is up — only network errors throw.
     function probeTileServer(url) {
-        return fetch(url + '/', { method: 'HEAD', mode: 'no-cors', cache: 'no-store' })
+        // GET, not HEAD — some tile services / proxies reject HEAD requests.
+        return fetch(url + '/', { method: 'GET', mode: 'no-cors', cache: 'no-store' })
             .then(() => true)
             .catch(() => false);
     }
@@ -388,6 +389,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     maxZoom: 17,
                     errorTileUrl: TRANSPARENT_TILE,
                 });
+                // OVERZOOM: the MBTiles often stops at a lower zoom than the map's
+                // maxZoom (e.g. satellite caps at z13). Read the tileset's real
+                // maxzoom from the tile-server's TileJSON and set maxNativeZoom, so
+                // zooming in past the data ceiling UPSCALES the deepest tiles
+                // instead of requesting non-existent tiles (blank/grey + false
+                // "tiles not loading" banners). Defaults to 13 if unavailable.
+                fetch(tileServer + '/services/' + encodeURIComponent(tileset) + '.json', { cache: 'no-store' })
+                    .then(r => (r.ok ? r.json() : null)).catch(() => null)
+                    .then(tj => {
+                        const mz = tj && Number.isFinite(+tj.maxzoom) ? +tj.maxzoom : 13;
+                        layer.options.maxNativeZoom = mz;
+                        if (map.hasLayer(layer)) layer.redraw();
+                    });
                 layer.on('tileerror', (ev) => {
                     errorCountsByTileset[tileset] = (errorCountsByTileset[tileset] || 0) + 1;
                     // After a handful of consecutive errors, surface a banner.
@@ -6952,8 +6966,13 @@ document.addEventListener('DOMContentLoaded', () => {
             symbolManager.style.display = 'none';
             lineManager.style.display = 'none';
             if (textManager) textManager.style.display = 'block';
-        } else {
+        } else if (mode === 'symbol') {
             symbolManager.style.display = 'block';
+            lineManager.style.display = 'none';
+            if (textManager) textManager.style.display = 'none';
+        } else {
+            // 'pan', 'select', and any other mode — tool-rail.js owns symbol-manager visibility
+            symbolManager.style.display = 'none';
             lineManager.style.display = 'none';
             if (textManager) textManager.style.display = 'none';
         }
@@ -14007,6 +14026,14 @@ document.addEventListener('DOMContentLoaded', () => {
             // otherwise stacks two identical symbols at the same spot.
             if (isDuplicatePlacementClick(e.latlng, e.originalEvent)) return;
             const sidc = generateSIDC();
+            // Scenario Edit Mode: a symbol placed on the map IS a scenario unit. Route it
+            // into the scenario draft (side from SIDC, coord from the click; red units
+            // auto-link to the nearest landing site) and skip the operator-layer marker.
+            if (window.AppEditMode && typeof window.AppEditMode.isOn === 'function' && window.AppEditMode.isOn()
+                && typeof window.AppEditMode.placeUnitFromMap === 'function') {
+                window.AppEditMode.placeUnitFromMap(sidc, e.latlng.lng, e.latlng.lat);
+                return;
+            }
             const opts = { ...getTextModifiers(), size: 25, simpleStatusModifier: true };
 
             const marker = L.marker(e.latlng, { icon: L.divIcon({ className: 'custom-nato-marker', html: '<div></div>', iconSize: [1, 1], iconAnchor: [0, 0] }), draggable: true });
@@ -17227,7 +17254,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     const legendToggleBtn = document.getElementById('legend-toggle-btn');
     function getTheme() {
-        return localStorage.getItem(THEME_KEY) || 'dark';
+        return localStorage.getItem(THEME_KEY) || 'light';
     }
     function setTheme(theme) {
         document.documentElement.setAttribute('data-theme', theme);

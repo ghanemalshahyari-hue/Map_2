@@ -1,0 +1,120 @@
+# C: MO - Taking off and Landing from different places using missions
+Video: https://www.youtube.com/watch?v=oclprX6GrF4
+Video ID: oclprX6GrF4
+
+hello everyone in today's video we're
+going to be showing how you can create a
+flight plan so that you have units that
+take off from one place and they're
+actually going to go and land in another
+place now one thing I will say about all
+flight planning is that it's a little
+bit little bit uh ficity F snik I think
+is the word I want to say and you have
+to kind of be very mindful of the
+different settings that you kind of
+create and how you set groups together
+and how you build the groups but we'll
+deal with that as they kind of come up
+so want do is I'm going to grab my
+target here lovely Harford Connecticut
+I'll strike this again this is only the
+500th time I this we're sitting up at
+least there's not nuclear weapons this
+time so what I'm going to do of course
+is I'm going to grab myself one of these
+handy dandy flights I'm going to grab a
+group of four this looks pretty good to
+me flap them down here I'm going to go
+ahead and create or update the flight
+plan here and what we're going to do is
+we're going to go into this flight plan
+and we're just going to tweak it so I'm
+going to open up my flight plan editor
+I'll drag the mission editor out of the
+way and I'll just do the best I can to
+show you so what we want to do is we
+want them to take off and we want them
+to fly up and land on my Essex class
+which is kind of a Northeast of our kind
+of initial location here so to do that
+of course so what I'm going to do is I'm
+going to grab my first unit here and
+again it doesn't tell you which one the
+leader of the individual group is which
+is kind of a It's Tricky It's tricky to
+say the L it definitely makes things
+interesting in my opinion so what I'm
+going to do is I'm going to grab one of
+these units here I'm just going to pick
+Asus one because because science and
+again if we want to check that Asus one
+is going to be our flight lead here I'm
+going to go ahead now to click on my SX
+class I'm going go ahead and say change
+a landing location and as soon as I do
+that you'll notice that it tweaks itself
+and now the flight plan is actually
+could be modified so we have this nice
+lovely straight line that takes us right
+to our destination fantastic the problem
+we have with this and this is one of
+those kind of little tricky things is
+there's four aircraft in this flight if
+we try to use one of the aircraft and
+program this flight plan onto it it's
+only going to hang on to that one so
+instead what we have to do is even
+though visually we don't see this
+updating right away we need to tweak it
+so that it makes a little more sense I'm
+actually going to do one of these I mean
+if we're going to edit the flight plan
+we might as well do it right right so
+what I'm going to do is I'm going to go
+ahead and I'll grab my next unit here
+I'm going to go ahead and click on my
+Essex class I'm going to set him as the
+landing location I'm going to go to Asus
+111 I'm going to set him as the landing
+location Asus 1 Z said him is the
+landing location hs11 I'm going go ahead
+and say this is the landing location now
+that seems like a lot of work but the
+good news is it really isn't because
+what we're going to do is we're going to
+copy the flight plan now I've got 12 of
+these groups of four so it's going to be
+three groups and I'm going go ahead and
+make two copies of that flight plan now
+when to come down here you're going to
+observe that hammer 72 and 62 my two
+Voodoo have no airplanes in them so what
+I'm going to do is grab my demons I'm
+going to go and add them to my list and
+I'm going go over to my flight plant
+editor and I'm going to fill them up
+with airplanes uh so I'm go ahead and
+grab on our Hammer 72 fill empty
+aircraft slots grab my Voodoo 62 and
+fill aircraft slots and now everybody's
+all full of airplanes when we come over
+here you'll notice we have ourselves of
+three different groups with a completely
+different Landing location so what I'm
+going to do now is I'm going to go ahead
+unpause they're going to go ahead and
+launch they're going to do their thing
+everybody's kind to kind of get in
+format here or they're going to go
+strike the targets so sorry Harford
+sorry and as you watch carefully you'll
+see each one of these groups
+automatically break themselves up into
+tiny ones and they're all going to
+go that's a technical term by the way
+for how they landed there and now of
+course if I click on here in t X6 voila
+you now will see that we have ourselves
+aircraft that took off struck and then
+landed at a different point enjoy

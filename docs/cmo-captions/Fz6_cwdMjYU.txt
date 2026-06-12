@@ -1,0 +1,571 @@
+# C: MO - Blimps
+Video: https://www.youtube.com/watch?v=Fz6_cwdMjYU
+Video ID: Fz6_cwdMjYU
+
+hello everyone in today's video we're
+going to be taking a look at blimpse on
+a relatively new addition to command
+modded operations and kind of some of
+the quirks and sort of some of the
+different ways that you can employ them
+so what we have here is a pretty
+straightforward scenario with a bunch of
+Liberty classes that are picking up a
+little bit of speed uh they're getting
+ready for their long long long long
+journey over to England there and of
+course there's some probably some nasty
+underwater threats if you can kind of
+take a look at the ear that we have here
+now what happened is in a World War II
+the United States was actually still to
+this day as they were spoiled because
+they have a lot of helium you know for
+those of you know about blimps you know
+lighter than air travel basically if you
+have your sulfic acids lighter than air
+it tends to rise and if you trap that
+gas it tends to bring anything up with
+it assuming it's light enough now in the
+early days of course use hydrogen which
+is a fantastically light gas but it's
+also a little bloomy over the humanity
+you all know what I'm talking about so
+what we did in the World War II or the
+United States did is they started
+employing a bunch of blimps and they
+actually did this in World War One also
+as an anti-submarine measure so for
+those of you new submarines from World
+War II of course you probably recall all
+that the U-Boat was really a torpedo
+boat that could go underwater once in a
+while it was not like what you think of
+of the modern sub where it spends all of
+its time underwater so the big thing
+here was we could take one of these and
+basically fly over a convoy with it and
+the U-boats would be like uh yeah no I
+can't surface to actually get into
+position to attack of course there's
+always the lucky thing where you put by
+your Periscope and a bunch of ships go
+by
+um that happens but a lot of times it
+did not now these particular blimps here
+if I go I'd open the sucker up here I
+had a couple different bells and
+whistles on it now believe it or not for
+those you know the New England Air
+Museum they have one of these in this
+little like kind of carriage underneath
+is wild especially the fact there's a
+drop a little platform that you can
+climb out to the engine to work on the
+engine while it's in Flight I just
+thought that was kind of neat so
+scrolling down here we have a couple
+different tools on here we have ourself
+a surface search radar this thing uh
+kind of sucks it works but as you can
+see it's an an
+aps-2 now people are like oh and APG 70
+yeah this is a two so keep in mind this
+thing's a little agent honestly the
+dockets work better we also have mad
+doesn't work great but it works a couple
+machine guns and different mounts and of
+course if you scroll down you'd actually
+be surprised what we can carry here we
+could do some cargo we can do some
+cluster bombs which are amazing by the
+way uh we also have of course the
+capability to drop a bunch of sauna
+buoys again these are the old school
+non-directional soundables kind of suck
+feel free to listen to the old record
+playing if you go online and type in
+sonar sound Sona buoy World War II wave
+file or something like that you can
+listen to what these things can hear
+it's disappointing you'll know what I
+mean we also have the Fido which is a
+super duper entertaining torpedo it's
+not so much that it's effective it's
+just entertaining to watch and think
+about its Effectiveness but it does work
+against sometimes and of course we got
+Mark 47s which are like woohoo let's
+rock so what we're going to do is
+demonstrate the first couple problems
+you're going to face when you're dealing
+with a blimp so if I open up my game
+options real quick map display we're
+going to turn on contact trails and
+we're going to leave it on ourselves
+here the biggest problem you're going to
+face with the blimp other than the fact
+it takes a lifetime and a half think of
+these as ships by the way like really
+fast flying ships and you probably get
+the problems you're going to have is the
+turn radius is staggeringly bad so if I
+actually would order myself to take my
+90 degree turn here I will step up
+notice by the way how incredibly slow
+this thing picks up speed I'm at 15x
+here now we're going to go ripping past
+my little Destroyer Escort real quick
+how you doing buddy and now we're going
+to take a turn now at 70 knots this
+thing is not going to turn very sharply
+so I'm gonna let it go oh boy here we go
+[Laughter]
+I'm gonna work out the radius of that
+turn just for you all because I'm a nice
+guy here
+that's about a mile wide turn it's about
+0.9 nautical miles for the width of that
+turn which I don't know about you but
+that's pretty darn wide so one of the
+problems you're going to have is let's
+say I want to attack this Convoy here
+you know you're going to sit here and do
+one of these things of course and it's
+going to take you look at the size of
+the arc required to line yourself up at
+the Convoy now notice even though we had
+plenty of room we completely missed the
+Convoy if we were to actually do an
+attack here we were just rounding ding
+ding ding ding right by the thing one of
+the cool tricks of course that ablem can
+do that many other aircraft can it's not
+gonna actually stop
+so I can order this thing to quit moving
+I can actually turn it around in place
+and watch this whoop it just slows down
+and of course it uh steps its speed back
+up because um remember you need a little
+bit of speed in order to turn here so
+watch how big this turn is gonna be ah
+isn't that painful so that is going to
+be the number one problem you're going
+to face with the blimp
+the next problem we're going to have of
+course is actually employing it in its
+purpose of World War II um what I want
+to do now is I've got obviously got to
+get this Convoy across the Atlantic I'm
+sure there's some of those nasty U-boats
+along the way so how are we going to
+deploy this thing well well the first
+thing I like to do is I like to go ahead
+and Define the prosecution area let's go
+ahead and change my map settings here
+again I don't know why they keep
+changing it like that but that's all
+right control right click area rectangle
+obviously this is not a huge Convoy so
+I'm just going to give myself a pretty
+pretty standard prosecution area here
+I'm going to make it about that big yeah
+it's fine uh proc area that sounds good
+to me press ok I'm gonna go ahead and
+that's fine I'm gonna go ahead and set
+this to be a rotating reference point
+let's see here rotating bearing I'm
+going to set it off of the Convoy itself
+that way it stays kind of and follows
+the Convoy now some of you are like can
+you just order the blimps go zipping
+around in here yeah you could do that um
+the downside to that of course is that
+remember that turn radius thing I was
+telling you about so if we detect a
+submarine right here and he's over here
+you're going to lose the entire Convoy
+before he's even done turning around so
+kind of keep that in mind so what I
+actually prefer to do with these guys is
+I will create myself a new point to
+actually do this so I'm going to go
+ahead and create one let's call it right
+here and I'm going to call this one my
+Anchor Point
+and after I've done that I'm going to do
+the same thing I normally do I'm going
+to make this a rotating bearing I'll
+click on this one right here looks
+pretty good to me and now what I'm going
+to do is actually have this move with
+the Convoy and I'm going to order him to
+chase after the point so let's go ahead
+and hit Ctrl f11 let's go get this set
+up blimp Google Google something like
+that hopefully he's got a T-shirt cannon
+for us and we're going to do a c control
+Patrol press the okie doke button and
+now we're going to grab him it's going
+to get not grumpy at us because we do
+have an air base for I believe it or not
+all right this don't be no need we do
+want unknown contacts outside Patrol we
+do want them within weapons range are
+this both important one thing you're
+going to see is I'm gonna set this to
+repeatable Loop here and you know I'm
+actually going to come up here and set
+the Anchor Point as my only position and
+I know that sounds very scandalous but I
+want to watch how it works in a minute
+you'll be like oh he knows what he's
+doing sometimes so now what I'm going to
+do is I'm going to create the
+prosecution area this is basically where
+I want to blow stuff up so I'm going to
+add all these validate it just to make
+sure it didn't goofy yeah I'm pretty
+good today
+and now we're good that's it this guy's
+ready to rock so now you also notice
+that I have myself some handy dandy
+escorts there I got them obviously this
+is the correct escorts for World War II
+I have a cannon I have a hunt three how
+many times have been depth charged by
+one of those I don't admit and of course
+we have ourselves a Fletcher which is
+the another word for Destroyer so for
+these chaps I'm actually going to do
+differently I'm going to use them to
+sanitize as opposed to trying to just
+look everywhere
+um obviously if we want to design them
+you know we could put one over here one
+over here one over here that would be an
+Optimum Arrangement if you'd have to put
+them into the formation to make that
+possible instead I'm gonna go the easy
+wrong way here I'm just gonna of course
+I was almost gonna say wrong way which
+I'm not completely wrong there so we're
+going to go ahead and create a little
+kind of Zone here oh that's perfectly
+fine Destroyer sand Zone and this is
+just going to be the Zone where my
+destroyers are going to be doing their
+thing here I'm actually going to grab
+this and pull this up just a little bit
+and this is going to be their
+operational area and we're just going to
+do the exact same thing with this point
+as we did with the other one so rotating
+point I'm gonna go ahead and click on a
+convoy delightful control f11.
+um do stuff stuff in the water
+all right we set this one to a c control
+Patrol obviously if anything else comes
+by to say hello we probably won't take
+pot shots at it let's see here that
+looks good looks good looks good all
+right we're non-aircrafts we're vessels
+that looks good to me chips a Transit
+throttle oh come on it's World War II
+get going station throttle well actually
+we can even kick this up the flank
+attack throttle oh that's pretty old
+school that's what we're gonna go for
+I'm not gonna worry about any of those
+other ones uh let's see here that's good
+that's good that's good uh Patrol area
+that's fine that's exactly what I wanted
+to do so they're going to stay in there
+and I don't really need a prosecution
+area if I wanted to be silly I could do
+one of these things and actually add
+that as my prosecution area so that way
+we've got a little bit of overlap
+between the two zones in the event that
+we want to keep sinking the sub after we
+detected it behind us or something like
+that
+all right I'm liking everything I think
+we're in great shape here
+um that's it so if you're having issues
+where it's like I can't see the map
+anymore because there's too many visible
+zones
+all set that's all you need to do now
+Watch What Happens let's grab my blimp
+here I'm actually gonna move him here
+and I'm also going to shut off those
+little trails that we're kind of
+chilling behind them oh I don't need
+this anymore it's cute I just don't need
+it so let's go ahead and unpause let's
+R2
+sorry about that oh bad sneeze
+let's go ahead and assign these chaps to
+the mission outside this Mission uh you
+guys are going to do some stuff in the
+water and again that's a technical term
+there we're going to go ahead and add
+this one as well do stuff in the water
+and I'm also going to order this one to
+do stuff in the water too uh the big
+thing here that I probably mentioned was
+the fact that I don't put these on the
+same Mission this blimp has a different
+property I need him to look I need these
+guys to actually do the engaging we can
+use the blimp to drop the Fidos but it's
+very very awkward and you'll see what I
+mean so what's going to happen now is uh
+this is actually pretty cool I'm
+actually going to delete that Waypoint
+here he's going to go ahead and select
+this point as is kind of a let's go
+ahead of a thing let's go make sure
+these on the right Mission here I
+believe I said that correctly let me
+just look
+and he's going to run up to that Anchor
+Point and you'll notice he never quite
+gets to the Anchor Point he's going to
+come ripping up there and he's going to
+get just about to it and then he's going
+to kind of hang out there and that's
+going to allow us to have as a radar
+kind of do some of the deed for us
+yep there he goes he's going to take a
+nice long lap and he's going to come
+right back to the Anchor Point so you
+see how he's doing kind of this little
+like whoopty Daisy kind of a thing I'll
+keep an eye on all the stuff that's
+around us all right so one thing we want
+to do is we just want to confirm his
+radar is hanging away obviously Radars
+don't ping but you know it does ping
+World War II destroyers paying uh shame
+on me on that one all right so let's go
+to m con let's go turn him on we can go
+actually shut their Radars off if we
+want to be subtle here but they will be
+pinging like crazy in the water that's
+just a war or two thing all right Google
+Google I think that's entertaining all
+right so our blimp now is basically
+going to do these massive air Donuts
+through that point over and over again
+you can see how you just see how he does
+it again and he's just kind of kind of
+hanging there now some people say oh
+what I would actually prefer is If
+instead of like kind of doing this
+little loopy thing that he chases after
+this point um if you wanted to chase
+after the point if you go back to the
+blimp go go go go and go back up to the
+mission settings one of the things you
+can do is you can set this to be instead
+of a loop you can set it to an area and
+then the area becomes one wide and it
+basically chases after this area some
+people prefer it that way I kind of like
+the little loop-de-loop just in case and
+obviously if you detect something along
+the way which I promise you'll be will
+in a second
+um that'll go ahead and arrange itself
+appropriately
+now let's see here you're creeping I
+don't know why you're creeping on a
+Canon meanwhile is a flank speed you're
+doing that correctly and our Fletcher
+should not be creepy now he should be
+stepping up the flank speed and getting
+back into position there just gonna go
+ahead and check this actually more
+traditionally if I I don't know if get a
+little more old school probably Cruise
+uh Transit throttle is going to be flank
+and we'll do cruise because that's I
+don't know historical not really ignore
+all that I don't know what I'm talking
+about all right let's go get ourselves
+some U-boats and cause some trouble all
+right we've got ourselves some red team
+unpause let's go ahead and make sure
+that when we stick all these guys to
+start investigating uh they're well
+within the danger zone here because
+otherwise it's going to be no fun all
+right there we go uh-huh
+uh-huh and uh as a matter of fact I
+don't need any of those I can delete all
+of those if I want to I just want to
+kind of encourage them to travel in that
+direction let's grab them oops control V
+yeah we don't know if there's anything
+there they'll figure it out in a second
+I'm sure all right let's go switch the
+other guys real fast usn all right
+little blimps doing his thing looking
+around it's out Court keep in mind oh
+we've spotted something
+so now what I'll do is I'll go ahead and
+order the Hostile setting here and what
+that's going to cause is everybody's
+going to panic just a little bit our
+little blimp here is I'm going to do one
+of these things which is always
+entertaining it's going to be sitting
+there going um what do I do what do I do
+what do I do what do I do now what are
+the problems you're going to face with
+them other than the fact that I can't
+decide where he wants to go you just
+just you can go over there it's fine
+yeah just have to kind of nudge them one
+of the problems you're going to face
+with this is uh remember how he is a
+blimp and he's not an airplane so if you
+look under the default settings as far
+as you know what speeds and stuff we
+should be doing this on you have to kind
+of be mindful of this because loiter is
+zero speed for a limp that's just kind
+of one of those things you got to kind
+of be mindful of and it's just kind of
+like I said ah why didn't I think of
+that kind of a thing so just be careful
+that um the other problem you're going
+to have with the blimp too is the attack
+altitude if I take a look at my Fido
+Torpedoes the mark 40 that but
+okay if we actually take a look at the
+Mark 42 Torpedoes here you're going to
+notice that their effective altitude is
+actually fairly limited uh we can drop
+them from between minus 328 or we can go
+up to a thousand feet which means for us
+we have to actually make sure we're at
+an appropriate altitude to launch them
+so one of the mistakes I learned when I
+was playing with these guys earlier was
+the fact that if you don't do things at
+the right altitude you don't doesn't do
+much it doesn't do much all right so
+here we go we're gonna take our giant
+turn here getting up to attack speed
+of course a drop yeah there goes now
+he's working Meanwhile my destroyers are
+freaking out right now because they have
+something that's interesting there they
+go
+do
+oh man this is giving me flashbacks to
+Silent Hunter something Furious
+ferocious now notice our blimp here is I
+got a good oh my gosh these guys are so
+screwed
+don't worry the blimp will get you and
+like I was saying earlier it's a very
+very challenging to get within a range
+where you can actually deploy your
+weapons with this thing look at it go
+all right we're back into the
+prosecution Zone align myself up again
+blimps very challenging to use an
+offensive weapon here get you going
+again there we go looks pretty good I
+just need to get just close enough to
+drop a Fido on you that's more than
+enough to drop a fight on you there we
+go watch this this is fun we can
+actually tell him to stop and he could
+just sit here and like chill all right
+shift f11 ah let's see here fire I'll
+keep in mind the Fido is uh not great
+you'll see what I mean let's go ahead
+and switch to God's eye view here we
+want to watch the entertaining shot here
+because um you know why not I'm gonna
+get to sink I never get to stick the
+U-boats for this direction I'm usually
+the one running from the torpedo oh yeah
+that's going to be sweet look at how low
+the water is here I would not recommend
+operating uh ships or submarines and
+water this shallow this is uh a bit
+challenging all right on the way I
+believe there's another one of course my
+little if you wanted he doesn't have a
+custom model yet hopefully to add them
+later because they're really really
+entertaining to play with
+oh I can think of is like every James
+Bond movie like when the code is
+counting down like he's like you know
+five four three two one kind of a thing
+now the fun thing about the Fido torpedo
+by the way is I love chasing after the
+people who shot it so watch this see how
+he's getting shallower and shallower now
+what's gonna happen is he's gonna Broach
+here and when he broaches all my
+destroyers are going to join into the
+fun now notice we're actually basically
+outpacing these things but it's not
+going to be enough my type 7 is not
+gonna Escape here that is out of type
+seven but that's okay oh
+oh come on cap just gotta go a little
+bit faster a little bit faster
+uh Fido where are you going
+where you going
+I did mention these Torpedoes oh look at
+that break beautiful double knuckle Port
+don't look a port nice
+so you can see how unfortunately we're
+not successful in that regard so ah
+they're just as unreliable as they were
+in the real world I love that meanwhile
+of course a bunch of very angry
+destroyers have all showed up for some
+reason they arrived here at the exact
+same time I think the AI is cheating but
+that's just me
+yeah you can watch these Torpedoes I
+just goofing off trying to reacquire and
+notice they both completely out of
+energy here all right I'm gonna go and
+delete that we're gonna set you back to
+Auto everything I don't need to tell you
+to do anything Meanwhile my Destroyer
+escorts are all going to come rushing in
+they gotta have their fun too right we
+noticed the blimps like I got him I got
+him I got him let me add him let me have
+him
+trying to get close enough now if he
+were a depth charges now notice my blip
+will not let that submarine go oh
+dropped a bunch of Sono boys come on
+all right notice everybody of course
+snapped back into the patrol Zone uh
+prosecution Zone rather than going 40
+miles away and not being able to require
+the original Convoy so as you can see
+the blimps are very effective weapons
+but they require a lot of manual touch
+and a lot of kind of planning advance in
+order to make best use of them they
+really do work but it's one of those
+things where you have to understand the
+platform and understand it's missing
+capabilities in some cases and a little
+bit of it's kind of fun when it goes to
+be used enjoy

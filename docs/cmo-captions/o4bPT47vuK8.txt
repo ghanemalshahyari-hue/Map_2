@@ -1,0 +1,575 @@
+# C: MO - Visual Sensors and time of day
+Video: https://www.youtube.com/watch?v=o4bPT47vuK8
+Video ID: o4bPT47vuK8
+
+hello everyone in today's video we're
+going to be taking a look at visual
+detection and how it is affected by
+different times of day now when I'm
+referring to visual detection I'm
+talking about more than just looking I'm
+also talking about things like low light
+television infrared things along those
+lines now the reason I'm doing this of
+course is to provide everybody an
+opportunity to kind of see how certain
+mechanics are modeled and what things do
+so what I have here today is I have
+myself an infantry section I'm in the
+galpagos by the way in case you're
+curious I'm going to go and open them up
+um they have a really really really
+really simple sensor here it's called
+the mark1 eyeball I'm sure you've seen
+it before
+and what we're going to do is we're
+going to unpause my scenario speed up
+time here and we're going to go ahead
+and wait till we just spot something aha
+we have spotted something so what I'm
+going to do now is I'm going to go and
+select this bogey here and I noticed
+I've detected them at a range of about
+46.8 nautical miles now that's a pretty
+good distance there um that's really
+really far actually and personally I
+can't normally see things that aren't
+you know the size of a mountain at 50
+nautical miles yet we had no difficulty
+detecting them with an eyeball can't
+keep in mind got no binoculars or
+anything along those lines helping us
+out here and you're sitting here going
+wow wow that's that's actually really
+impressive how were they able to do that
+well let's take a look why when I go
+down to my air contacts and actually
+click on this one you will notice that
+my observation post detected them by a
+very large Contra they actually detected
+at 53 nautical miles also I have my game
+set up so it U reduces to 1x time
+interesting so um of course we know
+these guys are way way out there we pick
+them up by their contrail next thing I
+want to make you go ahead and observe
+here is if you look up at the tippy top
+you'll observe that it is 12:07 local
+time it is the middle of the day and we
+were able to pick them up at 53 nautical
+miles so what I'm going to do is I'm
+going to un pause here I'm just going to
+speed up time ah we spotted something
+else at a little bit closer of a
+distance you notice I have a third
+bomber here we picked him up at about 10
+nautical milish so let's go ah and take
+a look here what we detected observation
+no contrail detected so your brain is
+going oh well that makes no sense how
+come these different altitude 12,000 ft
+so obviously we weren't marking
+generally you're not going to start
+marking again this is generally on until
+you get to about 20,000 ft and up
+anything below that you're probably not
+on of Mark and by Mark I mean you're
+going to leave a contrail so anyway I'm
+going to go Ahad and un pause here and
+again let some time pass oh we spotted
+some more things here wow this is just a
+spot of paloa going on right here I
+noticed a really really really small
+contrail here on this one I also noticed
+a really really small contrail on this
+one and again we have different targets
+really fun Pro tip by the way you zoom
+in like this and you click on something
+it'll actually highlight where you saw
+it last which is really really handy
+here now there's one other thing I want
+you to observe that's the fact that
+nothing that I'm seeing again you can't
+see my finger quotes but I'm seeing
+these things I have been able to get a
+very very accurate Fire Control Quality
+Lock on I was able to identify several
+of them as dangerous of course these are
+dup LIF 160s here I never Ed those for
+anything so I'm like I'll use some
+people of 160s and of course these other
+targets are just going to kind of sneak
+on by this one's I think an attack
+airplane this one right here is I'm
+pretty confident it's a fighter but oh
+there's something else I just spotted
+what's this oh another Blackjack oh he
+was a little bit lower ah that's why we
+didn't see that one till the very end
+and of course they're just going to kind
+of scoot Scoot and fly away just like
+that so what I'm going to do now is I'm
+going to reload my game real quickly
+here test uh yes there's no other way to
+name a scenario like this so what I'm
+going to do now is I'm going to reduce
+the time of day to the middle of the
+night so I'll subract the let's see here
+8 hours off we get me to 4 in the
+morning we'll do a 10 hours off 0800 I
+think I did the math completely wrong on
+yes I did the math completely wrong in
+that cuz I'm a bad person 2200 press
+okay I keep doing the math bad backwards
+ah so bad at this sometimes I'm sorry
+all right we'll go get to the middle of
+the night now now one of the things I
+was very very curious about when I was
+originally testing the scenario and
+getting this ready earlier just to make
+sure everything works kind of a thing is
+I never bothered to double check to see
+if the phases the moon work and I
+actually tested the phases of the moon
+and I can safely say that I could not
+find an appreciable difference in
+spotting distance at Full Moon versus no
+moon or New Moon is the technical word
+there also Duran Duran so one of the
+things we have there is um that's not a
+factor but night time is a factor so I'm
+going to get unpause again go speed up
+time ah we spotted something fantastic
+so let's go ahead and see here we have a
+new air contact here this is at 15
+nautical miles I spotted this particular
+Target so my detection distance if you
+want to pull out a calculator real
+quickly here it's pretty quick here uh
+15 divided by what do we say 53 I think
+we're down to 25% of the spotting
+distance about well 28 and again this is
+all just experimental so some of this is
+not going to be accurate No Matter What
+keep in mind one of these bar is
+significantly higher than the other one
+but that is okay so I'm going to go and
+pause they're just sort of chewing
+they're going to chwo chew by I can't
+even identify what they are I just know
+they're up there because they're
+contrails HOH got something what's this
+H we can identify it as a Blackjack uh
+they actually got close enough that we
+could see them so they oh got something
+else here what's this oh another
+Blackjack you guys think these are all
+bombers they're not all bombers
+whoopsies so we didn't even identify
+them correctly and of course we didn't
+spot the other craft that we're going by
+so you can see there that we had a one4
+effective visual range at those
+distances which is really really
+relevant so what I'm going to do now is
+I'm going to reopen my scenario here and
+this is one of the nice things about
+these scenarios and I'm going to go
+ahead and set the time of day to Dawn
+now if you thought my math was bad a
+minute ago waai you see me try to get
+Dawn correctly let's try 1500 we need
+555 a.m. I did the math that's 9:00 a.m.
+so I got to subtract a few more of these
+let's see how close we can get again if
+this thing had a local time thing on a
+little scenario editor I would be a very
+happy person but we're never going to
+get that all right 6: a.m. so I need to
+subtract uh basically half an hour so do
+11:30 cuz again we need those bombers to
+take D and if I hold my mouse here
+you'll see that it says 5:30 a.m. Dawn
+we're well into Civil Twilight at this
+particular point so we should be able to
+see things okay so I'm going to go
+unpause one more time well by unpause
+I'm going to open up the message log
+speed up time oh we spotted something
+let's see what we got this time so now
+if I open this up you will observe the
+fact that we have detected them at 35
+nautical miles it is actually lured uh
+basically if your maximum daylight is
+going to get you a spotting distance of
+Maximum which was I said about 53 you
+can see here at dawn or dusk depending
+how you look at it we got about 35 there
+pull on my calculator that gets us about
+66% so that's actually pretty good but
+you can see even at dawn you have a
+pretty substantial decreasing in the
+range of where you're able to detect
+things again if you're making a little
+cheat sheet there you can kind of a
+pretty good idea that even though it's
+night time you can still see things
+especially if they have contrails that's
+really important as a matter of fact if
+I speed up a little more you'll notice
+that um we pick up that other Target
+right here bomber bomber bomber we got
+three different bombers going on here we
+never actually um oh oh there they are I
+think we see the fighter let me see if
+we can actually see that fighter oh we
+found the Blackjack but we're still
+missing one of these air contacts and
+again you can see little tiny contrail
+at four nautical miles is how close we
+had to get to actually detect it and we
+never actually spotted those other
+aircraft of course everybody's going
+what aircraft did he do what aircraft
+did he pick so now let's bring us to
+this second side of this equation and
+that is the tricky bit of getting
+something where I can actually lock onto
+things visually so what I'm going to do
+is grab my infantry section here I'm
+going to make a slight change to their
+sensor apparatus I'm going to add a
+sensor here I'm going to go ahead and
+grab this add a pair of
+binoculars grab myself anti-air and
+surface I'm going to make sure they can
+see in every direction now binoculars
+are an interesting quirky thing and let
+me show you why they're an interesting
+quirky thing this is one of the things
+that hopefully you take away if you
+don't take away anything else here so if
+I type in binoculars there
+surface area binoculars you'll notice
+they have a maximum range of 18 nautical
+miles now that's seems kind of dumb like
+why would you only have an 18 atic mile
+range of binoculars well I encourage you
+to set your binocular Zoom to 25x and
+try to hold them steady while looking
+out a little white Speck in the sky try
+it sometime it's it's a process so let
+me show you what happens I'll speed up
+time again and pause now what you'll
+observe here is my Mark 1 eyeball had no
+difficulty picking them up at our
+original 50 3 nautical mile range but
+something new is going to happen this
+time so I'm going to go ahead and go out
+to about 18 nautical miles here I'm
+going to go ahead and do a control
+insert uh see control insert control
+insert I'm just doing this again you can
+use your imagination while I put that
+there it's just to show you what 18
+nautical miles looks like so go and zoom
+back out here we're going to speed up
+time oh look at that you'll observe now
+that our Blackjack so we still don't
+have something that we could do a Fire
+Control lock or anything like that we
+need a radar to really get this a little
+bit more accurate you'll see what I mean
+in a minute but U for now you can see
+we're actually able to successfully
+Target these guys we have a pretty good
+idea what they are because the
+binoculars are not for searching they're
+for identifying so I'm going to go and
+speed up time a little bit here and what
+you're going to observe is we picked up
+the other aircraft as well we're
+actually be to get them we got them much
+earlier this time and what we're doing
+now is we're looking through our
+binoculars see how we picked them up
+with the generic binoculars and now
+we're able to actually track them once
+they get a little bit closer so our
+fighter targets and whatever this attack
+plane is we actually have a really
+confident lock on yes we definitely do
+not have any speed but we do have a
+course course is useful speed we'd have
+to do the math on but you'll notice look
+at how much higher quality of a track I
+have this track is enough that I could
+probably guide a weapon to it without
+turning on the radar keep in mind name a
+weapon system S sa19 I know uh that
+you're able to guide something purely
+visually with absolutely no radar signal
+at all but the thing I want to point out
+here is we actually had no difficulty
+and yeah that was an F-117 so if you
+wonder why it was so difficult to see
+doesn't really matter but you can see
+here because of those binoculars we're
+actually able to identify things and
+that's a really important point and
+you'll actually see here depending on
+how close we are how far we are we can
+actually identify it either by
+binoculars see how it's generic
+binoculars here or it's by the mark1
+eyeball if they get close enough now
+that's some pretty useful stuff so I'm
+going to reload my scenario again
+because again why not because science
+and what we're going to show you now is
+what happens when you add in a computer
+aided sensor so what I'm going to do is
+I'm gonna go ahead TV um so there's a
+lot of different choices for TV here and
+I'm going to grab a really simple one
+here and you go to generic TV camera and
+when you go all the way down here you're
+going to see that there's a generic TV
+Camera third generation surveillance so
+I'm going to go and add this on now this
+is a pretty neat sensor and I'll show
+you why it's actually almost too good
+you'll see what I mean in a second here
+so let me go a TV here actually if we
+type in generic TV this would be a lot
+easier wouldn't it generic TV let's go
+and scroll down here there it is right
+there success you'll notice it has a 30
+nautical mile range it also has a
+20x zoom which is huge the other thing
+you'll notice is it can identify whose
+team it's on it can classify it and it
+has continuous tracking capability uh
+that's an important Point here because
+of that's very challenging to do on
+certain types of platforms so let's go
+and unpause and the first thing you'll
+notice is we pick up our bombers at our
+usual range of 53 Nal miles and actually
+I can click on this guy and you can see
+very clearly that we're basically doing
+this still fashion way we're looking at
+out the window and just sort of seeing
+these chaps now if you remember we had a
+pretty hefty range on those TVs and
+you'll observe that as soon as we got
+within that particular range our generic
+TV Camera had no difficulty identifying
+the target you can see here right when
+we crossed the threshold of let's see 30
+nautical miles told you so now we also
+have a nice New Quirk that's continuous
+tracking I can actually look at this
+Target and I can watch them continuously
+track towards us so I now have
+everything I need to know about these
+particular targets with the exception of
+their speed and you can see this other
+Blackjack here we're actually able to
+identify it as well again thanks to that
+camera again a 70 30X or 20x Zoom is
+plenty of Zoom but one of the things you
+probably notice here is I still don't
+see my Fighters because without that
+distinctive contrail we're never going
+to be able to see them until they get
+very close in which case once they get
+very very close you'll actually zerve
+I'll pause one more time here that we
+actually detected them at about 10
+nautical miles with the camera before we
+saw them with the eyeball and now that
+we can see them with the camera we have
+the ability finally to go ahead and
+actually start doing the classification
+process so you can see just like that
+Wham I'm able to do this now the reason
+this is so stupid useful to us and again
+if you're building scenarios this is a
+great great technique here is we now
+have continuous tracking without a
+single radar pointing anywhere at these
+particular targets the only thing we
+don't have of course is our speed
+information now you're sitting there
+going I like this okay I like I like the
+cut of your chip here you've got a lot
+of Moxy you know kind of a thing like
+that and you can see just how effective
+this is is from a perspective now I
+can't fire any missiles at any of these
+guys we don't know their speed we just
+know where they are but again pretty
+confident interval here so I'm going to
+reset our scenario again again I feel
+sorry for this poor scenario I think
+I've used it millions of times and what
+I'm going to do is put that TV Camera
+back on but watch what happens this time
+when we change the time of day TV we'll
+go to TV Camera we'll do surveillance go
+ahead add that sucker on there all the
+targeting cameras are really really fun
+to play with but for the purpose of our
+scenario let's break things here uh what
+did we say it was I cannot remember what
+time we said it's probably 8 or
+something like really smart like that
+6:00 a.m. not early enough I told you
+we' forget 10 a.m. press okay there oh
+that's even this is what I get for doing
+a math in the top well 80 let's go to 80
+o00 that seems legit press okay there
+sounds good to me cool 2: in the morning
+perfect so we still have a camera but
+they're not low light television cameras
+so speed up
+time ah we've detected something and
+you'll observe here that our bogey here
+we picked them up at 17 nautical miles
+remember when we did the math before we
+came up here we did one of these like
+that aha we got a slight Improvement on
+Range here so not too too much but
+you'll notice our camera actually picked
+them up before our eyeballs pick them up
+again the benefit of having something
+that's got such a good range but even
+though it is the middle of the night we
+still can safely identify these targets
+again we're not getting we're not giving
+ourselves away here or anything like
+that but you'll also observe the only
+reason we saw these targets was because
+of their contrails if we were they were
+lower altitude like that one right there
+we never ever ever would have seen them
+basically go by we can see we have the
+blackjacks we have a big pack of these
+but we're missing the fighter and all
+that other stuff and obviously we're not
+going to see an f117 very easily at
+night now you know what you're thinking
+you're going ah so this is pretty good
+stuff this is pretty good I get it I can
+understand how you can use that in order
+to improve his scenario and like enhance
+and I get the whole detection versus
+classification thing uh where you going
+with all this well let me go with all
+this what happens when you start using
+infrared cameras instead of using visual
+cameras
+now everybody's like I'll be able to see
+at night this is great it's not as great
+as you think let me show you why so
+let's go and open that sucker up here
+we've added a generic flare this is a
+very very very good sensor as a matter
+of fact if I go up to my sensor page
+real quickly generic F lir we scroll
+down to the bottom you'll observe here
+that I have a 45 nautical mile max range
+20 Zoom it is a fantastic tool and you
+can see I can get I I can classify I can
+also get continuous tracking everything
+you could ever want so I'm going to go
+ahead and set the time of day we learn
+this time it's 8 :00 bam look at that 2
+in the morning on
+pause give it a moment and you'll
+observe the fact that we don't pick this
+target up until the same exact range
+actually little tiny bit further because
+again infrared targets are very very
+obvious to see but one of the things you
+observe here is even though we've
+acquired the target we're struggling ah
+there we go we're finally able to see
+our targets all about the same distance
+and again we saw one there we saw one
+there the best curiosity I can think of
+here is are we ever going to detect our
+fighter targets if we let these gigantic
+bombers go by you will see yes indeed
+our handy dandy this guy right here
+which we cannot identify it's just bogey
+number four at this moment we have to
+wait until they get pretty much on top
+of us even though we have that fancy
+schmancy Flur system really a Flur plus
+a TV Camera probably would have been the
+best combination if we were trying to
+improve our detectability over these
+really really long distances so as you
+can see nighttime does have a pretty big
+impact on detection and you can see it
+reduces its effect of detection by about
+U 75% is the reduction you can see at
+dawn you get about 60% of the detection
+range and obviously that's going to be
+lured throughout the day depending on
+what different situation you're going to
+get now where things get really really
+fun and if you've ever gone up here and
+done day and night lighting like this
+you can see just how dark it really is
+at this time of day one of my favorite
+bits here is um if you actually go to
+the side of the world that has light
+let's say we come here for example you
+actually do one of these things oh wait
+it's August just
+kidding as we make our way down you'll
+notice it's very very dark it's actually
+Dusk and of course if I make our way all
+the way down here and you know McMurdo
+and all that stuff you can see it's
+nighttime and one of the things I love
+is if you come up to the tippy top do
+you see this little Arc right here Perma
+daytime I don't know I just I love the
+fact that that's all been modeled
+accurately within this program I just
+think it's so cool I don't like day and
+night lighting for obvious reasons
+because I can't see a thing but again
+everybody's a little different as far as
+that goes now we'll leave you with one
+little detail that's kind of neat I'm
+going to go back to my database VI real
+fast here I'm going to go ahead and type
+in generic TV and I just want share one
+little thing with you while you're going
+to notice we have surveillance which can
+do side info it's automatic Target
+Inquisition visual when you select
+weapon detector one of the things you're
+going to observe is the fact this
+achieves all that other stuff too but it
+has a staggering range of 100 nautical
+miles that's just kind of one of those
+little H kind of a thing and of course
+you have the surface search version of
+these which are much shorter so if
+you're looking for something kind of
+cheap you have some really really really
+really powerful cameras here if you're
+looking to basically go all the way with
+stuff but again you can see even our
+third generation surveillance isn't bad
+when we make it a weapon director woo we
+that's a really really long range if
+you're looking to kind of not cheat the
+system a little bit but kind of take it
+all the way enjoy

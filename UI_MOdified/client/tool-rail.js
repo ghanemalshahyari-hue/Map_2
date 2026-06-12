@@ -201,6 +201,15 @@
         return warGameLoadPromise;
     }
 
+    /* ── Unit panel visibility ────────────────────────────────────────── */
+    function syncUnitPanel(tool) {
+        // Commander Unit Status Panel: close when switching away from select tool
+        const up = window.AppUnitStatusPanel;
+        if (tool !== 'select') {
+            if (up && typeof up.closePanel === 'function') up.closePanel();
+        }
+    }
+
     /* ── Rail button state ────────────────────────────────────────────── */
     function updateRailButtons(tool) {
         document.querySelectorAll('.tool-rail-btn').forEach(btn => {
@@ -246,6 +255,7 @@
                 })
                 .catch(err => console.warn('War Game engine load failed', err));
             setTimeout(showWarGameHud, 250);
+            syncUnitPanel(tool);
             return;
         }
 
@@ -278,6 +288,9 @@
 
         // 5. Ensure context panel is visible
         if (contextPanel) contextPanel.style.display = '';
+
+        // 6. Hide unit panel when not in select mode; restore it on select
+        syncUnitPanel(tool);
     }
 
     /* ── Wire tool rail clicks ────────────────────────────────────────── */
@@ -331,6 +344,7 @@
                 updateRailButtons(tool);
                 updateHeaders(tool);
                 setVisibleSections(tool);
+                syncUnitPanel(tool);
             }
             // Always re-apply drawing section visibility to override app.js's
             // switchSidebarForMode which may have shown symbolManager for 'pan' mode

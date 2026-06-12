@@ -1,0 +1,128 @@
+# C: MO - Personal Map Profile
+Video: https://www.youtube.com/watch?v=drNNxXIoE1I
+Video ID: drNNxXIoE1I
+
+hello everyone in today's video we're
+going to be taking a look at the
+personal map profile option now what are
+we talking about when we talk about the
+personal map profile well let's go ahead
+and demonstrate this kind of feel like
+I'm doing an infomercial thing here but
+it'll make sense when I show it to you
+this way so you first load in you're
+sitting here going I think I'll go ahead
+and build myself a little map here
+you'll make a fun little reference to
+Team Fortress 2 that nobody picks up on
+and you be like oh man I just
+can't kind of a thing like that so of
+course you know you go up to view real
+quick and you say all right what do we
+got to do to make this thing a little
+bit more pleasant you shut that sucker
+off and you're like that's a little bit
+better I kind of like the way this is
+going um I'm loving this looks pretty
+good you know let's go ahead and add a
+extra side here I'm just going to type
+in grn and I'll go ahead and go this ah
+ah and you go ahead and panic again sort
+of a thing so you're dealing with the
+default map options that are built into
+our lovely game here would it be nice if
+there's a way that we could tell it not
+to do that well the answer is there is
+and if you actually go up to game
+options and you go up to map display
+one of the options you're going to
+notice here towards the bottom is this
+thing that says use personal map profile
+the map profile of course is going to
+absorb whatever your standard profile is
+and is actually going to use it that way
+for the purposes of displaying the map
+itself so let's go ahead and I'm going
+to go ahead and create a new scenario
+here so you can all go blind
+again of course it's did I activate that
+no I didn't let's go add a new side let
+me go ahead my good old fashioned red
+again double kind of a thing but now
+what we're going to do is we're going to
+go up and we're going to customize this
+map so it looks the way that we want it
+to look so I'm going to come up here of
+course I don't like the Sentinel map a
+lot of people really really really like
+the open toal map one thing I actually
+usually do shut off is the place names I
+actually don't care for that I use it
+sometimes but a lot of times I do
+everything with latitude longitude
+anyway so it doesn't matter much to me
+and I come in here of course I go to my
+range symbols I set this to selected
+units because honestly it just gets so
+messy otherwise Mission area selected
+missions the one that I like contact the
+missions I always like this one all the
+missions were selected uh Fire Control
+for the rest so I said here I kind of
+customize everything sort of the way
+that I like it data blocks you can
+customize this quite a bit data links I
+never use that um I always use this
+option this one I always do this one of
+course I like to use that looks pretty
+good to me I love the fact that you can
+change the color of this like I just
+it's so cool there's so many neat things
+that they stick in the change notes that
+everybody misses so then what you're
+going to want to do is go up to game
+options map display and then this this
+lovely button that says here save
+current map profile as personal I'm
+going to go ahead and click that button
+so now what I'm going to do is I'm going
+to come up here and press use personal
+map profile so I've I clicked that
+switch you all saw me do that so now
+what I'm going to do is I'm going to
+create a new blank scenario notice
+nothing bad has happened so far I'm
+going up to create added sides I'm Type
+in red double click voila you can see
+that everything is stayed exactly the
+way that I like it now the interesting
+thing that you'll actually notice here
+is if I go up to view real quick you'll
+see that it actually has shut off the
+buttons that I don't want if you
+actually go back up to game options and
+you were to shut this off for some
+reason and uh close this it's actually
+going to go back to whatever that one
+was when it was created so keep that in
+mind that if I come up here and type in
+grin for example and double click ah
+it's all back once again so again game
+options map display I'm just going to go
+ahead and hit M personal map profile ah
+it's much much better kind of a thing
+now the bit that I wish you know if you
+actually were to go up to map settings
+you click on this you'll notice it
+remembered my settings for range and
+illumination and targeting if we come
+down here to contact the missions it
+remembered that feature as well so as
+you can see this is a fantastic way to
+customize this in such a way that it
+makes more sense to you keep in mind if
+you have that box checked and you open
+up and somebody already has it a
+specific way in a scenario your mode
+will override their mode which works
+really really well enjoy

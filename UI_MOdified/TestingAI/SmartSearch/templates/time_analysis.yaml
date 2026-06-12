@@ -1,0 +1,146 @@
+# templates/time_analysis.yaml
+# ============================
+# Doc 3 — تحليل الوقت (Time Analysis / 1:3 Rule).
+#
+# Why this is the simplest template:
+#   Every field is `static`, `input`, or `computed`. ZERO retrieval,
+#   ZERO LLM calls, zero citations. This is M2's deliverable — it
+#   exercises the renderer's Arabic typography (tables, numbering,
+#   layout) without touching Phase 2.
+#
+# Design references:
+#   - referencedocs/20_phase3_templates_and_kinds.md §6 (worked example)
+#   - referencedocs/18_phase3_generation.md §5 (summary table)
+#   - NewClasses.md (schema reference — MISSION_TIMELINE + CURRENT_TIME_REFERENCE)
+#
+# Collection scope: none. The template declares no default_collections
+# because no group in this document is `kind: retrieved`.
+
+meta:
+  template_id: time_analysis
+  template_version: 1
+  title_arabic: "تحليل الوقت"
+  document_slug: time_analysis
+  output_filename: "{document_slug}.docx"
+  default_collections: []              # no retrieval in this document
+
+schemas:
+  CURRENT_TIME_REFERENCE:
+    fields:
+      time_now:
+        kind: computed
+        function: time_math.format_time_now
+        arguments:
+          reporting_time: "{{input: timing.reporting_date_gregorian}}"
+          time_zone: "{{input: timing.time_zone}}"
+        label_ar: "الوقت الحالي"
+
+  MISSION_TIMELINE:
+    fields:
+      current_date:
+        kind: computed
+        function: time_math.format_gregorian_hijri_pair
+        arguments:
+          when: "{{input: timing.reporting_date_gregorian}}"
+        label_ar: "التاريخ الحالي (ميلادي / هجري)"
+
+      mission_start_time:
+        kind: computed
+        function: time_math.format_h_hour
+        arguments:
+          when: "{{input: timing.h_hour_gregorian}}"
+          time_zone: "{{input: timing.time_zone}}"
+        label_ar: "وقت بدء المهمة (T₀ / H-Hour)"
+
+      total_available_time:
+        kind: computed
+        function: time_math.format_duration_hours
+        arguments:
+          minutes: "{{input: timing.total_available_minutes}}"
+        label_ar: "إجمالي الوقت المتاح قبل بدء المهمة"
+
+      # The 1:3 rule: one third goes to the commander's planning,
+      # two thirds go to subordinate units. See referencedocs/
+      # 18_phase3_generation.md §8.1 for time_math.compute_allocation.
+      allocated_planning_time:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: planning_minutes_display
+        label_ar: "الوقت المخصص للتخطيط (الإجمالي ÷ 3)"
+
+      available_time_for_subordinate_units:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: subordinate_minutes_display
+        label_ar: "الوقت المتاح للوحدات الفرعية (الإجمالي × 2/3)"
+
+      # The four MDMP planning steps, each expressed as a percentage
+      # of allocated_planning_time. Splits are 30/20/30/20 per the
+      # old code and ADP 5-0.
+      time_for_mission_receipt_analysis:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: step_1_display
+        label_ar: "استلام المهمة وتحليلها (30%)"
+
+      time_for_coa_development:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: step_2_display
+        label_ar: "تطوير مسار العمل (20%)"
+
+      time_for_coa_analysis_comparison:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: step_3_display
+        label_ar: "تحليل ومقارنة مسارات العمل (30%)"
+
+      time_for_plan_order_production:
+        kind: computed
+        function: time_math.compute_allocation
+        arguments:
+          total_minutes: "{{input: timing.total_available_minutes}}"
+          h_hour: "{{input: timing.h_hour_gregorian}}"
+        output_field: step_4_display
+        label_ar: "إعداد الخطة والأمر (20%)"
+
+structure:
+  - kind: title
+    text: "تحليل الوقت"
+    alignment: center
+    underline: true
+
+  - kind: section
+    schema: CURRENT_TIME_REFERENCE
+    heading:
+      text: "الوقت المرجعي"
+      underline: true
+      space_before_cm: 1.0
+      space_after_cm: 0.0
+    layout: numbered_fields
+    citation_collection: false
+
+  - kind: section
+    schema: MISSION_TIMELINE
+    heading:
+      text: "الإطار الزمني للمهمة"
+      underline: true
+      space_before_cm: 1.0
+      space_after_cm: 0.0
+    layout: timeline_table
+    citation_collection: false

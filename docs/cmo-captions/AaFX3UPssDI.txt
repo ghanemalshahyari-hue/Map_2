@@ -1,0 +1,230 @@
+# C: MO - Using Time Step and Popup options for more control over time acceleration
+Video: https://www.youtube.com/watch?v=AaFX3UPssDI
+Video ID: AaFX3UPssDI
+
+hello everyone in today's video we're
+going to be taking a look at how you can
+make time acceleration and pausing work
+for you so we've talked about time
+acceleration in the past but one of the
+things we haven't really hit upon is how
+you can kind of customize it to make it
+work without missing kind of key events
+and there's a combination of different
+techniques that you can use to make that
+possible in this game the first one is
+if you look at the bottom left corner of
+the screen you probably notice that
+there's this thing that says 15 1 5 and
+15 you'll also probably notice if you
+hold your mouse over it that it's going
+to jump up say Advance Time by 1 minute
+so if you hold on the ALT key and then
+press the key that you see there it'll
+actually Advance time when you're paused
+now what I'm going to do is I'm going to
+set my time acceleration to maximum and
+I'm going to press alt two and what'll
+happen here is you'll see that we'll
+Advance time exactly one minutes now the
+cool thing here is you didn't see
+anything happen uh that makes sense
+because nothing did happen so what I'm
+going to try now is I'm going to go
+ahead and press alt in three and you can
+see there 3 minutes later exactly we've
+acquired some unusual contacts that seem
+to chilling out off our East Coast here
+so what I'm going to do now is I'm
+afraid that we might get attacked or
+something so I'm going to make sure that
+I've got something to pause Us in the
+event that we advance time a little bit
+too far so I'm going to go up to my game
+options here and in the game options if
+you head over to the message log you'll
+notice there's an option here for time
+scale 1X what this does is this will
+intentionally pause your game or
+actually not pause it'll drop you to 1x
+scale when it has a certain condition
+met so for example let me do a new
+missile contact you know let's say we
+have something coming at us ah here we
+are new weapon contact I'm going to set
+that to 1x just like that go ahead and
+close it and I'm going Advance Time by
+five minutes so I'm just going to press
+all three a bunch of things happen five
+minutes later 5 minutes later five
+minutes later oh we've got a lot of
+trouble coming our way here we better
+get everybody an alert this seems pretty
+dangerous aha alt three and again we're
+just skipping five minutes at a time
+there's a lot of aircraft that seem to
+be going in the opposite direction to us
+that's a little nerve-wracking I wonder
+what that's about although uh oh we
+picked something up in which you'll
+observe upper left corner of the screen
+is instantaneously when that event
+occurred our game reduced itself to 1x
+speed even though I was in time
+acceleration mode now of course that we
+get to see a nice little set of
+fireworks here I don't want to miss the
+fireworks I wonder who could be taking
+pot shots at us here it's always
+questionable with some of these things
+all right let's see how we're doing with
+the battle here isn't that a neat little
+base I love the way they got like little
+hangers and everything like that and
+then of course you can watch the little
+fireworks here as they're firing the
+individual pot shots at these um it says
+R3 they're not r3s they're kayaks KS
+k20s I think I always get those wrong
+but I think you can guess where those
+came from but we should watch the rest
+of the fireworks here um obviously we've
+got some more incoming weapons so I'm
+going to go ahead and ALT to actually
+I'll pause first I'll make sure you're
+careful with the alt that you don't
+close your game by the way pause the
+game real quick I'm going to go ahead
+and press alt two there just like that
+and you can skip for it a minute of
+course if I want to be a little more
+precise you can go ahead and set this to
+a higher speed so that when you do your
+alternate 2 time advances very very
+quickly uh keep in mind there's a lot of
+shenanigans is about to happen here so
+I'm going to go ahead and press alt one
+and you can almost like skip ahead like
+one click at a time and of course we had
+a new missile detected so the game
+instantly dropped down to 1x speed so we
+can watch the engagement of our missiles
+here now I believe they call the rapers
+hles and not missiles because the
+concept is they never miss butth we'll
+see what happens here kind of a thing
+like that let's skip a little bit of
+time ahead here and the fireworks are
+going okay oh boy look at that thing
+leaving the rail I mean again this is
+real time this is 1,00 knots it's got 5
+Seconds to catch up to our little guided
+weapon 20 here again I don't know who's
+shooting guided weapons at us here uhoh
+uh-oh he got through it got through
+uh-oh uhoh let's see what's going to
+happen
+here oh my goodness here it comes here
+it comes HOH this might get really close
+oh let's see here I think this guy's
+going to be that did it fantastic so
+again I'll just press my ALT to I'll
+actually make sure you're in the correct
+speed that you want to be first hit that
+alt two and again you can just skip 15
+seconds at a time you can watch the
+splattering and it's fantastic how fast
+you can basically skip ahead because it
+knows its time interval and it actually
+runs very smoothly for skipping huge
+chunks of time in a scenario now the
+other thing you have here too is if you
+look up in my left corner there's this
+lovely button here that says basically
+X1 if you ever get stuck you can run up
+here and quickly press that button to
+reduce the time scale that it is and
+like I said I think that's just kind of
+a neat feature when you combine that
+automatic 1X plus the little time skips
+you have a lot of control over your
+scenario and again you can always have
+those little almost interrupts is what
+I'm going to call them to make things go
+a little bit smoother for you without
+ACC accidentally now I'm going to go
+ahead and drop this back to a 1x scale
+of course you can actually make it pop
+up messages and things you can even make
+it appear down here in the message log
+if you need depending exactly on what
+stuff you have to do now I feel kind of
+bad that we fired a lot of missiles out
+of the air there but there's something
+going on over here and just it just
+seems a little unfair that it's just
+allowed to you know kind of continually
+exist without our Shenanigans here so
+well let's cause some trouble and again
+you can see the little uh pin icons the
+pin cushion view there just kind of
+getting a feel for that that's a ton of
+fun by the way I like the way that work
+Works set some control v action here and
+oh what's this it'd be a shame if
+somebody in a Virginia happened to be
+nearby oh we shouldn't do that that
+wouldn't be appropriate what we should
+do instead let me go ahead and grab the
+United Kingdom Here H UK UK it's only
+fair it's only fair let's see what is
+the latest and greatest we can get there
+the s32 dreadn what a fantastic name
+that is an ssbn it's not what we want
+though let's see SS attx summary oh
+we'll go with that one 2024 seems
+legit let's go ahead and swing around of
+course we have Newman like 25 ft away so
+we have to kind of keep that in mind any
+shenanigan we're about to pull here is
+uh going to be probably ill advised
+there we go let's just swing around here
+there we go and you got to watch your
+speed real carefully here i' love to
+like pop up real quick and like you know
+get a periscope sighting or something
+like that but we can't looks pretty good
+82 feet is awfully
+shallow had a pretty good Target lock
+there for a second I like that right
+there pause all right let's do the deed
+you get one two three and and you're
+going to turn around so you're only
+going to get two and you get one because
+reasons fire
+[Applause]
+Revenge that care oh look at him go look
+at him go look at him go told
+you oh ow oh each uhoh he's running he's
+running not going to work what turn
+around that did oh I can't believe that
+didn't work I'm actually kind of
+disappointed uh these little barks by
+the way they can get the away some time
+let's see we doing here new Mania is um
+hurting I bet let's take a look at yeah
+he's a Hulk so he's going down and of
+course the cluing itself is not looking
+so good but um I think we're going to
+have to give it another pass and of
+course you can see that our Goblin here
+which clearly did the deed even though
+we've detected him firing we weren't
+quick enough to get a follow-up torpedo
+we were too busy running away so as you
+can see the time acceleration options
+are a great way to be able to kind of
+control the flow of the game especially
+in longer scenarios but they can also be
+customized to make sure you don't miss
+important things enjoy

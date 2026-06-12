@@ -47,6 +47,7 @@ const adjudicator  = require('./ai/adjudicator-agent');
 const scenarios    = require('./ai/scenario-loader');
 const wargameSimBridge = require('./wargame-sim-bridge'); // FAST-DOC-1 DOCX→sim→import bridge
 const wargameLocalBridge = require('./wargame-local-bridge'); // LOCAL-IMPORT-2 local folder import
+const terrainApi   = require('./terrain-api'); // GIS-TERRAIN-1 T-1: read-only DEM endpoints
 const mcRunner     = require('./ai/monte-carlo-runner');
 const feedbackStore = require('./ai/feedback-store');
 const lessonStore   = require('./ai/lesson-store');
@@ -469,6 +470,10 @@ const server = http.createServer((req, res) => {
     // ROADMAP-4: roadmap status persistence (GET read / POST admin-only). Isolated
     // from the scenario/sim domain — never touches World State, units, or the journal.
     if (roadmapStore.handleRoadmapApi(req, res, pathname, req.method, sendJson, readJsonBody)) return;
+
+    // GIS-TERRAIN-1 (T-1): read-only terrain endpoints (health/elevation/profile).
+    // Wires the previously orphaned dem-service; degrades gracefully without a DEM.
+    if (terrainApi.handle(req, res, { url, pathname, method: req.method, sendJson })) return;
 
     // FAST-DOC-1: DOCX → WarGamingGEN → GeoJSON import bridge (staged handoff).
     if (wargameSimBridge.handle(req, res, { url, pathname, method: req.method, sendJson, scenarios })) return;

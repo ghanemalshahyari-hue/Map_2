@@ -1061,11 +1061,25 @@ function handle(req, res, ctx) {
                     ao: body.ao != null ? body.ao : null,
                     as_of: body.as_of, staleness_days: body.staleness_days,
                 };
-                if (isTerrainOptIn(body.includeTerrain) || isTerrainOptIn(url.searchParams.get('includeTerrain'))) {
+                var includeTerrain = isTerrainOptIn(body.includeTerrain) || isTerrainOptIn(url.searchParams.get('includeTerrain'));
+                if (includeTerrain) {
                     enrichOptions.includeTerrain = true;
                 }
 
                 var enriched = LOCATION.enrichPlanningModelLocations(model, enrichOptions);
+                var uploadedCandidates = Array.isArray(ob && ob.placement_candidates) ? ob.placement_candidates : [];
+                uploadedCandidates.forEach(function (cand, ci) {
+                    if (!cand || typeof cand !== 'object' || Array.isArray(cand)) return;
+                    var copy = JSON.parse(JSON.stringify(cand));
+                    copy.exact_unit_position = false;
+                    copy.needs_review = true;
+                    copy.source_type = copy.source_type || 'ai_candidate_from_external_llm';
+                    copy.source = copy.source || PLANNING.makeSource({ type: 'uploaded_doc', origin: 'brief', key: 'operational_brief.placement_candidates[' + ci + ']' });
+                    if (!Array.isArray(copy.warnings)) copy.warnings = [];
+                    if (copy.warnings.indexOf('coordinate_requires_location_intelligence_review') === -1) copy.warnings.push('coordinate_requires_location_intelligence_review');
+                    enriched.placement_candidates.push(copy);
+                });
+                if (includeTerrain) LOCATION.attachTerrainToCandidates(enriched.placement_candidates);
 
                 sendJson(res, 200, {
                     ok: true,

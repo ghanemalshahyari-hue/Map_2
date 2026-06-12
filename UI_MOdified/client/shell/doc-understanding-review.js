@@ -145,9 +145,12 @@
     }
     function renderEnemyBases(p) {
         var bases = opBrief(p).enemy_bases || [];
-        if (!bases.length) return '';
+        var friendlyTrials = opBrief(p).friendly_trial_bases || [];
+        if (!bases.length && !friendlyTrials.length) return '';
         var html = '<section style="margin:10px 0;padding:8px 0;border-top:1px solid #23303d;">' +
             '<div style="font-size:13px;color:#f0a0a0;font-weight:600;margin-bottom:6px;">\u0642\u0648\u0627\u0639\u062f \u0648\u0645\u0637\u0627\u0631\u0627\u062a \u0627\u0644\u0639\u062f\u0648 \u2014 Enemy Bases</div>';
+        html += '<div style="margin-bottom:6px;">' + chip('RED bases', bases.length, '#f0a0a0') +
+            chip('BLUE trial bases', friendlyTrials.length, '#7fd6a0') + '</div>';
         bases.forEach(function (b) {
             var coord = (b.lat != null && b.lon != null) ? (b.lat + ', ' + b.lon) : 'pending';
             html += '<div style="margin:4px 0;padding:6px 8px;border:1px solid #3d2a2a;background:#1a1212;border-radius:4px;font-size:12px;">' +
@@ -155,6 +158,18 @@
                 fieldRow('base_name_en', b.base_name_en) +
                 fieldRow('coordinates', coord) +
                 fieldRow('site_type', b.site_type || 'airbase') +
+                fieldRow('needs_review', b.needs_review ? 'true' : 'false') +
+                fieldRow('source_type', b.source_type) +
+                '</div>';
+        });
+        friendlyTrials.forEach(function (b) {
+            var coord = (b.lat != null && b.lon != null) ? (b.lat + ', ' + b.lon) : 'pending';
+            html += '<div style="margin:4px 0;padding:6px 8px;border:1px solid #294333;background:#121a16;border-radius:4px;font-size:12px;">' +
+                fieldRow('base_name_ar', b.base_name_ar) +
+                fieldRow('base_name_en', b.base_name_en) +
+                fieldRow('coordinates', coord) +
+                fieldRow('site_type', b.site_type || 'friendly_trial_anchor') +
+                fieldRow('side', b.side || 'BLUE') +
                 fieldRow('needs_review', b.needs_review ? 'true' : 'false') +
                 fieldRow('source_type', b.source_type) +
                 '</div>';

@@ -52,6 +52,7 @@ function emptyBrief() {
             placement_candidates: [],
             proposed_units: [],
             enemy_bases: [],
+            friendly_trial_bases: [],
             enemy_forces: null,
             staff_brief_2: null,
             external_raw: {},
@@ -408,8 +409,13 @@ function step1FingerprintKeys(obj) {
      'GROUND_COMPONENT_MISSION', 'Operational_Assumptions'].forEach(function (k) {
         if (k in obj) matched.push(k);
     });
-    if (obj.enemy_forces && typeof obj.enemy_forces === 'object' &&
-            Array.isArray(obj.enemy_forces.air_bases)) matched.push('enemy_forces.air_bases');
+    if (obj.enemy_forces && typeof obj.enemy_forces === 'object') {
+        ['bases', 'air_bases', 'naval_bases', 'land_bases'].forEach(function (k) {
+            if (Array.isArray(obj.enemy_forces[k])) matched.push('enemy_forces.' + k);
+        });
+    }
+    if (obj.friendly_forces && typeof obj.friendly_forces === 'object' &&
+            Array.isArray(obj.friendly_forces.trial_bases)) matched.push('friendly_forces.trial_bases');
     var sm = obj.scenario_metadata;
     var st = sm && sm.scenario_type;
     if (typeof st === 'string' && /step\s*[-_ ]*1/i.test(st)) matched.push('scenario_metadata.scenario_type');
@@ -508,6 +514,7 @@ function normalizeBrief(input) {
     o.placement_candidates = arr(ob.placement_candidates);
     o.proposed_units = arr(ob.proposed_units);
     o.enemy_bases = arr(ob.enemy_bases);
+    o.friendly_trial_bases = arr(ob.friendly_trial_bases);
     o.enemy_forces = (ob.enemy_forces && typeof ob.enemy_forces === 'object') ? ob.enemy_forces : null;
     o.staff_brief_2 = (ob.staff_brief_2 && typeof ob.staff_brief_2 === 'object') ? ob.staff_brief_2 : null;
     o.external_raw = (ob.external_raw && typeof ob.external_raw === 'object') ? ob.external_raw : {};

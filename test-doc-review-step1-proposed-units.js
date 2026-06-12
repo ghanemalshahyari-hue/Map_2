@@ -91,7 +91,7 @@ assert(html.indexOf('F-4D/E Phantom II') !== -1 && html.indexOf('12') !== -1, 'F
 });
 ['18', '10', '8', '4'].forEach(count => assert(html.indexOf(count) !== -1, 'count ' + count + ' shown'));
 assert(html.indexOf('35.2116, 48.6534') !== -1, 'coordinates shown');
-assert(html.indexOf('site_type') !== -1 && html.indexOf('airbase') !== -1, 'site_type shown');
+assert(html.indexOf('site_type') !== -1 && html.indexOf('air_base') !== -1, 'site_type shown');
 assert(html.indexOf('source_type') !== -1 && html.indexOf('ai_candidate_from_external_llm') !== -1, 'source type shown');
 assert(html.indexOf('base_known_exact_unit_position_unknown') !== -1, 'warning shown');
 assert(html.indexOf('AI information requires review') !== -1, 'AI review warning');

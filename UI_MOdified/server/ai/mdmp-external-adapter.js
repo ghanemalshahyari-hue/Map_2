@@ -213,13 +213,105 @@ function typeArForUnit(unit, platform) {
     return '\u0648\u062d\u062f\u0629';
 }
 
-function addEnemyAirBases(data, file, state) {
+function siteTypeForBase(base, fallback) {
+    const raw = firstText(base, ['site_type', 'base_type', 'type', 'location_type']) || fallback || 'base';
+    const s = String(raw).toLowerCase().replace(/[\s-]+/g, '_');
+    if (/naval/.test(s) || s.indexOf('\u0628\u062d\u0631') !== -1) return 'naval_base';
+    if (/land|ground/.test(s) || s.indexOf('\u0628\u0631') !== -1) return 'land_base';
+    if (/trial/.test(s)) return 'friendly_trial_anchor';
+    if (/air/.test(s) || s.indexOf('\u062c\u0648') !== -1 || s === 'airbase') return 'air_base';
+    return s || 'base';
+}
+
+function baseListFromEnemy(rawEnemy) {
+    if (!rawEnemy || typeof rawEnemy !== 'object' || Array.isArray(rawEnemy)) return [];
+    if (Array.isArray(rawEnemy.bases)) {
+        return rawEnemy.bases.map((base, index) => ({ base, index, key: 'enemy_forces.bases[' + index + ']', site_type: siteTypeForBase(base, 'base') }));
+    }
+    const out = [];
+    [['air_bases', 'air_base'], ['naval_bases', 'naval_base'], ['land_bases', 'land_base']].forEach(([field, type]) => {
+        const list = Array.isArray(rawEnemy[field]) ? rawEnemy[field] : [];
+        list.forEach((base, index) => out.push({ base, index, key: 'enemy_forces.' + field + '[' + index + ']', site_type: siteTypeForBase(base, type) }));
+    });
+    return out;
+}
+
+function normalizeProposedUnit(unit, file, key) {
+    if (!unit || typeof unit !== 'object' || Array.isArray(unit)) return null;
+    const out = normalizePlatformText(clone(unit));
+    out.side = String(out.side || 'RED').toUpperCase();
+    out.source_type = out.source_type || 'ai_candidate_from_external_llm';
+    out.needs_review = true;
+    out.confidence = out.confidence || 'low';
+    out.exact_unit_position = false;
+    out.warning = out.warning || 'base_known_exact_unit_position_unknown';
+    out.warnings = Array.isArray(out.warnings) && out.warnings.length ? out.warnings : ['base_known_exact_unit_position_unknown', 'ai_information_requires_review'];
+    out.source = out.source || { type: 'external_json', file, key, origin: 'mdmp_step1', confidence: 'low' };
+    return out;
+}
+
+function normalizePlacementCandidate(candidate, file, key) {
+    if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) return null;
+    const out = normalizePlatformText(clone(candidate));
+    const coords = baseCoords(out);
+    if (out.lat == null && coords.lat != null) out.lat = coords.lat;
+    if (out.lon == null && coords.lon != null) out.lon = coords.lon;
+    out.placement_type = out.placement_type || 'base_location_anchor';
+    out.coordinate_format = out.coordinate_format || 'external_step1_anchor';
+    out.exact_unit_position = false;
+    out.needs_review = true;
+    out.confidence = out.confidence || ((out.lat != null && out.lon != null) ? 'medium' : 'low');
+    out.source_type = out.source_type || 'ai_candidate_from_external_llm';
+    out.source = out.source || { type: 'external_json', file, key, origin: 'mdmp_step1', confidence: 'low' };
+    out.warnings = Array.isArray(out.warnings) && out.warnings.length ? out.warnings : ['coordinate_requires_location_intelligence_review'];
+    return out;
+}
+
+function pushPlacementCandidate(state, candidate) {
+    if (!candidate) return;
+    const key = [
+        candidate.side || '',
+        candidate.placement_type || '',
+        candidate.site_type || '',
+        candidate.base_name_ar || candidate.base_name_en || candidate.mention || '',
+        candidate.lat == null ? '' : candidate.lat,
+        candidate.lon == null ? '' : candidate.lon,
+    ].join('|');
+    const exists = state.placement_candidates.some(c => [
+        c.side || '',
+        c.placement_type || '',
+        c.site_type || '',
+        c.base_name_ar || c.base_name_en || c.mention || '',
+        c.lat == null ? '' : c.lat,
+        c.lon == null ? '' : c.lon,
+    ].join('|') === key);
+    if (!exists) state.placement_candidates.push(candidate);
+}
+
+function preserveTopLevelReviewArrays(data, file, state) {
+    const units = rawStructuredValue(data, 'proposed_units');
+    if (Array.isArray(units)) {
+        units.forEach((unit, i) => {
+            const u = normalizeProposedUnit(unit, file, 'proposed_units[' + i + ']');
+            if (u) state.proposed_units.push(u);
+        });
+    }
+    const candidates = rawStructuredValue(data, 'placement_candidates');
+    if (Array.isArray(candidates)) {
+        candidates.forEach((candidate, i) => pushPlacementCandidate(state,
+            normalizePlacementCandidate(candidate, file, 'placement_candidates[' + i + ']')));
+    }
+}
+
+function addStep1BaseAnchors(data, file, state) {
     const rawEnemy = rawStructuredValue(data, 'enemy_forces');
     if (rawEnemy && typeof rawEnemy === 'object' && !Array.isArray(rawEnemy) && !state.enemy_forces) {
         state.enemy_forces = rawEnemy;
     }
-    const bases = rawEnemy && typeof rawEnemy === 'object' && Array.isArray(rawEnemy.air_bases) ? rawEnemy.air_bases : [];
-    bases.forEach((base, bi) => {
+    const enemyBases = baseListFromEnemy(rawEnemy);
+    const hadTopLevelProposedUnits = state.proposed_units.length > 0;
+    enemyBases.forEach((entry, bi) => {
+        const base = entry.base;
         if (!base || typeof base !== 'object') return;
         const baseNameAr = firstText(base, ['base_name_ar', 'name_ar', 'base_ar', 'name']) || '';
         const baseNameEn = firstText(base, ['base_name_en', 'name_en', 'base_en']) || '';
@@ -231,7 +323,7 @@ function addEnemyAirBases(data, file, state) {
             country: firstText(base, ['country']) || '\u0625\u064a\u0631\u0627\u0646',
             base_name_ar: baseNameAr,
             base_name_en: baseNameEn,
-            site_type: firstText(base, ['site_type', 'type', 'location_type']) || 'airbase',
+            site_type: entry.site_type,
             lat: coords.lat,
             lon: coords.lon,
             exact_unit_position: false,
@@ -240,11 +332,11 @@ function addEnemyAirBases(data, file, state) {
             warning: 'base_known_exact_unit_position_unknown',
             warnings: ['base_known_exact_unit_position_unknown'],
             source_type: 'ai_candidate_from_external_llm',
-        }, { source: { type: 'external_json', file, key: 'enemy_forces.air_bases[' + bi + ']', origin: 'mdmp_step1', confidence: 'low' } });
+        }, { source: { type: 'external_json', file, key: entry.key, origin: 'mdmp_step1', confidence: 'low' } });
         state.enemy_bases.push(baseObj);
-        if (coords.lat === null || coords.lon === null) addMissing(state, 'enemy_forces.air_bases[' + bi + '].coordinates');
+        if (coords.lat === null || coords.lon === null) addMissing(state, entry.key + '.coordinates');
         else {
-            state.placement_candidates.push({
+            pushPlacementCandidate(state, {
                 mention: baseNameAr || baseNameEn || ('enemy air base ' + (bi + 1)),
                 coordinate_format: 'base_anchor',
                 lat: coords.lat,
@@ -253,21 +345,22 @@ function addEnemyAirBases(data, file, state) {
                 side: 'RED',
                 base_name_ar: baseNameAr,
                 base_name_en: baseNameEn,
-                site_type: firstText(base, ['site_type', 'type', 'location_type']) || 'airbase',
+                site_type: entry.site_type,
                 exact_unit_position: false,
                 needs_review: true,
                 confidence: 'medium',
                 source_type: 'ai_candidate_from_external_llm',
-                source: { type: 'external_json', file, key: 'enemy_forces.air_bases[' + bi + ']', origin: 'mdmp_step1', confidence: 'low' },
+                source: { type: 'external_json', file, key: entry.key, origin: 'mdmp_step1', confidence: 'low' },
                 warnings: ['base_known_exact_unit_position_unknown', 'coordinate_requires_location_intelligence_review'],
             });
         }
         const units = Array.isArray(base.units) ? base.units : [];
         units.forEach((unit, ui) => {
+            if (hadTopLevelProposedUnits) return;
             if (!unit || typeof unit !== 'object') return;
             const platform = firstText(unit, ['platform', 'name', 'unit', 'aircraft']) || 'unknown';
             const estimated = firstNumber(unit, ['estimated_count', 'count', 'quantity']);
-            if (estimated === null) addMissing(state, 'enemy_forces.air_bases[' + bi + '].units[' + ui + '].estimated_count');
+            if (estimated === null) addMissing(state, entry.key + '.units[' + ui + '].estimated_count');
             state.proposed_units.push({
                 id: 'RED-' + platformCode(platform) + '-' + code,
                 side: 'RED',
@@ -285,9 +378,43 @@ function addEnemyAirBases(data, file, state) {
                 exact_unit_position: false,
                 warning: 'base_known_exact_unit_position_unknown',
                 warnings: ['base_known_exact_unit_position_unknown', 'ai_information_requires_review'],
-                source: { type: 'external_json', file, key: 'enemy_forces.air_bases[' + bi + '].units[' + ui + ']', origin: 'mdmp_step1', confidence: 'low' },
+                source: { type: 'external_json', file, key: entry.key + '.units[' + ui + ']', origin: 'mdmp_step1', confidence: 'low' },
             });
         });
+    });
+    const rawFriendly = rawStructuredValue(data, 'friendly_forces');
+    const friendlyBases = rawFriendly && typeof rawFriendly === 'object' && Array.isArray(rawFriendly.trial_bases) ? rawFriendly.trial_bases : [];
+    friendlyBases.forEach((base, bi) => {
+        if (!base || typeof base !== 'object') return;
+        const baseNameAr = firstText(base, ['base_name_ar', 'name_ar', 'base_ar', 'name']) || '';
+        const baseNameEn = firstText(base, ['base_name_en', 'name_en', 'base_en']) || '';
+        const coords = baseCoords(base);
+        const key = 'friendly_forces.trial_bases[' + bi + ']';
+        const trial = {
+            id: 'BLUE-TRIAL-' + baseCode(baseNameAr, baseNameEn),
+            side: 'BLUE',
+            country: firstText(base, ['country']) || '\u0642\u0637\u0631',
+            base_name_ar: baseNameAr,
+            base_name_en: baseNameEn,
+            site_type: 'friendly_trial_anchor',
+            lat: coords.lat,
+            lon: coords.lon,
+            exact_unit_position: false,
+            needs_review: true,
+            confidence: (coords.lat !== null && coords.lon !== null) ? 'medium' : 'low',
+            warning: 'trial_anchor_exact_unit_position_unknown',
+            warnings: ['trial_anchor_exact_unit_position_unknown'],
+            source_type: 'ai_candidate_from_external_llm',
+            source: { type: 'external_json', file, key, origin: 'mdmp_step1', confidence: 'low' },
+        };
+        state.friendly_trial_bases.push(trial);
+        if (coords.lat === null || coords.lon === null) addMissing(state, key + '.coordinates');
+        else pushPlacementCandidate(state, Object.assign({}, trial, {
+            mention: baseNameAr || baseNameEn || ('friendly trial base ' + (bi + 1)),
+            coordinate_format: 'base_anchor',
+            placement_type: 'base_location_anchor',
+            warnings: ['trial_anchor_exact_unit_position_unknown', 'coordinate_requires_location_intelligence_review'],
+        }));
     });
 }
 
@@ -803,7 +930,8 @@ function mapPlanning(data, file, state) {
     if (ff && !state.friendly_summary) state.friendly_summary = { text: ff, file, key: 'friendly_forces' };
     const ef = val(data, 'enemy_forces');
     if (ef && !state.enemy_summary) state.enemy_summary = { text: ef, file, key: 'enemy_forces' };
-    addEnemyAirBases(data, file, state);
+    preserveTopLevelReviewArrays(data, file, state);
+    addStep1BaseAnchors(data, file, state);
     const cap = val(data, 'Enemy_Capabilities');
     if (cap) state.enemy_capabilities.push({ text: cap, source: { file, key: 'Enemy_Capabilities' } });
 }
@@ -822,7 +950,7 @@ function adaptMdmpBundle(entries) {
         constraints: [], assumptions: [], timeline: [], area: null, enemy_capabilities: [],
         task_assembly: null, units_duty: null, placement_candidates: [], missing_information: [], seen_planning: false,
         doctrine_upload_required: null, doctrine_sources: [], doctrine_application_policy: null,
-        enemy_forces: null, enemy_bases: [], proposed_units: [],
+        enemy_forces: null, enemy_bases: [], friendly_trial_bases: [], proposed_units: [],
         staff_brief_2: null, external_raw: {},
         files: [], steps: [],
     };
@@ -882,6 +1010,7 @@ function adaptMdmpBundle(entries) {
         ob.placement_candidates = state.placement_candidates;
         ob.enemy_forces = state.enemy_forces;
         ob.enemy_bases = state.enemy_bases;
+        ob.friendly_trial_bases = state.friendly_trial_bases;
         ob.proposed_units = state.proposed_units;
     }
     if (state.area) ob.area_of_operations = state.area;

@@ -395,8 +395,50 @@ const MDMP_STEPS = [
             'join_op_mission'] },
 ];
 
+const STEP1_WRAPPER_KEYS = [
+    'operational_brief', 'step1', 'Step1', 'Step_1', 'planning_guidance',
+    'Planning_Guidance', 'external_step1', 'External_Step_1',
+];
+
+function step1FingerprintKeys(obj) {
+    if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return [];
+    var matched = [];
+    ['task_assembly', 'Units_Duty', 'doctrine_upload_required', 'letter_ref_number',
+     'warning_order', 'Warning_Order', 'WARNORD', 'Assembly_Area',
+     'GROUND_COMPONENT_MISSION', 'Operational_Assumptions'].forEach(function (k) {
+        if (k in obj) matched.push(k);
+    });
+    if (obj.enemy_forces && typeof obj.enemy_forces === 'object' &&
+            Array.isArray(obj.enemy_forces.air_bases)) matched.push('enemy_forces.air_bases');
+    var sm = obj.scenario_metadata;
+    var st = sm && sm.scenario_type;
+    if (typeof st === 'string' && /step\s*[-_ ]*1/i.test(st)) matched.push('scenario_metadata.scenario_type');
+    return matched;
+}
+
+function getExternalStep1Root(obj) {
+    if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return null;
+    var roots = [{ path: '', value: obj }];
+    STEP1_WRAPPER_KEYS.forEach(function (k) {
+        if (obj[k] && typeof obj[k] === 'object' && !Array.isArray(obj[k])) {
+            roots.push({ path: k, value: obj[k] });
+        }
+    });
+    for (var i = 0; i < roots.length; i++) {
+        var matched = step1FingerprintKeys(roots[i].value);
+        if (matched.length) return {
+            root: roots[i].value,
+            path: roots[i].path,
+            matched: matched.map(function (k) { return roots[i].path ? roots[i].path + '.' + k : k; }),
+        };
+    }
+    return null;
+}
+
 function detectMdmp(obj) {
     if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return { is: false };
+    var step1 = getExternalStep1Root(obj);
+    if (step1) return { is: true, step: 'planning_guidance', matched: step1.matched };
     for (const def of MDMP_STEPS) {
         const matched = def.any.filter(k => k in obj);
         if (matched.length) return { is: true, step: def.step, matched };
@@ -408,12 +450,12 @@ function detectMdmp(obj) {
 function classifyJsonInput(obj) {
     if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return 'unknown';
     if (Array.isArray(obj.red_units) && Array.isArray(obj.blue_units_initial)) return 'rmooz_scenario';
+    if (detectMdmp(obj).is) return 'mdmp_external';
     if (obj.operational_brief && typeof obj.operational_brief === 'object') return 'operational_brief';
     if (obj.friendly && obj.enemy &&
         (typeof obj.mission === 'string' || Array.isArray(obj.objectives) || Array.isArray(obj.phases))) {
         return 'operational_brief';   // bare operational_brief object
     }
-    if (detectMdmp(obj).is) return 'mdmp_external';
     return 'unknown';
 }
 
@@ -490,9 +532,28 @@ function understandingFromBrief(brief) {
     if (!ob.mission) ambiguities.push('Mission not present in the brief.');
     if (!arr(ob.objectives).length) ambiguities.push('No objectives in the brief — set the objective on the map.');
     if (!arr(ob.phases).length) ambiguities.push('No phases in the brief.');
+    var labelEn = 'Operational Brief';
+    var labelAr = 'الموجز التشغيلي';
+    if (brief && brief.set_type === 'mdmp_external') {
+        var steps = arr(brief.documents).map(function (d) { return d && d.mdmp_step; }).filter(Boolean);
+        var uniqueSteps = Array.from(new Set(steps));
+        if (uniqueSteps.length === 1 && uniqueSteps[0] === 'planning_guidance') {
+            labelEn = 'External App Step 1';
+            labelAr = 'خطوة 1 من تطبيق خارجي';
+        } else if (uniqueSteps.indexOf('planning_guidance') !== -1) {
+            labelEn = 'External MDMP Bundle (Step 1 included)';
+            labelAr = 'حزمة MDMP خارجية تتضمن الخطوة 1';
+        } else if (uniqueSteps.length === 1 && uniqueSteps[0] === 'staff_brief_2') {
+            labelEn = 'External Staff Brief 2';
+            labelAr = 'إيجاز الأركان 2 من تطبيق خارجي';
+        } else {
+            labelEn = 'External MDMP Bundle';
+            labelAr = 'حزمة MDMP خارجية';
+        }
+    }
     return {
         set_type: brief.set_type || 'operational_brief',
-        set_label_en: 'Operational Brief', set_label_ar: 'الموجز التشغيلي',
+        set_label_en: labelEn, set_label_ar: labelAr,
         mission: ob.mission || '', commander_intent: ob.commander_intent || '',
         friendly: { summary: (ob.friendly && ob.friendly.summary) || '', source: 'brief JSON' },
         enemy: { summary: (ob.enemy && ob.enemy.summary) || '', source: 'brief JSON' },
@@ -579,6 +640,7 @@ module.exports = {
     // Phase F JSON input:
     classifyJsonInput,
     detectMdmp,
+    getExternalStep1Root,
     validateBrief,
     normalizeBrief,
     understandingFromBrief,

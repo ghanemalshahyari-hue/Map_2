@@ -120,7 +120,8 @@
             (groups[key] = groups[key] || []).push(u);
         });
         var html = '<section style="margin:10px 0;padding:8px 0;border-top:1px solid #23303d;">' +
-            '<div style="font-size:13px;color:#f0a0a0;font-weight:600;margin-bottom:6px;">\u0642\u0648\u0627\u062a \u0627\u0644\u0639\u062f\u0648 \u0627\u0644\u0645\u0646\u0638\u0645\u0629 \u2014 Enemy Force Structure</div>';
+            '<div style="font-size:13px;color:#f0a0a0;font-weight:600;margin-bottom:2px;">\u0627\u0644\u0648\u062d\u062f\u0627\u062a \u0627\u0644\u0645\u0642\u062a\u0631\u062d\u0629 \u2014 Proposed Units</div>' +
+            '<div style="font-size:11px;color:#8fa5b8;margin-bottom:6px;">\u0642\u0648\u0627\u062a \u0627\u0644\u0639\u062f\u0648 \u0627\u0644\u0645\u0646\u0638\u0645\u0629 \u2014 Enemy Force Structure</div>';
         Object.keys(groups).forEach(function (k) {
             var list = groups[k], first = list[0] || {};
             var coord = (first.lat != null && first.lon != null) ? (first.lat + ', ' + first.lon) : 'pending';

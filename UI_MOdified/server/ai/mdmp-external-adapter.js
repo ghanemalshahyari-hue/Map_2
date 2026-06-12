@@ -750,6 +750,8 @@ function mapStep5(data, file, state) {
 
 // ── step 1 / staff brief — situation & guidance fields ──────────────
 function mapPlanning(data, file, state) {
+    const detectedStep1 = BRIEF.getExternalStep1Root ? BRIEF.getExternalStep1Root(data) : null;
+    data = (detectedStep1 && detectedStep1.root) || data;
     state.seen_planning = true;
     if (!state.task_assembly) {
         state.task_assembly = buildTaskAssembly(data, file);

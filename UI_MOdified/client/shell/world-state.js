@@ -94,6 +94,9 @@
             role: u.role || null,
             domain: u.domain || null,
             echelon: u.echelon || null,
+            // OBJLINK-B: preserve the authored BLS reference (e.g. "BLS-1") so the
+            // unit_objective_links derivation can read it. null when unauthored (BLUE).
+            bls: (u.bls != null && u.bls !== '') ? u.bls : null,
             sidc: u.sidc || null,
             label: u.label || u.name_ar || u.name_en || null,
             position: pos,
@@ -206,6 +209,13 @@
         // bls status per step (W3 carries one bls_status_baseline applied to staged set)
         var blsStatus = s.bls_status_baseline || null;
         if (blsStatus) ws.lines.bls.forEach(function (b) { if (b.status == null) b.status = blsStatus; });
+        // OBJLINK-B: stash the authored per-id BLS status map as a derivation input.
+        // Read BLS status by id from HERE — NOT ws.lines.bls[].status: the loop above
+        // assigns the whole map object onto each line's .status (the line-shape wrinkle
+        // the audit flagged), so the per-line value is not a usable status string.
+        // clone() so the snapshot never aliases the scenario's step object (a
+        // stray consumer write must corrupt only the snapshot, never the scenario).
+        ws.lines.bls_status_baseline = clone(obj(s.bls_status_baseline));
 
         // units (red + blue)
         arr(scn.red_units).forEach(function (u) {
@@ -952,13 +962,88 @@
         return out;
     }
 
+    /* ---- OBJLINK-B: per-unit objective / BLS / route link index -----------
+     * Builds uid -> link record. The unit->objective relationship in Wargame 3
+     * is INFERRED, not authored: confidence = 'inferred', and link_basis is at
+     * most 'scenario_single_objective' (exactly one objective AND the unit has
+     * tasking or route context). It NEVER claims an assigned objective. BLS is
+     * DECLARED on the unit (unit.bls) -> bls_confidence = 'declared'; bls_status
+     * is read by id from the step's authored map (ws.lines.bls_status_baseline),
+     * NOT from ws.lines.bls[].status (the line-shape wrinkle). Route is a summary
+     * of kinematics.course. Pure + null-safe; no objective => no objective link.
+     * Reads ws.derived.unit_tasking, so it is registered AFTER unit_tasking.
+     */
+    function computeUnitObjectiveLinks(ws) {
+        var out     = {};
+        var units   = arr(ws && ws.units);
+        var meta    = obj(ws && ws.meta);
+        var stepIdx = (meta.step_index != null) ? meta.step_index : null;
+        var phase   = meta.phase || null;
+
+        var objs   = arr(ws && ws.objectives);
+        var hasObj = objs.length > 0;
+        var single = objs.length === 1;
+        var obj0   = obj(objs[0]);
+        var objectiveId     = hasObj ? (obj0.id || obj0.name || null) : null;
+        var objectiveName   = hasObj ? (obj0.name || null) : null;   // approved shape: id AND name
+        var objectiveStatus = (hasObj && obj0.status != null) ? obj0.status : null;
+
+        var blsBaseline = obj(ws && ws.lines && ws.lines.bls_status_baseline);
+        var tasking     = obj(ws && ws.derived && ws.derived.unit_tasking);
+
+        for (var i = 0; i < units.length; i++) {
+            var u = obj(units[i]);
+            var uid = u.uid;
+            if (!uid) continue;                                      // null-safe: skip unidentifiable
+
+            // BLS — DECLARED on the unit; status read by id from the step map.
+            var blsId = (u.bls != null && u.bls !== '') ? u.bls : null;
+            var blsStatus = (blsId != null && blsBaseline[blsId] != null) ? blsBaseline[blsId] : null;
+
+            // Route summary from kinematics.course (null when no course points).
+            // from/to are COPIES — link records must never share coordinate
+            // references with kinematics.course (aliasing hygiene).
+            var course = arr(u.kinematics && u.kinematics.course);
+            var c0 = course[0], cN = course[course.length - 1];
+            var route = course.length
+                ? { points: course.length,
+                    from: Array.isArray(c0) ? c0.slice(0, 2) : null,
+                    to:   Array.isArray(cN) ? cN.slice(0, 2) : null }
+                : null;
+
+            // Objective link is INFERRED. Basis is 'scenario_single_objective'
+            // only when exactly one objective AND the unit has tasking or route
+            // context. Never 'assigned'.
+            var hasContext = !!tasking[uid] || !!route;
+            var linkBasis  = (hasObj && single && hasContext) ? 'scenario_single_objective' : null;
+
+            out[uid] = {
+                uid:              uid,
+                side:             u.side || null,
+                objective_id:     objectiveId,
+                objective_name:   objectiveName,
+                objective_status: objectiveStatus,
+                link_basis:       linkBasis,
+                confidence:       hasObj ? 'inferred' : null,           // objective link: inferred, never declared
+                bls_id:           blsId,
+                bls_status:       blsStatus,
+                bls_confidence:   (blsId != null) ? 'declared' : null,  // BLS: authored/declared (rule: confidence|bls_confidence)
+                route:            route,
+                step_index:       stepIdx,
+                phase:            phase
+            };
+        }
+        return out;
+    }
+
     var DERIVATIONS = {
         balance_summary:          computeBalanceSummary,
         bls_status:               computeBlsStatusB,
         contacts:                 computeContacts,
         objective_evidence:       computeObjectiveEvidence,        // PR-OBJ-A: evidence ledger (before status)
         objective_status_display: computeObjectiveStatusDisplay,
-        unit_tasking:             computeUnitTasking               // TASK1-B: per-uid step action index
+        unit_tasking:             computeUnitTasking,              // TASK1-B: per-uid step action index
+        unit_objective_links:     computeUnitObjectiveLinks        // OBJLINK-B: per-uid objective/BLS/route link
     };
     function applyDerivations(ws) {
         if (!ws) return ws;
@@ -1038,6 +1123,8 @@
         DERIVATIONS: DERIVATIONS,
         // TASK1-B: exposed for tests and accessors
         computeUnitTasking: computeUnitTasking,
+        // OBJLINK-B: per-uid objective/BLS/route link index (derived).
+        computeUnitObjectiveLinks: computeUnitObjectiveLinks,
         // exposed for tests / future rule modules
         _bearing: bearing,
         _nmBetween: nmBetween

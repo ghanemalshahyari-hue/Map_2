@@ -66,6 +66,10 @@ function readJsonBody(req, cb) {
     });
 }
 
+function isTerrainOptIn(value) {
+    return value === true || value === 1 || value === '1' || value === 'true';
+}
+
 // Resolve the TestingAI root. DEBUG-DOCX-1 root cause RC-2: the old hardcoded
 // 'C:/Users/ADMIN/Desktop/TestingAI' default is dead on any box whose user isn't
 // "ADMIN", so staged DOCX, the run, and the import all silently targeted a
@@ -1024,7 +1028,9 @@ function handle(req, res, ctx) {
     // incidents / AO) and returns placement CANDIDATES for commander review.
     // Deterministic, offline (no LLM, no network, no geocoder). NEVER places a
     // unit and never mutates anything — candidate generation only.
-    //   body: { brief?, mentions?[string], incidents?[], ao?, outcome_type? }
+    //   body: { brief?, mentions?[string], incidents?[], ao?, outcome_type?,
+    //           includeTerrain?:true }
+    //   query: ?includeTerrain=1
     //   returns: { ok, placement_candidates[], missing_information[],
     //              conflicts[], source_summary[], count }
     if (pathname === '/api/wargame-sim/placement' && method === 'POST') {
@@ -1049,12 +1055,17 @@ function handle(req, res, ctx) {
                         .forEach(function (t) { if (typeof t === 'string' && t.trim()) mentions.push({ text: t, source: PLANNING.makeSource({ type: 'uploaded_doc', origin: 'brief' }) }); });
                 }
 
-                var enriched = LOCATION.enrichPlanningModelLocations(model, {
+                var enrichOptions = {
                     mentions: mentions,
                     incidents: body.incidents != null ? body.incidents : model.incidents,
                     ao: body.ao != null ? body.ao : null,
                     as_of: body.as_of, staleness_days: body.staleness_days,
-                });
+                };
+                if (isTerrainOptIn(body.includeTerrain) || isTerrainOptIn(url.searchParams.get('includeTerrain'))) {
+                    enrichOptions.includeTerrain = true;
+                }
+
+                var enriched = LOCATION.enrichPlanningModelLocations(model, enrichOptions);
 
                 sendJson(res, 200, {
                     ok: true,
@@ -1548,6 +1559,7 @@ module.exports = { handle, _internals: {
     // SCENARIO-AUTOGEN-1
     scenarioJsonPathOf, isValidScenarioObjective, buildMinimalScenario,
     writeCanonicalScenarioViaPython, ensureScenarioJson, normalizeOverrideFile,
+    isTerrainOptIn,
     // WIZARD-FINGERPRINT-1
     hashFile, round4, currentSetupFingerprint, setupMatchesRun, persistRunMetaWhenReady,
 } };

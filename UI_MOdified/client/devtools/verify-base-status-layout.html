@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!--
+  Layout verify harness for the RMOOZ Object Status Card / Base Status Panel.
+  Reproduces the app's top + bottom chrome (header + classification bars + #timeline-strip
+  playback transport + .app-statusbar) at their REAL heights (from style.css), then opens
+  the card with a tall proposed-units list. Proves the card sits in the content band and
+  never hides behind the playback footer. Append ?broken=1 to force the OLD full-height CSS
+  for an A/B comparison. Dev-only harness — no app logic, no API, no mutation.
+-->
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>verify — base status card layout</title>
+  <link rel="stylesheet" href="../style.css" />
+  <style>
+    html, body { margin: 0; height: 100%; background: #0a0e14; }
+    /* Top chrome pinned to the top, bottom chrome pinned to the bottom — same heights as the app. */
+    #harness-top { position: fixed; top: 0; left: 0; right: 0; z-index: 1200; }
+    #harness-bottom { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1050; }
+    #harness-map { position: fixed; top: 74px; bottom: 86px; left: 0; right: 0; background:
+      repeating-linear-gradient(45deg,#0c131c,#0c131c 18px,#0e1622 18px,#0e1622 36px);
+      color:#33506e; display:flex; align-items:center; justify-content:center; font-family:monospace; }
+    .app-header { height: 52px; display:flex; align-items:center; padding:0 14px; background:#0c1420; color:#cfe0f0; border-bottom:1px solid #1e2b3a; font-family:monospace; }
+    #measure { position: fixed; left: 8px; top: 80px; z-index: 2000; background: rgba(0,0,0,.8);
+      color: #9fe0a0; font-family: monospace; font-size: 12px; padding: 8px 10px; border: 1px solid #2c6542; border-radius: 6px; white-space: pre; }
+  </style>
+</head>
+<body>
+  <div id="harness-top">
+    <div class="classification-bar classification-bar--top">UNCLASSIFIED // TRAINING USE ONLY</div>
+    <div class="app-header">RMOOZ — layout verify harness (chrome mock)</div>
+  </div>
+  <div id="harness-map">MAP / OPERATIONAL VIEW</div>
+  <div id="harness-bottom">
+    <div id="timeline-strip" class="timeline-strip" role="toolbar">▶ ⏸ ⏭ &nbsp; SPEED 1x &nbsp; SCENARIO TIME 00:00 &nbsp; PHASE 1</div>
+    <div class="app-statusbar">status footer · جاهز</div>
+    <div class="classification-bar classification-bar--bottom">UNCLASSIFIED // TRAINING USE ONLY</div>
+  </div>
+  <div id="measure">measuring…</div>
+
+  <script src="../shell/world-state-db.js"></script>
+  <script src="../shell/symbol-db.js"></script>
+  <script src="../shell/base-status-panel.js"></script>
+  <script>
+    (function () {
+      function base(en, ar, side, type, lat, lon) {
+        return { id: side + '-' + en, side: side, base_name_en: en, base_name_ar: ar, site_type: type,
+          lat: lat, lon: lon, needs_review: true, exact_unit_position: false,
+          source_type: 'ai_candidate_from_external_llm',
+          source: { type: 'external_json', file: 'trial.json', confidence: 'low' } };
+      }
+      function anchorFrom(b) {
+        return { mention: b.base_name_en, base_name_en: b.base_name_en, base_name_ar: b.base_name_ar,
+          side: b.side, site_type: b.site_type, placement_type: 'base_location_anchor', lat: b.lat, lon: b.lon,
+          coordinate_format: 'base_anchor', ao_check: 'inside', exact_unit_position: false, needs_review: true,
+          confidence: 'medium', warnings: ['base_known_exact_unit_position_unknown'], source: b.source };
+      }
+      function unit(side, baseName, platform, count, typeAr, warn) {
+        return { side: side, base_name_en: baseName, platform: platform, estimated_count: count,
+          type_ar: typeAr || 'طائرة', needs_review: true, exact_unit_position: false,
+          source_type: 'ai_candidate_from_external_llm', warnings: [warn || 'ai_information_requires_review'] };
+      }
+      var hamedan = base('Hamedan', 'همدان', 'RED', 'air_base', 35.2116, 48.6534);
+      // Tall list incl. an f16c (DB1-known -> matched systems) + an unknown (-> Catalog required),
+      // plus filler so the table is long enough to require internal scrolling.
+      var units = [
+        unit('RED', 'Hamedan', 'f16c', 6, 'مقاتلة F-16'),
+        unit('RED', 'Hamedan', 'F-14A Tomcat', 12, 'مقاتلة'),
+        unit('RED', 'Hamedan', 'F-4E Phantom II', 8, 'مقاتلة / هجوم', 'ai_information_requires_review_with_a_deliberately_long_arabic_and_english_warning_تحذير_طويل_جدا_للتأكد_من_الالتفاف_الصحيح'),
+        unit('RED', 'Hamedan', 'Su-24 Fencer', 6, 'هجوم'),
+        unit('RED', 'Hamedan', 'C-130H', 2, 'نقل'),
+        unit('RED', 'Hamedan', 'Unlisted Platform X', 1, 'غير معروف')
+      ];
+      for (var i = 0; i < 14; i++) units.push(unit('RED', 'Hamedan', 'Filler Type ' + i, i + 1, 'وحدة ' + i));
+      var payload = { documents: [{ filename: 'trial.json' }], brief: { operational_brief: {
+        task_assembly: { doctrine_upload_required: true }, enemy: { units: [] }, friendly: { units: [] },
+        courses_of_action: [], enemy_bases: [hamedan], friendly_trial_bases: [], proposed_units: units,
+        missing_information: ['Hamedan: catalog link missing'] } } };
+
+      window.RmoozBaseStatusPanel.open(anchorFrom(hamedan), payload);
+
+      // ?broken=1 -> force the OLD full-height CSS so we can A/B the regression.
+      if (/broken/.test(location.search)) {
+        var p = document.getElementById('step1-base-status-panel');
+        if (p) { p.style.top = '0px'; p.style.bottom = ''; p.style.height = '100vh'; p.style.zIndex = '940'; }
+      }
+
+      function measure() {
+        var p = document.getElementById('step1-base-status-panel');
+        var bar = document.getElementById('timeline-strip');
+        if (!p || !bar) return;
+        var pr = p.getBoundingClientRect(), br = bar.getBoundingClientRect();
+        var overlap = Math.max(0, pr.bottom - br.top);
+        document.getElementById('measure').textContent =
+          'card.bottom=' + Math.round(pr.bottom) + '  bar.top=' + Math.round(br.top) +
+          '\noverlap=' + Math.round(overlap) + 'px  ' + (overlap <= 0.5 ? 'OK ✓ (above footer)' : 'BUG ✗ (behind footer)') +
+          '\ncard.top=' + Math.round(pr.top) + '  viewport=' + window.innerHeight;
+        window.__layoutProbe = { cardBottom: pr.bottom, barTop: br.top, overlap: overlap, cardTop: pr.top, vh: window.innerHeight };
+      }
+      setTimeout(measure, 60);
+      window.addEventListener('resize', function () { setTimeout(measure, 30); });
+    })();
+  </script>
+</body>
+</html>

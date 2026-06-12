@@ -160,6 +160,24 @@ ok('Chabahar opens panel with helicopter category', /Chabahar/.test(panel.innerH
 BasePanel.open(candidateFromBase(blue), payload);
 ok('BLUE trial base shows BLUE side', /Blue Trial Base 1/.test(panel.innerHTML) && />BLUE</.test(panel.innerHTML));
 
+// ── adaptive measurement path: stub querySelector to return real chrome heights ──
+// (the base document stub has no querySelector, so the helper would otherwise no-op)
+var FAKE_BARS = { '.app-header': 52, '.classification-bar--top': 22, '#timeline-strip': 36, '.app-statusbar': 28, '.classification-bar--bottom': 22 };
+global.document.querySelector = function (sel) {
+    if (Object.prototype.hasOwnProperty.call(FAKE_BARS, sel)) {
+        return { getBoundingClientRect: function () { return { height: FAKE_BARS[sel] }; } };
+    }
+    return null;
+};
+BasePanel.open(candidateFromBase(hamedan), payload);
+ok('layout: fitToContentBand measures live chrome -> card top = 74px (52+22)', panel.style.top === '74px');
+ok('layout: fitToContentBand measures live chrome -> card bottom = 86px (36+28+22)', panel.style.bottom === '86px');
+// chrome measuring 0 (hidden) must CLEAR the inline offset -> falls back to CSS-var default (no stale)
+global.document.querySelector = function () { return { getBoundingClientRect: function () { return { height: 0 }; } }; };
+BasePanel.open(candidateFromBase(hamedan), payload);
+ok('layout: zero-height chrome clears inline offsets (no stale offset on reuse)', panel.style.top === '' && panel.style.bottom === '');
+delete global.document.querySelector; // restore headless mode for the remaining checks
+
 var fakeLayer = null;
 var clicked = false;
 global.window.RmoozBaseStatusPanel.open = function (anchor) { clicked = anchor && anchor.base_name_en === 'Bandar Abbas'; };
@@ -208,6 +226,23 @@ ok('SYMBOL-DB-B: unknown platform -> no invented systems (sensors empty), still 
 var npHelo = BasePanel.normalizePlatform({ platform: 'AB-212' });
 ok('SYMBOL-DB-B: category-only platform unchanged (helicopter, no invented systems)',
     npHelo.symbol_category === 'helicopter' && npHelo.sensors.length === 0);
+
+// ── LAYOUT REGRESSION (fix: keep object status card above playback footer) ──
+var styleEl = global.document.getElementById('step1-base-status-style');
+var css = (styleEl && styleEl.textContent) || '';
+ok('layout: card injects its stylesheet', css.length > 0);
+ok('layout: card is NOT full-viewport height (no height:100vh under the bars)', css.indexOf('height:100vh') === -1);
+ok('layout: card clears the bottom playback footer (bottom offset var)',
+    /bottom:var\(--rmooz-status-card-bottom/.test(css));
+ok('layout: card clears the top chrome (top offset var)',
+    /top:var\(--rmooz-status-card-top/.test(css));
+ok('layout: card body scrolls internally (overflow-y:auto)', /overflow-y:auto/.test(css));
+ok('layout: card clips horizontal overflow (overflow-x:hidden)', /overflow-x:hidden/.test(css));
+ok('layout: card keeps its z-index (940, no stacking creep)', /\.step1-base-status-panel\{[^}]*z-index:940/.test(css));
+ok('layout: proposed-units table min-width reduced for the panel (600, not 680)',
+    /\.bsp-table\{[^}]*min-width:600px/.test(css) && css.indexOf('min-width:680px') === -1);
+ok('layout: warning cells wrap long Arabic/English text (word-break)', /word-break:break-word/.test(css));
+ok('layout: fitToContentBand call did not throw during open (panel rendered)', /Review only/.test(panel.innerHTML) && panel.innerHTML.length > 200);
 
 console.log('\n' + passed + ' passed, ' + failed + ' failed');
 process.exit(failed ? 1 : 0);

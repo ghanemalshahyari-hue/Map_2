@@ -44,8 +44,15 @@ function emptyBrief() {
             timeline: [],
             constraints: [],
             assumptions: [],
+            missing_information: [],
             ambiguities: [],
             source_citations: [],
+            task_assembly: null,
+            units_duty: null,
+            placement_candidates: [],
+            proposed_units: [],
+            enemy_bases: [],
+            enemy_forces: null,
             // ── COA layer (additive; D9 approved 2026-06-11) ─────────
             // Candidate courses of action (each with wargame_turns[] per
             // L10), the structured force comparison, and the AI/rule-engine
@@ -377,7 +384,7 @@ const MDMP_STEPS = [
     // fields (letter ref / assembly area / task_assembly) first.
     { step: 'planning_guidance', // step 1 / WARNO package (also the field dictionary)
       any: ['letter_ref_number', 'Assembly_Area', 'task_assembly',
-            'GROUND_COMPONENT_MISSION', 'Operational_Assumptions'] },
+            'Units_Duty', 'GROUND_COMPONENT_MISSION', 'Operational_Assumptions'] },
     { step: 'staff_brief',      // step 2 outputs — intel summary / capabilities
       any: ['Enemy_Capabilities', 'First_light', 'Recent_and_Ongoing_Activities',
             'join_op_mission'] },
@@ -446,8 +453,15 @@ function normalizeBrief(input) {
     o.timeline = arr(ob.timeline);
     o.constraints = arr(ob.constraints);
     o.assumptions = arr(ob.assumptions);
+    o.missing_information = arr(ob.missing_information);
     o.ambiguities = arr(ob.ambiguities);
     o.source_citations = arr(ob.source_citations);
+    o.task_assembly = (ob.task_assembly && typeof ob.task_assembly === 'object') ? ob.task_assembly : null;
+    o.units_duty = ob.units_duty != null ? ob.units_duty : null;
+    o.placement_candidates = arr(ob.placement_candidates);
+    o.proposed_units = arr(ob.proposed_units);
+    o.enemy_bases = arr(ob.enemy_bases);
+    o.enemy_forces = (ob.enemy_forces && typeof ob.enemy_forces === 'object') ? ob.enemy_forces : null;
     // COA layer (additive, D9) — preserved verbatim through normalization.
     o.courses_of_action = arr(ob.courses_of_action);
     o.force_comparison = (ob.force_comparison && typeof ob.force_comparison === 'object') ? ob.force_comparison : null;
@@ -459,6 +473,13 @@ function normalizeBrief(input) {
 function understandingFromBrief(brief) {
     var ob = (brief && brief.operational_brief) || {};
     var ambiguities = arr(ob.ambiguities).slice();
+    var proposedUnits = arr(ob.proposed_units);
+    var countSide = function (side) {
+        return proposedUnits.filter(function (u) { return String((u && u.side) || '').toUpperCase() === side; }).length;
+    };
+    var redCount = countSide('RED') || arr(ob.enemy && ob.enemy.units).length;
+    var blueCount = countSide('BLUE') || arr(ob.friendly && ob.friendly.units).length;
+    var neutralCount = countSide('NEUTRAL') || arr(ob.neutral && ob.neutral.civilian).length;
     if (!ob.mission) ambiguities.push('Mission not present in the brief.');
     if (!arr(ob.objectives).length) ambiguities.push('No objectives in the brief — set the objective on the map.');
     if (!arr(ob.phases).length) ambiguities.push('No phases in the brief.');
@@ -472,10 +493,12 @@ function understandingFromBrief(brief) {
         objectives: arr(ob.objectives), phases: arr(ob.phases), constraints: arr(ob.constraints),
         assumptions: arr(ob.assumptions), ambiguities: ambiguities,
         proposed_unit_counts: {
-            red: arr(ob.enemy && ob.enemy.units).length,
-            blue: arr(ob.friendly && ob.friendly.units).length,
-            neutral: arr(ob.neutral && ob.neutral.civilian).length,
+            red: redCount,
+            blue: blueCount,
+            neutral: neutralCount,
         },
+        proposed_units: proposedUnits,
+        task_assembly: ob.task_assembly || null,
         proposed_map_bounds: (ob.area_of_operations && ob.area_of_operations.bbox) || null,
         // COA layer summary (additive, D9) — cards rendered by the COA panel (G-3).
         coas: arr(ob.courses_of_action).map(function (c) {

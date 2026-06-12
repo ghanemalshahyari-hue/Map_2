@@ -45,6 +45,73 @@
             esc(title) + ' (' + items.length + ')</div><ul style="margin:0;padding:0 18px;font-size:12px;color:#e8eaed;direction:rtl;text-align:right;">' +
             lis + '</ul></div>';
     }
+    function opBrief(p) {
+        return (p && p.brief && p.brief.operational_brief) || (p && p.operational_brief) || {};
+    }
+    function fieldRow(label, value) {
+        if (value == null || value === '' || (Array.isArray(value) && !value.length)) return '';
+        var text = Array.isArray(value) ? value.join(', ') : value;
+        return '<div style="display:grid;grid-template-columns:minmax(110px,180px) 1fr;gap:8px;margin:3px 0;font-size:12px;">' +
+            '<div style="color:#8fa5b8;">' + esc(label) + '</div><div style="color:#e8eaed;direction:rtl;text-align:right;">' + esc(text) + '</div></div>';
+    }
+    function renderTaskAssembly(p) {
+        var ob = opBrief(p);
+        var ta = ob.task_assembly || (p.understanding && p.understanding.task_assembly);
+        if (!ta) return '';
+        var supporting = Array.isArray(ta.supporting_tasks) ? ta.supporting_tasks : [];
+        var supportText = supporting.map(function (t) {
+            if (t && typeof t === 'object') return [(t.unit || t.unit_name || ''), (t.duty || t.task || t.summary || '')].filter(Boolean).join(': ');
+            return String(t || '');
+        }).filter(Boolean);
+        var sources = Array.isArray(ta.doctrine_sources) && ta.doctrine_sources.length ? ta.doctrine_sources : ['pending_upload'];
+        var html = '<section style="margin:10px 0;padding:8px 0;border-top:1px solid #23303d;">' +
+            '<div style="font-size:13px;color:#cfe6ff;font-weight:600;margin-bottom:6px;">\u062a\u062c\u0645\u064a\u0639 \u0627\u0644\u0648\u0627\u062c\u0628 \u2014 Task Assembly</div>';
+        html += fieldRow('summary', ta.summary);
+        html += fieldRow('main_task', ta.main_task);
+        html += listBlock('supporting_tasks', supportText);
+        html += fieldRow('tasking_status', ta.tasking_status);
+        html += fieldRow('commander_review_required', ta.commander_review_required === true ? 'true' : (ta.commander_review_required === false ? 'false' : ''));
+        html += fieldRow('doctrine_upload_required', ta.doctrine_upload_required === true ? 'true' : (ta.doctrine_upload_required === false ? 'false' : ''));
+        html += fieldRow('doctrine_sources', sources);
+        html += fieldRow('doctrine_application_policy', ta.doctrine_application_policy);
+        html += '<div style="margin-top:6px;padding:6px 8px;border-radius:4px;background:#2a2412;border:1px solid #b8860b;color:#e0c060;font-size:12px;direction:rtl;text-align:right;">' +
+            '\u0644\u0627 \u064a\u062a\u0645 \u0627\u0639\u062a\u0645\u0627\u062f \u0627\u0644\u062a\u062e\u0637\u064a\u0637 \u0627\u0644\u0646\u0647\u0627\u0626\u064a \u062f\u0648\u0646 \u0631\u0641\u0639 \u0627\u0644\u0639\u0642\u064a\u062f\u0629 \u0648\u0645\u0631\u0627\u062c\u0639\u062a\u0647\u0627.' +
+            '</div></section>';
+        return html;
+    }
+    function renderProposedUnits(p) {
+        var ob = opBrief(p);
+        var units = (Array.isArray(ob.proposed_units) && ob.proposed_units.length) ? ob.proposed_units :
+            ((p.understanding && Array.isArray(p.understanding.proposed_units)) ? p.understanding.proposed_units : []);
+        units = units.filter(function (u) { return String((u && u.side) || '').toUpperCase() === 'RED'; });
+        if (!units.length) return '';
+        var groups = {};
+        units.forEach(function (u) {
+            var key = (u.base_name_ar || u.base_name_en || 'RED base') + '|' + (u.lat != null ? u.lat : '') + ',' + (u.lon != null ? u.lon : '');
+            (groups[key] = groups[key] || []).push(u);
+        });
+        var html = '<section style="margin:10px 0;padding:8px 0;border-top:1px solid #23303d;">' +
+            '<div style="font-size:13px;color:#f0a0a0;font-weight:600;margin-bottom:6px;">\u0627\u0644\u0648\u062d\u062f\u0627\u062a \u0627\u0644\u0645\u0642\u062a\u0631\u062d\u0629 \u2014 Proposed Units</div>';
+        Object.keys(groups).forEach(function (k) {
+            var list = groups[k], first = list[0] || {};
+            var coord = (first.lat != null && first.lon != null) ? (first.lat + ', ' + first.lon) : 'pending';
+            html += '<div style="margin:8px 0;"><div style="font-size:12px;color:#f0a0a0;margin-bottom:4px;direction:rtl;text-align:right;">' +
+                esc(first.base_name_ar || first.base_name_en || 'RED base') + ' <span style="color:#8fa5b8;">(' + esc(coord) + ')</span></div>';
+            list.forEach(function (u) {
+                html += '<div style="margin:4px 0;padding:6px 8px;border:1px solid #3d2a2a;background:#1a1212;border-radius:4px;font-size:12px;">' +
+                    fieldRow('platform', u.platform) +
+                    fieldRow('estimated_count', u.estimated_count) +
+                    fieldRow('type', u.type_ar) +
+                    fieldRow('needs_review', u.needs_review ? 'true' : 'false') +
+                    fieldRow('warning', u.warning || (u.warnings || []).join(', ')) +
+                    '<div style="color:#e0a93a;font-size:11px;direction:rtl;text-align:right;">AI information requires review</div>' +
+                    '</div>';
+            });
+            html += '</div>';
+        });
+        html += '</section>';
+        return html;
+    }
 
     function render(container, p, handlers) {
         handlers = handlers || {};
@@ -70,9 +137,11 @@
         html += listBlock('Phases — المراحل', (u.phases || []).map(function (ph) { return 'P' + ph.index + ': ' + ph.label; }));
         html += listBlock('Constraints / ROE — القيود', (u.constraints || []).map(function (c) { return c.text; }));
         html += '<div style="margin:8px 0;">' +
-            chip('Proposed units — أعداد مقترحة', 'RED ' + (pc.red || 0) + ' · BLUE ' + (pc.blue || 0) + ' · NEUTRAL ' + (pc.neutral || 0)) +
+            chip('Proposed units — أعداد مقترحة', 'BLUE ' + (pc.blue || 0) + ' / RED ' + (pc.red || 0) + ' / NEUTRAL ' + (pc.neutral || 0)) +
             chip('Map bounds — حدود الخريطة', u.proposed_map_bounds ? 'from document' : 'not specified — set objective on map') + '</div>';
         html += listBlock('Missing / ambiguous — نواقص وغموض', u.ambiguities || [], '#e0a93a');
+        html += renderTaskAssembly(p);
+        html += renderProposedUnits(p);
         if (p.llm_fill && !p.llm_fill.available) {
             html += '<div style="font-size:11px;color:#9aa3ad;margin:6px 0;">ℹ Deep extraction (exact units &amp; intent) runs on the deployment LLM; this is the offline structural read.</div>';
         }

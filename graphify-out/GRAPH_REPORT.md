@@ -1,16 +1,16 @@
 # Graph Report - MAP_2  (2026-06-12)
 
 ## Corpus Check
-- 1962 files · ~9,725,141 words
+- 1963 files · ~9,727,490 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 90996 nodes · 130561 edges · 6752 communities (6561 shown, 191 thin omitted)
+- 90462 nodes · 130024 edges · 6711 communities (6519 shown, 192 thin omitted)
 - Extraction: 84% EXTRACTED · 16% INFERRED · 0% AMBIGUOUS · INFERRED: 20354 edges (avg confidence: 0.55)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `083afb13`
+- Built from commit: `b6d06dbd`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -407,8 +407,6 @@
 - [[_COMMUNITY_Community 390|Community 390]]
 - [[_COMMUNITY_Community 391|Community 391]]
 - [[_COMMUNITY_Community 392|Community 392]]
-- [[_COMMUNITY_Community 393|Community 393]]
-- [[_COMMUNITY_Community 394|Community 394]]
 - [[_COMMUNITY_Community 395|Community 395]]
 - [[_COMMUNITY_Community 396|Community 396]]
 - [[_COMMUNITY_Community 397|Community 397]]
@@ -461,13 +459,11 @@
 - [[_COMMUNITY_Community 444|Community 444]]
 - [[_COMMUNITY_Community 445|Community 445]]
 - [[_COMMUNITY_Community 446|Community 446]]
-- [[_COMMUNITY_Community 447|Community 447]]
 - [[_COMMUNITY_Community 448|Community 448]]
 - [[_COMMUNITY_Community 449|Community 449]]
 - [[_COMMUNITY_Community 450|Community 450]]
 - [[_COMMUNITY_Community 451|Community 451]]
 - [[_COMMUNITY_Community 452|Community 452]]
-- [[_COMMUNITY_Community 453|Community 453]]
 - [[_COMMUNITY_Community 454|Community 454]]
 - [[_COMMUNITY_Community 455|Community 455]]
 - [[_COMMUNITY_Community 456|Community 456]]
@@ -1663,7 +1659,6 @@
 - [[_COMMUNITY_Community 1646|Community 1646]]
 - [[_COMMUNITY_Community 1647|Community 1647]]
 - [[_COMMUNITY_Community 1648|Community 1648]]
-- [[_COMMUNITY_Community 1649|Community 1649]]
 - [[_COMMUNITY_Community 1650|Community 1650]]
 - [[_COMMUNITY_Community 1651|Community 1651]]
 - [[_COMMUNITY_Community 1652|Community 1652]]
@@ -1752,12 +1747,6 @@
 - [[_COMMUNITY_Community 1735|Community 1735]]
 - [[_COMMUNITY_Community 1736|Community 1736]]
 - [[_COMMUNITY_Community 1737|Community 1737]]
-- [[_COMMUNITY_Community 1738|Community 1738]]
-- [[_COMMUNITY_Community 1739|Community 1739]]
-- [[_COMMUNITY_Community 1740|Community 1740]]
-- [[_COMMUNITY_Community 1741|Community 1741]]
-- [[_COMMUNITY_Community 1742|Community 1742]]
-- [[_COMMUNITY_Community 1743|Community 1743]]
 - [[_COMMUNITY_Community 1744|Community 1744]]
 - [[_COMMUNITY_Community 1745|Community 1745]]
 - [[_COMMUNITY_Community 1746|Community 1746]]
@@ -1889,7 +1878,6 @@
 - [[_COMMUNITY_Community 1872|Community 1872]]
 - [[_COMMUNITY_Community 1873|Community 1873]]
 - [[_COMMUNITY_Community 1874|Community 1874]]
-- [[_COMMUNITY_Community 1875|Community 1875]]
 - [[_COMMUNITY_Community 1876|Community 1876]]
 - [[_COMMUNITY_Community 1877|Community 1877]]
 - [[_COMMUNITY_Community 1878|Community 1878]]
@@ -2101,24 +2089,14 @@
 - [[_COMMUNITY_Community 2084|Community 2084]]
 - [[_COMMUNITY_Community 2085|Community 2085]]
 - [[_COMMUNITY_Community 2086|Community 2086]]
-- [[_COMMUNITY_Community 2088|Community 2088]]
 - [[_COMMUNITY_Community 2089|Community 2089]]
 - [[_COMMUNITY_Community 2090|Community 2090]]
 - [[_COMMUNITY_Community 2091|Community 2091]]
-- [[_COMMUNITY_Community 2092|Community 2092]]
 - [[_COMMUNITY_Community 2093|Community 2093]]
 - [[_COMMUNITY_Community 2094|Community 2094]]
-- [[_COMMUNITY_Community 2095|Community 2095]]
-- [[_COMMUNITY_Community 2096|Community 2096]]
 - [[_COMMUNITY_Community 2097|Community 2097]]
-- [[_COMMUNITY_Community 2098|Community 2098]]
-- [[_COMMUNITY_Community 2099|Community 2099]]
-- [[_COMMUNITY_Community 2100|Community 2100]]
-- [[_COMMUNITY_Community 2101|Community 2101]]
 - [[_COMMUNITY_Community 2102|Community 2102]]
-- [[_COMMUNITY_Community 2103|Community 2103]]
 - [[_COMMUNITY_Community 2104|Community 2104]]
-- [[_COMMUNITY_Community 2105|Community 2105]]
 - [[_COMMUNITY_Community 2106|Community 2106]]
 - [[_COMMUNITY_Community 2107|Community 2107]]
 - [[_COMMUNITY_Community 2108|Community 2108]]
@@ -2126,7 +2104,6 @@
 - [[_COMMUNITY_Community 2110|Community 2110]]
 - [[_COMMUNITY_Community 2111|Community 2111]]
 - [[_COMMUNITY_Community 2112|Community 2112]]
-- [[_COMMUNITY_Community 2113|Community 2113]]
 - [[_COMMUNITY_Community 2114|Community 2114]]
 - [[_COMMUNITY_Community 2115|Community 2115]]
 - [[_COMMUNITY_Community 2116|Community 2116]]
@@ -2143,7 +2120,6 @@
 - [[_COMMUNITY_Community 2127|Community 2127]]
 - [[_COMMUNITY_Community 2128|Community 2128]]
 - [[_COMMUNITY_Community 2129|Community 2129]]
-- [[_COMMUNITY_Community 2130|Community 2130]]
 - [[_COMMUNITY_Community 2131|Community 2131]]
 - [[_COMMUNITY_Community 2132|Community 2132]]
 - [[_COMMUNITY_Community 2133|Community 2133]]
@@ -2169,7 +2145,6 @@
 - [[_COMMUNITY_Community 2154|Community 2154]]
 - [[_COMMUNITY_Community 2155|Community 2155]]
 - [[_COMMUNITY_Community 2156|Community 2156]]
-- [[_COMMUNITY_Community 2157|Community 2157]]
 - [[_COMMUNITY_Community 2158|Community 2158]]
 - [[_COMMUNITY_Community 2159|Community 2159]]
 - [[_COMMUNITY_Community 2160|Community 2160]]
@@ -2918,7 +2893,6 @@
 - [[_COMMUNITY_Community 2903|Community 2903]]
 - [[_COMMUNITY_Community 2904|Community 2904]]
 - [[_COMMUNITY_Community 2905|Community 2905]]
-- [[_COMMUNITY_Community 2906|Community 2906]]
 - [[_COMMUNITY_Community 2907|Community 2907]]
 - [[_COMMUNITY_Community 2908|Community 2908]]
 - [[_COMMUNITY_Community 2909|Community 2909]]
@@ -3914,7 +3888,6 @@
 - [[_COMMUNITY_Community 4073|Community 4073]]
 - [[_COMMUNITY_Community 4074|Community 4074]]
 - [[_COMMUNITY_Community 4075|Community 4075]]
-- [[_COMMUNITY_Community 4076|Community 4076]]
 - [[_COMMUNITY_Community 4077|Community 4077]]
 - [[_COMMUNITY_Community 4078|Community 4078]]
 - [[_COMMUNITY_Community 4079|Community 4079]]
@@ -4270,7 +4243,6 @@
 - [[_COMMUNITY_Community 4441|Community 4441]]
 - [[_COMMUNITY_Community 4442|Community 4442]]
 - [[_COMMUNITY_Community 4443|Community 4443]]
-- [[_COMMUNITY_Community 4444|Community 4444]]
 - [[_COMMUNITY_Community 4445|Community 4445]]
 - [[_COMMUNITY_Community 4446|Community 4446]]
 - [[_COMMUNITY_Community 4447|Community 4447]]
@@ -5079,14 +5051,8 @@
 - [[_COMMUNITY_Community 5347|Community 5347]]
 - [[_COMMUNITY_Community 5348|Community 5348]]
 - [[_COMMUNITY_Community 5349|Community 5349]]
-- [[_COMMUNITY_Community 5350|Community 5350]]
-- [[_COMMUNITY_Community 5351|Community 5351]]
-- [[_COMMUNITY_Community 5352|Community 5352]]
 - [[_COMMUNITY_Community 5353|Community 5353]]
 - [[_COMMUNITY_Community 5354|Community 5354]]
-- [[_COMMUNITY_Community 5355|Community 5355]]
-- [[_COMMUNITY_Community 5356|Community 5356]]
-- [[_COMMUNITY_Community 5357|Community 5357]]
 - [[_COMMUNITY_Community 5358|Community 5358]]
 - [[_COMMUNITY_Community 5359|Community 5359]]
 - [[_COMMUNITY_Community 5360|Community 5360]]
@@ -5632,8 +5598,6 @@
 - [[_COMMUNITY_Community 5912|Community 5912]]
 - [[_COMMUNITY_Community 5913|Community 5913]]
 - [[_COMMUNITY_Community 5914|Community 5914]]
-- [[_COMMUNITY_Community 5915|Community 5915]]
-- [[_COMMUNITY_Community 5916|Community 5916]]
 - [[_COMMUNITY_Community 5919|Community 5919]]
 - [[_COMMUNITY_Community 5921|Community 5921]]
 - [[_COMMUNITY_Community 5922|Community 5922]]
@@ -6472,13 +6436,8 @@
 - [[_COMMUNITY_Community 6799|Community 6799]]
 - [[_COMMUNITY_Community 6800|Community 6800]]
 - [[_COMMUNITY_Community 6801|Community 6801]]
-- [[_COMMUNITY_Community 6802|Community 6802]]
-- [[_COMMUNITY_Community 6803|Community 6803]]
 - [[_COMMUNITY_Community 6804|Community 6804]]
 - [[_COMMUNITY_Community 6805|Community 6805]]
-- [[_COMMUNITY_Community 6806|Community 6806]]
-- [[_COMMUNITY_Community 6807|Community 6807]]
-- [[_COMMUNITY_Community 6808|Community 6808]]
 - [[_COMMUNITY_Community 6809|Community 6809]]
 - [[_COMMUNITY_Community 6810|Community 6810]]
 - [[_COMMUNITY_Community 6811|Community 6811]]
@@ -6592,8 +6551,6 @@
 10. `QdrantBase` - 276 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `haversineKm()` --calls--> `toRad()`  [INFERRED]
-  test-pr-mg1-grouped.js → UI_MOdified/lib/coord-utils.js
 - `buildFixture()` --calls--> `mk()`  [INFERRED]
   test-fast-doc-2-publish-before-import.js → UI_MOdified/lib/sql.js
 - `IngestionState` --uses--> `IngestionState`  [INFERRED]
@@ -6601,6 +6558,8 @@
 - `HybridChunker` --uses--> `IngestionState`  [INFERRED]
   UI_MOdified/TestingAI/SmartSearch/NewOffline/code/graph/nodes/chunk_document.py → UI_MOdified/TestingAI/SmartSearch/graph/state.py
 - `IngestionState` --uses--> `IngestionState`  [INFERRED]
+  UI_MOdified/TestingAI/SmartSearch/NewOffline/code/graph/nodes/chunk_document.py → UI_MOdified/TestingAI/SmartSearch/graph/state.py
+- `Any` --uses--> `IngestionState`  [INFERRED]
   UI_MOdified/TestingAI/SmartSearch/NewOffline/code/graph/nodes/chunk_document.py → UI_MOdified/TestingAI/SmartSearch/graph/state.py
 
 ## Import Cycles
@@ -6617,7 +6576,7 @@
 - 1-file cycle: `UI_MOdified/TestingAI/SmartSearch/libs/qdrant_client-1.17.1/qdrant_client/local/order_by.py -> UI_MOdified/TestingAI/SmartSearch/libs/qdrant_client-1.17.1/qdrant_client/local/order_by.py`
 - 1-file cycle: `UI_MOdified/TestingAI/SmartSearch/libs/qdrant_client-1.17.1/qdrant_client/local/tests/test_datetimes.py -> UI_MOdified/TestingAI/SmartSearch/libs/qdrant_client-1.17.1/qdrant_client/local/tests/test_datetimes.py`
 
-## Communities (6752 total, 191 thin omitted)
+## Communities (6711 total, 192 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.12
@@ -6717,7 +6676,7 @@ Nodes (73): analyzeDebugEnabled(), analyzeDebugPayload(), BRIEF, buildHead(), bu
 
 ### Community 26 - "Community 26"
 Cohesion: 0.01
-Nodes (358): ApiVlmOptions, AsrPipelineOptions, AbstractDocumentBackend, PdfDocumentBackend, BaseOcrModel, BasePageElement, BaseTableStructureOptions, CodeFormulaModel (+350 more)
+Nodes (433): ApiVlmOptions, AbstractDocumentBackend, BaseLayoutOptions, BaseOcrModel, BasePageElement, BaseTableStructureOptions, CodeFormulaModel, CodeFormulaModelOptions (+425 more)
 
 ### Community 27 - "Community 27"
 Cohesion: 0.21
@@ -6725,11 +6684,11 @@ Nodes (20): DoctrinalConfig, _get(), _get_bool(), _get_float(), _get_int(), LLMC
 
 ### Community 28 - "Community 28"
 Cohesion: 0.01
-Nodes (392): ApiKserveV2ImageClassificationEngineOptions, ApiKserveV2ObjectDetectionEngineOptions, ApiVlmEngineOptions, AutoInlineVlmEngineOptions, BaseImageClassificationEngine, BaseImageClassificationEngineOptions, BaseImageProcessor, BaseObjectDetectionEngine (+384 more)
+Nodes (394): ApiKserveV2ImageClassificationEngineOptions, ApiKserveV2ObjectDetectionEngineOptions, ApiVlmEngineOptions, AutoInlineVlmEngineOptions, BaseImageClassificationEngine, BaseImageClassificationEngineOptions, BaseImageProcessor, BaseObjectDetectionEngine (+386 more)
 
 ### Community 29 - "Community 29"
 Cohesion: 0.01
-Nodes (362): AttributesImpl, DeclarativeDocumentBackend, PaginatedDocumentBackend, DeclarativeDocumentBackend.      A declarative document backend is a backend t, DeclarativeDocumentBackend.      A declarative document backend is a backend t, AsciiDocBackend, Extract the item marker (number or bullet symbol) and the text of the item., Parse an image macro, extracting its path and attributes.         Syntax: image (+354 more)
+Nodes (374): AttributesImpl, DeclarativeDocumentBackend, PaginatedDocumentBackend, DeclarativeDocumentBackend.      A declarative document backend is a backend t, DeclarativeDocumentBackend.      A declarative document backend is a backend t, AsciiDocBackend, Extract the item marker (number or bullet symbol) and the text of the item., Parse an image macro, extracting its path and attributes.         Syntax: image (+366 more)
 
 ### Community 30 - "Community 30"
 Cohesion: 0.05
@@ -6737,7 +6696,7 @@ Nodes (35): ABC, DoclingParsePageBackend, # TODO: Take width and height from doc
 
 ### Community 31 - "Community 31"
 Cohesion: 0.02
-Nodes (264): AbstractDocumentBackend, NoOpBackend, A no-op backend that only validates input existence.     Used e.g. for audio fi, BaseExtractionPipeline, ChunkDocumentResponse, ChunkingOptT, ConversionJob, ConvertDocumentResponse (+256 more)
+Nodes (253): AbstractDocumentBackend, NoOpBackend, A no-op backend that only validates input existence.     Used e.g. for audio fi, BaseExtractionPipeline, ChunkDocumentResponse, ChunkingOptT, ConversionJob, ConvertDocumentResponse (+245 more)
 
 ### Community 32 - "Community 32"
 Cohesion: 0.22
@@ -6764,8 +6723,8 @@ Cohesion: 0.12
 Nodes (22): areAnyCircleXRingsOverlapping(), autoDrawCircleXFlankLines(), buildCatkVectorHeadIconHtml(), buildReadonlyTmgMarker(), ensureFrontLineDebugLayer(), ensureObstaclePolygonsLoaded(), findClosestCircleXCenter(), frontlineCoversAllCircles() (+14 more)
 
 ### Community 38 - "Community 38"
-Cohesion: 0.06
-Nodes (33): ao_boundaries, bls_template, blue_units_base_ids, blue_units_initial, blue_units_source, can_resume_generation, expected_phase_count, generated_from_docs (+25 more)
+Cohesion: 0.07
+Nodes (23): ConfidenceReport, PageConfidenceScores, QualityGrade, ConversionAssets, _DocumentConversionInput, _DummyBackend, Serialize the full ConversionAssets to JSON., Load a ConversionAssets. (+15 more)
 
 ### Community 39 - "Community 39"
 Cohesion: 0.07
@@ -6776,8 +6735,8 @@ Cohesion: 0.06
 Nodes (44): bindDistanceWaypointLabelTooltip(), buildCatkTailPopupContent(), buildLinePopupContent(), buildTextLabelPopupContent(), catkPopupStylePayload(), coordInputHtml(), createDistanceSegmentLabelMarkers(), dedupeConsecutiveDistancePointsMutate() (+36 more)
 
 ### Community 41 - "Community 41"
-Cohesion: 0.02
-Nodes (105): Show a warning of the specified category only once per program run., show_warning(), show_warning_once(), Resolves any possible ids into vectors and returns a new query object, along wit, Initialize local Qdrant.          Args:             location: Where to store, AsyncQdrantBase, AliasOperations, Any (+97 more)
+Cohesion: 0.03
+Nodes (43): AliasOperations, Any, ClusterOperations, CollectionInfo, CollectionsAliasesResponse, CollectionsResponse, CountResult, DistributedTelemetryData (+35 more)
 
 ### Community 42 - "Community 42"
 Cohesion: 0.13
@@ -6792,8 +6751,8 @@ Cohesion: 0.04
 Nodes (54): buildExternalScenarioCatalogFromManifest(), buildExternalScenarioSourceTrace(), buildLiveOobUnitIndex(), buildLiveStepInvolvedUnits(), buildSingleExternalScenarioCatalogEntry(), checkScenarioHealth(), classifyScenarioFolderFile(), clearLiveOperatorEventLog() (+46 more)
 
 ### Community 45 - "Community 45"
-Cohesion: 0.06
-Nodes (33): blue_unit_step_coords, B-d0-71-029, B-d0-80-027, B-d0-الإمدا-028, B-d1-501-012, B-d1-502-013, B-d1-503-014, B-d1-505-015 (+25 more)
+Cohesion: 0.10
+Nodes (19): DoclingDocument, _Element, NodeItem, JatsDocumentBackend, Backend to parse articles in JATS (Journal Article Tag Suite) XML format.  JAT, # TODO: apply styling according to child.tag when supported by docling-core, # TODO: address cases with multiple sections, # TODO: once superscript is supported, add label with formatting (+11 more)
 
 ### Community 46 - "Community 46"
 Cohesion: 0.25
@@ -6840,8 +6799,8 @@ Cohesion: 0.12
 Nodes (15): APP_HTML, dbSrc, failures, fs, PANEL_JS, panelEnd, panelStart, path (+7 more)
 
 ### Community 57 - "Community 57"
-Cohesion: 0.06
-Nodes (38): addLegend(), attritionStatusOf(), buildDestroyedIcon(), buildDetectionUnits(), buildManeuverArrowPolygonLatLngs(), buildUnitMarkerIcon(), clearCoverageRings(), clearDetectionContacts() (+30 more)
+Cohesion: 0.04
+Nodes (80): addLegend(), addSitrep(), applyStepAttrition(), applyStepProgress(), attritionStatusOf(), bindZoomHookOnce(), blueIconSize(), blueSidcFor() (+72 more)
 
 ### Community 58 - "Community 58"
 Cohesion: 0.33
@@ -6853,7 +6812,7 @@ Nodes (18): adjSchema, COUNT_BOUNDS, SHAPES, TOP_LEVEL, adjSchema, isBbox(), isC
 
 ### Community 60 - "Community 60"
 Cohesion: 0.02
-Nodes (153): InspectorEmbed, Inspector which collects paths to objects requiring inference in the received mo, Looks for all the paths to objects requiring inference in the received models, Looks for all the paths to objects requiring inference in the received model, Looks for all the paths to objects requiring inference in the received model, Embedder, ModelInstance, Check if model is supported by fastembed          Args:             model_nam (+145 more)
+Nodes (157): Show a warning of the specified category only once per program run., show_warning(), show_warning_once(), InspectorEmbed, Inspector which collects paths to objects requiring inference in the received mo, Looks for all the paths to objects requiring inference in the received models, Looks for all the paths to objects requiring inference in the received model, Looks for all the paths to objects requiring inference in the received model (+149 more)
 
 ### Community 61 - "Community 61"
 Cohesion: 0.18
@@ -6881,7 +6840,7 @@ Nodes (8): ASSET_DIR, failures, fs, MANIFEST, PANEL_JS, path, SAM_PATH, sandbox
 
 ### Community 67 - "Community 67"
 Cohesion: 0.02
-Nodes (137): BasePipeline, _BaseChartExtractionModelGraniteVision, ChartExtractionModelGraniteVision, ChartExtractionModelGraniteVisionV4, Check if a value is numeric (int or float)., Transform a pandas DataFrame into a TableData object.          Automatically i, Extract CSV content from decoded text and convert to DataFrame.          Handl, Load the processor and model from the given artifacts path. (+129 more)
+Nodes (142): BasePipeline, Determines if a given element in a document can be processed by the model., Extracts a programming language from the beginning of a string.          This, Converts a string to a corresponding `CodeLanguageLabel` enum member., Constructs the prompt for the model based on the input label.          Paramet, Processes a list of text strings by truncating at '<end_of_utterance>' and, Processes the given batch of elements and enriches them with predictions., Initializes the CodeFormulaModel with the given configuration.          Parame (+134 more)
 
 ### Community 68 - "Community 68"
 Cohesion: 0.60
@@ -6892,16 +6851,16 @@ Cohesion: 0.10
 Nodes (16): appHtml, appHtmlPath, assert, cfgPath, cfgSrc, dockerfilePath, dockerSrc, fs (+8 more)
 
 ### Community 70 - "Community 70"
-Cohesion: 0.06
-Nodes (33): blue_unit_step_prev, B-d0-71-029, B-d0-80-027, B-d0-الإمدا-028, B-d1-501-012, B-d1-502-013, B-d1-503-014, B-d1-505-015 (+25 more)
+Cohesion: 0.09
+Nodes (39): QueryVectors, Any, Filter, Prefetch, QdrantClient, QueryVectors, build_filter(), _dense_prefetch() (+31 more)
 
 ### Community 71 - "Community 71"
 Cohesion: 0.06
-Nodes (33): blue_unit_step_coords, B-d0-71-029, B-d0-80-027, B-d0-الإمدا-028, B-d1-501-012, B-d1-502-013, B-d1-503-014, B-d1-505-015 (+25 more)
+Nodes (35): bls_template, blue_units_base_ids, blue_units_initial, generated_from_brief, generation, document_set_id, draft, from (+27 more)
 
 ### Community 72 - "Community 72"
 Cohesion: 0.06
-Nodes (33): blue_unit_step_prev, B-d0-71-029, B-d0-80-027, B-d0-الإمدا-028, B-d1-501-012, B-d1-502-013, B-d1-503-014, B-d1-505-015 (+25 more)
+Nodes (35): bls_template, blue_units_base_ids, blue_units_initial, generated_from_brief, generation, document_set_id, draft, from (+27 more)
 
 ### Community 73 - "Community 73"
 Cohesion: 0.13
@@ -6928,28 +6887,28 @@ Cohesion: 0.15
 Nodes (5): BACKUP_PATH, fs, HUD_SRC, MAP_SRC, path
 
 ### Community 79 - "Community 79"
-Cohesion: 0.07
-Nodes (28): ao_boundaries, bls_template, blue_units_base_ids, blue_units_initial, blue_units_source, generated_from_docs, imported_from_geojson, input_docs (+20 more)
+Cohesion: 0.06
+Nodes (35): bls_template, blue_units_base_ids, blue_units_initial, generated_from_brief, generation, document_set_id, draft, from (+27 more)
 
 ### Community 80 - "Community 80"
 Cohesion: 0.09
 Nodes (22): Executive summary, Final inventory by domain, Final state at end of run, Force-ratio progression, Phase 0 — D-7 — تمهيد - الوضع قبل العمليات, Phase 10 — D+36h — الفرقة 9 تلتحق - دفع 8-10 كم, Phase 11 — D+48h — اندفاع نحو 40-50 كم, Phase 12 — D+72h — المرحلة 3 - الفرقة المدرعة 1 تنزل (+14 more)
 
 ### Community 81 - "Community 81"
-Cohesion: 0.11
-Nodes (18): red_unit_step_coords, R-d0-21-025, R-d0-48-027, R-d1-10-023, R-d1-12-021, R-d1-41-003, R-d1-42-007, R-d1-45-011 (+10 more)
+Cohesion: 0.06
+Nodes (35): bls_template, blue_units_base_ids, blue_units_initial, generated_from_brief, generation, document_set_id, draft, from (+27 more)
 
 ### Community 82 - "Community 82"
-Cohesion: 0.11
-Nodes (18): red_unit_step_prev, R-d0-21-025, R-d0-48-027, R-d1-10-023, R-d1-12-021, R-d1-41-003, R-d1-42-007, R-d1-45-011 (+10 more)
+Cohesion: 0.06
+Nodes (35): bls_template, blue_units_base_ids, blue_units_initial, generated_from_brief, generation, document_set_id, draft, from (+27 more)
 
 ### Community 83 - "Community 83"
-Cohesion: 0.11
-Nodes (18): red_unit_step_coords, R-d0-21-025, R-d0-48-027, R-d1-10-023, R-d1-12-021, R-d1-41-003, R-d1-42-007, R-d1-45-011 (+10 more)
+Cohesion: 0.06
+Nodes (35): bls_template, blue_units_base_ids, blue_units_initial, generated_from_brief, generation, document_set_id, draft, from (+27 more)
 
 ### Community 84 - "Community 84"
-Cohesion: 0.11
-Nodes (18): red_unit_step_prev, R-d0-21-025, R-d0-48-027, R-d1-10-023, R-d1-12-021, R-d1-41-003, R-d1-42-007, R-d1-45-011 (+10 more)
+Cohesion: 0.06
+Nodes (35): bls_template, blue_units_base_ids, blue_units_initial, generated_from_brief, generation, document_set_id, draft, from (+27 more)
 
 ### Community 85 - "Community 85"
 Cohesion: 0.14
@@ -6976,16 +6935,16 @@ Cohesion: 0.38
 Nodes (17): briefBlock(), chip(), esc(), fieldRow(), listBlock(), opBrief(), proposedCounts(), proposedUnits() (+9 more)
 
 ### Community 91 - "Community 91"
-Cohesion: 0.03
-Nodes (171): AliasDescription, BaseUploader, CollectionDescription, GrpcToRest, RestToGrpc, CreateAlias, DeleteAlias, ParallelWorkerPool (+163 more)
+Cohesion: 0.04
+Nodes (173): AliasDescription, BaseUploader, CollectionDescription, get_args_subscribed(), Get type arguments with all substitutions performed. Supports subscripted generi, GrpcToRest, RestToGrpc, ParallelWorkerPool (+165 more)
 
 ### Community 92 - "Community 92"
-Cohesion: 0.33
-Nodes (6): obj, carver, coord, name, radius_km, target_depth_km
+Cohesion: 0.06
+Nodes (35): bls_template, blue_units_base_ids, blue_units_initial, generated_from_brief, generation, document_set_id, draft, from (+27 more)
 
 ### Community 93 - "Community 93"
-Cohesion: 0.33
-Nodes (6): obj, carver, coord, name, radius_km, target_depth_km
+Cohesion: 0.06
+Nodes (35): bls_template, blue_units_base_ids, blue_units_initial, generated_from_brief, generation, document_set_id, draft, from (+27 more)
 
 ### Community 94 - "Community 94"
 Cohesion: 0.33
@@ -6996,36 +6955,36 @@ Cohesion: 0.50
 Nodes (4): image_match, note, meko, platform_match
 
 ### Community 97 - "Community 97"
-Cohesion: 0.67
-Nodes (3): objective_override_expected, lat, lon
+Cohesion: 0.06
+Nodes (35): bls_template, blue_units_base_ids, blue_units_initial, generated_from_brief, generation, document_set_id, draft, from (+27 more)
 
 ### Community 98 - "Community 98"
-Cohesion: 0.67
-Nodes (3): objective_override_expected, lat, lon
+Cohesion: 0.06
+Nodes (35): bls_template, blue_units_base_ids, blue_units_initial, generated_from_brief, generation, document_set_id, draft, from (+27 more)
 
 ### Community 99 - "Community 99"
 Cohesion: 0.09
-Nodes (37): PagePredictions, get_md_deepseek_paths(), mock_parsing(), Test DeepSeek OCR markdown parsing in VLM pipeline., Get all DeepSeek markdown test files., Create a mock conversion result with the DeepSeek OCR markdown as VLM response., Test DeepSeek OCR markdown parsing for all test files., Test DeepSeek OCR VLM conversion on a PDF file. (+29 more)
+Nodes (38): PagePredictions, get_md_deepseek_paths(), mock_parsing(), Test DeepSeek OCR markdown parsing in VLM pipeline., Get all DeepSeek markdown test files., Create a mock conversion result with the DeepSeek OCR markdown as VLM response., Test DeepSeek OCR markdown parsing for all test files., Test DeepSeek OCR VLM conversion on a PDF file. (+30 more)
 
 ### Community 100 - "Community 100"
 Cohesion: 0.02
-Nodes (120): QdrantLocal, Resolves any possible ids into vectors and returns a new query object, along wit, Everything Qdrant server can do, but locally.      Use this implementation to, Initialize local Qdrant.          Args:             location: Where to store, QdrantBase, gRPC client for collections methods          Returns:             An instance, gRPC client for points methods          Returns:             An instance of r, REST Client          Returns:             An instance of raw REST API client, (+112 more)
+Nodes (105): QdrantLocal, Resolves any possible ids into vectors and returns a new query object, along wit, Everything Qdrant server can do, but locally.      Use this implementation to, Initialize local Qdrant.          Args:             location: Where to store, QdrantBase, client(), Sets up multiple collections with a bunch of points, AliasOperations (+97 more)
 
 ### Community 101 - "Community 101"
 Cohesion: 0.02
 Nodes (179): __(), _0(), _1(), a0(), a1(), a2(), ai(), ar() (+171 more)
 
 ### Community 102 - "Community 102"
-Cohesion: 0.04
-Nodes (32): AcornSearchParams, ContextInput, ContextInputPair, DiscoverInput, FeedbackItem, FeedbackStrategy, Fusion, NaiveFeedbackStrategy (+24 more)
+Cohesion: 0.12
+Nodes (25): _available_source_docs(), build_citation_tag(), collect_group_specs(), _elide_missing_source_docs(), _fan_out_search(), _is_tier_aware(), _lookup_nested(), graph/generation/retrieval_group.py — fan-out + merge for Phase 3.  Implements (+17 more)
 
 ### Community 103 - "Community 103"
 Cohesion: 0.06
 Nodes (148): $t(), af(), aj(), as(), bf(), bi(), bj(), cf() (+140 more)
 
 ### Community 104 - "Community 104"
-Cohesion: 0.04
-Nodes (41): BearerAuth, get_server_version(), is_compatible(), parse_version(), get_args_subscribed(), Remap type to a type that can be used in type annotations      Pydantic uses c, Get type arguments with all substitutions performed. Supports subscripted generi, remap_type() (+33 more)
+Cohesion: 0.32
+Nodes (6): BearerAuth, get_server_version(), is_compatible(), parse_version(), Any, Version
 
 ### Community 105 - "Community 105"
 Cohesion: 0.09
@@ -7033,7 +6992,7 @@ Nodes (148): ab(), ag(), ah(), au(), av(), aw(), ax(), az() (+140 more)
 
 ### Community 106 - "Community 106"
 Cohesion: 0.03
-Nodes (90): SparseModelDescription, get_all_punctuation(), remove_non_alphanumeric(), Bm25, Bm25Worker, Lists the supported models.          Returns:             list[SparseModelDes, Encode a list of documents into list of embeddings.         We use mean pooling, Calculate the term frequency part of the BM25 formula.          ( (+82 more)
+Nodes (87): SparseModelDescription, Lists the supported models.          Returns:             list[SparseModelDes, Bm42, Bm42TextEmbeddingWorker, get_language_by_model_name(), Orders all tokens in the vector by their importance and generates a new score ba, Lists the supported models.          Returns:             list[SparseModelDes, Encode a list of documents into list of embeddings.         We use mean pooling (+79 more)
 
 ### Community 107 - "Community 107"
 Cohesion: 0.22
@@ -7088,40 +7047,40 @@ Cohesion: 0.13
 Nodes (12): B, BOX, { extractDocxText }, fs, GEN, mkSteps(), N, path (+4 more)
 
 ### Community 120 - "Community 120"
-Cohesion: 0.12
-Nodes (20): applyState(), applySuppressionHalos(), _applyTaskingToMarkerMap(), applyW3UnitNarrative(), clearSuppressionHalos(), clearTaskingOverlay(), deriveDisplayOutcome(), ensureScenarioGraphicsPane() (+12 more)
+Cohesion: 0.09
+Nodes (34): animateSalvoLaunches(), applyState(), applySuppressionHalos(), _applyTaskingToMarkerMap(), applyW3UnitNarrative(), blsIcon(), buildBlsTooltip(), buildObjTooltip() (+26 more)
 
 ### Community 121 - "Community 121"
 Cohesion: 0.04
-Nodes (48): AnnotatedText, AnnotatedTextList, _ExtractedFormField, HTMLDocumentBackend, Rewrite <p> elements that contain block-level breakers.          This function, Determine whether an table cell should be parsed as a Docling RichTableCell., Parse an XML tag by recursively walking its content.          While walking, t, Create an inline group for annotated texts.          Checks if annotated_text_ (+40 more)
+Nodes (52): AnnotatedText, AnnotatedTextList, _ExtractedFormField, _ExtractedFormValue, HTMLDocumentBackend, Rewrite <p> elements that contain block-level breakers.          This function, Determine whether an table cell should be parsed as a Docling RichTableCell., Parse an XML tag by recursively walking its content.          While walking, t (+44 more)
 
 ### Community 122 - "Community 122"
-Cohesion: 0.22
-Nodes (16): applyW3Spread(), bluePositionLonLat(), clamp01(), computeDisplayOffset(), engLaneOffset(), kmPerDegLng(), kmPerPixelAtZoom(), lerpLonLat() (+8 more)
+Cohesion: 0.11
+Nodes (30): animateLineDraw(), applyW3Spread(), blueActionsFor(), bluePositionLonLat(), clamp01(), computeDisplayOffset(), createTacticalArrow(), displayBlueId() (+22 more)
 
 ### Community 123 - "Community 123"
-Cohesion: 0.05
-Nodes (23): escape_latex(), get_val(), load(), load_string(), oMath2Latex, Pr, Office Math Markup Language (OMML)  Adapted from https://github.com/xiilei/dwm, process children of the elm,return dict (+15 more)
+Cohesion: 0.20
+Nodes (13): MathHandlerMixin, LatexDocumentBackend, LatexBackendOptions, BytesIO, DocItemLabel, DoclingDocument, Formatting, InputDocument (+5 more)
 
 ### Community 124 - "Community 124"
-Cohesion: 0.07
-Nodes (24): define_cache_dir(), iter_batch(), mean_pooling(), normalize(), >>> list(iter_batch([1,2,3,4,5], 3))     [[1, 2, 3], [4, 5]], Define the cache directory for fastembed, OnnxTextEmbedding, OnnxTextEmbeddingWorker (+16 more)
+Cohesion: 0.06
+Nodes (33): define_cache_dir(), get_all_punctuation(), iter_batch(), mean_pooling(), normalize(), >>> list(iter_batch([1,2,3,4,5], 3))     [[1, 2, 3], [4, 5]], Define the cache directory for fastembed, remove_non_alphanumeric() (+25 more)
 
 ### Community 125 - "Community 125"
 Cohesion: 0.08
 Nodes (57): $(), adjudicateNext(), autoDrawWhenReady(), bindHandlers(), boot(), cancelMc(), classifyHistoricalStep(), classifyRun() (+49 more)
 
 ### Community 126 - "Community 126"
-Cohesion: 0.31
-Nodes (9): applyW3PerStepDamage(), markUnitAsDamaged(), renderMarkerByStatus(), _resolveSidc(), restoreMarker(), setSidcStatusDigit(), sidcIcon(), unmarkUnitAsDamaged() (+1 more)
+Cohesion: 0.19
+Nodes (13): applyW3PerStepDamage(), buildDestroyedIcon(), buildUnitMarkerIcon(), fadeMarker(), markUnitAsDamaged(), markUnitAsDestroyed(), renderMarkerByStatus(), _resolveSidc() (+5 more)
 
 ### Community 127 - "Community 127"
-Cohesion: 0.04
-Nodes (86): BaseLayoutOptions, Cluster, LayoutPrediction, LayoutObjectDetectionOptions, LayoutOptions, Options for layout processing using Docling's built-in layout model.      Prov, Options for layout detection using object-detection runtimes.      Alternative, Internal options for the experimental TableCrops layout model. (+78 more)
+Cohesion: 0.14
+Nodes (12): _parse_orientation(), r"""         Run tesseract CLI, r"""         Run tesseract in PSM 0 mode to detect the language, r"""         Read and set the languages installed in tesseract and decide the s, # HACK: Windows versions of Tesseract output the version to stdout, Linux versio, TesseractOcrCliModel, DataFrame, BoundingBox (+4 more)
 
 ### Community 128 - "Community 128"
-Cohesion: 0.05
-Nodes (41): crop_whitespace(), get_docx_to_pdf_converter(), get_libreoffice_cmd(), get_pil_from_dml_docx(), Return the libreoffice cmd and optionally test it., Detects the best available DOCX to PDF tool and returns a conversion function., backend(), documents() (+33 more)
+Cohesion: 0.06
+Nodes (42): crop_whitespace(), get_docx_to_pdf_converter(), get_libreoffice_cmd(), get_pil_from_dml_docx(), Return the libreoffice cmd and optionally test it., Detects the best available DOCX to PDF tool and returns a conversion function., backend(), documents() (+34 more)
 
 ### Community 129 - "Community 129"
 Cohesion: 0.39
@@ -7369,15 +7328,15 @@ Nodes (6): hideAllPanels(), hideAutoFlankControls(), hideChatSidebar(), hideCont
 
 ### Community 192 - "Community 192"
 Cohesion: 0.02
-Nodes (73): BatchVectorStruct, grpc_to_payload(), has_field(), json_to_value(), payload_to_grpc(), Parse common parts of vector structs          Args:             model: Vector, Same as protobuf HasField, but also works for primitive values     (https://sta, value_to_json() (+65 more)
+Nodes (68): BatchVectorStruct, ContextInput, ContextInputPair, Remap type to a type that can be used in type annotations      Pydantic uses c, remap_type(), grpc_to_payload(), has_field(), json_to_value() (+60 more)
 
 ### Community 193 - "Community 193"
 Cohesion: 0.04
-Nodes (60): PoolingType, int, OnnxTextEmbedding, CLIPEmbeddingWorker, CLIPOnnxEmbedding, CustomTextEmbedding, PostprocessingConfig, JinaEmbeddingV3 (+52 more)
+Nodes (96): ColbertEmbeddingWorker, DenseModelDescription, ModelSource, PoolingType, OnnxOutputContext, int, ColbertEmbeddingWorker, JinaColbertEmbeddingWorker (+88 more)
 
 ### Community 194 - "Community 194"
 Cohesion: 0.06
-Nodes (64): EmbeddingWorker, OnnxModel, OnnxOutputContext, A convenience method to select the exposed session options in models, Add extra session options to the existing options object in-place          Arg, Post-process the ONNX model output to convert it into a usable format., Preprocess the onnx input., load_preprocessor() (+56 more)
+Nodes (50): EmbeddingWorker, OnnxModel, A convenience method to select the exposed session options in models, Add extra session options to the existing options object in-place          Arg, Post-process the ONNX model output to convert it into a usable format., Preprocess the onnx input., Device, OnnxImageModel (+42 more)
 
 ### Community 195 - "Community 195"
 Cohesion: 0.03
@@ -7385,11 +7344,11 @@ Nodes (41): BinaryQuantization, BinaryQuantizationConfig, BinaryQuantizationEnco
 
 ### Community 196 - "Community 196"
 Cohesion: 0.03
-Nodes (168): GroupCacheKey, All the fields that compose the cache key, plus the computed hash.      Keepin, GroupRetrievalResult, GroupSpec, SourcedHit, CoverageVerdict, coverage_verdict(), Return ``"strong"`` / ``"weak"`` / ``"empty"`` for ``hits``.      The three si (+160 more)
+Nodes (190): GroupCacheKey, All the fields that compose the cache key, plus the computed hash.      Keepin, save_group(), _sourced_hit_to_json(), GroupRetrievalResult, GroupSpec, Path, SourcedHit (+182 more)
 
 ### Community 197 - "Community 197"
-Cohesion: 0.07
-Nodes (85): GroupDraft, Cacheable output of ``retrieve → draft → critique`` for one group.      Stored, Any, ComputedField, _apply_transform(), _call_computed(), dispatch_template(), DispatchError (+77 more)
+Cohesion: 0.05
+Nodes (138): Exception, Any, DispatchResult, assemble_document(), AssemblyError, GeneratedDocument, graph/generation/assembler.py — turn dispatch output into a :class:`GeneratedDo, Fully assembled document ready for rendering.      Attributes:         templa (+130 more)
 
 ### Community 198 - "Community 198"
 Cohesion: 0.12
@@ -7401,7 +7360,7 @@ Nodes (37): Path, Phase3Inputs, ReadFile, _apply_v1_scope_gate(), _assert_no_emp
 
 ### Community 200 - "Community 200"
 Cohesion: 0.04
-Nodes (64): ModelSource, ColModernVBERT, ColModernVBERTImageEmbeddingWorker, ColModernVBERTTextEmbeddingWorker, Lists the supported models.          Returns:             list[DenseModelDesc, Post-process the ONNX model output to convert it into a usable format., Post-process the ONNX model output to convert it into a usable format., Process nested image patches (from ImageSplitter).          Args: (+56 more)
+Nodes (63): ColModernVBERT, ColModernVBERTImageEmbeddingWorker, ColModernVBERTTextEmbeddingWorker, Lists the supported models.          Returns:             list[DenseModelDesc, Post-process the ONNX model output to convert it into a usable format., Post-process the ONNX model output to convert it into a usable format., Process nested image patches (from ImageSplitter).          Args:, Add text input placeholders for image data, following Idefics3 processing logic. (+55 more)
 
 ### Community 201 - "Community 201"
 Cohesion: 0.08
@@ -7409,23 +7368,23 @@ Nodes (98): am(), aN(), aO(), bl(), bN(), bO(), cl(), cN() (+90 more)
 
 ### Community 202 - "Community 202"
 Cohesion: 0.02
-Nodes (112): _AvailableModels, download(), download_hf_repo(), DocInputType, PageConfidenceScores, QualityGrade, DocumentFormat, LayoutModelType (+104 more)
+Nodes (109): _AvailableModels, download(), download_hf_repo(), DocInputType, DocumentFormat, LayoutModelType, InferenceAsrFramework, CUDA graph capture mode for the vLLM v1 engine.      Controls whether and how (+101 more)
 
 ### Community 203 - "Community 203"
 Cohesion: 0.04
 Nodes (66): jsonable_encoder(), Universally query points in batch. This endpoint covers all capabilities of sear, Universally query points. This endpoint covers all capabilities of search, recom, Universally query points, grouped by a given payload field, Look for the points which are closer to stored positive examples and at the same, Look for the points which are closer to stored positive examples and at the same, Look for the points which are closer to stored positive examples and at the same, Retrieve by batch the closest points based on vector similarity and given filter (+58 more)
 
 ### Community 204 - "Community 204"
-Cohesion: 0.03
-Nodes (141): Inspector, Inspector which tries to find at least one occurrence of an object requiring inf, Looks for at least one occurrence of an object requiring inference in the receiv, AsyncQdrantLocal, Everything Qdrant server can do, but locally.      Use this implementation to, AsyncQdrantClient, Retrieve stored points by IDs          Args:             collection_name: Nam, Deletes selected points from collection          Args:             collection (+133 more)
+Cohesion: 0.02
+Nodes (195): Inspector, Inspector which tries to find at least one occurrence of an object requiring inf, AsyncQdrantLocal, Resolves any possible ids into vectors and returns a new query object, along wit, Everything Qdrant server can do, but locally.      Use this implementation to, Initialize local Qdrant.          Args:             location: Where to store, AsyncQdrantBase, AsyncQdrantClient (+187 more)
 
 ### Community 205 - "Community 205"
 Cohesion: 0.28
 Nodes (65): DenseQueryVector, FilterSelector, ContextPair, ContextQuery, DiscoveryQuery, DistanceOrder, FeedbackItem, NaiveFeedbackCoefficients (+57 more)
 
 ### Community 206 - "Community 206"
-Cohesion: 0.07
-Nodes (21): AbortShardTransfer, CollectionClusterInfoResponse, CreateShardKey, DeleteShardKey, LocalShardInfo, MoveShard, RemoteShardInfo, Replica (+13 more)
+Cohesion: 0.02
+Nodes (61): AbortShardTransfer, AcornSearchParams, CollectionClusterInfoResponse, CreateShardKey, DeleteShardKey, DivExpression, FieldCondition, GeoDistance (+53 more)
 
 ### Community 207 - "Community 207"
 Cohesion: 0.08
@@ -7433,7 +7392,7 @@ Nodes (20): ignore_mentioned_ids_filter(), _include_ids_in_filter(), LocalCollec
 
 ### Community 208 - "Community 208"
 Cohesion: 0.09
-Nodes (36): Any, cache_dir_for_run(), _canonical_sha256(), _collection_content_hashes(), compute_group_cache_key(), force_regenerate_flag(), _group_yaml_block_hash(), _input_subset_hash() (+28 more)
+Nodes (33): Any, cache_dir_for_run(), _canonical_sha256(), _collection_content_hashes(), compute_group_cache_key(), force_regenerate_flag(), _group_yaml_block_hash(), _input_subset_hash() (+25 more)
 
 ### Community 209 - "Community 209"
 Cohesion: 0.03
@@ -7445,11 +7404,11 @@ Nodes (57): Adjudicator, adjudicator.py — Neutral wargame umpire.  Two public 
 
 ### Community 211 - "Community 211"
 Cohesion: 0.06
-Nodes (39): BaseModelDescription, CustomTextCrossEncoder, OnnxTextCrossEncoder, Reranks documents based on their relevance to a given query.          Args:, Returns the number of tokens in the pairs.          Args:             pairs:, Lists the supported models.          Returns:             list[BaseModelDescr, Args:             model_name (str): The name of the model to use., TextCrossEncoderWorker (+31 more)
+Nodes (44): BaseModelDescription, CustomTextCrossEncoder, OnnxTextCrossEncoder, Reranks documents based on their relevance to a given query.          Args:, Returns the number of tokens in the pairs.          Args:             pairs:, Lists the supported models.          Returns:             list[BaseModelDescr, Args:             model_name (str): The name of the model to use., TextCrossEncoderWorker (+36 more)
 
 ### Community 212 - "Community 212"
 Cohesion: 0.05
-Nodes (70): QdrantClient, _get_client(), get_registry_entry(), list_registry_entries(), _live_points_count(), _print_entry(), graph/retrieval/registry.py =============================== Read-only view ove, Scroll the `_registry` collection and enrich each row with its live     points_ (+62 more)
+Nodes (74): QdrantClient, _get_client(), get_registry_entry(), list_registry_entries(), _live_points_count(), _print_entry(), graph/retrieval/registry.py =============================== Read-only view ove, Scroll the `_registry` collection and enrich each row with its live     points_ (+66 more)
 
 ### Community 213 - "Community 213"
 Cohesion: 0.06
@@ -7457,11 +7416,7 @@ Nodes (77): addLegend(), addSitrep(), animateLineDraw(), applyState(), applyStep
 
 ### Community 214 - "Community 214"
 Cohesion: 0.06
-Nodes (35): center_crop(), convert_to_rgb(), crop_ndarray(), normalize(), pad2square(), pil2ndarray(), rescale(), resize() (+27 more)
-
-### Community 215 - "Community 215"
-Cohesion: 0.09
-Nodes (37): Table, TableStructurePrediction, Options for the table structure (TableFormer V2)., TableStructureV2Options, BaseTableStructureModel, Shared interface for table structure models., Return the options type supported by this table model., # FIXME: this method is here to test the quality and performance of the (+29 more)
+Nodes (43): load_preprocessor(), load_special_tokens(), load_tokenizer(), Compose, center_crop(), convert_to_rgb(), crop_ndarray(), normalize() (+35 more)
 
 ### Community 216 - "Community 216"
 Cohesion: 0.07
@@ -7492,16 +7447,16 @@ Cohesion: 0.03
 Nodes (44): escapeHtml(), renderReportHtml(), terrainApi, adjudicator, aiProvider, appData, CHAT_FILE, CHAT_GROUPS_FILE (+36 more)
 
 ### Community 223 - "Community 223"
-Cohesion: 0.04
-Nodes (115): Any, DispatchResult, assemble_document(), AssemblyError, GeneratedDocument, graph/generation/assembler.py — turn dispatch output into a :class:`GeneratedDo, Fully assembled document ready for rendering.      Attributes:         templa, Import the schema module declared for this template_id. (+107 more)
+Cohesion: 0.11
+Nodes (30): _available_source_docs(), build_citation_tag(), collect_group_specs(), _elide_missing_source_docs(), _fan_out_search(), GroupSpec, _is_tier_aware(), _lookup_nested() (+22 more)
 
 ### Community 224 - "Community 224"
-Cohesion: 0.05
-Nodes (40): ColbertEmbeddingWorker, Colbert, ColbertEmbeddingWorker, Lists the supported models.          Returns:             list[DenseModelDesc, Args:             model_name (str): The name of the model to use., Encode a list of documents into list of embeddings.         We use mean pooling, JinaColbert, JinaColbertEmbeddingWorker (+32 more)
+Cohesion: 0.06
+Nodes (30): Colbert, Lists the supported models.          Returns:             list[DenseModelDesc, Args:             model_name (str): The name of the model to use., Encode a list of documents into list of embeddings.         We use mean pooling, JinaColbert, Lists the supported models.          Returns:             list[DenseModelDesc, LateInteractionTextEmbeddingBase, Embeds a list of text passages into a list of embeddings.          Args: (+22 more)
 
 ### Community 225 - "Community 225"
-Cohesion: 0.15
-Nodes (13): show_external_plugins_callback(), get_layout_factory(), get_ocr_factory(), get_picture_description_factory(), get_table_structure_factory(), LayoutFactory, OcrFactory, PictureDescriptionFactory (+5 more)
+Cohesion: 0.16
+Nodes (11): get_layout_factory(), get_picture_description_factory(), get_table_structure_factory(), LayoutFactory, OcrFactory, PictureDescriptionFactory, TableStructureFactory, LayoutFactory (+3 more)
 
 ### Community 226 - "Community 226"
 Cohesion: 0.04
@@ -7553,7 +7508,7 @@ Nodes (16): _AliasesApi, jsonable_encoder(), Get list of all aliases for a colle
 
 ### Community 238 - "Community 238"
 Cohesion: 0.06
-Nodes (53): Exception, BaseModel, _build_output_model(), _collect_source_file_fields(), extract_for_document(), _format_sources_block(), _format_tasks_block(), _prompts_module_for() (+45 more)
+Nodes (52): BaseModel, _build_output_model(), _collect_source_file_fields(), extract_for_document(), _format_sources_block(), _format_tasks_block(), _prompts_module_for(), graph/generation/source_file_extractor.py — per-doc file extraction.  For each (+44 more)
 
 ### Community 239 - "Community 239"
 Cohesion: 0.10
@@ -7592,8 +7547,8 @@ Cohesion: 0.04
 Nodes (48): ACCS, Air_support_coordination, Appendices, area_interest, Assembly_Area, Attached_and_Detached_units, civil_considerations, CIVILIAN_CONSIDERATIONS (+40 more)
 
 ### Community 248 - "Community 248"
-Cohesion: 0.08
-Nodes (40): compose_three_prompts(), extract_inputs(), extract_inputs_from_three(), ExtractionError, prompt_sha256(), graph/generation/prompt_extractor.py — free-form prompt → Phase3Inputs.  One u, Deterministic short hash of a prompt, for cache keys (§18 C16).      Returns t, Concatenate three per-doc prompts into one labelled brief (§C22).      The ext (+32 more)
+Cohesion: 0.07
+Nodes (43): compose_three_prompts(), extract_inputs(), extract_inputs_from_three(), ExtractionError, prompt_sha256(), graph/generation/prompt_extractor.py — free-form prompt → Phase3Inputs.  One u, Deterministic short hash of a prompt, for cache keys (§18 C16).      Returns t, Concatenate three per-doc prompts into one labelled brief (§C22).      The ext (+35 more)
 
 ### Community 249 - "Community 249"
 Cohesion: 0.04
@@ -7628,8 +7583,8 @@ Cohesion: 0.13
 Nodes (35): calculate_context_scores(), calculate_discovery_ranks(), calculate_discovery_scores(), calculate_distance(), calculate_distance_core(), calculate_naive_feedback_query(), calculate_recommend_best_scores(), calculate_recommend_sum_scores() (+27 more)
 
 ### Community 257 - "Community 257"
-Cohesion: 0.10
-Nodes (17): ModelManagement, Downloads a model from HuggingFace Hub.         Args:             hf_source_re, Decompresses a .tar.gz file to a cache directory.          Args:, Lists the supported models.          Returns:             list[T]: A list of, Downloads a model from HuggingFace Hub or Google Cloud Storage.          Args:, Add a custom model to the existing embedding classes based on the passed model d, Gets the model description from the model_name.          Args:             mo, Downloads a file from Google Cloud Storage.          Args:             url (s (+9 more)
+Cohesion: 0.06
+Nodes (26): ModelManagement, Downloads a model from HuggingFace Hub.         Args:             hf_source_re, Decompresses a .tar.gz file to a cache directory.          Args:, Lists the supported models.          Returns:             list[T]: A list of, Downloads a model from HuggingFace Hub or Google Cloud Storage.          Args:, Add a custom model to the existing embedding classes based on the passed model d, Gets the model description from the model_name.          Args:             mo, Downloads a file from Google Cloud Storage.          Args:             url (s (+18 more)
 
 ### Community 258 - "Community 258"
 Cohesion: 0.04
@@ -7712,8 +7667,8 @@ Cohesion: 0.05
 Nodes (41): blueUnitsAuthored, blueUnitsDefault, DB1, degraded, DET, DOCTRINE_TYPES, doctrineSnapshot, dRec() (+33 more)
 
 ### Community 278 - "Community 278"
-Cohesion: 0.02
-Nodes (82): ContentHandler, _generate_groundtruth(), groundtruth(), patents(), Test methods in module docling.backend.patent_uspto_backend.py., Test the table parser., Test applications and grants Full Text Data/XML Version 4.x ICE., Test applications and grants Full Text Data/APS. (+74 more)
+Cohesion: 0.04
+Nodes (37): ContentHandler, Element, PatentHandler, Build an instance of PatentUsptoAppV1 class., SAX ContentHandler for patent documents., Represents an element of interest in the patent application document., Build an instance of the patent handler., Signal the start of an element.              Args:                 tag: The e (+29 more)
 
 ### Community 279 - "Community 279"
 Cohesion: 0.07
@@ -7732,8 +7687,8 @@ Cohesion: 0.07
 Nodes (25): baseExportPackage(), baseRealEntry(), buildChecklistCopyAuditPayload(), checkCommitBridgeDryRun(), checkDecisionRecordsInMemory(), checkDownloadGuardLocked(), checkExportSafetyFlagsRejected(), checklistVisibleNow() (+17 more)
 
 ### Community 283 - "Community 283"
-Cohesion: 0.09
-Nodes (32): addSitrep(), applyStepProgress(), blsIcon(), blueIconSize(), blueSidcFor(), buildBlsTooltip(), buildEchelonDivisionGroups(), buildObjTooltip() (+24 more)
+Cohesion: 0.16
+Nodes (18): _generate_groundtruth(), groundtruth(), patents(), Test methods in module docling.backend.patent_uspto_backend.py., Test the table parser., Test applications and grants Full Text Data/XML Version 4.x ICE., Test applications and grants Full Text Data/APS., Test applications Full Text Data/XML Version 1.x. (+10 more)
 
 ### Community 284 - "Community 284"
 Cohesion: 0.05
@@ -7760,8 +7715,8 @@ Cohesion: 0.05
 Nodes (42): 10. Verification checklist for Claude IDE, 11. Recommended implementation order for Claude IDE, 12. Copy-paste brief for Claude IDE, 1. Goal, 2. Important constraint, 3. Current model touchpoints in this repo, 4. Recommended rollout, 5.1 Shared LLM connection (+34 more)
 
 ### Community 290 - "Community 290"
-Cohesion: 0.10
-Nodes (31): Any, cache_dir_for_run(), _canonical_sha256(), _collection_content_hashes(), compute_group_cache_key(), force_regenerate_flag(), _group_yaml_block_hash(), _input_subset_hash() (+23 more)
+Cohesion: 0.26
+Nodes (15): check_cache_key_invalidation(), check_citation_tag_emission(), check_citation_tag_parsing(), check_coverage_verdicts(), check_evidence_bundle_assembly(), check_renderer_endnote_layout(), check_retrieve_group_routing(), _Counter (+7 more)
 
 ### Community 291 - "Community 291"
 Cohesion: 0.05
@@ -7836,24 +7791,24 @@ Cohesion: 0.05
 Nodes (40): ao_boundaries, bls_template, BLUE, NEUTRAL, RED, blue_units_base_ids, blue_units_initial, map_bbox (+32 more)
 
 ### Community 309 - "Community 309"
-Cohesion: 0.05
-Nodes (40): ao_boundaries, bls_template, blue_unit_step_coords, BLUE-ADA-01, BLUE-COY-01, BLUE-RES-01, blue_units_base_ids, blue_units_initial (+32 more)
+Cohesion: 0.21
+Nodes (4): CreateAlias, DeleteAlias, RenameAlias, AliasOperations
 
 ### Community 310 - "Community 310"
-Cohesion: 0.05
-Nodes (40): ao_boundaries, bls_template, blue_unit_step_coords, BLUE-LOG-01, BLUE-QRF-01, BLUE-SEC-01, blue_units_base_ids, blue_units_initial (+32 more)
+Cohesion: 0.33
+Nodes (4): _expand_macros(), LatexMathNode, DoclingDocument, NodeItem
 
 ### Community 311 - "Community 311"
-Cohesion: 0.16
-Nodes (28): Any, Namespace, RegistryEntry, _classify_extension(), _do_search(), _facet(), main(), _parse_args() (+20 more)
+Cohesion: 0.17
+Nodes (27): Any, RegistryEntry, _classify_extension(), _do_search(), _facet(), main(), _parse_args(), _pick_best_collection() (+19 more)
 
 ### Community 312 - "Community 312"
 Cohesion: 0.02
-Nodes (138): QdrantClient, Delete specified vector from the collection. Does not affect payload., Retrieve stored points by IDs          Args:             collection_name: Nam, Deletes selected points from collection          Args:             collection, Modifies payload of the specified points.          Examples:              `S, Overwrites payload of the specified points         After this operation is appl, Remove values from point's payload          Args:             collection_name, Delete all payload for selected points          Args:             collection_ (+130 more)
+Nodes (143): QdrantClient, Delete specified vector from the collection. Does not affect payload., Retrieve stored points by IDs          Args:             collection_name: Nam, Deletes selected points from collection          Args:             collection, Modifies payload of the specified points.          Examples:              `S, Overwrites payload of the specified points         After this operation is appl, Remove values from point's payload          Args:             collection_name, Delete all payload for selected points          Args:             collection_ (+135 more)
 
 ### Community 313 - "Community 313"
 Cohesion: 0.05
-Nodes (33): _BetaApi, jsonable_encoder(), Removes all issues reported so far, Removes all issues reported so far, Removes all issues reported so far, to_json(), jsonable_encoder(), An endpoint for health checking used in Kubernetes. (+25 more)
+Nodes (33): _BetaApi, jsonable_encoder(), Removes all issues reported so far, Removes all issues reported so far, Removes all issues reported so far, to_json(), jsonable_encoder(), Returns information about the running Qdrant instance like version and commit id (+25 more)
 
 ### Community 314 - "Community 314"
 Cohesion: 0.10
@@ -7876,8 +7831,8 @@ Cohesion: 0.05
 Nodes (39): 0. Stage map, 10. Cross-references, 1.1 Network calls at runtime, 1.2 Install-time network calls, 1.3 Code that contains user-machine-specific paths (must change), 1.4 Things explicitly NOT internet-touched (safe to ignore), 1. Definitive inventory — what hits the internet today, 2. Pre-stage: collect everything from the Mac (or any online box) (+31 more)
 
 ### Community 319 - "Community 319"
-Cohesion: 0.11
-Nodes (13): dict, PictureDescriptionVlmModel, _DummyBatch, _DummyModel, _DummyProcessor, _DummyTokenizer, _InitDummyModel, _InitDummyProcessor (+5 more)
+Cohesion: 0.33
+Nodes (3): An endpoint for health checking used in Kubernetes., An endpoint for health checking used in Kubernetes., An endpoint for health checking used in Kubernetes.
 
 ### Community 320 - "Community 320"
 Cohesion: 0.05
@@ -7896,8 +7851,8 @@ Cohesion: 0.05
 Nodes (38): 10. Exact next coding PR scope, 11. Quick browser observations (from PR-287L0 verify run), 12. Summary, 1. The user complaint, restated, 2. Current DOM layout map (top-down inside `#scenario-workspace-panel`), 3. Current live repaint flow, 4. What is truly live (drives from `window.RmoozScenario`), 5. What is mock or static (+30 more)
 
 ### Community 324 - "Community 324"
-Cohesion: 0.05
-Nodes (38): ao_boundaries, bls_template, blue_unit_step_coords, BLUE-EVAC-01, BLUE-MED-01, blue_units_base_ids, blue_units_initial, blue_units_source (+30 more)
+Cohesion: 0.33
+Nodes (3): An endpoint for health checking used in Kubernetes., An endpoint for health checking used in Kubernetes., An endpoint for health checking used in Kubernetes.
 
 ### Community 325 - "Community 325"
 Cohesion: 0.05
@@ -8084,8 +8039,8 @@ Cohesion: 0.06
 Nodes (5): _(), a(), Ci(), l(), x()
 
 ### Community 371 - "Community 371"
-Cohesion: 0.05
-Nodes (45): DenseModelDescription, ImageEmbeddingBase, Embeds a list of images into a list of embeddings.          Args:, Returns embedding size of the chosen model., Returns embedding size for the current model, ImageEmbedding, Encode a list of images into list of embeddings.          Args:             i, Lists the supported models.          Returns:             list[dict[str, Any] (+37 more)
+Cohesion: 0.08
+Nodes (25): ImageEmbeddingBase, Returns embedding size of the chosen model., Returns embedding size for the current model, ImageEmbedding, Encode a list of images into list of embeddings.          Args:             i, Lists the supported models.          Returns:             list[dict[str, Any], Get the embedding size of the current model, Get the embedding size of the passed model          Args:             model_n (+17 more)
 
 ### Community 372 - "Community 372"
 Cohesion: 0.06
@@ -8096,12 +8051,12 @@ Cohesion: 0.06
 Nodes (33): ao_boundaries, bls_template, blue_units_base_ids, blue_units_initial, blue_units_source, can_resume_generation, expected_phase_count, generated_from_docs (+25 more)
 
 ### Community 374 - "Community 374"
-Cohesion: 0.06
-Nodes (33): ao_boundaries, bls_template, blue_units_base_ids, blue_units_initial, blue_units_source, can_resume_generation, expected_phase_count, generated_from_docs (+25 more)
+Cohesion: 0.53
+Nodes (3): Looks for at least one occurrence of an object requiring inference in the receiv, BaseModel, FieldPath
 
 ### Community 375 - "Community 375"
-Cohesion: 0.06
-Nodes (33): ao_boundaries, bls_template, blue_units_base_ids, blue_units_initial, blue_units_source, can_resume_generation, expected_phase_count, generated_from_docs (+25 more)
+Cohesion: 0.40
+Nodes (4): LatexCharsNode, LatexEnvironmentNode, LatexMacroNode, TableData
 
 ### Community 376 - "Community 376"
 Cohesion: 0.06
@@ -8132,8 +8087,8 @@ Cohesion: 0.06
 Nodes (32): Command: Modern Operations — Community Scenario Pack 5.1, `_Community Scenario List.ini`, External Scenario Pack Inventory, Filename Pattern, Files That Were Unreadable and Why, Final Report, `_IMPORTANT NOTE - READ THIS FIRST.txt`, `_IMPORTANT NOTE - Scenario Authors Please Read This.txt` (+24 more)
 
 ### Community 383 - "Community 383"
-Cohesion: 0.07
-Nodes (42): Return the process-level HTTP reranker singleton., Return the process-level HTTP reranker singleton., Score every (query, document) pair; return hits sorted by score desc.      Rai, Score every (query, document) pair; return hits sorted by score desc.      Rai, RuntimeError, _get_http_reranker(), HttpReranker, graph/retrieval/rerank.py ============================ Stage C — cross-encoder (+34 more)
+Cohesion: 0.05
+Nodes (64): Return the process-level HTTP reranker singleton., Return the process-level HTTP reranker singleton., Score every (query, document) pair; return hits sorted by score desc.      Rai, Score every (query, document) pair; return hits sorted by score desc.      Rai, RuntimeError, _get_http_reranker(), HttpReranker, graph/retrieval/rerank.py ============================ Stage C — cross-encoder (+56 more)
 
 ### Community 384 - "Community 384"
 Cohesion: 0.06
@@ -8156,28 +8111,16 @@ Cohesion: 0.06
 Nodes (33): blue_unit_step_prev, B-d0-71-029, B-d0-80-027, B-d0-الإمدا-028, B-d1-501-012, B-d1-502-013, B-d1-503-014, B-d1-505-015 (+25 more)
 
 ### Community 389 - "Community 389"
-Cohesion: 0.06
-Nodes (33): blue_unit_step_coords, B-d0-71-029, B-d0-80-027, B-d0-الإمدا-028, B-d1-501-012, B-d1-502-013, B-d1-503-014, B-d1-505-015 (+25 more)
+Cohesion: 0.33
+Nodes (6): buildDetectionUnits(), clearDetectionContacts(), clearEngagements(), computeEngagementRecords(), renderDetectionContacts(), renderEngagements()
 
 ### Community 390 - "Community 390"
-Cohesion: 0.06
-Nodes (33): blue_unit_step_prev, B-d0-71-029, B-d0-80-027, B-d0-الإمدا-028, B-d1-501-012, B-d1-502-013, B-d1-503-014, B-d1-505-015 (+25 more)
+Cohesion: 0.50
+Nodes (3): BytesIO, Path, decode_latex_content()
 
 ### Community 391 - "Community 391"
-Cohesion: 0.06
-Nodes (33): blue_unit_step_coords, B-d0-71-029, B-d0-80-027, B-d0-الإمدا-028, B-d1-501-012, B-d1-502-013, B-d1-503-014, B-d1-505-015 (+25 more)
-
-### Community 392 - "Community 392"
-Cohesion: 0.06
-Nodes (33): blue_unit_step_prev, B-d0-71-029, B-d0-80-027, B-d0-الإمدا-028, B-d1-501-012, B-d1-502-013, B-d1-503-014, B-d1-505-015 (+25 more)
-
-### Community 393 - "Community 393"
-Cohesion: 0.06
-Nodes (33): blue_unit_step_coords, B-d0-71-029, B-d0-80-027, B-d0-الإمدا-028, B-d1-501-012, B-d1-502-013, B-d1-503-014, B-d1-505-015 (+25 more)
-
-### Community 394 - "Community 394"
-Cohesion: 0.06
-Nodes (33): blue_unit_step_prev, B-d0-71-029, B-d0-80-027, B-d0-الإمدا-028, B-d1-501-012, B-d1-502-013, B-d1-503-014, B-d1-505-015 (+25 more)
+Cohesion: 0.50
+Nodes (3): Backend to parse XBRL (eXtensible Business Reporting Language) documents.  XBR, # TODO: parametrize the timeout?, # TODO: custom set cntlr.webCache.cacheDir?
 
 ### Community 395 - "Community 395"
 Cohesion: 0.06
@@ -8196,8 +8139,8 @@ Cohesion: 0.11
 Nodes (30): _get_backend_from_stream(), _make_multipage_tiff_stream(), _make_png_stream(), Test getting page size., Test getting full page image., Test getting scaled page image., Test cropping page image., Test cropping and scaling page image. (+22 more)
 
 ### Community 399 - "Community 399"
-Cohesion: 0.11
-Nodes (15): Checks if any worker process has terminated unexpectedly, Emergency shutdown         @param timeout:         @return:, A worker that pulls data pints off the input queue, and places the execution res, Worker, Any, BaseValue, Device, Queue (+7 more)
+Cohesion: 0.21
+Nodes (7): ExtendedPointId, NumpyArray, PointStruct, Record, VectorStruct, iter_batch(), >>> list(iter_batch([1,2,3,4,5], 3))     [[1, 2, 3], [4, 5]]
 
 ### Community 400 - "Community 400"
 Cohesion: 0.08
@@ -8340,8 +8283,8 @@ Cohesion: 0.12
 Nodes (35): bB(), Cb(), cq(), Fb(), fq(), gb(), gq(), hh() (+27 more)
 
 ### Community 436 - "Community 436"
-Cohesion: 0.08
-Nodes (25): get_asr_converter(), Cover _NativeWhisperModel init path with artifacts_path passed., Cover _NativeWhisperModel.run with BytesIO input and success path., Create a DocumentConverter configured for ASR with whisper_turbo model., Cover _NativeWhisperModel.run failure path when transcribe raises., Cover _MlxWhisperModel.run success and failure paths., Tests that _NativeWhisperModel correctly adjusts zero-duration segments., Test ASR pipeline conversion using whisper_turbo model on sample_10s.mp3. (+17 more)
+Cohesion: 0.04
+Nodes (61): AsrPipelineOptions, InlineAsrMlxWhisperOptions, InlineAsrNativeWhisperOptions, Configuration for native Whisper ASR implementation., MLX Whisper options for Apple Silicon optimization.      Uses mlx-whisper libr, InlineAsrMlxWhisperOptions, InlineAsrNativeWhisperOptions, _ConversationItem (+53 more)
 
 ### Community 437 - "Community 437"
 Cohesion: 0.11
@@ -8383,10 +8326,6 @@ Nodes (28): 1. Detection DB Enhancements (`detection.js`), 2. Engagement DB Enha
 Cohesion: 0.07
 Nodes (28): 10. Explicit Pause, 11. Safety Checklist, 1. Purpose, 2. What "Dry-Run Scenario" Means, 3. First Scenario Test Flow, 4. Test Object, 5. What the Dry-Run Must Answer, 6. Scenario Readiness Checklist (+20 more)
 
-### Community 447 - "Community 447"
-Cohesion: 0.15
-Nodes (10): Bm42, get_language_by_model_name(), Orders all tokens in the vector by their importance and generates a new score ba, Lists the supported models.          Returns:             list[SparseModelDes, Encode a list of documents into list of embeddings.         We use mean pooling, To emulate BM25 behaviour, we don't need to use smart weights in the query, and, Bm42 is an extension of BM25, which tries to better evaluate importance of token, Args:             model_name (str): The name of the model to use. (+2 more)
-
 ### Community 448 - "Community 448"
 Cohesion: 0.16
 Nodes (15): PhaseResolution, The adjudicator's full output for one phase., When the validation context provides 'all_uids' (combined Red+Blue         OOB), When the validation context provides 'side_uids', every component         actor, _find_latest_run_dir(), regenerate_outputs.py — rebuild CSV/MD/GeoJSON outputs from existing checkpoints, # IMPORTANT: For accurate per-phase positions, we'd need to walk the, Walk checkpoints in order, applying outcomes + writing one GeoJSON     per phas (+7 more)
@@ -8404,10 +8343,6 @@ Cohesion: 0.19
 Nodes (20): calculate_distance_sparse(), calculate_sparse_context_scores(), calculate_sparse_discovery_ranks(), calculate_sparse_discovery_scores(), calculate_sparse_recommend_best_scores(), calculate_sparse_recommend_sum_scores(), combine_aggregate(), merge_positive_and_negative_avg() (+12 more)
 
 ### Community 452 - "Community 452"
-Cohesion: 0.07
-Nodes (28): ao_boundaries, bls_template, blue_units_base_ids, blue_units_initial, blue_units_source, generated_from_docs, imported_from_geojson, input_docs (+20 more)
-
-### Community 453 - "Community 453"
 Cohesion: 0.07
 Nodes (28): ao_boundaries, bls_template, blue_units_base_ids, blue_units_initial, blue_units_source, generated_from_docs, imported_from_geojson, input_docs (+20 more)
 
@@ -8461,7 +8396,7 @@ Nodes (27): 1. **Panel Container**, 1. Panel Container (`.unit-status-panel`), 2
 
 ### Community 466 - "Community 466"
 Cohesion: 0.15
-Nodes (17): Channel, Compression, _ClientAsyncCallDetails, _ClientCallDetails, create_generic_async_client_interceptor(), create_generic_client_interceptor(), _GenericAsyncClientInterceptor, _GenericClientInterceptor (+9 more)
+Nodes (16): Channel, Compression, _ClientAsyncCallDetails, _ClientCallDetails, create_generic_async_client_interceptor(), create_generic_client_interceptor(), _GenericAsyncClientInterceptor, _GenericClientInterceptor (+8 more)
 
 ### Community 467 - "Community 467"
 Cohesion: 0.10
@@ -10884,8 +10819,8 @@ Cohesion: 0.09
 Nodes (18): bridge, bridgeCode, cfg, cli, dc, envEx, failures, fs (+10 more)
 
 ### Community 1072 - "Community 1072"
-Cohesion: 0.13
-Nodes (17): SimpleNamespace, approx(), build_fc(), make_rec(), make_scenario(), make_unit(), test_objective_relative_placement.py — PREGEN-CONTROL-2 (objective-relative forc, _install_fake_rapidocr() (+9 more)
+Cohesion: 0.52
+Nodes (6): _install_fake_rapidocr(), test_download_models_uses_language_specific_mobile_paths(), test_model_downloader_fetches_both_rapidocr_language_sets(), test_rapidocr_defaults_to_chinese_mobile_assets(), test_rapidocr_uses_english_mobile_assets(), Path
 
 ### Community 1073 - "Community 1073"
 Cohesion: 0.11
@@ -12940,8 +12875,8 @@ Cohesion: 0.21
 Nodes (18): el(), getSharedState(), numberInput(), renderObjectivesCard(), selectInput(), textInput(), actionLabel(), body() (+10 more)
 
 ### Community 1586 - "Community 1586"
-Cohesion: 0.29
-Nodes (10): _clean_math(), _extract_macro_arg(), _extract_verbatim_content(), _parse_table(), _process_nodes(), DocItemLabel, DoclingDocument, Formatting (+2 more)
+Cohesion: 0.28
+Nodes (11): _clean_math(), EnvironmentHandlerMixin, _extract_macro_arg(), _extract_verbatim_content(), _parse_table(), _process_nodes(), DocItemLabel, DoclingDocument (+3 more)
 
 ### Community 1587 - "Community 1587"
 Cohesion: 0.10
@@ -13190,10 +13125,6 @@ Nodes (19): campaign_series, Caribbean Fury Sub-Series (CF), Khrushchev's War Ca
 ### Community 1648 - "Community 1648"
 Cohesion: 0.11
 Nodes (18): Blocked, Campaign Series Summary, Catalog only, Document Briefings, Gulf of Sidra Incident, 1981 (1 HTML file), HTML Briefing Packages, Import Safety Summary, Iran Strike, 2025 (4 HTML files) (+10 more)
-
-### Community 1649 - "Community 1649"
-Cohesion: 0.11
-Nodes (18): authoring_status, bls_template, blue_units_base_ids, blue_units_initial, design_intent, name, objectives, phase_table (+10 more)
 
 ### Community 1650 - "Community 1650"
 Cohesion: 0.18
@@ -13544,30 +13475,6 @@ Cohesion: 0.11
 Nodes (18): red_unit_step_coords, R-d0-21-025, R-d0-48-027, R-d1-10-023, R-d1-12-021, R-d1-41-003, R-d1-42-007, R-d1-45-011 (+10 more)
 
 ### Community 1737 - "Community 1737"
-Cohesion: 0.11
-Nodes (18): red_unit_step_prev, R-d0-21-025, R-d0-48-027, R-d1-10-023, R-d1-12-021, R-d1-41-003, R-d1-42-007, R-d1-45-011 (+10 more)
-
-### Community 1738 - "Community 1738"
-Cohesion: 0.11
-Nodes (18): red_unit_step_coords, R-d0-21-025, R-d0-48-027, R-d1-10-023, R-d1-12-021, R-d1-41-003, R-d1-42-007, R-d1-45-011 (+10 more)
-
-### Community 1739 - "Community 1739"
-Cohesion: 0.11
-Nodes (18): red_unit_step_prev, R-d0-21-025, R-d0-48-027, R-d1-10-023, R-d1-12-021, R-d1-41-003, R-d1-42-007, R-d1-45-011 (+10 more)
-
-### Community 1740 - "Community 1740"
-Cohesion: 0.11
-Nodes (18): red_unit_step_coords, R-d0-21-025, R-d0-48-027, R-d1-10-023, R-d1-12-021, R-d1-41-003, R-d1-42-007, R-d1-45-011 (+10 more)
-
-### Community 1741 - "Community 1741"
-Cohesion: 0.11
-Nodes (18): red_unit_step_prev, R-d0-21-025, R-d0-48-027, R-d1-10-023, R-d1-12-021, R-d1-41-003, R-d1-42-007, R-d1-45-011 (+10 more)
-
-### Community 1742 - "Community 1742"
-Cohesion: 0.11
-Nodes (18): red_unit_step_coords, R-d0-21-025, R-d0-48-027, R-d1-10-023, R-d1-12-021, R-d1-41-003, R-d1-42-007, R-d1-45-011 (+10 more)
-
-### Community 1743 - "Community 1743"
 Cohesion: 0.11
 Nodes (18): red_unit_step_prev, R-d0-21-025, R-d0-48-027, R-d1-10-023, R-d1-12-021, R-d1-41-003, R-d1-42-007, R-d1-45-011 (+10 more)
 
@@ -13956,8 +13863,8 @@ Cohesion: 0.13
 Nodes (13): FRS, fs, LOSSES, MAP_JS, path, refParseFr(), refRule(), STATUSES (+5 more)
 
 ### Community 1841 - "Community 1841"
-Cohesion: 0.14
-Nodes (14): LatexCharsNode, LatexGroupNode, LatexEnvironmentNode, LatexMacroNode, TableData, DocItemLabel, DoclingDocument, Formatting (+6 more)
+Cohesion: 0.21
+Nodes (10): LatexGroupNode, DocItemLabel, DoclingDocument, Formatting, NodeItem, _expand_custom_macro_invocation(), _expand_macros(), _extract_macro_arg() (+2 more)
 
 ### Community 1842 - "Community 1842"
 Cohesion: 0.12
@@ -14095,10 +14002,6 @@ Nodes (14): 10. Exact next implementation PR prompt, 1. Current pipeline diagram
 ### Community 1874 - "Community 1874"
 Cohesion: 0.13
 Nodes (14): Client flow & progress model, Deployment prerequisites (REQUIRED for one-click generation), Files, Follow-ups (not in this PR), `GET /api/wargame-sim/status` — new `sim` fields (read-only), `POST /api/wargame-sim/import?partial=1[&name=&replace=1]`, `POST /api/wargame-sim/regenerate[?run=<id>]` — NEW, `POST /api/wargame-sim/run?resume=1` (+6 more)
-
-### Community 1875 - "Community 1875"
-Cohesion: 0.26
-Nodes (15): check_cache_key_invalidation(), check_citation_tag_emission(), check_citation_tag_parsing(), check_coverage_verdicts(), check_evidence_bundle_assembly(), check_renderer_endnote_layout(), check_retrieve_group_routing(), _Counter (+7 more)
 
 ### Community 1876 - "Community 1876"
 Cohesion: 0.18
@@ -14922,7 +14825,7 @@ Nodes (19): ak(), al(), bk(), ck(), df(), ek(), fk(), gk() (+11 more)
 
 ### Community 2083 - "Community 2083"
 Cohesion: 0.04
-Nodes (223): A, AsrModelType, DoclingParseDocumentBackend, DoclingParseV2DocumentBackend, DoclingParseV4DocumentBackend, ImageDocumentBackend, Image-native backend that bypasses pypdfium2.      Notes:         - Subclasse, MetsGbsDocumentBackend (+215 more)
+Nodes (227): A, AsrModelType, DoclingParseDocumentBackend, DoclingParseV2DocumentBackend, DoclingParseV4DocumentBackend, ImageDocumentBackend, Image-native backend that bypasses pypdfium2.      Notes:         - Subclasse, MetsGbsDocumentBackend (+219 more)
 
 ### Community 2084 - "Community 2084"
 Cohesion: 0.15
@@ -14936,10 +14839,6 @@ Nodes (6): ADAPTER, B, container, input, out, path
 Cohesion: 0.13
 Nodes (11): Tests for failed page handling in StandardPdfPipeline.  These tests verify tha, Test that multiple failed pages are added to DoclingDocument.pages., Test that failed pages have size information when available., Test that errors are recorded in conv_res.errors for failed pages., Test that all pages are present in DoclingDocument.pages for a normal PDF., Test that a single failed page is added to DoclingDocument.pages., test_errors_recorded_for_failed_pages(), test_failed_pages_added_to_document_1page() (+3 more)
 
-### Community 2088 - "Community 2088"
-Cohesion: 0.31
-Nodes (8): _load_dummy_inputs(), graph/generation/tiered_search.py ===================================== Shared, Load a valid :class:`Phase3Inputs` for placeholder-free seeds.      ``retrieve, Run one tiered search and return a structured verdict + hits.      The query i, Structured result of one tiered search.      Carries enough state for both CLI, run_tiered_search(), TieredSearchResult, Path
-
 ### Community 2089 - "Community 2089"
 Cohesion: 0.20
 Nodes (6): dem, DEM_PRESENT, LI, path, PM, { spawnSync }
@@ -14952,10 +14851,6 @@ Nodes (11): adaptMdmpBundle(), cite(), coaKeyName(), coaVal(), mapStep3(), mapSt
 Cohesion: 0.14
 Nodes (14): adapt(), ADAPTER, assert(), asyncTests(), B, BRIDGE, friendlyTrials, path (+6 more)
 
-### Community 2092 - "Community 2092"
-Cohesion: 0.33
-Nodes (3): An endpoint for health checking used in Kubernetes., An endpoint for health checking used in Kubernetes., An endpoint for health checking used in Kubernetes.
-
 ### Community 2093 - "Community 2093"
 Cohesion: 0.83
 Nodes (3): get_converter(), get_webp_paths(), test_e2e_webp_conversions()
@@ -14963,38 +14858,6 @@ Nodes (3): get_converter(), get_webp_paths(), test_e2e_webp_conversions()
 ### Community 2094 - "Community 2094"
 Cohesion: 0.38
 Nodes (3): FacetHit, FacetValue, FacetValueHit
-
-### Community 2095 - "Community 2095"
-Cohesion: 0.40
-Nodes (3): The tokenizer is "destructive" such that the regexes applied will munge the, Return a tokenized copy of `text`.          >>> s = '''Good muffins cost $3.88, WordTokenizer
-
-### Community 2096 - "Community 2096"
-Cohesion: 0.18
-Nodes (14): animateLineDraw(), blueActionsFor(), createTacticalArrow(), displayBlueId(), displayRedId(), engStopShort(), findNearestRedMarker(), groupArcsByTargetCluster() (+6 more)
-
-### Community 2098 - "Community 2098"
-Cohesion: 0.33
-Nodes (3): Collect metrics data including app info, collections info, cluster info and stat, Collect metrics data including app info, collections info, cluster info and stat, Collect metrics data including app info, collections info, cluster info and stat
-
-### Community 2099 - "Community 2099"
-Cohesion: 0.18
-Nodes (13): applyStepAttrition(), buildStepEvents(), canUnitAct(), collectAllMarkers(), computeStepAttrition(), dbg(), echelonOf(), getEffectiveUnitStatus() (+5 more)
-
-### Community 2100 - "Community 2100"
-Cohesion: 0.50
-Nodes (3): acronym_expander(), graph/post_processors/acronym_expander.py =====================================, Append acronym expansion hints to each chunk.      Steps:       1. Scan the b
-
-### Community 2101 - "Community 2101"
-Cohesion: 0.20
-Nodes (11): animateSalvoLaunches(), clearEngagementArcs(), clearSalvoAnimations(), fitScenarioAO(), isFiniteLonLatCoord(), isObjectiveRef(), objectiveIdentityTokens(), parseSalvoCount() (+3 more)
-
-### Community 2103 - "Community 2103"
-Cohesion: 0.50
-Nodes (3): acronym_expander(), graph/post_processors/acronym_expander.py =====================================, Append acronym expansion hints to each chunk.      Steps:       1. Scan the b
-
-### Community 2105 - "Community 2105"
-Cohesion: 0.36
-Nodes (8): formatCoords(), latLngToDMS(), latLngToUTM(), parseCoords(), parseDMS(), parseUTM(), toDeg(), toRad()
 
 ### Community 2106 - "Community 2106"
 Cohesion: 0.14
@@ -15023,10 +14886,6 @@ Nodes (11): ADJ_MAP, APP_JS, CSS_PATH, DOC_PATH, fs, HTML_PATH, I18N_PATH, path 
 ### Community 2112 - "Community 2112"
 Cohesion: 0.14
 Nodes (13): About “مجرى الحوادث”, Area of Operation rule, First: is your friend right about “LLM knows the location”?, G-3.5 should do:, How this fits with current RMOOZ approach, How to prove your friend right or wrong, My answer to your main question, New object: Incident Ledger (+5 more)
-
-### Community 2113 - "Community 2113"
-Cohesion: 0.31
-Nodes (10): bindZoomHookOnce(), findBlueMarkerByBaseId(), hasMap(), spawnBreachBadge(), spawnDeathRing(), spawnExpendedFlash(), spawnExplosion(), spawnHitFlash() (+2 more)
 
 ### Community 2114 - "Community 2114"
 Cohesion: 0.14
@@ -15133,10 +14992,6 @@ Cohesion: 0.40
 Nodes (4): _hit(), graph/generation/coverage.py — pure-arithmetic coverage check.  Phase 7 of the, Merge a per-field YAML override onto the env / locked defaults.      YAML over, resolve_thresholds_for_group()
 
 ### Community 2156 - "Community 2156"
-Cohesion: 0.15
-Nodes (13): assumption_air_superiority, assumption_coordination, assumption_early_warning, assumption_logistics, assumption_tanker_support, readiness_assumptions, BLUE_coalition, RED_meridia (+5 more)
-
-### Community 2157 - "Community 2157"
 Cohesion: 0.15
 Nodes (13): assumption_air_superiority, assumption_coordination, assumption_early_warning, assumption_logistics, assumption_tanker_support, readiness_assumptions, BLUE_coalition, RED_meridia (+5 more)
 
@@ -17868,10 +17723,6 @@ Nodes (11): BALTAP - Repräsentative Schnellbootlage - 10 Years Later, 1980, ba
 Cohesion: 0.18
 Nodes (11): BALTAP - Repräsentative Schnellbootlage, 1970, base_name, campaign_series, confidence, document_references, has_ini, has_scen, lua_script_references (+3 more)
 
-### Community 2906 - "Community 2906"
-Cohesion: 0.18
-Nodes (11): constraints, description, points, scenario_outcome, constraints, description, points, scenario_outcome (+3 more)
-
 ### Community 2907 - "Community 2907"
 Cohesion: 0.18
 Nodes (11): properties, required, type, _BaseProps, description, type, maximum, minimum (+3 more)
@@ -17909,8 +17760,8 @@ Cohesion: 0.20
 Nodes (10): CATEGORIES, data, fs, gatherCoverageData(), html, path, radar_in_html, renderPanel() (+2 more)
 
 ### Community 2916 - "Community 2916"
-Cohesion: 0.24
-Nodes (7): AN5_SIZING, assert, engLaneOffset(), engStopShort(), groupArcsByTargetCluster(), haversineKm(), kmPerDegLng()
+Cohesion: 0.14
+Nodes (15): formatCoords(), latLngToDMS(), latLngToUTM(), parseCoords(), parseDMS(), parseUTM(), toDeg(), toRad() (+7 more)
 
 ### Community 2917 - "Community 2917"
 Cohesion: 0.18
@@ -21832,10 +21683,6 @@ Nodes (9): 15. Conclusion & Handoff to Phase 3B, 1. Scenario Identity, 2. Theate
 Cohesion: 0.20
 Nodes (10): 3. Full Scenario Workspace Section Map, GROUP A — Current Workflow / Wargame 3 Dry-Run Preview, GROUP B — Current Scenario (Live Cards), GROUP C — Scenario Timeline (Live), GROUP D — Objective, BLS, Force Snapshots (Live), GROUP E — Operator State (Live Status Mirrors), GROUP F — Proposal Workflow (Preview-Only Mock Cards), GROUP G — Map Diagnostics (+2 more)
 
-### Community 4076 - "Community 4076"
-Cohesion: 0.20
-Nodes (10): east_lon, north_lat, south_lat, west_lon, map, map_bbox, crs, note (+2 more)
-
 ### Community 4077 - "Community 4077"
 Cohesion: 0.20
 Nodes (7): assert, fs, HTML, NSL, path, ROOT, TL
@@ -23247,10 +23094,6 @@ Nodes (7): 5. Strategic Objectives (Fictional Facilities), Objective 1: Meridian
 ### Community 4443 - "Community 4443"
 Cohesion: 0.29
 Nodes (7): northern_fury_breakdown, 1. Northern Fury, 2. Baltic Fury, 3. Caribbean Fury, 4. Indian Ocean Fury, 5. Mediterranean Fury, 6. Pacific Fury
-
-### Community 4444 - "Community 4444"
-Cohesion: 0.29
-Nodes (7): BLUE, RED, postures, BLUE, RED, BLUE, RED
 
 ### Community 4445 - "Community 4445"
 Cohesion: 0.52
@@ -26484,35 +26327,11 @@ Nodes (6): 4. Button/Control Audit, COA / Operator Review (W3 Dry-Run Preview, i
 Cohesion: 0.33
 Nodes (6): 8. Safety and Mutation Audit, Controls That Are Preview-Only, Controls That Mutate Live Scenario State, Controls That Paint/Clear Map Overlays, Controls That Touch localStorage / sessionStorage / Backend, Pure Read-Only Controls (Nothing Written Anywhere)
 
-### Community 5350 - "Community 5350"
-Cohesion: 0.33
-Nodes (6): design_notes, extensibility, geographic_abstraction, learning_intent, mechanical_testing, scope_simplification
-
-### Community 5351 - "Community 5351"
-Cohesion: 0.33
-Nodes (6): metadata, created_date, next_steps, rmooz_compatibility, sanitization_level, source_inspiration
-
-### Community 5352 - "Community 5352"
-Cohesion: 0.33
-Nodes (6): obj, carver, coord, name, radius_km, target_depth_km
-
 ### Community 5353 - "Community 5353"
 Cohesion: 0.33
 Nodes (6): obj, carver, coord, name, radius_km, target_depth_km
 
 ### Community 5354 - "Community 5354"
-Cohesion: 0.33
-Nodes (6): obj, carver, coord, name, radius_km, target_depth_km
-
-### Community 5355 - "Community 5355"
-Cohesion: 0.33
-Nodes (6): obj, carver, coord, name, radius_km, target_depth_km
-
-### Community 5356 - "Community 5356"
-Cohesion: 0.33
-Nodes (6): obj, carver, coord, name, radius_km, target_depth_km
-
-### Community 5357 - "Community 5357"
 Cohesion: 0.33
 Nodes (6): obj, carver, coord, name, radius_km, target_depth_km
 
@@ -28695,14 +28514,6 @@ Nodes (5): 7. Data-Flow Diagram, Flow A — Live Step Navigator (affects active 
 ### Community 5914 - "Community 5914"
 Cohesion: 0.40
 Nodes (5): 9. Recommended Reorganization, Recommended Label Clarifications, Specific Recommendations, What Should Be Combined, What Should Stay Separate
-
-### Community 5915 - "Community 5915"
-Cohesion: 0.40
-Nodes (5): constraints, description, points, scenario_outcome, operational_victory
-
-### Community 5916 - "Community 5916"
-Cohesion: 0.40
-Nodes (5): constraints, description, points, scenario_outcome, strategic_victory
 
 ### Community 5919 - "Community 5919"
 Cohesion: 0.80
@@ -32012,31 +31823,11 @@ Nodes (3): The War That Never Was Series, count, scenario_names
 Cohesion: 0.67
 Nodes (3): Wargasm Series, count, scenario_names
 
-### Community 6802 - "Community 6802"
-Cohesion: 0.67
-Nodes (3): sides_bases, BLUE, RED
-
-### Community 6803 - "Community 6803"
-Cohesion: 0.67
-Nodes (3): units, BLUE, RED
-
 ### Community 6804 - "Community 6804"
 Cohesion: 0.67
 Nodes (3): objective_override_expected, lat, lon
 
 ### Community 6805 - "Community 6805"
-Cohesion: 0.67
-Nodes (3): objective_override_expected, lat, lon
-
-### Community 6806 - "Community 6806"
-Cohesion: 0.67
-Nodes (3): objective_override_expected, lat, lon
-
-### Community 6807 - "Community 6807"
-Cohesion: 0.67
-Nodes (3): objective_override_expected, lat, lon
-
-### Community 6808 - "Community 6808"
 Cohesion: 0.67
 Nodes (3): objective_override_expected, lat, lon
 
@@ -32113,18 +31904,18 @@ Cohesion: 0.67
 Nodes (3): 8.1 `time_math.py`, 8.2 Derived-reference resolution, 8. Non-LLM Computation
 
 ## Knowledge Gaps
-- **58738 isolated node(s):** `fs`, `path`, `crypto`, `{ spawn, spawnSync }`, `ROOT` (+58733 more)
+- **58229 isolated node(s):** `schema_version`, `created_by`, `created_at`, `id`, `lon` (+58224 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **191 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **192 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `JSON` connect `Community 31` to `Community 4480`, `Community 257`, `Community 1794`, `Community 2179`, `Community 1667`, `Community 2180`, `Community 4226`, `Community 263`, `Community 1799`, `Community 2183`, `Community 2185`, `Community 2065`, `Community 4375`, `Community 26`, `Community 3611`, `Community 4380`, `Community 29`, `Community 27`, `Community 287`, `Community 286`, `Community 290`, `Community 420`, `Community 2088`, `Community 3627`, `Community 1580`, `Community 1072`, `Community 2100`, `Community 1844`, `Community 437`, `Community 2103`, `Community 953`, `Community 441`, `Community 442`, `Community 448`, `Community 322`, `Community 194`, `Community 196`, `Community 197`, `Community 199`, `Community 200`, `Community 1351`, `Community 202`, `Community 332`, `Community 973`, `Community 974`, `Community 463`, `Community 208`, `Community 6094`, `Community 207`, `Community 464`, `Community 2513`, `Community 212`, `Community 210`, `Community 975`, `Community 976`, `Community 91`, `Community 476`, `Community 349`, `Community 1758`, `Community 223`, `Community 478`, `Community 5985`, `Community 220`, `Community 1891`, `Community 356`, `Community 99`, `Community 1894`, `Community 357`, `Community 1895`, `Community 1643`, `Community 238`, `Community 4085`, `Community 248`, `Community 252`, `Community 2174`, `Community 2175`?**
-  _High betweenness centrality (0.005) - this node is a cross-community bridge._
-- **Why does `__()` connect `Community 101` to `Community 1825`, `Community 2082`, `Community 198`, `Community 103`, `Community 105`, `Community 201`, `Community 435`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
-- **Why does `InputDocument` connect `Community 29` to `Community 128`, `Community 2083`, `Community 67`, `Community 202`, `Community 43`, `Community 278`, `Community 121`, `Community 26`, `Community 30`, `Community 31`?**
+- **Why does `JSON` connect `Community 31` to `Community 4480`, `Community 257`, `Community 1794`, `Community 2179`, `Community 1667`, `Community 2180`, `Community 4226`, `Community 383`, `Community 263`, `Community 1799`, `Community 2183`, `Community 2185`, `Community 2065`, `Community 4375`, `Community 26`, `Community 3611`, `Community 4380`, `Community 29`, `Community 27`, `Community 287`, `Community 286`, `Community 420`, `Community 38`, `Community 3627`, `Community 1580`, `Community 1844`, `Community 437`, `Community 953`, `Community 441`, `Community 442`, `Community 192`, `Community 448`, `Community 322`, `Community 67`, `Community 196`, `Community 197`, `Community 199`, `Community 200`, `Community 1351`, `Community 332`, `Community 973`, `Community 974`, `Community 463`, `Community 208`, `Community 6094`, `Community 207`, `Community 464`, `Community 2513`, `Community 212`, `Community 214`, `Community 210`, `Community 975`, `Community 976`, `Community 476`, `Community 349`, `Community 1758`, `Community 223`, `Community 478`, `Community 5985`, `Community 220`, `Community 1891`, `Community 356`, `Community 99`, `Community 1894`, `Community 102`, `Community 357`, `Community 1895`, `Community 1643`, `Community 238`, `Community 4085`, `Community 248`, `Community 252`, `Community 2174`, `Community 2175`?**
+  _High betweenness centrality (0.004) - this node is a cross-community bridge._
+- **Why does `GrpcToRest` connect `Community 91` to `Community 192`, `Community 195`, `Community 295`, `Community 1672`, `Community 204`, `Community 205`, `Community 206`, `Community 2094`, `Community 207`, `Community 241`, `Community 2097`, `Community 309`, `Community 312`, `Community 60`?**
+  _High betweenness centrality (0.002) - this node is a cross-community bridge._
+- **Why does `ConversionResult` connect `Community 26` to `Community 128`, `Community 2083`, `Community 67`, `Community 1661`, `Community 38`, `Community 99`, `Community 436`, `Community 121`, `Community 127`, `Community 29`, `Community 31`?**
   _High betweenness centrality (0.002) - this node is a cross-community bridge._
 - **Are the 251 inferred relationships involving `GrpcToRest` (e.g. with `DenseQueryVector` and `FilterSelector`) actually correct?**
   _`GrpcToRest` has 251 INFERRED edges - model-reasoned connections that need verification._
@@ -32132,5 +31923,5 @@ _Questions this graph is uniquely positioned to answer:_
   _`AcceleratorOptions` has 412 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 395 inferred relationships involving `InputDocument` (e.g. with `AttributesImpl` and `AbstractDocumentBackend`) actually correct?**
   _`InputDocument` has 395 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `fs`, `path`, `crypto` to the rest of the system?**
-  _61471 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **What connects `schema_version`, `created_by`, `created_at` to the rest of the system?**
+  _60962 weakly-connected nodes found - possible documentation gaps or missing edges._

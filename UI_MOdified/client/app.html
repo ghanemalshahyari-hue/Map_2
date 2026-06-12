@@ -4488,6 +4488,8 @@
     <script src="shell/side-picker.js?v=1"></script>
 
     <script src="shell/applied-state.js?v=1"></script>
+    <!-- App-shell safe-area measurer: publishes --rmooz-shell-top-safe / --rmooz-shell-bottom-safe so fixed right-side drawers bound to the content band. Must load before the panels that use it. -->
+    <script src="shell/shell-safe-area.js?v=1"></script>
     <script src="shell/unit-status-panel.js?v=1"></script>
     <script src="shell/objective-evidence-panel.js?v=3"></script>
     <!-- L3-B-1: read-only Why-Not display panel in the Scenario Workspace.
@@ -5054,8 +5056,10 @@
         .unit-status-panel {
             position: fixed;
             right: 0;
-            top: 0;
-            height: 100vh;
+            /* Bound to the app-shell content band (shell-safe-area.js) — never behind header/footer. */
+            top: var(--rmooz-shell-top-safe, 74px);
+            bottom: var(--rmooz-shell-bottom-safe, 96px);
+            max-height: calc(100vh - var(--rmooz-shell-top-safe, 74px) - var(--rmooz-shell-bottom-safe, 96px));
             width: 420px;
             background: #f9f9f9;
             border-left: 1px solid #d0d0d0;
@@ -5498,7 +5502,11 @@
         .usp-empty-icon { font-size:2rem; margin-bottom:0.75rem; color:#1a2535; }
         .usp-empty p { margin:0; line-height:1.7; }
 
-        .usp-body { display:flex; flex-direction:column; flex:1; overflow-x:hidden; }
+        /* min-height:0 + overflow-y:auto => the unit-panel body scrolls INSIDE the shell-safe-area
+           bound (the outer panel is overflow:visible so the reopen tab can protrude), so tall unit
+           content never spills behind the bottom chrome. (.panel-body above is a dead selector — the
+           real scroll body is .usp-body.) */
+        .usp-body { display:flex; flex-direction:column; flex:1; min-height:0; overflow-y:auto; overflow-x:hidden; }
         .usp-body[hidden] { display:none !important; }
 
         .usp-hero { background:linear-gradient(180deg,#0c1420,#0b0e15); border-bottom:1px solid #1a2535; }

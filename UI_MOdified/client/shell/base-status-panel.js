@@ -257,15 +257,15 @@
         if (document.getElementById('step1-base-status-style')) return;
         var style = document.createElement('style');
         style.id = 'step1-base-status-style';
-        // Sit in the CONTENT BAND, never under the chrome: --rmooz-status-card-top clears the
-        // header + top classification bar; --rmooz-status-card-bottom clears the playback transport
-        // (#timeline-strip 36px) + status footer (.app-statusbar 28px) + bottom classification bar
-        // (22px). render() measures the real bar heights at open time and overrides the vars.
-        // height is derived from top/bottom (no 100vh) + overflow-y:auto => the body scrolls
-        // internally and the last Proposed-Units rows never hide behind the playback footer.
+        // Bound the card to the app-shell CONTENT BAND (shell-safe-area.js publishes the band as
+        // --rmooz-shell-top-safe / --rmooz-shell-bottom-safe on <html>). The OUTER card is bounded
+        // (top/bottom/max-height) with overflow:hidden so it can NEVER pass behind the top header or
+        // the bottom chrome (timeline strip + 200px event log + status footer + classification bars);
+        // the INNER .bsp-body scrolls (min-height:0 + overflow-y:auto) so the last rows / message log
+        // stay reachable above the footer. Defaults are a safe fallback only — the live band wins.
         style.textContent = [
-            '.step1-base-status-panel{position:fixed;right:0;top:var(--rmooz-status-card-top,74px);bottom:var(--rmooz-status-card-bottom,86px);width:460px;max-width:100vw;z-index:940;background:#0d1119;color:#cdd8e4;border-left:3px solid #2a4060;box-shadow:-6px 0 24px rgba(0,0,0,.75);font-family:Consolas,monospace;font-size:12px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;box-sizing:border-box;padding-bottom:8px;}',
-            '.step1-base-status-panel[hidden]{display:none!important}.bsp-header{padding:12px 14px;background:#101820;border-bottom:1px solid #1e2b3a;display:flex;justify-content:space-between;gap:12px}.bsp-title{font-size:16px;color:#e8f0f8;font-weight:700}.bsp-subtitle{color:#8fb8e0;margin-top:2px}.bsp-close{border:1px solid #33475f;background:#111a24;color:#cfe6ff;border-radius:4px;cursor:pointer;width:28px;height:28px}.bsp-section{border-bottom:1px solid #172434;padding:10px 14px}.bsp-section h3{margin:0 0 8px;color:#8fb8e0;font-size:12px;text-transform:uppercase;letter-spacing:0}.bsp-row{display:grid;grid-template-columns:142px 1fr;gap:8px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.035)}.bsp-row span{color:#7f93a6}.bsp-row b{color:#e8eaed;font-weight:500;text-align:right;word-break:break-word}.bsp-chip{display:inline-block;margin:2px 4px 2px 0;padding:2px 7px;border-radius:8px;border:1px solid #2e5d7d;background:#16222e;color:#cfe6ff}.bsp-chip.red{border-color:#6e3333;color:#f0a0a0}.bsp-chip.blue{border-color:#2c6542;color:#7fd6a0}.bsp-chip.warn{border-color:#8a6a20;color:#e0c060;background:#2a2412}.bsp-chip.review{border-color:#8a6a20;color:#e0c060;background:#2a2412}.bsp-summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}.bsp-table-wrap{overflow-x:auto;overflow-y:visible;border:1px solid #1e2b3a;-webkit-overflow-scrolling:touch}.bsp-table{width:100%;border-collapse:collapse;min-width:600px}.bsp-table th,.bsp-table td{padding:5px 6px;border-bottom:1px solid #182536;text-align:left;vertical-align:top;word-break:break-word;overflow-wrap:anywhere}.bsp-table td:last-child{max-width:160px}.bsp-table th{color:#8fb8e0;background:#101820;font-size:11px}.bsp-table td{color:#d8e0e8}.bsp-table small{color:#9ab}.bsp-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.bsp-tab{border:1px solid #26384a;background:#101820;color:#9fbad0;padding:6px;text-align:center}.bsp-tab-body{margin-top:8px;padding:8px;border:1px dashed #30455c;color:#e0c060;background:#121711;direction:rtl;text-align:right}.bsp-empty{color:#8fa5b8;font-style:italic}.bsp-log{margin:0;padding-left:18px;color:#d8e0e8}.bsp-log li{margin:3px 0}.bsp-cap-list{margin:0;padding-left:18px;color:#d8e0e8}.bsp-cap-list li{margin:3px 0}',
+            '.step1-base-status-panel{position:fixed;right:0;top:var(--rmooz-shell-top-safe,74px);bottom:var(--rmooz-shell-bottom-safe,96px);width:460px;max-width:100vw;max-height:calc(100vh - var(--rmooz-shell-top-safe,74px) - var(--rmooz-shell-bottom-safe,96px));z-index:940;display:flex;flex-direction:column;background:#0d1119;color:#cdd8e4;border-left:3px solid #2a4060;box-shadow:-6px 0 24px rgba(0,0,0,.75);font-family:Consolas,monospace;font-size:12px;overflow:hidden;box-sizing:border-box;}',
+            '.step1-base-status-panel[hidden]{display:none!important}.bsp-body{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding-bottom:10px}.bsp-header{flex:0 0 auto;padding:12px 14px;background:#101820;border-bottom:1px solid #1e2b3a;display:flex;justify-content:space-between;gap:12px}.bsp-title{font-size:16px;color:#e8f0f8;font-weight:700}.bsp-subtitle{color:#8fb8e0;margin-top:2px}.bsp-close{border:1px solid #33475f;background:#111a24;color:#cfe6ff;border-radius:4px;cursor:pointer;width:28px;height:28px}.bsp-section{border-bottom:1px solid #172434;padding:10px 14px}.bsp-section h3{margin:0 0 8px;color:#8fb8e0;font-size:12px;text-transform:uppercase;letter-spacing:0}.bsp-row{display:grid;grid-template-columns:142px 1fr;gap:8px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.035)}.bsp-row span{color:#7f93a6}.bsp-row b{color:#e8eaed;font-weight:500;text-align:right;word-break:break-word}.bsp-chip{display:inline-block;margin:2px 4px 2px 0;padding:2px 7px;border-radius:8px;border:1px solid #2e5d7d;background:#16222e;color:#cfe6ff}.bsp-chip.red{border-color:#6e3333;color:#f0a0a0}.bsp-chip.blue{border-color:#2c6542;color:#7fd6a0}.bsp-chip.warn{border-color:#8a6a20;color:#e0c060;background:#2a2412}.bsp-chip.review{border-color:#8a6a20;color:#e0c060;background:#2a2412}.bsp-summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}.bsp-table-wrap{overflow-x:auto;overflow-y:visible;border:1px solid #1e2b3a;-webkit-overflow-scrolling:touch}.bsp-table{width:100%;border-collapse:collapse;min-width:600px}.bsp-table th,.bsp-table td{padding:5px 6px;border-bottom:1px solid #182536;text-align:left;vertical-align:top;word-break:break-word;overflow-wrap:anywhere}.bsp-table td:last-child{max-width:160px}.bsp-table th{color:#8fb8e0;background:#101820;font-size:11px}.bsp-table td{color:#d8e0e8}.bsp-table small{color:#9ab}.bsp-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.bsp-tab{border:1px solid #26384a;background:#101820;color:#9fbad0;padding:6px;text-align:center}.bsp-tab-body{margin-top:8px;padding:8px;border:1px dashed #30455c;color:#e0c060;background:#121711;direction:rtl;text-align:right}.bsp-empty{color:#8fa5b8;font-style:italic}.bsp-log{margin:0;padding-left:18px;color:#d8e0e8}.bsp-log li{margin:3px 0}.bsp-cap-list{margin:0;padding-left:18px;color:#d8e0e8}.bsp-cap-list li{margin:3px 0}',
             '@media(max-width:768px){.step1-base-status-panel{width:100%;}.bsp-row{grid-template-columns:118px 1fr}}'
         ].join('');
         document.head.appendChild(style);
@@ -274,30 +274,19 @@
         var panel = document && document.getElementById(PANEL_ID);
         if (panel) panel.setAttribute('hidden', '');
     }
-    // Measure the live chrome so the card fits the content band exactly, adapting if a
-    // bar is hidden or resized. Falls back to the CSS-var defaults when layout cannot be
-    // measured (headless/Node, or before first paint) — never throws.
-    function fitToContentBand(panel) {
-        if (!panel || !panel.style) return;
-        if (typeof document === 'undefined' || typeof document.querySelector !== 'function') return;
-        function h(sel) {
-            var el = document.querySelector(sel);
-            if (!el || typeof el.getBoundingClientRect !== 'function') return 0;
-            var r = el.getBoundingClientRect();
-            var v = r && Number(r.height);
-            return (isFinite(v) && v > 0) ? v : 0;
-        }
-        var top = h('.classification-bar--top') + h('.app-header');
-        var bottom = h('#timeline-strip') + h('.app-statusbar') + h('.classification-bar--bottom');
-        // Set the measured offset, or clear a prior inline value so it falls back to the
-        // CSS-var default (the panel is a reused singleton — never leave a stale offset).
-        panel.style.top = top > 0 ? top + 'px' : '';
-        panel.style.bottom = bottom > 0 ? bottom + 'px' : '';
+    // Refresh the shared shell safe-area vars so the card is bounded to the live content band
+    // (handles layout changes since load). The card positions purely via the CSS vars; no inline
+    // geometry on the panel. Guarded — a no-op if the measurer isn't loaded (CSS-var defaults apply).
+    function refreshShellSafeArea() {
+        try {
+            var SSA = (typeof window !== 'undefined' && window.RmoozShellSafeArea) || null;
+            if (SSA && typeof SSA.measure === 'function') SSA.measure();
+        } catch (_) {}
     }
     function render(anchor, payload) {
         var panel = ensurePanel();
         if (!panel) return;
-        fitToContentBand(panel);
+        refreshShellSafeArea();
         anchor = anchor || {};
         payload = payload || {};
         var base = findBase(anchor, payload);
@@ -319,6 +308,8 @@
             chip(side, side === 'BLUE' ? 'blue' : 'red') + chip(type) + chip('Review only', 'review') +
             chip('needs_review:true', 'review') + chip('exact_unit_position:false', 'review') +
             '</div></div><button class="bsp-close" type="button" title="Close">x</button></header>';
+        // Everything below the header lives in the internally-scrolling body.
+        html += '<div class="bsp-body">';
         html += '<section class="bsp-section"><h3>Location</h3>' +
             row('Lat / Lon', (lat != null && lon != null) ? (lat + ', ' + lon) : '-') +
             row('Coordinate format', anchor.coordinate_format || base.coordinate_format || 'base_anchor') +
@@ -351,6 +342,7 @@
             (doctrine ? '<li>Doctrine required warning: true</li>' : '<li>Doctrine required warning: false</li>') +
             (missing.length ? missing.map(function (m) { return '<li>missing_information: ' + esc(m) + '</li>'; }).join('') : '<li>missing_information: none linked to this base</li>') +
             '</ul></section>';
+        html += '</div>'; // close .bsp-body
         panel.innerHTML = html;
         panel.removeAttribute('hidden');
         var closeBtn = panel.querySelector('.bsp-close');

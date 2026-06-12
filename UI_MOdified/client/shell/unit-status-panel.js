@@ -138,6 +138,8 @@
     function openPanel() {
         var p = $('unit-status-panel');
         if (p) p.removeAttribute('hidden');
+        // Refresh the shared shell safe-area so this fixed drawer is bounded to the content band.
+        try { if (window.RmoozShellSafeArea && window.RmoozShellSafeArea.measure) window.RmoozShellSafeArea.measure(); } catch (_) {}
         var tab = $('usp-reopen-tab');
         if (tab) tab.setAttribute('hidden', '');
     }

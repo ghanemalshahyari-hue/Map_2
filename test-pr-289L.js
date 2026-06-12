@@ -265,8 +265,8 @@ console.log('\n─── Section E: paint DOM ───');
 
     check(rowsEl._children.length === 3, 'T27: 3 rows rendered into tbody',
           String(rowsEl._children.length));
-    check(rowsEl._children[0]._children.length === 5,
-          'T28: each row has 5 cells (Unit/Side/Role/Domain/Involvement)');
+    check(rowsEl._children[0]._children.length === 8,
+          'T28: each row has 8 cells (Unit/Side/Role/Domain/Involvement/Readiness/Supply/Orders)');
     check(rowsEl._children[0].getAttribute('data-side') === 'RED' &&
           rowsEl._children[2].getAttribute('data-side') === 'BLUE',
           'T29: rows carry data-side (RED first, BLUE B-1)');

@@ -23,11 +23,13 @@
     }
 
     // payload.placement.placement_candidates (wizard attaches the endpoint body
-    // under .placement) — tolerate a few shapes defensively.
+    // under .placement) — tolerate raw Step 1 and analyzed shapes defensively.
     function candidatesOf(payload) {
         var p = payload || {};
         var src = p.placement || p;
-        var list = src.placement_candidates || src.candidates || p.placement_candidates;
+        var brief = (p.brief && p.brief.operational_brief) || p.operational_brief || p.brief || p;
+        var list = src.placement_candidates || src.candidates ||
+            p.placement_candidates || brief.placement_candidates || brief.candidates;
         return Array.isArray(list) ? list : [];
     }
     function hasCandidates(payload) { return candidatesOf(payload).length > 0; }

@@ -46,7 +46,51 @@
             lis + '</ul></div>';
     }
     function opBrief(p) {
-        return (p && p.brief && p.brief.operational_brief) || (p && p.operational_brief) || {};
+        if (p && p.brief && p.brief.operational_brief) return p.brief.operational_brief;
+        if (p && p.operational_brief) return p.operational_brief;
+        if (p && p.brief && typeof p.brief === 'object' && !Array.isArray(p.brief)) return p.brief;
+        return (p && typeof p === 'object' && !Array.isArray(p)) ? p : {};
+    }
+    function arr(v) {
+        return Array.isArray(v) ? v : [];
+    }
+    function baseSourceType(base) {
+        return (base && base.source_type) || 'ai_candidate_from_external_llm';
+    }
+    function normalizeReviewBase(base, side, siteType) {
+        base = base || {};
+        return {
+            base_name_ar: base.base_name_ar || base.name_ar || base.name || base.mention,
+            base_name_en: base.base_name_en || base.name_en || base.name || base.mention,
+            lat: base.lat,
+            lon: base.lon,
+            side: base.side || side,
+            site_type: base.site_type || base.base_type || siteType,
+            needs_review: base.needs_review !== false,
+            source_type: baseSourceType(base),
+        };
+    }
+    function enemyBases(p) {
+        var ob = opBrief(p);
+        if (arr(ob.enemy_bases).length) return arr(ob.enemy_bases);
+        var ef = ob.enemy_forces || {};
+        if (arr(ef.bases).length) {
+            return arr(ef.bases).map(function (b) {
+                return normalizeReviewBase(b, 'RED', b && (b.site_type || b.base_type) || 'enemy_base');
+            });
+        }
+        return []
+            .concat(arr(ef.air_bases).map(function (b) { return normalizeReviewBase(b, 'RED', 'air_base'); }))
+            .concat(arr(ef.naval_bases).map(function (b) { return normalizeReviewBase(b, 'RED', 'naval_base'); }))
+            .concat(arr(ef.land_bases).map(function (b) { return normalizeReviewBase(b, 'RED', 'land_base'); }));
+    }
+    function friendlyTrialBases(p) {
+        var ob = opBrief(p);
+        if (arr(ob.friendly_trial_bases).length) return arr(ob.friendly_trial_bases);
+        var ff = ob.friendly_forces || {};
+        return arr(ff.trial_bases).map(function (b) {
+            return normalizeReviewBase(b, 'BLUE', 'friendly_trial_anchor');
+        });
     }
     function proposedUnits(p) {
         var ob = opBrief(p);
@@ -110,9 +154,8 @@
         });
     }
     function isPartialStep1Upload(p) {
-        var ob = opBrief(p);
         var noUnits = proposedUnits(p).length === 0;
-        var noEnemyBases = !Array.isArray(ob.enemy_bases) || ob.enemy_bases.length === 0;
+        var noEnemyBases = enemyBases(p).length === 0;
         var noUsablePlacement = !hasUsablePlacementCandidates(p);
         if (!isStep1LikePayload(p)) return false;
         return noUnits && (noEnemyBases || noUsablePlacement || taskAssemblyLooksPlaceholder(p) || hasStep1MissingMarkers(p));
@@ -229,8 +272,8 @@
         return html;
     }
     function renderEnemyBases(p) {
-        var bases = opBrief(p).enemy_bases || [];
-        var friendlyTrials = opBrief(p).friendly_trial_bases || [];
+        var bases = enemyBases(p);
+        var friendlyTrials = friendlyTrialBases(p);
         if (!bases.length && !friendlyTrials.length) return '';
         var html = '<section style="margin:10px 0;padding:8px 0;border-top:1px solid #23303d;">' +
             '<div style="font-size:13px;color:#f0a0a0;font-weight:600;margin-bottom:6px;">\u0642\u0648\u0627\u0639\u062f \u0648\u0645\u0637\u0627\u0631\u0627\u062a \u0627\u0644\u0639\u062f\u0648 \u2014 Enemy Bases</div>';

@@ -9,6 +9,7 @@ global.window = {};
 
 const ADAPTER = require(path.join(__dirname, 'UI_MOdified/server/ai/mdmp-external-adapter'));
 const B = require(path.join(__dirname, 'UI_MOdified/server/ai/operational-brief'));
+require(path.join(__dirname, 'UI_MOdified/client/shell/placement-candidates-panel.js'));
 require(path.join(__dirname, 'UI_MOdified/client/shell/doc-understanding-review.js'));
 
 function assert(cond, msg) { if (!cond) throw new Error(msg || 'assertion failed'); }
@@ -102,6 +103,84 @@ assert(html.indexOf('data-act="preview"') !== -1, 'full Step 1 input still shows
 const fullSnap = JSON.stringify(out.brief.operational_brief.proposed_units);
 window.RmoozDocReview.render({ innerHTML: '', style: {}, querySelector: function () { return null; } }, out, {});
 assert(JSON.stringify(out.brief.operational_brief.proposed_units) === fullSnap, 'full payload not mutated by render');
+
+const rawValidUnits = [];
+for (let i = 1; i <= 76; i++) {
+    rawValidUnits.push({
+        id: 'RED-RAW-' + i,
+        side: 'RED',
+        platform: 'RED trial platform ' + i,
+        estimated_count: 1,
+        base_name_en: 'Nested RED Base ' + ((i % 32) + 1),
+        lat: 25 + (i / 1000),
+        lon: 51 + (i / 1000),
+    });
+}
+for (let i = 1; i <= 7; i++) {
+    rawValidUnits.push({
+        id: 'BLUE-RAW-' + i,
+        side: 'BLUE',
+        platform: 'BLUE trial platform ' + i,
+        estimated_count: 1,
+        base_name_en: 'BLUE Trial Anchor ' + i,
+        lat: 24 + (i / 1000),
+        lon: 52 + (i / 1000),
+    });
+}
+const rawValidBases = [];
+for (let i = 1; i <= 32; i++) {
+    rawValidBases.push({
+        base_name_ar: '\u0642\u0627\u0639\u062f\u0629 \u062a\u062c\u0631\u064a\u0628 \u0645\u062a\u062f\u0627\u062e\u0644\u0629 ' + i,
+        base_name_en: 'Nested RED Base ' + i,
+        lat: 26 + (i / 100),
+        lon: 50 + (i / 100),
+        site_type: i <= 11 ? 'air_base' : (i <= 20 ? 'naval_base' : 'land_base'),
+    });
+}
+const rawValidPlacements = [];
+for (let i = 1; i <= 36; i++) {
+    rawValidPlacements.push({
+        mention: 'Raw placement candidate ' + i,
+        side: i <= 7 ? 'BLUE' : 'RED',
+        site_type: i <= 11 ? 'air_base' : 'known_base',
+        lat: 24 + (i / 100),
+        lon: 51 + (i / 100),
+        exact_unit_position: false,
+    });
+}
+const rawValidStep1 = {
+    task_assembly: {
+        summary: 'Raw valid Step 1 task assembly',
+        main_task: 'Review UAE/Iran trial posture',
+        supporting_tasks: [{ unit: 'air component', duty: 'confirm posture' }],
+    },
+    proposed_units: rawValidUnits,
+    placement_candidates: rawValidPlacements,
+    enemy_forces: {
+        bases: rawValidBases,
+        air_bases: rawValidBases.slice(0, 11),
+        naval_bases: rawValidBases.slice(11, 20),
+        land_bases: rawValidBases.slice(20),
+    },
+    doctrine_upload_required: true,
+};
+const rawValidSnap = JSON.stringify(rawValidStep1);
+const rawValidContainer = {
+    innerHTML: '',
+    style: {},
+    querySelector: function () { return null; },
+};
+window.RmoozDocReview.render(rawValidContainer, rawValidStep1, {});
+const rawValidHtml = rawValidContainer.innerHTML;
+
+assert(rawValidHtml.indexOf('BLUE 7 / RED 76 / NEUTRAL 0') !== -1, 'raw valid Step 1 shows 83 proposed units');
+assert(rawValidHtml.indexOf('RED bases') !== -1 && rawValidHtml.indexOf('<b>32</b>') !== -1, 'raw valid Step 1 shows 32 nested RED bases');
+assert(rawValidHtml.indexOf('Nested RED Base 1') !== -1, 'raw valid Step 1 renders nested enemy_forces.bases');
+assert(rawValidHtml.indexOf('template/partial planning guide') === -1, 'raw valid Step 1 does not show partial/template warning');
+assert(rawValidHtml.indexOf('data-act="preview"') !== -1, 'raw valid Step 1 enables Preview Decision Steps');
+assert(window.RmoozPlacementPanel.hasCandidates(rawValidStep1), 'raw valid Step 1 placement panel reads top-level placement_candidates');
+assert(window.RmoozPlacementPanel.hasCandidates({ brief: { operational_brief: rawValidStep1 } }), 'placement panel reads analyzed operational_brief placement_candidates');
+assert(JSON.stringify(rawValidStep1) === rawValidSnap, 'raw valid Step 1 payload not mutated by render');
 
 const partialInput = {
     letter_ref_number: '<\u0631\u0642\u0645 \u0627\u0644\u0645\u0631\u062c\u0639>',

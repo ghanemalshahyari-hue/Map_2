@@ -34,10 +34,14 @@
     var _payload = null, _objective = null;
     var _allGroups = [], _red = [], _blue = [];
     var _progress = 0, _running = false, _paused = false, _timer = null;
-    var _layer = null, _panel = null, _card = null;
+    var _layer = null, _panel = null, _card = null, _aiPanel = null;
+    var _plan = null, _terrain = { available: false }, _objectiveSource = null;
 
     function W() { return (typeof window !== 'undefined') ? window : root; }
     function mapReady() { var w = W(); return !!(w && w.L && w.map && typeof w.L.layerGroup === 'function'); }
+    function arr(v) { return Array.isArray(v) ? v : []; }
+    // FREE-FIGHT-AI-LITE-A: deterministic planner + injected terrain results.
+    function aiPlanner() { var w = W(); if (w && w.RmoozFreeFightAI) return w.RmoozFreeFightAI; try { return require('./free-fight-ai.js'); } catch (_) { return null; } }
     function num(v) { var n = Number(v); return Number.isFinite(n) ? n : null; }
     function cloneLL(o) { return o ? { lat: num(o.lat), lon: num(o.lon) } : null; }
     function finiteLL(o) { return !!(o && Number.isFinite(o.lat) && Number.isFinite(o.lon)); }
@@ -79,8 +83,19 @@
     }
 
     function selectSample() {
-        _red = []; _blue = [];
-        if (!finiteLL(_objective)) return;
+        _red = []; _blue = []; _plan = null;
+        if (!finiteLL(_objective) || !_allGroups.length) return;
+        var AI = aiPlanner();
+        if (AI && typeof AI.buildPlan === 'function') {
+            // AI-lite: the planner decides which RED groups attack + which BLUE
+            // groups react and where (terrain-aware when terrain is available).
+            _plan = AI.buildPlan(_allGroups, _objective, { terrain: _terrain });
+            var byId = {}; _allGroups.forEach(function (g) { byId[g.id] = g; });
+            _red = arr(_plan.red_attack_plan).map(function (e) { var g = byId[e.demo_group_id]; return g ? prep(g, 'RED', cloneLL(e._target || _objective), e) : null; }).filter(Boolean);
+            _blue = arr(_plan.blue_reaction_plan).map(function (e) { var g = byId[e.demo_group_id]; return g ? prep(g, 'BLUE', cloneLL(e._target), e) : null; }).filter(Boolean);
+            return;
+        }
+        // Fallback (planner not loaded): nearest 2 RED + 3 BLUE, geometric.
         var reds = _allGroups.filter(function (g) { return g.side === 'RED'; }).slice();
         var blues = _allGroups.filter(function (g) { return g.side === 'BLUE'; }).slice();
         reds.sort(function (a, b) { return dist2(a.anchor, _objective) - dist2(b.anchor, _objective); });
@@ -88,13 +103,19 @@
         _red = reds.slice(0, RED_ATTACK).map(function (g) { return prep(g, 'RED', cloneLL(_objective)); });
         _blue = blues.slice(0, BLUE_REACT).map(function (g) { return prep(g, 'BLUE', interceptPoint(g.anchor, _objective)); });
     }
-    function prep(g, role, target) {
+    function prep(g, role, target, planEntry) {
+        planEntry = planEntry || {};
         return {
             id: g.id, side: g.side, role: role, country: g.country, country_key: g.country_key,
             base_name_ar: g.base_name_ar, base_name_en: g.base_name_en, site_type: g.site_type,
             category_counts: g.category_counts || {}, total: g.total || 0, member_ids: g.member_ids || [],
             anchor: cloneLL(g.anchor), target: target, current: cloneLL(g.anchor),
-            phase: 'staged', demo_only: true, review_only: true, exact_unit_position: false, movement_status: 'demo',
+            phase: 'staged', demo_only: true, review_only: true, needs_review: true,
+            requires_commander_approval: true, exact_unit_position: false, movement_status: 'demo',
+            // AI-lite plan context (review-only):
+            reaction_type: planEntry.reaction_type || null, reason: planEntry.reason || null,
+            confidence: planEntry.confidence || 'low', plan_warnings: planEntry.warnings || [],
+            route_summary: planEntry.route_summary || null, terrain_summary: planEntry.terrain_summary || null,
         };
     }
 
@@ -110,23 +131,30 @@
         opts = opts || {};
         _payload = payload || {};
         _allGroups = buildGroups(_payload);
-        _objective = finiteLL(opts.objective) ? cloneLL(opts.objective) : deriveObjective(_payload);
+        if (finiteLL(opts.objective)) { _objective = cloneLL(opts.objective); _objectiveSource = 'opts'; }
+        else { var d = deriveObjective(_payload); _objective = d; _objectiveSource = finiteLL(d) ? 'brief' : null; }
         _progress = 0; _running = false; _paused = false;
         selectSample();
         return getState();
     }
     function setObjective(latlon) {
         _objective = finiteLL(cloneLL(latlon)) ? cloneLL(latlon) : null;
+        _objectiveSource = finiteLL(_objective) ? 'user_marked_demo_objective' : null;
+        // Persist (browser) so a re-opened card can reuse the placed Objective X.
+        try { if (finiteLL(_objective)) W().__rmoozFreeFightObjective = { lat: _objective.lat, lon: _objective.lon }; } catch (_) {}
+        _terrain = { available: false };   // re-probe per new objective/targets
         _progress = 0; _running = false; _paused = false; clearTimer();
         selectSample();
         if (mapReady()) { syncMarkers(); }
-        updatePanel();
+        updatePanel(); renderAiPanel(); probeTerrain();
         return getState();
     }
     function clearObjective() {
-        _objective = null; _red = []; _blue = []; _progress = 0; _running = false; _paused = false; clearTimer();
+        _objective = null; _objectiveSource = null; _red = []; _blue = []; _plan = null; _terrain = { available: false };
+        try { delete W().__rmoozFreeFightObjective; } catch (_) {}   // forget the persisted Objective X
+        _progress = 0; _running = false; _paused = false; clearTimer();
         if (mapReady()) syncMarkers();
-        updatePanel();
+        updatePanel(); renderAiPanel();
         return getState();
     }
     function groups() { return _red.concat(_blue); }
@@ -140,7 +168,7 @@
         updatePanel();
     }
     function start() {
-        if (!finiteLL(_objective) || !groups().length) return getState();
+        if (!canStartFreeFight()) return getState();   // needs Objective X + a group + anchors
         _running = true; _paused = false;
         if (mapReady() && typeof setInterval === 'function') { clearTimer(); _timer = setInterval(step, TICK_MS); }
         updatePanel();
@@ -155,18 +183,47 @@
         return getState();
     }
 
+    // FREE-FIGHT-DEMO-B: graceful degradation messages (no crash for any shape).
+    function freeFightWarnings() {
+        var w = [];
+        if (!_allGroups.length) { w.push('No map anchors available — لا توجد مراسٍ على الخريطة'); return w; }
+        if (!finiteLL(_objective)) { w.push('Place Objective X to begin — ضع الهدف X للبدء'); return w; }
+        if (!_red.length) w.push('No RED attack units found — لا توجد وحدات هجوم حمراء');
+        if (!_blue.length) w.push('No BLUE reaction units found — لا توجد وحدات رد فعل زرقاء');
+        if (_plan && _plan.terrain_used === false) w.push('Terrain unavailable; using geometric demo movement only');
+        return w;
+    }
+    // FREE-FIGHT-AI-LITE visibility fix: the card SHOWS regardless of objective
+    // (decided in doc-understanding-review.canShowFreeFight); the demo can only
+    // START when there is an Objective X + at least one RED/BLUE group + anchors.
+    function canStartFreeFight() {
+        return finiteLL(_objective) && _allGroups.length > 0 && (_red.length > 0 || _blue.length > 0);
+    }
     function getState() {
         return {
             running: _running, paused: _paused, progress: _progress,
             objective: _objective ? cloneLL(_objective) : null, objective_set: finiteLL(_objective),
+            objective_source: _objectiveSource,
             red_groups: _red.length, blue_groups: _blue.length, all_groups: _allGroups.length,
+            has_anchors: _allGroups.length > 0, can_start: canStartFreeFight(), warnings: freeFightWarnings(),
+            terrain_used: !!(_terrain && _terrain.available), terrain_available: !!(_terrain && _terrain.available),
+            red_attack_plan: arr(_plan && _plan.red_attack_plan).length,
+            blue_reaction_plan: arr(_plan && _plan.blue_reaction_plan).length,
+            ai_assisted: true, requires_commander_approval: true,
             demo_only: true, review_only: true,
         };
     }
+    function getPlan() { return _plan; }
     function getGroups() { return groups(); }
     function getRed() { return _red; }
     function getBlue() { return _blue; }
-    function getObjective() { return _objective ? cloneLL(_objective) : null; }
+    function getObjective() {
+        if (!finiteLL(_objective)) return null;
+        // Stored as a review-only, user-marked demo objective (FREE-FIGHT-AI-LITE-A #1).
+        return { lat: _objective.lat, lon: _objective.lon, object_type: 'objective', name: 'Objective X',
+            needs_review: true, review_only: true, source_type: 'user_marked_demo_objective',
+            objective_source: _objectiveSource };
+    }
 
     // ── Browser-only rendering (guarded) ─────────────────────────────────
     var COUNTRY_COLORS = { iran: '#f0707a', uae: '#5bd6a0', qatar: '#7bb8e8', bahrain: '#d9b34a', kuwait: '#b893e0', oman: '#5fc7c7', ksa: '#7fd6a0' };
@@ -257,19 +314,40 @@
             '<button data-act="close" style="background:transparent;border:none;color:#8fa5b8;cursor:pointer;font-size:16px;">✕</button></div>';
         if (!st.objective_set) {
             html += '<button data-act="place-obj" style="font:inherit;cursor:pointer;border:1px solid #b8860b;background:#2a2412;color:#e0c060;border-radius:5px;padding:6px 10px;margin-bottom:8px;">＋ Place Objective X — ضع الهدف X</button>';
+        } else {
+            if (st.objective_source === 'reused_previous') html += '<div style="margin-bottom:4px;font-size:11px;color:#7fd6a0;">↻ Reusing previous Objective X — إعادة استخدام الهدف السابق</div>';
+            html += '<button data-act="place-obj" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#22303f;color:#cfe6ff;border-radius:5px;padding:6px 10px;margin-bottom:8px;">↻ Place new Objective X — ضع هدفاً جديداً</button>';
+        }
+        // FREE-FIGHT-CARD-VISIBILITY: the panel always opens; Start is gated on
+        // Objective X (+ groups + anchors). No anchors → disabled + note; no
+        // objective → disabled + "Place Objective X to start" note.
+        var startBtn, startNote = '';
+        if (!st.has_anchors) {
+            startBtn = '<button data-act="start" disabled style="font:inherit;cursor:not-allowed;border:1px solid #3a5040;background:#162018;color:#5f8f74;border-radius:5px;padding:5px 10px;opacity:.55;">▶ Start AI Free Fight</button>';
+            startNote = '<div style="margin:2px 0 6px;font-size:11px;color:#e0a93a;">No map anchors available — لا توجد مراسٍ على الخريطة</div>';
+        } else if (!st.can_start) {
+            startBtn = '<button data-act="start" disabled title="Place Objective X first" style="font:inherit;cursor:not-allowed;border:1px solid #3a5040;background:#162018;color:#5f8f74;border-radius:5px;padding:5px 10px;opacity:.6;">▶ Start AI Free Fight</button>';
+            startNote = '<div style="margin:2px 0 6px;font-size:11px;color:#e0c060;">Place Objective X to start AI Free Fight<br>ضع الهدف X لبدء القتال التجريبي بالذكاء الاصطناعي</div>';
+        } else {
+            startBtn = '<button data-act="start" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:5px;padding:5px 10px;">▶ Start AI Free Fight</button>';
         }
         html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">' +
-            '<button data-act="start" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:5px;padding:5px 10px;">▶ Start Free Fight Demo</button>' +
+            startBtn +
             '<button data-act="pause" style="font:inherit;cursor:pointer;border:1px solid #8a6a20;background:#2a2412;color:#e0c060;border-radius:5px;padding:5px 10px;">⏸ Pause</button>' +
             '<button data-act="reset" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:5px;padding:5px 10px;">⟲ Reset</button>' +
             '<button data-act="clear-obj" style="font:inherit;cursor:pointer;border:1px solid #7a3030;background:#241414;color:#f0a0a0;border-radius:5px;padding:5px 10px;">✕ Clear Objective X</button></div>';
+        html += startNote;
         html += '<div style="font-size:11px;color:#9aa3ad;margin-bottom:4px;">' + esc(objLine) + '</div>';
+        if (st.warnings && st.warnings.length) {
+            html += '<div style="margin-bottom:6px;font-size:11px;color:#e0a93a;">' +
+                st.warnings.map(function (w) { return '⚠ ' + esc(w); }).join('<br>') + '</div>';
+        }
         html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;font-size:11px;">' +
             '<span style="color:#f0a0a0;">RED demo attack — هجوم تجريبي للطرف الأحمر</span> · ' +
             '<span style="color:#7fd6a0;">BLUE demo reaction — رد فعل تجريبي للطرف الأزرق</span></div>';
         html += '<div style="padding:6px 8px;border-radius:5px;background:#2a2412;border:1px solid #b8860b;color:#e0c060;font-size:11px;line-height:1.5;">' +
-            '⚠ Demo only — not final tasking — requires commander approval<br>' +
-            'حركة تجريبية فقط — ليست إسناد واجب نهائي — تحتاج اعتماد القائد</div>';
+            '⚠ AI-assisted demo only — not final tasking — requires commander approval<br>' +
+            'عرض تجريبي بمساعدة الذكاء الاصطناعي — ليس إسناد واجب نهائي — يحتاج اعتماد القائد</div>';
         _panel.innerHTML = html;
         bind('start', start); bind('pause', pause); bind('reset', reset); bind('clear-obj', clearObjective); bind('close', clear);
         bind('place-obj', armPlaceObjective);
@@ -288,26 +366,108 @@
         w.map.on('click', handler);
     }
 
+    // FREE-FIGHT-AI-LITE-A: the "AI Free Fight Reasoning" panel (why RED/BLUE
+    // were chosen, terrain used, missing info, confidence, warnings). Read-only.
+    function renderAiPanel() {
+        var w = W();
+        if (!w || !w.document || !w.document.body) return;
+        if (!finiteLL(_objective) || !_plan) {
+            if (_aiPanel && _aiPanel.parentNode) { _aiPanel.parentNode.removeChild(_aiPanel); _aiPanel = null; }
+            return;
+        }
+        if (!_aiPanel) {
+            _aiPanel = w.document.createElement('div');
+            _aiPanel.id = 'rmooz-free-fight-ai-panel';
+            _aiPanel.style.cssText = ['position:fixed', 'top:128px', 'right:24px', 'z-index:9954', 'background:#0e1620', 'border:1px solid #4a7bb8', 'border-radius:8px', 'padding:12px 14px', 'min-width:320px', 'max-width:380px', 'max-height:calc(100vh - 200px)', 'overflow:auto', 'box-shadow:0 4px 20px rgba(0,0,0,.65)', 'color:#e8eaed', 'font-family:inherit', 'direction:ltr'].join(';');
+            w.document.body.appendChild(_aiPanel);
+        }
+        function entry(e, c) {
+            return '<div style="margin:5px 0;padding:6px 8px;border:1px solid #2a3f55;border-radius:5px;background:#0c141d;font-size:11px;">' +
+                '<div style="color:' + c + ';font-weight:600;">' + esc(e.country || e.demo_group_id) + (e.reaction_type ? ' · ' + esc(e.reaction_type) : '') + ' · ' + esc(e.source_base || '-') + '</div>' +
+                '<div style="color:#cdd8e4;margin-top:2px;">' + esc(e.reason || '') + '</div>' +
+                '<div style="color:#9ab;margin-top:2px;">route: ' + esc(e.route_summary || '-') + '</div>' +
+                '<div style="color:#9ab;">terrain: ' + esc(e.terrain_summary || '-') + '</div>' +
+                '<div style="color:#8fa5b8;">confidence: ' + esc(e.confidence || 'low') + (arr(e.warnings).length ? ' · ⚠ ' + esc(e.warnings.join(', ')) : '') + '</div></div>';
+        }
+        var h = '<div style="font-weight:700;color:#9ec2ec;font-size:13px;margin-bottom:4px;">AI Free Fight Reasoning — تفسير قرار الذكاء الاصطناعي</div>' +
+            '<div style="font-size:10px;color:#7f93a6;margin-bottom:6px;">' + esc(_plan.planner || 'deterministic heuristic (no LLM)') + ' · terrain_used: ' + (!!_plan.terrain_used) + '</div>';
+        h += '<div style="color:#f0a0a0;font-weight:600;font-size:12px;">RED attack (' + arr(_plan.red_attack_plan).length + ')</div>';
+        h += arr(_plan.red_attack_plan).map(function (e) { return entry(e, '#f0a0a0'); }).join('') || '<div style="color:#e0a93a;font-size:11px;">No RED attack groups available</div>';
+        h += '<div style="color:#7fd6a0;font-weight:600;font-size:12px;margin-top:6px;">BLUE reaction (' + arr(_plan.blue_reaction_plan).length + ')</div>';
+        h += arr(_plan.blue_reaction_plan).map(function (e) { return entry(e, '#7fd6a0'); }).join('') || '<div style="color:#e0a93a;font-size:11px;">No BLUE reaction groups available</div>';
+        if (arr(_plan.warnings).length) h += '<div style="margin-top:6px;font-size:11px;color:#e0a93a;">' + _plan.warnings.map(function (x) { return '⚠ ' + esc(x); }).join('<br>') + '</div>';
+        if (arr(_plan.missing_information).length) h += '<div style="margin-top:4px;font-size:11px;color:#c98;">missing: ' + esc(_plan.missing_information.join(', ')) + '</div>';
+        h += '<div style="margin-top:8px;padding:5px 7px;border-radius:4px;background:#2a2412;border:1px solid #b8860b;color:#e0c060;font-size:11px;">AI-assisted demo only — not final tasking — requires commander approval<br>عرض تجريبي بمساعدة الذكاء الاصطناعي — ليس إسناد واجب نهائي — يحتاج اعتماد القائد</div>';
+        _aiPanel.innerHTML = h;
+    }
+
+    // Best-effort terrain enrichment: probe /api/terrain, re-plan if a DEM is
+    // available. Graceful no-op when terrain/DEM is absent (stays geometric).
+    function probeTerrain() {
+        var w = W();
+        if (!w || typeof w.fetch !== 'function' || !finiteLL(_objective) || !groups().length) return;
+        try {
+            w.fetch('/api/terrain/health').then(function (r) { return r.json(); }).then(function (hh) {
+                if (!hh || hh.available !== true) return;   // no DEM → stay geometric (graceful, advisory-only)
+                var gs = groups().filter(function (g) { return finiteLL(g.anchor) && finiteLL(g.target); });
+                var jobs = gs.map(function (g) {
+                    // /api/terrain/profile expects { points: [{lat,lon}, ...] }.
+                    return w.fetch('/api/terrain/profile', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ points: [{ lat: g.anchor.lat, lon: g.anchor.lon }, { lat: g.target.lat, lon: g.target.lon }] }) })
+                        .then(function (r) { return r.json(); }).then(function (p) { return { id: g.id, p: p }; }).catch(function () { return null; });
+                });
+                Promise.all(jobs).then(function (res) {
+                    var routes = {};
+                    res.filter(Boolean).forEach(function (x) {
+                        var p = x.p || {}, s = p.slope || {}, e = p.elevation || {};
+                        var mob = (s.no_go_segments > 0) ? 'no_go' : (s.slow_go_segments > 0 ? 'slow_go' : 'go');
+                        var gain = (e.max_m != null && e.min_m != null) ? Math.round(e.max_m - e.min_m) : null;
+                        routes[x.id] = { available: true, max_slope_deg: (s.max_deg != null ? s.max_deg : null), elevation_gain_m: gain, mobility: mob, distance_km: p.distance_km };
+                    });
+                    _terrain = { available: true, routes: routes };
+                    selectSample();
+                    if (mapReady()) syncMarkers();
+                    renderAiPanel(); updatePanel();
+                }).catch(function () {});
+            }).catch(function () {});
+        } catch (_) {}
+    }
+
     function clear() {
         pause();
         var w = W();
         if (_layer && mapReady()) { try { if (w.map.hasLayer(_layer)) w.map.removeLayer(_layer); } catch (_) {} }
         _layer = null;
         if (_panel && _panel.parentNode) _panel.parentNode.removeChild(_panel); _panel = null;
+        if (_aiPanel && _aiPanel.parentNode) _aiPanel.parentNode.removeChild(_aiPanel); _aiPanel = null;
         if (_card && _card.parentNode) _card.parentNode.removeChild(_card); _card = null;
-        _red = []; _blue = []; _allGroups = []; _objective = null; _progress = 0; _running = false; _paused = false;
+        _red = []; _blue = []; _allGroups = []; _objective = null; _objectiveSource = null; _plan = null; _terrain = { available: false };
+        _progress = 0; _running = false; _paused = false;
+        // NOTE: clear() closes the overlay but KEEPS the persisted Objective X
+        // (window.__rmoozFreeFightObjective) so re-opening can reuse it; only
+        // clearObjective() forgets it.
     }
 
     function mount(payload, opts) {
         init(payload, opts);
+        // FREE-FIGHT objective reuse: if the brief gave no objective but one was
+        // placed earlier this session, reuse it (no duplicate markers — the demo
+        // layer re-renders a single Objective X marker on syncMarkers).
+        if (!finiteLL(_objective)) {
+            try {
+                var prev = W().__rmoozFreeFightObjective;
+                if (finiteLL(prev)) { _objective = cloneLL(prev); _objectiveSource = 'reused_previous'; selectSample(); }
+            } catch (_) {}
+        }
         if (mapReady()) { syncMarkers(); buildPanel(); }
+        renderAiPanel(); probeTerrain();
         return getState();
     }
 
     var API = {
         mount: mount, init: init, setObjective: setObjective, clearObjective: clearObjective,
         start: start, pause: pause, reset: reset, step: step, clear: clear,
-        getState: getState, getGroups: getGroups, getRed: getRed, getBlue: getBlue, getObjective: getObjective,
+        getState: getState, getGroups: getGroups, getRed: getRed, getBlue: getBlue,
+        getObjective: getObjective, getPlan: getPlan,
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozFreeFightDemo = API;

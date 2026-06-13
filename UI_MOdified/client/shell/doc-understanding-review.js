@@ -478,6 +478,28 @@
         }
         return null;
     }
+    // FREE-FIGHT-AI-LITE visibility fix: SHOWING the Free Fight card must NOT
+    // require an Objective X — the operator places Objective X *inside* the demo,
+    // so gating the card on an objective is a deadlock (can't open the card to
+    // place the objective the card itself requires). Show whenever ANY demo-able
+    // Step 1 data exists. Whether the demo can START (objective + groups +
+    // anchors) is decided separately in free-fight-demo.js (canStartFreeFight).
+    function canShowFreeFight(p) {
+        if (coalitionRollup(p)) return true;                       // coalition implies data (not required)
+        var ob = opBrief(p);
+        var src = (p && p.placement) || {};
+        var u = (p && p.understanding) || {};
+        var hasUnits = arr(ob.proposed_units).length > 0 || arr(u.proposed_units).length > 0;
+        var hasAnchorOrBase = arr(ob.placement_candidates).length > 0 || arr(src.placement_candidates).length > 0 ||
+            arr(ob.enemy_bases).length > 0 || arr(ob.friendly_trial_bases).length > 0 || arr(ob.country_bases).length > 0;
+        return hasUnits && hasAnchorOrBase;                        // units AND an anchor/base source — NO objective gate
+    }
+    function ffHasObjective(p) {
+        var ob = opBrief(p);
+        return arr(ob.objectives).length > 0 || arr((p && p.understanding && p.understanding.objectives)).length > 0 ||
+            !!(ob.area_of_operations && ob.area_of_operations.center);
+    }
+    function canFreeFight(p) { return canShowFreeFight(p); }   // back-compat alias (no objective gate)
     function sideTone(side) {
         side = String(side || '').toUpperCase();
         return side === 'BLUE' ? '#7fd6a0' : (side === 'RED' ? '#f0a0a0' : '#d8d870');
@@ -594,6 +616,20 @@
         // create preview layers without an extraction path.
         var showPreviewBtn = caps.map_preview_ready;
         var disabledPreview = !showPreviewBtn && caps.text_preview_ready;
+        // FREE-FIGHT-DEMO-B (TEMPORARY debug): explains why the Free Fight button
+        // is shown/hidden for the current review payload.
+        var _ffOb = opBrief(p);
+        var _ffBaseCount = arr(_ffOb.enemy_bases).length + arr(_ffOb.friendly_trial_bases).length + arr(_ffOb.country_bases).length;
+        var _ffCardVisible = canShowFreeFight(p), _ffHasObj = ffHasObjective(p);
+        html += '<div data-el="free-fight-debug" style="margin:8px 0;padding:5px 7px;border:1px dashed #4a5a6a;border-radius:4px;background:#0c1118;color:#8fb8e0;font-size:11px;font-family:Consolas,monospace;direction:ltr;text-align:left;">' +
+            'free-fight debug · kind=' + esc(p.kind || (u && u.set_label_en) || 'unknown') +
+            ' · has_coalition=' + (!!coalitionRollup(p)) +
+            ' · has_objective=' + _ffHasObj +
+            ' · proposed_units_count=' + proposedUnits(p).length +
+            ' · placement_candidates_count=' + placementCandidates(p).length +
+            ' · base_count=' + _ffBaseCount +
+            ' · free_fight_card_visible=' + (!!_ffCardVisible) +
+            ' · start_enabled=' + (!!(_ffCardVisible && _ffHasObj)) + '</div>';
         html += '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
             '<button type="button" data-act="generate" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:6px;padding:7px 14px;font-weight:600;">Generate Scenario — توليد السيناريو</button>' +
             '<button type="button" data-act="edit" style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#22303f;color:#cfe6ff;border-radius:6px;padding:7px 14px;">Edit Understanding — تعديل الفهم</button>' +
@@ -601,7 +637,7 @@
             (showPreviewBtn ? '<button type="button" data-act="preview" style="font:inherit;cursor:pointer;border:1px solid #b8860b;background:#2a2412;color:#e0c060;border-radius:6px;padding:7px 14px;">Preview Decision Steps — معاينة خطوات القرار</button>' : '') +
             (disabledPreview ? '<button type="button" data-act="preview-disabled" disabled title="' + esc('Missing: ' + caps.missing_for_map_preview.join(', ')) + '" style="font:inherit;cursor:not-allowed;border:1px solid #5a4c2a;background:#191711;color:#9a8550;border-radius:6px;padding:7px 14px;">Map Preview Not Ready — معاينة الخريطة غير جاهزة</button>' : '') +
             (coalitionRollup(p) ? '<button type="button" data-act="demo-movement" title="Symbolic demo only — not final tasking" style="font:inherit;cursor:pointer;border:1px solid #b8860b;background:#2a2412;color:#e0c060;border-radius:6px;padding:7px 14px;">Demo Movement — حركة عرض (demo only)</button>' : '') +
-            (coalitionRollup(p) ? '<button type="button" data-act="free-fight" title="Symbolic action-reaction demo — not final tasking" style="font:inherit;cursor:pointer;border:1px solid #7a3030;background:#241414;color:#f0a0a0;border-radius:6px;padding:7px 14px;">Free Fight Demo — قتال تجريبي (demo only)</button>' : '') +
+            (canShowFreeFight(p) ? '<button type="button" data-act="free-fight" title="Symbolic AI-assisted demo — not final tasking" style="font:inherit;cursor:pointer;border:1px solid #7a3030;background:#241414;color:#f0a0a0;border-radius:6px;padding:7px 14px;">Free Fight Demo — قتال تجريبي (demo only)</button>' : '') +
             '<button type="button" data-act="cancel" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:6px;padding:7px 14px;">Cancel — إلغاء</button>' +
             '</div>' +
             '<details data-el="editbox" style="margin-top:8px;"><summary style="cursor:pointer;font-size:12px;color:#8fa5b8;">Operational Brief JSON — مسودة الموجز</summary>' +

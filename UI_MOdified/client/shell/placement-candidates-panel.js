@@ -35,8 +35,10 @@
     function hasCandidates(payload) { return candidatesOf(payload).length > 0; }
 
     var anchorLayer = null;
+    var _anchorRetry = null;
 
     function clearMapAnchors() {
+        if (_anchorRetry) { clearTimeout(_anchorRetry); _anchorRetry = null; }
         if (anchorLayer && anchorLayer.clearLayers) anchorLayer.clearLayers();
         if (window) window.__rmoozStep1PlacementAnchorCount = 0;
     }
@@ -86,8 +88,16 @@
         });
     }
 
-    function renderMapAnchors(cands) {
-        if (!window || !window.L || !window.map || typeof window.L.layerGroup !== 'function') return;
+    function renderMapAnchors(cands, _attempt) {
+        if (!window || !window.L || !window.map || typeof window.L.layerGroup !== 'function') {
+            _attempt = (_attempt || 0) + 1;
+            if (_attempt <= 8) {
+                if (_anchorRetry) clearTimeout(_anchorRetry);
+                _anchorRetry = setTimeout(function () { renderMapAnchors(cands, _attempt); }, 250);
+            }
+            return;
+        }
+        if (_anchorRetry) { clearTimeout(_anchorRetry); _anchorRetry = null; }
         if (!anchorLayer) {
             anchorLayer = window.L.layerGroup();
             anchorLayer.addTo(window.map);

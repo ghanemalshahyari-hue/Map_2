@@ -22,7 +22,7 @@
     var BUCKETS = ['air_fighter', 'air_attack', 'air_transport', 'maritime_patrol', 'helicopter', 'uav', 'naval_surface', 'ground_unit', 'unknown'];
 
     function arr(v) { return Array.isArray(v) ? v : []; }
-    function num(v) { var n = Number(v); return Number.isFinite(n) ? n : null; }
+    function num(v) { if (v == null || v === '') return null; var n = Number(v); return Number.isFinite(n) ? n : null; }
     function opBrief(p) {
         return (p && p.brief && p.brief.operational_brief) || (p && p.operational_brief) ||
             (p && typeof p === 'object' && !Array.isArray(p) ? p : {});
@@ -124,7 +124,7 @@
     function buildGroupsFromAnchors(payload) {
         var ob = opBrief(payload);
         var cands = arr(ob.placement_candidates).filter(function (c) {
-            return c && Number.isFinite(Number(c.lat)) && Number.isFinite(Number(c.lon));
+            return c && num(c.lat) != null && num(c.lon) != null;   // null/'' → not an anchor (Number(null)===0 trap)
         });
         if (!cands.length) return [];
         var pus = arr(ob.proposed_units);
@@ -150,7 +150,7 @@
                 id: 'DEMOGRP-' + String(c.side || '').toUpperCase() + '-' + (c.country_key || 'ctry') + '-' + i,
                 side: String(c.side || '').toUpperCase(), country: c.country || null, country_key: c.country_key || null,
                 base_name_ar: c.base_name_ar || '', base_name_en: c.base_name_en || c.mention || '', site_type: c.site_type || null,
-                anchor: { lat: Number(c.lat), lon: Number(c.lon) },
+                anchor: { lat: num(c.lat), lon: num(c.lon) },
                 member_ids: members.map(function (m) { return m.id; }), category_counts: counts, total: total,
                 demo_only: true, review_only: true, movement_status: 'demo',
             };

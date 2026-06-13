@@ -374,7 +374,10 @@ function buildMultiCountryStep1(input, opts) {
                     id: side + '-' + (canon ? canon.key.toUpperCase() : 'CTRY') + '-BASE-' + code + '-' + bi,
                     side: side, country: name, country_key: canon ? canon.key : null,
                     base_name_ar: baseNameAr, base_name_en: baseNameEn,
-                    site_type: type, lat: lat, lon: lon,
+                    // STEP1-BASE-TYPE-SYMBOL-RESTORE-A: carry an explicit base_type
+                    // (air_base | naval_base | land_base) so review anchors keep the
+                    // correct base symbol through persistence + reload.
+                    site_type: type, base_type: type, lat: lat, lon: lon,
                     exact_unit_position: false, needs_review: true,
                     confidence: hasCoord ? 'medium' : 'low',
                     warning: 'base_known_exact_unit_position_unknown',
@@ -393,7 +396,7 @@ function buildMultiCountryStep1(input, opts) {
                         mention: baseNameEn || baseNameAr || (name + ' ' + type + ' ' + (bi + 1)),
                         base_name_ar: baseNameAr, base_name_en: baseNameEn,
                         side: side, country: name, country_key: canon ? canon.key : null,
-                        site_type: type, lat: lat, lon: lon,
+                        site_type: type, base_type: type, lat: lat, lon: lon,
                         coordinate_format: 'base_anchor', placement_type: 'base_location_anchor',
                         exact_unit_position: false, needs_review: true, confidence: 'medium',
                         ao_check: 'unknown',

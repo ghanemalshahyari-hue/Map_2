@@ -471,7 +471,8 @@
         // SYMBOL-DB-B: base symbol mapping metadata (registry-sourced; review-only).
         html += '<section class="bsp-section"><h3>Symbol / الرمز</h3>' +
             row('object_type', sym ? sym.object_type : type) +
-            row('base_type', type) +
+            // STEP1-BASE-TYPE-SYMBOL-RESTORE-A (req #5): show the human base-type label.
+            row('base_type', type + (sym && sym.label_en ? ' — ' + sym.label_en + (sym.label_ar ? ' / ' + sym.label_ar : '') : '')) +
             row('symbol', sym ? (sym.glyph + '  ' + sym.label_en + ' / ' + sym.label_ar) : '-') +
             row('symbol_category', dominantCategory(units)) +
             row('symbol_source', sym ? sym.symbol_source : 'registry_not_loaded') +

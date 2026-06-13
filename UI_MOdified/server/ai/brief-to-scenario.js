@@ -29,6 +29,18 @@ function r5(n) { return Math.round(n * 1e5) / 1e5; }
 function sanitizeName(s) {
     return String(s == null ? '' : s).trim().replace(/[^A-Za-z0-9._-]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 60) || 'brief_scenario';
 }
+// STEP1-BASE-TYPE-SYMBOL-RESTORE-A: normalize a base/facility type from whatever
+// field a reviewed candidate carries (base_type → site_type → object_type →
+// anchor_type → placement_type). Unknown → 'base_facility' (NEVER null, NEVER a
+// unit type). Mirrors the client baseTypeOf() so persisted anchors keep the type.
+function normalizeBaseType(c) {
+    const s = String((c && (c.base_type || c.site_type || c.object_type || c.anchor_type || c.placement_type)) || '').toLowerCase();
+    if (/friendly_trial|trial/.test(s)) return 'friendly_trial_anchor';
+    if (/naval|harbou|\bport\b|بحر|مينا/.test(s)) return 'naval_base';
+    if (/land|ground|army|بري|برية/.test(s)) return 'land_base';
+    if (/air|airfield|airport|جو|مطار/.test(s)) return 'air_base';
+    return 'base_facility';
+}
 
 // n points on a ring around center; lon radius scaled for latitude.
 function ring(center, n, radiusDeg) {
@@ -215,7 +227,10 @@ function generateScenarioFromBrief(brief, opts) {
                 lat: Number.isFinite(+c.lat) ? +c.lat : null,
                 lon: Number.isFinite(+c.lon) ? +c.lon : null,
                 site_type: c.site_type || c.object_type || null,
-                base_type: c.base_type || null,
+                // STEP1-BASE-TYPE-SYMBOL-RESTORE-A (req #1/#6): always persist a base_type
+                // (air_base | naval_base | land_base | base_facility) so a reloaded scenario
+                // redraws the correct typed base symbol — never null, never a unit symbol.
+                base_type: normalizeBaseType(c),
                 source_type: c.source_type || 'reviewed_placement_candidate',
                 needs_review: true, exact_unit_position: false,
             };

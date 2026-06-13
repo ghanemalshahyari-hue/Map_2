@@ -72,12 +72,21 @@
             if (!c || c.lat == null || c.lon == null) return;
             var lat = Number(c.lat), lon = Number(c.lon);
             if (!Number.isFinite(lat) || !Number.isFinite(lon)) return;
+            // MULTI-COUNTRY-A: coalition anchors carry side + country. Side
+            // drives the marker color (mapAnchorIcon); country is surfaced in
+            // the title/popup so RED-country and BLUE-coalition anchors read
+            // distinctly without creating any final unit marker.
+            var sideLabel = String(c.side || '').toUpperCase();
+            var ctry = c.country || c.country_key || '';
+            var titleBits = ['Step 1 placement anchor - review only'];
+            if (sideLabel) titleBits.push(sideLabel);
+            if (ctry) titleBits.push(ctry);
             var marker = window.L.marker([lat, lon], {
                 icon: mapAnchorIcon(c),
                 interactive: true,
                 keyboard: false,
-                title: 'Step 1 placement anchor - review only',
-                alt: 'Step 1 placement anchor - review only',
+                title: titleBits.join(' · '),
+                alt: titleBits.join(' · '),
             });
             marker._rmoozStep1PlacementAnchor = true;
             marker._rmoozReviewOnly = true;
@@ -85,6 +94,8 @@
             marker._rmoozBaseAnchorData = c;
             marker.bindPopup('<div style="font-size:12px;color:#e8eaed;background:#0e1620;">' +
                 '<b>' + esc(c.mention || c.base_name_en || c.base_name_ar || 'Placement anchor') + '</b><br>' +
+                (ctry ? 'country: ' + esc(ctry) + '<br>' : '') +
+                (sideLabel ? 'side: ' + esc(sideLabel) + (c.site_type ? ' · ' + esc(c.site_type) : '') + '<br>' : '') +
                 'review marker only<br>exact_unit_position: false<br>click marker for Base Status Panel</div>');
             if (typeof marker.on === 'function') {
                 marker.on('click', function () {

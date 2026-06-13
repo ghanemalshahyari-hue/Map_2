@@ -48,6 +48,9 @@ const TEMPLATES = require(path.join(__dirname, 'ai', 'operation-templates.js'));
 const MDMP_ADAPTER = require(path.join(__dirname, 'ai', 'mdmp-external-adapter.js'));
 const PLANNING = require(path.join(__dirname, 'ai', 'planning-model.js'));            // G-3A
 const LOCATION = require(path.join(__dirname, 'ai', 'location-intelligence.js'));     // G-3B
+// MULTI-COUNTRY-A: dependency-free .xlsx reader + coalition Step 1 ORBAT model.
+const XLSX = require(path.join(__dirname, 'ai', 'xlsx-text.js'));
+const MULTICOUNTRY = require(path.join(__dirname, 'ai', 'multi-country-orbat.js'));
 
 // Collect a request body and parse it. cb(obj) on success; cb(null) when the
 // body is empty; cb(undefined) when a body is present but not valid JSON.
@@ -1278,6 +1281,16 @@ function handle(req, res, ctx) {
                 return;
             }
             try {
+                // MULTI-COUNTRY-A: standard response for a coalition Step 1 brief.
+                var sendMultiCountry = function (mcx) {
+                    sendJson(res, 200, withAnalyzeDebug({
+                        ok: true, kind: 'multi_country_step1', requires_review: true, confidence: 'low',
+                        brief: mcx.brief, report: mcx.report,
+                        document_set_id: mcx.brief.document_set_id, documents: mcx.brief.documents,
+                        understanding: BRIEF.understandingFromBrief(mcx.brief),
+                        llm_fill: { available: false, reason: 'Coalition Step 1 ORBAT parsed deterministically (review/map foundation only)' },
+                    }));
+                };
                 var analyzeDiagEnabled = analyzeDebugEnabled();
                 var analyzeDiag = function (filename, content, det, adaptedOb) {
                     if (!analyzeDiagEnabled) return;
@@ -1346,6 +1359,17 @@ function handle(req, res, ctx) {
                     }));
                     return;
                 }
+                // MULTI-COUNTRY-A: an .xlsx workbook posted as base64 → parse
+                // sheets → coalition Step 1 brief (the Excel input path).
+                if (typeof body.workbook_base64 === 'string' && body.workbook_base64) {
+                    var wbBuf;
+                    try { wbBuf = Buffer.from(body.workbook_base64, 'base64'); }
+                    catch (eWb) { sendJson(res, 400, { ok: false, error: 'workbook_base64 is not valid base64' }); return; }
+                    var wb = XLSX.extractWorkbook(wbBuf);
+                    if (!wb.sheets.length) { sendJson(res, 400, { ok: false, error: 'no sheets parsed — not a readable .xlsx workbook' }); return; }
+                    sendMultiCountry(MULTICOUNTRY.buildBriefFromMultiCountry({ sheets: wb.sheets }, { file: body.filename || 'workbook.xlsx', sideOverrides: body.side_overrides }));
+                    return;
+                }
                 var kind = BRIEF.classifyJsonInput(body);
                 if (kind === 'rmooz_scenario') {
                     // RMOOZ Scenario JSON → schema validate + 500/side normalize (before/after).
@@ -1387,6 +1411,9 @@ function handle(req, res, ctx) {
                         understanding: BRIEF.understandingFromBrief(single.brief),
                         llm_fill: { available: false, reason: 'External MDMP file adapted deterministically (' + det.step + '); LLM enrichment runs on deployment' },
                     }));
+                } else if (kind === 'multi_country_step1') {
+                    // MULTI-COUNTRY-A: per-country ORBAT JSON → coalition Step 1 brief.
+                    sendMultiCountry(MULTICOUNTRY.buildBriefFromMultiCountry(body, { file: 'multi_country_step1', sideOverrides: body.side_overrides }));
                 } else {
                     var u = BRIEF.unknownToBrief(body);
                     sendJson(res, 200, withAnalyzeDebug({

@@ -460,6 +460,66 @@
         return html;
     }
 
+    // MULTI-COUNTRY-A: read the coalition rollup from understanding.coalition,
+    // falling back to the brief's own coalition arrays. Null for non-coalition
+    // payloads (so the section never renders for ordinary Step 1 imports).
+    function coalitionRollup(p) {
+        var u = (p && p.understanding) || {};
+        if (u.coalition) return u.coalition;
+        var ob = opBrief(p);
+        if (arr(ob.coalitions).length || arr(ob.countries).length) {
+            return {
+                coalitions: arr(ob.coalitions), countries: arr(ob.countries),
+                country_count: arr(ob.countries).length,
+                red_country_count: arr(ob.countries).filter(function (c) { return c.side === 'RED'; }).length,
+                blue_country_count: arr(ob.countries).filter(function (c) { return c.side === 'BLUE'; }).length,
+                coalition_totals: ob.coalition_totals || null,
+            };
+        }
+        return null;
+    }
+    function sideTone(side) {
+        side = String(side || '').toUpperCase();
+        return side === 'BLUE' ? '#7fd6a0' : (side === 'RED' ? '#f0a0a0' : '#d8d870');
+    }
+    function renderCoalitionRollup(p) {
+        var r = coalitionRollup(p);
+        if (!r) return '';
+        var html = '<section data-el="coalition-rollup" style="margin:10px 0;padding:8px 0;border-top:1px solid #23303d;">' +
+            '<div style="font-size:13px;color:#cfe6ff;font-weight:600;margin-bottom:6px;">ربط القوات متعدد الدول — Coalition ORBAT</div>';
+        html += '<div style="margin-bottom:6px;">' +
+            chip('Countries detected — الدول', r.country_count) +
+            chip('RED countries — دول حمراء', r.red_country_count, '#f0a0a0') +
+            chip('BLUE countries — دول زرقاء', r.blue_country_count, '#7fd6a0') + '</div>';
+        // Per-side coalition totals.
+        var totals = r.coalition_totals || {};
+        Object.keys(totals).forEach(function (side) {
+            var t = totals[side] || {};
+            html += '<div style="margin:3px 0;font-size:12px;color:' + sideTone(side) + ';">' +
+                esc(side) + ' coalition: ' +
+                '<span style="color:#e8eaed;">' + (t.countries || 0) + ' countries · ' +
+                (t.total_bases || 0) + ' bases (air ' + (t.air_bases || 0) + ' / naval ' + (t.naval_bases || 0) + ' / land ' + (t.land_bases || 0) + ') · ' +
+                (t.proposed_units || 0) + ' proposed units</span></div>';
+        });
+        // Per-country breakdown.
+        (r.countries || []).forEach(function (c) {
+            var bc = c.base_counts || {};
+            html += '<div style="margin:5px 0;padding:6px 8px;border:1px solid #2a2f37;background:#101820;border-radius:4px;font-size:12px;">' +
+                '<div style="color:' + sideTone(c.side) + ';font-weight:600;direction:rtl;text-align:right;">' +
+                esc(c.name || '-') + (c.name_en ? ' — ' + esc(c.name_en) : '') + ' <span style="color:#8fa5b8;">[' + esc(c.side) + ']</span></div>' +
+                '<div style="color:#9ab;margin-top:3px;">' +
+                'bases: air ' + (bc.air || 0) + ' · naval ' + (bc.naval || 0) + ' · land ' + (bc.land || 0) + ' · total <b>' + (bc.total || 0) + '</b>' +
+                ' &nbsp;·&nbsp; proposed units <b>' + (c.proposed_unit_count || 0) + '</b></div></div>';
+        });
+        // Coalition membership lines.
+        (r.coalitions || []).forEach(function (co) {
+            html += '<div style="margin:3px 0;font-size:11px;color:#8fa5b8;">' +
+                esc(co.name_en || co.id) + ': ' + esc((co.participants || []).join('، ')) + '</div>';
+        });
+        html += '</section>';
+        return html;
+    }
+
     function render(container, p, handlers) {
         handlers = handlers || {};
         p = p || {};
@@ -498,6 +558,7 @@
         html += '<div style="margin:8px 0;">' +
             chip('Proposed units — أعداد مقترحة', 'BLUE ' + (pc.blue || 0) + ' / RED ' + (pc.red || 0) + ' / NEUTRAL ' + (pc.neutral || 0)) +
             chip('Map bounds — حدود الخريطة', u.proposed_map_bounds ? 'from document' : 'not specified — set objective on map') + '</div>';
+        html += renderCoalitionRollup(p);
         html += listBlock('Missing / ambiguous — نواقص وغموض', u.ambiguities || [], '#e0a93a');
         html += renderTaskAssembly(p);
         html += renderUnitsDuty(p);

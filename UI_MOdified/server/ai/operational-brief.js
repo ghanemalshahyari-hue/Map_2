@@ -64,6 +64,17 @@ function emptyBrief() {
             courses_of_action: [],
             force_comparison: null,
             coa_recommendation: null,
+            // ── Multi-country coalition layer (additive; MULTI-COUNTRY-A) ──
+            // Coalition Step 1 ORBAT: many countries vs one. Built by
+            // multi-country-orbat.js, which ALSO projects into the arrays
+            // above (proposed_units / placement_candidates / enemy_bases) so
+            // every existing Step 1 consumer keeps working. Review-only.
+            coalitions: [],
+            participants: [],
+            countries: [],
+            country_orbats: [],
+            country_bases: [],
+            coalition_totals: null,
         },
     };
 }
@@ -483,11 +494,25 @@ function detectMdmp(obj) {
     return { is: false };
 }
 
+// MULTI-COUNTRY-A: a raw coalition Step 1 input — either a parsed workbook
+// ({ sheets:[{name,rows}] }) or per-country ORBAT JSON ({ countries:[…] } with
+// air/naval/land base arrays). Distinct from a built brief (which carries the
+// same data under operational_brief.* and classifies as operational_brief).
+function isMultiCountryInput(obj) {
+    if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return false;
+    if (Array.isArray(obj.sheets) && obj.sheets.some(function (s) { return s && typeof s === 'object' && Array.isArray(s.rows); })) return true;
+    if (Array.isArray(obj.countries) && obj.countries.some(function (c) {
+        return c && typeof c === 'object' && (Array.isArray(c.air_bases) || Array.isArray(c.naval_bases) || Array.isArray(c.land_bases) || Array.isArray(c.bases));
+    })) return true;
+    return false;
+}
+
 // Detect what a posted JSON object is.
 function classifyJsonInput(obj) {
     if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return 'unknown';
     if (Array.isArray(obj.red_units) && Array.isArray(obj.blue_units_initial)) return 'rmooz_scenario';
     if (detectMdmp(obj).is) return 'mdmp_external';
+    if (isMultiCountryInput(obj)) return 'multi_country_step1';
     if (obj.operational_brief && typeof obj.operational_brief === 'object') return 'operational_brief';
     if (obj.friendly && obj.enemy &&
         (typeof obj.mission === 'string' || Array.isArray(obj.objectives) || Array.isArray(obj.phases))) {
@@ -553,7 +578,37 @@ function normalizeBrief(input) {
     o.courses_of_action = arr(ob.courses_of_action);
     o.force_comparison = (ob.force_comparison && typeof ob.force_comparison === 'object') ? ob.force_comparison : null;
     o.coa_recommendation = (ob.coa_recommendation && typeof ob.coa_recommendation === 'object') ? ob.coa_recommendation : null;
+    // Multi-country coalition layer (additive, MULTI-COUNTRY-A) — preserved verbatim.
+    o.coalitions = arr(ob.coalitions);
+    o.participants = arr(ob.participants);
+    o.countries = arr(ob.countries);
+    o.country_orbats = arr(ob.country_orbats);
+    o.country_bases = arr(ob.country_bases);
+    o.coalition_totals = (ob.coalition_totals && typeof ob.coalition_totals === 'object') ? ob.coalition_totals : null;
     return out;
+}
+
+// MULTI-COUNTRY-A: roll the coalition layer up for the review screen —
+// coalitions + per-country (side / base counts / proposed count) + per-side
+// totals. Returns null for a non-coalition brief (no behavior change).
+function buildCoalitionRollup(ob) {
+    var coalitions = arr(ob.coalitions);
+    var countries = arr(ob.countries);
+    if (!coalitions.length && !countries.length) return null;
+    return {
+        coalitions: coalitions.map(function (c) {
+            return { id: c.id, side: c.side, name_en: c.name_en, name_ar: c.name_ar, participants: arr(c.participants) };
+        }),
+        countries: countries.map(function (c) {
+            return { name: c.name, name_en: c.name_en, side: c.side,
+                     base_counts: c.base_counts || { air: 0, naval: 0, land: 0, total: 0 },
+                     proposed_unit_count: c.proposed_unit_count || 0 };
+        }),
+        country_count: countries.length,
+        red_country_count: countries.filter(function (c) { return c.side === 'RED'; }).length,
+        blue_country_count: countries.filter(function (c) { return c.side === 'BLUE'; }).length,
+        coalition_totals: ob.coalition_totals || null,
+    };
 }
 
 // Build the AI-Understanding payload from a normalized brief.
@@ -589,6 +644,11 @@ function understandingFromBrief(brief) {
             labelAr = 'حزمة MDMP خارجية';
         }
     }
+    if (brief && brief.set_type === 'multi_country_step1') {
+        labelEn = 'Coalition Step 1 ORBAT';
+        labelAr = 'ربط القوات متعدد الدول (الخطوة 1)';
+    }
+    var coalition = buildCoalitionRollup(ob);
     return {
         set_type: brief.set_type || 'operational_brief',
         set_label_en: labelEn, set_label_ar: labelAr,
@@ -613,6 +673,8 @@ function understandingFromBrief(brief) {
                      turns: arr(c.wargame_turns).length, needs_review: c.needs_review !== false };
         }),
         coa_recommendation: ob.coa_recommendation || null,
+        // MULTI-COUNTRY-A coalition rollup (null for non-coalition briefs).
+        coalition: coalition,
     };
 }
 

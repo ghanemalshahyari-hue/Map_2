@@ -40,7 +40,9 @@
     }
     function allBases(payload) {
         var ob = opBrief(payload);
-        return arr(ob.enemy_bases).concat(arr(ob.friendly_trial_bases));
+        // MULTI-COUNTRY-A: country_bases holds every coalition base anchor
+        // (both sides). Concat so BLUE coalition bases also resolve here.
+        return arr(ob.enemy_bases).concat(arr(ob.friendly_trial_bases)).concat(arr(ob.country_bases));
     }
     function sourceFile(payload, anchor) {
         return (anchor && anchor.source && anchor.source.file) ||
@@ -332,6 +334,7 @@
         var units = allProposedUnits(payload).filter(function (u) { return unitBelongsToAnchor(u, anchor, base); });
         var side = sideOf(anchor, base);
         var type = baseType(anchor, base);
+        var country = text(anchor.country || base.country, '');
         var counts = categoryCounts(units);
         var caps = capabilitySummary(units);
         var missing = missingForBase(payload, anchor, base);
@@ -344,7 +347,9 @@
         var lon = anchor.lon != null ? anchor.lon : base.lon;
         var html = '<header class="bsp-header"><div><div class="bsp-title">' + esc(titleEn) + '</div>' +
             '<div class="bsp-subtitle" dir="rtl">' + esc(titleAr || '-') + '</div><div>' +
-            chip(side, side === 'BLUE' ? 'blue' : 'red') + chip(type) + chip('Review only', 'review') +
+            chip(side, side === 'BLUE' ? 'blue' : 'red') +
+            (country ? chip(country, side === 'BLUE' ? 'blue' : (side === 'RED' ? 'red' : '')) : '') +
+            chip(type) + chip('Review only', 'review') +
             chip('needs_review:true', 'review') + chip('exact_unit_position:false', 'review') +
             '</div></div><button class="bsp-close" type="button" title="Close">x</button></header>';
         // Everything below the header lives in the internally-scrolling body.
@@ -357,6 +362,8 @@
             row('Source type', anchor.source_type || base.source_type || source.type || '-') +
             '</section>';
         html += '<section class="bsp-section"><h3>Base Summary</h3>' +
+            row('Country / الدولة', country || '-') +
+            row('Side / الجهة', side) +
             row('Assigned base / ID', base.assigned_base || base.base_id || anchor.assigned_base || anchor.base_id || base.id || anchor.location_id || '-') +
             row('Proposed units count', units.length) +
             '<div class="bsp-summary-grid">' +

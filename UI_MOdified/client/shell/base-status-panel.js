@@ -25,6 +25,8 @@
         if (!N || typeof N.normalizeUnit !== 'function') return null;
         try { return N.normalizeUnit(unit); } catch (_) { return null; }
     }
+    // GLOBAL-SYMBOL-IDENTITY-A: shared resolver (window-only; null → existing fallback).
+    function bspIdentity(input) { var w = (typeof window !== 'undefined') ? window : null; return (w && w.RmoozSymbolIdentity && w.RmoozSymbolIdentity.resolve) ? w.RmoozSymbolIdentity.resolve(input) : null; }
     function text(v, fallback) {
         if (v == null || v === '') return fallback == null ? '' : fallback;
         return String(v);
@@ -309,6 +311,8 @@
         if (!units.length) return '<div class="bsp-empty">No proposed units linked to this base.</div>';
         var rows = units.map(function (u) {
             var n = normalizePlatform(u);
+            var ident = bspIdentity({ original_text: u.platform || u.platform_name || u.name, name: u.platform || u.platform_name, type: u.type_ar || u.type, side: u.side, symbol_category: n.symbol_category, unit_intel: n.unit_intel });
+            var glyphPrefix = (ident && ident.display_glyph && ident.display_glyph !== '?') ? esc(ident.display_glyph) + ' ' : '';
             var warnings = arr(u && u.warnings).concat(u && u.warning ? [u.warning] : []);
             // Systems come ONLY from DB1 (via symbol-db). Present => catalog known; absent => Catalog required.
             var hasSystems = !!(n.sensors.length || n.weapons.length || n.magazines.length);
@@ -322,7 +326,7 @@
                 '<td>' + esc(u.platform || u.platform_name || u.name || '-') + '</td>' +
                 '<td>' + esc(u.type_ar || u.type || '-') + '</td>' +
                 '<td>' + esc(u.estimated_count == null ? '-' : u.estimated_count) + '</td>' +
-                '<td>' + esc(n.symbol_category) + classLine + candLine + '</td>' +
+                '<td>' + glyphPrefix + esc(n.symbol_category) + classLine + candLine + '</td>' +
                 '<td><span class="bsp-cat bsp-cat-' + esc(n.catalog_match_status) + '">' + esc(n.catalog_match_status) + '</span>' +
                     '<br><small>' + esc(fmtConf(n.catalog_confidence)) + '</small></td>' +
                 '<td>' + esc(n.needs_review === false ? 'false' : 'true') + '</td>' +

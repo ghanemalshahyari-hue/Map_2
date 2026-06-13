@@ -62,10 +62,23 @@
     var BASE_GLYPH = { air_base: '✈', naval_base: '⚓', land_base: '▤', friendly_trial_anchor: '◇', base_facility: '⬢' };
     function mapAnchorIcon(c) {
         var side = String(c.side || '').toUpperCase();
+        var REG = (typeof window !== 'undefined' && window.RmoozSymbolRegistry) || null;
+        // GLOBAL-SYMBOL-IDENTITY-A: consult the shared resolver for a CONFIDENT object
+        // identity (air/naval/land base, etc.); otherwise fall through to the registry's
+        // base resolver, which keeps the base_facility / unknown two-tier fallback.
+        var ID = (typeof window !== 'undefined' && window.RmoozSymbolIdentity) || null;
+        if (ID && ID.resolve && REG && typeof REG.iconHtml === 'function') {
+            var rid = ID.resolve({ object_type: (c.object_type || c.site_type || c.base_type || c.anchor_type || c.placement_type), side: side });
+            if (rid && rid.object_symbol && rid.object_symbol.fallback === false) {
+                return window.L.divIcon({
+                    className: 'step1-review-placement-anchor step1-anchor-' + (rid.object_symbol.object_type || 'unknown'),
+                    html: REG.iconHtml(rid.object_symbol, { side: side }), iconSize: [24, 24], iconAnchor: [12, 12],
+                });
+            }
+        }
         // SYMBOL-DB-B: prefer the shared RMOOZ symbol registry (base_type → glyph,
         // with base_facility / unknown fallback). Local glyphs below are a guard
         // for when the registry script isn't loaded.
-        var REG = (typeof window !== 'undefined' && window.RmoozSymbolRegistry) || null;
         if (REG && typeof REG.resolveBaseSymbol === 'function' && typeof REG.iconHtml === 'function') {
             var rsym = REG.resolveBaseSymbol(c);
             return window.L.divIcon({

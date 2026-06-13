@@ -375,7 +375,12 @@
         Object.keys(cc).forEach(function (k) { if (cc[k] > n) { n = cc[k]; best = k; } });
         return best;
     }
+    // GLOBAL-SYMBOL-IDENTITY-A: prefer the shared resolver; fall back to the
+    // registry/role glyph if it is not loaded (window-only, never required).
+    function identity() { var w = W(); return (w && w.RmoozSymbolIdentity && w.RmoozSymbolIdentity.resolve) ? w.RmoozSymbolIdentity : null; }
     function groupGlyph(g) {
+        var ID = identity();
+        if (ID) { var r = ID.resolve({ symbol_category: dominant(g), side: g.side }); if (r && r.display_glyph) return r.display_glyph; }
         var REG = W() && W().RmoozSymbolRegistry;
         if (REG && REG.platformSymbol) { var s = REG.platformSymbol(dominant(g)); return (s && s.glyph) || '▢'; }
         return g.role === 'RED' ? '▲' : '◆';

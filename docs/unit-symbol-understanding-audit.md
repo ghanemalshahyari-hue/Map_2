@@ -131,3 +131,44 @@ no-safe-mapping note), and a **"Review required before final symbol"** line. Whe
 milsymbol (`window.ms`) is present, a small SVG preview of the candidate is rendered via
 `previewSvg()` (guarded — returns null on any error); otherwise the category glyph stands
 alone. Test: `scripts/test-sidc-bridge-a.js`.
+
+## GLOBAL-SYMBOL-IDENTITY-A
+
+`client/shell/symbol-identity.js` (`window.RmoozSymbolIdentity.resolve(input)`) is the **one
+shared review-only symbol-identity layer** for every RMOOZ review surface — Free Fight,
+Step 1 review, base/anchor cards, and (in future) the scenario editor, import wizard, unit
+status cards, and map review layers. It composes the three deterministic pieces into a
+single decision so all screens agree:
+
+```
+unit-intel-normalizer  → understand Arabic/English unit text
+symbol-registry        → display glyph (unit category + object/base)
+sidc-preview           → optional, additive review-only SIDC preview
+```
+
+**It is identity, not authority.** `resolve()` returns `{ original_text,
+normalized_unit_intel, display_glyph, display_label, symbol_category, platform_category,
+object_symbol, sidc_preview, sidc_candidate:"review_required", confidence, warnings,
+missing_information, needs_review:true, exact_unit_position:false, source_type }`. It runs
+the deterministic normalizer first, takes the glyph from the registry, and adds the
+SIDC preview only when one is safe (else null + warning). Unknown text → unknown glyph +
+`unknown_unit_type` warning. No final units, no approved SIDC, no world-state, no
+weapons/damage/adjudication.
+
+**It does NOT replace the real milsymbol final rendering** (`symbology.js` /
+`units-map.js` / `adjudicator-map.js` / final scenario unit creation are untouched). It only
+gives the review screens one consistent symbol decision.
+
+Consumers (all keep their existing behavior as fallback when the resolver is absent —
+the resolver is read from `window` only, never hard-required):
+
+- **Free Fight** demo group markers/card resolve the group glyph via the resolver.
+- **Base Status** proposed-unit rows prefix the resolved glyph on the category cell.
+- **Placement/base anchors** consult the resolver for a *confident* object identity and
+  otherwise fall through to the registry's base resolver (preserving the base_facility /
+  unknown two-tier fallback).
+
+**LLM later:** an optional Qwen/LiteLLM pass may cross-check this resolved result
+(agreement raises confidence; disagreement raises a conflict warning; failure never
+blocks) — but it can **never directly approve a SIDC**; `sidc_candidate` stays
+`review_required`. Test: `scripts/test-symbol-identity-a.js` (12 cases).

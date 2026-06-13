@@ -114,7 +114,50 @@
         return { demo_units: demo_units, groups: order.map(function (k) { return groupMap[k]; }) };
     }
 
-    var API = { buildDemoUnits: buildDemoUnits, categoryOf: categoryOf, BUCKETS: BUCKETS };
+    function nm(s) { return String(s == null ? '' : s).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim(); }
+
+    // Build movement groups from the BASE ANCHORS (placement_candidates) — the
+    // reliable source of coordinates — and attach each anchor's grouped units by
+    // matching proposed_units via assigned_base_id / base name. This gives one
+    // demo group per base (RED + BLUE), even when top-level proposed_units carry
+    // no per-unit coordinates. Falls back to proposed-unit grouping (no anchors).
+    function buildGroupsFromAnchors(payload) {
+        var ob = opBrief(payload);
+        var cands = arr(ob.placement_candidates).filter(function (c) {
+            return c && Number.isFinite(Number(c.lat)) && Number.isFinite(Number(c.lon));
+        });
+        if (!cands.length) return [];
+        var pus = arr(ob.proposed_units);
+        var byBaseId = {}, byName = {};
+        pus.forEach(function (u) {
+            if (u.assigned_base_id) (byBaseId[u.assigned_base_id] = byBaseId[u.assigned_base_id] || []).push(u);
+            var n = nm(u.base_name_en || u.base_name_ar);
+            if (n) (byName[n] = byName[n] || []).push(u);
+        });
+        return cands.map(function (c, i) {
+            var members = byBaseId[c.base_id] || byBaseId[c.id] || byName[nm(c.base_name_en || c.base_name_ar || c.mention)] || [];
+            var counts = zeroCounts(), total = 0;
+            members.forEach(function (u) {
+                var cat = categoryOf(u), amt = Number(u.estimated_count);
+                if (!Number.isFinite(amt) || amt < 1) amt = 1;
+                counts[cat] += amt; total += amt;
+            });
+            if (!members.length) {
+                var gc = c.grouped_units_count != null ? c.grouped_units_count : c.grouped_unit_count;
+                total = Number(gc) || 0;
+            }
+            return {
+                id: 'DEMOGRP-' + String(c.side || '').toUpperCase() + '-' + (c.country_key || 'ctry') + '-' + i,
+                side: String(c.side || '').toUpperCase(), country: c.country || null, country_key: c.country_key || null,
+                base_name_ar: c.base_name_ar || '', base_name_en: c.base_name_en || c.mention || '', site_type: c.site_type || null,
+                anchor: { lat: Number(c.lat), lon: Number(c.lon) },
+                member_ids: members.map(function (m) { return m.id; }), category_counts: counts, total: total,
+                demo_only: true, review_only: true, movement_status: 'demo',
+            };
+        });
+    }
+
+    var API = { buildDemoUnits: buildDemoUnits, buildGroupsFromAnchors: buildGroupsFromAnchors, categoryOf: categoryOf, BUCKETS: BUCKETS };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozDemoUnits = API;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

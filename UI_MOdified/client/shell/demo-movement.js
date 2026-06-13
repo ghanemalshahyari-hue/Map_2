@@ -69,7 +69,11 @@
         var DU = (W() && W().RmoozDemoUnits) || (typeof require === 'function' ? safeRequire() : null);
         var built = DU && typeof DU.buildDemoUnits === 'function' ? DU.buildDemoUnits(_payload) : { demo_units: [], groups: [] };
         _demoUnits = built.demo_units || [];
-        _allGroups = (built.groups || []).filter(finiteAnchor);
+        // Prefer anchor-based groups (placement_candidates carry coords); fall
+        // back to proposed-unit grouping when there are no map anchors.
+        var anchorGroups = (DU && typeof DU.buildGroupsFromAnchors === 'function') ? DU.buildGroupsFromAnchors(_payload) : [];
+        var src = anchorGroups.length ? anchorGroups : (built.groups || []);
+        _allGroups = src.filter(finiteAnchor);
         _objective = centroid(_allGroups);
         _groups = pickSample(_allGroups).map(function (g) {
             var anchor = clone(g.anchor);

@@ -22,6 +22,8 @@ build/
 Thumbs.db
 Desktop.ini
 .DS_Store
+# macOS AppleDouble resource forks (E-drive/Mac recovery debris)
+._*
 
 # Editor files
 .vscode/
@@ -56,6 +58,9 @@ UI_MOdified/server/ai/ai-secrets.local.js
 *.db-wal
 *.db-shm
 UI_MOdified/data/units.db
+
+# Runtime server logs — machine-local, regenerated every run, never commit.
+UI_MOdified/data/logs/
 
 # Atomic-write temp files from the server's write-then-rename save path
 # (e.g. plans/<uuid>.geojson.tmp.<pid>.<timestamp>). Transient — never commit.

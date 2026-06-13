@@ -290,4 +290,8 @@ module.exports = {
         width: W, height: H,
     }),
     isAvailable: () => fs.existsSync(DEM_PATH),
+    // GIS-TERRAIN-1 (T-1): exposed so /api/terrain/health can report the
+    // configured dataset + tile-cache location without duplicating them.
+    DEM_PATH,
+    CACHE_DIR,
 };

@@ -1,0 +1,99 @@
+{
+  "generatedAt": "2026-06-12T17:28:28.452Z",
+  "localHead": "5dd93e7",
+  "fixturePath": "/tmp/Iran_Qatar_step1_updated_red_blue_trial.json",
+  "fixtureSource": "test-external-step1-live-route.js::IRAN_QATAR_STEP1",
+  "server": "http://127.0.0.1:8011",
+  "screenshots": [
+    "preview-step-1.png",
+    "preview-step-middle.png",
+    "preview-step-final.png",
+    "preview-clear.png"
+  ],
+  "analysis": {
+    "analyzeKind": "mdmp_external",
+    "setLabel": "External App Step 1",
+    "placementCount": 13,
+    "previewButtonText": "Preview Decision Steps — معاينة خطوات القرار"
+  },
+  "step1": {
+    "active": true,
+    "stepCount": 7,
+    "text": "Preview Decision Steps / معاينة خطوات القرار\n✕\n◀\nStep 1 / 7\n▶\nPhase / المرحلة: Initial posture — تمركز ابتدائي\nAction / العمل\nEstablish the preview force posture around known bases and trial anchors.\nReason / السبب\nThe reviewed payload identifies bases, anchors, and proposed units before any committed tasking.\nRisk / المخاطر\nBaseline locations remain approximate until commander review confirms anchors.\nUnits involved / الوحدات المشاركة\nRED F-14A Tomcat unknown x24RED F-4D/E Phantom II unknown x12RED F-5E Tiger II unknown x8RED F-5E Tiger II unknown x18RED C-130H Hercules unknown x6RED Boeing 707 Tanker unknown x2\nRelated bases/anchors / القواعد والمراسي المرتبطة\nRED-BASE-HAMEDANRED-BASE-MEHRABADRED-BASE-BUSHEHRRED-BASE-BANDARABBASRED-BASE-CHABAHARRED-BASE-DEZFUL\nEvidence / الأدلة\ntemplate:attack_objective | scenario_template:Attack Objective\nLegend / مفتاح الخريطة\nFriendly preview unit\nEnemy preview unit\nApproximate movement/action\nRequires review\n⚠ preview_only · approximate_route · requires_review\npreview_only:true | approximate_route:true | requires_review:true\nApproximate demo movement / route requires review\nClear Preview / مسح المعاينة",
+    "legend": true,
+    "panelBox": {
+      "top": 122,
+      "bottom": 772,
+      "left": 896,
+      "right": 1416
+    },
+    "headerBottom": 74,
+    "bottomStatusTop": 800,
+    "viewportH": 920,
+    "noChromeOverlap": true,
+    "previewLayers": 70,
+    "movementLines": 0,
+    "unitMarkers": 66,
+    "targets": 2,
+    "activeLines": 0
+  },
+  "mid": {
+    "active": true,
+    "stepCount": 7,
+    "text": "Preview Decision Steps / معاينة خطوات القرار\n✕\n◀\nStep 4 / 7\n▶\nPhase / المرحلة: Main movement/action — الحركة أو العمل الرئيسي\nAction / العمل\nPreview RED movement from related bases toward the objective or area of concern.\nReason / السبب\nCurrent reviewed anchors are sufficient to show an approximate route for commander sense-making.\nRisk / المخاطر\nRoutes are schematic and require terrain, doctrine, and operator review.\nUnits involved / الوحدات المشاركة\nRED F-14A Tomcat unknown x24RED F-4D/E Phantom II unknown x12RED F-5E Tiger II unknown x8RED F-5E Tiger II unknown x18RED C-130H Hercules unknown x6RED Boeing 707 Tanker unknown x2\nRelated bases/anchors / القواعد والمراسي المرتبطة\nRED-BASE-HAMEDANRED-BASE-MEHRABADRED-BASE-BUSHEHRRED-BASE-BANDARABBASRED-BASE-CHABAHARRED-BASE-DEZFUL\nEvidence / الأدلة\ntemplate:attack_objective | scenario_template:Attack Objective\nLegend / مفتاح الخريطة\nFriendly preview unit\nEnemy preview unit\nApproximate movement/action\nRequires review\n⚠ preview_only · approximate_route · requires_review\npreview_only:true | approximate_route:true | requires_review:true\nApproximate demo movement / route requires review\nClear Preview / مسح المعاينة",
+    "legend": true,
+    "panelBox": {
+      "top": 122,
+      "bottom": 772,
+      "left": 896,
+      "right": 1416
+    },
+    "headerBottom": 74,
+    "bottomStatusTop": 800,
+    "viewportH": 920,
+    "noChromeOverlap": true,
+    "previewLayers": 124,
+    "movementLines": 54,
+    "unitMarkers": 66,
+    "targets": 2,
+    "activeLines": 54
+  },
+  "final": {
+    "active": true,
+    "stepCount": 7,
+    "text": "Preview Decision Steps / معاينة خطوات القرار\n✕\n◀\nStep 7 / 7\n▶\nPhase / المرحلة: Decision point — نقطة قرار\nAction / العمل\nPresent the commander with a review point: continue, revise anchors, or request richer inputs.\nReason / السبب\nThe preview is based only on current Step 1/2 evidence and stops before committing scenario state.\nRisk / المخاطر\nFurther action requires operator review and later-step evidence; no auto-apply path exists.\nUnits involved / الوحدات المشاركة\nRED F-14A Tomcat unknown x24RED F-4D/E Phantom II unknown x12RED F-5E Tiger II unknown x8RED F-5E Tiger II unknown x18RED C-130H Hercules unknown x6RED Boeing 707 Tanker unknown x2\nRelated bases/anchors / القواعد والمراسي المرتبطة\nRED-BASE-HAMEDANRED-BASE-MEHRABADRED-BASE-BUSHEHRRED-BASE-BANDARABBASRED-BASE-CHABAHARRED-BASE-DEZFUL\nEvidence / الأدلة\ntemplate:attack_objective | scenario_template:Attack Objective\nLegend / مفتاح الخريطة\nFriendly preview unit\nEnemy preview unit\nApproximate movement/action\nRequires review\n⚠ preview_only · approximate_route · requires_review\npreview_only:true | approximate_route:true | requires_review:true\nApproximate demo movement / route requires review\nClear Preview / مسح المعاينة",
+    "legend": true,
+    "panelBox": {
+      "top": 122,
+      "bottom": 772,
+      "left": 896,
+      "right": 1416
+    },
+    "headerBottom": 74,
+    "bottomStatusTop": 800,
+    "viewportH": 920,
+    "noChromeOverlap": true,
+    "previewLayers": 124,
+    "movementLines": 54,
+    "unitMarkers": 66,
+    "targets": 2,
+    "activeLines": 54
+  },
+  "cleared": {
+    "active": false,
+    "stepCount": 0,
+    "text": "",
+    "legend": false,
+    "panelBox": null,
+    "headerBottom": 74,
+    "bottomStatusTop": 800,
+    "viewportH": 920,
+    "noChromeOverlap": false,
+    "previewLayers": 0,
+    "movementLines": 0,
+    "unitMarkers": 0,
+    "targets": 0,
+    "activeLines": 0
+  },
+  "consoleIssues": []
+}

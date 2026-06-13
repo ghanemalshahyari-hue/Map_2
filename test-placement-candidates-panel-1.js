@@ -64,8 +64,6 @@ ok('surfaces the outside-AO warning for Chah Bahar', /outside area of operation/
 ok('shows base coordinates', /27\.19611/.test(html) && /56\.28778/.test(html));
 
 var fakeLayer = null;
-var selectedObjectCall = null;
-global.window.openSelectedObjectPanel = function (obj) { selectedObjectCall = obj; };
 global.window.L = {
     divIcon: function (opts) { return opts; },
     marker: function (latlng, opts) {
@@ -75,7 +73,6 @@ global.window.L = {
             _rmoozStep1PlacementAnchor: false,
             _rmoozReviewOnly: false,
             _rmoozExactUnitPosition: null,
-            on: function (eventName, fn) { if (eventName === 'click') this.click = fn; return this; },
             bindPopup: function (htmlText) { this.popup = htmlText; return this; },
         };
     },
@@ -99,14 +96,6 @@ ok('map anchor markers are flagged review-only / not exact unit positions',
     }));
 ok('map anchor icon class is step1-review-placement-anchor',
     fakeLayer && fakeLayer.layers.every(function (m) { return /step1-review-placement-anchor/.test(m.opts.icon.className || ''); }));
-if (fakeLayer && fakeLayer.layers[0] && fakeLayer.layers[0].click) fakeLayer.layers[0].click();
-ok('map anchor click calls common selected object panel for base',
-    selectedObjectCall &&
-    selectedObjectCall.object_kind === 'base' &&
-    selectedObjectCall.source === 'step1_external_app' &&
-    selectedObjectCall.review_only === true &&
-    selectedObjectCall.exact_unit_position === false &&
-    selectedObjectCall.data === bandar);
 
 // Read-only surface invariant: no action buttons emitted from this mirror.
 ok('READ-ONLY: emits no action buttons / data-act', html.indexOf('<button') === -1 && html.indexOf('data-act') === -1);

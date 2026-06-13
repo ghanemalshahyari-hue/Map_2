@@ -1056,6 +1056,49 @@
         return ws;
     }
 
+    /* ---- G-4-C: read-only tasking overlay preview -------------------------
+     * Controlled preview path only. This is deliberately NOT a DERIVATIONS row:
+     * normal world-state projection remains baseline-derived, and callers must
+     * explicitly request an overlay projection. The returned snapshot is a clone.
+     */
+    function buildTaskingOverlayPreview(ws, overlay) {
+        var source = root.AppTaskingOverlayStore || null;
+        var base = clone(obj(ws));
+        base.derived = obj(base.derived);
+        var baselineTasking = obj(base.derived.unit_tasking);
+        var projected = baselineTasking;
+        if (source && typeof source.projectTaskingPreview === 'function') {
+            projected = source.projectTaskingPreview(baselineTasking, overlay);
+        } else {
+            projected = clone(baselineTasking);
+        }
+        Object.keys(obj(projected)).forEach(function (uid) {
+            var entry = obj(projected[uid]);
+            if (!entry.source || entry.source.kind !== 'g4_tasking_overlay') return;
+            entry.read_only = true;
+            entry.overlay_only = true;
+            entry.baseline_mutation = false;
+            entry.source = Object.assign({}, entry.source, {
+                read_only: true,
+                overlay_only: true,
+                baseline_mutation: false
+            });
+            projected[uid] = entry;
+        });
+        base.derived.unit_tasking_overlay_preview = projected;
+        base.tasking_overlay_preview = {
+            source: 'g4_tasking_overlay',
+            read_only: true,
+            overlay_only: true,
+            baseline_mutation: false,
+            imported_source_mutation: false,
+            live_scenario_mutation: false,
+            persistent_storage: false,
+            ui_edit_controls: false
+        };
+        return base;
+    }
+
     /* ---- pure transition SEED (PR-WS3 expands) ---------------------------- */
     var DECISION_TYPES = ['NOTE', 'UNIT_MOVE', 'READINESS_DELTA', 'SUPPLY_DELTA'];
 
@@ -1125,6 +1168,8 @@
         computeUnitTasking: computeUnitTasking,
         // OBJLINK-B: per-uid objective/BLS/route link index (derived).
         computeUnitObjectiveLinks: computeUnitObjectiveLinks,
+        // G-4-C: explicit read-only overlay projection; not part of baseline derivation.
+        buildTaskingOverlayPreview: buildTaskingOverlayPreview,
         // exposed for tests / future rule modules
         _bearing: bearing,
         _nmBetween: nmBetween

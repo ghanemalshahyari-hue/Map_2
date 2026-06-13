@@ -44,8 +44,18 @@ function emptyBrief() {
             timeline: [],
             constraints: [],
             assumptions: [],
+            missing_information: [],
             ambiguities: [],
             source_citations: [],
+            task_assembly: null,
+            units_duty: null,
+            placement_candidates: [],
+            proposed_units: [],
+            enemy_bases: [],
+            friendly_trial_bases: [],
+            enemy_forces: null,
+            staff_brief_2: null,
+            external_raw: {},
             // ── COA layer (additive; D9 approved 2026-06-11) ─────────
             // Candidate courses of action (each with wargame_turns[] per
             // L10), the structured force comparison, and the AI/rule-engine
@@ -377,14 +387,95 @@ const MDMP_STEPS = [
     // fields (letter ref / assembly area / task_assembly) first.
     { step: 'planning_guidance', // step 1 / WARNO package (also the field dictionary)
       any: ['letter_ref_number', 'Assembly_Area', 'task_assembly',
-            'GROUND_COMPONENT_MISSION', 'Operational_Assumptions'] },
+            'Units_Duty', 'GROUND_COMPONENT_MISSION', 'Operational_Assumptions'] },
+    { step: 'staff_brief_2',
+      any: ['Staff_Brief_2', 'staff_brief_2', 'sections', 'intel_summary', 'enemy_capabilities',
+            'operations', 'hr', 'logistics'] },
     { step: 'staff_brief',      // step 2 outputs — intel summary / capabilities
       any: ['Enemy_Capabilities', 'First_light', 'Recent_and_Ongoing_Activities',
             'join_op_mission'] },
 ];
 
+const STEP1_WRAPPER_KEYS = [
+    'operational_brief', 'step1', 'Step1', 'Step_1', 'planning_guidance',
+    'Planning_Guidance', 'external_step1', 'External_Step_1',
+    'step_1', 'Step_1_Output', 'initial_planning_guide',
+    'initial_planning_guidance', 'data', 'payload', 'document',
+    'external_json', 'raw_external_json',
+];
+
+function step1FingerprintKeys(obj) {
+    if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return [];
+    var matched = [];
+    ['task_assembly', 'Units_Duty', 'doctrine_upload_required', 'letter_ref_number',
+     'warning_order', 'Warning_Order', 'WARNORD', 'Assembly_Area',
+     'GROUND_COMPONENT_MISSION', 'Operational_Assumptions'].forEach(function (k) {
+        if (k in obj) matched.push(k);
+    });
+    if (String(obj.external_step || obj.step || '').trim() === '1') matched.push('external_step');
+    var pkg = String(obj.package_type || obj.Package_Type || obj.document_type || obj.type || '');
+    if (/step\s*[-_ ]*1|staff\s*brief\s*1|planning\s*guidance|initial\s*planning|warnord|warning\s*order/i.test(pkg)) {
+        matched.push('package_type');
+    }
+    if (obj.enemy_forces && typeof obj.enemy_forces === 'object') {
+        ['bases', 'air_bases', 'naval_bases', 'land_bases'].forEach(function (k) {
+            if (Array.isArray(obj.enemy_forces[k])) matched.push('enemy_forces.' + k);
+        });
+    }
+    if (obj.friendly_forces && typeof obj.friendly_forces === 'object' &&
+            Array.isArray(obj.friendly_forces.trial_bases)) matched.push('friendly_forces.trial_bases');
+    var sm = obj.scenario_metadata;
+    var st = sm && sm.scenario_type;
+    if (typeof st === 'string' && /step\s*[-_ ]*1/i.test(st)) matched.push('scenario_metadata.scenario_type');
+    return matched;
+}
+
+function getExternalStep1Root(obj) {
+    if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return null;
+    var roots = [{ path: '', value: obj }];
+    var seen = new Set([obj]);
+    for (var depth = 0; depth < roots.length && depth < 24; depth++) {
+        var cur = roots[depth].value;
+        STEP1_WRAPPER_KEYS.forEach(function (k) {
+            if (cur[k] && typeof cur[k] === 'object' && !Array.isArray(cur[k]) && !seen.has(cur[k])) {
+                seen.add(cur[k]);
+                roots.push({ path: roots[depth].path ? roots[depth].path + '.' + k : k, value: cur[k] });
+            }
+        });
+    }
+    var baseRoots = roots.slice();
+    for (var ui = 0; ui < baseRoots.length; ui++) {
+        var root = baseRoots[ui].value;
+        if (root.operational_brief && typeof root.operational_brief === 'object' && !Array.isArray(root.operational_brief)) {
+            var merged = Object.assign({}, root.operational_brief);
+            ['task_assembly', 'Units_Duty', 'doctrine_upload_required', 'doctrine_sources',
+             'doctrine_application_policy', 'enemy_forces', 'friendly_forces',
+             'proposed_units', 'placement_candidates', 'missing_information',
+             'external_step', 'step', 'package_type', 'Package_Type', 'document_type',
+             'type', 'scenario_metadata'].forEach(function (k) {
+                if (root[k] !== undefined && merged[k] === undefined) merged[k] = root[k];
+            });
+            roots.push({
+                path: baseRoots[ui].path ? baseRoots[ui].path + '.operational_brief' : 'operational_brief',
+                value: merged,
+            });
+        }
+    }
+    for (var i = 0; i < roots.length; i++) {
+        var matched = step1FingerprintKeys(roots[i].value);
+        if (matched.length) return {
+            root: roots[i].value,
+            path: roots[i].path,
+            matched: matched.map(function (k) { return roots[i].path ? roots[i].path + '.' + k : k; }),
+        };
+    }
+    return null;
+}
+
 function detectMdmp(obj) {
     if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return { is: false };
+    var step1 = getExternalStep1Root(obj);
+    if (step1) return { is: true, step: 'planning_guidance', matched: step1.matched };
     for (const def of MDMP_STEPS) {
         const matched = def.any.filter(k => k in obj);
         if (matched.length) return { is: true, step: def.step, matched };
@@ -396,12 +487,12 @@ function detectMdmp(obj) {
 function classifyJsonInput(obj) {
     if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return 'unknown';
     if (Array.isArray(obj.red_units) && Array.isArray(obj.blue_units_initial)) return 'rmooz_scenario';
+    if (detectMdmp(obj).is) return 'mdmp_external';
     if (obj.operational_brief && typeof obj.operational_brief === 'object') return 'operational_brief';
     if (obj.friendly && obj.enemy &&
         (typeof obj.mission === 'string' || Array.isArray(obj.objectives) || Array.isArray(obj.phases))) {
         return 'operational_brief';   // bare operational_brief object
     }
-    if (detectMdmp(obj).is) return 'mdmp_external';
     return 'unknown';
 }
 
@@ -446,8 +537,18 @@ function normalizeBrief(input) {
     o.timeline = arr(ob.timeline);
     o.constraints = arr(ob.constraints);
     o.assumptions = arr(ob.assumptions);
+    o.missing_information = arr(ob.missing_information);
     o.ambiguities = arr(ob.ambiguities);
     o.source_citations = arr(ob.source_citations);
+    o.task_assembly = (ob.task_assembly && typeof ob.task_assembly === 'object') ? ob.task_assembly : null;
+    o.units_duty = ob.units_duty != null ? ob.units_duty : null;
+    o.placement_candidates = arr(ob.placement_candidates);
+    o.proposed_units = arr(ob.proposed_units);
+    o.enemy_bases = arr(ob.enemy_bases);
+    o.friendly_trial_bases = arr(ob.friendly_trial_bases);
+    o.enemy_forces = (ob.enemy_forces && typeof ob.enemy_forces === 'object') ? ob.enemy_forces : null;
+    o.staff_brief_2 = (ob.staff_brief_2 && typeof ob.staff_brief_2 === 'object') ? ob.staff_brief_2 : null;
+    o.external_raw = (ob.external_raw && typeof ob.external_raw === 'object') ? ob.external_raw : {};
     // COA layer (additive, D9) — preserved verbatim through normalization.
     o.courses_of_action = arr(ob.courses_of_action);
     o.force_comparison = (ob.force_comparison && typeof ob.force_comparison === 'object') ? ob.force_comparison : null;
@@ -459,12 +560,38 @@ function normalizeBrief(input) {
 function understandingFromBrief(brief) {
     var ob = (brief && brief.operational_brief) || {};
     var ambiguities = arr(ob.ambiguities).slice();
+    var proposedUnits = arr(ob.proposed_units);
+    var countSide = function (side) {
+        return proposedUnits.filter(function (u) { return String((u && u.side) || '').toUpperCase() === side; }).length;
+    };
+    var redCount = countSide('RED') || arr(ob.enemy && ob.enemy.units).length;
+    var blueCount = countSide('BLUE') || arr(ob.friendly && ob.friendly.units).length;
+    var neutralCount = countSide('NEUTRAL') || arr(ob.neutral && ob.neutral.civilian).length;
     if (!ob.mission) ambiguities.push('Mission not present in the brief.');
     if (!arr(ob.objectives).length) ambiguities.push('No objectives in the brief — set the objective on the map.');
     if (!arr(ob.phases).length) ambiguities.push('No phases in the brief.');
+    var labelEn = 'Operational Brief';
+    var labelAr = 'الموجز التشغيلي';
+    if (brief && brief.set_type === 'mdmp_external') {
+        var steps = arr(brief.documents).map(function (d) { return d && d.mdmp_step; }).filter(Boolean);
+        var uniqueSteps = Array.from(new Set(steps));
+        if (uniqueSteps.length === 1 && uniqueSteps[0] === 'planning_guidance') {
+            labelEn = 'External App Step 1';
+            labelAr = 'خطوة 1 من تطبيق خارجي';
+        } else if (uniqueSteps.indexOf('planning_guidance') !== -1) {
+            labelEn = 'External MDMP Bundle (Step 1 included)';
+            labelAr = 'حزمة MDMP خارجية تتضمن الخطوة 1';
+        } else if (uniqueSteps.length === 1 && uniqueSteps[0] === 'staff_brief_2') {
+            labelEn = 'External Staff Brief 2';
+            labelAr = 'إيجاز الأركان 2 من تطبيق خارجي';
+        } else {
+            labelEn = 'External MDMP Bundle';
+            labelAr = 'حزمة MDMP خارجية';
+        }
+    }
     return {
         set_type: brief.set_type || 'operational_brief',
-        set_label_en: 'Operational Brief', set_label_ar: 'الموجز التشغيلي',
+        set_label_en: labelEn, set_label_ar: labelAr,
         mission: ob.mission || '', commander_intent: ob.commander_intent || '',
         friendly: { summary: (ob.friendly && ob.friendly.summary) || '', source: 'brief JSON' },
         enemy: { summary: (ob.enemy && ob.enemy.summary) || '', source: 'brief JSON' },
@@ -472,10 +599,13 @@ function understandingFromBrief(brief) {
         objectives: arr(ob.objectives), phases: arr(ob.phases), constraints: arr(ob.constraints),
         assumptions: arr(ob.assumptions), ambiguities: ambiguities,
         proposed_unit_counts: {
-            red: arr(ob.enemy && ob.enemy.units).length,
-            blue: arr(ob.friendly && ob.friendly.units).length,
-            neutral: arr(ob.neutral && ob.neutral.civilian).length,
+            red: redCount,
+            blue: blueCount,
+            neutral: neutralCount,
         },
+        proposed_units: proposedUnits,
+        task_assembly: ob.task_assembly || null,
+        staff_brief_2: ob.staff_brief_2 || null,
         proposed_map_bounds: (ob.area_of_operations && ob.area_of_operations.bbox) || null,
         // COA layer summary (additive, D9) — cards rendered by the COA panel (G-3).
         coas: arr(ob.courses_of_action).map(function (c) {
@@ -548,6 +678,7 @@ module.exports = {
     // Phase F JSON input:
     classifyJsonInput,
     detectMdmp,
+    getExternalStep1Root,
     validateBrief,
     normalizeBrief,
     understandingFromBrief,

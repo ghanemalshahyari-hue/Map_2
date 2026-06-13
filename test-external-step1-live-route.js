@@ -133,6 +133,9 @@ function postAnalyze(body) {
     const container = { innerHTML: '', style: {}, querySelector: function () { return null; } };
     window.RmoozDocReview.render(container, out, {});
     const html = container.innerHTML;
+    const caps = window.RmoozDocReview.assessReviewPayloadCapabilities(out);
+    assert(caps.status === 'map_ready', 'full Step 1 route capability status map_ready');
+    assert(caps.map_preview_ready === true, 'full Step 1 route map preview ready');
     assert(html.indexOf('Task Assembly') !== -1, 'Task Assembly section renders');
     assert(html.indexOf('Doctrine Required') !== -1, 'Doctrine section renders');
     assert(html.indexOf('Proposed Units') !== -1, 'Proposed Units section renders');
@@ -142,6 +145,47 @@ function postAnalyze(body) {
         assert(html.indexOf(name) !== -1, name + ' appears');
     });
     assert(html.indexOf('BLUE 0 / RED 27 / NEUTRAL 0') !== -1, 'UI count includes RED 27');
+    assert(html.indexOf('template/partial planning guide') === -1, 'full Step 1 does not show partial/template warning');
+    assert(html.indexOf('Input capability check') !== -1, 'full Step 1 shows capability box');
+    assert(html.indexOf('data-act="preview"') !== -1, 'full Step 1 still shows Preview Decision Steps');
+
+    const partialStep1 = {
+        operational_brief: {
+            scenario_metadata: { scenario_type: 'MDMP Step 1 template / partial planning guide' },
+            letter_ref_number: '<\u0631\u0642\u0645 \u0627\u0644\u0645\u0631\u062c\u0639>',
+            task_assembly: '\u064a\u0635\u062f\u0631 \u0644\u0627\u062d\u0642\u0627\u064b',
+            Units_Duty: '<\u0648\u0627\u062c\u0628\u0627\u062a \u0623\u0648\u0644\u064a\u0629>',
+            doctrine_upload_required: true,
+            doctrine_sources: ['pending_upload'],
+            doctrine_application_policy: 'operator_uploaded_doctrine_required_before_final_tasking',
+            Assembly_Area: 'R CN 64215 7114840',
+            join_op_mission: '<\u0627\u0644\u0645\u0647\u0645\u0629>',
+        },
+    };
+    const partialResponse = await postAnalyze({
+        bundle: [{ filename: 'step1-template-guide.json', content: JSON.stringify(partialStep1) }],
+    });
+    assert(partialResponse.status === 200, 'partial Step 1 analyze route returns 200');
+    const partialOut = partialResponse.body;
+    assert(partialOut.kind === 'mdmp_external', 'partial Step 1 still classified as mdmp_external');
+    const partialOb = partialOut.brief.operational_brief;
+    assert(Array.isArray(partialOb.proposed_units) && partialOb.proposed_units.length === 0, 'partial Step 1 has no proposed units');
+    assert(Array.isArray(partialOb.enemy_bases) && partialOb.enemy_bases.length === 0, 'partial Step 1 has no enemy bases');
+    const partialSnap = JSON.stringify(partialOut.brief);
+    const partialContainer = { innerHTML: '', style: {}, querySelector: function () { return null; } };
+    window.RmoozDocReview.render(partialContainer, partialOut, {});
+    const partialHtml = partialContainer.innerHTML;
+    const partialCaps = window.RmoozDocReview.assessReviewPayloadCapabilities(partialOut);
+    assert(partialCaps.status === 'text_only' || partialCaps.status === 'insufficient', 'partial Step 1 route is not map_ready');
+    assert(partialCaps.map_preview_ready === false, 'partial Step 1 route map preview not ready');
+    assert(partialCaps.missing_for_map_preview.indexOf('proposed_units') !== -1, 'partial Step 1 route missing proposed_units');
+    assert(partialHtml.indexOf('Input capability check') !== -1, 'partial Step 1 shows generic capability box');
+    assert(partialHtml.indexOf('AI understood the document, but no map-ready units were found') !== -1, 'partial Step 1 shows upload quality warning');
+    assert(partialHtml.indexOf('Unit map preview requires proposed_units and placement_candidates') !== -1, 'partial warning explains preview requirements');
+    assert(partialHtml.indexOf('data-act="preview"') === -1, 'partial Step 1 hides Preview Decision Steps');
+    assert(partialHtml.indexOf('data-act="preview-disabled"') !== -1, 'partial Step 1 shows disabled map preview button');
+    assert(partialHtml.indexOf('Missing / ambiguous') !== -1, 'partial Step 1 keeps ambiguity list');
+    assert(JSON.stringify(partialOut.brief) === partialSnap, 'partial Step 1 render does not mutate payload');
 
     console.log('  [PASS] External Step 1 live route renders proposed RED units');
 })().catch(e => {

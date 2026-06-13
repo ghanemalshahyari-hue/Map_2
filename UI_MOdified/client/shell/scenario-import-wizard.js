@@ -373,7 +373,7 @@
         function attachPlacement(payload) {
             var brief = payload && payload.brief;
             if (!brief) return Promise.resolve(payload);
-            return api('POST', '/api/wargame-sim/placement', { brief: brief }).then(function (pr) {
+            return api('POST', '/api/wargame-sim/placement', { brief: brief, includeTerrain: true }).then(function (pr) {
                 if (pr && pr.body && pr.body.ok) payload.placement = pr.body;
                 return payload;
             }).catch(function () { return payload; });

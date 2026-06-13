@@ -138,6 +138,8 @@
     function openPanel() {
         var p = $('unit-status-panel');
         if (p) p.removeAttribute('hidden');
+        // Refresh the shared shell safe-area so this fixed drawer is bounded to the content band.
+        try { if (window.RmoozShellSafeArea && window.RmoozShellSafeArea.measure) window.RmoozShellSafeArea.measure(); } catch (_) {}
         var tab = $('usp-reopen-tab');
         if (tab) tab.setAttribute('hidden', '');
     }
@@ -848,10 +850,53 @@
         } catch (_) { return null; }
     }
 
+    // G-4-D: read-only overlay preview indicator source.
+    // Reads only the explicit G-4-C preview path; never writes baseline tasking.
+    function _getUnitTaskingOverlayPreview(uid) {
+        if (!uid) return null;
+        try {
+            var map = root.AppAdjudicatorMap;
+            if (!map || typeof map.getWorldState !== 'function') return null;
+            var ws = map.getWorldState();
+            if (!ws || !ws.derived || !ws.derived.unit_tasking_overlay_preview) return null;
+            return ws.derived.unit_tasking_overlay_preview[uid] || null;
+        } catch (_) { return null; }
+    }
+
+    // G-4-E: read-only dry-run diff viewer source.
+    // The diff must already exist in derived state; this panel never builds,
+    // approves, applies, or persists tasking overlay changes.
+    function _getUnitTaskingOverlayDryRunDiff(uid) {
+        if (!uid) return null;
+        try {
+            var map = root.AppAdjudicatorMap;
+            if (!map || typeof map.getWorldState !== 'function') return null;
+            var ws = map.getWorldState();
+            var derived = ws && ws.derived;
+            if (!derived) return null;
+            var src = derived.unit_tasking_overlay_dry_run_diff
+                || derived.tasking_overlay_dry_run_diff
+                || null;
+            if (!src) return null;
+            if (Array.isArray(src)) {
+                for (var i = 0; i < src.length; i++) {
+                    if (src[i] && (src[i].unit_uid === uid || src[i].uid === uid)) return src[i];
+                }
+                return null;
+            }
+            if (src[uid]) return src[uid];
+            if (src.unit_uid === uid || src.uid === uid) return src;
+            return null;
+        } catch (_) { return null; }
+    }
+
     // ── Assignment ────────────────────────────────────────────────────
     function populateAssignment(unit) {
         // Read current-step tasking record (null = no actor for this unit this step)
-        var tasking = _getUnitTasking(unit.uid || unit.id);
+        var uid = unit.uid || unit.id;
+        var tasking = _getUnitTasking(uid);
+        var overlayPreview = _getUnitTaskingOverlayPreview(uid);
+        var overlayDiff = _getUnitTaskingOverlayDryRunDiff(uid);
 
         setText('unit-domain',  unit.domain  || '—');
         setText('unit-role',    unit.role ? unit.role.replace(/_/g, ' ') : '—');
@@ -883,49 +928,54 @@
         }
 
         // ── TASK1-C: populate Current Orders detail block ────────────────
-        _populateTaskingDetails(tasking);
+        _populateTaskingDetails(tasking, overlayPreview, overlayDiff);
     }
 
     /**
      * Populate the collapsible "CURRENT ORDERS" detail block.
      * Shows: step/phase label, action_why, action_intended_effect,
      *        action_doctrine_cited[] (joined with ' · ').
-     * Hides the entire block when tasking is null.
+     * Hides the entire block when tasking, overlayPreview, and overlayDiff are null.
      * Each row shown only when its value is a non-empty string.
      * Read-only; never mutates tasking or any scenario data.
      *
      * @param {{action_why, action_intended_effect, action_doctrine_cited[],
      *           step_index, phase}|null} tasking
+     * @param {{source, read_only, overlay_only, baseline_mutation}|null} overlayPreview
+     * @param {{before, after, blocked_reasons, step_index, phase}|null} overlayDiff
      */
-    function _populateTaskingDetails(tasking) {
+    function _populateTaskingDetails(tasking, overlayPreview, overlayDiff) {
         var block = $('usp-tasking-block');
         if (!block) return;
 
-        if (!tasking) {
+        if (!tasking && !overlayPreview && !overlayDiff) {
             block.setAttribute('hidden', '');
             return;
         }
 
         // Step / phase label in section header
         var stepLabel = '';
-        if (tasking.phase) {
+        if (tasking && tasking.phase) {
             stepLabel = tasking.phase;
             if (tasking.step_index != null) {
                 stepLabel = 'Step ' + (tasking.step_index + 1) + ' \xb7 ' + stepLabel;
             }
-        } else if (tasking.step_index != null) {
+        } else if (tasking && tasking.step_index != null) {
             stepLabel = 'Step ' + (tasking.step_index + 1);
         }
         setText('usp-tasking-step', stepLabel ? ' – ' + stepLabel : '');
 
+        _populateTaskingOverlayPreview(overlayPreview);
+        _populateTaskingOverlayDryRunDiff(overlayDiff);
+
         // Why row
-        _setTaskingRow('usp-tasking-why-row', 'usp-tasking-why', tasking.action_why);
+        _setTaskingRow('usp-tasking-why-row', 'usp-tasking-why', tasking && tasking.action_why);
 
         // Intended Effect row
-        _setTaskingRow('usp-tasking-effect-row', 'usp-tasking-effect', tasking.action_intended_effect);
+        _setTaskingRow('usp-tasking-effect-row', 'usp-tasking-effect', tasking && tasking.action_intended_effect);
 
         // Doctrine row — join array cleanly with ' · '
-        var docArr = Array.isArray(tasking.action_doctrine_cited)
+        var docArr = tasking && Array.isArray(tasking.action_doctrine_cited)
             ? tasking.action_doctrine_cited.filter(function(d) { return d && String(d).trim(); })
             : [];
         var docText = docArr.length ? docArr.join(' \xb7 ') : null;
@@ -933,8 +983,10 @@
 
         // Show block only if at least one row is visible
         var anyVisible = !!(
-            (tasking.action_why && String(tasking.action_why).trim()) ||
-            (tasking.action_intended_effect && String(tasking.action_intended_effect).trim()) ||
+            overlayPreview ||
+            overlayDiff ||
+            (tasking && tasking.action_why && String(tasking.action_why).trim()) ||
+            (tasking && tasking.action_intended_effect && String(tasking.action_intended_effect).trim()) ||
             docArr.length
         );
         if (anyVisible) {
@@ -944,6 +996,95 @@
         }
     }
 
+    function _populateTaskingOverlayPreview(overlayPreview) {
+        var row = $('usp-tasking-overlay-row');
+        var val = $('usp-tasking-overlay');
+        if (!row) return;
+        if (!overlayPreview) {
+            row.setAttribute('hidden', '');
+            if (val) val.textContent = '';
+            return;
+        }
+        var source = overlayPreview.source || {};
+        var sourceLabel = source.kind || 'g4_tasking_overlay';
+        var baselineMutation = (overlayPreview.baseline_mutation === false || source.baseline_mutation === false)
+            ? 'false' : String(overlayPreview.baseline_mutation);
+        var readOnly = (overlayPreview.read_only === true || source.read_only === true);
+        var overlayOnly = (overlayPreview.overlay_only === true || source.overlay_only === true);
+        if (val) {
+            val.textContent = 'Overlay preview available · source: ' + sourceLabel
+                + ' · baseline_mutation:' + baselineMutation
+                + (readOnly ? ' · read_only:true' : '')
+                + (overlayOnly ? ' · overlay_only:true' : '');
+        }
+        row.removeAttribute('hidden');
+    }
+
+    var _G4_TASKING_DIFF_FIELDS = [
+        'action_component',
+        'action_what',
+        'action_why',
+        'action_intended_effect',
+        'action_doctrine_cited'
+    ];
+
+    function _formatTaskingDiffValue(value) {
+        if (Array.isArray(value)) {
+            var list = value.map(function (v) { return String(v == null ? '' : v).trim(); })
+                .filter(Boolean);
+            return list.length ? list.join(' / ') : '-';
+        }
+        if (value == null || String(value).trim() === '') return '-';
+        return String(value);
+    }
+
+    function _formatTaskingDiffLine(field, before, after) {
+        return field + ': ' + _formatTaskingDiffValue(before && before[field])
+            + ' -> ' + _formatTaskingDiffValue(after && after[field]);
+    }
+
+    function _forbiddenTaskingDiffWarnings(diff) {
+        var warnings = [];
+        var reasons = Array.isArray(diff && diff.blocked_reasons) ? diff.blocked_reasons : [];
+        reasons.forEach(function (reason) {
+            var text = String(reason || '');
+            if (text.indexOf('forbidden_field:') === 0) warnings.push(text);
+        });
+        var fields = Array.isArray(diff && diff.forbidden_fields) ? diff.forbidden_fields : [];
+        fields.forEach(function (field) {
+            var text = String(field || '').trim();
+            if (text) warnings.push('forbidden_field:' + text);
+        });
+        return warnings;
+    }
+
+    function _populateTaskingOverlayDryRunDiff(diff) {
+        var row = $('usp-tasking-diff-row');
+        var val = $('usp-tasking-diff');
+        if (!row) return;
+        if (!diff) {
+            row.setAttribute('hidden', '');
+            if (val) val.textContent = '';
+            return;
+        }
+
+        var before = diff.before || {};
+        var after = diff.after || {};
+        var lines = [
+            'Dry-run diff viewer',
+            'read_only:true / overlay_only:true / baseline_mutation:false'
+        ];
+        _G4_TASKING_DIFF_FIELDS.forEach(function (field) {
+            lines.push(_formatTaskingDiffLine(field, before, after));
+        });
+        lines.push('step_index: ' + _formatTaskingDiffValue(diff.step_index));
+        lines.push('phase: ' + _formatTaskingDiffValue(diff.phase));
+        var warnings = _forbiddenTaskingDiffWarnings(diff);
+        if (warnings.length) lines.push('Forbidden-field warnings: ' + warnings.join(' / '));
+
+        if (val) val.textContent = lines.join('\n');
+        row.removeAttribute('hidden');
+    }
     /**
      * Show/hide a single tasking detail row.
      * @param {string} rowId  - element id of the row div

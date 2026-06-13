@@ -34,7 +34,7 @@ function check(ok, label, detail) {
 // ── Server helpers (loaded via _internals) ────────────────────────────────────
 const bridge   = require('./UI_MOdified/server/wargame-sim-bridge.js');
 const internals = bridge._internals;
-const { buildPreviewFromScenario, PREVIEW_STEP_TEXT, PREVIEW_STEP_TEXT_DEFAULT } = internals;
+const { buildPreviewFromScenario, PREVIEW_STEP_SEQUENCE, PREVIEW_STEP_TEXT, PREVIEW_STEP_TEXT_DEFAULT } = internals;
 
 // ── brief-to-scenario generator (direct) ─────────────────────────────────────
 const GEN = require('./UI_MOdified/server/ai/brief-to-scenario.js');
@@ -47,6 +47,15 @@ const FIXTURE_BRIEF = {
         enemy:    { summary: 'Two mechanised battalions defending the ridge line.' },
         friendly: { summary: 'One armoured brigade reinforced with engineers.' },
         objectives: [{ name: 'OBJ-A', coord: [51.5, 24.5] }],
+        placement_candidates: [
+            { name: 'Anchor Delta', lat: 24.49, lon: 51.49, object_kind: 'base' },
+        ],
+        enemy_bases: [
+            { name: 'Enemy Base Ridge', lat: 24.55, lon: 51.55 },
+        ],
+        friendly_trial_bases: [
+            { name: 'Friendly Trial Base', lat: 24.45, lon: 51.45 },
+        ],
         proposed_units: [
             { side: 'RED',  platform: 'T-72', estimated_count: 3, lat: 51.5,  lon: 24.5 },
             { side: 'BLUE', platform: 'M1A2', estimated_count: 4, lat: 51.48, lon: 24.48 },
@@ -136,6 +145,9 @@ check(typeof buildPreviewFromScenario === 'function',
 check(typeof PREVIEW_STEP_TEXT === 'object' && PREVIEW_STEP_TEXT !== null,
     'PREVIEW_STEP_TEXT exported via _internals');
 
+check(Array.isArray(PREVIEW_STEP_SEQUENCE) && PREVIEW_STEP_SEQUENCE.length === 7,
+    'PREVIEW_STEP_SEQUENCE exports seven operational preview steps');
+
 // ── Section 5: Preview object invariants ─────────────────────────────────────
 console.log('\n  5. Preview object structure');
 
@@ -155,6 +167,9 @@ check(preview.review_source === 'ai_decision_demo',
 
 check(Array.isArray(preview.steps) && preview.steps.length >= 5 && preview.steps.length <= 8,
     'steps count in [5, 8]', preview.steps.length);
+
+check(preview.steps.length === 7,
+    'preview uses seven operational steps', preview.steps.length);
 
 check(Array.isArray(preview.red_units) && preview.red_units.length > 0,
     'red_units present', preview.red_units.length);
@@ -199,6 +214,38 @@ check(step0.unit_positions && Array.isArray(step0.unit_positions.red) && Array.i
 check(Array.isArray(step0.movement_lines),
     'step[0].movement_lines is array');
 
+var expectedTitles = [
+    'Initial posture',
+    'Reconnaissance and confirmation',
+    'Defensive readiness',
+    'Main movement/action',
+    'Contact or engagement',
+    'Consolidation',
+    'Decision point',
+];
+var actualTitles = preview.steps.map(function (s) { return s.phase_name_en; });
+check(JSON.stringify(actualTitles) === JSON.stringify(expectedTitles),
+    'improved operational step titles are generated', actualTitles.join(' | '));
+
+check(preview.steps.every(function (s) {
+    return typeof s.action_en === 'string' && s.action_en.length > 0 &&
+           typeof s.reason_en === 'string' && s.reason_en.length > 0 &&
+           typeof s.risk_en === 'string' && s.risk_en.length > 0;
+}), 'every step has action/reason/risk fields');
+
+check(preview.steps.every(function (s) {
+    return Array.isArray(s.units_involved) && s.units_involved.length > 0 &&
+           Array.isArray(s.related_bases) && s.related_bases.length > 0 &&
+           /preview_only:true/.test(s.review_warning || '') &&
+           /approximate_route:true/.test(s.review_warning || '') &&
+           /requires_review:true/.test(s.review_warning || '');
+}), 'every step carries units, related bases/anchors, and review warning metadata');
+
+check(step0.unit_positions.red.concat(step0.unit_positions.blue).every(function (u) {
+    return u.preview_only === true && u._isPreview === true && u.requires_review === true &&
+           typeof u.label === 'string' && u.label.length > 0;
+}), 'marker metadata has preview_only/review flags and readable labels');
+
 // ── Section 7: Movement lines only when positions change ─────────────────────
 console.log('\n  7. Movement lines');
 
@@ -221,6 +268,16 @@ if (laterStep) {
         if (nonZero) {
             check(line.approximate === true,
                 'movement line[' + line.unit_uid + '] carries approximate:true');
+            check(line.approximate_route === true,
+                'movement line[' + line.unit_uid + '] carries approximate_route:true');
+            check(line.requires_review === true,
+                'movement line[' + line.unit_uid + '] carries requires_review:true');
+            check(typeof line.from_label === 'string' && line.from_label.length > 0,
+                'movement line[' + line.unit_uid + '] has from anchor/base label');
+            check(typeof line.to_label === 'string' && line.to_label.length > 0,
+                'movement line[' + line.unit_uid + '] has to objective/area label');
+            check(Number.isInteger(line.step_index) && line.step_index === laterStep.index,
+                'movement line[' + line.unit_uid + '] has step_index metadata');
         }
     });
     check(laterStep.movement_lines.every(function (l) {
@@ -315,6 +372,59 @@ check(/_active\s*=\s*false/.test(clientSrc),
 
 check(/_preview\s*=\s*null/.test(clientSrc),
     'clear() sets _preview to null');
+check(/Clear Preview/.test(clientSrc) && /data-act="clear"/.test(clientSrc),
+    'panel exposes visible Clear Preview control');
+check(/preview_only/.test(clientSrc) && /approximate_route/.test(clientSrc) && /requires_review/.test(clientSrc),
+    'panel warning shows preview_only / approximate_route / requires_review tokens');
+
+check(/Action \/ العمل/.test(clientSrc) && /Reason \/ السبب/.test(clientSrc) &&
+      /Units involved \/ الوحدات المشاركة/.test(clientSrc) &&
+      /Related bases\/anchors \/ القواعد والمراسي المرتبطة/.test(clientSrc),
+    'panel renders action, reason, units involved, and related bases/anchors');
+
+check(/rmooz-demo-preview-legend/.test(clientSrc) &&
+      /Friendly preview unit/.test(clientSrc) &&
+      /Enemy preview unit/.test(clientSrc) &&
+      /Approximate movement\/action/.test(clientSrc) &&
+      /Requires review/.test(clientSrc),
+    'legend renders friendly/enemy/movement/review symbols');
+
+check(/rmooz-demo-preview-unit-friendly/.test(clientSrc) &&
+      /rmooz-demo-preview-unit-enemy/.test(clientSrc) &&
+      /preview_only:true/.test(clientSrc) &&
+      /role\/platform/.test(clientSrc),
+    'unit markers have friendly/enemy classes, preview badge metadata, and tooltips');
+
+check(/rmooz-demo-preview-line-active/.test(clientSrc) &&
+      /_rmoozPreviewActiveStep\s*=\s*true/.test(clientSrc) &&
+      /weight:\s*4/.test(clientSrc),
+    'active step movement/action line styling exists');
+
+check(/bindPopup/.test(clientSrc) && /From:/.test(clientSrc) &&
+      /To:/.test(clientSrc) && /approximate_route:true/.test(clientSrc) &&
+      /requires_review:true/.test(clientSrc),
+    'movement lines render labels/popups with review metadata');
+
+check(/Approximate target \/ requires review/.test(clientSrc) &&
+      /_rmoozApproximateTarget\s*=\s*true/.test(clientSrc),
+    'objective marker shows Approximate target / requires review');
+
+check(/_stepLayer\.clearLayers\s*\(\)/.test(clientSrc),
+    'renderStep clears previous marker and line layers before drawing current step');
+
+var proposedBefore = JSON.stringify(FIXTURE_BRIEF.operational_brief.proposed_units);
+var placementBefore = JSON.stringify(FIXTURE_BRIEF.operational_brief.placement_candidates);
+buildPreviewFromScenario(gen.scenario, gen.report, FIXTURE_BRIEF);
+check(JSON.stringify(FIXTURE_BRIEF.operational_brief.proposed_units) === proposedBefore,
+    'buildPreviewFromScenario does not mutate source proposed_units');
+check(JSON.stringify(FIXTURE_BRIEF.operational_brief.placement_candidates) === placementBefore,
+    'buildPreviewFromScenario does not mutate source placement_candidates');
+
+var builderStart = bridgeSrc.indexOf('function buildPreviewFromScenario');
+var builderEnd = bridgeSrc.indexOf('// ── main router', builderStart);
+var builderSrc = bridgeSrc.slice(builderStart, builderEnd);
+check(!/step\s*[345]|Step\s*[345]/i.test(builderSrc),
+    'preview builder has no Step 3/4/5 dependency');
 
 // ─────────────────────────────────────────────────────────────────────────────
 console.log('\n  ─────────────────────────────────────────────');

@@ -23,11 +23,13 @@
     }
 
     // payload.placement.placement_candidates (wizard attaches the endpoint body
-    // under .placement) — tolerate a few shapes defensively.
+    // under .placement) — tolerate raw Step 1 and analyzed shapes defensively.
     function candidatesOf(payload) {
         var p = payload || {};
         var src = p.placement || p;
-        var list = src.placement_candidates || src.candidates || p.placement_candidates;
+        var brief = (p.brief && p.brief.operational_brief) || p.operational_brief || p.brief || p;
+        var list = src.placement_candidates || src.candidates ||
+            p.placement_candidates || brief.placement_candidates || brief.candidates;
         return Array.isArray(list) ? list : [];
     }
     function hasCandidates(payload) { return candidatesOf(payload).length > 0; }
@@ -59,7 +61,6 @@
 
     function renderMapAnchors(cands) {
         if (!window || !window.L || !window.map || typeof window.L.layerGroup !== 'function') return;
-        window.__rmoozStep1SelectedObjectPayload = lastPayload || {};
         if (!anchorLayer) {
             anchorLayer = window.L.layerGroup();
             anchorLayer.addTo(window.map);
@@ -87,16 +88,7 @@
                 'review marker only<br>exact_unit_position: false<br>click marker for Base Status Panel</div>');
             if (typeof marker.on === 'function') {
                 marker.on('click', function () {
-                    if (typeof window.openSelectedObjectPanel === 'function') {
-                        window.__rmoozStep1SelectedObjectPayload = lastPayload || {};
-                        window.openSelectedObjectPanel({
-                            object_kind: "base",
-                            source: "step1_external_app",
-                            review_only: true,
-                            exact_unit_position: false,
-                            data: c
-                        });
-                    } else if (window.RmoozBaseStatusPanel && typeof window.RmoozBaseStatusPanel.open === 'function') {
+                    if (window.RmoozBaseStatusPanel && typeof window.RmoozBaseStatusPanel.open === 'function') {
                         window.RmoozBaseStatusPanel.open(c, lastPayload || {});
                     }
                 });

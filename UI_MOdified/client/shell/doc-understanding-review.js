@@ -46,12 +46,76 @@
             lis + '</ul></div>';
     }
     function opBrief(p) {
-        return (p && p.brief && p.brief.operational_brief) || (p && p.operational_brief) || {};
+        if (p && p.brief && p.brief.operational_brief) return p.brief.operational_brief;
+        if (p && p.operational_brief) return p.operational_brief;
+        if (p && p.brief && typeof p.brief === 'object' && !Array.isArray(p.brief)) return p.brief;
+        return (p && typeof p === 'object' && !Array.isArray(p)) ? p : {};
+    }
+    function arr(v) {
+        return Array.isArray(v) ? v : [];
+    }
+    function baseSourceType(base) {
+        return (base && base.source_type) || 'ai_candidate_from_external_llm';
+    }
+    function normalizeReviewBase(base, side, siteType) {
+        base = base || {};
+        return {
+            base_name_ar: base.base_name_ar || base.name_ar || base.name || base.mention,
+            base_name_en: base.base_name_en || base.name_en || base.name || base.mention,
+            lat: base.lat,
+            lon: base.lon,
+            side: base.side || side,
+            site_type: base.site_type || base.base_type || siteType,
+            needs_review: base.needs_review !== false,
+            source_type: baseSourceType(base),
+        };
+    }
+    function enemyBases(p) {
+        var ob = opBrief(p);
+        if (arr(ob.enemy_bases).length) return arr(ob.enemy_bases);
+        var ef = ob.enemy_forces || {};
+        if (arr(ef.bases).length) {
+            return arr(ef.bases).map(function (b) {
+                return normalizeReviewBase(b, 'RED', b && (b.site_type || b.base_type) || 'enemy_base');
+            });
+        }
+        return []
+            .concat(arr(ef.air_bases).map(function (b) { return normalizeReviewBase(b, 'RED', 'air_base'); }))
+            .concat(arr(ef.naval_bases).map(function (b) { return normalizeReviewBase(b, 'RED', 'naval_base'); }))
+            .concat(arr(ef.land_bases).map(function (b) { return normalizeReviewBase(b, 'RED', 'land_base'); }));
+    }
+    function friendlyTrialBases(p) {
+        var ob = opBrief(p);
+        if (arr(ob.friendly_trial_bases).length) return arr(ob.friendly_trial_bases);
+        var ff = ob.friendly_forces || {};
+        return arr(ff.trial_bases).map(function (b) {
+            return normalizeReviewBase(b, 'BLUE', 'friendly_trial_anchor');
+        });
     }
     function proposedUnits(p) {
         var ob = opBrief(p);
         return (Array.isArray(ob.proposed_units) && ob.proposed_units.length) ? ob.proposed_units :
             ((p && p.understanding && Array.isArray(p.understanding.proposed_units)) ? p.understanding.proposed_units : []);
+    }
+    function placementCandidates(p) {
+        var ob = opBrief(p);
+        var src = (p && p.placement) || p || {};
+        var out = [];
+        if (p && p.placement) {
+            if (Array.isArray(src.placement_candidates)) return src.placement_candidates;
+            if (Array.isArray(src.candidates)) return src.candidates;
+        }
+        if (Array.isArray(ob.placement_candidates)) out = out.concat(ob.placement_candidates);
+        if (src !== ob && Array.isArray(src.placement_candidates)) out = out.concat(src.placement_candidates);
+        if (src !== ob && Array.isArray(src.candidates)) out = out.concat(src.candidates);
+        return out;
+    }
+    function objectives(p) {
+        var ob = opBrief(p);
+        var u = (p && p.understanding) || {};
+        var fromBrief = arr(ob.objectives).concat(arr(ob.objectives_list));
+        if (fromBrief.length) return fromBrief;
+        return arr(u.objectives);
     }
     function proposedCounts(p) {
         var u = (p && p.understanding) || {};
@@ -68,6 +132,129 @@
             return counts;
         }
         return { blue: pc.blue || 0, red: pc.red || 0, neutral: pc.neutral || 0 };
+    }
+    function hasUsablePlacementCandidates(p) {
+        return placementCandidates(p).some(function (c) {
+            return c && Number.isFinite(Number(c.lat)) && Number.isFinite(Number(c.lon));
+        });
+    }
+    function textLooksPlaceholder(value) {
+        var text = String(value == null ? '' : value).trim().toLowerCase();
+        if (!text) return true;
+        return /<[^>]+>|\u064a\u0635\u062f\u0631\s+\u0644\u0627\u062d\u0642|later|tbd|todo|placeholder|template/.test(text);
+    }
+    function taskAssemblyLooksPlaceholder(p) {
+        var ta = opBrief(p).task_assembly || (p && p.understanding && p.understanding.task_assembly);
+        if (!ta || typeof ta !== 'object' || Array.isArray(ta)) return true;
+        var supporting = Array.isArray(ta.supporting_tasks) ? ta.supporting_tasks : [];
+        return textLooksPlaceholder(ta.summary) &&
+            textLooksPlaceholder(ta.main_task) &&
+            supporting.length === 0;
+    }
+    function isStep1LikePayload(p) {
+        var u = (p && p.understanding) || {};
+        var label = String(u.set_label_en || u.detected_type || p && p.kind || '').toLowerCase();
+        if (/external app step 1|step 1|planning_guidance|mdmp_external|operational brief/.test(label)) return true;
+        return ((p && p.documents) || []).some(function (d) {
+            var bits = [d && d.filename, d && d.detected_type, d && d.mdmp_step, d && d.type_label_en].join(' ').toLowerCase();
+            return /step\s*1|planning_guidance|mdmp/.test(bits);
+        });
+    }
+    function hasStep1MissingMarkers(p) {
+        var ob = opBrief(p);
+        var missing = (ob.missing_information || []).concat((p && p.understanding && p.understanding.ambiguities) || []);
+        return missing.some(function (m) {
+            return /\[step1\]|task_assembly|units_duty|placeholder|not found/i.test(String(m || ''));
+        });
+    }
+    function hasOperationalBriefText(p) {
+        var ob = opBrief(p);
+        var u = (p && p.understanding) || {};
+        return !!(ob.mission || ob.commander_intent || ob.task_assembly || ob.units_duty ||
+            ob.staff_brief_2 || u.mission || u.commander_intent ||
+            (u.friendly && u.friendly.summary) || (u.enemy && u.enemy.summary) ||
+            isStep1LikePayload(p));
+    }
+    function assessReviewPayloadCapabilities(p) {
+        p = p || {};
+        var units = proposedUnits(p);
+        var candidates = placementCandidates(p);
+        var usableCandidates = candidates.filter(function (c) {
+            return c && Number.isFinite(Number(c.lat)) && Number.isFinite(Number(c.lon));
+        });
+        var redBases = enemyBases(p);
+        var blueBases = friendlyTrialBases(p);
+        var obj = objectives(p);
+        var caps = {
+            has_operational_brief: hasOperationalBriefText(p),
+            has_proposed_units: units.length > 0,
+            proposed_unit_count: units.length,
+            has_placement_candidates: usableCandidates.length > 0,
+            placement_candidate_count: usableCandidates.length,
+            has_enemy_bases: redBases.length > 0,
+            enemy_base_count: redBases.length,
+            has_friendly_bases: blueBases.length > 0,
+            friendly_base_count: blueBases.length,
+            has_objectives: obj.length > 0,
+            map_preview_ready: false,
+            text_preview_ready: false,
+            status: 'insufficient',
+            missing_for_map_preview: [],
+            warnings: [],
+        };
+        caps.text_preview_ready = caps.has_operational_brief;
+        if (!caps.has_proposed_units) caps.missing_for_map_preview.push('proposed_units');
+        if (!caps.has_placement_candidates) caps.missing_for_map_preview.push('placement_candidates');
+        if (!caps.has_enemy_bases && !caps.has_friendly_bases && !caps.has_objectives) {
+            caps.missing_for_map_preview.push('enemy_bases/friendly_trial_bases/objectives');
+        }
+        caps.map_preview_ready = caps.has_proposed_units && caps.has_placement_candidates &&
+            (caps.has_enemy_bases || caps.has_friendly_bases || caps.has_objectives);
+        var hasAnyMapData = caps.has_proposed_units || caps.has_enemy_bases || caps.has_friendly_bases;
+        if (caps.map_preview_ready) caps.status = 'map_ready';
+        else if (hasAnyMapData) caps.status = 'partial_map';
+        else if (caps.text_preview_ready) caps.status = 'text_only';
+        else caps.status = 'insufficient';
+        if (caps.text_preview_ready && !caps.map_preview_ready) {
+            caps.warnings.push('text_understood_map_units_missing');
+        }
+        if (taskAssemblyLooksPlaceholder(p) || hasStep1MissingMarkers(p)) {
+            caps.warnings.push('partial_or_placeholder_fields');
+        }
+        return caps;
+    }
+    function renderCapabilityStatus(p, caps) {
+        var u = (p && p.understanding) || {};
+        var type = (u.set_label_en || u.detected_type || p.kind || 'unknown');
+        var statusColor = caps.map_preview_ready ? '#7fd6a0' :
+            (caps.status === 'partial_map' ? '#e0c060' : (caps.text_preview_ready ? '#e0a93a' : '#c98'));
+        var mapText = caps.map_preview_ready ? 'ready' : (caps.status === 'partial_map' ? 'partial' : 'not ready');
+        var html = '<section data-el="review-capability-status" style="margin:8px 0 10px;padding:8px 10px;border-radius:6px;' +
+            'background:#101820;border:1px solid #284050;color:#e8eaed;font-size:12px;line-height:1.35;">' +
+            '<div style="font-weight:700;color:#cfe6ff;margin-bottom:5px;">Input capability check — فحص جاهزية الملف</div>' +
+            '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:5px;">' +
+            chip('AI understood this file as', type, '#7fd6a0') +
+            chip('Text understanding', caps.text_preview_ready ? 'available' : 'not available', caps.text_preview_ready ? '#7fd6a0' : '#c98') +
+            chip('Units', caps.proposed_unit_count + ' found', caps.has_proposed_units ? '#7fd6a0' : '#e0a93a') +
+            chip('Placement anchors', caps.placement_candidate_count + ' found', caps.has_placement_candidates ? '#7fd6a0' : '#e0a93a') +
+            chip('Bases', (caps.enemy_base_count + caps.friendly_base_count) + ' found', (caps.has_enemy_bases || caps.has_friendly_bases) ? '#7fd6a0' : '#e0a93a') +
+            chip('Map preview', mapText, statusColor) +
+            '</div>';
+        if (caps.text_preview_ready && !caps.map_preview_ready) {
+            html += '<div data-el="map-readiness-warning" style="margin-top:6px;padding:6px 8px;border-radius:5px;background:#2a2412;border:1px solid #b8860b;color:#e0c060;">' +
+                '<div>AI understood the document, but no map-ready units were found. Unit map preview requires proposed_units and placement_candidates.</div>' +
+                '<div style="direction:rtl;text-align:right;margin-top:4px;">' +
+                '\u0641\u0647\u0645 \u0627\u0644\u0630\u0643\u0627\u0621 \u0627\u0644\u0627\u0635\u0637\u0646\u0627\u0639\u064a \u0645\u062d\u062a\u0648\u0649 \u0627\u0644\u0645\u0644\u0641\u060c \u0644\u0643\u0646 \u0644\u0645 \u064a\u062a\u0645 \u0627\u0644\u0639\u062b\u0648\u0631 \u0639\u0644\u0649 \u0648\u062d\u062f\u0627\u062a \u062c\u0627\u0647\u0632\u0629 \u0644\u0644\u0639\u0631\u0636 \u0639\u0644\u0649 \u0627\u0644\u062e\u0631\u064a\u0637\u0629. \u0645\u0639\u0627\u064a\u0646\u0629 \u0627\u0644\u0648\u062d\u062f\u0627\u062a \u062a\u062d\u062a\u0627\u062c proposed_units \u0648 placement_candidates.' +
+                '</div>' +
+                '<div style="margin-top:5px;color:#f4d98a;">Upload the full Step 1 generated output or run deep extraction before using map preview.</div>' +
+                '</div>';
+        }
+        if (caps.missing_for_map_preview.length && !caps.map_preview_ready) {
+            html += '<div style="margin-top:5px;color:#9aa3ad;">Missing for map preview: ' +
+                esc(caps.missing_for_map_preview.join(', ')) + '</div>';
+        }
+        html += '</section>';
+        return html;
     }
     function fieldRow(label, value) {
         if (value == null || value === '' || (Array.isArray(value) && !value.length)) return '';
@@ -168,8 +355,8 @@
         return html;
     }
     function renderEnemyBases(p) {
-        var bases = opBrief(p).enemy_bases || [];
-        var friendlyTrials = opBrief(p).friendly_trial_bases || [];
+        var bases = enemyBases(p);
+        var friendlyTrials = friendlyTrialBases(p);
         if (!bases.length && !friendlyTrials.length) return '';
         var html = '<section style="margin:10px 0;padding:8px 0;border-top:1px solid #23303d;">' +
             '<div style="font-size:13px;color:#f0a0a0;font-weight:600;margin-bottom:6px;">\u0642\u0648\u0627\u0639\u062f \u0648\u0645\u0637\u0627\u0631\u0627\u062a \u0627\u0644\u0639\u062f\u0648 \u2014 Enemy Bases</div>';
@@ -278,6 +465,7 @@
         p = p || {};
         var u = p.understanding || {};
         var pc = proposedCounts(p);
+        var caps = assessReviewPayloadCapabilities(p);
         var html = '<div style="font-size:14px;color:#7fd6a0;font-weight:600;margin-bottom:8px;">AI understood this as — فهم الذكاء الاصطناعي</div>';
         html += '<div style="margin-bottom:8px;">' + chip('Type / النوع', (u.set_label_en || '') + ' — ' + (u.set_label_ar || ''), '#7fd6a0');
         (p.documents || []).forEach(function (d) {
@@ -294,6 +482,7 @@
             html += '<div style="margin:0 0 8px;padding:5px 7px;border:1px solid #4a5a6a;background:#101820;color:#cfe6ff;border-radius:4px;font-size:11px;font-family:Consolas,monospace;direction:ltr;text-align:left;">' +
                 esc(debugLine) + '</div>';
         }
+        html += renderCapabilityStatus(p, caps);
         if (p.dedupe && p.dedupe.same_in_both_slots) {
             html += '<div style="margin-bottom:8px;padding:6px 8px;border-radius:5px;background:#2a2412;border:1px solid #b8860b;color:#e0c060;font-size:12px;">' +
                 '⮕ Same document in both slots — treated as ONE Mixed Operational Document. نفس الوثيقة في الخانتين — عوملت كوثيقة عمليات واحدة.</div>';
@@ -339,13 +528,17 @@
             '</select></div>';
         // G-3 approval gate message (hidden until a blocked Generate attempt).
         html += '<div data-el="coa-block-warn" style="display:none;margin:0 0 8px;padding:6px 8px;border-radius:5px;background:#2a2412;border:1px solid #b8860b;color:#e0c060;font-size:12px;"></div>';
-        // DEMO-ACTUAL-1: show Preview button when placement candidates or reviewed brief exist.
-        var showPreviewBtn = !!(p.brief || (window.RmoozPlacementPanel && window.RmoozPlacementPanel.hasCandidates(p)));
+        // DEMO-ACTUAL-1: map preview is available only when structured map
+        // inputs exist. Text understanding alone remains visible but cannot
+        // create preview layers without an extraction path.
+        var showPreviewBtn = caps.map_preview_ready;
+        var disabledPreview = !showPreviewBtn && caps.text_preview_ready;
         html += '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
             '<button type="button" data-act="generate" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:6px;padding:7px 14px;font-weight:600;">Generate Scenario — توليد السيناريو</button>' +
             '<button type="button" data-act="edit" style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#22303f;color:#cfe6ff;border-radius:6px;padding:7px 14px;">Edit Understanding — تعديل الفهم</button>' +
             '<button type="button" data-act="more" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:6px;padding:7px 14px;">Upload More — وثائق إضافية</button>' +
             (showPreviewBtn ? '<button type="button" data-act="preview" style="font:inherit;cursor:pointer;border:1px solid #b8860b;background:#2a2412;color:#e0c060;border-radius:6px;padding:7px 14px;">Preview Decision Steps — معاينة خطوات القرار</button>' : '') +
+            (disabledPreview ? '<button type="button" data-act="preview-disabled" disabled title="' + esc('Missing: ' + caps.missing_for_map_preview.join(', ')) + '" style="font:inherit;cursor:not-allowed;border:1px solid #5a4c2a;background:#191711;color:#9a8550;border-radius:6px;padding:7px 14px;">Map Preview Not Ready — معاينة الخريطة غير جاهزة</button>' : '') +
             '<button type="button" data-act="cancel" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:6px;padding:7px 14px;">Cancel — إلغاء</button>' +
             '</div>' +
             '<details data-el="editbox" style="margin-top:8px;"><summary style="cursor:pointer;font-size:12px;color:#8fa5b8;">Operational Brief JSON — مسودة الموجز</summary>' +
@@ -430,5 +623,5 @@
         bind('cancel', handlers.onCancel || function () { container.style.display = 'none'; });
     }
 
-    window.RmoozDocReview = { render: render, esc: esc };
+    window.RmoozDocReview = { render: render, esc: esc, assessReviewPayloadCapabilities: assessReviewPayloadCapabilities };
 })();

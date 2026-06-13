@@ -2776,18 +2776,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!data || !data.latlng1 || !data.latlng2) return;
             const p1 = map.latLngToLayerPoint(data.latlng1);
             const p2 = map.latLngToLayerPoint(data.latlng2);
-            const mx = (p1.x + p2.x) / 2;
-            const my = (p1.y + p2.y) / 2;
-            const dot = (mx - start.x) * ux + (my - start.y) * uy;
-            const proj = L.point(start.x + dot * ux, start.y + dot * uy);
-            const offX = mx - proj.x;
-            const offY = my - proj.y;
-            // Leaflet layer points are in screen space (Y grows downward), so the cross-product sign is inverted.
-            const cross = -(ux * offY - uy * offX);
-            if (cross !== 0) {
-                signSum += Math.sign(cross);
-                count += 1;
-            }
+            const sx = p2.x - p1.x;
+            const sy = p2.y - p1.y;
+            const sl = Math.hypot(sx, sy);
+            if (sl === 0) return;
+            const sameDirectionAsChord = (sx * ux + sy * uy) >= 0;
+            const storedSide = (data.scallopSide === 1 && !data.scallopFlip) ? 1 : -1;
+            signSum += sameDirectionAsChord ? storedSide : -storedSide;
+            count += 1;
         });
         if (count === 0) return null;
         if (signSum === 0) return null;
@@ -2834,6 +2830,108 @@ document.addEventListener('DOMContentLoaded', () => {
             sideSign: cross === 0 ? 1 : Math.sign(cross)
         };
     }
+
+    let frontLineDebugLayer = null;
+    function ensureFrontLineDebugLayer() {
+        if (!map) return null;
+        if (!frontLineDebugLayer) frontLineDebugLayer = L.layerGroup().addTo(map);
+        return frontLineDebugLayer;
+    }
+
+    function clearFrontLineDebugOverlay() {
+        if (frontLineDebugLayer) frontLineDebugLayer.clearLayers();
+    }
+
+    function addFrontLineDebugLabel(layer, latlng, text, color) {
+        const marker = L.marker(latlng, {
+            interactive: false,
+            pane: 'placementPreviewPane',
+            icon: L.divIcon({
+                className: 'frontline-debug-label',
+                html: `<div style="background:rgba(15,23,42,0.92);border:1px solid ${color};color:${color};font:700 11px/1.1 system-ui;padding:2px 4px;border-radius:4px;white-space:nowrap;">${text}</div>`,
+                iconSize: [1, 1],
+                iconAnchor: [0, 0]
+            })
+        });
+        layer.addLayer(marker);
+    }
+
+    function showFrontLineDebugOverlay() {
+        const layer = ensureFrontLineDebugLayer();
+        if (!layer || !map) return;
+        layer.clearLayers();
+        const segments = getScallopedSegments();
+        const rows = [];
+        const seenPoints = [];
+        const pointIndexFor = (ll) => {
+            for (let i = 0; i < seenPoints.length; i++) {
+                if (map.distance(seenPoints[i], ll) < 0.5) return i;
+            }
+            seenPoints.push(ll);
+            return seenPoints.length - 1;
+        };
+        segments.forEach((seg, idx) => {
+            const d = seg?._tmgData;
+            if (!d?.latlng1 || !d?.latlng2) return;
+            const a = L.latLng(d.latlng1.lat, d.latlng1.lng);
+            const b = L.latLng(d.latlng2.lat, d.latlng2.lng);
+            const p1 = map.latLngToLayerPoint(a);
+            const p2 = map.latLngToLayerPoint(b);
+            const dx = p2.x - p1.x;
+            const dy = p2.y - p1.y;
+            const len = Math.hypot(dx, dy);
+            if (!len) return;
+            const ux = dx / len;
+            const uy = dy / len;
+            const side = d.scallopSide === 1 ? 1 : -1;
+            const mid = L.point((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
+            const normal = L.point(uy * side, -ux * side);
+            const ctrl = L.point(mid.x + normal.x * 42, mid.y + normal.y * 42);
+            const ctrlLL = map.layerPointToLatLng(ctrl);
+            const midLL = map.layerPointToLatLng(mid);
+            const endArrow = map.layerPointToLatLng(L.point(mid.x + ux * Math.min(58, len / 2), mid.y + uy * Math.min(58, len / 2)));
+            layer.addLayer(L.polyline([a, b], { color: '#fbbf24', weight: 2, dashArray: '6,4', interactive: false, pane: 'placementPreviewPane' }));
+            layer.addLayer(L.polyline([midLL, endArrow], { color: '#22d3ee', weight: 3, interactive: false, pane: 'placementPreviewPane' }));
+            layer.addLayer(L.polyline([midLL, ctrlLL], { color: '#f97316', weight: 3, interactive: false, pane: 'placementPreviewPane' }));
+            layer.addLayer(L.circleMarker(ctrlLL, { radius: 5, color: '#f97316', fillColor: '#f97316', fillOpacity: 0.9, weight: 1, interactive: false, pane: 'placementPreviewPane' }));
+            const ia = pointIndexFor(a);
+            const ib = pointIndexFor(b);
+            addFrontLineDebugLabel(layer, a, `P${ia}`, '#fbbf24');
+            addFrontLineDebugLabel(layer, b, `P${ib}`, '#fbbf24');
+            addFrontLineDebugLabel(layer, endArrow, `S${idx} dir`, '#22d3ee');
+            addFrontLineDebugLabel(layer, ctrlLL, `ctrl ${side === 1 ? 'left' : 'right'}`, '#f97316');
+            rows.push({
+                segment: idx,
+                p0: { lat: a.lat, lng: a.lng },
+                p1: { lat: b.lat, lng: b.lng },
+                dx: Number(dx.toFixed(2)),
+                dy: Number(dy.toFixed(2)),
+                normalSide: side === 1 ? 'left/flipped' : 'right/default',
+                control: { lat: ctrlLL.lat, lng: ctrlLL.lng },
+                sessionId: d.sessionId || null
+            });
+        });
+        console.table(rows);
+        return rows;
+    }
+
+    function flipFrontLineScallopSideForSession() {
+        const segments = getScallopedSegments();
+        segments.forEach((seg) => {
+            if (!seg?._tmgData) return;
+            seg._tmgData.scallopSide = seg._tmgData.scallopSide === -1 ? 1 : -1;
+            updateTmgLayer(seg);
+        });
+        showFrontLineDebugOverlay();
+        scheduleSaveToStorage();
+        if (typeof refreshActiveAutoFlanks === 'function') refreshActiveAutoFlanks();
+    }
+
+    window.RMOOZFrontLineDebug = {
+        show: showFrontLineDebugOverlay,
+        hide: clearFrontLineDebugOverlay,
+        flip: flipFrontLineScallopSideForSession
+    };
 
     /** Obstacle polygons from maps/obstacle.geojson — used to clip auto flank lines. */
     let obstaclePolygons = [];
@@ -3723,12 +3821,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * Rear geographic bearing: choose the perpendicular to the trueLeft→trueRight chord that places
-     * the rear offset on the side opposite the scallop bulge (teeth point toward enemy).
+     * the rear/depth structure on the rendered side opposite the scallop bulge
+     * (scallopSide = combat/enemy-facing side; generatedDepthSide = -scallopSide).
+     *
+     * `getScallopBulgeSideRelativeToChord` returns a rendered layer-point side. Geographic bearing
+     * perpendiculars use the opposite sign convention at this chord boundary, so using the returned
+     * side directly here produces the opposite rendered side for the rear/depth structure.
      */
     function getAutoFlankRearBearingChord(leftPt, rightPt) {
         const chordBear = bearingDegrees(leftPt, rightPt);
         const bulgeSide = getScallopBulgeSideRelativeToChord(leftPt, rightPt);
-        const perpMult = bulgeSide ? -bulgeSide : 1;
+        const perpMult = bulgeSide || 1;
         return ((chordBear + perpMult * 90) % 360 + 360) % 360;
     }
 
@@ -7317,7 +7420,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 iconAnchor: [size / 2, size / 2],
             };
         }
-        const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+        let angle = Math.atan2(dy, dx) * (180 / Math.PI);
+        if (typeId === 'scalloped' && (styleOverrides?.scallopSide === -1 || styleOverrides?.scallopFlip)) {
+            angle = (angle + 180) % 360;
+        }
         if (def.catkVectorHead && styleOverrides?.catkHeadSolo) {
             const h = Math.max(32 * pxScale, Math.round(20 + strokeWidth * 5));
             return {
@@ -8791,6 +8897,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const TMG_SCALE_FACTOR = 1.25;
+    const DEFAULT_SCALLOP_SIDE = -1;
     function createTmgLayer(latlng1, latlng2, typeId, color, useBodyOnly, skipPopup, styleOverrides) {
         const def = TACTICAL_GRAPHICS.find(d => d.id === typeId);
         if (!def) return null;
@@ -8800,12 +8907,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const p2 = map.latLngToLayerPoint(latlng2);
         const mid = def.pointSymbol ? latlng1 : map.layerPointToLatLng(L.point((p1.x + p2.x) / 2, (p1.y + p2.y) / 2));
         const strokeWidth = styleOverrides?.strokeWidth ?? def.strokeWidth ?? 4;
-        const icon = L.divIcon(getTmgIconOptions(latlng1, latlng2, typeId, color, useBodyOnly, { filled, dashed, strokeWidth }));
+        const scallopSide = typeId === 'scalloped'
+            ? (styleOverrides?.scallopSide === 1 ? 1 : DEFAULT_SCALLOP_SIDE)
+            : undefined;
+        const icon = L.divIcon(getTmgIconOptions(latlng1, latlng2, typeId, color, useBodyOnly, { filled, dashed, strokeWidth, scallopSide }));
         const markerOpts = { icon, interactive: true, draggable: true };
         if (styleOverrides?.pane) markerOpts.pane = styleOverrides.pane;
         const marker = L.marker(mid, markerOpts);
         if (!skipPopup) { /* caller adds via addToActiveLayer */ }
         marker._tmgData = { latlng1, latlng2, typeId, color, useBodyOnly: !!useBodyOnly, filled, dashed, strokeWidth, catkHeadSolo: !!styleOverrides?.catkHeadSolo };
+        if (typeId === 'scalloped') marker._tmgData.scallopSide = scallopSide;
         marker.on('dragend', () => {
             const d = marker._tmgData;
             if (!d) return;
@@ -9065,7 +9176,7 @@ document.addEventListener('DOMContentLoaded', () => {
             syncCatkHeadMarkerToPoints(marker, marker._catkGroup._tmgData);
             return;
         }
-        const opts = getTmgIconOptions(d.latlng1, d.latlng2, d.typeId, d.color, d.useBodyOnly, { filled: d.filled, dashed: d.dashed, strokeWidth: d.strokeWidth, catkHeadSolo: d.catkHeadSolo });
+        const opts = getTmgIconOptions(d.latlng1, d.latlng2, d.typeId, d.color, d.useBodyOnly, { filled: d.filled, dashed: d.dashed, strokeWidth: d.strokeWidth, catkHeadSolo: d.catkHeadSolo, scallopSide: d.scallopSide });
         if (opts) marker.setIcon(L.divIcon(opts));
     }
 

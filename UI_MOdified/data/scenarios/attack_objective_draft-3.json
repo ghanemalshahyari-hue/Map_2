@@ -1,0 +1,1398 @@
+{
+  "name": "attack_objective_draft-3",
+  "scenario_label": "تقوم القوة المشتركة في هذا السيناريو التدريبي بتحليل الموقف ",
+  "model_version": "brief-gen-v1",
+  "map_bbox": [
+    53.72,
+    23.04,
+    54.92,
+    24.24
+  ],
+  "obj": {
+    "name": "OBJ X",
+    "coord": [
+      54.32,
+      23.64
+    ],
+    "target_depth_km": 8,
+    "carver": 35,
+    "radius_km": 10
+  },
+  "pipeline": [
+    [
+      53.82878,
+      23.64
+    ],
+    [
+      54.07439,
+      23.64
+    ],
+    [
+      54.32,
+      23.64
+    ]
+  ],
+  "red_units": [
+    {
+      "uid": "R-001",
+      "label": "armor-1",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        53.99252,
+        23.49
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-002",
+      "label": "mech_infantry-2",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "mech_infantry",
+      "coord": [
+        53.99252,
+        23.494
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-003",
+      "label": "infantry-3",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "infantry",
+      "coord": [
+        53.99252,
+        23.498
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-004",
+      "label": "recon-4",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        53.99252,
+        23.502
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-005",
+      "label": "fires-5",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        53.99252,
+        23.506
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-006",
+      "label": "engineer-6",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        53.99252,
+        23.51
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-007",
+      "label": "armor-7",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        53.99252,
+        23.514
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-008",
+      "label": "mech_infantry-8",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "mech_infantry",
+      "coord": [
+        53.99252,
+        23.518
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-009",
+      "label": "infantry-9",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "infantry",
+      "coord": [
+        53.99252,
+        23.522
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-010",
+      "label": "recon-10",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        53.99252,
+        23.526
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-011",
+      "label": "fires-11",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        53.99252,
+        23.53
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-012",
+      "label": "engineer-12",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        53.99252,
+        23.534
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-013",
+      "label": "armor-13",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        53.99252,
+        23.538
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-014",
+      "label": "mech_infantry-14",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "mech_infantry",
+      "coord": [
+        53.99252,
+        23.542
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-015",
+      "label": "infantry-15",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "infantry",
+      "coord": [
+        53.99252,
+        23.546
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-016",
+      "label": "recon-16",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        53.99252,
+        23.55
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-017",
+      "label": "fires-17",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        53.99252,
+        23.554
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-018",
+      "label": "engineer-18",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        53.99252,
+        23.558
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-019",
+      "label": "armor-19",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        53.99252,
+        23.562
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-020",
+      "label": "mech_infantry-20",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "mech_infantry",
+      "coord": [
+        53.99252,
+        23.566
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-021",
+      "label": "infantry-21",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "infantry",
+      "coord": [
+        53.99252,
+        23.57
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-022",
+      "label": "recon-22",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        53.99252,
+        23.574
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-023",
+      "label": "fires-23",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        53.99252,
+        23.578
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-024",
+      "label": "engineer-24",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        53.99252,
+        23.582
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-025",
+      "label": "armor-25",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        53.99252,
+        23.586
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-026",
+      "label": "mech_infantry-26",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "mech_infantry",
+      "coord": [
+        53.99252,
+        23.59
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-027",
+      "label": "infantry-27",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "infantry",
+      "coord": [
+        53.99252,
+        23.594
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-028",
+      "label": "recon-28",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        53.99252,
+        23.598
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-029",
+      "label": "fires-29",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        53.99252,
+        23.602
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-030",
+      "label": "engineer-30",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        53.99252,
+        23.606
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-031",
+      "label": "armor-31",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        53.99252,
+        23.61
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-032",
+      "label": "mech_infantry-32",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "mech_infantry",
+      "coord": [
+        53.99252,
+        23.614
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-033",
+      "label": "infantry-33",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "infantry",
+      "coord": [
+        53.99252,
+        23.618
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-034",
+      "label": "recon-34",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        53.99252,
+        23.622
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-035",
+      "label": "fires-35",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        53.99252,
+        23.626
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-036",
+      "label": "engineer-36",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        53.99252,
+        23.63
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-037",
+      "label": "armor-37",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        53.99252,
+        23.634
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-038",
+      "label": "mech_infantry-38",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "mech_infantry",
+      "coord": [
+        53.99252,
+        23.638
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-039",
+      "label": "infantry-39",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "infantry",
+      "coord": [
+        53.99252,
+        23.642
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-040",
+      "label": "recon-40",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        53.99252,
+        23.646
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-041",
+      "label": "fires-41",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        53.99252,
+        23.65
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-042",
+      "label": "engineer-42",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        53.99252,
+        23.654
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-043",
+      "label": "armor-43",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        53.99252,
+        23.658
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-044",
+      "label": "mech_infantry-44",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "mech_infantry",
+      "coord": [
+        53.99252,
+        23.662
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-045",
+      "label": "infantry-45",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "infantry",
+      "coord": [
+        53.99252,
+        23.666
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-046",
+      "label": "recon-46",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        53.99252,
+        23.67
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-047",
+      "label": "fires-47",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        53.99252,
+        23.674
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-048",
+      "label": "engineer-48",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        53.99252,
+        23.678
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-049",
+      "label": "armor-49",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        53.99252,
+        23.682
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-050",
+      "label": "mech_infantry-50",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "mech_infantry",
+      "coord": [
+        53.99252,
+        23.686
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-051",
+      "label": "infantry-51",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "infantry",
+      "coord": [
+        53.99252,
+        23.69
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-052",
+      "label": "recon-52",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        53.99252,
+        23.694
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-053",
+      "label": "fires-53",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        53.99252,
+        23.698
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-054",
+      "label": "engineer-54",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        53.99252,
+        23.702
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-055",
+      "label": "armor-55",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        53.99252,
+        23.706
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-056",
+      "label": "mech_infantry-56",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "mech_infantry",
+      "coord": [
+        53.99252,
+        23.71
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-057",
+      "label": "infantry-57",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "infantry",
+      "coord": [
+        53.99252,
+        23.714
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-058",
+      "label": "recon-58",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        53.99252,
+        23.718
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-059",
+      "label": "fires-59",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        53.99252,
+        23.722
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-060",
+      "label": "engineer-60",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        53.99252,
+        23.726
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-061",
+      "label": "armor-61",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        53.99252,
+        23.73
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-062",
+      "label": "mech_infantry-62",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "mech_infantry",
+      "coord": [
+        53.99252,
+        23.734
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-063",
+      "label": "infantry-63",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "infantry",
+      "coord": [
+        53.99252,
+        23.738
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-064",
+      "label": "recon-64",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        53.99252,
+        23.742
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-065",
+      "label": "fires-65",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        53.99252,
+        23.746
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-066",
+      "label": "engineer-66",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        53.99252,
+        23.75
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-067",
+      "label": "armor-67",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        53.99252,
+        23.754
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-068",
+      "label": "mech_infantry-68",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "mech_infantry",
+      "coord": [
+        53.99252,
+        23.758
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-069",
+      "label": "infantry-69",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "infantry",
+      "coord": [
+        53.99252,
+        23.762
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-070",
+      "label": "recon-70",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        53.99252,
+        23.766
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-071",
+      "label": "fires-71",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        53.99252,
+        23.77
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-072",
+      "label": "engineer-72",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        53.99252,
+        23.774
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-073",
+      "label": "armor-73",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        53.99252,
+        23.778
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-074",
+      "label": "mech_infantry-74",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "mech_infantry",
+      "coord": [
+        53.99252,
+        23.782
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-075",
+      "label": "infantry-75",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "infantry",
+      "coord": [
+        53.99252,
+        23.786
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-076",
+      "label": "recon-76",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        53.99252,
+        23.79
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    }
+  ],
+  "blue_units_base_ids": [
+    "b1",
+    "b2",
+    "b3",
+    "b4",
+    "b5",
+    "b6",
+    "b7"
+  ],
+  "blue_units_initial": [
+    {
+      "unit_uid": "B-001",
+      "base_id": "b1",
+      "role": "infantry",
+      "coord": [
+        54.39641,
+        23.64
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "unit_uid": "B-002",
+      "base_id": "b2",
+      "role": "infantry",
+      "coord": [
+        54.36764,
+        23.69473
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "unit_uid": "B-003",
+      "base_id": "b3",
+      "role": "anti_tank",
+      "coord": [
+        54.303,
+        23.70824
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "unit_uid": "B-004",
+      "base_id": "b4",
+      "role": "air_defense",
+      "coord": [
+        54.25115,
+        23.67037
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "unit_uid": "B-005",
+      "base_id": "b5",
+      "role": "reserve",
+      "coord": [
+        54.25115,
+        23.60963
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "unit_uid": "B-006",
+      "base_id": "b6",
+      "role": "infantry",
+      "coord": [
+        54.303,
+        23.57176
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "unit_uid": "B-007",
+      "base_id": "b7",
+      "role": "infantry",
+      "coord": [
+        54.36764,
+        23.58527
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    }
+  ],
+  "bls_template": [
+    {
+      "name": "BLS-1",
+      "coord": [
+        54.45099,
+        23.64
+      ],
+      "role": "staging",
+      "draft": true,
+      "needs_review": true
+    }
+  ],
+  "phase_table": [
+    {
+      "index": 0,
+      "time_label": "H0",
+      "elapsed_hours": 0,
+      "phase": "shaping",
+      "kind_native": "shaping"
+    },
+    {
+      "index": 1,
+      "time_label": "H+6",
+      "elapsed_hours": 6,
+      "phase": "approach",
+      "kind_native": "approach"
+    },
+    {
+      "index": 2,
+      "time_label": "H+12",
+      "elapsed_hours": 12,
+      "phase": "assault",
+      "kind_native": "assault"
+    },
+    {
+      "index": 3,
+      "time_label": "H+18",
+      "elapsed_hours": 18,
+      "phase": "consolidate",
+      "kind_native": "consolidate"
+    }
+  ],
+  "steps": [
+    {
+      "index": 0,
+      "time_label": "H0",
+      "elapsed_hours": 0,
+      "phase": "shaping",
+      "kind_native": "shaping"
+    },
+    {
+      "index": 1,
+      "time_label": "H+6",
+      "elapsed_hours": 6,
+      "phase": "approach",
+      "kind_native": "approach"
+    },
+    {
+      "index": 2,
+      "time_label": "H+12",
+      "elapsed_hours": 12,
+      "phase": "assault",
+      "kind_native": "assault"
+    },
+    {
+      "index": 3,
+      "time_label": "H+18",
+      "elapsed_hours": 18,
+      "phase": "consolidate",
+      "kind_native": "consolidate"
+    }
+  ],
+  "terrain_note": "Draft scenario generated from a reviewed Operational Brief. Positions are placeholders for operator review.",
+  "source": "OperationalBrief",
+  "generated_from_brief": true,
+  "generation": {
+    "from": "operational_brief",
+    "template": "attack_objective",
+    "template_name_en": "Attack Objective",
+    "template_name_ar": "هجوم على هدف",
+    "draft": true,
+    "placement_confidence": "low",
+    "objective_source": "operator",
+    "document_set_id": "ds_mdmp_a838141508e4",
+    "source_citations": [
+      {
+        "field": "mission",
+        "file": "UAE_Iran_step1_updated_red_blue_trial.json",
+        "keys": [
+          "join_op_mission"
+        ]
+      },
+      {
+        "field": "commander_intent",
+        "file": "UAE_Iran_step1_updated_red_blue_trial.json",
+        "keys": [
+          "Join_op_purp",
+          "joint_ops_how",
+          "joint_ops_desired_end"
+        ]
+      }
+    ],
+    "missing_fields": [
+      "all unit positions are DRAFT — refine on the map",
+      "precise coordinates were not taken from the document"
+    ],
+    "proposed_unit_counts": {
+      "red": 76,
+      "blue": 7
+    }
+  },
+  "ported_from": "brief-to-scenario.js"
+}

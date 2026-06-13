@@ -3555,6 +3555,14 @@
                             <button class="usp-collapse-btn" aria-expanded="true" aria-controls="usp-tasking-body">&#171;</button>
                         </div>
                         <div id="usp-tasking-body" class="usp-section-body" data-collapsed="false">
+                            <div class="usp-tasking-row usp-tasking-overlay-row" id="usp-tasking-overlay-row" hidden>
+                                <span class="usp-tasking-lbl">Overlay Preview</span>
+                                <span class="usp-tasking-val usp-tasking-overlay-val" id="usp-tasking-overlay"></span>
+                            </div>
+                            <div class="usp-tasking-row usp-tasking-diff-row" id="usp-tasking-diff-row" hidden>
+                                <span class="usp-tasking-lbl">Dry-run Diff</span>
+                                <span class="usp-tasking-val usp-tasking-diff-val" id="usp-tasking-diff"></span>
+                            </div>
                             <div class="usp-tasking-row" id="usp-tasking-why-row" hidden>
                                 <span class="usp-tasking-lbl" data-i18n="usp-lbl-why">Why</span>
                                 <span class="usp-tasking-val" id="usp-tasking-why"></span>
@@ -4453,6 +4461,10 @@
     <script src="shell/detection.js?v=1"></script>
     <script src="shell/engagement.js?v=1"></script>
     <script src="shell/world-state-db.js?v=1"></script>
+    <!-- G-4-C: read-only tasking overlay projection helper.
+         Loaded for controlled preview access only: no UI controls, no storage,
+         no backend, no live scenario mutation. -->
+    <script src="shell/tasking-overlay-store.js?v=1"></script>
     <!-- PR-WS2: World State projection (WS1). Loaded before the map so the
          adjudicator can derive a live World State snapshot per step and route
          objective status through it (parity-proof read seam — World State
@@ -4488,6 +4500,8 @@
     <script src="shell/side-picker.js?v=1"></script>
 
     <script src="shell/applied-state.js?v=1"></script>
+    <!-- App-shell safe-area measurer: publishes --rmooz-shell-top-safe / --rmooz-shell-bottom-safe so fixed right-side drawers bound to the content band. Must load before the panels that use it. -->
+    <script src="shell/shell-safe-area.js?v=1"></script>
     <script src="shell/unit-status-panel.js?v=1"></script>
     <script src="shell/objective-evidence-panel.js?v=3"></script>
     <!-- L3-B-1: read-only Why-Not display panel in the Scenario Workspace.
@@ -4649,6 +4663,8 @@
          Import Tools" (kept, not deleted). Orchestration only; porter unchanged. -->
     <!-- DOC-UNDERSTANDING-1 / G-3: COA Review Panel (cards + Select/Reject/Edit/Compare + generation gate). Must load BEFORE the review renderer. -->
     <script src="shell/coa-review-panel.js?v=1"></script>
+    <!-- SYMBOL-DB-B: proposed-unit platform categorizer (systems from DB1 catalog; no invention). Must load BEFORE the base status panel, which delegates systems lookup to it. -->
+    <script src="shell/symbol-db.js?v=symbol-db-b"></script>
     <script src="shell/base-status-panel.js?v=base-status-a"></script>
     <script src="shell/placement-candidates-panel.js?v=1"></script>
     <!-- DEMO-ACTUAL-1: AI Decision-Making Scenario Preview. Isolated preview
@@ -5056,8 +5072,10 @@
         .unit-status-panel {
             position: fixed;
             right: 0;
-            top: 0;
-            height: 100vh;
+            /* Bound to the app-shell content band (shell-safe-area.js) — never behind header/footer. */
+            top: var(--rmooz-shell-top-safe, 74px);
+            bottom: var(--rmooz-shell-bottom-safe, 96px);
+            max-height: calc(100vh - var(--rmooz-shell-top-safe, 74px) - var(--rmooz-shell-bottom-safe, 96px));
             width: 420px;
             background: #f9f9f9;
             border-left: 1px solid #d0d0d0;
@@ -5500,7 +5518,11 @@
         .usp-empty-icon { font-size:2rem; margin-bottom:0.75rem; color:#1a2535; }
         .usp-empty p { margin:0; line-height:1.7; }
 
-        .usp-body { display:flex; flex-direction:column; flex:1; overflow-x:hidden; }
+        /* min-height:0 + overflow-y:auto => the unit-panel body scrolls INSIDE the shell-safe-area
+           bound (the outer panel is overflow:visible so the reopen tab can protrude), so tall unit
+           content never spills behind the bottom chrome. (.panel-body above is a dead selector — the
+           real scroll body is .usp-body.) */
+        .usp-body { display:flex; flex-direction:column; flex:1; min-height:0; overflow-y:auto; overflow-x:hidden; }
         .usp-body[hidden] { display:none !important; }
 
         .usp-hero { background:linear-gradient(180deg,#0c1420,#0b0e15); border-bottom:1px solid #1a2535; }
@@ -5957,6 +5979,19 @@
             word-break:break-word; font-family:'Consolas','Courier New',monospace;
         }
         .usp-tasking-doctrine-val { color:#6080a0; font-style:italic; font-size:0.68rem; }
+        .usp-tasking-overlay-row {
+            background:#0a1218;
+            border-bottom-color:#183247;
+        }
+        .usp-tasking-overlay-val { color:#78c6ff; }
+        .usp-tasking-diff-row {
+            background:#0b1018;
+            border-bottom-color:#223047;
+        }
+        .usp-tasking-diff-val {
+            color:#a8c8e8;
+            white-space:pre-line;
+        }
 
         /* Light theme */
         [data-theme="light"] .usp-tasking-block { border-bottom-color:#dde8f0; }
@@ -5965,6 +6000,10 @@
         [data-theme="light"] .usp-tasking-lbl { color:#5a7890; }
         [data-theme="light"] .usp-tasking-val { color:#2a4060; }
         [data-theme="light"] .usp-tasking-doctrine-val { color:#486888; }
+        [data-theme="light"] .usp-tasking-overlay-row { background:#eef7ff; border-bottom-color:#c8dff2; }
+        [data-theme="light"] .usp-tasking-overlay-val { color:#0f5f94; }
+        [data-theme="light"] .usp-tasking-diff-row { background:#f6fbff; border-bottom-color:#d5e4f0; }
+        [data-theme="light"] .usp-tasking-diff-val { color:#244c68; }
 
         /* RTL */
         [dir="rtl"] .usp-tasking-row { flex-direction:row-reverse; }

@@ -48,13 +48,20 @@ const SOURCE_TYPES = Object.freeze([
     'doctrine_rule',
     'world_state',
     'scenario_builder',
+    // GIS-TERRAIN-1 (T-2, design §5): terrain becomes a first-class source.
+    'terrain_layer',     // direct reading of curated terrain data (elevation at a point)
+    'gis_analysis',      // computed product (slope class, profile, LOS, LZ score)
 ]);
 
 // L15 precedence: operator-declared(4) > reviewed(3) > derived(2) > AI(1).
+// terrain_layer ranks with curated data (location_db); gis_analysis is a
+// derived computation and ranks with world_state — so operator declarations
+// override terrain, and terrain overrides AI guesses, with no new logic.
 const TRUST_RANK = Object.freeze({
     manual_app_entry: 4, map_click: 4, scenario_builder: 4,
     uploaded_doc: 3, external_json: 3, mdmp_adapter: 3, location_db: 3, doctrine_rule: 3,
-    world_state: 2, incident_log: 2,
+    terrain_layer: 3,
+    world_state: 2, incident_log: 2, gis_analysis: 2,
     llm_candidate: 1,
 });
 
@@ -97,6 +104,32 @@ function withSource(entry, src) {
     return e;
 }
 
+/* ── GIS-TERRAIN-1 (T-2): terrain collections ───────────────────────────── */
+/** Append a terrain layer record (registry entry: dem/hillshade/roads/…) to
+ *  model.terrain_layers. The input is cloned (never mutated); an existing
+ *  valid source on the entry is preserved, otherwise srcInput (default
+ *  terrain_layer) is stamped. Returns the stored entry. */
+function attachTerrainLayer(model, layer, srcInput) {
+    const m = obj(model);
+    if (!Array.isArray(m.terrain_layers)) m.terrain_layers = [];   // pre-T-2 models
+    const entry = withSource(layer, Object.assign({ type: 'terrain_layer' }, obj(srcInput)));
+    m.terrain_layers.push(entry);
+    return entry;
+}
+
+/** Append a terrain analysis product (profile/slope/LZ/LOS result) to
+ *  model.terrain_analysis. Same clone/source rules; analyses are derived
+ *  computations, so the default source type is gis_analysis and
+ *  needs_review defaults to true (L6 — never presented as operator truth). */
+function attachTerrainAnalysis(model, analysis, srcInput) {
+    const m = obj(model);
+    if (!Array.isArray(m.terrain_analysis)) m.terrain_analysis = [];
+    const entry = withSource(analysis, Object.assign({ type: 'gis_analysis' }, obj(srcInput)));
+    if (entry.needs_review !== false) entry.needs_review = true;
+    m.terrain_analysis.push(entry);
+    return entry;
+}
+
 /* ── Empty model (the one shape, both paths) ────────────────────────────── */
 
 function emptyPlanningModel() {
@@ -114,6 +147,10 @@ function emptyPlanningModel() {
         locations: [],
         incidents: [],
         doctrine_refs: [],
+        // GIS-TERRAIN-1 (T-2): terrain registry + analysis products. Always
+        // present (empty arrays) — absent terrain must never break a flow.
+        terrain_layers: [],
+        terrain_analysis: [],
         courses_of_action: [],
         force_comparison: null,
         coa_recommendation: null,           // preserved from briefs (additive key)
@@ -290,7 +327,8 @@ function computeSourceSummary(model) {
     const bump = t => { if (t) counts[t] = (counts[t] || 0) + 1; };
     if (model.mission && model.mission.source) bump(model.mission.source.type);
     ['area_of_operation', 'objectives', 'units', 'locations', 'incidents',
-     'doctrine_refs', 'courses_of_action'].forEach(k => {
+     'doctrine_refs', 'terrain_layers', 'terrain_analysis',
+     'courses_of_action'].forEach(k => {
         arr(model[k]).forEach(e => bump(e && e.source && e.source.type));
     });
     return Object.keys(counts).sort().map(type => ({ type: type, count: counts[type] }));
@@ -597,6 +635,9 @@ module.exports = {
     fromOperationalBrief,
     fromWorldState,
     mergePlanningModels,
+    // GIS-TERRAIN-1 (T-2)
+    attachTerrainLayer,
+    attachTerrainAnalysis,
     // exposed for tests
     _internal: { withSource, comparable, EVALUATORS },
 };

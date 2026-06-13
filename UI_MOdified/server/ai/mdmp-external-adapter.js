@@ -55,7 +55,534 @@ function isPlaceholder(s) {
 function val(obj, key) {
     const v = obj ? obj[key] : undefined;
     if (typeof v !== 'string' || isPlaceholder(v)) return null;
-    return v.trim();
+    return normalizePlatformText(v.trim());
+}
+
+function clone(o) {
+    return o === undefined ? undefined : JSON.parse(JSON.stringify(o));
+}
+
+function normalizePlatformText(value) {
+    if (typeof value === 'string') return value.replace(/\b(?:figter|fighter)\b/gi, 'مقاتلة / طائرة');
+    if (Array.isArray(value)) return value.map(normalizePlatformText);
+    if (value && typeof value === 'object') {
+        const out = {};
+        Object.keys(value).forEach(k => { out[k] = normalizePlatformText(value[k]); });
+        return out;
+    }
+    return value;
+}
+
+function rawStructuredValue(obj, key) {
+    const v = obj ? obj[key] : undefined;
+    if (typeof v === 'string') return isPlaceholder(v) ? null : normalizePlatformText(v.trim());
+    if (Array.isArray(v)) return normalizePlatformText(v);
+    if (v && typeof v === 'object') return normalizePlatformText(clone(v));
+    return null;
+}
+
+function aiReviewSource(file, key) {
+    return {
+        source_type: 'ai_candidate_from_external_llm',
+        needs_review: true,
+        source: { file, key },
+    };
+}
+
+function defaultTaskAssembly() {
+    return {
+        summary: 'يصدر لاحقاً',
+        supporting_tasks: [],
+        commander_review_required: true,
+        tasking_status: 'needs_review',
+    };
+}
+
+function buildTaskAssembly(data, file) {
+    const raw = rawStructuredValue(data, 'task_assembly');
+    if (!raw) {
+        return Object.assign(defaultTaskAssembly(), aiReviewSource(file, 'task_assembly'));
+    }
+    const out = (raw && typeof raw === 'object' && !Array.isArray(raw))
+        ? Object.assign(defaultTaskAssembly(), raw)
+        : Object.assign(defaultTaskAssembly(), { summary: String(raw) });
+    if (!Array.isArray(out.supporting_tasks)) out.supporting_tasks = [];
+    out.commander_review_required = true;
+    out.tasking_status = out.tasking_status || 'needs_review';
+    return Object.assign(out, aiReviewSource(file, 'task_assembly'));
+}
+
+function buildUnitsDuty(data, file) {
+    const raw = rawStructuredValue(data, 'Units_Duty');
+    if (!raw) return null;
+    const out = (raw && typeof raw === 'object' && !Array.isArray(raw))
+        ? raw
+        : { summary: String(raw), duties: [] };
+    return Object.assign(out, aiReviewSource(file, 'Units_Duty'));
+}
+
+function addMissing(state, item) {
+    if (state.missing_information.indexOf(item) === -1) state.missing_information.push(item);
+}
+
+function addPlacementCandidatesFromText(text, file, key, state) {
+    const raw = String(text == null ? '' : text);
+    if (!raw.trim()) return;
+    const decimal = /(-?\d{1,2}(?:\.\d+)?)\s*,\s*(-?\d{1,3}(?:\.\d+)?)/g;
+    let m;
+    while ((m = decimal.exec(raw))) {
+        const lat = Number(m[1]), lon = Number(m[2]);
+        if (Number.isFinite(lat) && Number.isFinite(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
+            state.placement_candidates.push({
+                mention: m[0], coordinate_format: 'decimal',
+                lat, lon, placement_type: 'coordinate_candidate',
+                exact_unit_position: false, needs_review: true, confidence: 'low',
+                source_type: 'ai_candidate_from_external_llm',
+                source: { type: 'external_json', file, key, origin: 'mdmp_step1', confidence: 'low' },
+                warnings: ['coordinate_requires_location_intelligence_review'],
+            });
+        }
+    }
+    const mgrs = /\b(?:\d{1,2}\s*)?[A-Z]{1,3}\s+[A-Z]{1,3}\s+\d{3,}\s+\d{3,}\b|\b\d{1,2}\s*[A-Z]{1,3}\s*[A-Z]{0,2}\s*\d{3,}\s*\d{3,}\b/gi;
+    while ((m = mgrs.exec(raw))) {
+        state.placement_candidates.push({
+            mention: m[0], coordinate_format: 'mgrs_candidate',
+            lat: null, lon: null, placement_type: 'coordinate_candidate',
+            exact_unit_position: false, needs_review: true, confidence: 'low',
+            source_type: 'ai_candidate_from_external_llm',
+            source: { type: 'external_json', file, key, origin: 'mdmp_step1', confidence: 'low' },
+            warnings: ['mgrs_not_converted', 'coordinate_requires_location_intelligence_review'],
+        });
+    }
+}
+
+function firstText(obj, keys) {
+    for (const k of keys) {
+        const v = obj && obj[k];
+        if (typeof v === 'string' && !isPlaceholder(v)) return normalizePlatformText(v.trim());
+    }
+    return null;
+}
+
+function firstNumber(obj, keys) {
+    for (const k of keys) {
+        const v = obj && obj[k];
+        if (typeof v === 'number' && Number.isFinite(v)) return v;
+        if (typeof v === 'string' && v.trim() && Number.isFinite(Number(v))) return Number(v);
+    }
+    return null;
+}
+
+function baseCoords(base) {
+    const lat = firstNumber(base, ['lat', 'latitude', 'y']);
+    const lon = firstNumber(base, ['lon', 'lng', 'longitude', 'x']);
+    if (lat !== null && lon !== null) return { lat, lon };
+    const c = base && (base.coordinates || base.coord || base.location);
+    if (Array.isArray(c) && c.length >= 2) {
+        const a = Number(c[0]), b = Number(c[1]);
+        if (Number.isFinite(a) && Number.isFinite(b)) {
+            return Math.abs(a) <= 90 ? { lat: a, lon: b } : { lat: b, lon: a };
+        }
+    }
+    if (c && typeof c === 'object') return baseCoords(c);
+    return { lat: null, lon: null };
+}
+
+function baseCode(ar, en) {
+    const s = String(en || ar || '');
+    if (/hamedan|hamadan/i.test(s) || s.indexOf('\u0647\u0645\u062f\u0627\u0646') !== -1) return 'HAMEDAN';
+    if (/chabahar/i.test(s) || s.indexOf('\u062c\u0627\u0628\u0647\u0627\u0631') !== -1) return 'CHABAHAR';
+    if (/bandar\s*abbas/i.test(s) || s.indexOf('\u0628\u0646\u062f\u0631') !== -1) return 'BANDARABBAS';
+    const ascii = s.toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim().split(/\s+/).filter(Boolean);
+    return (ascii[ascii.length - 1] || 'BASE').slice(0, 18);
+}
+
+function platformCode(platform) {
+    const p = String(platform || '');
+    if (/F\s*-\s*14A/i.test(p)) return 'F14A';
+    if (/F\s*-\s*14/i.test(p)) return 'F14';
+    if (/F\s*-\s*4/i.test(p)) return 'F4';
+    const ascii = p.toUpperCase().replace(/[^A-Z0-9]+/g, '').slice(0, 14);
+    return ascii || 'UNIT';
+}
+
+function typeArForUnit(unit, platform) {
+    const t = firstText(unit, ['type_ar', 'type', 'platform_type']);
+    if (t) return t;
+    if (/\b(?:figter|fighter)\b|F\s*-\s*(?:14|4)/i.test(String(platform || ''))) return '\u0645\u0642\u0627\u062a\u0644\u0629 / \u0637\u0627\u0626\u0631\u0629';
+    return '\u0648\u062d\u062f\u0629';
+}
+
+function siteTypeForBase(base, fallback) {
+    const raw = firstText(base, ['site_type', 'base_type', 'type', 'location_type']) || fallback || 'base';
+    const s = String(raw).toLowerCase().replace(/[\s-]+/g, '_');
+    if (/naval/.test(s) || s.indexOf('\u0628\u062d\u0631') !== -1) return 'naval_base';
+    if (/land|ground/.test(s) || s.indexOf('\u0628\u0631') !== -1) return 'land_base';
+    if (/trial/.test(s)) return 'friendly_trial_anchor';
+    if (/air/.test(s) || s.indexOf('\u062c\u0648') !== -1 || s === 'airbase') return 'air_base';
+    return s || 'base';
+}
+
+function baseListFromEnemy(rawEnemy) {
+    if (!rawEnemy || typeof rawEnemy !== 'object' || Array.isArray(rawEnemy)) return [];
+    if (Array.isArray(rawEnemy.bases)) {
+        return rawEnemy.bases.map((base, index) => ({ base, index, key: 'enemy_forces.bases[' + index + ']', site_type: siteTypeForBase(base, 'base') }));
+    }
+    const out = [];
+    [['air_bases', 'air_base'], ['naval_bases', 'naval_base'], ['land_bases', 'land_base']].forEach(([field, type]) => {
+        const list = Array.isArray(rawEnemy[field]) ? rawEnemy[field] : [];
+        list.forEach((base, index) => out.push({ base, index, key: 'enemy_forces.' + field + '[' + index + ']', site_type: siteTypeForBase(base, type) }));
+    });
+    return out;
+}
+
+function normalizeProposedUnit(unit, file, key) {
+    if (!unit || typeof unit !== 'object' || Array.isArray(unit)) return null;
+    const out = normalizePlatformText(clone(unit));
+    out.side = String(out.side || 'RED').toUpperCase();
+    out.source_type = out.source_type || 'ai_candidate_from_external_llm';
+    out.needs_review = true;
+    out.confidence = out.confidence || 'low';
+    out.exact_unit_position = false;
+    out.warning = out.warning || 'base_known_exact_unit_position_unknown';
+    out.warnings = Array.isArray(out.warnings) && out.warnings.length ? out.warnings : ['base_known_exact_unit_position_unknown', 'ai_information_requires_review'];
+    out.source = out.source || { type: 'external_json', file, key, origin: 'mdmp_step1', confidence: 'low' };
+    return out;
+}
+
+function normalizePlacementCandidate(candidate, file, key) {
+    if (!candidate || typeof candidate !== 'object' || Array.isArray(candidate)) return null;
+    const out = normalizePlatformText(clone(candidate));
+    const coords = baseCoords(out);
+    if (out.lat == null && coords.lat != null) out.lat = coords.lat;
+    if (out.lon == null && coords.lon != null) out.lon = coords.lon;
+    out.placement_type = out.placement_type || 'base_location_anchor';
+    out.coordinate_format = out.coordinate_format || 'external_step1_anchor';
+    out.exact_unit_position = false;
+    out.needs_review = true;
+    out.confidence = out.confidence || ((out.lat != null && out.lon != null) ? 'medium' : 'low');
+    out.source_type = out.source_type || 'ai_candidate_from_external_llm';
+    out.source = out.source || { type: 'external_json', file, key, origin: 'mdmp_step1', confidence: 'low' };
+    out.warnings = Array.isArray(out.warnings) && out.warnings.length ? out.warnings : ['coordinate_requires_location_intelligence_review'];
+    return out;
+}
+
+function pushPlacementCandidate(state, candidate) {
+    if (!candidate) return;
+    const key = [
+        candidate.side || '',
+        candidate.placement_type || '',
+        candidate.site_type || '',
+        candidate.base_name_ar || candidate.base_name_en || candidate.mention || '',
+        candidate.lat == null ? '' : candidate.lat,
+        candidate.lon == null ? '' : candidate.lon,
+    ].join('|');
+    const exists = state.placement_candidates.some(c => [
+        c.side || '',
+        c.placement_type || '',
+        c.site_type || '',
+        c.base_name_ar || c.base_name_en || c.mention || '',
+        c.lat == null ? '' : c.lat,
+        c.lon == null ? '' : c.lon,
+    ].join('|') === key);
+    if (!exists) state.placement_candidates.push(candidate);
+}
+
+function preserveTopLevelReviewArrays(data, file, state) {
+    const units = rawStructuredValue(data, 'proposed_units');
+    if (Array.isArray(units)) {
+        units.forEach((unit, i) => {
+            const u = normalizeProposedUnit(unit, file, 'proposed_units[' + i + ']');
+            if (u) state.proposed_units.push(u);
+        });
+    }
+    const candidates = rawStructuredValue(data, 'placement_candidates');
+    if (Array.isArray(candidates)) {
+        candidates.forEach((candidate, i) => pushPlacementCandidate(state,
+            normalizePlacementCandidate(candidate, file, 'placement_candidates[' + i + ']')));
+    }
+}
+
+function addStep1BaseAnchors(data, file, state) {
+    const rawEnemy = rawStructuredValue(data, 'enemy_forces');
+    if (rawEnemy && typeof rawEnemy === 'object' && !Array.isArray(rawEnemy) && !state.enemy_forces) {
+        state.enemy_forces = rawEnemy;
+    }
+    const enemyBases = baseListFromEnemy(rawEnemy);
+    const hadTopLevelProposedUnits = state.proposed_units.length > 0;
+    enemyBases.forEach((entry, bi) => {
+        const base = entry.base;
+        if (!base || typeof base !== 'object') return;
+        const baseNameAr = firstText(base, ['base_name_ar', 'name_ar', 'base_ar', 'name']) || '';
+        const baseNameEn = firstText(base, ['base_name_en', 'name_en', 'base_en']) || '';
+        const coords = baseCoords(base);
+        const code = baseCode(baseNameAr, baseNameEn);
+        const baseObj = Object.assign({
+            id: 'RED-BASE-' + code,
+            side: 'RED',
+            country: firstText(base, ['country']) || '\u0625\u064a\u0631\u0627\u0646',
+            base_name_ar: baseNameAr,
+            base_name_en: baseNameEn,
+            site_type: entry.site_type,
+            lat: coords.lat,
+            lon: coords.lon,
+            exact_unit_position: false,
+            needs_review: true,
+            confidence: (coords.lat !== null && coords.lon !== null) ? 'medium' : 'low',
+            warning: 'base_known_exact_unit_position_unknown',
+            warnings: ['base_known_exact_unit_position_unknown'],
+            source_type: 'ai_candidate_from_external_llm',
+        }, { source: { type: 'external_json', file, key: entry.key, origin: 'mdmp_step1', confidence: 'low' } });
+        state.enemy_bases.push(baseObj);
+        if (coords.lat === null || coords.lon === null) addMissing(state, entry.key + '.coordinates');
+        else {
+            pushPlacementCandidate(state, {
+                mention: baseNameAr || baseNameEn || ('enemy air base ' + (bi + 1)),
+                coordinate_format: 'base_anchor',
+                lat: coords.lat,
+                lon: coords.lon,
+                placement_type: 'base_location_anchor',
+                side: 'RED',
+                base_name_ar: baseNameAr,
+                base_name_en: baseNameEn,
+                site_type: entry.site_type,
+                exact_unit_position: false,
+                needs_review: true,
+                confidence: 'medium',
+                source_type: 'ai_candidate_from_external_llm',
+                source: { type: 'external_json', file, key: entry.key, origin: 'mdmp_step1', confidence: 'low' },
+                warnings: ['base_known_exact_unit_position_unknown', 'coordinate_requires_location_intelligence_review'],
+            });
+        }
+        const units = Array.isArray(base.units) ? base.units : [];
+        units.forEach((unit, ui) => {
+            if (hadTopLevelProposedUnits) return;
+            if (!unit || typeof unit !== 'object') return;
+            const platform = firstText(unit, ['platform', 'name', 'unit', 'aircraft']) || 'unknown';
+            const estimated = firstNumber(unit, ['estimated_count', 'count', 'quantity']);
+            if (estimated === null) addMissing(state, entry.key + '.units[' + ui + '].estimated_count');
+            state.proposed_units.push({
+                id: 'RED-' + platformCode(platform) + '-' + code,
+                side: 'RED',
+                country: firstText(base, ['country']) || '\u0625\u064a\u0631\u0627\u0646',
+                base_name_ar: baseNameAr,
+                base_name_en: baseNameEn,
+                lat: coords.lat,
+                lon: coords.lon,
+                platform: platform,
+                type_ar: typeArForUnit(unit, platform),
+                estimated_count: estimated,
+                source_type: 'ai_candidate_from_external_llm',
+                needs_review: true,
+                confidence: (coords.lat !== null && coords.lon !== null && estimated !== null) ? 'medium' : 'low',
+                exact_unit_position: false,
+                warning: 'base_known_exact_unit_position_unknown',
+                warnings: ['base_known_exact_unit_position_unknown', 'ai_information_requires_review'],
+                source: { type: 'external_json', file, key: entry.key + '.units[' + ui + ']', origin: 'mdmp_step1', confidence: 'low' },
+            });
+        });
+    });
+    const rawFriendly = rawStructuredValue(data, 'friendly_forces');
+    const friendlyBases = rawFriendly && typeof rawFriendly === 'object' && Array.isArray(rawFriendly.trial_bases) ? rawFriendly.trial_bases : [];
+    friendlyBases.forEach((base, bi) => {
+        if (!base || typeof base !== 'object') return;
+        const baseNameAr = firstText(base, ['base_name_ar', 'name_ar', 'base_ar', 'name']) || '';
+        const baseNameEn = firstText(base, ['base_name_en', 'name_en', 'base_en']) || '';
+        const coords = baseCoords(base);
+        const key = 'friendly_forces.trial_bases[' + bi + ']';
+        const trial = {
+            id: 'BLUE-TRIAL-' + baseCode(baseNameAr, baseNameEn),
+            side: 'BLUE',
+            country: firstText(base, ['country']) || '\u0642\u0637\u0631',
+            base_name_ar: baseNameAr,
+            base_name_en: baseNameEn,
+            site_type: 'friendly_trial_anchor',
+            lat: coords.lat,
+            lon: coords.lon,
+            exact_unit_position: false,
+            needs_review: true,
+            confidence: (coords.lat !== null && coords.lon !== null) ? 'medium' : 'low',
+            warning: 'trial_anchor_exact_unit_position_unknown',
+            warnings: ['trial_anchor_exact_unit_position_unknown'],
+            source_type: 'ai_candidate_from_external_llm',
+            source: { type: 'external_json', file, key, origin: 'mdmp_step1', confidence: 'low' },
+        };
+        state.friendly_trial_bases.push(trial);
+        if (coords.lat === null || coords.lon === null) addMissing(state, key + '.coordinates');
+        else pushPlacementCandidate(state, Object.assign({}, trial, {
+            mention: baseNameAr || baseNameEn || ('friendly trial base ' + (bi + 1)),
+            coordinate_format: 'base_anchor',
+            placement_type: 'base_location_anchor',
+            warnings: ['trial_anchor_exact_unit_position_unknown', 'coordinate_requires_location_intelligence_review'],
+        }));
+    });
+}
+
+const STAFF2_SECTIONS = {
+    intel_summary: ['Terrain', 'Weather', 'First_light', 'Last_light', 'Moon',
+        'Effect_of_Weather_and_Terrain_on_Operations', 'Composition', 'Deployments',
+        'Force_Coverage', 'Morale', 'Training', 'Recent_and_Ongoing_Activities',
+        'Enemy_Tactics_in_Exposure_Operations_Phase1_Preparation',
+        'Enemy_Tactics_in_Exposure_Operations_Phase2_Preparation',
+        'Enemy_Tactics_in_Exposure_Operations_Phase3_Main_Attack',
+        'Intentions_and_Objectives', 'Counter_Intelligence_Observations', 'Conclusions'],
+    enemy_capabilities: ['Enemy_Capabilities'],
+    operations: ['join_op_mission', 'Join_op_purp', 'joint_ops_how', 'joint_ops_desired_end',
+        'Exc_command_mission', 'Exc_command_purp', 'Exc_command_main_mission',
+        'joint_ops_desired_end2', 'Land_component_force', 'Attached_units',
+        'Force_Composition', 'Training_Readiness_Level', 'Combat_Effectiveness',
+        'Operational_Conclusions'],
+    hr: ['Force_Cover', 'Combat_Morale', 'Reinforcements', 'Projected_Casualties',
+        'Control_and_Coordination', 'Prisoners_of_War', 'Civilian_Users',
+        'Civilian_Prisoners_and_Detainees', 'Human_Force_Conclusions'],
+    logistics: ['Logistical_Rations', 'Logistical_sustainment', 'Fuel', 'ammunition',
+        'Spare_parts', 'Engineering_materiel', 'Transportation', 'Maintenance',
+        'Field_Hospitals', 'Supply_Conclusions'],
+};
+
+const STAFF2_FILE_SECTION = {
+    AAAA: 'intel_summary',
+    BBBB: 'enemy_capabilities',
+    CCCC: 'operations',
+    DDDD: 'hr',
+    EEEE: 'logistics',
+};
+
+const STAFF2_MISSING_LABEL = {
+    intel_summary: 'Intel Summary',
+    enemy_capabilities: 'Enemy Capabilities',
+    operations: 'Operations',
+    hr: 'HR',
+    logistics: 'Logistics',
+};
+
+function newStaffBrief2(file) {
+    return {
+        sections: {
+            intel_summary: {},
+            enemy_capabilities: {},
+            operations: {},
+            hr: {},
+            logistics: {},
+        },
+        external_step: 2,
+        package_type: 'Staff_Brief_2',
+        raw_external_json: { files: [] },
+        duplicate_key_warnings: [],
+        conflicts: [],
+        missing_information: [],
+        source_type: 'ai_candidate_from_external_llm',
+        needs_review: true,
+        source: { file, key: 'Staff_Brief_2' },
+    };
+}
+
+function addStaff2Field(staff, sectionName, key, value, file, sourceKey) {
+    if (value == null) return;
+    const section = staff.sections[sectionName];
+    if (!section) return;
+    if (Object.prototype.hasOwnProperty.call(section, key)) {
+        const old = section[key] && section[key].value;
+        if (JSON.stringify(old) !== JSON.stringify(value)) {
+            staff.duplicate_key_warnings.push({
+                key,
+                section: sectionName,
+                kept: old,
+                ignored: value,
+                source_type: 'ai_candidate_from_external_llm',
+                needs_review: true,
+                source: { file, key: sourceKey || key },
+            });
+        }
+        return;
+    }
+    section[key] = {
+        value,
+        source_type: 'ai_candidate_from_external_llm',
+        needs_review: true,
+        source: { file, key: sourceKey || key },
+    };
+}
+
+function mapStaff2Object(staff, obj, file, prefix, onlySection) {
+    if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return;
+    const sectionsRoot = obj.sections && typeof obj.sections === 'object' && !Array.isArray(obj.sections) ? obj.sections : obj;
+    Object.keys(STAFF2_SECTIONS).forEach(sectionName => {
+        if (onlySection && sectionName !== onlySection) return;
+        const nested = sectionsRoot[sectionName];
+        if (nested && typeof nested === 'object' && !Array.isArray(nested)) {
+            Object.keys(nested).forEach(k => {
+                const raw = rawStructuredValue(nested, k);
+                if (raw != null) addStaff2Field(staff, sectionName, k, raw, file, (prefix ? prefix + '.' : '') + sectionName + '.' + k);
+            });
+        }
+    });
+    Object.keys(STAFF2_SECTIONS).forEach(sectionName => {
+        if (onlySection && sectionName !== onlySection) return;
+        STAFF2_SECTIONS[sectionName].forEach(k => {
+            const raw = rawStructuredValue(obj, k);
+            if (raw != null) addStaff2Field(staff, sectionName, k, raw, file, (prefix ? prefix + '.' : '') + k);
+        });
+    });
+}
+
+function rebuildStaff2Conflicts(staff) {
+    const seen = {};
+    Object.keys(staff.sections).forEach(sectionName => {
+        Object.keys(staff.sections[sectionName]).forEach(k => {
+            const item = staff.sections[sectionName][k];
+            const serialized = JSON.stringify(item && item.value);
+            if (!seen[k]) seen[k] = [];
+            seen[k].push({ section: sectionName, value: item && item.value, serialized });
+        });
+    });
+    staff.conflicts = [];
+    Object.keys(seen).forEach(k => {
+        const vals = Array.from(new Set(seen[k].map(x => x.serialized)));
+        if (seen[k].length > 1 && vals.length > 1) {
+            staff.conflicts.push({
+                key: k,
+                type: 'duplicate_key_different_values_across_sections',
+                entries: seen[k],
+                needs_review: true,
+                source_type: 'ai_candidate_from_external_llm',
+            });
+        }
+    });
+}
+
+function mapStaffBrief2(data, file, state) {
+    const staff = state.staff_brief_2 || newStaffBrief2(file);
+    staff.raw_external_json.files.push({ file, data: clone(data) });
+    const fileStem = String(file || '').replace(/\.[^.]+$/, '').toUpperCase();
+    const onlySection = STAFF2_FILE_SECTION[fileStem] || null;
+    const wrapped = rawStructuredValue(data, 'Staff_Brief_2') || rawStructuredValue(data, 'staff_brief_2');
+    if (wrapped && typeof wrapped === 'object' && !Array.isArray(wrapped)) mapStaff2Object(staff, wrapped, file, 'Staff_Brief_2', onlySection);
+    mapStaff2Object(staff, data, file, '', onlySection);
+    rebuildStaff2Conflicts(staff);
+    staff.missing_information = [];
+    state.missing_information = state.missing_information.filter(m => String(m).indexOf('Staff Brief 2 missing section: ') !== 0);
+    Object.keys(staff.sections).forEach(sectionName => {
+        if (!Object.keys(staff.sections[sectionName]).length) {
+            const missKey = 'Staff Brief 2 missing section: ' + STAFF2_MISSING_LABEL[sectionName];
+            if (staff.missing_information.indexOf(missKey) === -1) staff.missing_information.push(missKey);
+            addMissing(state, missKey);
+        }
+    });
+    state.staff_brief_2 = staff;
+    if (!state.external_raw.staff_brief_2) state.external_raw.staff_brief_2 = { files: [] };
+    state.external_raw.staff_brief_2.files.push({ file, data: clone(data) });
+    if (!state.enemy_summary && staff.sections.enemy_capabilities.Enemy_Capabilities) {
+        state.enemy_summary = { text: String(staff.sections.enemy_capabilities.Enemy_Capabilities.value), file, key: 'Enemy_Capabilities' };
+    }
+    if (staff.sections.enemy_capabilities.Enemy_Capabilities) {
+        state.enemy_capabilities.push({
+            text: String(staff.sections.enemy_capabilities.Enemy_Capabilities.value),
+            source_type: 'ai_candidate_from_external_llm',
+            needs_review: true,
+            source: { file, key: 'Enemy_Capabilities' },
+        });
+    }
 }
 
 // COA-2 suffix families: <k>2 (step3), <k>_2 (step4), <k>_c2 (step5).
@@ -350,6 +877,24 @@ function mapStep5(data, file, state) {
 
 // ── step 1 / staff brief — situation & guidance fields ──────────────
 function mapPlanning(data, file, state) {
+    const detectedStep1 = BRIEF.getExternalStep1Root ? BRIEF.getExternalStep1Root(data) : null;
+    data = (detectedStep1 && detectedStep1.root) || data;
+    state.seen_planning = true;
+    if (!state.task_assembly) {
+        state.task_assembly = buildTaskAssembly(data, file);
+        if (!rawStructuredValue(data, 'task_assembly')) addMissing(state, 'task_assembly');
+    }
+    if ('doctrine_upload_required' in data && state.doctrine_upload_required === null) {
+        state.doctrine_upload_required = !!data.doctrine_upload_required;
+    }
+    const doctrineSources = rawStructuredValue(data, 'doctrine_sources');
+    if (Array.isArray(doctrineSources) && !state.doctrine_sources.length) state.doctrine_sources = doctrineSources;
+    const doctrinePolicy = val(data, 'doctrine_application_policy');
+    if (doctrinePolicy && !state.doctrine_application_policy) state.doctrine_application_policy = doctrinePolicy;
+    const unitsDuty = buildUnitsDuty(data, file);
+    if (unitsDuty && !state.units_duty) state.units_duty = unitsDuty;
+    else if (!unitsDuty) addMissing(state, 'Units_Duty');
+
     state.mission = state.mission || (function () {
         for (const k of ['join_op_mission', 'GROUND_COMPONENT_MISSION', 'Exc_command_mission']) {
             const v = val(data, k);
@@ -376,12 +921,17 @@ function mapPlanning(data, file, state) {
     for (const k of ['operations_area', 'area_interest', 'Assembly_Area', 'Maps']) {
         const v = val(data, k);
         if (v) ao[k] = v;
+        if (v) addPlacementCandidatesFromText(v, file, k, state);
     }
     if (Object.keys(ao).length) state.area = Object.assign(state.area || {}, ao, { source_file: file });
+    addPlacementCandidatesFromText(JSON.stringify(state.task_assembly || ''), file, 'task_assembly', state);
+    addPlacementCandidatesFromText(JSON.stringify(state.units_duty || ''), file, 'Units_Duty', state);
     const ff = val(data, 'friendly_forces');
     if (ff && !state.friendly_summary) state.friendly_summary = { text: ff, file, key: 'friendly_forces' };
     const ef = val(data, 'enemy_forces');
     if (ef && !state.enemy_summary) state.enemy_summary = { text: ef, file, key: 'enemy_forces' };
+    preserveTopLevelReviewArrays(data, file, state);
+    addStep1BaseAnchors(data, file, state);
     const cap = val(data, 'Enemy_Capabilities');
     if (cap) state.enemy_capabilities.push({ text: cap, source: { file, key: 'Enemy_Capabilities' } });
 }
@@ -398,19 +948,25 @@ function adaptMdmpBundle(entries) {
         red_ml: null, recommendation: null, force_comparison: null,
         mission: null, intent: null, friendly_summary: null, enemy_summary: null,
         constraints: [], assumptions: [], timeline: [], area: null, enemy_capabilities: [],
+        task_assembly: null, units_duty: null, placement_candidates: [], missing_information: [], seen_planning: false,
+        doctrine_upload_required: null, doctrine_sources: [], doctrine_application_policy: null,
+        enemy_forces: null, enemy_bases: [], friendly_trial_bases: [], proposed_units: [],
+        staff_brief_2: null, external_raw: {},
         files: [], steps: [],
     };
 
     for (const e of list) {
         const det = BRIEF.detectMdmp(e.data);
-        const step = det.is ? det.step : 'unknown';
         const file = e.filename || '(unnamed)';
+        const fileStem = String(file).replace(/\.[^.]+$/, '').toUpperCase();
+        const step = det.is ? det.step : (STAFF2_FILE_SECTION[fileStem] ? 'staff_brief_2' : 'unknown');
         state.files.push({ filename: file, mdmp_step: step, matched_keys: det.is ? det.matched : [] });
         if (det.is) state.steps.push(step);
         if (step === 'coa_development') mapStep3(e.data, file, state);
         else if (step === 'coa_analysis') mapStep4(e.data, file, state);
         else if (step === 'coa_comparison') mapStep5(e.data, file, state);
-        else if (step === 'planning_guidance' || step === 'staff_brief') mapPlanning(e.data, file, state);
+        else if (step === 'planning_guidance') mapPlanning(e.data, file, state);
+        else if (step === 'staff_brief' || step === 'staff_brief_2') mapStaffBrief2(e.data, file, state);
     }
 
     // Assemble the brief.
@@ -433,13 +989,51 @@ function adaptMdmpBundle(entries) {
     ob.constraints = state.constraints;
     ob.assumptions = state.assumptions;
     ob.timeline = state.timeline;
+    ob.missing_information = state.missing_information;
+    if (state.seen_planning) {
+        ob.task_assembly = state.task_assembly || Object.assign(defaultTaskAssembly(), {
+            doctrine_upload_required: true,
+            doctrine_sources: [],
+            doctrine_application_policy: 'operator_uploaded_doctrine_required_before_final_tasking',
+            source_type: 'ai_candidate_from_external_llm',
+            needs_review: true,
+        });
+        if (state.doctrine_upload_required !== null) ob.task_assembly.doctrine_upload_required = state.doctrine_upload_required;
+        else if (!('doctrine_upload_required' in ob.task_assembly)) ob.task_assembly.doctrine_upload_required = true;
+        if (state.doctrine_sources.length) ob.task_assembly.doctrine_sources = state.doctrine_sources;
+        else if (!Array.isArray(ob.task_assembly.doctrine_sources)) ob.task_assembly.doctrine_sources = [];
+        if (state.doctrine_application_policy) ob.task_assembly.doctrine_application_policy = state.doctrine_application_policy;
+        if (!ob.task_assembly.doctrine_application_policy) {
+            ob.task_assembly.doctrine_application_policy = 'operator_uploaded_doctrine_required_before_final_tasking';
+        }
+        ob.units_duty = state.units_duty;
+        ob.placement_candidates = state.placement_candidates;
+        ob.enemy_forces = state.enemy_forces;
+        ob.enemy_bases = state.enemy_bases;
+        ob.friendly_trial_bases = state.friendly_trial_bases;
+        ob.proposed_units = state.proposed_units;
+    }
     if (state.area) ob.area_of_operations = state.area;
     if (state.force_comparison) ob.force_comparison = state.force_comparison;
+    if (state.staff_brief_2) {
+        if (state.seen_planning) {
+            state.staff_brief_2.step1_linkage = {
+                task_assembly: !!ob.task_assembly,
+                proposed_units: ob.proposed_units.length,
+                doctrine_upload_required: !!(ob.task_assembly && ob.task_assembly.doctrine_upload_required),
+                placement_candidates: ob.placement_candidates.length,
+                needs_review: true,
+                source_type: 'ai_candidate_from_external_llm',
+            };
+        }
+        ob.staff_brief_2 = state.staff_brief_2;
+    }
+    if (Object.keys(state.external_raw).length) ob.external_raw = state.external_raw;
 
-    // COAs: 2 BLUE always (even if empty — the operator sees what's missing),
-    // + RED most-likely when the source carried it. RED most-dangerous is
-    // NEVER invented (D3) — Generate More produces it later.
-    const coas = state.blue.slice();
+    // COAs are review objects only when a COA-stage source exists. Step 1/2
+    // imports remain task/force understanding, not draft COA creation.
+    const hasCoaStage = state.steps.some(s => s === 'coa_development' || s === 'coa_analysis' || s === 'coa_comparison');
+    const coas = hasCoaStage ? state.blue.slice() : [];
     if (state.red_ml) {
         const red = newCoa('coa-red-ml', 'RED', 'العمل الأكثر احتمالاً للعدو', 'Enemy Most Likely COA');
         red.intent = state.red_ml.text;
@@ -453,6 +1047,7 @@ function adaptMdmpBundle(entries) {
     // Brief-level ambiguities: per-COA gaps roll up so the review screen's
     // single funnel shows them.
     const ambiguities = [];
+    for (const m of state.missing_information) ambiguities.push('[step1] ' + m);
     for (const c of coas) {
         for (const m of c.missing_information) ambiguities.push('[' + c.id + '] ' + m);
     }

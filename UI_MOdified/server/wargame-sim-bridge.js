@@ -51,6 +51,7 @@ const LOCATION = require(path.join(__dirname, 'ai', 'location-intelligence.js'))
 // MULTI-COUNTRY-A: dependency-free .xlsx reader + coalition Step 1 ORBAT model.
 const XLSX = require(path.join(__dirname, 'ai', 'xlsx-text.js'));
 const MULTICOUNTRY = require(path.join(__dirname, 'ai', 'multi-country-orbat.js'));
+const FREE_FIGHT_LLM = require(path.join(__dirname, 'ai', 'free-fight-llm-plan.js'));
 
 // Collect a request body and parse it. cb(obj) on success; cb(null) when the
 // body is empty; cb(undefined) when a body is present but not valid JSON.
@@ -1223,6 +1224,25 @@ function handle(req, res, ctx) {
     const { url, pathname, method, sendJson } = ctx;
     if (!pathname.startsWith('/api/wargame-sim/')) return false;
     const c = cfg();
+
+    if (pathname === '/api/wargame-sim/free-fight/llm-plan' && method === 'POST') {
+        readJsonBody(req, function (body) {
+            if (body === undefined) {
+                sendJson(res, 200, { ok: false, reason: 'invalid_json' });
+                return;
+            }
+            FREE_FIGHT_LLM.createPlan(body || {})
+                .then(function (r) { sendJson(res, r.status || 200, r.payload || { ok: false, reason: 'llm_failed' }); })
+                .catch(function (e) {
+                    sendJson(res, 200, {
+                        ok: false,
+                        reason: 'llm_unavailable',
+                        error: e && e.message ? String(e.message).slice(0, 240) : String(e),
+                    });
+                });
+        });
+        return true;
+    }
 
     // ── status ──
     if (pathname === '/api/wargame-sim/status' && method === 'GET') {

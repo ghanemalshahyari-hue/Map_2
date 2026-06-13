@@ -36,6 +36,15 @@
     var _progress = 0, _running = false, _paused = false, _timer = null;
     var _layer = null, _panel = null, _card = null, _aiPanel = null;
     var _plan = null, _terrain = { available: false }, _objectiveSource = null;
+    var _plannerMode = 'deterministic';
+    var _planSource = 'deterministic';
+    var _llmStatus = {
+        state: 'idle',
+        message: '',
+        validation_result: 'not_requested',
+        fallback_reason: null,
+    };
+    var _llmRequestSeq = 0;
 
     function W() { return (typeof window !== 'undefined') ? window : root; }
     function mapReady() { var w = W(); return !!(w && w.L && w.map && typeof w.L.layerGroup === 'function'); }
@@ -82,26 +91,48 @@
         return lerp(obj, anchor, BLUE_RING);
     }
 
-    function selectSample() {
-        _red = []; _blue = []; _plan = null;
-        if (!finiteLL(_objective) || !_allGroups.length) return;
+    function applyPlanToGroups(plan, source) {
+        _plan = plan || null;
+        _planSource = source || 'deterministic';
+        var byId = {}; _allGroups.forEach(function (g) { byId[g.id] = g; });
+        _red = arr(_plan && _plan.red_attack_plan).map(function (e) {
+            var g = byId[e.demo_group_id];
+            return g ? prep(g, 'RED', cloneLL(e._target || _objective), e) : null;
+        }).filter(Boolean);
+        _blue = arr(_plan && _plan.blue_reaction_plan).map(function (e) {
+            var g = byId[e.demo_group_id];
+            var t = cloneLL(e._target || e.intercept_or_defend_location);
+            return g ? prep(g, 'BLUE', t, e) : null;
+        }).filter(Boolean);
+    }
+
+    function buildDeterministicPlan() {
         var AI = aiPlanner();
         if (AI && typeof AI.buildPlan === 'function') {
-            // AI-lite: the planner decides which RED groups attack + which BLUE
-            // groups react and where (terrain-aware when terrain is available).
-            _plan = AI.buildPlan(_allGroups, _objective, { terrain: _terrain });
-            var byId = {}; _allGroups.forEach(function (g) { byId[g.id] = g; });
-            _red = arr(_plan.red_attack_plan).map(function (e) { var g = byId[e.demo_group_id]; return g ? prep(g, 'RED', cloneLL(e._target || _objective), e) : null; }).filter(Boolean);
-            _blue = arr(_plan.blue_reaction_plan).map(function (e) { var g = byId[e.demo_group_id]; return g ? prep(g, 'BLUE', cloneLL(e._target), e) : null; }).filter(Boolean);
-            return;
+            return AI.buildPlan(_allGroups, _objective, { terrain: _terrain });
         }
-        // Fallback (planner not loaded): nearest 2 RED + 3 BLUE, geometric.
         var reds = _allGroups.filter(function (g) { return g.side === 'RED'; }).slice();
         var blues = _allGroups.filter(function (g) { return g.side === 'BLUE'; }).slice();
         reds.sort(function (a, b) { return dist2(a.anchor, _objective) - dist2(b.anchor, _objective); });
         blues.sort(function (a, b) { return dist2(a.anchor, _objective) - dist2(b.anchor, _objective); });
-        _red = reds.slice(0, RED_ATTACK).map(function (g) { return prep(g, 'RED', cloneLL(_objective)); });
-        _blue = blues.slice(0, BLUE_REACT).map(function (g) { return prep(g, 'BLUE', interceptPoint(g.anchor, _objective)); });
+        return {
+            planner: 'free-fight-ai-lite (deterministic fallback; planner module unavailable)',
+            terrain_used: false,
+            red_attack_plan: reds.slice(0, RED_ATTACK).map(function (g) {
+                return { demo_group_id: g.id, reason: 'Nearest RED anchor fallback.', route_summary: 'geometric fallback', confidence: 'low', warnings: ['planner_module_unavailable'], _target: cloneLL(_objective) };
+            }),
+            blue_reaction_plan: blues.slice(0, BLUE_REACT).map(function (g) {
+                return { demo_group_id: g.id, reaction_type: 'intercept', reason: 'Nearest BLUE anchor fallback.', route_summary: 'geometric fallback', confidence: 'low', warnings: ['planner_module_unavailable'], _target: interceptPoint(g.anchor, _objective) };
+            }),
+            warnings: ['deterministic_planner_module_unavailable'],
+            missing_information: [],
+        };
+    }
+
+    function selectSample() {
+        _red = []; _blue = []; _plan = null;
+        if (!finiteLL(_objective) || !_allGroups.length) return;
+        applyPlanToGroups(buildDeterministicPlan(), 'deterministic');
     }
     function prep(g, role, target, planEntry) {
         planEntry = planEntry || {};
@@ -134,6 +165,8 @@
         if (finiteLL(opts.objective)) { _objective = cloneLL(opts.objective); _objectiveSource = 'opts'; }
         else { var d = deriveObjective(_payload); _objective = d; _objectiveSource = finiteLL(d) ? 'brief' : null; }
         _progress = 0; _running = false; _paused = false;
+        _planSource = 'deterministic';
+        _llmStatus = { state: 'idle', message: '', validation_result: 'not_requested', fallback_reason: null };
         selectSample();
         return getState();
     }
@@ -144,6 +177,8 @@
         try { if (finiteLL(_objective)) W().__rmoozFreeFightObjective = { lat: _objective.lat, lon: _objective.lon }; } catch (_) {}
         _terrain = { available: false };   // re-probe per new objective/targets
         _progress = 0; _running = false; _paused = false; clearTimer();
+        _planSource = 'deterministic';
+        _llmStatus = { state: 'idle', message: '', validation_result: 'not_requested', fallback_reason: null };
         selectSample();
         if (mapReady()) { syncMarkers(); }
         updatePanel(); renderAiPanel(); probeTerrain();
@@ -151,6 +186,8 @@
     }
     function clearObjective() {
         _objective = null; _objectiveSource = null; _red = []; _blue = []; _plan = null; _terrain = { available: false };
+        _planSource = 'deterministic';
+        _llmStatus = { state: 'idle', message: '', validation_result: 'not_requested', fallback_reason: null };
         try { delete W().__rmoozFreeFightObjective; } catch (_) {}   // forget the persisted Objective X
         _progress = 0; _running = false; _paused = false; clearTimer();
         if (mapReady()) syncMarkers();
@@ -158,6 +195,20 @@
         return getState();
     }
     function groups() { return _red.concat(_blue); }
+
+    function setPlannerMode(mode) {
+        _plannerMode = String(mode || '').toLowerCase() === 'llm' ? 'llm' : 'deterministic';
+        _progress = 0; _running = false; _paused = false; clearTimer();
+        if (_plannerMode === 'deterministic') {
+            selectSample();
+            setLlmStatus('idle', '', 'not_requested', null);
+        } else {
+            setLlmStatus('idle', '', 'not_requested', null);
+        }
+        if (mapReady()) syncMarkers();
+        updatePanel(); renderAiPanel();
+        return getState();
+    }
 
     function step() {
         if (!_running || !finiteLL(_objective)) return;
@@ -167,12 +218,95 @@
         if (mapReady()) syncMarkers();
         updatePanel();
     }
-    function start() {
-        if (!canStartFreeFight()) return getState();   // needs Objective X + a group + anchors
+    function setLlmStatus(state, message, validation, fallback) {
+        _llmStatus = {
+            state: state || 'idle',
+            message: message || '',
+            validation_result: validation || _llmStatus.validation_result || 'not_requested',
+            fallback_reason: fallback || null,
+        };
+        updatePanel();
+        renderAiPanel();
+    }
+    function startMovementNow() {
+        if (!canStartFreeFight()) return getState();
         _running = true; _paused = false;
         if (mapReady() && typeof setInterval === 'function') { clearTimer(); _timer = setInterval(step, TICK_MS); }
         updatePanel();
         return getState();
+    }
+    function buildLlmRequestBody() {
+        return {
+            objective: _objective ? cloneLL(_objective) : null,
+            groups: _allGroups.map(function (g) {
+                return {
+                    id: g.id, side: g.side, country: g.country || null, country_key: g.country_key || null,
+                    base_name_en: g.base_name_en || null, base_name_ar: g.base_name_ar || null,
+                    category_counts: g.category_counts || {}, symbol_category: g.symbol_category || null,
+                    anchor: g.anchor ? cloneLL(g.anchor) : null,
+                };
+            }),
+            terrain: _terrain || { available: false },
+            missing_information: arr(_plan && _plan.missing_information),
+        };
+    }
+    function fallbackToDeterministic(reason, startAfter) {
+        selectSample();
+        setLlmStatus('fallback', 'LLM unavailable or invalid response - using RMOOZ deterministic planner', 'rejected', reason || 'llm_unavailable');
+        if (mapReady()) syncMarkers();
+        renderAiPanel();
+        if (startAfter) return startMovementNow();
+        return getState();
+    }
+    function requestLlmPlan(startAfter) {
+        var w = W();
+        if (!canStartFreeFight()) return Promise.resolve(getState());
+        if (!w || typeof w.fetch !== 'function') return Promise.resolve(fallbackToDeterministic('fetch_unavailable', startAfter));
+        var seq = ++_llmRequestSeq;
+        setLlmStatus('loading', 'Requesting LLM advisory plan...', 'pending', null);
+        var controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+        var timeout = null;
+        if (controller && typeof setTimeout === 'function') {
+            timeout = setTimeout(function () { try { controller.abort(); } catch (_) {} }, 30000);
+        }
+        return w.fetch('/api/wargame-sim/free-fight/llm-plan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(buildLlmRequestBody()),
+            signal: controller ? controller.signal : undefined,
+        }).then(function (r) { return r.json(); }).then(function (body) {
+            if (timeout) clearTimeout(timeout);
+            if (seq !== _llmRequestSeq) return getState();
+            if (!body || body.ok !== true || body.planner !== 'llm_advisory') {
+                return fallbackToDeterministic((body && (body.reason || body.error)) || 'invalid_llm_response', startAfter);
+            }
+            body.terrain_used = !!(_terrain && _terrain.available);
+            applyPlanToGroups(body, 'llm_advisory');
+            setLlmStatus('received', 'LLM advisory plan received - validated by RMOOZ', 'accepted', null);
+            if (mapReady()) syncMarkers();
+            renderAiPanel();
+            if (startAfter) return startMovementNow();
+            return getState();
+        }).catch(function (e) {
+            if (timeout) clearTimeout(timeout);
+            if (seq !== _llmRequestSeq) return getState();
+            return fallbackToDeterministic((e && e.name === 'AbortError') ? 'timeout' : 'llm_unavailable', startAfter);
+        });
+    }
+    function replan() {
+        _progress = 0; _running = false; _paused = false; clearTimer();
+        if (_plannerMode === 'llm') return requestLlmPlan(false);
+        selectSample();
+        setLlmStatus('idle', '', 'not_requested', null);
+        if (mapReady()) syncMarkers();
+        renderAiPanel(); updatePanel();
+        return getState();
+    }
+    function start() {
+        if (!canStartFreeFight()) return getState();   // needs Objective X + a group + anchors
+        if (_plannerMode === 'llm') return requestLlmPlan(true);
+        setLlmStatus('idle', '', 'not_requested', null);
+        return startMovementNow();
     }
     function pause() { _running = false; _paused = true; clearTimer(); updatePanel(); return getState(); }
     function reset() {
@@ -191,6 +325,7 @@
         if (!_red.length) w.push('No RED attack units found — لا توجد وحدات هجوم حمراء');
         if (!_blue.length) w.push('No BLUE reaction units found — لا توجد وحدات رد فعل زرقاء');
         if (_plan && _plan.terrain_used === false) w.push('Terrain unavailable; using geometric demo movement only');
+        if (_llmStatus && _llmStatus.state === 'fallback') w.push(_llmStatus.message);
         return w;
     }
     // FREE-FIGHT-AI-LITE visibility fix: the card SHOWS regardless of objective
@@ -209,7 +344,12 @@
             terrain_used: !!(_terrain && _terrain.available), terrain_available: !!(_terrain && _terrain.available),
             red_attack_plan: arr(_plan && _plan.red_attack_plan).length,
             blue_reaction_plan: arr(_plan && _plan.blue_reaction_plan).length,
-            ai_assisted: true, requires_commander_approval: true,
+            planner_mode: _plannerMode,
+            planner: _planSource,
+            llm_status: Object.assign({}, _llmStatus),
+            validation_result: _llmStatus.validation_result,
+            fallback_reason: _llmStatus.fallback_reason,
+            ai_assisted: _plannerMode === 'llm', requires_commander_approval: true,
             demo_only: true, review_only: true,
         };
     }
@@ -318,6 +458,12 @@
             if (st.objective_source === 'reused_previous') html += '<div style="margin-bottom:4px;font-size:11px;color:#7fd6a0;">↻ Reusing previous Objective X — إعادة استخدام الهدف السابق</div>';
             html += '<button data-act="place-obj" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#22303f;color:#cfe6ff;border-radius:5px;padding:6px 10px;margin-bottom:8px;">↻ Place new Objective X — ضع هدفاً جديداً</button>';
         }
+        html += '<div style="margin:2px 0 8px;padding:7px 8px;border:1px solid #2a3f55;border-radius:5px;background:#0c141d;">' +
+            '<label for="rmooz-ff-planner-mode" style="display:block;font-size:11px;color:#9ec2ec;margin-bottom:4px;">Mode:</label>' +
+            '<select id="rmooz-ff-planner-mode" data-act="planner-mode" style="width:100%;font:inherit;font-size:12px;background:#101b27;color:#e8eaed;border:1px solid #4a5f75;border-radius:4px;padding:5px;">' +
+            '<option value="deterministic"' + (_plannerMode === 'deterministic' ? ' selected' : '') + '>Deterministic Planner - RMOOZ planner, works offline</option>' +
+            '<option value="llm"' + (_plannerMode === 'llm' ? ' selected' : '') + '>LLM Assisted - Qwen/LiteLLM advisory, needs model</option>' +
+            '</select></div>';
         // FREE-FIGHT-CARD-VISIBILITY: the panel always opens; Start is gated on
         // Objective X (+ groups + anchors). No anchors → disabled + note; no
         // objective → disabled + "Place Objective X to start" note.
@@ -333,10 +479,15 @@
         }
         html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">' +
             startBtn +
+            '<button data-act="replan" style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#172436;color:#9ec2ec;border-radius:5px;padding:5px 10px;">Re-plan</button>' +
             '<button data-act="pause" style="font:inherit;cursor:pointer;border:1px solid #8a6a20;background:#2a2412;color:#e0c060;border-radius:5px;padding:5px 10px;">⏸ Pause</button>' +
             '<button data-act="reset" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:5px;padding:5px 10px;">⟲ Reset</button>' +
             '<button data-act="clear-obj" style="font:inherit;cursor:pointer;border:1px solid #7a3030;background:#241414;color:#f0a0a0;border-radius:5px;padding:5px 10px;">✕ Clear Objective X</button></div>';
         html += startNote;
+        if (_llmStatus && _llmStatus.message) {
+            var statusColor = _llmStatus.state === 'received' ? '#7fd6a0' : (_llmStatus.state === 'loading' ? '#e0c060' : '#e0a93a');
+            html += '<div style="margin:2px 0 6px;font-size:11px;color:' + statusColor + ';">' + esc(_llmStatus.message) + '</div>';
+        }
         html += '<div style="font-size:11px;color:#9aa3ad;margin-bottom:4px;">' + esc(objLine) + '</div>';
         if (st.warnings && st.warnings.length) {
             html += '<div style="margin-bottom:6px;font-size:11px;color:#e0a93a;">' +
@@ -349,8 +500,10 @@
             '⚠ AI-assisted demo only — not final tasking — requires commander approval<br>' +
             'عرض تجريبي بمساعدة الذكاء الاصطناعي — ليس إسناد واجب نهائي — يحتاج اعتماد القائد</div>';
         _panel.innerHTML = html;
-        bind('start', start); bind('pause', pause); bind('reset', reset); bind('clear-obj', clearObjective); bind('close', clear);
+        bind('start', start); bind('replan', replan); bind('pause', pause); bind('reset', reset); bind('clear-obj', clearObjective); bind('close', clear);
         bind('place-obj', armPlaceObjective);
+        var modeSel = _panel.querySelector('[data-act="planner-mode"]');
+        if (modeSel && modeSel.addEventListener) modeSel.addEventListener('change', function () { setPlannerMode(modeSel.value); });
     }
     function bind(act, fn) { if (!_panel) return; var b = _panel.querySelector('[data-act="' + act + '"]'); if (b && b.addEventListener) b.addEventListener('click', fn); }
 
@@ -391,6 +544,12 @@
         }
         var h = '<div style="font-weight:700;color:#9ec2ec;font-size:13px;margin-bottom:4px;">AI Free Fight Reasoning — تفسير قرار الذكاء الاصطناعي</div>' +
             '<div style="font-size:10px;color:#7f93a6;margin-bottom:6px;">' + esc(_plan.planner || 'deterministic heuristic (no LLM)') + ' · terrain_used: ' + (!!_plan.terrain_used) + '</div>';
+        h += '<div style="font-size:11px;color:#cdd8e4;margin-bottom:6px;padding:5px 7px;border:1px solid #2a3f55;border-radius:4px;background:#0c141d;">' +
+            'planner mode: ' + esc(_plannerMode === 'llm' ? 'LLM Assisted' : 'Deterministic Planner') + '<br>' +
+            'active planner: ' + esc(_planSource === 'llm_advisory' ? 'LLM advisory' : 'deterministic') + '<br>' +
+            'validation: ' + esc(_llmStatus.validation_result || 'not_requested') +
+            (_llmStatus.fallback_reason ? '<br>fallback: ' + esc(_llmStatus.fallback_reason) : '') + '<br>' +
+            'LLM output is advisory only - RMOOZ validated</div>';
         h += '<div style="color:#f0a0a0;font-weight:600;font-size:12px;">RED attack (' + arr(_plan.red_attack_plan).length + ')</div>';
         h += arr(_plan.red_attack_plan).map(function (e) { return entry(e, '#f0a0a0'); }).join('') || '<div style="color:#e0a93a;font-size:11px;">No RED attack groups available</div>';
         h += '<div style="color:#7fd6a0;font-weight:600;font-size:12px;margin-top:6px;">BLUE reaction (' + arr(_plan.blue_reaction_plan).length + ')</div>';
@@ -424,7 +583,7 @@
                         routes[x.id] = { available: true, max_slope_deg: (s.max_deg != null ? s.max_deg : null), elevation_gain_m: gain, mobility: mob, distance_km: p.distance_km };
                     });
                     _terrain = { available: true, routes: routes };
-                    selectSample();
+                    if (_planSource !== 'llm_advisory') selectSample();
                     if (mapReady()) syncMarkers();
                     renderAiPanel(); updatePanel();
                 }).catch(function () {});
@@ -441,6 +600,8 @@
         if (_aiPanel && _aiPanel.parentNode) _aiPanel.parentNode.removeChild(_aiPanel); _aiPanel = null;
         if (_card && _card.parentNode) _card.parentNode.removeChild(_card); _card = null;
         _red = []; _blue = []; _allGroups = []; _objective = null; _objectiveSource = null; _plan = null; _terrain = { available: false };
+        _planSource = 'deterministic';
+        _llmStatus = { state: 'idle', message: '', validation_result: 'not_requested', fallback_reason: null };
         _progress = 0; _running = false; _paused = false;
         // NOTE: clear() closes the overlay but KEEPS the persisted Objective X
         // (window.__rmoozFreeFightObjective) so re-opening can reuse it; only
@@ -465,9 +626,10 @@
 
     var API = {
         mount: mount, init: init, setObjective: setObjective, clearObjective: clearObjective,
-        start: start, pause: pause, reset: reset, step: step, clear: clear,
+        start: start, pause: pause, reset: reset, step: step, replan: replan, clear: clear,
+        setPlannerMode: setPlannerMode,
         getState: getState, getGroups: getGroups, getRed: getRed, getBlue: getBlue,
-        getObjective: getObjective, getPlan: getPlan,
+        getObjective: getObjective, getPlan: getPlan, getLlmStatus: function () { return Object.assign({}, _llmStatus); },
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozFreeFightDemo = API;

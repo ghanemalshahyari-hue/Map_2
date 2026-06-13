@@ -64,6 +64,16 @@
         air_defense:     { glyph: '⊕', label_en: 'Air Defense',      label_ar: 'دفاع جوي' },                 // ⊕
         radar:           { glyph: '◎', label_en: 'Radar',            label_ar: 'رادار' },                             // ◎
         logistics:       { glyph: '▦', label_en: 'Logistics',        label_ar: 'إمداد' },                             // ▦
+        infantry:        { glyph: 'I',      label_en: 'Infantry',         label_ar: 'مشاة' },
+        mechanized_infantry: { glyph: 'M',  label_en: 'Mechanized Infantry', label_ar: 'مشاة آلي' },
+        armor:           { glyph: 'T',      label_en: 'Armor / Tank',     label_ar: 'مدرع / دبابات' },
+        reconnaissance:  { glyph: 'R',      label_en: 'Reconnaissance',   label_ar: 'استطلاع' },
+        artillery:       { glyph: 'A',      label_en: 'Artillery',        label_ar: 'مدفعية' },
+        engineer:        { glyph: 'E',      label_en: 'Engineer',         label_ar: 'هندسة' },
+        hq:              { glyph: '★',      label_en: 'HQ',               label_ar: 'قيادة' },
+        air_base:        { glyph: '✈',      label_en: 'Air Base',         label_ar: 'قاعدة جوية' },
+        naval_base:      { glyph: '⚓',      label_en: 'Naval Base',       label_ar: 'قاعدة بحرية' },
+        land_base:       { glyph: '▣',      label_en: 'Land Base',        label_ar: 'قاعدة برية' },
         unknown:         { glyph: '?',      label_en: 'Unknown',          label_ar: 'غير معروف' },
     };
 

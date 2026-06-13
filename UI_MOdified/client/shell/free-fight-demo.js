@@ -140,6 +140,7 @@
             id: g.id, side: g.side, role: role, country: g.country, country_key: g.country_key,
             base_name_ar: g.base_name_ar, base_name_en: g.base_name_en, site_type: g.site_type,
             category_counts: g.category_counts || {}, total: g.total || 0, member_ids: g.member_ids || [],
+            unit_intel_summary: g.unit_intel_summary || null, unit_intel_warnings: g.unit_intel_warnings || [],
             anchor: cloneLL(g.anchor), target: target, current: cloneLL(g.anchor),
             phase: 'staged', demo_only: true, review_only: true, needs_review: true,
             requires_commander_approval: true, exact_unit_position: false, movement_status: 'demo',
@@ -369,6 +370,7 @@
     var COUNTRY_COLORS = { iran: '#f0707a', uae: '#5bd6a0', qatar: '#7bb8e8', bahrain: '#d9b34a', kuwait: '#b893e0', oman: '#5fc7c7', ksa: '#7fd6a0' };
     function colorFor(g) { return COUNTRY_COLORS[g.country_key] || (g.side === 'RED' ? '#f0a0a0' : '#7fd6a0'); }
     function dominant(g) {
+        if (g && g.unit_intel_summary && g.unit_intel_summary.dominant_symbol_category && g.unit_intel_summary.dominant_symbol_category !== 'unknown') return g.unit_intel_summary.dominant_symbol_category;
         var best = 'unknown', n = -1, cc = g.category_counts || {};
         Object.keys(cc).forEach(function (k) { if (cc[k] > n) { n = cc[k]; best = k; } });
         return best;
@@ -405,12 +407,40 @@
             });
             var m = w.L.marker(markerLatLng(g), { icon: icon, interactive: true, keyboard: false, title: g.role + ' demo group — not final tasking' });
             m._rmoozDemoOnly = true; m._rmoozReviewOnly = true; m._rmoozExactUnitPosition = false;
+            m._rmoozSymbolCategory = dominant(g);
+            m._rmoozUnitIntelSummary = g.unit_intel_summary || null;
             if (typeof m.on === 'function') m.on('click', function () { openDemoUnitCard(g); });
             _layer.addLayer(m);
         });
     }
 
     // Simple demo unit card (NOT the base card) — review-only.
+    function unitIntelCardHtml(g) {
+        var summary = (g && g.unit_intel_summary) || {};
+        var units = arr(summary.normalized_units);
+        if (!units.length) {
+            return '<div style="margin-top:7px;color:#e0a93a;font-size:11px;">unit intel: unknown - using review-only fallback</div>';
+        }
+        return '<div style="margin-top:7px;border-top:1px solid #26384a;padding-top:7px;">' +
+            units.slice(0, 5).map(function (u) {
+                var comp = arr(u.composition).map(function (c) {
+                    return (c.count || 1) + 'x ' + (c.echelon || '-') + ' ' + (c.unit_type || c.symbol_category || 'unknown');
+                }).join(', ') || '-';
+                var warns = arr(u.warnings).join(', ') || '-';
+                return '<div style="margin:5px 0;padding:6px 7px;border:1px solid #2a3f55;border-radius:5px;background:#0c141d;">' +
+                    '<div dir="rtl" style="color:#d8e0e8;">original: <b>' + esc(u.original_text || '-') + '</b></div>' +
+                    '<div>normalized: <b>' + esc(u.normalized_name_en || u.unit_type || '-') + '</b></div>' +
+                    '<div>type/echelon: ' + esc((u.unit_type || '-') + ' / ' + (u.echelon || '-')) + '</div>' +
+                    '<div>composition: ' + esc(comp) + '</div>' +
+                    '<div>symbol_category: <b>' + esc(u.symbol_category || 'unknown') + '</b></div>' +
+                    '<div>SIDC: <b>' + esc(u.sidc_candidate || 'review_required') + '</b> (' + esc(u.sidc_confidence || 'review_required') + ')</div>' +
+                    '<div>confidence: ' + esc(u.confidence || 'low') + ' | warnings: ' + esc(warns) + '</div>' +
+                '</div>';
+            }).join('') +
+            '<div style="color:#e0c060;font-size:11px;">SIDC candidate is review-required; no final SIDC or exact unit position is assigned.</div>' +
+        '</div>';
+    }
+
     function openDemoUnitCard(g) {
         var w = W();
         if (!w || !w.document || !w.document.body) return;
@@ -428,6 +458,7 @@
             'grouped platforms: ' + esc(cats) + '<br>phase: ' + esc(g.phase) + '<br>' +
             '<span style="color:#e0c060;">demo_only:true · review_only:true · exact_unit_position:false</span></div>' +
             '<div style="margin-top:8px;padding:5px 7px;border-radius:4px;background:#2a2412;border:1px solid #b8860b;color:#e0c060;font-size:11px;">Demo only — not final tasking — requires commander approval<br>حركة تجريبية فقط — ليست إسناد واجب نهائي — تحتاج اعتماد القائد</div>';
+        _card.innerHTML += '<div style="margin-top:7px;color:#9ec2ec;font-size:11px;">dominant symbol: <b>' + esc(dominant(g)) + '</b></div>' + unitIntelCardHtml(g);
         w.document.body.appendChild(_card);
         var x = _card.querySelector('[data-act="x"]'); if (x) x.addEventListener('click', function () { if (_card && _card.parentNode) _card.parentNode.removeChild(_card); _card = null; });
     }

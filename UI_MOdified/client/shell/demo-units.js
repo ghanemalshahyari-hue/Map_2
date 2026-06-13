@@ -19,7 +19,12 @@
 (function (root) {
     'use strict';
 
-    var BUCKETS = ['air_fighter', 'air_attack', 'air_transport', 'maritime_patrol', 'helicopter', 'uav', 'naval_surface', 'ground_unit', 'unknown'];
+    var BUCKETS = [
+        'air_fighter', 'air_attack', 'air_transport', 'maritime_patrol', 'helicopter', 'uav',
+        'naval_surface', 'submarine', 'ground_unit', 'infantry', 'mechanized_infantry', 'armor',
+        'reconnaissance', 'artillery', 'air_defense', 'radar', 'engineer', 'logistics', 'hq',
+        'air_base', 'naval_base', 'land_base', 'unknown'
+    ];
 
     function arr(v) { return Array.isArray(v) ? v : []; }
     function num(v) { if (v == null || v === '') return null; var n = Number(v); return Number.isFinite(n) ? n : null; }
@@ -28,11 +33,23 @@
             (p && typeof p === 'object' && !Array.isArray(p) ? p : {});
     }
     function W() { return (typeof window !== 'undefined') ? window : root; }
+    function normalizer() {
+        var w = W();
+        if (w && w.RmoozUnitIntelNormalizer) return w.RmoozUnitIntelNormalizer;
+        try { return require('./unit-intel-normalizer.js'); } catch (_) { return null; }
+    }
+    function unitIntel(unit) {
+        var N = normalizer();
+        if (!N || typeof N.normalizeUnit !== 'function') return null;
+        try { return N.normalizeUnit(unit); } catch (_) { return null; }
+    }
 
     // Category: prefer the canonical SYMBOL-DB ladder when loaded; else a small
     // built-in fallback so the module also works standalone.
     function rawCategory(unit) {
         var w = W();
+        var intel = unitIntel(unit);
+        if (intel && intel.symbol_category && intel.symbol_category !== 'unknown') return intel.symbol_category;
         try { if (w && w.RmoozSymbolDB && typeof w.RmoozSymbolDB.categorize === 'function') return w.RmoozSymbolDB.categorize(unit).symbol_category; } catch (_) {}
         try { if (w && w.RmoozBaseStatusPanel && typeof w.RmoozBaseStatusPanel.normalizePlatform === 'function') return w.RmoozBaseStatusPanel.normalizePlatform(unit).symbol_category; } catch (_) {}
         return localCategory(unit);
@@ -54,10 +71,12 @@
         switch (cat) {
             case 'air_fighter': case 'air_attack': case 'air_transport':
             case 'maritime_patrol': case 'helicopter': case 'uav': case 'naval_surface':
+            case 'submarine': case 'ground_unit': case 'infantry': case 'mechanized_infantry':
+            case 'armor': case 'reconnaissance': case 'artillery': case 'air_defense':
+            case 'radar': case 'engineer': case 'logistics': case 'hq':
+            case 'air_base': case 'naval_base': case 'land_base':
                 return cat;
-            case 'submarine': return 'naval_surface';
-            case 'air_defense': case 'radar': case 'hq': case 'logistics': case 'base_facility': case 'ground_unit':
-                return 'ground_unit';
+            case 'base_facility': return 'land_base';
             default: return 'unknown';
         }
     }
@@ -77,6 +96,7 @@
         var order = [];
         pus.forEach(function (pu, i) {
             var cat = categoryOf(pu);
+            var intel = unitIntel(pu);
             var lat = num(pu.lat), lon = num(pu.lon);
             var du = {
                 id: 'DEMO-' + (pu.id || ('PU' + i)),
@@ -85,7 +105,7 @@
                 side: String(pu.side || '').toUpperCase(), country: pu.country || null, country_key: pu.country_key || null,
                 base_name_ar: pu.base_name_ar || '', base_name_en: pu.base_name_en || '', site_type: pu.site_type || null,
                 platform: pu.platform || null, estimated_count: pu.estimated_count == null ? null : pu.estimated_count,
-                symbol_category: cat,
+                symbol_category: cat, unit_intel: intel,
                 anchor: { lat: lat, lon: lon },
                 exact_unit_position: false, needs_review: true,
                 source_type: pu.source_type || 'external_excel_orbat_candidate',
@@ -110,6 +130,13 @@
             if (!Number.isFinite(amt) || amt < 1) amt = 1;
             g.category_counts[cat] += amt;
             g.total += amt;
+        });
+        order.forEach(function (k) {
+            var g = groupMap[k];
+            var members = demo_units.filter(function (du) { return g.member_ids.indexOf(du.id) !== -1; });
+            var summary = summarizeUnitIntel(members);
+            g.unit_intel_summary = summary;
+            g.unit_intel_warnings = summary.warnings;
         });
         return { demo_units: demo_units, groups: order.map(function (k) { return groupMap[k]; }) };
     }
@@ -146,15 +173,64 @@
                 var gc = c.grouped_units_count != null ? c.grouped_units_count : c.grouped_unit_count;
                 total = Number(gc) || 0;
             }
+            var summary = summarizeUnitIntel(members);
             return {
                 id: 'DEMOGRP-' + String(c.side || '').toUpperCase() + '-' + (c.country_key || 'ctry') + '-' + i,
                 side: String(c.side || '').toUpperCase(), country: c.country || null, country_key: c.country_key || null,
                 base_name_ar: c.base_name_ar || '', base_name_en: c.base_name_en || c.mention || '', site_type: c.site_type || null,
                 anchor: { lat: num(c.lat), lon: num(c.lon) },
                 member_ids: members.map(function (m) { return m.id; }), category_counts: counts, total: total,
+                unit_intel_summary: summary, unit_intel_warnings: summary.warnings,
                 demo_only: true, review_only: true, movement_status: 'demo',
             };
         });
+    }
+
+    function summarizeUnitIntel(members) {
+        var source = arr(members);
+        var normalized = source.map(function (m) {
+            var intel = m && m.unit_intel ? m.unit_intel : unitIntel(m);
+            if (!intel) return null;
+            return {
+                original_text: intel.original_text,
+                normalized_name_ar: intel.normalized_name_ar,
+                normalized_name_en: intel.normalized_name_en,
+                unit_number: intel.unit_number,
+                echelon: intel.echelon,
+                unit_family: intel.unit_family,
+                unit_type: intel.unit_type,
+                symbol_category: intel.symbol_category,
+                platform_category: intel.platform_category,
+                sidc_candidate: intel.sidc_candidate,
+                sidc_confidence: intel.sidc_confidence,
+                composition: intel.composition || [],
+                confidence: intel.confidence,
+                warnings: intel.warnings || [],
+                missing_information: intel.missing_information || [],
+                needs_review: true,
+                exact_unit_position: false,
+            };
+        }).filter(Boolean);
+        var tally = {}, warnings = [], missing = [];
+        normalized.forEach(function (n, idx) {
+            var cat = n.symbol_category || 'unknown';
+            var amt = Number(source[idx] && source[idx].estimated_count);
+            if (!Number.isFinite(amt) || amt < 1) amt = 1;
+            tally[cat] = (tally[cat] || 0) + amt;
+            arr(n.warnings).forEach(function (w) { if (warnings.indexOf(w) === -1) warnings.push(w); });
+            arr(n.missing_information).forEach(function (m) { if (missing.indexOf(m) === -1) missing.push(m); });
+        });
+        var best = 'unknown', bestN = -1;
+        Object.keys(tally).forEach(function (k) { if (tally[k] > bestN) { best = k; bestN = tally[k]; } });
+        return {
+            normalized_units: normalized,
+            dominant_symbol_category: best,
+            warnings: warnings,
+            missing_information: missing,
+            sidc_candidate: 'review_required',
+            needs_review: true,
+            exact_unit_position: false,
+        };
     }
 
     var API = { buildDemoUnits: buildDemoUnits, buildGroupsFromAnchors: buildGroupsFromAnchors, categoryOf: categoryOf, BUCKETS: BUCKETS };

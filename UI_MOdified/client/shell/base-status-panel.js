@@ -20,6 +20,11 @@
     }
     function arr(v) { return Array.isArray(v) ? v : []; }
     function lower(s) { return String(s == null ? '' : s).toLowerCase(); }
+    function unitIntel(unit) {
+        var N = (typeof window !== 'undefined' && window.RmoozUnitIntelNormalizer) || null;
+        if (!N || typeof N.normalizeUnit !== 'function') return null;
+        try { return N.normalizeUnit(unit); } catch (_) { return null; }
+    }
     function text(v, fallback) {
         if (v == null || v === '') return fallback == null ? '' : fallback;
         return String(v);
@@ -107,6 +112,7 @@
 
     function normalizePlatform(unit) {
         var platform = text(unit && (unit.platform || unit.platform_name || unit.name || unit.type || unit.type_ar), '');
+        var intel = unitIntel(unit);
         var p = lower(platform).replace(/[–—]/g, '-');
         var cat = 'unknown';
         var status = 'unknown';
@@ -129,6 +135,12 @@
         else if (/logistic|supply|depot/.test(p)) { cat = 'logistics'; status = 'category_only'; confidence = 0.64; }
         else if (/ground|armor|tank|infantry|brigade|battalion/.test(p)) { cat = 'ground_unit'; status = 'category_only'; confidence = 0.62; }
 
+        if (intel && intel.symbol_category && intel.symbol_category !== 'unknown') {
+            cat = intel.symbol_category;
+            status = 'unit_intel';
+            confidence = intel.confidence === 'high' ? 0.86 : (intel.confidence === 'medium' ? 0.66 : 0.42);
+        }
+
         var result = {
             symbol_category: cat,
             symbol_category_candidates: candidates,
@@ -141,7 +153,8 @@
             weapons: [],
             magazines: [],
             unknown_fields: cat === 'unknown' ? ['platform'] : [],
-            needs_review: true
+            needs_review: true,
+            unit_intel: intel
         };
         // SYMBOL-DB-B: merge catalog-sourced systems (sensors/weapons/magazines) when the
         // canonical categorizer is loaded. Systems come ONLY from the DB1 catalog — never
@@ -176,6 +189,12 @@
             naval_surface: ['Maritime patrol'],
             submarine: ['Maritime patrol'],
             ground_unit: ['Ground/HQ/logistics'],
+            infantry: ['Ground/HQ/logistics'],
+            mechanized_infantry: ['Ground/HQ/logistics'],
+            armor: ['Ground/HQ/logistics'],
+            reconnaissance: ['UAV/recon', 'Ground/HQ/logistics'],
+            artillery: ['Ground/HQ/logistics'],
+            engineer: ['Ground/HQ/logistics'],
             air_defense: ['Ground/HQ/logistics'],
             radar: ['Ground/HQ/logistics'],
             base_facility: ['Ground/HQ/logistics'],
@@ -202,7 +221,9 @@
                 case 'helicopter': counts.helicopters += amount; break;
                 case 'uav': counts.uav += amount; break;
                 case 'naval_surface': case 'submarine': counts.naval += amount; break;
-                case 'ground_unit': case 'air_defense': case 'radar': case 'hq': case 'logistics': counts.ground += amount; break;
+                case 'ground_unit': case 'infantry': case 'mechanized_infantry': case 'armor':
+                case 'reconnaissance': case 'artillery': case 'engineer':
+                case 'air_defense': case 'radar': case 'hq': case 'logistics': counts.ground += amount; break;
                 default: counts.unknown += amount;
             }
         });
@@ -253,6 +274,22 @@
     function sysCell(label, html) {
         return '<div class="bsp-sysrow"><span>' + esc(label) + '</span><div>' + html + '</div></div>';
     }
+    function fmtComposition(list) {
+        var items = arr(list).map(function (c) {
+            return (c.count || 1) + 'x ' + (c.echelon || '-') + ' ' + (c.unit_type || c.symbol_category || 'unknown');
+        });
+        return items.length ? items.join(', ') : '-';
+    }
+    function unitIntelRows(intel) {
+        if (!intel) return sysCell('Unit intel', '<span class="bsp-dim">not available</span>');
+        return sysCell('Original text', esc(intel.original_text || '-')) +
+            sysCell('Normalized type', esc((intel.unit_type || '-') + ' / ' + (intel.echelon || '-'))) +
+            sysCell('Composition', esc(fmtComposition(intel.composition))) +
+            sysCell('Symbol category', esc(intel.symbol_category || 'unknown')) +
+            sysCell('SIDC candidate', esc((intel.sidc_candidate || 'review_required') + ' / ' + (intel.sidc_confidence || 'review_required'))) +
+            sysCell('Unit confidence', esc(intel.confidence || 'low')) +
+            sysCell('Unit warnings', esc(arr(intel.warnings).join(', ') || '-'));
+    }
     function renderUnitTable(units) {
         if (!units.length) return '<div class="bsp-empty">No proposed units linked to this base.</div>';
         var rows = units.map(function (u) {
@@ -281,6 +318,7 @@
                 '<div class="bsp-sysgrid">' +
                     sysCell('Platform class', n.platform_class ? esc(n.platform_class) : '<span class="bsp-dim">—</span>') +
                     sysCell('Catalog', esc(n.catalog_match_status) + ' · ' + esc(fmtConf(n.catalog_confidence))) +
+                    unitIntelRows(n.unit_intel) +
                     sysCell('Sensors', sysChips(n.sensors, fmtSensor)) +
                     sysCell('Weapons', sysChips(n.weapons, fmtWeapon)) +
                     sysCell('Magazines', sysChips(n.magazines, fmtMag)) +

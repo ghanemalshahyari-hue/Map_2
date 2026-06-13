@@ -32,7 +32,7 @@
     var BLUE_RING = 0.35;                    // BLUE intercept standoff (fraction of anchor→obj dist)
 
     var _payload = null, _objective = null;
-    var _allGroups = [], _red = [], _blue = [];
+    var _allGroups = [], _red = [], _blue = [], _anchors = [];
     var _progress = 0, _running = false, _paused = false, _timer = null;
     var _layer = null, _panel = null, _card = null, _aiPanel = null;
     var _plan = null, _terrain = { available: false }, _objectiveSource = null;
@@ -84,6 +84,12 @@
         return groups.filter(function (g) { return finiteLL(g && g.anchor); });
     }
     function safeRequire() { try { return require('./demo-units.js'); } catch (_) { return null; } }
+    // Base anchors (placement_candidates) carry coords + site_type — used by
+    // DOMAIN-AWARE-MOVEMENT-A to find a coastal approach point for naval groups.
+    function anchorsOf(payload) {
+        var ob = (payload && payload.brief && payload.brief.operational_brief) || (payload && payload.operational_brief) || payload || {};
+        return arr(ob.placement_candidates).filter(function (c) { return c && finiteLL({ lat: num(c.lat), lon: num(c.lon) }); });
+    }
 
     // BLUE intercept point: a defensive standoff between Objective X and the BLUE
     // group's home base (on the bearing from X toward that base).
@@ -91,18 +97,42 @@
         return lerp(obj, anchor, BLUE_RING);
     }
 
+    // DOMAIN-AWARE-MOVEMENT-A: route each demo group by movement domain so ships
+    // don't glide straight into an inland Objective X and support units hold.
+    // window-only resolver with a Node require fallback (pure helper); review-only.
+    function domainMovement() { var w = W(); if (w && w.RmoozDomainMovement) return w.RmoozDomainMovement; try { return require('./domain-movement.js'); } catch (_) { return null; } }
+    function domainize(pg) {
+        if (!pg) return pg;
+        var DM = domainMovement();
+        if (!DM || typeof DM.buildDemoRoute !== 'function') { pg.movement_domain = null; pg.route_type = 'unknown_direct'; pg.route = null; return pg; }
+        var dest = finiteLL(pg.target) ? { lat: pg.target.lat, lon: pg.target.lon } : (finiteLL(_objective) ? cloneLL(_objective) : null);
+        var route = DM.buildDemoRoute(pg, dest, _anchors);   // pg carries anchor + category_counts + unit_intel_summary
+        pg.movement_domain = route.movement_domain;
+        pg.route_type = route.route_type;
+        pg.route = route;
+        // The marker glides to the route's TERMINAL waypoint (naval → coastal
+        // approach; support → hold at anchor; air/ground → destination).
+        var term = arr(route.waypoints).length ? route.waypoints[route.waypoints.length - 1] : null;
+        if (term && Number.isFinite(term.lat) && Number.isFinite(term.lng)) pg.target = { lat: term.lat, lon: term.lng };
+        arr(route.warnings).forEach(function (w) { if (pg.plan_warnings.indexOf(w) === -1) pg.plan_warnings.push(w); });
+        return pg;
+    }
     function applyPlanToGroups(plan, source) {
         _plan = plan || null;
         _planSource = source || 'deterministic';
         var byId = {}; _allGroups.forEach(function (g) { byId[g.id] = g; });
         _red = arr(_plan && _plan.red_attack_plan).map(function (e) {
-            var g = byId[e.demo_group_id];
-            return g ? prep(g, 'RED', cloneLL(e._target || _objective), e) : null;
+            var g = byId[e.demo_group_id]; if (!g) return null;
+            var pg = domainize(prep(g, 'RED', cloneLL(e._target || _objective), e));
+            e.movement_domain = pg.movement_domain; e.route_type = pg.route_type; e.route_warnings = pg.route ? arr(pg.route.warnings) : [];
+            return pg;
         }).filter(Boolean);
         _blue = arr(_plan && _plan.blue_reaction_plan).map(function (e) {
-            var g = byId[e.demo_group_id];
+            var g = byId[e.demo_group_id]; if (!g) return null;
             var t = cloneLL(e._target || e.intercept_or_defend_location);
-            return g ? prep(g, 'BLUE', t, e) : null;
+            var pg = domainize(prep(g, 'BLUE', t, e));
+            e.movement_domain = pg.movement_domain; e.route_type = pg.route_type; e.route_warnings = pg.route ? arr(pg.route.warnings) : [];
+            return pg;
         }).filter(Boolean);
     }
 
@@ -163,6 +193,7 @@
         opts = opts || {};
         _payload = payload || {};
         _allGroups = buildGroups(_payload);
+        _anchors = anchorsOf(_payload);
         if (finiteLL(opts.objective)) { _objective = cloneLL(opts.objective); _objectiveSource = 'opts'; }
         else { var d = deriveObjective(_payload); _objective = d; _objectiveSource = finiteLL(d) ? 'brief' : null; }
         _progress = 0; _running = false; _paused = false;
@@ -587,11 +618,14 @@
             w.document.body.appendChild(_aiPanel);
         }
         function entry(e, c) {
+            var rw = arr(e.route_warnings);
             return '<div style="margin:5px 0;padding:6px 8px;border:1px solid #2a3f55;border-radius:5px;background:#0c141d;font-size:11px;">' +
                 '<div style="color:' + c + ';font-weight:600;">' + esc(e.country || e.demo_group_id) + (e.reaction_type ? ' · ' + esc(e.reaction_type) : '') + ' · ' + esc(e.source_base || '-') + '</div>' +
                 '<div style="color:#cdd8e4;margin-top:2px;">' + esc(e.reason || '') + '</div>' +
-                '<div style="color:#9ab;margin-top:2px;">route: ' + esc(e.route_summary || '-') + '</div>' +
+                '<div style="color:#9ab;margin-top:2px;">domain: ' + esc(e.movement_domain || '-') + ' · route_type: ' + esc(e.route_type || '-') + '</div>' +
+                '<div style="color:#9ab;">route: ' + esc(e.route_summary || '-') + '</div>' +
                 '<div style="color:#9ab;">terrain: ' + esc(e.terrain_summary || '-') + '</div>' +
+                (rw.length ? '<div style="color:#e0a93a;">⚠ ' + esc(rw.join('; ')) + '</div>' : '') +
                 '<div style="color:#8fa5b8;">confidence: ' + esc(e.confidence || 'low') + (arr(e.warnings).length ? ' · ⚠ ' + esc(e.warnings.join(', ')) : '') + '</div></div>';
         }
         var h = '<div style="font-weight:700;color:#9ec2ec;font-size:13px;margin-bottom:4px;">AI Free Fight Reasoning — تفسير قرار الذكاء الاصطناعي</div>' +
@@ -608,6 +642,7 @@
         h += arr(_plan.blue_reaction_plan).map(function (e) { return entry(e, '#7fd6a0'); }).join('') || '<div style="color:#e0a93a;font-size:11px;">No BLUE reaction groups available</div>';
         if (arr(_plan.warnings).length) h += '<div style="margin-top:6px;font-size:11px;color:#e0a93a;">' + _plan.warnings.map(function (x) { return '⚠ ' + esc(x); }).join('<br>') + '</div>';
         if (arr(_plan.missing_information).length) h += '<div style="margin-top:4px;font-size:11px;color:#c98;">missing: ' + esc(_plan.missing_information.join(', ')) + '</div>';
+        h += '<div style="margin-top:6px;font-size:10px;color:#9ec2ec;">domain-aware demo route — not final tasking</div>';
         h += '<div style="margin-top:8px;padding:5px 7px;border-radius:4px;background:#2a2412;border:1px solid #b8860b;color:#e0c060;font-size:11px;">AI-assisted demo only — not final tasking — requires commander approval<br>عرض تجريبي بمساعدة الذكاء الاصطناعي — ليس إسناد واجب نهائي — يحتاج اعتماد القائد</div>';
         _aiPanel.innerHTML = h;
     }

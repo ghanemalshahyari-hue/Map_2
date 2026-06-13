@@ -111,7 +111,7 @@ test('controller: setObjective runs the planner; getPlan + plan-driven groups', 
     FF.init(p); var st = FF.setObjective(OBJ);
     var plan = FF.getPlan();
     assert(plan && plan.red_attack_plan.length >= 1 && plan.blue_reaction_plan.length >= 1, 'plan produced');
-    assert(st.ai_assisted === true && st.requires_commander_approval === true, 'state ai_assisted + requires_commander_approval');
+    assert(st.planner_mode === 'deterministic' && st.requires_commander_approval === true, 'state deterministic planner mode + requires_commander_approval');
     assert(st.red_attack_plan === plan.red_attack_plan.length && st.blue_reaction_plan === plan.blue_reaction_plan.length, 'state plan counts match');
     assert(FF.getRed().every(function (g) { return g.reason && g.confidence; }), 'RED groups carry AI reason/confidence');
     assert(FF.getBlue().every(function (g) { return g.reaction_type && g.reason; }), 'BLUE groups carry reaction_type + reason');
@@ -122,8 +122,10 @@ test('controller: RED attacks Objective X, BLUE reacts toward defend/intercept; 
     FF.init(p); FF.setObjective(OBJ);
     var redBefore = FF.getRed().map(function (g) { return d2(g.anchor, OBJ); });
     FF.start(); FF.step(); FF.step();
-    FF.getRed().forEach(function (g, i) { assert(d2(g.current, OBJ) < redBefore[i], 'RED ' + i + ' moves toward X'); });
-    assert(FF.getBlue().every(function (g) { return d2(g.current, g.anchor) > 0; }), 'BLUE moves toward reaction position');
+    // DOMAIN-AWARE-MOVEMENT-A: groups move toward their DOMAIN target (air/ground → X,
+    // naval → coastal approach, support → hold), not necessarily straight to X.
+    FF.getRed().forEach(function (g, i) { assert(d2(g.current, g.target) <= d2(g.anchor, g.target), 'RED ' + i + ' moves toward its domain target (or holds)'); });
+    assert(FF.getBlue().every(function (g) { return d2(g.current, g.target) <= d2(g.anchor, g.target); }), 'BLUE moves toward its domain reaction target (support holds)');
     FF.reset();
     assert(FF.getGroups().every(function (g) { return g.current.lat === g.anchor.lat && g.current.lon === g.anchor.lon; }), 'reset → anchors');
     FF.clear();

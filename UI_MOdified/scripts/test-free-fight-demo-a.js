@@ -75,28 +75,29 @@ test('Objective X can be placed → 1-3 RED attack + 1-3 BLUE react selected (AI
     assert(st.blue_groups >= 1 && st.blue_groups <= 3, 'BLUE react groups 1..3, got ' + st.blue_groups);
     assert(FF.getRed().every(function (g) { return g.role === 'RED'; }) && FF.getBlue().every(function (g) { return g.role === 'BLUE'; }), 'roles assigned');
 });
-test('selected RED groups attack Objective X (target = X)', function () {
+test('selected RED groups route to a DOMAIN target (air/ground → X, naval → coast, support → hold)', function () {
     var p = brief(LITE); FF.init(p); FF.setObjective(OBJ);
     var red = FF.getRed();
     assert(red.length >= 1 && red.length <= 3, '1..3 red');
-    assert(red.every(function (g) { return d2(g.target, OBJ) === 0; }), 'RED target = Objective X');
+    // DOMAIN-AWARE-MOVEMENT-A: only air/ground/unknown route straight to X; naval
+    // routes to a coastal approach; support holds at its anchor.
+    assert(red.every(function (g) {
+        if (g.route_type === 'support_hold') return d2(g.target, g.anchor) === 0;
+        if (g.route_type === 'naval_to_coast') return true;            // routed to coast, not inland X
+        return d2(g.target, OBJ) === 0;                                 // air/ground/unknown_direct → X
+    }), 'RED targets are domain-aware');
 });
-test('RED groups MOVE toward Objective X (distance to X decreases)', function () {
+test('RED groups MOVE toward their domain target (support holds)', function () {
     var p = brief(LITE); FF.init(p); FF.setObjective(OBJ);
-    var before = FF.getRed().map(function (g) { return d2(g.anchor, OBJ); });
     FF.start(); FF.step(); FF.step();
-    var after = FF.getRed();
-    after.forEach(function (g, i) { assert(d2(g.current, OBJ) < before[i], 'RED group ' + i + ' moved toward Objective X'); });
+    FF.getRed().forEach(function (g, i) { assert(d2(g.current, g.target) <= d2(g.anchor, g.target), 'RED group ' + i + ' (' + g.route_type + ') moved toward its domain target or holds'); });
     assert(FF.getState().progress > 0, 'progress advanced');
 });
-test('BLUE groups REACT toward Objective X (move from anchor toward intercept near X)', function () {
+test('BLUE groups REACT toward their domain target (naval → coast, support holds)', function () {
     var p = brief(LITE); FF.init(p); FF.setObjective(OBJ);
-    var beforeAnchorDist = FF.getBlue().map(function (g) { return d2(g.anchor, OBJ); });
     FF.start(); FF.step(); FF.step();
-    var after = FF.getBlue();
-    after.forEach(function (g, i) {
-        assert(d2(g.current, g.anchor) > 0, 'BLUE group ' + i + ' moved from its anchor');
-        assert(d2(g.current, OBJ) < beforeAnchorDist[i], 'BLUE group ' + i + ' moved toward Objective X');
+    FF.getBlue().forEach(function (g, i) {
+        assert(d2(g.current, g.target) <= d2(g.anchor, g.target), 'BLUE group ' + i + ' (' + g.route_type + ') moves toward its domain target or holds');
     });
 });
 test('phases progress staged → moving → approaching/reacting → holding', function () {

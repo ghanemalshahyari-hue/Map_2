@@ -311,5 +311,23 @@
         mount.innerHTML = html;
     }
 
-    window.RmoozPlacementPanel = { hasCandidates: hasCandidates, render: render };
+    // RMOOZ-DOC-REVIEW-PERSISTENCE-AND-DEMO-CLEANUP-A (Part C #4): on scenario reload,
+    // redraw the saved REVIEW anchors (review_placement_candidates) — review-only, never
+    // exact unit markers. Reads the top-level field or the generation.* mirror.
+    function drawSavedReviewAnchors(scenario) {
+        if (!scenario || typeof scenario !== 'object') return 0;
+        var cands = (Array.isArray(scenario.review_placement_candidates) && scenario.review_placement_candidates) ||
+            (scenario.generation && Array.isArray(scenario.generation.review_placement_candidates) && scenario.generation.review_placement_candidates) || [];
+        cands = cands.filter(function (c) { return c && Number.isFinite(+c.lat) && Number.isFinite(+c.lon); });
+        if (!cands.length) return 0;
+        renderMapAnchors(cands);   // built-in retry handles map-not-ready
+        return cands.length;
+    }
+    if (typeof window !== 'undefined' && window.document && typeof window.document.addEventListener === 'function') {
+        window.document.addEventListener('rmooz:live-scenario-loaded', function (e) {
+            try { var sc = e && e.detail && e.detail.scenario; if (sc) drawSavedReviewAnchors(sc); } catch (_) {}
+        });
+    }
+
+    window.RmoozPlacementPanel = { hasCandidates: hasCandidates, render: render, drawSavedReviewAnchors: drawSavedReviewAnchors };
 })();

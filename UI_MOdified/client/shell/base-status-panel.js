@@ -79,11 +79,23 @@
         if (![latA, lonA, latB, lonB].every(Number.isFinite)) return false;
         return Math.abs(latA - latB) < 0.02 && Math.abs(lonA - lonB) < 0.02;
     }
+    // IMPORT-UNITS-BASE-PLACEMENT-FIX-A: explicit base-id match — a unit's
+    // assigned_base_id/base_id vs the anchor/base base_id/id/assigned_base/location_id.
+    function baseIdMatches(unit, target) {
+        if (!unit || !target) return false;
+        var uids = [unit.assigned_base_id, unit.base_id].filter(function (v) { return v != null && v !== ''; }).map(String);
+        if (!uids.length) return false;
+        var tids = [target.base_id, target.id, target.assigned_base, target.location_id].filter(function (v) { return v != null && v !== ''; }).map(String);
+        for (var i = 0; i < uids.length; i++) { if (tids.indexOf(uids[i]) !== -1) return true; }
+        return false;
+    }
     function unitBelongsToAnchor(unit, anchor, base) {
         if (!unit || !anchor) return false;
         var sideU = String(unit.side || '').toUpperCase();
         var sideA = String(anchor.side || (base && base.side) || '').toUpperCase();
         if (sideU && sideA && sideU !== sideA) return false;
+        // Prefer explicit assigned_base_id/base_id over name/coord heuristics.
+        if (baseIdMatches(unit, anchor) || (base && baseIdMatches(unit, base))) return true;
         if (nameMatches(unit, anchor) || (base && nameMatches(unit, base))) return true;
         return coordMatches(unit, anchor) || (base && coordMatches(unit, base));
     }

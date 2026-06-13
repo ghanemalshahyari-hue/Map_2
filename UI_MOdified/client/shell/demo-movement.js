@@ -157,7 +157,7 @@
                     esc(g.country || g.side) + '</span></div>',
                 iconSize: [80, 18], iconAnchor: [7, 9],
             });
-            var m = w.L.marker(markerLatLng(g), { icon: icon, interactive: true, keyboard: false, title: 'Demo movement — not final tasking' });
+            var m = w.L.marker(markerLatLng(g), { icon: icon, interactive: true, keyboard: false, title: 'Legacy Preview — preview overlay only, not actual imported positions' });
             m._rmoozDemoOnly = true; m._rmoozReviewOnly = true; m._rmoozExactUnitPosition = false;
             m.bindPopup('<div style="font-size:12px;color:#e8eaed;background:#0e1620;min-width:180px;">' +
                 '<b>' + esc(g.base_name_en || g.base_name_ar || 'Demo group') + '</b><br>' +
@@ -197,15 +197,17 @@
         if (!_panel) return;
         var st = getState();
         var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
-            '<div style="font-weight:700;color:#cfe6ff;font-size:13px;">Demo Movement — حركة عرض</div>' +
+            '<div style="font-weight:700;color:#cfe6ff;font-size:13px;">Demo Movement — حركة عرض <span style="color:#8fa5b8;font-weight:400;">(Legacy Preview)</span></div>' +
             '<button data-act="close" style="background:transparent;border:none;color:#8fa5b8;cursor:pointer;font-size:16px;">✕</button></div>' +
             '<div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">' +
             '<button data-act="start" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:5px;padding:5px 10px;">▶ Start Demo Movement</button>' +
             '<button data-act="pause" style="font:inherit;cursor:pointer;border:1px solid #8a6a20;background:#2a2412;color:#e0c060;border-radius:5px;padding:5px 10px;">⏸ Pause</button>' +
             '<button data-act="reset" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:5px;padding:5px 10px;">⟲ Reset</button></div>' +
             '<div style="font-size:11px;color:#9aa3ad;margin-bottom:6px;">groups: ' + st.group_count + ' (BLUE ' + st.sample_blue + ' / RED ' + st.sample_red + ') · demo_units: ' + st.demo_unit_count + ' · progress: ' + Math.round(st.progress * 100) + '%' + (st.running ? ' · running' : (st.paused ? ' · paused' : '')) + '</div>' +
+            '<div style="padding:5px 7px;border-radius:5px;background:#10202c;border:1px solid #2e5d7d;color:#9ec2ec;font-size:11px;line-height:1.5;margin-bottom:6px;">' +
+            'Preview overlay only — not actual imported positions. Imported proposed rows remain grouped under base/location anchors.</div>' +
             '<div style="padding:6px 8px;border-radius:5px;background:#2a2412;border:1px solid #b8860b;color:#e0c060;font-size:11px;line-height:1.5;">' +
-            '⚠ <b>Demo movement</b> · Not final tasking · Requires commander approval<br>' +
+            '⚠ <b>Legacy Preview (Demo Movement)</b> · review_only · demo_only · exact_unit_position:false · Not final tasking<br>' +
             'عقيدة غير مرفوعة / Doctrine pending · symbolic only — not tactical truth</div>';
         _panel.innerHTML = html;
         bind('start', start); bind('pause', pause); bind('reset', reset); bind('close', clear);
@@ -223,6 +225,9 @@
     }
 
     function mount(payload) {
+        // RMOOZ-DOC-REVIEW-PERSISTENCE-AND-DEMO-CLEANUP-A (Part A): the two preview
+        // overlays must NOT stack — clear the Free Fight layer first.
+        try { var ww = W(); if (ww && ww.RmoozFreeFightDemo && typeof ww.RmoozFreeFightDemo.clear === 'function') ww.RmoozFreeFightDemo.clear(); } catch (_) {}
         init(payload);
         if (mapReady()) { syncMarkers(); buildPanel(); }
         return getState();

@@ -15715,6 +15715,11 @@
         // throws back into the load path. Outcome surfaced on result.mapDraw.
         var mapDraw = maybeDrawLiveScenarioOnMap(s, options);
 
+        // RMOOZ-DOC-REVIEW-PERSISTENCE-AND-DEMO-CLEANUP-A (Part C): announce the load so the
+        // review anchor layer can redraw saved review_placement_candidates. The raw json
+        // carries them (review-only metadata); renderMapAnchors retries until the map is ready.
+        try { if (typeof document !== 'undefined' && document.dispatchEvent) document.dispatchEvent(new CustomEvent('rmooz:live-scenario-loaded', { detail: { scenario: json } })); } catch (_) {}
+
         return {
             passed:         true,
             scenarioId:     s.scenario_id || null,

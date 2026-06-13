@@ -322,7 +322,14 @@
         var groups = {};
         units.forEach(function (u) {
             var side = String((u && u.side) || 'RED').toUpperCase();
-            var key = side + '|' + (u.base_name_ar || u.base_name_en || side + ' base') + '|' + (u.lat != null ? u.lat : '') + ',' + (u.lon != null ? u.lon : '');
+                // IMPORT-UNITS-BASE-PLACEMENT-FIX-A: group by the explicit base anchor id
+                // (assigned_base_id/base_id) when the unit carries one — keeps units grouped
+                // under their real base; fall back to base_name + lat/lon only when no id.
+                var bid = (u.assigned_base_id != null && u.assigned_base_id !== '') ? u.assigned_base_id
+                        : (u.base_id != null && u.base_id !== '') ? u.base_id : null;
+                var key = (bid != null)
+                    ? (side + '|id:' + bid)
+                    : (side + '|' + (u.base_name_ar || u.base_name_en || side + ' base') + '|' + (u.lat != null ? u.lat : '') + ',' + (u.lon != null ? u.lon : ''));
             (groups[key] = groups[key] || []).push(u);
         });
         var html = '<section style="margin:10px 0;padding:8px 0;border-top:1px solid #23303d;">' +

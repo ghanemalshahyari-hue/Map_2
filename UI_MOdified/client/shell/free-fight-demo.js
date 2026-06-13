@@ -414,6 +414,21 @@
         });
     }
 
+    // SIDC-BRIDGE-A: review-only SIDC preview (app favorites only; never final).
+    function sidcBridge() { var w = W(); if (w && w.RmoozSidcPreview) return w.RmoozSidcPreview; try { return require('./sidc-preview.js'); } catch (_) { return null; } }
+    function sidcPreviewHtml(u, g) {
+        var SP = sidcBridge();
+        if (!SP || !u) return '';
+        var p = SP.previewFor({ symbol_category: u.symbol_category, echelon: u.echelon, side: g && g.side });
+        var cand = p.sidc_preview_candidate;
+        var svg = cand ? SP.previewSvg(cand.sidc, { size: 22 }) : null;
+        var line = cand
+            ? 'SIDC preview: <b>' + esc(cand.sidc) + '</b> <span style="color:#9ab;">(' + esc(cand.source) + ' · ' + esc(cand.confidence) + ')</span>' + (svg ? ' <span style="display:inline-block;vertical-align:middle;">' + svg + '</span>' : '')
+            : 'SIDC preview: <span style="color:#e0a93a;">none — ' + esc(arr(p.warnings).join('; ') || 'No safe internal SIDC mapping found') + '</span>';
+        return '<div style="margin-top:3px;">' + line + '</div>' +
+            '<div style="color:#e0c060;font-size:10px;">Review required before final symbol — مطلوب مراجعة قبل الرمز النهائي</div>';
+    }
+
     // Simple demo unit card (NOT the base card) — review-only.
     function unitIntelCardHtml(g) {
         var summary = (g && g.unit_intel_summary) || {};
@@ -435,6 +450,7 @@
                     '<div>symbol_category: <b>' + esc(u.symbol_category || 'unknown') + '</b></div>' +
                     '<div>SIDC: <b>' + esc(u.sidc_candidate || 'review_required') + '</b> (' + esc(u.sidc_confidence || 'review_required') + ')</div>' +
                     '<div>confidence: ' + esc(u.confidence || 'low') + ' | warnings: ' + esc(warns) + '</div>' +
+                    sidcPreviewHtml(u, g) +
                 '</div>';
             }).join('') +
             '<div style="color:#e0c060;font-size:11px;">SIDC candidate is review-required; no final SIDC or exact unit position is assigned.</div>' +

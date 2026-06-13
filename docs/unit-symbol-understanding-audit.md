@@ -92,3 +92,42 @@ SIDCs, or commander-approved orders. The cross-check may only adjust *confidence
 *conflict warnings* within the deterministic schema. See
 [`free-fight-ai-litellm-design.md`](free-fight-ai-litellm-design.md) for the broader
 advisory-LLM posture this mirrors.
+
+## SIDC Preview Bridge (SIDC-BRIDGE-A)
+
+`client/shell/sidc-preview.js` (`window.RmoozSidcPreview`) bridges the normalizer to the
+real AppSymbology / milsymbol world as a **review-only preview** — never an authority. It
+takes `{ symbol_category, echelon, side }` and returns:
+
+```
+{ symbol_category, echelon, side, affiliation_preview, echelon_preview,
+  sidc_preview_candidate: null | { sidc, source:"internal_app_symbology_mapping", matched_favorite, confidence },
+  sidc_candidate:"review_required", confidence, warnings, needs_review:true, exact_unit_position:false }
+```
+
+**It uses ONLY existing internal data and invents nothing.** `sidc-data.js`
+(`SIDC_PICKER_STANDARD`) holds picker *building blocks*, not finished SIDC strings — the app
+assembles a SIDC when an operator picks one. The only **pre-built, app-sanctioned** SIDC
+strings are the three `AppSymbology.FALLBACK_SIDC_FAVORITES` (Friendly / Hostile / Unknown
+Infantry). So the bridge maps:
+
+- **infantry** → the favorite chosen by side (BLUE→Friendly, RED→Hostile, none→Unknown);
+  `source:"internal_app_symbology_mapping"`, confidence medium (low for unknown side). Read
+  live from `AppSymbology.FALLBACK_SIDC_FAVORITES`, with an in-file mirror for Node/offline.
+- **everything else** (mechanized_infantry, armor, reconnaissance, artillery, air_defense,
+  radar, engineer, logistics, hq, bases, unknown) → `sidc_preview_candidate:null` +
+  `warning:"No safe internal SIDC mapping found"`. Reconstructing those from picker parts
+  would be "inventing" a SIDC, which this bridge does not do.
+
+Boundaries: affiliation (side) and echelon are **preview-only** — echelon is *not* encoded
+into the SIDC; composition children create no sub-markers; `sidc_candidate` stays
+`review_required` (no final/approved SIDC); no units, world-state, weapons, damage, or
+adjudication. The **display glyphs (RmoozSymbolRegistry) remain the primary renderer** and
+the fallback; the SIDC preview is additive.
+
+UI: the Free Fight demo unit card and Base Status proposed-unit detail rows show the
+display category, normalized type/echelon, the SIDC preview candidate (or the
+no-safe-mapping note), and a **"Review required before final symbol"** line. When
+milsymbol (`window.ms`) is present, a small SVG preview of the candidate is rendered via
+`previewSvg()` (guarded — returns null on any error); otherwise the category glyph stands
+alone. Test: `scripts/test-sidc-bridge-a.js`.

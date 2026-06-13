@@ -280,13 +280,28 @@
         });
         return items.length ? items.join(', ') : '-';
     }
-    function unitIntelRows(intel) {
+    // SIDC-BRIDGE-A: review-only SIDC preview (app favorites only; never final).
+    function sidcPreview() { var w = (typeof window !== 'undefined') ? window : null; if (w && w.RmoozSidcPreview) return w.RmoozSidcPreview; try { return require('./sidc-preview.js'); } catch (_) { return null; } }
+    function sidcPreviewRows(intel, side) {
+        var sp = sidcPreview();
+        if (!sp || !intel) return '';
+        var p = sp.previewFor({ symbol_category: intel.symbol_category, echelon: intel.echelon, side: side });
+        var cand = p.sidc_preview_candidate;
+        var svg = cand ? sp.previewSvg(cand.sidc, { size: 20 }) : null;
+        var val = cand
+            ? esc(cand.sidc) + ' <span class="bsp-dim">(' + esc(cand.source) + ' · ' + esc(cand.confidence) + ')</span>' + (svg ? ' ' + svg : '')
+            : '<span class="bsp-dim">none — ' + esc(arr(p.warnings).join('; ') || 'No safe internal SIDC mapping found') + '</span>';
+        return sysCell('SIDC preview', val) +
+            sysCell('Final symbol', '<span class="bsp-dim">Review required before final symbol</span>');
+    }
+    function unitIntelRows(intel, side) {
         if (!intel) return sysCell('Unit intel', '<span class="bsp-dim">not available</span>');
         return sysCell('Original text', esc(intel.original_text || '-')) +
             sysCell('Normalized type', esc((intel.unit_type || '-') + ' / ' + (intel.echelon || '-'))) +
             sysCell('Composition', esc(fmtComposition(intel.composition))) +
             sysCell('Symbol category', esc(intel.symbol_category || 'unknown')) +
             sysCell('SIDC candidate', esc((intel.sidc_candidate || 'review_required') + ' / ' + (intel.sidc_confidence || 'review_required'))) +
+            sidcPreviewRows(intel, side) +
             sysCell('Unit confidence', esc(intel.confidence || 'low')) +
             sysCell('Unit warnings', esc(arr(intel.warnings).join(', ') || '-'));
     }
@@ -318,7 +333,7 @@
                 '<div class="bsp-sysgrid">' +
                     sysCell('Platform class', n.platform_class ? esc(n.platform_class) : '<span class="bsp-dim">—</span>') +
                     sysCell('Catalog', esc(n.catalog_match_status) + ' · ' + esc(fmtConf(n.catalog_confidence))) +
-                    unitIntelRows(n.unit_intel) +
+                    unitIntelRows(n.unit_intel, u.side) +
                     sysCell('Sensors', sysChips(n.sensors, fmtSensor)) +
                     sysCell('Weapons', sysChips(n.weapons, fmtWeapon)) +
                     sysCell('Magazines', sysChips(n.magazines, fmtMag)) +

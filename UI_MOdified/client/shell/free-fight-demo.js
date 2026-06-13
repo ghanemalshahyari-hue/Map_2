@@ -245,7 +245,9 @@
     function step() {
         if (!_running || !finiteLL(_objective)) return;
         _progress = Math.min(1, _progress + STEP);
-        groups().forEach(function (g) { g.current = lerp(g.anchor, g.target, _progress); g.phase = phaseFor(g.role, _progress); });
+        // DOMAIN-AWARE-MOVEMENT-A: support groups hold at their anchor, so label
+        // them "holding" instead of a progress-based "moving" (route logic unchanged).
+        groups().forEach(function (g) { g.current = lerp(g.anchor, g.target, _progress); g.phase = (g.route_type === 'support_hold') ? 'holding' : phaseFor(g.role, _progress); });
         if (_progress >= 1) { _running = false; clearTimer(); }
         if (mapReady()) syncMarkers();
         updatePanel();

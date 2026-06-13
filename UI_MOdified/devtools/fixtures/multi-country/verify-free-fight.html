@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FREE-FIGHT-AI-LITE — live map verify (devtools)</title>
+    <!--
+      DEVTOOLS-ONLY harness — NOT part of the production bundle (devtools/ is
+      .dockerignore'd). It drives the REAL free-fight-demo.js against a REAL
+      Leaflet map (window.map), exactly as the app does, so the AI-Lite flow can
+      be verified end-to-end in a browser:
+
+        fetch fixture countries[] → POST /api/wargame-sim/analyze (kind:multi_country_step1)
+        → draw base anchors via RmoozSymbolRegistry (symbol glyphs, NOT "B")
+        → RmoozFreeFightDemo.mount(payload)  (control panel + reasoning panel)
+        → place Objective X → Start → Reset → Clear  (RED attack / BLUE react)
+
+      Run the real web-server (serves /shell/*, /lib/*, /devtools/*, /api/*):
+        cd UI_MOdified && node server/web-server.js
+      then open  http://localhost:8000/devtools/fixtures/multi-country/verify-free-fight.html
+
+      Everything here is demo_only / review_only / needs_review — no final units,
+      no world-state mutation. The window.__ff* helpers exist for automated
+      (preview_eval) verification.
+    -->
+    <link rel="stylesheet" href="/lib/leaflet.css">
+    <style>
+        html, body { margin:0; height:100%; background:#0b0f0d; color:#e8eaed; font-family:'Segoe UI',Tahoma,Arial,sans-serif; }
+        #map { position:absolute; inset:0; z-index:1; background:#13202b; }
+        .leaflet-container { background:#13202b; }
+        #bar { position:fixed; bottom:14px; left:50%; transform:translateX(-50%); z-index:9970;
+               background:#0e1620; border:1px solid #3a6088; border-radius:8px; padding:8px 12px;
+               display:flex; gap:6px; flex-wrap:wrap; align-items:center; box-shadow:0 4px 20px rgba(0,0,0,.6); direction:ltr; }
+        #bar button { font:inherit; cursor:pointer; border:1px solid #4a7bb8; background:#22303f; color:#cfe6ff; border-radius:6px; padding:5px 10px; font-size:12px; }
+        #hstat { font-size:11px; color:#9ec2ec; max-width:420px; font-family:Consolas,monospace; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div id="bar">
+        <span id="hstat">loading…</span>
+        <button id="b-mount" type="button">1 · Mount</button>
+        <button id="b-place" type="button">2 · Place Objective X</button>
+        <button id="b-start" type="button">3 · Start</button>
+        <button id="b-reset" type="button">4 · Reset</button>
+        <button id="b-clear" type="button">5 · Clear Objective</button>
+    </div>
+
+    <script src="/lib/leaflet.js"></script>
+    <!-- Shell modules in the same order app.html loads them (cache-busted to match). -->
+    <script src="/shell/world-state-db.js"></script>
+    <script src="/shell/symbol-db.js"></script>
+    <script src="/shell/symbol-registry.js?v=ff-card-fix"></script>
+    <script src="/shell/demo-units.js?v=ff-card-fix"></script>
+    <script src="/shell/base-status-panel.js"></script>
+    <script src="/shell/placement-candidates-panel.js"></script>
+    <script src="/shell/free-fight-ai.js?v=ff-card-fix"></script>
+    <script src="/shell/free-fight-demo.js?v=ff-card-fix"></script>
+    <script src="/shell/doc-understanding-review.js?v=ff-card-fix"></script>
+    <script>
+    (function () {
+        var statusEl = document.getElementById('hstat');
+        var FIXTURE = './GCC_vs_Iran_step1_multicountry_freefight_trial_LITE.json';
+
+        // Real Leaflet map → window.map (the contract free-fight-demo.js renders against).
+        var map = L.map('map', { zoomControl: true, attributionControl: false }).setView([26.2, 53.5], 6);
+        // No tile layer in this devtools harness (avoids a tile-request storm against
+        // the page URL); the dark #map background stands in for basemap. The free-fight
+        // demo + anchors render on top exactly as in the app.
+        window.map = map;
+        var anchorLayer = L.layerGroup().addTo(map);
+
+        function setStatus(s) { statusEl.textContent = s; }
+        window.__ffPayload = null;
+
+        // Draw base anchors using the SAME symbol registry the app uses (proves the
+        // map shows facility glyphs, never a generic "B").
+        function drawAnchors(payload) {
+            anchorLayer.clearLayers();
+            var REG = window.RmoozSymbolRegistry;
+            var ob = (payload.brief && payload.brief.operational_brief) || {};
+            var cands = (ob.placement_candidates || []).filter(function (c) {
+                return Number.isFinite(+c.lat) && Number.isFinite(+c.lon);
+            });
+            var drawn = [];
+            cands.forEach(function (c) {
+                var type = c.object_type || c.site_type || c.base_type || 'base_facility';
+                var sym = (REG && REG.objectSymbol) ? REG.objectSymbol(type) : null;
+                var glyph = (sym && sym.glyph) || '▣';
+                var side = String(c.side || '').toUpperCase();
+                var color = side === 'RED' ? '#f0a0a0' : (side === 'BLUE' ? '#7fd6a0' : '#d8d870');
+                var icon = L.divIcon({ className: 'rmooz-anchor', iconSize: [110, 16], iconAnchor: [8, 8],
+                    html: '<div style="display:flex;align-items:center;gap:3px;">' +
+                        '<span style="width:16px;height:16px;border-radius:3px;background:' + color + ';color:#0c1118;display:flex;align-items:center;justify-content:center;font-size:11px;border:1px solid #0c1118;">' + glyph + '</span>' +
+                        '<span style="background:#0e1620;color:#e8eaed;border:1px solid ' + color + ';border-radius:3px;padding:0 4px;font-size:9px;white-space:nowrap;">' + (c.name_en || c.name || c.country || type) + '</span></div>' });
+                L.marker([+c.lat, +c.lon], { icon: icon }).addTo(anchorLayer);
+                drawn.push({ type: type, glyph: glyph, side: side });
+            });
+            window.__ffAnchors = drawn;
+            return drawn;
+        }
+
+        function analyze() {
+            setStatus('fetching fixture…');
+            return fetch(FIXTURE).then(function (r) { return r.json(); }).then(function (fx) {
+                var body = Array.isArray(fx.countries) ? { countries: fx.countries } : fx;
+                setStatus('POST /api/wargame-sim/analyze …');
+                return fetch('/api/wargame-sim/analyze', { method: 'POST', credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+                    .then(function (r) { return r.json(); })
+                    .then(function (p) {
+                        if (!p || !p.ok) throw new Error((p && p.error) || 'analyze failed');
+                        window.__ffPayload = p;
+                        var co = (p.understanding && p.understanding.coalition) || {};
+                        var anchors = drawAnchors(p);
+                        setStatus('kind=' + p.kind + ' · countries=' + (co.country_count || 0) +
+                            ' (RED ' + (co.red_country_count || 0) + '/BLUE ' + (co.blue_country_count || 0) + ') · anchors=' + anchors.length);
+                        return p;
+                    });
+            }).catch(function (e) { setStatus('ERROR: ' + e.message); throw e; });
+        }
+
+        // ── window.__ff* automation helpers (read structured state via preview_eval) ──
+        window.__ffMount = function () {
+            if (!window.__ffPayload) return { error: 'no payload — analyze first' };
+            return window.RmoozFreeFightDemo.mount(window.__ffPayload);
+        };
+        window.__ffPlace = function (lat, lon) {
+            // default Objective X near the coalition centre if not supplied
+            return window.RmoozFreeFightDemo.setObjective({ lat: lat == null ? 26.0 : lat, lon: lon == null ? 53.0 : lon });
+        };
+        window.__ffStart = function () { return window.RmoozFreeFightDemo.start(); };
+        window.__ffStepN = function (n) { var s; for (var i = 0; i < (n || 1); i++) s = window.RmoozFreeFightDemo.step(); return window.RmoozFreeFightDemo.getState(); };
+        window.__ffReset = function () { return window.RmoozFreeFightDemo.reset(); };
+        window.__ffClear = function () { return window.RmoozFreeFightDemo.clearObjective(); };
+
+        // A full structured snapshot for automated assertions.
+        window.__ffSnapshot = function () {
+            var FF = window.RmoozFreeFightDemo;
+            var st = FF.getState();
+            var groups = FF.getGroups().map(function (g) {
+                return { id: g.id, side: g.side, role: g.role, country: g.country, phase: g.phase,
+                    anchor: g.anchor, current: g.current,
+                    moved: !!(g.current && g.anchor && (Math.abs(g.current.lat - g.anchor.lat) + Math.abs(g.current.lon - g.anchor.lon)) > 1e-9),
+                    demo_only: g.demo_only, review_only: g.review_only, exact_unit_position: g.exact_unit_position };
+            });
+            var dbg = document.querySelector('[data-el="ff-debug"]');
+            return {
+                state: st,
+                dom: {
+                    panel: !!document.getElementById('rmooz-free-fight-panel'),
+                    ai_panel: !!document.getElementById('rmooz-free-fight-ai-panel'),
+                    debug_line: dbg ? dbg.textContent.trim() : null,
+                    objective_markers: document.querySelectorAll('.rmooz-ff-objective').length,
+                    group_markers: document.querySelectorAll('.rmooz-ff-group').length,
+                    anchor_markers: document.querySelectorAll('.rmooz-anchor').length,
+                    place_new_btn: !!(function () { var b = document.querySelector('#rmooz-free-fight-panel [data-act="place-obj"]'); return b && /Place new|new Objective/i.test(b.textContent); })(),
+                    start_disabled: (function () { var b = document.querySelector('#rmooz-free-fight-panel [data-act="start"]'); return b ? !!b.disabled : null; })()
+                },
+                anchors_drawn: window.__ffAnchors || [],
+                groups: groups
+            };
+        };
+
+        document.getElementById('b-mount').addEventListener('click', window.__ffMount);
+        document.getElementById('b-place').addEventListener('click', function () { window.__ffPlace(); });
+        document.getElementById('b-start').addEventListener('click', window.__ffStart);
+        document.getElementById('b-reset').addEventListener('click', window.__ffReset);
+        document.getElementById('b-clear').addEventListener('click', window.__ffClear);
+
+        analyze().then(function () { window.__ffReady = true; });
+    })();
+    </script>
+</body>
+</html>

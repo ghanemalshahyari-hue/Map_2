@@ -26,9 +26,17 @@ require(path.join(CLIENT, 'base-status-panel.js'));
 require(path.join(CLIENT, 'placement-candidates-panel.js'));
 require(path.join(CLIENT, 'demo-units.js'));
 require(path.join(CLIENT, 'free-fight-demo.js'));
+require(path.join(CLIENT, 'doc-understanding-review.js'));
 
 var MC = require(path.join(AI, 'multi-country-orbat.js'));
+var BRIEF = require(path.join(AI, 'operational-brief.js'));
 var FF = global.window.RmoozFreeFightDemo;
+function renderReview(payload) {
+    var c = { innerHTML: '', style: {}, querySelector: function () { return null; } };
+    global.window.RmoozDocReview.render(c, payload, {});
+    return c.innerHTML;
+}
+function hasFreeFightButton(payload) { return /data-act="free-fight"/.test(renderReview(payload)); }
 
 var passed = 0, failed = 0;
 function test(n, fn) { try { fn(); console.log('  [PASS] ' + n); passed++; } catch (e) { console.log('  [FAIL] ' + n + ': ' + e.message); failed++; } }
@@ -58,20 +66,19 @@ test('before Objective X: no sample selected, prompt to place', function () {
     assert(st.red_groups === 0 && st.blue_groups === 0, 'no groups until objective placed');
     assert(st.all_groups > 0, 'groups exist to choose from');
 });
-test('Objective X can be placed → 2 RED attack + up to 3 BLUE react selected (RED1/BLUE6)', function () {
+test('Objective X can be placed → 1-3 RED attack + 1-3 BLUE react selected (AI-lite planner)', function () {
     var p = brief(LITE);
     FF.init(p);
     var st = FF.setObjective(OBJ);
     assert(st.objective_set === true, 'objective set');
-    assert(st.red_groups === 2, 'RED attack groups = 2, got ' + st.red_groups);
-    assert(st.blue_groups === 3, 'BLUE react groups = 3, got ' + st.blue_groups);
+    assert(st.red_groups >= 1 && st.red_groups <= 3, 'RED attack groups 1..3, got ' + st.red_groups);
+    assert(st.blue_groups >= 1 && st.blue_groups <= 3, 'BLUE react groups 1..3, got ' + st.blue_groups);
     assert(FF.getRed().every(function (g) { return g.role === 'RED'; }) && FF.getBlue().every(function (g) { return g.role === 'BLUE'; }), 'roles assigned');
 });
-test('selected RED groups are the NEAREST RED anchors to Objective X', function () {
+test('selected RED groups attack Objective X (target = X)', function () {
     var p = brief(LITE); FF.init(p); FF.setObjective(OBJ);
     var red = FF.getRed();
-    assert(red.length === 2, 'two red');
-    // each selected red anchor is at least as near as any unselected red would be — sanity: targets = objective
+    assert(red.length >= 1 && red.length <= 3, '1..3 red');
     assert(red.every(function (g) { return d2(g.target, OBJ) === 0; }), 'RED target = Objective X');
 });
 test('RED groups MOVE toward Objective X (distance to X decreases)', function () {
@@ -118,7 +125,7 @@ test('works with UAE/Iran and Qatar/Iran (different country counts)', function (
     [['UAE/Iran', UAE_IRAN], ['Qatar/Iran', QATAR_IRAN]].forEach(function (pair) {
         var p = brief(pair[1]); FF.init(p); var st = FF.setObjective({ lat: 26, lon: 55 });
         assert(st.objective_set, pair[0] + ' objective set');
-        assert(st.red_groups >= 1 && st.red_groups <= 2, pair[0] + ' RED groups 1..2, got ' + st.red_groups);
+        assert(st.red_groups >= 1 && st.red_groups <= 3, pair[0] + ' RED groups 1..3, got ' + st.red_groups);
         assert(st.blue_groups >= 1 && st.blue_groups <= 3, pair[0] + ' BLUE groups 1..3, got ' + st.blue_groups);
         FF.start(); FF.step();
         assert(FF.getRed().concat(FF.getBlue()).some(function (g) { return d2(g.current, g.anchor) > 0; }), pair[0] + ' groups move');
@@ -135,6 +142,68 @@ test('exact_unit_position stays false; demo group carries card fields; no final 
     assert(p.brief.red_units === undefined, 'no scenario red_units');
     assert(ob.courses_of_action.length === 0, 'no COA');
     assert(typeof global.window.units === 'undefined', 'no window.units');
+    FF.clear();
+});
+
+// ── FREE-FIGHT-DEMO-B: button visibility for any Step 1 scenario + degradation ──
+var ONE_RED_ONE_BLUE = { countries: [
+    { name: 'Iran', air_bases: [{ name_en: 'Bandar Abbas', lat: 27.2, lon: 56.3, units: [{ platform: 'F-14', estimated_count: 8 }] }] },
+    { name: 'UAE', air_bases: [{ name_en: 'Al Dhafra', lat: 24.2, lon: 54.5, units: [{ platform: 'F-16E', estimated_count: 12 }] }] },
+] };
+var RED_ONLY = { countries: [{ name: 'Iran',
+    air_bases: [{ name_en: 'Bandar Abbas', lat: 27.2, lon: 56.3, units: [{ platform: 'F-14', estimated_count: 8 }] }],
+    naval_bases: [{ name_en: 'Bandar Naval', lat: 27.1, lon: 56.2, units: [{ platform: 'Kilo', estimated_count: 2 }] }],
+    land_bases: [{ name_en: 'Shiraz', lat: 29.6, lon: 52.5, units: [{ platform: 'S-300', estimated_count: 4 }] }] }] };
+var BLUE_ONLY = { countries: [{ name: 'UAE',
+    air_bases: [{ name_en: 'Al Dhafra', lat: 24.2, lon: 54.5, units: [{ platform: 'F-16E', estimated_count: 12 }] }],
+    naval_bases: [{ name_en: 'Zayed', lat: 24.5, lon: 54.4, units: [{ platform: 'Baynunah', estimated_count: 6 }] }],
+    land_bases: [{ name_en: 'As Sila', lat: 24.0, lon: 51.8, units: [{ platform: 'Patriot', estimated_count: 3 }] }] }] };
+var NO_COORDS = { countries: [{ name: 'Iran', air_bases: [{ name_en: 'NoCoordBase', units: [{ platform: 'F-14', estimated_count: 2 }] }] }] };
+
+test('Free Fight button shows for Iran/Qatar, UAE/Iran, GCC, and single-country briefs', function () {
+    assert(hasFreeFightButton({ brief: brief(QATAR_IRAN).brief }), 'Qatar/Iran shows button');
+    assert(hasFreeFightButton({ brief: brief(UAE_IRAN).brief }), 'UAE/Iran shows button');
+    assert(hasFreeFightButton({ brief: brief(LITE).brief }), 'GCC (RED1/BLUE6) shows button');
+    assert(hasFreeFightButton({ brief: brief(ONE_RED_ONE_BLUE).brief }), 'one RED / one BLUE shows button');
+    assert(hasFreeFightButton({ brief: brief(RED_ONLY).brief }), 'RED-only shows button');
+    assert(hasFreeFightButton({ brief: brief(NO_COORDS).brief }), 'proposed_units-only (no anchors) still shows button');
+});
+test('Free Fight button hidden only when there is no demo-able data', function () {
+    var empty = { brief: { operational_brief: { proposed_units: [], placement_candidates: [], enemy_bases: [], friendly_trial_bases: [], country_bases: [], coalitions: [], countries: [] } }, understanding: {} };
+    assert(!hasFreeFightButton(empty), 'empty brief hides button');
+    assert(/data-el="free-fight-debug"/.test(renderReview({ brief: brief(LITE).brief })), 'temporary debug line present');
+});
+test('one RED / one BLUE: both move toward Objective X', function () {
+    var p = brief(ONE_RED_ONE_BLUE); FF.init(p); var st = FF.setObjective({ lat: 26, lon: 55 });
+    assert(st.red_groups === 1 && st.blue_groups === 1, 'one RED + one BLUE, got ' + st.red_groups + '/' + st.blue_groups);
+    FF.start(); FF.step(); FF.step();
+    assert(FF.getRed()[0] && d2(FF.getRed()[0].current, FF.getRed()[0].anchor) > 0, 'RED moved');
+    assert(FF.getBlue()[0] && d2(FF.getBlue()[0].current, FF.getBlue()[0].anchor) > 0, 'BLUE moved');
+    FF.clear();
+});
+test('missing BLUE: RED still attacks, warning shown, no crash', function () {
+    var p = brief(RED_ONLY); FF.init(p); var st = FF.setObjective({ lat: 26, lon: 55 });
+    assert(st.red_groups >= 1 && st.blue_groups === 0, 'RED present, BLUE absent');
+    assert(st.warnings.some(function (w) { return /No BLUE/.test(w); }), 'warns No BLUE reaction units');
+    FF.start(); FF.step();
+    assert(FF.getRed().some(function (g) { return d2(g.current, g.anchor) > 0; }), 'RED moves with no BLUE');
+    FF.clear();
+});
+test('missing RED: BLUE still moves protectively, warning shown, no crash', function () {
+    var p = brief(BLUE_ONLY); FF.init(p); var st = FF.setObjective({ lat: 25, lon: 54 });
+    assert(st.blue_groups >= 1 && st.red_groups === 0, 'BLUE present, RED absent');
+    assert(st.warnings.some(function (w) { return /No RED/.test(w); }), 'warns No RED attack units');
+    FF.start(); FF.step();
+    assert(FF.getBlue().some(function (g) { return d2(g.current, g.anchor) > 0; }), 'BLUE moves with no RED');
+    FF.clear();
+});
+test('no anchors: Start hidden state + warning, no crash', function () {
+    var p = brief(NO_COORDS); FF.init(p); FF.setObjective({ lat: 27, lon: 56 });
+    var st = FF.getState();
+    assert(st.has_anchors === false, 'no anchors');
+    assert(st.warnings.some(function (w) { return /No map anchors/.test(w); }), 'warns No map anchors available');
+    FF.start();
+    assert(FF.getState().progress === 0, 'start is a no-op without anchors (no crash)');
     FF.clear();
 });
 

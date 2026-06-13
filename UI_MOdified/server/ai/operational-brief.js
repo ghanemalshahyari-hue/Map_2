@@ -504,6 +504,13 @@ function isMultiCountryInput(obj) {
     if (Array.isArray(obj.countries) && obj.countries.some(function (c) {
         return c && typeof c === 'object' && (Array.isArray(c.air_bases) || Array.isArray(c.naval_bases) || Array.isArray(c.land_bases) || Array.isArray(c.bases));
     })) return true;
+    // MULTI-COUNTRY-DEMO-A: the external Step 1 coalition shape — declared
+    // participants OR friendly_forces.countries (a coalition of named countries).
+    // (Distinct from STEP1-C single-RED-vs-single-trial, which has neither.)
+    var P = obj.participants;
+    if (P && typeof P === 'object' && (Array.isArray(P.red) || Array.isArray(P.blue)) && (arr(P.red).length + arr(P.blue).length) > 0) return true;
+    var ff = obj.friendly_forces;
+    if (ff && typeof ff === 'object' && Array.isArray(ff.countries) && ff.countries.length) return true;
     return false;
 }
 
@@ -511,8 +518,11 @@ function isMultiCountryInput(obj) {
 function classifyJsonInput(obj) {
     if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return 'unknown';
     if (Array.isArray(obj.red_units) && Array.isArray(obj.blue_units_initial)) return 'rmooz_scenario';
-    if (detectMdmp(obj).is) return 'mdmp_external';
+    // Coalition Step 1 (multi-country) is checked BEFORE mdmp_external: these
+    // files also carry task_assembly/enemy_forces (which fingerprint as Step 1),
+    // but the coalition layer is the richer, correct interpretation.
     if (isMultiCountryInput(obj)) return 'multi_country_step1';
+    if (detectMdmp(obj).is) return 'mdmp_external';
     if (obj.operational_brief && typeof obj.operational_brief === 'object') return 'operational_brief';
     if (obj.friendly && obj.enemy &&
         (typeof obj.mission === 'string' || Array.isArray(obj.objectives) || Array.isArray(obj.phases))) {

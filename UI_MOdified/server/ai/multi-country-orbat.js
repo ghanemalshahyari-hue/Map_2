@@ -108,6 +108,7 @@ function toNum(v) {
 }
 function validLat(n) { return n != null && n >= -90 && n <= 90; }
 function validLon(n) { return n != null && n >= -180 && n <= 180; }
+function arr(v) { return Array.isArray(v) ? v : []; }
 
 function codeFromName(ar, en) {
     const ascii = String(en || ar || '').toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim().split(/\s+/).filter(Boolean);
@@ -477,11 +478,214 @@ function buildMultiCountryStep1(input, opts) {
     };
 }
 
+// ── Flexible external Step 1 ingestion (MULTI-COUNTRY-DEMO-A) ─────────────
+// Real external Step 1 files don't use the {countries[]} ORBAT shape — they use
+// participants.{red,blue,neutral} + enemy_forces + friendly_forces.countries +
+// pre-enriched top-level proposed_units / placement_candidates. This path reads
+// ALL of those flexibly, infers side from section when missing (with a warning),
+// preserves the file's enriched units/anchors, and NEVER invents final values.
+function normSide(s) { return s ? String(s).toUpperCase() : null; }
+function baseTypeNorm(s) {
+    s = String(s == null ? '' : s).toLowerCase();
+    if (/friendly_trial|trial/.test(s)) return 'friendly_trial_anchor';
+    if (/naval|harbou|\bport\b|بحر|مينا/.test(s)) return 'naval_base';
+    if (/land|ground|army|بري|برية/.test(s)) return 'land_base';
+    if (/air|airfield|airport|جو|مطار/.test(s)) return 'air_base';
+    return 'base_facility';
+}
+function baseCoordsExt(b) {
+    var lat = toNum(b && (b.lat != null ? b.lat : b.latitude));
+    var lon = toNum(b && (b.lon != null ? b.lon : (b.lng != null ? b.lng : b.longitude)));
+    if (validLat(lat) && validLon(lon)) return { lat: lat, lon: lon };
+    var loc = b && b.location;
+    if (loc && typeof loc === 'object') {
+        var llat = toNum(loc.lat != null ? loc.lat : loc.latitude);
+        var llon = toNum(loc.lon != null ? loc.lon : (loc.lng != null ? loc.lng : loc.longitude));
+        if (validLat(llat) && validLon(llon)) return { lat: llat, lon: llon };
+    }
+    return { lat: null, lon: null };
+}
+
+function isExternalStep1Shape(input) {
+    if (!input || typeof input !== 'object' || Array.isArray(input)) return false;
+    if (Array.isArray(input.sheets)) return false;
+    if (Array.isArray(input.countries) && input.countries.some(function (c) {
+        return c && (Array.isArray(c.air_bases) || Array.isArray(c.naval_bases) || Array.isArray(c.land_bases));
+    })) return false;
+    return !!(input.participants || input.enemy_forces || input.friendly_forces ||
+        (Array.isArray(input.proposed_units) && input.proposed_units.length));
+}
+
+function buildFromExternalStep1(input, opts) {
+    opts = opts || {};
+    var overrides = opts.sideOverrides || {};
+    var warnings = [];
+    var meta = {};            // country_key -> { name, country_key, side, name_en, side_source }
+    var orderKeys = [];
+
+    function resolveKey(name, key) {
+        // Canonicalize so the file's country_key ('Iran'/'UAE') and a resolved
+        // Arabic name ('إيران'→'iran') collapse to ONE key (no double-counting).
+        var canon = resolveCountry(key || name);
+        if (canon) return canon.key;
+        return (key && String(key).toLowerCase()) || ((norm(name) || '').replace(/\s+/g, '_')) || null;
+    }
+    function addCountry(name, key, side, src) {
+        var ck = resolveKey(name, key);
+        if (!ck) return null;
+        var canon = resolveCountry(key || name);
+        if (!meta[ck]) { meta[ck] = { name: name || (canon && canon.name_ar) || ck, country_key: ck, name_en: canon && canon.name_en, side: side || 'UNKNOWN', side_source: src }; orderKeys.push(ck); }
+        else if ((!meta[ck].side || meta[ck].side === 'UNKNOWN') && side) { meta[ck].side = side; meta[ck].side_source = src; }
+        return ck;
+    }
+
+    // 1) participants.{red,blue,neutral}
+    var P = (input.participants && typeof input.participants === 'object') ? input.participants : {};
+    [['red', 'RED'], ['blue', 'BLUE'], ['neutral', 'NEUTRAL']].forEach(function (pair) {
+        arr(P[pair[0]]).forEach(function (p) { if (p && (p.country || p.country_key)) addCountry(p.country, p.country_key, pair[1], 'participants.' + pair[0]); });
+    });
+    // 2) enemy_forces (RED) / friendly_forces.countries|country (BLUE)
+    var ef = (input.enemy_forces && typeof input.enemy_forces === 'object') ? input.enemy_forces : null;
+    var ff = (input.friendly_forces && typeof input.friendly_forces === 'object') ? input.friendly_forces : null;
+    if (ef && ef.country) addCountry(ef.country, ef.country_key, normSide(ef.side) || 'RED', 'enemy_forces (side inferred from section)');
+    if (ff) {
+        if (Array.isArray(ff.countries)) ff.countries.forEach(function (c) { if (c) addCountry(c.country, c.country_key, normSide(c.side) || 'BLUE', 'friendly_forces.countries'); });
+        else if (ff.country) addCountry(ff.country, ff.country_key, normSide(ff.side) || 'BLUE', 'friendly_forces (side inferred from section)');
+    }
+
+    // 3) proposed_units — preserve enriched fields; review-only; assign to country
+    var proposed_units = [];
+    var puByCountry = {};
+    arr(input.proposed_units).forEach(function (u, i) {
+        if (!u || typeof u !== 'object') return;
+        var side = normSide(u.side);
+        var ck = resolveKey(u.country, u.country_key);
+        if (!side && ck && meta[ck]) side = meta[ck].side;
+        if (!side) { side = 'RED'; warnings.push('side inferred (default RED) for proposed_unit ' + (u.id || i)); }
+        if (ck) addCountry(u.country, u.country_key, side, 'proposed_units');
+        var platform = u.platform || u.platform_name_original || u.platform_name_ar || u.name || null;
+        var cat = u.symbol_category || 'unknown';
+        var unit = Object.assign({}, u, {
+            id: u.id || (side + '-PU-' + i),
+            side: side, country: u.country || (meta[ck] && meta[ck].name) || null, country_key: ck || null,
+            platform: platform, type_ar: u.type_ar || null, symbol_category: cat,
+            catalog_match_status: u.catalog_match_status || (cat === 'unknown' ? 'catalog_required' : 'generic_category_match'),
+            estimated_count: (u.estimated_count != null ? u.estimated_count : null),
+            exact_unit_position: false, needs_review: true,
+            source_type: u.source_type || 'external_orbat_candidate',
+            confidence: u.confidence || u.catalog_confidence || 'low',
+            warnings: arr(u.warnings).length ? u.warnings : ['ai_information_requires_review'],
+        });
+        proposed_units.push(unit);
+        if (ck) (puByCountry[ck] = puByCountry[ck] || []).push(unit);
+    });
+
+    // 4) bases (enemy_forces.* + friendly_forces.{bases,trial_bases,countries[].bases}) → country_bases
+    var country_bases = [], enemy_bases = [], basesByCountry = {};
+    function addBase(b, fallbackSide, src) {
+        if (!b || typeof b !== 'object') return;
+        var ck = resolveKey(b.country, b.country_key);
+        var side = normSide(b.side) || (ck && meta[ck] ? meta[ck].side : null) || fallbackSide || 'UNKNOWN';
+        if (ck) addCountry(b.country, b.country_key, side, src);
+        var coords = baseCoordsExt(b);
+        var bt = baseTypeNorm(b.base_type || b.site_type || b.anchor_type || b.type);
+        var rec = {
+            id: b.id || b.base_id || (side + '-BASE-' + country_bases.length),
+            side: side, country: b.country || (meta[ck] && meta[ck].name) || null, country_key: ck || null,
+            base_name_ar: b.base_name_ar || b.name_ar || '', base_name_en: b.base_name_en || b.name_en || '',
+            site_type: bt, base_type: bt, lat: coords.lat, lon: coords.lon,
+            exact_unit_position: false, needs_review: true,
+            source_type: b.source_type || 'external_file', warnings: arr(b.warnings),
+        };
+        country_bases.push(rec);
+        if (side === 'RED') enemy_bases.push(rec);
+        if (ck) (basesByCountry[ck] = basesByCountry[ck] || []).push(rec);
+        if (coords.lat == null || coords.lon == null) warnings.push('Missing coordinates for base ' + (rec.base_name_en || rec.base_name_ar || rec.id));
+    }
+    if (ef) ['bases', 'air_bases', 'naval_bases', 'land_bases'].forEach(function (k) { arr(ef[k]).forEach(function (b) { addBase(b, 'RED', 'enemy_forces.' + k); }); });
+    if (ff) {
+        ['bases', 'trial_bases'].forEach(function (k) { arr(ff[k]).forEach(function (b) { addBase(b, 'BLUE', 'friendly_forces.' + k); }); });
+        if (Array.isArray(ff.countries)) ff.countries.forEach(function (c) { arr(c && c.bases).forEach(function (b) { addBase(Object.assign({ country: c.country, country_key: c.country_key, side: c.side }, b), normSide(c.side) || 'BLUE', 'friendly_forces.countries[].bases'); }); });
+    }
+
+    // 5) placement_candidates — the map anchors (preserve, normalize type+flags, dedup)
+    var placement_candidates = [], seenAnchor = {};
+    arr(input.placement_candidates).forEach(function (c, i) {
+        if (!c || typeof c !== 'object') return;
+        var coords = baseCoordsExt(c);
+        var lat = (c.lat != null ? toNum(c.lat) : coords.lat);
+        var lon = (c.lon != null ? toNum(c.lon) : coords.lon);
+        var bt = baseTypeNorm(c.site_type || c.base_type || c.anchor_type || c.placement_type);
+        var side = normSide(c.side) || 'UNKNOWN';
+        var ck = resolveKey(c.country, c.country_key);
+        if (ck) addCountry(c.country, c.country_key, side !== 'UNKNOWN' ? side : null, 'placement_candidates');
+        var key = [side, bt, c.base_name_en || c.base_name_ar || c.mention || c.normalized_name || c.name_en || '', lat == null ? '' : lat, lon == null ? '' : lon].join('|');
+        if (seenAnchor[key]) return;
+        seenAnchor[key] = 1;
+        placement_candidates.push(Object.assign({}, c, {
+            side: side, country: c.country || (meta[ck] && meta[ck].name) || null, country_key: ck || null,
+            site_type: bt, lat: lat, lon: lon,
+            placement_type: c.placement_type || 'base_location_anchor',
+            exact_unit_position: false, needs_review: true,
+            source_type: c.source_type || (c.source && c.source.type) || 'external_file',
+            confidence: c.confidence || 'medium',
+        }));
+        if (lat == null || lon == null) warnings.push('Missing coordinates for placement candidate ' + (c.mention || c.id || i));
+    });
+
+    // 6) operator side overrides
+    Object.keys(meta).forEach(function (ck) {
+        var ov = overrides[ck] || overrides[norm(ck)] || overrides[norm(meta[ck].name)];
+        if (ov) meta[ck].side = String(ov).toUpperCase();
+    });
+
+    // 7) assemble coalition model
+    var coalitionsBySide = {};
+    function coalitionFor(side) {
+        if (!coalitionsBySide[side]) {
+            var labels = { RED: { en: 'RED Coalition', ar: 'التحالف الأحمر' }, BLUE: { en: 'BLUE Coalition', ar: 'التحالف الأزرق' }, NEUTRAL: { en: 'Neutral', ar: 'محايد' }, UNKNOWN: { en: 'Unassigned', ar: 'غير مخصص' } };
+            var l = labels[side] || labels.UNKNOWN;
+            coalitionsBySide[side] = { id: 'coalition-' + side.toLowerCase(), side: side, name_en: l.en, name_ar: l.ar, participants: [] };
+        }
+        return coalitionsBySide[side];
+    }
+    var participants = [], countries = [], country_orbats = [];
+    orderKeys.forEach(function (ck) {
+        var m = meta[ck], side = m.side || 'UNKNOWN', co = coalitionFor(side);
+        co.participants.push(m.name);
+        participants.push({ country: m.name, country_key: ck, side: side, coalition_id: co.id, side_source: m.side_source });
+        var bs = basesByCountry[ck] || [];
+        var counts = { air: 0, naval: 0, land: 0, total: bs.length };
+        bs.forEach(function (b) { if (b.site_type === 'air_base') counts.air++; else if (b.site_type === 'naval_base') counts.naval++; else if (b.site_type === 'land_base') counts.land++; });
+        var pus = puByCountry[ck] || [];
+        countries.push({ name: m.name, name_en: m.name_en || null, country_key: ck, side: side, coalition_id: co.id, base_counts: counts, proposed_unit_count: pus.length, needs_review: true });
+        country_orbats.push({ country: m.name, country_key: ck, side: side, coalition_id: co.id, name_en: m.name_en || null, bases: bs, proposed_units: pus, placement_candidates: placement_candidates.filter(function (a) { return a.country_key === ck; }) });
+    });
+    var coalitions = Object.keys(coalitionsBySide).map(function (s) { return coalitionsBySide[s]; });
+    var coalition_totals = {};
+    coalitions.forEach(function (co) { coalition_totals[co.side] = { coalition_id: co.id, countries: 0, air_bases: 0, naval_bases: 0, land_bases: 0, total_bases: 0, proposed_units: 0 }; });
+    countries.forEach(function (c) {
+        var t = coalition_totals[c.side]; if (!t) return;
+        t.countries++; t.air_bases += c.base_counts.air; t.naval_bases += c.base_counts.naval; t.land_bases += c.base_counts.land; t.total_bases += c.base_counts.total; t.proposed_units += c.proposed_unit_count;
+    });
+    arr(input.missing_information).forEach(function (m) { if (m && warnings.indexOf(String(m)) === -1) warnings.push(String(m)); });
+
+    return {
+        coalitions: coalitions, participants: participants, countries: countries,
+        country_orbats: country_orbats, country_bases: country_bases,
+        proposed_units: proposed_units, placement_candidates: placement_candidates, enemy_bases: enemy_bases,
+        coalition_totals: coalition_totals,
+        red_country_count: countries.filter(function (c) { return c.side === 'RED'; }).length,
+        blue_country_count: countries.filter(function (c) { return c.side === 'BLUE'; }).length,
+        warnings: warnings,
+    };
+}
+
 // Wrap the model into a full Operational Brief (set_type = multi_country_step1).
 function buildBriefFromMultiCountry(input, opts) {
     opts = opts || {};
     const BRIEF = require('./operational-brief');
-    const model = buildMultiCountryStep1(input, opts);
+    const model = isExternalStep1Shape(input) ? buildFromExternalStep1(input, opts) : buildMultiCountryStep1(input, opts);
     const brief = BRIEF.emptyBrief();
     brief.set_type = 'multi_country_step1';
     brief.document_set_id = 'ds_multicountry_' + BRIEF.sha256(JSON.stringify(model.participants)).slice(0, 12);
@@ -504,7 +708,14 @@ function buildBriefFromMultiCountry(input, opts) {
     ob.friendly_trial_bases = [];                 // BLUE coalition bases are real bases, not trial anchors
     ob.coalition_totals = model.coalition_totals;
     ob.ambiguities = model.warnings.slice();
-    ob.missing_information = model.warnings.filter(function (w) { return /^missing_/.test(w); });
+    ob.missing_information = model.warnings.filter(function (w) { return /missing|coordinate/i.test(w); });
+    // Carry task_assembly + doctrine posture (when the input has them) so the
+    // review screen shows "doctrine pending" / not-final-tasking honestly.
+    if (input && input.task_assembly && typeof input.task_assembly === 'object') ob.task_assembly = input.task_assembly;
+    if (input && input.doctrine_upload_required != null) {
+        ob.task_assembly = ob.task_assembly || {};
+        if (ob.task_assembly.doctrine_upload_required == null) ob.task_assembly.doctrine_upload_required = !!input.doctrine_upload_required;
+    }
     // Mission/objectives stay empty — Step 1 ORBAT import is force understanding,
     // not a tasked operation. Operator sets the objective on the map before any
     // generation (no final scenario units / tasking created here).
@@ -530,5 +741,7 @@ module.exports = {
     parseCountrySheets,
     coerceCountries,
     buildMultiCountryStep1,
+    isExternalStep1Shape,
+    buildFromExternalStep1,
     buildBriefFromMultiCountry,
 };

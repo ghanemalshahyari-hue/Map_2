@@ -600,6 +600,7 @@
             '<button type="button" data-act="more" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:6px;padding:7px 14px;">Upload More — وثائق إضافية</button>' +
             (showPreviewBtn ? '<button type="button" data-act="preview" style="font:inherit;cursor:pointer;border:1px solid #b8860b;background:#2a2412;color:#e0c060;border-radius:6px;padding:7px 14px;">Preview Decision Steps — معاينة خطوات القرار</button>' : '') +
             (disabledPreview ? '<button type="button" data-act="preview-disabled" disabled title="' + esc('Missing: ' + caps.missing_for_map_preview.join(', ')) + '" style="font:inherit;cursor:not-allowed;border:1px solid #5a4c2a;background:#191711;color:#9a8550;border-radius:6px;padding:7px 14px;">Map Preview Not Ready — معاينة الخريطة غير جاهزة</button>' : '') +
+            (coalitionRollup(p) ? '<button type="button" data-act="demo-movement" title="Symbolic demo only — not final tasking" style="font:inherit;cursor:pointer;border:1px solid #b8860b;background:#2a2412;color:#e0c060;border-radius:6px;padding:7px 14px;">Demo Movement — حركة عرض (demo only)</button>' : '') +
             '<button type="button" data-act="cancel" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:6px;padding:7px 14px;">Cancel — إلغاء</button>' +
             '</div>' +
             '<details data-el="editbox" style="margin-top:8px;"><summary style="cursor:pointer;font-size:12px;color:#8fa5b8;">Operational Brief JSON — مسودة الموجز</summary>' +
@@ -682,6 +683,15 @@
             });
         });
         bind('cancel', handlers.onCancel || function () { container.style.display = 'none'; });
+        // MULTI-COUNTRY-DEMO-A: symbolic demo-movement overlay (demo only — no
+        // final tasking, no world-state mutation). Shown for coalition briefs.
+        bind('demo-movement', function () {
+            if (window.RmoozDemoMovement && typeof window.RmoozDemoMovement.mount === 'function') {
+                window.RmoozDemoMovement.mount(p);
+            } else {
+                alert('Demo movement module not loaded (shell/demo-movement.js)');
+            }
+        });
     }
 
     window.RmoozDocReview = { render: render, esc: esc, assessReviewPayloadCapabilities: assessReviewPayloadCapabilities };

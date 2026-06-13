@@ -1,0 +1,84 @@
+{
+  "set_label": "GCC vs Iran — Step 1 multi-country free-fight trial (LITE)",
+  "note": "Review/map/demo foundation only. Illustrative coordinates. Not tactical truth, not doctrinally correct, not final tasking.",
+  "countries": [
+    {
+      "name": "Iran",
+      "air_bases": [
+        { "name_ar": "قاعدة بندر عباس الجوية", "name_en": "Bandar Abbas AB", "lat": 27.21, "lon": 56.38,
+          "units": [ { "platform": "F-14A Tomcat", "estimated_count": 12, "type_ar": "مقاتلة" }, { "platform": "F-4E Phantom", "estimated_count": 8, "type_ar": "مقاتلة" } ] }
+      ],
+      "naval_bases": [
+        { "name_ar": "ميناء بندر عباس البحري", "name_en": "Bandar Abbas Naval", "lat": 27.15, "lon": 56.21,
+          "units": [ { "platform": "Kilo Submarine", "estimated_count": 2, "type_ar": "غواصة" } ] }
+      ],
+      "land_bases": [
+        { "name_ar": "قاعدة شيراز البرية", "name_en": "Shiraz Land", "lat": 29.60, "lon": 52.53,
+          "units": [ { "platform": "S-300 SAM", "estimated_count": 3, "type_ar": "دفاع جوي" } ] }
+      ]
+    },
+    {
+      "name": "UAE",
+      "air_bases": [
+        { "name_ar": "قاعدة الظفرة الجوية", "name_en": "Al Dhafra AB", "lat": 24.25, "lon": 54.55,
+          "units": [ { "platform": "F-16E Block 60", "estimated_count": 12, "type_ar": "مقاتلة" } ] }
+      ],
+      "naval_bases": [
+        { "name_ar": "قاعدة زايد البحرية", "name_en": "Zayed Port Naval", "lat": 24.52, "lon": 54.37,
+          "units": [ { "platform": "Baynunah Corvette", "estimated_count": 2, "type_ar": "كورفيت" } ] }
+      ],
+      "land_bases": []
+    },
+    {
+      "name": "Qatar",
+      "air_bases": [
+        { "name_ar": "قاعدة العديد الجوية", "name_en": "Al Udeid AB", "lat": 25.117, "lon": 51.315,
+          "units": [ { "platform": "Rafale", "estimated_count": 6, "type_ar": "مقاتلة" }, { "platform": "F-15QA", "estimated_count": 6, "type_ar": "مقاتلة" } ] }
+      ],
+      "naval_bases": [],
+      "land_bases": []
+    },
+    {
+      "name": "Bahrain",
+      "air_bases": [
+        { "name_ar": "قاعدة عيسى الجوية", "name_en": "Isa AB", "lat": 25.92, "lon": 50.59,
+          "units": [ { "platform": "F-16C Block 70", "estimated_count": 8, "type_ar": "مقاتلة" } ] }
+      ],
+      "naval_bases": [],
+      "land_bases": []
+    },
+    {
+      "name": "Kuwait",
+      "air_bases": [
+        { "name_ar": "قاعدة أحمد الجابر الجوية", "name_en": "Ahmad al-Jaber AB", "lat": 28.93, "lon": 47.79,
+          "units": [ { "platform": "F/A-18C Hornet", "estimated_count": 12, "type_ar": "مقاتلة" } ] }
+      ],
+      "naval_bases": [],
+      "land_bases": []
+    },
+    {
+      "name": "Oman",
+      "air_bases": [
+        { "name_ar": "قاعدة المصنعة الجوية", "name_en": "Al Musannah AB", "lat": 23.63, "lon": 57.49,
+          "units": [ { "platform": "F-16C Block 50", "estimated_count": 6, "type_ar": "مقاتلة" } ] }
+      ],
+      "naval_bases": [],
+      "land_bases": []
+    },
+    {
+      "name": "KSA",
+      "air_bases": [
+        { "name_ar": "قاعدة الملك عبدالعزيز الجوية", "name_en": "King Abdulaziz AB Dhahran", "lat": 26.27, "lon": 50.15,
+          "units": [ { "platform": "F-15SA Eagle", "estimated_count": 12, "type_ar": "مقاتلة" } ] }
+      ],
+      "naval_bases": [
+        { "name_ar": "قاعدة الجبيل البحرية", "name_en": "Jubail Naval", "lat": 27.03, "lon": 49.66,
+          "units": [ { "platform": "Al Riyadh Frigate", "estimated_count": 2, "type_ar": "فرقاطة" } ] }
+      ],
+      "land_bases": [
+        { "name_ar": "قاعدة حفر الباطن البرية", "name_en": "Hafr Al-Batin Land", "lat": 28.43, "lon": 45.96,
+          "units": [ { "platform": "Patriot PAC-3", "estimated_count": 4, "type_ar": "دفاع جوي" } ] }
+      ]
+    }
+  ]
+}

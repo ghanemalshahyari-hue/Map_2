@@ -418,7 +418,8 @@ function buildMultiCountryStep1(input, opts) {
                         site_type: type, lat: lat, lon: lon,
                         platform: platform, type_ar: u.type_ar || null,
                         estimated_count: estimated,
-                        source_type: 'multi_country_step1_orbat',
+                        // MULTI-COUNTRY-DEMO-A #2: canonical review-only candidate marker.
+                        source_type: 'external_excel_orbat_candidate',
                         needs_review: true,
                         confidence: (hasCoord && estimated !== null) ? 'medium' : 'low',
                         exact_unit_position: false,

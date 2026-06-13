@@ -43,6 +43,24 @@
         return !!(window.L && window.map && typeof window.L.layerGroup === 'function');
     }
 
+    function asObjectiveCoord(obj) {
+        if (!obj) return null;
+        var coord = obj.coord || obj.coords || obj.coordinates || obj.location;
+        if (Array.isArray(coord) && coord.length >= 2 && Number.isFinite(Number(coord[0])) && Number.isFinite(Number(coord[1]))) {
+            return { lon: Number(coord[0]), lat: Number(coord[1]) };
+        }
+        if (coord && typeof coord === 'object') {
+            return asObjectiveCoord(coord);
+        }
+        if (obj.lon != null && obj.lat != null && Number.isFinite(Number(obj.lon)) && Number.isFinite(Number(obj.lat))) {
+            return { lon: Number(obj.lon), lat: Number(obj.lat) };
+        }
+        if (obj.longitude != null && obj.latitude != null && Number.isFinite(Number(obj.longitude)) && Number.isFinite(Number(obj.latitude))) {
+            return { lon: Number(obj.longitude), lat: Number(obj.latitude) };
+        }
+        return null;
+    }
+
     function lineReviewHtml(line) {
         var step = line && line.step_label ? line.step_label : ('Step ' + (((line && line.step_index) || 0) + 1));
         return [
@@ -135,32 +153,49 @@
     // ── Objective derivation (never mutates payload) ──────────────────────────
 
     function _deriveObjective(payload) {
-        // 1. Placement candidates attached by the wizard
-        var cands = (payload && payload.placement && payload.placement.placement_candidates) ||
-                    (payload && payload.placement_candidates) || [];
-        for (var ci = 0; ci < cands.length; ci++) {
-            var c = cands[ci];
-            if (c && c.lat != null && c.lon != null &&
-                Number.isFinite(Number(c.lat)) && Number.isFinite(Number(c.lon))) {
-                return { lon: Number(c.lon), lat: Number(c.lat) };
-            }
+        var ob = (payload && payload.brief && payload.brief.operational_brief) ||
+            (payload && payload.operational_brief) || {};
+
+        // 1. User/operator-selected or explicit objective fields. These are the
+        // only safe direct target sources for preview. Placement candidates are
+        // bases/anchors and must never become Objective X by accident.
+        var explicit = [
+            payload && payload.objective,
+            payload && payload.objective_x,
+            payload && payload.selected_objective,
+            payload && payload.review_objective,
+            payload && payload.target_location,
+            ob.objective,
+            ob.objective_x,
+            ob.selected_objective,
+            ob.review_objective,
+            ob.target_location
+        ];
+        for (var ei = 0; ei < explicit.length; ei++) {
+            var ex = asObjectiveCoord(explicit[ei]);
+            if (ex) return ex;
         }
-        // 2. Brief area_of_operations center
-        var ob = (payload && payload.brief && payload.brief.operational_brief) || {};
+
+        // 2. Brief objectives list. Prefer named/objective records over generic
+        // area centers. Support coord arrays and lat/lon objects.
+        var objectives = ob.objectives || ob.objectives_list || [];
+        for (var oi = 0; oi < objectives.length; oi++) {
+            var obj = asObjectiveCoord(objectives[oi]);
+            if (obj) return obj;
+        }
+
+        // 3. Area of operations center is a fallback only. It is approximate and
+        // should be treated as review-required by the preview route.
         var ao = ob.area_of_operations || {};
         if (Array.isArray(ao.center) && ao.center.length === 2 &&
-            Number.isFinite(ao.center[0]) && Number.isFinite(ao.center[1])) {
-            return { lon: ao.center[0], lat: ao.center[1] };
+            Number.isFinite(Number(ao.center[0])) && Number.isFinite(Number(ao.center[1]))) {
+            return { lon: Number(ao.center[0]), lat: Number(ao.center[1]) };
         }
-        // 3. Brief objectives list
-        var objectives = ob.objectives || [];
-        for (var oi = 0; oi < objectives.length; oi++) {
-            var obj = objectives[oi];
-            if (obj && Array.isArray(obj.coord) && obj.coord.length === 2 &&
-                Number.isFinite(obj.coord[0]) && Number.isFinite(obj.coord[1])) {
-                return { lon: obj.coord[0], lat: obj.coord[1] };
-            }
+        if (ao.center && typeof ao.center === 'object') {
+            var center = asObjectiveCoord(ao.center);
+            if (center) return center;
         }
+
         return null;
     }
 

@@ -330,7 +330,14 @@
             if (!list.length) return '';
             var groups = {};
             list.forEach(function (u) {
-                var key = (u.base_name_ar || u.base_name_en || label) + '|' + (u.lat != null ? u.lat : '') + ',' + (u.lon != null ? u.lon : '');
+                // IMPORT-UNITS-BASE-PLACEMENT-FIX-A: prefer explicit base id grouping
+                // (assigned_base_id/base_id) to avoid merging distinct anchors that share
+                // similar names/coordinates.
+                var bid = (u.assigned_base_id != null && u.assigned_base_id !== '') ? u.assigned_base_id
+                    : (u.base_id != null && u.base_id !== '') ? u.base_id : null;
+                var key = (bid != null)
+                    ? ('id:' + bid)
+                    : ((u.base_name_ar || u.base_name_en || label) + '|' + (u.lat != null ? u.lat : '') + ',' + (u.lon != null ? u.lon : ''));
                 (groups[key] = groups[key] || []).push(u);
             });
             var h = '<div style="margin:8px 0;">' +

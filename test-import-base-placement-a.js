@@ -91,15 +91,26 @@ var payload = {
     } },
 };
 
+// Scope assertions to the anchor's "Proposed Units" section only — the merged
+// base-status panel adds a separate "Unassigned / needs base review" section
+// (json-loss-fix), so unmatched units now appear there, not nowhere.
+function proposedSection(html) {
+    var s = html.indexOf('Proposed Units');
+    if (s < 0) return '';
+    var rest = html.slice(s);
+    var end = rest.indexOf('Unassigned / needs base review');
+    if (end < 0) end = rest.indexOf('Capability Summary');
+    return end >= 0 ? rest.slice(0, end) : rest;
+}
 BasePanel.open(anchor, payload);
 var panel = elements['step1-base-status-panel'];
 ok('opens the anchor panel', !!panel && /Forward Operating Base Alpha/.test(panel.innerHTML));
 ok('proposed row groups under anchor by assigned_base_id despite NAME mismatch',
-    !!panel && /T-72 IDMatch/.test(panel.innerHTML));
-ok('a row with a DIFFERENT base_id is excluded from the anchor',
-    !!panel && !/BMP OtherBase/.test(panel.innerHTML));
+    !!panel && /T-72 IDMatch/.test(proposedSection(panel.innerHTML)));
+ok('a row with a DIFFERENT base_id is excluded from the anchor (Proposed Units section)',
+    !!panel && !/BMP OtherBase/.test(proposedSection(panel.innerHTML)));
 ok('exactly one proposed row under this anchor',
-    !!panel && (panel.innerHTML.match(/bsp-u-row/g) || []).length === 1);
+    !!panel && (proposedSection(panel.innerHTML).match(/bsp-u-row/g) || []).length === 1);
 ok('grouped row stays review-only / exact_unit_position:false',
     !!panel && /Review only/.test(panel.innerHTML) && /exact_unit_position:false/.test(panel.innerHTML));
 
@@ -118,9 +129,9 @@ var noIdPayload = {
     } },
 };
 BasePanel.open(anchor, noIdPayload);
-ok('without a matching base id (and mismatched name) the row does NOT group',
-    !!panel && !/T-72 IDMatch/.test(panel.innerHTML) &&
-    (panel.innerHTML.match(/bsp-u-row/g) || []).length === 0);
+ok('without a matching base id (and mismatched name) the row does NOT group under the anchor',
+    !!panel && !/T-72 IDMatch/.test(proposedSection(panel.innerHTML)) &&
+    (proposedSection(panel.innerHTML).match(/bsp-u-row/g) || []).length === 0);
 
 // ───────────────────── Part C/D: review-anchor persistence + draft provenance ─────────────────────
 var gen = require(path.join(__dirname, 'UI_MOdified/server/ai/brief-to-scenario.js'));

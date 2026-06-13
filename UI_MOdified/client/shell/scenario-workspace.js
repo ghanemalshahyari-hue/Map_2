@@ -15715,6 +15715,11 @@
         // throws back into the load path. Outcome surfaced on result.mapDraw.
         var mapDraw = maybeDrawLiveScenarioOnMap(s, options);
 
+        // RMOOZ-DOC-REVIEW-PERSISTENCE-AND-DEMO-CLEANUP-A (Part C): announce the load so the
+        // review anchor layer can redraw saved review_placement_candidates. The raw json
+        // carries them (review-only metadata); renderMapAnchors retries until the map is ready.
+        try { if (typeof document !== 'undefined' && document.dispatchEvent) document.dispatchEvent(new CustomEvent('rmooz:live-scenario-loaded', { detail: { scenario: json } })); } catch (_) {}
+
         return {
             passed:         true,
             scenarioId:     s.scenario_id || null,
@@ -15775,6 +15780,7 @@
             if (!summaryEl) return;
             if (text) {
                 summaryEl.textContent = text;
+                summaryEl.setAttribute('dir', 'auto');   // ARABIC-RTL-IMPORT-REGRESSION-A: RTL-safe mixed EN/AR summaries
                 summaryEl.removeAttribute('hidden');
             } else {
                 summaryEl.textContent = '';
@@ -15825,7 +15831,7 @@
                 } else {
                     _setStatus(tx('sw-live-import-blocked', 'Import blocked.'), 'error');
                     if (_looksLikeStep1OrOperationalJson(json)) {
-                        _setSummary('This loader expects a full RMOOZ scenario with steps[]. Use Review AI Understanding for Step 1 / operational JSON.');
+                        _setSummary('This loader expects a full RMOOZ scenario with steps[]. Use Review AI Understanding for Step 1 / operational JSON. — يتوقّع هذا المُحمِّل سيناريو RMOOZ كاملاً يحتوي على steps[]؛ استخدم «مراجعة فهم الذكاء الاصطناعي» لـ JSON الخطوة 1 / العملياتي.');
                     } else {
                         _setSummary(result.blockedReasons.join(', '));
                     }

@@ -100,9 +100,21 @@
         if (![latA, lonA, latB, lonB].every(Number.isFinite)) return false;
         return Math.abs(latA - latB) < 0.02 && Math.abs(lonA - lonB) < 0.02;
     }
+    // IMPORT-UNITS-BASE-PLACEMENT-FIX-A: explicit base-id match — a unit's
+    // assigned_base_id/base_id vs the anchor/base base_id/id/assigned_base/location_id.
+    function baseIdMatches(unit, target) {
+        if (!unit || !target) return false;
+        var uids = [unit.assigned_base_id, unit.base_id].filter(function (v) { return v != null && v !== ''; }).map(String);
+        if (!uids.length) return false;
+        var tids = [target.base_id, target.id, target.assigned_base, target.location_id].filter(function (v) { return v != null && v !== ''; }).map(String);
+        for (var i = 0; i < uids.length; i++) { if (tids.indexOf(uids[i]) !== -1) return true; }
+        return false;
+    }
     function unitBelongsToAnchor(unit, anchor, base) {
         if (!unit || !anchor) return false;
         if (!sideCountryCompatible(unit, anchor, base)) return false;
+        // Prefer explicit assigned_base_id/base_id over name/coord heuristics.
+        if (baseIdMatches(unit, anchor) || (base && baseIdMatches(unit, base))) return true;
         if (idMatches(unit, anchor, base)) return true;
         if (nameMatches(unit, anchor) || (base && nameMatches(unit, base))) return true;
         return coordMatches(unit, anchor) || (base && coordMatches(unit, base));
@@ -489,7 +501,8 @@
         // SYMBOL-DB-B: base symbol mapping metadata (registry-sourced; review-only).
         html += '<section class="bsp-section"><h3>Symbol / الرمز</h3>' +
             row('object_type', sym ? sym.object_type : type) +
-            row('base_type', type) +
+            // STEP1-BASE-TYPE-SYMBOL-RESTORE-A (req #5): show the human base-type label.
+            row('base_type', type + (sym && sym.label_en ? ' — ' + sym.label_en + (sym.label_ar ? ' / ' + sym.label_ar : '') : '')) +
             row('symbol', sym ? (sym.glyph + '  ' + sym.label_en + ' / ' + sym.label_ar) : '-') +
             row('symbol_category', dominantCategory(units)) +
             row('symbol_source', sym ? sym.symbol_source : 'registry_not_loaded') +
@@ -498,8 +511,8 @@
             '</section>';
         html += '<section class="bsp-section"><h3>Proposed Units</h3>' + renderUnitTable(units) + '</section>';
         if (orphaned.length) {
-            html += '<section class="bsp-section"><h3>Unassigned / needs base review</h3>' +
-                '<div class="bsp-catreq">These proposed units are present in the review payload but did not match a base anchor by id, name, country/side, or coordinates.</div>' +
+            html += '<section class="bsp-section"><h3 dir="auto">Unassigned / needs base review — غير مُسندة / تحتاج مراجعة قاعدة</h3>' +
+                '<div class="bsp-catreq" dir="auto">These proposed units are present in the review payload but did not match a base anchor by id, name, country/side, or coordinates. — هذه الوحدات المقترحة موجودة في حمولة المراجعة لكنها لم تطابق أي مرساة قاعدة بالمعرّف أو الاسم أو الدولة/الجهة أو الإحداثيات.</div>' +
                 renderUnitTable(orphaned) + '</section>';
         }
         html += '<section class="bsp-section"><h3>Capability Summary</h3><ul class="bsp-cap-list">' +

@@ -62,38 +62,31 @@
     var BASE_GLYPH = { air_base: '✈', naval_base: '⚓', land_base: '▤', friendly_trial_anchor: '◇', base_facility: '⬢' };
     function mapAnchorIcon(c) {
         var side = String(c.side || '').toUpperCase();
+        // STEP1-BASE-TYPE-SYMBOL-RESTORE-A: the normalized base type is AUTHORITATIVE for
+        // the marker class, so air/naval/land/facility stay visually distinct regardless
+        // of which resolver supplies the glyph. Review base anchors only — never a unit symbol.
+        var bt = baseTypeOf(c);
+        var cls = 'step1-review-placement-anchor step1-anchor-' + bt;
         var REG = (typeof window !== 'undefined' && window.RmoozSymbolRegistry) || null;
-        // GLOBAL-SYMBOL-IDENTITY-A: consult the shared resolver for a CONFIDENT object
-        // identity (air/naval/land base, etc.); otherwise fall through to the registry's
-        // base resolver, which keeps the base_facility / unknown two-tier fallback.
         var ID = (typeof window !== 'undefined' && window.RmoozSymbolIdentity) || null;
-        if (ID && ID.resolve && REG && typeof REG.iconHtml === 'function') {
-            var rid = ID.resolve({ object_type: (c.object_type || c.site_type || c.base_type || c.anchor_type || c.placement_type), side: side });
+        // Prefer the shared resolvers for the GLYPH, keyed on the normalized base type.
+        if (bt !== 'friendly_trial_anchor' && ID && ID.resolve && REG && typeof REG.iconHtml === 'function') {
+            var rid = ID.resolve({ object_type: bt, side: side });
             if (rid && rid.object_symbol && rid.object_symbol.fallback === false) {
-                return window.L.divIcon({
-                    className: 'step1-review-placement-anchor step1-anchor-' + (rid.object_symbol.object_type || 'unknown'),
-                    html: REG.iconHtml(rid.object_symbol, { side: side }), iconSize: [24, 24], iconAnchor: [12, 12],
-                });
+                return window.L.divIcon({ className: cls, html: REG.iconHtml(rid.object_symbol, { side: side }), iconSize: [24, 24], iconAnchor: [12, 12] });
             }
         }
-        // SYMBOL-DB-B: prefer the shared RMOOZ symbol registry (base_type → glyph,
-        // with base_facility / unknown fallback). Local glyphs below are a guard
-        // for when the registry script isn't loaded.
-        if (REG && typeof REG.resolveBaseSymbol === 'function' && typeof REG.iconHtml === 'function') {
-            var rsym = REG.resolveBaseSymbol(c);
-            return window.L.divIcon({
-                className: 'step1-review-placement-anchor step1-anchor-' + (rsym.object_type || 'unknown'),
-                html: REG.iconHtml(rsym, { side: side }), iconSize: [24, 24], iconAnchor: [12, 12],
-            });
+        if (bt !== 'friendly_trial_anchor' && REG && typeof REG.resolveBaseSymbol === 'function' && typeof REG.iconHtml === 'function') {
+            var rsym = REG.resolveBaseSymbol({ object_type: bt, base_type: bt, site_type: c.site_type });
+            return window.L.divIcon({ className: cls, html: REG.iconHtml(rsym, { side: side }), iconSize: [24, 24], iconAnchor: [12, 12] });
         }
-        var bt = baseTypeOf(c);
-        // Side drives the fill; the glyph signals a BASE / FACILITY anchor — it is
-        // deliberately NOT a unit/infantry symbol (these are Step 1 anchors only).
+        // Local glyph fallback (registry script not loaded, or trial anchor). Side drives
+        // the fill; the glyph signals a BASE / FACILITY anchor — deliberately NOT a unit symbol.
         var fill = side === 'BLUE' ? '#1f7a4d' : (side === 'RED' ? '#8f1f1f' : '#33475f');
         var ring = side === 'BLUE' ? '#7fd6a0' : (side === 'RED' ? '#f0a0a0' : '#cfe6ff');
         var glyph = BASE_GLYPH[bt] || BASE_GLYPH.base_facility;
         return window.L.divIcon({
-            className: 'step1-review-placement-anchor step1-anchor-' + bt,
+            className: cls,
             html: '<div title="' + esc(bt) + '" style="width:20px;height:20px;border-radius:4px;background:' + fill +
                 ';border:2px solid ' + ring + ';box-shadow:0 0 0 2px rgba(16,24,32,.6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;line-height:1;">' + glyph + '</div>',
             iconSize: [24, 24],
@@ -311,5 +304,23 @@
         mount.innerHTML = html;
     }
 
-    window.RmoozPlacementPanel = { hasCandidates: hasCandidates, render: render };
+    // RMOOZ-DOC-REVIEW-PERSISTENCE-AND-DEMO-CLEANUP-A (Part C #4): on scenario reload,
+    // redraw the saved REVIEW anchors (review_placement_candidates) — review-only, never
+    // exact unit markers. Reads the top-level field or the generation.* mirror.
+    function drawSavedReviewAnchors(scenario) {
+        if (!scenario || typeof scenario !== 'object') return 0;
+        var cands = (Array.isArray(scenario.review_placement_candidates) && scenario.review_placement_candidates) ||
+            (scenario.generation && Array.isArray(scenario.generation.review_placement_candidates) && scenario.generation.review_placement_candidates) || [];
+        cands = cands.filter(function (c) { return c && Number.isFinite(+c.lat) && Number.isFinite(+c.lon); });
+        if (!cands.length) return 0;
+        renderMapAnchors(cands);   // built-in retry handles map-not-ready
+        return cands.length;
+    }
+    if (typeof window !== 'undefined' && window.document && typeof window.document.addEventListener === 'function') {
+        window.document.addEventListener('rmooz:live-scenario-loaded', function (e) {
+            try { var sc = e && e.detail && e.detail.scenario; if (sc) drawSavedReviewAnchors(sc); } catch (_) {}
+        });
+    }
+
+    window.RmoozPlacementPanel = { hasCandidates: hasCandidates, render: render, drawSavedReviewAnchors: drawSavedReviewAnchors, baseTypeOf: baseTypeOf };
 })();

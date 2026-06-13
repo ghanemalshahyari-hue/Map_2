@@ -2321,8 +2321,8 @@
             'wg-adj-import-helper':             'Use this to load operational GeoJSON and draw units/scenario markers on the map.',
             'wg-adj-import-hint':               'Drop all_phases.geojson here, or click to choose a file',
             // PR-286L0: Live Scenario Import (PR-241A: clarified — in-memory, draws on map, no disk write)
-            'sw-live-scenario-import-title':    'Preview Live Scenario JSON — Read-only Cards Only',
-            'sw-live-scenario-import-subtitle': 'This preview updates Scenario Workspace cards only. Use the Operational Scenario HUD import to draw units on the map.',
+            'sw-live-scenario-import-title':    'Legacy / Full Scenario JSON — Load full RMOOZ scenario JSON',
+            'sw-live-scenario-import-subtitle': 'This loader expects a full RMOOZ scenario with steps[]. Use Review AI Understanding for Step 1 / operational JSON.',
             'sw-live-scenario-import-file-label':'Scenario JSON',
             'sw-live-scenario-import-btn':      'Import as Live Scenario',
             'sw-live-scenario-import-note':     'This replaces the current live workspace state in memory only.',
@@ -4737,8 +4737,8 @@
             'wg-adj-import-helper':             'استخدم هذا لتحميل ملفات GeoJSON العملياتية ورسم الوحدات/علامات السيناريو على الخريطة.',
             'wg-adj-import-hint':               'أفلت all_phases.geojson هنا، أو انقر لاختيار ملف',
             // PR-286L0: Live Scenario Import (PR-241A: clarified — in-memory, draws on map, no disk write)
-            'sw-live-scenario-import-title':    'معاينة JSON السيناريو الحي — البطاقات للقراءة فقط',
-            'sw-live-scenario-import-subtitle': 'تحدّث هذه المعاينة بطاقات مساحة عمل السيناريو فقط. استخدم استيراد السيناريو العملياتي (HUD) لرسم الوحدات على الخريطة.',
+            'sw-live-scenario-import-title':    'JSON سيناريو كامل / قديم — تحميل سيناريو RMOOZ كامل',
+            'sw-live-scenario-import-subtitle': 'يتوقّع هذا المُحمِّل سيناريو RMOOZ كاملاً يحتوي على steps[]. استخدم «مراجعة فهم الذكاء الاصطناعي» لـ JSON الخطوة 1 / العملياتي.',
             'sw-live-scenario-import-file-label':'ملف سيناريو JSON',
             'sw-live-scenario-import-btn':      'استيراد كسيناريو حي',
             'sw-live-scenario-import-note':     'يستبدل هذا الإجراء حالة مساحة العمل الحية الحالية في الذاكرة فقط.',

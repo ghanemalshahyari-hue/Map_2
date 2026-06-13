@@ -29,6 +29,18 @@ function r5(n) { return Math.round(n * 1e5) / 1e5; }
 function sanitizeName(s) {
     return String(s == null ? '' : s).trim().replace(/[^A-Za-z0-9._-]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 60) || 'brief_scenario';
 }
+// STEP1-BASE-TYPE-SYMBOL-RESTORE-A: normalize a base/facility type from whatever
+// field a reviewed candidate carries (base_type → site_type → object_type →
+// anchor_type → placement_type). Unknown → 'base_facility' (NEVER null, NEVER a
+// unit type). Mirrors the client baseTypeOf() so persisted anchors keep the type.
+function normalizeBaseType(c) {
+    const s = String((c && (c.base_type || c.site_type || c.object_type || c.anchor_type || c.placement_type)) || '').toLowerCase();
+    if (/friendly_trial|trial/.test(s)) return 'friendly_trial_anchor';
+    if (/naval|harbou|\bport\b|بحر|مينا/.test(s)) return 'naval_base';
+    if (/land|ground|army|بري|برية/.test(s)) return 'land_base';
+    if (/air|airfield|airport|جو|مطار/.test(s)) return 'air_base';
+    return 'base_facility';
+}
 
 // n points on a ring around center; lon radius scaled for latitude.
 function ring(center, n, radiusDeg) {
@@ -132,8 +144,37 @@ function generateScenarioFromBrief(brief, opts) {
     function placeCoords(scheme, n) {
         return scheme === 'ring' ? ring(objCoord, n, 0.07) : axis(objCoord, n, tpl.bearing_deg, 0.30, 0.30);
     }
-    const redCoords = placeCoords(tpl.red_scheme, redN);
-    const blueCoords = placeCoords(tpl.blue_scheme, blueN);
+    // IMPORT-UNITS-BASE-PLACEMENT-FIX-A (#4): when the reviewed brief carries base
+    // anchors (placement_candidates), lay DRAFT units at those base coordinates
+    // instead of a ring around the objective. Falls back to template geometry when
+    // a side has no reviewed anchors. Still DRAFT / needs_review — never exact.
+    function anchorsForSide(side) {
+        const cands = Array.isArray(ob.placement_candidates) ? ob.placement_candidates : [];
+        return cands.filter(function (c) {
+            return c && String(c.side || '').toUpperCase() === side &&
+                Number.isFinite(+c.lon) && Number.isFinite(+c.lat);
+        });
+    }
+    function placeFromAnchors(side, n) {
+        const a = anchorsForSide(side);
+        if (!a.length) return null;   // no reviewed anchors → caller uses template geometry
+        const out = [];
+        for (let i = 0; i < n; i++) {
+            const c = a[i % a.length];
+            const k = Math.floor(i / a.length);                 // wrap count for co-anchored units
+            const jit = k === 0 ? 0 : 0.008 * k;                 // tiny deterministic jitter so they don't overlap
+            const ang = i * 2.39996323;                          // golden-angle spread
+            const lonScale = Math.max(0.2, Math.cos((+c.lat) * Math.PI / 180));
+            out.push([r5((+c.lon) + (jit / lonScale) * Math.cos(ang)), r5((+c.lat) + jit * Math.sin(ang))]);
+        }
+        return out;
+    }
+    const redAnchorCoords = placeFromAnchors('RED', redN);
+    const blueAnchorCoords = placeFromAnchors('BLUE', blueN);
+    const redCoords = redAnchorCoords || placeCoords(tpl.red_scheme, redN);
+    const blueCoords = blueAnchorCoords || placeCoords(tpl.blue_scheme, blueN);
+    const RED_PLACEMENT_SRC = redAnchorCoords ? 'reviewed_base_anchor' : 'template_geometry_relative_to_objective';
+    const BLUE_PLACEMENT_SRC = blueAnchorCoords ? 'reviewed_base_anchor' : 'template_geometry_relative_to_objective';
 
     const red_units = [];
     for (let i = 0; i < redN; i++) {
@@ -142,6 +183,9 @@ function generateScenarioFromBrief(brief, opts) {
             uid: 'R-' + String(i + 1).padStart(3, '0'), label: role + '-' + (i + 1),
             bls: 'BLS-1', appear: 0, role: role, coord: (redCoords[i] || objCoord.slice()),
             side: 'RED', draft: true, needs_review: true, placement_confidence: 'low',
+            // IMPORT-UNITS-BASE-PLACEMENT-FIX-A (#3): provenance — never an exact/final position.
+            exact_unit_position: false, placement_source: RED_PLACEMENT_SRC,
+            draft_template_position: RED_PLACEMENT_SRC === 'template_geometry_relative_to_objective',
         });
     }
     const blue_units_initial = [];
@@ -151,6 +195,9 @@ function generateScenarioFromBrief(brief, opts) {
             unit_uid: 'B-' + String(i + 1).padStart(3, '0'), base_id: 'b' + (i + 1),
             role: role, coord: (blueCoords[i] || objCoord.slice()), posture: 'DEFEND',
             side: 'BLUE', draft: true, needs_review: true, placement_confidence: 'low',
+            // IMPORT-UNITS-BASE-PLACEMENT-FIX-A (#3): provenance — never an exact/final position.
+            exact_unit_position: false, placement_source: BLUE_PLACEMENT_SRC,
+            draft_template_position: BLUE_PLACEMENT_SRC === 'template_geometry_relative_to_objective',
         });
     }
     const blue_units_base_ids = blue_units_initial.map(u => u.base_id);
@@ -165,6 +212,45 @@ function generateScenarioFromBrief(brief, opts) {
     if (!ob.mission) missing_fields.push('mission text');
     if (!(Array.isArray(ob.constraints) && ob.constraints.length)) missing_fields.push('constraints / ROE');
 
+    // RMOOZ-DOC-REVIEW-PERSISTENCE-AND-DEMO-CLEANUP-A (Part C): preserve the reviewed
+    // base anchors + proposed units as REVIEW-ONLY metadata so a reloaded scenario can
+    // redraw the review anchor layer. These are NOT final units / NOT exact positions.
+    const review_placement_candidates = (Array.isArray(ob.placement_candidates) ? ob.placement_candidates : [])
+        .map(function (c) {
+            return {
+                base_id: c.base_id != null ? c.base_id : (c.id != null ? c.id : null),
+                id: c.id != null ? c.id : (c.base_id != null ? c.base_id : null),
+                base_name_en: c.base_name_en || c.mention || null,
+                base_name_ar: c.base_name_ar || null,
+                country: c.country || null, country_key: c.country_key || null,
+                side: c.side || null,
+                lat: Number.isFinite(+c.lat) ? +c.lat : null,
+                lon: Number.isFinite(+c.lon) ? +c.lon : null,
+                site_type: c.site_type || c.object_type || null,
+                // STEP1-BASE-TYPE-SYMBOL-RESTORE-A (req #1/#6): always persist a base_type
+                // (air_base | naval_base | land_base | base_facility) so a reloaded scenario
+                // redraws the correct typed base symbol — never null, never a unit symbol.
+                base_type: normalizeBaseType(c),
+                source_type: c.source_type || 'reviewed_placement_candidate',
+                needs_review: true, exact_unit_position: false,
+            };
+        })
+        .filter(function (a) { return a.lat != null && a.lon != null; });
+    const review_proposed_units = (Array.isArray(ob.proposed_units) ? ob.proposed_units : [])
+        .slice(0, 1000)
+        .map(function (u) {
+            return {
+                assigned_base_id: u.assigned_base_id != null ? u.assigned_base_id : (u.base_id != null ? u.base_id : null),
+                base_id: u.base_id != null ? u.base_id : null,
+                base_name_en: u.base_name_en || null, base_name_ar: u.base_name_ar || null,
+                side: u.side || null, country: u.country || null, country_key: u.country_key || null,
+                platform: u.platform || u.platform_name || null,
+                estimated_count: u.estimated_count != null ? u.estimated_count : null,
+                symbol_category: u.symbol_category || null,
+                needs_review: true, exact_unit_position: false, review_only: true,
+            };
+        });
+
     const scenario = {
         name: sanitizeName(opts.name || tpl.id + '_draft'),
         scenario_label: (ob.mission && String(ob.mission).slice(0, 60)) || (tpl.name_en + ' (draft)'),
@@ -176,6 +262,8 @@ function generateScenarioFromBrief(brief, opts) {
         // provenance + draft markers (extra keys; validator ignores unknown keys)
         source: 'OperationalBrief',
         generated_from_brief: true,
+        // Part C: review-only anchor layer for redraw-on-reload (top-level mirror).
+        review_placement_candidates: review_placement_candidates,
         generation: {
             from: 'operational_brief',
             template: tpl.id, template_name_en: tpl.name_en, template_name_ar: tpl.name_ar,
@@ -185,6 +273,12 @@ function generateScenarioFromBrief(brief, opts) {
             source_citations: (Array.isArray(ob.source_citations) ? ob.source_citations.slice(0, 50) : []),
             missing_fields,
             proposed_unit_counts: { red: redN, blue: blueN },
+            // IMPORT-UNITS-BASE-PLACEMENT-FIX-A: where DRAFT unit coords came from.
+            placement_sources: { red: RED_PLACEMENT_SRC, blue: BLUE_PLACEMENT_SRC },
+            exact_unit_position: false,
+            // Part C: review-only anchors + proposed rows preserved for reload redraw.
+            review_placement_candidates: review_placement_candidates,
+            review_proposed_units: review_proposed_units,
         },
         ported_from: 'brief-to-scenario.js',
     };

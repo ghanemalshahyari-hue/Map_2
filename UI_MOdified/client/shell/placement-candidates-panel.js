@@ -307,12 +307,20 @@
     // RMOOZ-DOC-REVIEW-PERSISTENCE-AND-DEMO-CLEANUP-A (Part C #4): on scenario reload,
     // redraw the saved REVIEW anchors (review_placement_candidates) — review-only, never
     // exact unit markers. Reads the top-level field or the generation.* mirror.
+    // STEP1-IMPORT-REVIEW-FINISH-A: also restore lastPayload from review_proposed_units
+    // so the Base Status Panel can show per-base proposed units after reload.
     function drawSavedReviewAnchors(scenario) {
         if (!scenario || typeof scenario !== 'object') return 0;
         var cands = (Array.isArray(scenario.review_placement_candidates) && scenario.review_placement_candidates) ||
             (scenario.generation && Array.isArray(scenario.generation.review_placement_candidates) && scenario.generation.review_placement_candidates) || [];
         cands = cands.filter(function (c) { return c && Number.isFinite(+c.lat) && Number.isFinite(+c.lon); });
         if (!cands.length) return 0;
+        // Restore lastPayload so anchor clicks surface per-base units in the BSP.
+        var reviewUnits = (scenario.generation && Array.isArray(scenario.generation.review_proposed_units) && scenario.generation.review_proposed_units) ||
+            (Array.isArray(scenario.review_proposed_units) && scenario.review_proposed_units) || [];
+        if (reviewUnits.length) {
+            lastPayload = { brief: { operational_brief: { proposed_units: reviewUnits } } };
+        }
         renderMapAnchors(cands);   // built-in retry handles map-not-ready
         return cands.length;
     }

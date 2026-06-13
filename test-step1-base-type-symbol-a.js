@@ -141,5 +141,95 @@ var persistedScenario = null;
         reloadCls.some(function (c) { return /base_facility/.test(c); }));
 })();
 
+// ── Section 5: drawSavedReviewAnchors restores lastPayload for BSP on reload ──
+// STEP1-IMPORT-REVIEW-FINISH-A: after loading a saved scenario the Base Status
+// Panel must be able to show per-base proposed units when an anchor is clicked.
+// drawSavedReviewAnchors() now sets lastPayload from generation.review_proposed_units.
+(function () {
+    var vm = require('vm');
+    var fs = require('fs');
+    var panelSrc = fs.readFileSync(path.join(__dirname, 'UI_MOdified/client/shell/placement-candidates-panel.js'), 'utf8');
+
+    function makeLayerGroup() {
+        var layers = [];
+        return { addTo: function () { return this; }, clearLayers: function () { layers.length = 0; },
+            addLayer: function (m) { layers.push(m); }, getLayers: function () { return layers; } };
+    }
+
+    var bspCalls = [];
+    var ctx = {
+        console: console,
+        setTimeout: setTimeout, clearTimeout: clearTimeout,
+        document: { addEventListener: function () {}, getElementById: function () { return null; } }
+    };
+    ctx.window = {
+        document: ctx.document,
+        RmoozBaseStatusPanel: { open: function (c, p) { bspCalls.push({ anchor: c, payload: p }); } },
+        map: { addLayer: function () {}, hasLayer: function () { return true; }, removeLayer: function () {} },
+        L: {
+            layerGroup: makeLayerGroup,
+            marker: function (latlng, opts) {
+                var handlers = {};
+                var m = { _ll: latlng, options: opts, _handlers: handlers,
+                    on: function (ev, fn) { handlers[ev] = fn; return this; },
+                    bindPopup: function () { return this; } };
+                return m;
+            },
+            divIcon: function (opts) { return { __divIcon: true, className: opts.className, options: opts }; }
+        }
+    };
+    vm.runInNewContext(panelSrc, ctx);
+    var P = ctx.window.RmoozPlacementPanel;
+
+    var reviewUnits = [
+        { side: 'RED', assigned_base_id: 'BASE-A', platform: 'Su-24', estimated_count: 3, needs_review: true, exact_unit_position: false, review_only: true },
+        { side: 'RED', assigned_base_id: 'BASE-B', platform: 'P-3C', estimated_count: 2, needs_review: true, exact_unit_position: false, review_only: true }
+    ];
+    var reloadScenario = {
+        review_placement_candidates: [
+            { base_id: 'BASE-A', side: 'RED', base_type: 'air_base', lat: 35.0, lon: 48.0 },
+            { base_id: 'BASE-B', side: 'RED', base_type: 'naval_base', lat: 27.0, lon: 56.0 }
+        ],
+        generation: { review_proposed_units: reviewUnits }
+    };
+
+    var drawCount = P.drawSavedReviewAnchors(reloadScenario);
+    ok('drawSavedReviewAnchors draws 2 anchors from reload scenario', drawCount === 2);
+
+    var layer = ctx.window.__rmoozStep1PlacementAnchorLayer;
+    var markers = layer ? layer.getLayers() : [];
+    ok('anchor layer has 2 markers after reload draw', markers.length === 2);
+
+    // Simulate anchor click — BSP should receive the restored payload
+    if (markers[0] && markers[0]._handlers && markers[0]._handlers.click) {
+        markers[0]._handlers.click();
+    }
+    ok('BSP.open called when anchor clicked after reload', bspCalls.length === 1);
+    var gotPayload = bspCalls[0] && bspCalls[0].payload;
+    var gotUnits = gotPayload && gotPayload.brief && gotPayload.brief.operational_brief && gotPayload.brief.operational_brief.proposed_units;
+    ok('BSP receives lastPayload with proposed_units restored from review_proposed_units',
+        Array.isArray(gotUnits) && gotUnits.length === 2);
+    ok('restored units include both platform names',
+        Array.isArray(gotUnits) &&
+        gotUnits.some(function (u) { return u.platform === 'Su-24'; }) &&
+        gotUnits.some(function (u) { return u.platform === 'P-3C'; }));
+
+    // Scenario with NO review_proposed_units must NOT overwrite a previously set lastPayload
+    var calls2 = [];
+    ctx.window.RmoozBaseStatusPanel = { open: function (c, p) { calls2.push(p); } };
+    P.drawSavedReviewAnchors({
+        review_placement_candidates: [{ base_id: 'X', side: 'RED', base_type: 'air_base', lat: 30, lon: 50 }]
+        // deliberately omits review_proposed_units
+    });
+    var l2 = ctx.window.__rmoozStep1PlacementAnchorLayer;
+    var m2 = l2 ? l2.getLayers() : [];
+    if (m2[0] && m2[0]._handlers && m2[0]._handlers.click) m2[0]._handlers.click();
+    ok('lastPayload unchanged when reload scenario has no review_proposed_units',
+        calls2.length === 1 &&
+        calls2[0] && calls2[0].brief &&
+        Array.isArray(calls2[0].brief.operational_brief.proposed_units) &&
+        calls2[0].brief.operational_brief.proposed_units.length === 2);
+})();
+
 console.log('\n' + passed + ' passed, ' + failed + ' failed');
 process.exit(failed ? 1 : 0);

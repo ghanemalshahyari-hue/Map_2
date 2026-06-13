@@ -36,6 +36,17 @@
         if (el) el.textContent = text;
     }
 
+    // RMOOZ-IMPORT-OBJECTIVE-UNITSTATUS-FIX-B (D): resolve a human display name from
+    // whatever identity field a selected marker actually carries. Scenario markers
+    // pass name / name_ar / uid / unit_uid / base_id (not always `label`), so using
+    // only `unit.label` showed the wrong name. Read-only — never mutates the unit.
+    function displayUnitName(unit) {
+        if (!unit) return '—';
+        return unit.label || unit.name || unit.name_en || unit.name_ar ||
+            unit.unit_name || unit.callsign || unit.code || unit.uid ||
+            unit.unit_uid || unit.id || unit.base_id || '—';
+    }
+
     // ── Magazine stock formatter ──────────────────────────────────────
     function formatMagStock(stock) {
         if (stock == null) return '';
@@ -198,7 +209,7 @@
 
     // ── Hero ──────────────────────────────────────────────────────────
     function populateHero(unit, enriched) {
-        setText('unit-label', unit.label || '—');
+        setText('unit-label', displayUnitName(unit));
         var badge = $('usp-status-badge');
         if (badge) {
             var txt = unit.veteran ? tr('usp-badge-veteran','VETERAN')
@@ -590,7 +601,7 @@
         container.style.overflow = 'hidden';
 
         var img = document.createElement('img');
-        img.alt  = unit.label || unit.name || '';
+        img.alt  = displayUnitName(unit) === '—' ? '' : displayUnitName(unit);
         img.style.cssText = [
             'width:100%', 'height:100%',
             'object-fit:cover', 'object-position:center top',
@@ -651,7 +662,7 @@
         }
 
         // UID / callsign
-        setText('unit-uid', unit.uid || unit.name || unit.label || '—');
+        setText('unit-uid', unit.uid || unit.unit_uid || displayUnitName(unit));
 
         // SIDC (monospace, shown when present)
         var sidcEl = $('usp-sidc');
@@ -809,7 +820,7 @@
     function populateFuelAmmo(unit, enriched) {
         var supplyPct = Math.round((unit.supply != null ? unit.supply : 0.8) * 100);
         var nameEl = $('usp-fuelammo-name');
-        if (nameEl) nameEl.textContent = unit.label || '—';
+        if (nameEl) nameEl.textContent = displayUnitName(unit);
         var fuelFill = $('usp-fuel-fill');
         if (fuelFill) fuelFill.style.width = supplyPct + '%';
         var detail = $('usp-fuelammo-detail');
@@ -1184,7 +1195,7 @@
     // ── Fuel section ─────────────────────────────────────────────────
     function populateFuelSection(unit, enriched) {
         var nameEl = $('usp-fuel-unit-name');
-        if (nameEl) nameEl.textContent = unit.label || '—';
+        if (nameEl) nameEl.textContent = displayUnitName(unit);
         var fuelPct = unit.fuel != null
             ? Math.round(Math.min(1, Math.max(0, unit.fuel)) * 100)
             : Math.round((unit.supply != null ? unit.supply : 0.8) * 100);
@@ -1355,6 +1366,7 @@
         openPanel: openPanel,
         closePanel: closePanel,
         populatePanel: populatePanel,
+        displayUnitName: displayUnitName,   // FIX-B (D): exposed for tests / reuse
         getCurrentUnit: function() { return currentUnit; }
     };
     init();

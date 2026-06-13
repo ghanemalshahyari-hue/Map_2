@@ -113,6 +113,9 @@
                   '<div id="wg-wz-obj-override-status" style="margin-bottom:8px;padding:4px;border-radius:3px;color:#e8eaed;display:none;background:#1a2a24;">' +
                     '<span>Override: </span><span id="wg-wz-obj-override-text"></span>' +
                   '</div>' +
+                  // FIX-B (B): single visible source-of-truth indicator — is Objective X the
+                  // server default or an operator override? This is the value Generate uses.
+                  '<div id="wg-wz-obj-source" style="margin-bottom:8px;font-size:11px;color:#9aa3ad;"></div>' +
                   '<div id="wg-wz-obj-map" style="width:100%;height:240px;border:1px solid #4a5a6a;border-radius:3px;margin-bottom:8px;background:#0a0e12;"></div>' +
                   '<div style="font-size:10px;color:#6a7a8a;margin-bottom:8px;">Drag the marker on the map or enter coordinates below</div>' +
                   '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">' +
@@ -266,6 +269,7 @@
             objDefault: card.querySelector('#wg-wz-obj-default'),
             objOverrideStatus: card.querySelector('#wg-wz-obj-override-status'),
             objOverrideText: card.querySelector('#wg-wz-obj-override-text'),
+            objSource: card.querySelector('#wg-wz-obj-source'),
             objLon: card.querySelector('#wg-wz-lon'),
             objLat: card.querySelector('#wg-wz-lat'),
             objSave: card.querySelector('#wg-wz-obj-save'),
@@ -289,7 +293,17 @@
             review.id = 'wg-wz-review';
             review.style.cssText = 'display:none;margin-top:10px;border:1px solid #2e5d7d;border-radius:8px;background:#0e1620;padding:12px;';
             actionRow.parentNode.insertBefore(review, actionRow.nextSibling);
+            // RMOOZ-IMPORT-OBJECTIVE-UNITSTATUS-FIX-B (A): explain the review gate, plus a
+            // dynamic hint shown when only ONE DOCX is staged (review needs Red + Blue).
+            var analyzeHint = document.createElement('div');
+            analyzeHint.id = 'wg-wz-analyze-hint';
+            analyzeHint.style.cssText = 'font-size:11px;color:#9aa3ad;margin-top:4px;line-height:1.5;';
+            analyzeHint.innerHTML = 'DOCX review uses staged <b>Red + Blue</b> documents. ' +
+                '<b>MDMP JSON</b> review can run separately. ' +
+                '<span style="color:#8fa5b8;">— مراجعة DOCX تستخدم مستندي الأحمر والأزرق؛ مراجعة MDMP JSON تعمل بشكل منفصل.</span>';
+            actionRow.parentNode.insertBefore(analyzeHint, review);
             el.analyze = analyzeBtn;
+            el.analyzeHint = analyzeHint;
             el.review = review;
             analyzeBtn.addEventListener('click', runAnalyze);
 
@@ -567,12 +581,26 @@
                 el.stop.style.display = st.running ? 'inline-flex' : 'none';
                 el.stop.disabled = !!st.stopping;
             }
-            // DOC-UNDERSTANDING-1 / Phase E: offer "Review AI Understanding" once
-            // at least one document is staged (red OR blue) and we're idle.
+            // DOC-UNDERSTANDING-1 / Phase E + RMOOZ-IMPORT-OBJECTIVE-UNITSTATUS-FIX-B (A):
+            // DOCX review needs BOTH Red + Blue staged (a single DOCX yields an
+            // incomplete, one-sided review/generation). MDMP JSON is the only
+            // "single-input" review path — staged MDMP files run on their own.
             if (el.analyze) {
                 el.analyze.style.display = st.stopped ? 'none' : '';
-                // G-3 wiring: staged MDMP JSONs also enable review (no DOCX needed).
-                el.analyze.disabled = !(st.red || st.blue || (st.mdmpFiles && st.mdmpFiles.length)) || st.running;
+                var mdmpOnly = !!(st.mdmpFiles && st.mdmpFiles.length);
+                var docxReady = !!(st.red && st.blue);
+                el.analyze.disabled = st.running || !(mdmpOnly || docxReady);
+                // Dynamic hint: explain the gate when exactly one DOCX is staged
+                // (and no MDMP) — the case that previously enabled an incomplete review.
+                if (el.analyzeHint) {
+                    var oneDocxOnly = (!!st.red !== !!st.blue) && !mdmpOnly;
+                    el.analyzeHint.innerHTML = oneDocxOnly
+                        ? '⚠ DOCX review needs <b>both</b> Red + Blue staged. Stage the other document, or use the MDMP JSON path for a separate review. ' +
+                          '<span style="color:#8fa5b8;">— مراجعة DOCX تتطلب المستندين معًا.</span>'
+                        : 'DOCX review uses staged <b>Red + Blue</b> documents. <b>MDMP JSON</b> review can run separately. ' +
+                          '<span style="color:#8fa5b8;">— مراجعة DOCX تستخدم مستندي الأحمر والأزرق؛ مراجعة MDMP JSON تعمل بشكل منفصل.</span>';
+                    el.analyzeHint.style.color = oneDocxOnly ? '#e0a93a' : '#9aa3ad';
+                }
             }
         }
 
@@ -647,15 +675,46 @@
         // ── PREGEN-CONTROL-2: Scenario Setup (Objective X control) ──────────────
         var objMap = null;
         var objMarker = null;
+        // FIX-B (B): Objective X is the single visible source of truth. Label whether
+        // the active value is the server default or an operator override, and PUSH the
+        // effective objective to the Free Fight / review objective so they cannot
+        // silently diverge. (Generate from Reviewed Brief already reads these inputs.)
+        function setObjectiveSourceLabel(source, lon, lat) {
+            if (!el.objSource) return;
+            var isOv = (source === 'override');
+            el.objSource.innerHTML = '<b>Objective X source:</b> ' +
+                (isOv ? 'operator override' : 'server default') +
+                ' (' + lon.toFixed(2) + ', ' + lat.toFixed(2) + ') · used by “Generate from Reviewed Brief”';
+            el.objSource.style.color = isOv ? '#7fd6a0' : '#9aa3ad';
+        }
+        function syncObjectiveToConsumers(lon, lat, source) {
+            // Persist for Free Fight reuse, update it live if already mounted, and
+            // announce the change for any review consumer. Never throws.
+            try { window.__rmoozFreeFightObjective = { lat: lat, lon: lon }; } catch (_) {}
+            try {
+                var FF = window.RmoozFreeFightDemo;
+                if (FF && typeof FF.setObjective === 'function' &&
+                    typeof FF.getGroups === 'function' && (FF.getGroups() || []).length) {
+                    FF.setObjective({ lat: lat, lon: lon });
+                }
+            } catch (_) {}
+            try {
+                document.dispatchEvent(new CustomEvent('rmooz:objective-x-changed', {
+                    detail: { lon: lon, lat: lat, source: source || 'default' }
+                }));
+            } catch (_) {}
+        }
         function loadObjective() {
             api('GET', '/api/wargame-sim/status').then(function (r) {
                 if (!r.body || !r.body.sim || !r.body.sim.objective) return;
                 var obj = r.body.sim.objective;
+                var effLon = null, effLat = null, effSource = 'default';
                 var defObj = obj.default;
                 if (defObj && typeof defObj.lon === 'number' && typeof defObj.lat === 'number') {
                     el.objDefault.textContent = defObj.lon.toFixed(2) + ', ' + defObj.lat.toFixed(2);
                     el.objLon.value = defObj.lon;
                     el.objLat.value = defObj.lat;
+                    effLon = defObj.lon; effLat = defObj.lat; effSource = 'default';
                 }
                 var ovObj = obj.override;
                 if (ovObj && typeof ovObj.lon === 'number' && typeof ovObj.lat === 'number') {
@@ -663,6 +722,14 @@
                     el.objOverrideText.textContent = ovObj.lon.toFixed(2) + ', ' + ovObj.lat.toFixed(2);
                     el.objLon.value = ovObj.lon;
                     el.objLat.value = ovObj.lat;
+                    effLon = ovObj.lon; effLat = ovObj.lat; effSource = 'override';
+                } else if (el.objOverrideStatus) {
+                    el.objOverrideStatus.style.display = 'none';   // no override → hide the override badge
+                }
+                // Label the active source + keep Free Fight / review objective in sync.
+                if (effLon != null && effLat != null) {
+                    setObjectiveSourceLabel(effSource, effLon, effLat);
+                    syncObjectiveToConsumers(effLon, effLat, effSource);
                 }
                 // After inputs are updated, reposition the marker if map is open
                 setTimeout(repositionMarker, 0);

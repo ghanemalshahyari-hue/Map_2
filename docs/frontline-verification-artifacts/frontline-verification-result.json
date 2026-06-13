@@ -1,0 +1,583 @@
+{
+  "url": "http://127.0.0.1:8000/app.html",
+  "sessionId": "verify-frontline-1781235874673",
+  "scenarioTitle": null,
+  "before": {
+    "segmentCount": 2,
+    "circleCount": 3,
+    "flankCount": 0,
+    "autoFlankTypeCounts": {},
+    "autoFlankSummary": [],
+    "expectedDepthSide": 1,
+    "structuralDepthScore": 0,
+    "structuralDepthSide": 0,
+    "oppositeDepthSideCount": 0,
+    "scallopSides": [
+      -1,
+      -1
+    ],
+    "firstSegment": {
+      "latlng1": {
+        "lat": 24.7,
+        "lng": 54.94
+      },
+      "latlng2": {
+        "lat": 24.735,
+        "lng": 54.98
+      },
+      "sessionId": "verify-frontline-1781235874673",
+      "scallopSide": -1
+    },
+    "scenarioTitle": null
+  },
+  "debugBefore": {
+    "rows": 2,
+    "first": {
+      "segment": 0,
+      "p0": {
+        "lat": 24.7,
+        "lng": 54.94
+      },
+      "p1": {
+        "lat": 24.735,
+        "lng": 54.98
+      },
+      "dx": 7,
+      "dy": -7,
+      "normalSide": "right/default",
+      "control": {
+        "lat": 24.571112574350526,
+        "lng": 55.12499167681186
+      },
+      "sessionId": "verify-frontline-1781235874673"
+    }
+  },
+  "generatedBeforeFlip": {
+    "segmentCount": 2,
+    "circleCount": 3,
+    "flankCount": 12,
+    "autoFlankTypeCounts": {
+      "auto-flank-area": 2,
+      "auto-flank-area-outline": 2,
+      "auto-flank-echelon": 8
+    },
+    "autoFlankSummary": [
+      {
+        "idx": 0,
+        "typeId": "auto-flank-area",
+        "tag": "battalion",
+        "lengthKm": 8,
+        "areaRole": null,
+        "color": "#3b82f6",
+        "fillColor": "#3b82f6",
+        "className": "auto-flank-area",
+        "pointCount": 5,
+        "centroid": {
+          "lat": 24.74880643778548,
+          "lng": 54.99740439967106
+        },
+        "centroidSide": 0,
+        "aggregateSideScore": -2.12
+      },
+      {
+        "idx": 1,
+        "typeId": "auto-flank-area-outline",
+        "tag": "battalion",
+        "lengthKm": 8,
+        "areaRole": null,
+        "color": "#3b82f6",
+        "fillColor": null,
+        "className": "auto-flank-area-outline",
+        "pointCount": 2,
+        "centroid": {
+          "lat": 24.779209885459963,
+          "lng": 54.997173108552644
+        },
+        "centroidSide": 1,
+        "aggregateSideScore": 7.78
+      },
+      {
+        "idx": 2,
+        "typeId": "auto-flank-area",
+        "tag": "battalion",
+        "lengthKm": 8,
+        "areaRole": null,
+        "color": "#3b82f6",
+        "fillColor": "#3b82f6",
+        "className": "auto-flank-area",
+        "pointCount": 4,
+        "centroid": {
+          "lat": 24.746805769948395,
+          "lng": 54.9575404116982
+        },
+        "centroidSide": 1,
+        "aggregateSideScore": 17.68
+      },
+      {
+        "idx": 3,
+        "typeId": "auto-flank-area-outline",
+        "tag": "battalion",
+        "lengthKm": 8,
+        "areaRole": null,
+        "color": "#3b82f6",
+        "fillColor": null,
+        "className": "auto-flank-area-outline",
+        "pointCount": 3,
+        "centroid": {
+          "lat": 24.775039064812372,
+          "lng": 54.96042351973686
+        },
+        "centroidSide": 1,
+        "aggregateSideScore": 24.04
+      },
+      {
+        "idx": 4,
+        "typeId": "auto-flank-echelon",
+        "tag": "battalion",
+        "lengthKm": null,
+        "areaRole": null,
+        "color": null,
+        "fillColor": null,
+        "className": null,
+        "pointCount": 1,
+        "centroid": {
+          "lat": 24.73685348477069,
+          "lng": 54.98107910156251
+        },
+        "centroidSide": 0,
+        "aggregateSideScore": 0
+      },
+      {
+        "idx": 5,
+        "typeId": "auto-flank-echelon",
+        "tag": "battalion",
+        "lengthKm": null,
+        "areaRole": null,
+        "color": null,
+        "fillColor": null,
+        "className": null,
+        "pointCount": 1,
+        "centroid": {
+          "lat": 24.724379466618387,
+          "lng": 55.00579833984376
+        },
+        "centroidSide": -1,
+        "aggregateSideScore": -5.66
+      },
+      {
+        "idx": 6,
+        "typeId": "auto-flank-echelon",
+        "tag": "battalion",
+        "lengthKm": null,
+        "areaRole": null,
+        "color": null,
+        "fillColor": null,
+        "className": null,
+        "pointCount": 1,
+        "centroid": {
+          "lat": 24.74682639314093,
+          "lng": 55.02502441406251
+        },
+        "centroidSide": -1,
+        "aggregateSideScore": -4.24
+      },
+      {
+        "idx": 7,
+        "typeId": "auto-flank-echelon",
+        "tag": "battalion",
+        "lengthKm": null,
+        "areaRole": null,
+        "color": null,
+        "fillColor": null,
+        "className": null,
+        "pointCount": 1,
+        "centroid": {
+          "lat": 24.779209885459963,
+          "lng": 54.997173108552644
+        },
+        "centroidSide": 1,
+        "aggregateSideScore": 3.54
+      },
+      {
+        "idx": 8,
+        "typeId": "auto-flank-echelon",
+        "tag": "battalion",
+        "lengthKm": null,
+        "areaRole": null,
+        "color": null,
+        "fillColor": null,
+        "className": null,
+        "pointCount": 1,
+        "centroid": {
+          "lat": 24.756762958937422,
+          "lng": 54.977947034333894
+        },
+        "centroidSide": 1,
+        "aggregateSideScore": 3.54
+      },
+      {
+        "idx": 9,
+        "typeId": "auto-flank-echelon",
+        "tag": "battalion",
+        "lengthKm": null,
+        "areaRole": null,
+        "color": null,
+        "fillColor": null,
+        "className": null,
+        "pointCount": 1,
+        "centroid": {
+          "lat": 24.77422238066648,
+          "lng": 54.953227796052644
+        },
+        "centroidSide": 1,
+        "aggregateSideScore": 8.49
+      },
+      {
+        "idx": 10,
+        "typeId": "auto-flank-echelon",
+        "tag": "battalion",
+        "lengthKm": null,
+        "areaRole": null,
+        "color": null,
+        "fillColor": null,
+        "className": null,
+        "pointCount": 1,
+        "centroid": {
+          "lat": 24.73684858095937,
+          "lng": 54.93713378906251
+        },
+        "centroidSide": 1,
+        "aggregateSideScore": 5.66
+      },
+      {
+        "idx": 11,
+        "typeId": "auto-flank-echelon",
+        "tag": "battalion",
+        "lengthKm": null,
+        "areaRole": null,
+        "color": null,
+        "fillColor": null,
+        "className": null,
+        "pointCount": 1,
+        "centroid": {
+          "lat": 24.756762958937422,
+          "lng": 54.977947034333894
+        },
+        "centroidSide": 1,
+        "aggregateSideScore": 3.54
+      }
+    ],
+    "expectedDepthSide": 1,
+    "structuralDepthScore": 47.38,
+    "structuralDepthSide": 1,
+    "oppositeDepthSideCount": 0,
+    "scallopSides": [
+      -1,
+      -1
+    ],
+    "firstSegment": {
+      "latlng1": {
+        "lat": 24.7,
+        "lng": 54.94
+      },
+      "latlng2": {
+        "lat": 24.735,
+        "lng": 54.98
+      },
+      "sessionId": "verify-frontline-1781235874673",
+      "scallopSide": -1
+    },
+    "scenarioTitle": null
+  },
+  "after": {
+    "segmentCount": 2,
+    "circleCount": 3,
+    "flankCount": 5,
+    "autoFlankTypeCounts": {
+      "auto-flank-area": 1,
+      "auto-flank-area-outline": 1,
+      "auto-flank-echelon": 3
+    },
+    "autoFlankSummary": [
+      {
+        "idx": 0,
+        "typeId": "auto-flank-area",
+        "tag": "battalion",
+        "lengthKm": 8,
+        "areaRole": null,
+        "color": "#3b82f6",
+        "fillColor": "#3b82f6",
+        "className": "auto-flank-area",
+        "pointCount": 5,
+        "centroid": {
+          "lat": 24.682467800000005,
+          "lng": 54.98785167999999
+        },
+        "centroidSide": -1,
+        "aggregateSideScore": -172.53
+      },
+      {
+        "idx": 1,
+        "typeId": "auto-flank-area-outline",
+        "tag": "battalion",
+        "lengthKm": 8,
+        "areaRole": null,
+        "color": "#3b82f6",
+        "fillColor": null,
+        "className": "auto-flank-area-outline",
+        "pointCount": 4,
+        "centroid": {
+          "lat": 24.669334750000004,
+          "lng": 54.989814599999995
+        },
+        "centroidSide": -1,
+        "aggregateSideScore": -172.53
+      },
+      {
+        "idx": 2,
+        "typeId": "auto-flank-echelon",
+        "tag": "battalion",
+        "lengthKm": null,
+        "areaRole": null,
+        "color": null,
+        "fillColor": null,
+        "className": null,
+        "pointCount": 1,
+        "centroid": {
+          "lat": 24.664334750000002,
+          "lng": 54.9448144
+        },
+        "centroidSide": -1,
+        "aggregateSideScore": -22.63
+      },
+      {
+        "idx": 3,
+        "typeId": "auto-flank-echelon",
+        "tag": "battalion",
+        "lengthKm": null,
+        "areaRole": null,
+        "color": null,
+        "fillColor": null,
+        "className": null,
+        "pointCount": 1,
+        "centroid": {
+          "lat": 24.6336695,
+          "lng": 54.9946292
+        },
+        "centroidSide": -1,
+        "aggregateSideScore": -65.76
+      },
+      {
+        "idx": 4,
+        "typeId": "auto-flank-echelon",
+        "tag": "battalion",
+        "lengthKm": null,
+        "areaRole": null,
+        "color": null,
+        "fillColor": null,
+        "className": null,
+        "pointCount": 1,
+        "centroid": {
+          "lat": 24.67433475,
+          "lng": 55.0348148
+        },
+        "centroidSide": -1,
+        "aggregateSideScore": -62.93
+      }
+    ],
+    "expectedDepthSide": -1,
+    "structuralDepthScore": -345.06,
+    "structuralDepthSide": -1,
+    "oppositeDepthSideCount": 0,
+    "scallopSides": [
+      1,
+      1
+    ],
+    "firstSegment": {
+      "latlng1": {
+        "lat": 24.7,
+        "lng": 54.94
+      },
+      "latlng2": {
+        "lat": 24.735,
+        "lng": 54.98
+      },
+      "sessionId": "verify-frontline-1781235874673",
+      "scallopSide": 1
+    },
+    "scenarioTitle": null
+  },
+  "debugAfter": {
+    "rows": 2,
+    "first": {
+      "segment": 0,
+      "p0": {
+        "lat": 24.7,
+        "lng": 54.94
+      },
+      "p1": {
+        "lat": 24.735,
+        "lng": 54.98
+      },
+      "dx": 29,
+      "dy": -29,
+      "normalSide": "left/flipped",
+      "control": {
+        "lat": 24.754561663562132,
+        "lng": 54.91900842845329
+      },
+      "sessionId": "verify-frontline-1781235874673"
+    }
+  },
+  "exportedScallopSide": 1,
+  "exportedScallopApp": {
+    "kind": "tmg-group",
+    "points": [
+      [
+        54.94,
+        24.7
+      ],
+      [
+        54.98,
+        24.735
+      ],
+      [
+        55.03,
+        24.71
+      ]
+    ],
+    "typeId": "scalloped",
+    "color": "#3b82f6",
+    "filled": true,
+    "dashed": false,
+    "strokeWidth": 2,
+    "sessionId": "verify-frontline-1781235874673",
+    "scallopSide": 1
+  },
+  "reload": {
+    "segmentCount": 2,
+    "circleCount": 3,
+    "flankCount": 5,
+    "autoFlankTypeCounts": {
+      "auto-flank-area": 1,
+      "auto-flank-area-outline": 1,
+      "auto-flank-echelon": 3
+    },
+    "autoFlankSummary": [
+      {
+        "idx": 0,
+        "typeId": "auto-flank-area",
+        "tag": "battalion",
+        "lengthKm": 8,
+        "areaRole": null,
+        "color": "#3b82f6",
+        "fillColor": "#3b82f6",
+        "className": "auto-flank-area",
+        "pointCount": 5,
+        "centroid": {
+          "lat": 24.682467800000005,
+          "lng": 54.98785167999999
+        },
+        "centroidSide": -1,
+        "aggregateSideScore": -43.13
+      },
+      {
+        "idx": 1,
+        "typeId": "auto-flank-area-outline",
+        "tag": "battalion",
+        "lengthKm": 8,
+        "areaRole": null,
+        "color": "#3b82f6",
+        "fillColor": null,
+        "className": "auto-flank-area-outline",
+        "pointCount": 4,
+        "centroid": {
+          "lat": 24.669334750000004,
+          "lng": 54.989814599999995
+        },
+        "centroidSide": -1,
+        "aggregateSideScore": -43.13
+      },
+      {
+        "idx": 2,
+        "typeId": "auto-flank-echelon",
+        "tag": "battalion",
+        "lengthKm": null,
+        "areaRole": null,
+        "color": null,
+        "fillColor": null,
+        "className": null,
+        "pointCount": 1,
+        "centroid": {
+          "lat": 24.664334750000002,
+          "lng": 54.9448144
+        },
+        "centroidSide": -1,
+        "aggregateSideScore": -5.66
+      },
+      {
+        "idx": 3,
+        "typeId": "auto-flank-echelon",
+        "tag": "battalion",
+        "lengthKm": null,
+        "areaRole": null,
+        "color": null,
+        "fillColor": null,
+        "className": null,
+        "pointCount": 1,
+        "centroid": {
+          "lat": 24.6336695,
+          "lng": 54.9946292
+        },
+        "centroidSide": -1,
+        "aggregateSideScore": -16.26
+      },
+      {
+        "idx": 4,
+        "typeId": "auto-flank-echelon",
+        "tag": "battalion",
+        "lengthKm": null,
+        "areaRole": null,
+        "color": null,
+        "fillColor": null,
+        "className": null,
+        "pointCount": 1,
+        "centroid": {
+          "lat": 24.67433475,
+          "lng": 55.0348148
+        },
+        "centroidSide": -1,
+        "aggregateSideScore": -16.26
+      }
+    ],
+    "expectedDepthSide": -1,
+    "structuralDepthScore": -86.26,
+    "structuralDepthSide": -1,
+    "oppositeDepthSideCount": 0,
+    "scallopSides": [
+      1,
+      1
+    ],
+    "firstSegment": {
+      "latlng1": {
+        "lat": 24.7,
+        "lng": 54.94
+      },
+      "latlng2": {
+        "lat": 24.735,
+        "lng": 54.98
+      },
+      "sessionId": "verify-frontline-1781235874673",
+      "scallopSide": 1
+    },
+    "scenarioTitle": null
+  },
+  "consoleErrors": [],
+  "pageErrors": [],
+  "screenshots": {
+    "before": "C:\\Users\\ADMIN\\Desktop\\MAP_2\\docs\\frontline-verification-artifacts\\frontline-before-flip.png",
+    "after": "C:\\Users\\ADMIN\\Desktop\\MAP_2\\docs\\frontline-verification-artifacts\\frontline-after-flip.png",
+    "reload": "C:\\Users\\ADMIN\\Desktop\\MAP_2\\docs\\frontline-verification-artifacts\\frontline-after-reload.png",
+    "export": "C:\\Users\\ADMIN\\Desktop\\MAP_2\\docs\\frontline-verification-artifacts\\frontline-export.geojson"
+  }
+}

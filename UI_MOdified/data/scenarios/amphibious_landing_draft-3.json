@@ -1,0 +1,1408 @@
+{
+  "name": "amphibious_landing_draft-3",
+  "scenario_label": "تقوم القوة المشتركة في هذا السيناريو التدريبي بتحليل الموقف ",
+  "model_version": "brief-gen-v1",
+  "map_bbox": [
+    32.29,
+    34.16,
+    33.49,
+    35.36
+  ],
+  "obj": {
+    "name": "OBJ X",
+    "coord": [
+      32.89,
+      34.76
+    ],
+    "target_depth_km": 5,
+    "carver": 30,
+    "radius_km": 10
+  },
+  "pipeline": [
+    [
+      32.89,
+      34.31
+    ],
+    [
+      32.89,
+      34.535
+    ],
+    [
+      32.89,
+      34.76
+    ]
+  ],
+  "red_units": [
+    {
+      "uid": "R-001",
+      "label": "marine-1",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        33.07258,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-002",
+      "label": "marine-2",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        33.06771,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-003",
+      "label": "armor-3",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        33.06284,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-004",
+      "label": "recon-4",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        33.05798,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-005",
+      "label": "engineer-5",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        33.05311,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-006",
+      "label": "fires-6",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        33.04824,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-007",
+      "label": "marine-7",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        33.04337,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-008",
+      "label": "marine-8",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        33.0385,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-009",
+      "label": "armor-9",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        33.03363,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-010",
+      "label": "recon-10",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        33.02876,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-011",
+      "label": "engineer-11",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        33.02389,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-012",
+      "label": "fires-12",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        33.01902,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-013",
+      "label": "marine-13",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        33.01416,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-014",
+      "label": "marine-14",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        33.00929,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-015",
+      "label": "armor-15",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        33.00442,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-016",
+      "label": "recon-16",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        32.99955,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-017",
+      "label": "engineer-17",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        32.99468,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-018",
+      "label": "fires-18",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        32.98981,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-019",
+      "label": "marine-19",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        32.98494,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-020",
+      "label": "marine-20",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        32.98007,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-021",
+      "label": "armor-21",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        32.97521,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-022",
+      "label": "recon-22",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        32.97034,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-023",
+      "label": "engineer-23",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        32.96547,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-024",
+      "label": "fires-24",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        32.9606,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-025",
+      "label": "marine-25",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        32.95573,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-026",
+      "label": "marine-26",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        32.95086,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-027",
+      "label": "armor-27",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        32.94599,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-028",
+      "label": "recon-28",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        32.94112,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-029",
+      "label": "engineer-29",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        32.93625,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-030",
+      "label": "fires-30",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        32.93139,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-031",
+      "label": "marine-31",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        32.92652,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-032",
+      "label": "marine-32",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        32.92165,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-033",
+      "label": "armor-33",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        32.91678,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-034",
+      "label": "recon-34",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        32.91191,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-035",
+      "label": "engineer-35",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        32.90704,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-036",
+      "label": "fires-36",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        32.90217,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-037",
+      "label": "marine-37",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        32.8973,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-038",
+      "label": "marine-38",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        32.89243,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-039",
+      "label": "armor-39",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        32.88757,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-040",
+      "label": "recon-40",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        32.8827,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-041",
+      "label": "engineer-41",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        32.87783,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-042",
+      "label": "fires-42",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        32.87296,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-043",
+      "label": "marine-43",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        32.86809,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-044",
+      "label": "marine-44",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        32.86322,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-045",
+      "label": "armor-45",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        32.85835,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-046",
+      "label": "recon-46",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        32.85348,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-047",
+      "label": "engineer-47",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        32.84861,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-048",
+      "label": "fires-48",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        32.84375,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-049",
+      "label": "marine-49",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        32.83888,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-050",
+      "label": "marine-50",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        32.83401,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-051",
+      "label": "armor-51",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        32.82914,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-052",
+      "label": "recon-52",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        32.82427,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-053",
+      "label": "engineer-53",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        32.8194,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-054",
+      "label": "fires-54",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        32.81453,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-055",
+      "label": "marine-55",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        32.80966,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-056",
+      "label": "marine-56",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        32.80479,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-057",
+      "label": "armor-57",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        32.79993,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-058",
+      "label": "recon-58",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        32.79506,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-059",
+      "label": "engineer-59",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        32.79019,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-060",
+      "label": "fires-60",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        32.78532,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-061",
+      "label": "marine-61",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        32.78045,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-062",
+      "label": "marine-62",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        32.77558,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-063",
+      "label": "armor-63",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        32.77071,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-064",
+      "label": "recon-64",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        32.76584,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-065",
+      "label": "engineer-65",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        32.76098,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-066",
+      "label": "fires-66",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        32.75611,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-067",
+      "label": "marine-67",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        32.75124,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-068",
+      "label": "marine-68",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        32.74637,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-069",
+      "label": "armor-69",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        32.7415,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-070",
+      "label": "recon-70",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        32.73663,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-071",
+      "label": "engineer-71",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        32.73176,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-072",
+      "label": "fires-72",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        32.72689,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-073",
+      "label": "marine-73",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        32.72202,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-074",
+      "label": "marine-74",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "marine",
+      "coord": [
+        32.71716,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-075",
+      "label": "armor-75",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        32.71229,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "uid": "R-076",
+      "label": "recon-76",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        32.70742,
+        34.46
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    }
+  ],
+  "blue_units_base_ids": [
+    "b1",
+    "b2",
+    "b3",
+    "b4",
+    "b5",
+    "b6",
+    "b7"
+  ],
+  "blue_units_initial": [
+    {
+      "unit_uid": "B-001",
+      "base_id": "b1",
+      "role": "infantry",
+      "coord": [
+        32.97521,
+        34.76
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "unit_uid": "B-002",
+      "base_id": "b2",
+      "role": "infantry",
+      "coord": [
+        32.94312,
+        34.81473
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "unit_uid": "B-003",
+      "base_id": "b3",
+      "role": "coastal_defense",
+      "coord": [
+        32.87104,
+        34.82824
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "unit_uid": "B-004",
+      "base_id": "b4",
+      "role": "air_defense",
+      "coord": [
+        32.81323,
+        34.79037
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "unit_uid": "B-005",
+      "base_id": "b5",
+      "role": "armor",
+      "coord": [
+        32.81323,
+        34.72963
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "unit_uid": "B-006",
+      "base_id": "b6",
+      "role": "reserve",
+      "coord": [
+        32.87104,
+        34.69176
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    },
+    {
+      "unit_uid": "B-007",
+      "base_id": "b7",
+      "role": "infantry",
+      "coord": [
+        32.94312,
+        34.70527
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low"
+    }
+  ],
+  "bls_template": [
+    {
+      "name": "BLS-1",
+      "coord": [
+        33.03607,
+        34.76
+      ],
+      "role": "staging",
+      "draft": true,
+      "needs_review": true
+    },
+    {
+      "name": "BLS-2",
+      "coord": [
+        32.74393,
+        34.76
+      ],
+      "role": "staging",
+      "draft": true,
+      "needs_review": true
+    }
+  ],
+  "phase_table": [
+    {
+      "index": 0,
+      "time_label": "H0",
+      "elapsed_hours": 0,
+      "phase": "preparation_recon",
+      "kind_native": "preparation_recon"
+    },
+    {
+      "index": 1,
+      "time_label": "H+6",
+      "elapsed_hours": 6,
+      "phase": "approach_movement",
+      "kind_native": "approach_movement"
+    },
+    {
+      "index": 2,
+      "time_label": "H+12",
+      "elapsed_hours": 12,
+      "phase": "landing",
+      "kind_native": "landing"
+    },
+    {
+      "index": 3,
+      "time_label": "H+18",
+      "elapsed_hours": 18,
+      "phase": "secure_expand",
+      "kind_native": "secure_expand"
+    }
+  ],
+  "steps": [
+    {
+      "index": 0,
+      "time_label": "H0",
+      "elapsed_hours": 0,
+      "phase": "preparation_recon",
+      "kind_native": "preparation_recon"
+    },
+    {
+      "index": 1,
+      "time_label": "H+6",
+      "elapsed_hours": 6,
+      "phase": "approach_movement",
+      "kind_native": "approach_movement"
+    },
+    {
+      "index": 2,
+      "time_label": "H+12",
+      "elapsed_hours": 12,
+      "phase": "landing",
+      "kind_native": "landing"
+    },
+    {
+      "index": 3,
+      "time_label": "H+18",
+      "elapsed_hours": 18,
+      "phase": "secure_expand",
+      "kind_native": "secure_expand"
+    }
+  ],
+  "terrain_note": "Draft scenario generated from a reviewed Operational Brief. Positions are placeholders for operator review.",
+  "source": "OperationalBrief",
+  "generated_from_brief": true,
+  "generation": {
+    "from": "operational_brief",
+    "template": "amphibious_landing",
+    "template_name_en": "Amphibious Landing",
+    "template_name_ar": "عملية إبرار",
+    "draft": true,
+    "placement_confidence": "low",
+    "objective_source": "operator",
+    "document_set_id": "ds_mdmp_a838141508e4",
+    "source_citations": [
+      {
+        "field": "mission",
+        "file": "UAE_Iran_step1_updated_red_blue_trial.json",
+        "keys": [
+          "join_op_mission"
+        ]
+      },
+      {
+        "field": "commander_intent",
+        "file": "UAE_Iran_step1_updated_red_blue_trial.json",
+        "keys": [
+          "Join_op_purp",
+          "joint_ops_how",
+          "joint_ops_desired_end"
+        ]
+      }
+    ],
+    "missing_fields": [
+      "all unit positions are DRAFT — refine on the map",
+      "precise coordinates were not taken from the document"
+    ],
+    "proposed_unit_counts": {
+      "red": 76,
+      "blue": 7
+    }
+  },
+  "ported_from": "brief-to-scenario.js"
+}

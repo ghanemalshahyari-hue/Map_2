@@ -1,0 +1,200 @@
+{
+  "ok": true,
+  "placement": {
+    "placement_candidates": [
+      {
+        "id": "pc-ryn8d9",
+        "mention": "Bandar Abbas Naval Base",
+        "normalized_name": "bandar abbas naval base",
+        "location_id": "IR-NAVBASE-BANDAR-ABBAS",
+        "lat": 27.15,
+        "lon": 56.2167,
+        "coordinate_format": "named",
+        "placement_type": "known_base",
+        "exact_unit_position": false,
+        "confidence": "high",
+        "needs_review": true,
+        "source": {
+          "type": "location_db",
+          "file": null,
+          "key": "IR-NAVBASE-BANDAR-ABBAS",
+          "origin": "gazetteer",
+          "confidence": "high"
+        },
+        "evidence": [
+          {
+            "method": "explicit_coordinate",
+            "hit": false
+          },
+          {
+            "method": "gazetteer",
+            "hit": true,
+            "location_ids": [
+              "IR-NAVBASE-BANDAR-ABBAS"
+            ]
+          },
+          {
+            "method": "incident_log",
+            "hit": false
+          },
+          {
+            "method": "llm_candidate",
+            "hit": false
+          }
+        ],
+        "warnings": [
+          "base_known_exact_unit_position_unknown"
+        ],
+        "ao_check": "inside",
+        "incident_status": null,
+        "terrain": {
+          "terrain_available": false,
+          "elevation_m": null,
+          "confidence": "low",
+          "warnings": [
+            "dem_not_configured",
+            "no_terrain_data"
+          ],
+          "source": {
+            "type": "terrain_layer",
+            "file": "libya_demx5.tif",
+            "key": "elevation",
+            "origin": "56.21670,27.15000",
+            "confidence": "low"
+          },
+          "needs_review": true
+        },
+        "source_key": "options.mentions[0].bandar abbas naval base"
+      },
+      {
+        "id": "pc-18rlu1t",
+        "mention": "Chabahar Naval Base",
+        "normalized_name": "chabahar naval base",
+        "location_id": "IR-NAVBASE-CHABAHAR",
+        "lat": 25.29,
+        "lon": 60.62,
+        "coordinate_format": "named",
+        "placement_type": "known_base",
+        "exact_unit_position": false,
+        "confidence": "high",
+        "needs_review": true,
+        "source": {
+          "type": "location_db",
+          "file": null,
+          "key": "IR-NAVBASE-CHABAHAR",
+          "origin": "gazetteer",
+          "confidence": "high"
+        },
+        "evidence": [
+          {
+            "method": "explicit_coordinate",
+            "hit": false
+          },
+          {
+            "method": "gazetteer",
+            "hit": true,
+            "location_ids": [
+              "IR-NAVBASE-CHABAHAR"
+            ]
+          },
+          {
+            "method": "incident_log",
+            "hit": false
+          },
+          {
+            "method": "llm_candidate",
+            "hit": false
+          }
+        ],
+        "warnings": [
+          "base_known_exact_unit_position_unknown"
+        ],
+        "ao_check": "inside",
+        "incident_status": null,
+        "terrain": {
+          "terrain_available": false,
+          "elevation_m": null,
+          "confidence": "low",
+          "warnings": [
+            "dem_not_configured",
+            "no_terrain_data"
+          ],
+          "source": {
+            "type": "terrain_layer",
+            "file": "libya_demx5.tif",
+            "key": "elevation",
+            "origin": "60.62000,25.29000",
+            "confidence": "low"
+          },
+          "needs_review": true
+        },
+        "source_key": "options.mentions[1].chabahar naval base"
+      },
+      {
+        "id": "pc-112awkj",
+        "mention": "29.74, 19.55",
+        "normalized_name": "29.74, 19.55",
+        "location_id": null,
+        "lat": 29.74,
+        "lon": 19.55,
+        "coordinate_format": "decimal",
+        "placement_type": "exact_unit_position",
+        "exact_unit_position": true,
+        "confidence": "high",
+        "needs_review": true,
+        "source": {
+          "type": "manual_app_entry",
+          "file": null,
+          "key": "explicit_coordinate",
+          "origin": "mention",
+          "confidence": "high"
+        },
+        "evidence": [
+          {
+            "method": "explicit_coordinate",
+            "hit": true
+          },
+          {
+            "method": "gazetteer",
+            "hit": false,
+            "location_ids": []
+          },
+          {
+            "method": "incident_log",
+            "hit": false
+          },
+          {
+            "method": "llm_candidate",
+            "hit": false
+          }
+        ],
+        "warnings": [
+          "coordinate_latlon_order_assumed",
+          "outside_ao"
+        ],
+        "ao_check": "outside_warn",
+        "incident_status": null,
+        "terrain": {
+          "terrain_available": false,
+          "elevation_m": null,
+          "confidence": "low",
+          "warnings": [
+            "dem_not_configured",
+            "no_terrain_data"
+          ],
+          "source": {
+            "type": "terrain_layer",
+            "file": "libya_demx5.tif",
+            "key": "elevation",
+            "origin": "19.55000,29.74000",
+            "confidence": "low"
+          },
+          "needs_review": true
+        },
+        "source_key": "options.mentions[2]"
+      }
+    ],
+    "missing_information": [],
+    "conflicts": []
+  }
+}

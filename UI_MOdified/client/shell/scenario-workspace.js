@@ -15612,6 +15612,12 @@
             result.warnings.push('no-bls-template');
         }
 
+        // Clear any lingering demo-preview layers before drawing the live scenario.
+        // Without this, step-0 demo positions (near OBJ X) remain visible underneath.
+        if (window.RmoozDemoPreview && typeof window.RmoozDemoPreview.clear === 'function') {
+            try { window.RmoozDemoPreview.clear(); } catch (_) {}
+        }
+
         var drew;
         try {
             drew = api.drawScenario(scenario);

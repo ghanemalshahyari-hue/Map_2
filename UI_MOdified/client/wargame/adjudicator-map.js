@@ -2105,22 +2105,28 @@
             // role-based position (lerp BLS → OBJ capped by role).
             const baseCoord = (Array.isArray(unit.coord) && unit.coord.length === 2) ? unit.coord.slice() : null;
             const meta = {
-                uid:       unit.uid,
-                side:      'RED',
-                role:      unit.role,
-                bls:       unit.bls,
-                appear:    Number.isFinite(unit.appear) ? unit.appear : 0,
-                label:     unit.label,
-                echelon:   unit.echelon,
+                uid:            unit.uid,
+                side:           'RED',
+                role:           unit.role,
+                bls:            unit.bls,
+                appear:         Number.isFinite(unit.appear) ? unit.appear : 0,
+                label:          unit.label,
+                echelon:        unit.echelon,
                 baseCoord,
+                placementSource: unit.placement_source || null,
             };
 
             // Initial placement.
             // W3-rich: use the per-unit coordinate extracted directly from the
             // source GeoJSON step data (authentic positions for each of 84 units).
+            // Brief-import (reviewed_base_anchor): unit.coord IS the reviewed base — use it
+            // directly. The BLS sea-staging model is for amphibious assault templates, not
+            // for land-base import scenarios where RED starts far from OBJ.
             // Other schemas: compute from the BLS→OBJ axis via redPositionLonLat.
             let initialLonLat;
             if (scenario.schema_variant === 'w3-rich' && baseCoord) {
+                initialLonLat = baseCoord;
+            } else if (unit.placement_source === 'reviewed_base_anchor' && baseCoord) {
                 initialLonLat = baseCoord;
             } else {
                 initialLonLat = redPositionLonLat(meta, 0, 0);
@@ -6246,10 +6252,17 @@
         }
         for (const m of Object.values(redMarkers)) {
             try { const el = m.getElement(); if (el) el.style.opacity = ''; } catch (_) {}
-            // Slide Red unit back to its step-0 offshore / role position.
+            // Slide Red unit back to its step-0 position.
+            // Brief-import (reviewed_base_anchor): snap to reviewed base coord.
+            // Other schemas: BLS→OBJ sea-staging model.
             const meta = m && m._wgRedMeta;
             if (meta) {
-                const ll = redPositionLonLat(meta, 0, 0);
+                let ll;
+                if (meta.placementSource === 'reviewed_base_anchor' && meta.baseCoord) {
+                    ll = meta.baseCoord;
+                } else {
+                    ll = redPositionLonLat(meta, 0, 0);
+                }
                 if (ll) { try { m.setLatLng([ll[1], ll[0]]); } catch (_) {} }
             }
         }

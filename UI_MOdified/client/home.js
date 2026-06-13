@@ -242,8 +242,8 @@
             scenario_label:   'Scenario Editor',
             authoring_status: 'draft',
             sides: [
-                { id: 'BLUE', name_en: 'Blue Force', name_ar: 'Ø§Ù„Ù‚ÙˆØ§Øª Ø§Ù„Ø²Ø±Ù‚Ø§Ø¡', color: '#2563eb' },
-                { id: 'RED',  name_en: 'Red Force',  name_ar: 'Ø§Ù„Ù‚ÙˆØ§Øª Ø§Ù„Ø­Ù…Ø±Ø§Ø¡',  color: '#dc2626' }
+                { id: 'BLUE', name_en: 'Blue Force', name_ar: 'القوات الزرقاء', color: '#2563eb' },
+                { id: 'RED',  name_en: 'Red Force',  name_ar: 'القوات الحمراء',  color: '#dc2626' }
             ],
             postures: {
                 BLUE: { BLUE: 'FRIENDLY', RED: 'HOSTILE' },

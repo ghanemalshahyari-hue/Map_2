@@ -1,5 +1,5 @@
 ﻿/* ============================================================================
- * doc-understanding-review.js â€” DOC-UNDERSTANDING-1 / Phase E
+ * doc-understanding-review.js — DOC-UNDERSTANDING-1 / Phase E
  * ----------------------------------------------------------------------------
  * Single source of the "AI Understanding" review renderer. Given the payload
  * from POST /api/wargame-sim/analyze, it paints what the AI understood BEFORE
@@ -231,7 +231,7 @@
         var mapText = caps.map_preview_ready ? 'ready' : (caps.status === 'partial_map' ? 'partial' : 'not ready');
         var html = '<section data-el="review-capability-status" style="margin:8px 0 10px;padding:8px 10px;border-radius:6px;' +
             'background:#101820;border:1px solid #284050;color:#e8eaed;font-size:12px;line-height:1.35;">' +
-            '<div style="font-weight:700;color:#cfe6ff;margin-bottom:5px;">Input capability check â€” ÙØ­Øµ Ø¬Ø§Ù‡Ø²ÙŠØ© Ø§Ù„Ù…Ù„Ù</div>' +
+            '<div style="font-weight:700;color:#cfe6ff;margin-bottom:5px;">Input capability check — فحص جاهزية الملف</div>' +
             '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:5px;">' +
             chip('AI understood this file as', type, '#7fd6a0') +
             chip('Text understanding', caps.text_preview_ready ? 'available' : 'not available', caps.text_preview_ready ? '#7fd6a0' : '#c98') +
@@ -374,29 +374,29 @@
     function renderEnemyBasesReviewPanel(bases, friendlyTrials) {
         var html = '';
         if (bases.length) {
-            html += '<div style="font-size:12px;color:#f0a0a0;font-weight:600;margin:6px 0 3px;">Enemy Bases (RED) â€” Ù‚ÙˆØ§Ø¹Ø¯ Ø§Ù„Ø¹Ø¯Ùˆ (' + bases.length + ')</div>';
+            html += '<div style="font-size:12px;color:#f0a0a0;font-weight:600;margin:6px 0 3px;">Enemy Bases (RED) — قواعد العدو (' + bases.length + ')</div>';
             bases.forEach(function (b) {
                 var coord = (b.lat != null && b.lon != null) ? (b.lat + ', ' + b.lon) : null;
                 html += '<div style="margin:3px 0;padding:6px 8px;border:1px solid #3d2a2a;background:#1a1212;border-radius:4px;font-size:12px;">' +
                     fieldRow('base_name_ar', b.base_name_ar) + fieldRow('base_name_en', b.base_name_en) +
-                    (coord ? fieldRow('coordinates', coord) : '<div style="color:#e0a93a;font-size:11px;">âš  No coordinate â€” ÙŠØ­ØªØ§Ø¬ Ø¨ÙŠØ§Ù†Ø§Øª Ù…ÙˆÙ‚Ø¹</div>') +
+                    (coord ? fieldRow('coordinates', coord) : '<div style="color:#e0a93a;font-size:11px;">⚠ No coordinate — يحتاج بيانات موقع</div>') +
                     fieldRow('site_type', b.site_type || 'airbase') + fieldRow('source_type', b.source_type) + '</div>';
             });
         }
         if (friendlyTrials.length) {
-            html += '<div style="font-size:12px;color:#7fd6a0;font-weight:600;margin:8px 0 3px;">Friendly Anchors (BLUE) â€” Ù…Ø±Ø§Ø³Ù ØµØ¯ÙŠÙ‚Ø© (' + friendlyTrials.length + ')</div>';
+            html += '<div style="font-size:12px;color:#7fd6a0;font-weight:600;margin:8px 0 3px;">Friendly Anchors (BLUE) — مراسٍ صديقة (' + friendlyTrials.length + ')</div>';
             friendlyTrials.forEach(function (b) {
                 var coord = (b.lat != null && b.lon != null) ? (b.lat + ', ' + b.lon) : null;
                 html += '<div style="margin:3px 0;padding:6px 8px;border:1px solid #294333;background:#121a16;border-radius:4px;font-size:12px;">' +
                     fieldRow('base_name_ar', b.base_name_ar) + fieldRow('base_name_en', b.base_name_en) +
-                    (coord ? fieldRow('coordinates', coord) : '<div style="color:#e0a93a;font-size:11px;">âš  No coordinate â€” ÙŠØ­ØªØ§Ø¬ Ø¨ÙŠØ§Ù†Ø§Øª Ù…ÙˆÙ‚Ø¹</div>') +
+                    (coord ? fieldRow('coordinates', coord) : '<div style="color:#e0a93a;font-size:11px;">⚠ No coordinate — يحتاج بيانات موقع</div>') +
                     fieldRow('site_type', b.site_type || 'friendly_trial_anchor') + fieldRow('source_type', b.source_type) + '</div>';
             });
         }
         var missingAll = bases.concat(friendlyTrials).filter(function (b) { return !baseHasLocation(b); });
         if (missingAll.length) {
             html += '<div style="margin-top:6px;padding:5px 8px;border-radius:4px;background:#2a2412;border:1px solid #8b6a16;color:#e0c060;font-size:11px;">' +
-                'âš  ' + missingAll.length + ' base(s) missing coordinates â€” need location data</div>';
+                '⚠ ' + missingAll.length + ' base(s) missing coordinates — need location data</div>';
         }
         return html;
     }
@@ -405,7 +405,7 @@
         var friendlyTrials = friendlyTrialBases(p);
         if (!bases.length && !friendlyTrials.length) return '';
         var hasBothSides = bases.length > 0 && friendlyTrials.length > 0;
-        var sectionLabel = hasBothSides ? 'Bases Review â€” Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ù‚ÙˆØ§Ø¹Ø¯' : (friendlyTrials.length ? 'Friendly Anchors â€” Ù…Ø±Ø§Ø³Ù ØµØ¯ÙŠÙ‚Ø©' : 'Enemy Bases â€” Ù‚ÙˆØ§Ø¹Ø¯ Ø§Ù„Ø¹Ø¯Ùˆ');
+        var sectionLabel = hasBothSides ? 'Bases Review — مراجعة القواعد' : (friendlyTrials.length ? 'Friendly Anchors — مراسٍ صديقة' : 'Enemy Bases — قواعد العدو');
         var sectionColor = hasBothSides ? '#cfe6ff' : (friendlyTrials.length ? '#7fd6a0' : '#f0a0a0');
         return '<section data-el="enemy-bases" style="margin:10px 0;padding:8px 0;border-top:1px solid #23303d;">' +
             '<div style="font-size:13px;color:' + sectionColor + ';font-weight:600;margin-bottom:6px;">' + esc(sectionLabel) + '</div>' +
@@ -485,7 +485,7 @@
         return html;
     }
 
-    // â”€â”€ Import Summary helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Import Summary helpers ────────────────────────────────────────────────
     function getSideCategory(sideStr) {
         var s = String(sideStr || '').toUpperCase();
         if (/^(BLUE|FRIENDLY|BLUE_TEAM|FRIENDLY_FORCES|BLUE_SIDE)/.test(s)) return 'friendly';
@@ -597,7 +597,7 @@
         return '<section data-el="import-summary" style="margin:8px 0 10px;padding:10px;border-radius:6px;background:#0f171f;border:1px solid #284050;">' +
             '<div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;flex-wrap:wrap;margin-bottom:8px;">' +
             '<div>' +
-            '<div style="font-size:13px;color:#cfe6ff;font-weight:700;">Import Summary â€” Ù…Ù„Ø®Øµ Ø§Ù„Ø§Ø³ØªÙŠØ±Ø§Ø¯</div>' +
+            '<div style="font-size:13px;color:#cfe6ff;font-weight:700;">Import Summary — ملخص الاستيراد</div>' +
             '<div style="font-size:12px;color:#9aa3ad;margin-top:2px;">Review counts first, then open only the sections that need attention.</div>' +
             '</div>' +
             '<div style="padding:5px 9px;border-radius:999px;border:1px solid ' + (summary.readiness === 'Ready' ? '#2e7d54' : '#8b6a16') + ';background:' + (summary.readiness === 'Ready' ? '#132219' : '#2a2412') + ';color:' + readinessTone + ';font-size:12px;font-weight:700;">' + esc(summary.readiness) + '</div>' +
@@ -608,7 +608,7 @@
             summaryCard('Objectives', summary.objectives, '#7fd6a0') +
             summaryCard('Missing information', summary.missing_information, summary.missing_information ? '#e0a93a' : '#7fd6a0') +
             summaryCard('Conflicts', summary.conflicts, summary.conflicts ? '#e0a93a' : '#7fd6a0') +
-            ((summary.coalitions || summary.countries) ? summaryCard('Coalition / countries', summary.countries || 0, '#cfe6ff', coalitionNote.join(' Â· ')) : '') +
+            ((summary.coalitions || summary.countries) ? summaryCard('Coalition / countries', summary.countries || 0, '#cfe6ff', coalitionNote.join(' · ')) : '') +
             (summary.enemy_bases || summary.friendly_trial_bases ? summaryCardWithChips('Bases', summary.enemy_bases + summary.friendly_trial_bases, '#cfe6ff', baseChips) : '') +
             '</div>' +
             '</section>';
@@ -621,7 +621,7 @@
         }
         return '<details data-el="critical-issues" open style="margin:8px 0 10px;padding:8px 10px;border-radius:6px;background:#101820;border:1px solid #5a4c2a;">' +
             '<summary style="cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:8px;align-items:center;color:#e0c060;font-size:13px;font-weight:700;">' +
-            '<span>Critical Issues â€” Ø§Ù„Ù‚Ø¶Ø§ÙŠØ§ Ø§Ù„Ø­Ø±Ø¬Ø©</span><span style="font-size:11px;color:#9aa3ad;">' + esc(total) + ' items require review</span></summary>' +
+            '<span>Critical Issues — القضايا الحرجة</span><span style="font-size:11px;color:#9aa3ad;">' + esc(total) + ' items require review</span></summary>' +
             '<div style="margin-top:8px;">' +
             (issues.missing_information.length ? listBlock('Missing information', issues.missing_information, '#e0a93a') : '') +
             (issues.conflicts.length ? listBlock('Conflicts', issues.conflicts, '#e0a93a') : '') +
@@ -648,7 +648,7 @@
         return null;
     }
     // FREE-FIGHT-AI-LITE visibility fix: SHOWING the Free Fight card must NOT
-    // require an Objective X â€” the operator places Objective X *inside* the demo,
+    // require an Objective X — the operator places Objective X *inside* the demo,
     // so gating the card on an objective is a deadlock (can't open the card to
     // place the objective the card itself requires). Show whenever ANY demo-able
     // Step 1 data exists. Whether the demo can START (objective + groups +
@@ -661,7 +661,7 @@
         var hasUnits = arr(ob.proposed_units).length > 0 || arr(u.proposed_units).length > 0;
         var hasAnchorOrBase = arr(ob.placement_candidates).length > 0 || arr(src.placement_candidates).length > 0 ||
             arr(ob.enemy_bases).length > 0 || arr(ob.friendly_trial_bases).length > 0 || arr(ob.country_bases).length > 0;
-        return hasUnits && hasAnchorOrBase;                        // units AND an anchor/base source â€” NO objective gate
+        return hasUnits && hasAnchorOrBase;                        // units AND an anchor/base source — NO objective gate
     }
     function ffHasObjective(p) {
         var ob = opBrief(p);
@@ -677,19 +677,19 @@
         var r = coalitionRollup(p);
         if (!r) return '';
         var html = '<section data-el="coalition-rollup" style="margin:10px 0;padding:8px 0;border-top:1px solid #23303d;">' +
-            '<div style="font-size:13px;color:#cfe6ff;font-weight:600;margin-bottom:6px;">Ø±Ø¨Ø· Ø§Ù„Ù‚ÙˆØ§Øª Ù…ØªØ¹Ø¯Ø¯ Ø§Ù„Ø¯ÙˆÙ„ â€” Coalition ORBAT</div>';
+            '<div style="font-size:13px;color:#cfe6ff;font-weight:600;margin-bottom:6px;">ربط القوات متعدد الدول — Coalition ORBAT</div>';
         html += '<div style="margin-bottom:6px;">' +
-            chip('Countries detected â€” Ø§Ù„Ø¯ÙˆÙ„', r.country_count) +
-            chip('RED countries â€” Ø¯ÙˆÙ„ Ø­Ù…Ø±Ø§Ø¡', r.red_country_count, '#f0a0a0') +
-            chip('BLUE countries â€” Ø¯ÙˆÙ„ Ø²Ø±Ù‚Ø§Ø¡', r.blue_country_count, '#7fd6a0') + '</div>';
+            chip('Countries detected — الدول', r.country_count) +
+            chip('RED countries — دول حمراء', r.red_country_count, '#f0a0a0') +
+            chip('BLUE countries — دول زرقاء', r.blue_country_count, '#7fd6a0') + '</div>';
         // Per-side coalition totals.
         var totals = r.coalition_totals || {};
         Object.keys(totals).forEach(function (side) {
             var t = totals[side] || {};
             html += '<div style="margin:3px 0;font-size:12px;color:' + sideTone(side) + ';">' +
                 esc(side) + ' coalition: ' +
-                '<span style="color:#e8eaed;">' + (t.countries || 0) + ' countries Â· ' +
-                (t.total_bases || 0) + ' bases (air ' + (t.air_bases || 0) + ' / naval ' + (t.naval_bases || 0) + ' / land ' + (t.land_bases || 0) + ') Â· ' +
+                '<span style="color:#e8eaed;">' + (t.countries || 0) + ' countries · ' +
+                (t.total_bases || 0) + ' bases (air ' + (t.air_bases || 0) + ' / naval ' + (t.naval_bases || 0) + ' / land ' + (t.land_bases || 0) + ') · ' +
                 (t.proposed_units || 0) + ' proposed units</span></div>';
         });
         // Per-country breakdown.
@@ -697,15 +697,15 @@
             var bc = c.base_counts || {};
             html += '<div style="margin:5px 0;padding:6px 8px;border:1px solid #2a2f37;background:#101820;border-radius:4px;font-size:12px;">' +
                 '<div style="color:' + sideTone(c.side) + ';font-weight:600;direction:rtl;text-align:right;">' +
-                esc(c.name || '-') + (c.name_en ? ' â€” ' + esc(c.name_en) : '') + ' <span style="color:#8fa5b8;">[' + esc(c.side) + ']</span></div>' +
+                esc(c.name || '-') + (c.name_en ? ' — ' + esc(c.name_en) : '') + ' <span style="color:#8fa5b8;">[' + esc(c.side) + ']</span></div>' +
                 '<div style="color:#9ab;margin-top:3px;">' +
-                'bases: air ' + (bc.air || 0) + ' Â· naval ' + (bc.naval || 0) + ' Â· land ' + (bc.land || 0) + ' Â· total <b>' + (bc.total || 0) + '</b>' +
-                ' &nbsp;Â·&nbsp; proposed units <b>' + (c.proposed_unit_count || 0) + '</b></div></div>';
+                'bases: air ' + (bc.air || 0) + ' · naval ' + (bc.naval || 0) + ' · land ' + (bc.land || 0) + ' · total <b>' + (bc.total || 0) + '</b>' +
+                ' &nbsp;·&nbsp; proposed units <b>' + (c.proposed_unit_count || 0) + '</b></div></div>';
         });
         // Coalition membership lines.
         (r.coalitions || []).forEach(function (co) {
             html += '<div style="margin:3px 0;font-size:11px;color:#8fa5b8;">' +
-                esc(co.name_en || co.id) + ': ' + esc((co.participants || []).join('ØŒ ')) + '</div>';
+                esc(co.name_en || co.id) + ': ' + esc((co.participants || []).join('، ')) + '</div>';
         });
         html += '</section>';
         return html;
@@ -717,10 +717,10 @@
         var u = p.understanding || {};
         var pc = proposedCounts(p);
         var caps = assessReviewPayloadCapabilities(p);
-        var html = '<div style="font-size:14px;color:#7fd6a0;font-weight:600;margin-bottom:8px;">AI understood this as â€” ÙÙ‡Ù… Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ</div>';
-        html += '<div style="margin-bottom:8px;">' + chip('Type / Ø§Ù„Ù†ÙˆØ¹', (u.set_label_en || '') + ' â€” ' + (u.set_label_ar || ''), '#7fd6a0');
+        var html = '<div style="font-size:14px;color:#7fd6a0;font-weight:600;margin-bottom:8px;">AI understood this as — فهم الذكاء الاصطناعي</div>';
+        html += '<div style="margin-bottom:8px;">' + chip('Type / النوع', (u.set_label_en || '') + ' — ' + (u.set_label_ar || ''), '#7fd6a0');
         (p.documents || []).forEach(function (d) {
-            html += chip(d.filename || (d.hash || '').slice(0, 8), (d.type_label_en || d.detected_type) + ' Â· ' + Math.round((d.confidence || 0) * 100) + '%');
+            html += chip(d.filename || (d.hash || '').slice(0, 8), (d.type_label_en || d.detected_type) + ' · ' + Math.round((d.confidence || 0) * 100) + '%');
         });
         html += '</div>';
         if (p.debug_line || p.debug) {
@@ -738,21 +738,21 @@
         html += renderCapabilityStatus(p, caps);
         if (p.dedupe && p.dedupe.same_in_both_slots) {
             html += '<div style="margin-bottom:8px;padding:6px 8px;border-radius:5px;background:#2a2412;border:1px solid #b8860b;color:#e0c060;font-size:12px;">' +
-                'â®• Same document in both slots â€” treated as ONE Mixed Operational Document. Ù†ÙØ³ Ø§Ù„ÙˆØ«ÙŠÙ‚Ø© ÙÙŠ Ø§Ù„Ø®Ø§Ù†ØªÙŠÙ† â€” Ø¹ÙˆÙ…Ù„Øª ÙƒÙˆØ«ÙŠÙ‚Ø© Ø¹Ù…Ù„ÙŠØ§Øª ÙˆØ§Ø­Ø¯Ø©.</div>';
+                '⮕ Same document in both slots — treated as ONE Mixed Operational Document. نفس الوثيقة في الخانتين — عوملت كوثيقة عمليات واحدة.</div>';
         }
-        if (u.mission) html += briefBlock('Mission â€” Ø§Ù„Ù…Ù‡Ù…Ø©', u.mission);
-        if (u.commander_intent) html += briefBlock("Commander's intent â€” Ù†ÙŠØ© Ø§Ù„Ù‚Ø§Ø¦Ø¯", u.commander_intent);
-        html += sideBlock('Friendly (BLUE) â€” Ù‚ÙˆØ§ØªÙ†Ø§ (Ø§Ù„Ø²Ø±Ù‚Ø§Ø¡)', u.friendly && u.friendly.summary, '#16241b', '#7fd6a0');
-        html += sideBlock('Enemy (RED) â€” Ø§Ù„Ø¹Ø¯Ùˆ (Ø§Ù„Ø­Ù…Ø±Ø§Ø¡)', u.enemy && u.enemy.summary, '#241616', '#f0a0a0');
-        if (u.neutral && (u.neutral.civilian || []).length) html += sideBlock('Neutral / civilian â€” Ù…Ø­Ø§ÙŠØ¯ / Ù…Ø¯Ù†ÙŠ', (u.neutral.civilian || []).join('\n'), '#24220f', '#d8d870');
-        html += listBlock('Objectives â€” Ø§Ù„Ø£Ù‡Ø¯Ø§Ù', (u.objectives || []).map(function (o) { return o.name; }));
-        html += listBlock('Phases â€” Ø§Ù„Ù…Ø±Ø§Ø­Ù„', (u.phases || []).map(function (ph) { return 'P' + ph.index + ': ' + ph.label; }));
-        html += listBlock('Constraints / ROE â€” Ø§Ù„Ù‚ÙŠÙˆØ¯', (u.constraints || []).map(function (c) { return c.text; }));
+        if (u.mission) html += briefBlock('Mission — المهمة', u.mission);
+        if (u.commander_intent) html += briefBlock("Commander's intent — نية القائد", u.commander_intent);
+        html += sideBlock('Friendly (BLUE) — قواتنا (الزرقاء)', u.friendly && u.friendly.summary, '#16241b', '#7fd6a0');
+        html += sideBlock('Enemy (RED) — العدو (الحمراء)', u.enemy && u.enemy.summary, '#241616', '#f0a0a0');
+        if (u.neutral && (u.neutral.civilian || []).length) html += sideBlock('Neutral / civilian — محايد / مدني', (u.neutral.civilian || []).join('\n'), '#24220f', '#d8d870');
+        html += listBlock('Objectives — الأهداف', (u.objectives || []).map(function (o) { return o.name; }));
+        html += listBlock('Phases — المراحل', (u.phases || []).map(function (ph) { return 'P' + ph.index + ': ' + ph.label; }));
+        html += listBlock('Constraints / ROE — القيود', (u.constraints || []).map(function (c) { return c.text; }));
         html += '<div style="margin:8px 0;">' +
-            chip('Proposed units â€” Ø£Ø¹Ø¯Ø§Ø¯ Ù…Ù‚ØªØ±Ø­Ø©', 'BLUE ' + (pc.blue || 0) + ' / RED ' + (pc.red || 0) + ' / NEUTRAL ' + (pc.neutral || 0)) +
-            chip('Map bounds â€” Ø­Ø¯ÙˆØ¯ Ø§Ù„Ø®Ø±ÙŠØ·Ø©', u.proposed_map_bounds ? 'from document' : 'not specified â€” set objective on map') + '</div>';
+            chip('Proposed units — أعداد مقترحة', 'BLUE ' + (pc.blue || 0) + ' / RED ' + (pc.red || 0) + ' / NEUTRAL ' + (pc.neutral || 0)) +
+            chip('Map bounds — حدود الخريطة', u.proposed_map_bounds ? 'from document' : 'not specified — set objective on map') + '</div>';
         html += renderCoalitionRollup(p);
-        html += listBlock('Missing / ambiguous â€” Ù†ÙˆØ§Ù‚Øµ ÙˆØºÙ…ÙˆØ¶', u.ambiguities || [], '#e0a93a');
+        html += listBlock('Missing / ambiguous — نواقص وغموض', u.ambiguities || [], '#e0a93a');
         html += renderTaskAssembly(p);
         html += renderUnitsDuty(p);
         html += renderDoctrineRequired(p);
@@ -761,7 +761,7 @@
         html += renderMissingInformation(p);
         html += renderStaffBrief2(p);
         if (p.llm_fill && !p.llm_fill.available) {
-            html += '<div style="font-size:11px;color:#9aa3ad;margin:6px 0;">â„¹ Deep extraction (exact units &amp; intent) runs on the deployment LLM; this is the offline structural read.</div>';
+            html += '<div style="font-size:11px;color:#9aa3ad;margin:6px 0;">ℹ Deep extraction (exact units &amp; intent) runs on the deployment LLM; this is the offline structural read.</div>';
         }
         // DOC-UNDERSTANDING-1 / G-3: COA Review Panel mount point. Painted by
         // shell/coa-review-panel.js when the brief carries courses_of_action[].
@@ -773,20 +773,20 @@
         var placementClosed = Array.isArray(placementList) && placementList.length > 10;
         html += '<details data-el="placement-section"' + (placementClosed ? '' : ' open') + ' style="margin:10px 0;padding:8px 0;border-top:1px solid #23303d;">' +
             '<summary style="cursor:pointer;font-size:13px;color:#e0c060;font-weight:600;display:flex;justify-content:space-between;gap:8px;align-items:center;">' +
-            '<span>Placement Candidates â€” Ù…ÙˆØ§Ù‚Ø¹ Ù…Ù‚ØªØ±Ø­Ø©</span>' +
+            '<span>Placement Candidates — مواقع مقترحة</span>' +
             '<span style="font-size:11px;color:#8fa5b8;">' + esc(placementList.length) + ' found</span></summary>' +
             '<div style="font-size:11px;color:#8fa5b8;margin:6px 0;">Map anchors render immediately on the map; open this section for the full candidate list.</div>' +
             '<div data-el="placement-panel"></div>' +
             '</details>';
         html += '<div style="margin:10px 0 6px;font-size:12px;color:#9aa3ad;display:flex;align-items:center;gap:6px;flex-wrap:wrap;border-top:1px solid #23303d;padding-top:10px;">' +
-            '<span>Operation template â€” Ù‚Ø§Ù„Ø¨ Ø§Ù„Ø¹Ù…Ù„ÙŠØ©:</span>' +
+            '<span>Operation template — قالب العملية:</span>' +
             '<select data-el="template" style="font:inherit;background:#161b18;color:#e8eaed;border:1px solid #4a5a6a;border-radius:4px;padding:3px 6px;">' +
-            '<option value="">(auto-detect â€” ÙƒØ´Ù ØªÙ„Ù‚Ø§Ø¦ÙŠ)</option>' +
-            '<option value="amphibious_landing">amphibious_landing â€” Ø¹Ù…Ù„ÙŠØ© Ø¥Ø¨Ø±Ø§Ø±</option>' +
-            '<option value="attack_objective">attack_objective â€” Ù‡Ø¬ÙˆÙ… Ø¹Ù„Ù‰ Ù‡Ø¯Ù</option>' +
-            '<option value="defend_objective">defend_objective â€” Ø¯ÙØ§Ø¹ Ø¹Ù† Ù‡Ø¯Ù</option>' +
-            '<option value="reconnaissance">reconnaissance â€” Ø§Ø³ØªØ·Ù„Ø§Ø¹</option>' +
-            '<option value="air_defense">air_defense â€” Ø¯ÙØ§Ø¹ Ø¬ÙˆÙŠ</option>' +
+            '<option value="">(auto-detect — كشف تلقائي)</option>' +
+            '<option value="amphibious_landing">amphibious_landing — عملية إبرار</option>' +
+            '<option value="attack_objective">attack_objective — هجوم على هدف</option>' +
+            '<option value="defend_objective">defend_objective — دفاع عن هدف</option>' +
+            '<option value="reconnaissance">reconnaissance — استطلاع</option>' +
+            '<option value="air_defense">air_defense — دفاع جوي</option>' +
             '</select></div>';
         // G-3 approval gate message (hidden until a blocked Generate attempt).
         html += '<div data-el="coa-block-warn" style="display:none;margin:0 0 8px;padding:6px 8px;border-radius:5px;background:#2a2412;border:1px solid #b8860b;color:#e0c060;font-size:12px;"></div>';
@@ -801,25 +801,25 @@
         var _ffBaseCount = arr(_ffOb.enemy_bases).length + arr(_ffOb.friendly_trial_bases).length + arr(_ffOb.country_bases).length;
         var _ffCardVisible = canShowFreeFight(p), _ffHasObj = ffHasObjective(p);
         html += '<div data-el="free-fight-debug" style="margin:8px 0;padding:5px 7px;border:1px dashed #4a5a6a;border-radius:4px;background:#0c1118;color:#8fb8e0;font-size:11px;font-family:Consolas,monospace;direction:ltr;text-align:left;">' +
-            'free-fight debug Â· kind=' + esc(p.kind || (u && u.set_label_en) || 'unknown') +
-            ' Â· has_coalition=' + (!!coalitionRollup(p)) +
-            ' Â· has_objective=' + _ffHasObj +
-            ' Â· proposed_units_count=' + proposedUnits(p).length +
-            ' Â· placement_candidates_count=' + placementCandidates(p).length +
-            ' Â· base_count=' + _ffBaseCount +
-            ' Â· free_fight_card_visible=' + (!!_ffCardVisible) +
-            ' Â· start_enabled=' + (!!(_ffCardVisible && _ffHasObj)) + '</div>';
+            'free-fight debug · kind=' + esc(p.kind || (u && u.set_label_en) || 'unknown') +
+            ' · has_coalition=' + (!!coalitionRollup(p)) +
+            ' · has_objective=' + _ffHasObj +
+            ' · proposed_units_count=' + proposedUnits(p).length +
+            ' · placement_candidates_count=' + placementCandidates(p).length +
+            ' · base_count=' + _ffBaseCount +
+            ' · free_fight_card_visible=' + (!!_ffCardVisible) +
+            ' · start_enabled=' + (!!(_ffCardVisible && _ffHasObj)) + '</div>';
         html += '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
-            '<button type="button" data-act="generate" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:6px;padding:7px 14px;font-weight:600;">Generate Scenario â€” ØªÙˆÙ„ÙŠØ¯ Ø§Ù„Ø³ÙŠÙ†Ø§Ø±ÙŠÙˆ</button>' +
-            '<button type="button" data-act="edit" style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#22303f;color:#cfe6ff;border-radius:6px;padding:7px 14px;">Edit Understanding â€” ØªØ¹Ø¯ÙŠÙ„ Ø§Ù„ÙÙ‡Ù…</button>' +
-            '<button type="button" data-act="more" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:6px;padding:7px 14px;">Upload More â€” ÙˆØ«Ø§Ø¦Ù‚ Ø¥Ø¶Ø§ÙÙŠØ©</button>' +
-            (showPreviewBtn ? '<button type="button" data-act="preview" style="font:inherit;cursor:pointer;border:1px solid #b8860b;background:#2a2412;color:#e0c060;border-radius:6px;padding:7px 14px;">Preview Decision Steps â€” Ù…Ø¹Ø§ÙŠÙ†Ø© Ø®Ø·ÙˆØ§Øª Ø§Ù„Ù‚Ø±Ø§Ø±</button>' : '') +
-            (disabledPreview ? '<button type="button" data-act="preview-disabled" disabled title="' + esc('Missing: ' + caps.missing_for_map_preview.join(', ')) + '" style="font:inherit;cursor:not-allowed;border:1px solid #5a4c2a;background:#191711;color:#9a8550;border-radius:6px;padding:7px 14px;">Map Preview Not Ready â€” Ù…Ø¹Ø§ÙŠÙ†Ø© Ø§Ù„Ø®Ø±ÙŠØ·Ø© ØºÙŠØ± Ø¬Ø§Ù‡Ø²Ø©</button>' : '') +
-            (coalitionRollup(p) ? '<button type="button" data-act="demo-movement" title="Symbolic demo only â€” not final tasking" style="font:inherit;cursor:pointer;border:1px solid #b8860b;background:#2a2412;color:#e0c060;border-radius:6px;padding:7px 14px;">Demo Movement â€” Ø­Ø±ÙƒØ© Ø¹Ø±Ø¶ (demo only)</button>' : '') +
-            (canShowFreeFight(p) ? '<button type="button" data-act="free-fight" title="Symbolic AI-assisted demo â€” not final tasking" style="font:inherit;cursor:pointer;border:1px solid #7a3030;background:#241414;color:#f0a0a0;border-radius:6px;padding:7px 14px;">Free Fight Demo â€” Ù‚ØªØ§Ù„ ØªØ¬Ø±ÙŠØ¨ÙŠ (demo only)</button>' : '') +
-            '<button type="button" data-act="cancel" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:6px;padding:7px 14px;">Cancel â€” Ø¥Ù„ØºØ§Ø¡</button>' +
+            '<button type="button" data-act="generate" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:6px;padding:7px 14px;font-weight:600;">Generate Scenario — توليد السيناريو</button>' +
+            '<button type="button" data-act="edit" style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#22303f;color:#cfe6ff;border-radius:6px;padding:7px 14px;">Edit Understanding — تعديل الفهم</button>' +
+            '<button type="button" data-act="more" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:6px;padding:7px 14px;">Upload More — وثائق إضافية</button>' +
+            (showPreviewBtn ? '<button type="button" data-act="preview" style="font:inherit;cursor:pointer;border:1px solid #b8860b;background:#2a2412;color:#e0c060;border-radius:6px;padding:7px 14px;">Preview Decision Steps — معاينة خطوات القرار</button>' : '') +
+            (disabledPreview ? '<button type="button" data-act="preview-disabled" disabled title="' + esc('Missing: ' + caps.missing_for_map_preview.join(', ')) + '" style="font:inherit;cursor:not-allowed;border:1px solid #5a4c2a;background:#191711;color:#9a8550;border-radius:6px;padding:7px 14px;">Map Preview Not Ready — معاينة الخريطة غير جاهزة</button>' : '') +
+            (coalitionRollup(p) ? '<button type="button" data-act="demo-movement" title="Symbolic demo only — not final tasking" style="font:inherit;cursor:pointer;border:1px solid #b8860b;background:#2a2412;color:#e0c060;border-radius:6px;padding:7px 14px;">Demo Movement — حركة عرض (demo only)</button>' : '') +
+            (canShowFreeFight(p) ? '<button type="button" data-act="free-fight" title="Symbolic AI-assisted demo — not final tasking" style="font:inherit;cursor:pointer;border:1px solid #7a3030;background:#241414;color:#f0a0a0;border-radius:6px;padding:7px 14px;">Free Fight Demo — قتال تجريبي (demo only)</button>' : '') +
+            '<button type="button" data-act="cancel" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:6px;padding:7px 14px;">Cancel — إلغاء</button>' +
             '</div>' +
-            '<details data-el="editbox" style="margin-top:8px;"><summary style="cursor:pointer;font-size:12px;color:#8fa5b8;">Operational Brief JSON â€” Ù…Ø³ÙˆØ¯Ø© Ø§Ù„Ù…ÙˆØ¬Ø²</summary>' +
+            '<details data-el="editbox" style="margin-top:8px;"><summary style="cursor:pointer;font-size:12px;color:#8fa5b8;">Operational Brief JSON — مسودة الموجز</summary>' +
             '<textarea data-el="json" spellcheck="false" style="width:100%;height:160px;margin-top:6px;background:#0a0e12;color:#c0c6cd;border:1px solid #2a2f37;border-radius:4px;font-size:11px;font-family:monospace;box-sizing:border-box;"></textarea>' +
             '<div style="font-size:11px;color:#9aa3ad;margin-top:4px;">Structured editing is applied on the deployment network; this view is for review/transparency.</div></details>';
         container.innerHTML = html;
@@ -848,13 +848,13 @@
         }
         // Generate passes the chosen operation template (or null = auto-detect).
         // G-3 approval rule: when COAs exist, generation requires an operator-
-        // selected BLUE COA (recommendation alone never satisfies this â€” D9).
+        // selected BLUE COA (recommendation alone never satisfies this — D9).
         bind('generate', function () {
             var warn = container.querySelector('[data-el="coa-block-warn"]');
             if (window.RmoozCoaPanel && window.RmoozCoaPanel.hasCoas(p)) {
                 var gate = window.RmoozCoaPanel.canGenerateNow();
                 if (!gate.ok) {
-                    if (warn) { warn.style.display = 'block'; warn.textContent = 'â›” ' + (gate.reason || window.RmoozCoaPanel.BLOCK_MESSAGE); }
+                    if (warn) { warn.style.display = 'block'; warn.textContent = '⛔ ' + (gate.reason || window.RmoozCoaPanel.BLOCK_MESSAGE); }
                     return;
                 }
                 if (warn) warn.style.display = 'none';
@@ -889,7 +889,7 @@
             }
             var previewBtn = container.querySelector('[data-act="preview"]');
             var prevLabel = previewBtn ? previewBtn.textContent : '';
-            if (previewBtn) { previewBtn.disabled = true; previewBtn.textContent = 'â€¦'; }
+            if (previewBtn) { previewBtn.disabled = true; previewBtn.textContent = '…'; }
             window.RmoozDemoPreview.build(p).then(function () {
                 if (previewBtn) { previewBtn.disabled = false; previewBtn.textContent = prevLabel; }
             }).catch(function (err) {
@@ -899,7 +899,7 @@
             });
         });
         bind('cancel', handlers.onCancel || function () { container.style.display = 'none'; });
-        // MULTI-COUNTRY-DEMO-A: symbolic demo-movement overlay (demo only â€” no
+        // MULTI-COUNTRY-DEMO-A: symbolic demo-movement overlay (demo only — no
         // final tasking, no world-state mutation). Shown for coalition briefs.
         bind('demo-movement', function () {
             if (window.RmoozDemoMovement && typeof window.RmoozDemoMovement.mount === 'function') {

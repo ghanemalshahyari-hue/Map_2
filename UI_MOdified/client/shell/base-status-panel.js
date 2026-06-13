@@ -59,12 +59,33 @@
     function normalizeName(s) {
         return lower(s).replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
     }
+    function idTokens(o) {
+        return [
+            o && o.assigned_base_id, o && o.base_id, o && o.anchor_id,
+            o && o.placement_candidate_id, o && o.base_location_id,
+            o && o.location_id, o && o.assigned_base, o && o.id
+        ].map(normalizeName).filter(Boolean);
+    }
     function nameTokens(o) {
         return [
-            o && o.base_name_ar, o && o.base_name_en, o && o.assigned_base,
+            o && o.base_name, o && o.base_name_ar, o && o.base_name_en, o && o.assigned_base,
             o && o.base_id, o && o.mention, o && o.normalized_name,
             o && o.location_id, o && o.id
         ].map(normalizeName).filter(Boolean);
+    }
+    function sideCountryCompatible(unit, anchor, base) {
+        var sideU = String(unit && unit.side || '').toUpperCase();
+        var sideA = String(anchor && anchor.side || (base && base.side) || '').toUpperCase();
+        if (sideU && sideA && sideU !== sideA) return false;
+        var countryU = normalizeName((unit && (unit.country_key || unit.country)) || '');
+        var countryA = normalizeName((anchor && (anchor.country_key || anchor.country)) || (base && (base.country_key || base.country)) || '');
+        return !(countryU && countryA && countryU !== countryA);
+    }
+    function idMatches(unit, anchor, base) {
+        var uu = idTokens(unit);
+        if (!uu.length) return false;
+        var aa = idTokens(anchor).concat(idTokens(base));
+        return aa.some(function (id) { return uu.indexOf(id) !== -1; });
     }
     function nameMatches(a, b) {
         var aa = nameTokens(a), bb = nameTokens(b);
@@ -81,11 +102,19 @@
     }
     function unitBelongsToAnchor(unit, anchor, base) {
         if (!unit || !anchor) return false;
-        var sideU = String(unit.side || '').toUpperCase();
-        var sideA = String(anchor.side || (base && base.side) || '').toUpperCase();
-        if (sideU && sideA && sideU !== sideA) return false;
+        if (!sideCountryCompatible(unit, anchor, base)) return false;
+        if (idMatches(unit, anchor, base)) return true;
         if (nameMatches(unit, anchor) || (base && nameMatches(unit, base))) return true;
         return coordMatches(unit, anchor) || (base && coordMatches(unit, base));
+    }
+    function allAnchorsAndBases(payload) {
+        return allCandidates(payload).concat(allBases(payload));
+    }
+    function unassignedUnits(payload) {
+        var anchors = allAnchorsAndBases(payload);
+        return allProposedUnits(payload).filter(function (u) {
+            return !anchors.some(function (a) { return unitBelongsToAnchor(u, a, a); });
+        });
     }
     function findBase(anchor, payload) {
         var bases = allBases(payload);
@@ -409,6 +438,7 @@
         payload = payload || {};
         var base = findBase(anchor, payload);
         var units = allProposedUnits(payload).filter(function (u) { return unitBelongsToAnchor(u, anchor, base); });
+        var orphaned = unassignedUnits(payload);
         var side = sideOf(anchor, base);
         var type = baseType(anchor, base);
         var country = text(anchor.country || base.country, '');
@@ -467,6 +497,11 @@
             ((sym && sym.fallback) ? '<div class="bsp-catreq">' + esc(sym.warning || 'symbol fallback used') + '</div>' : '') +
             '</section>';
         html += '<section class="bsp-section"><h3>Proposed Units</h3>' + renderUnitTable(units) + '</section>';
+        if (orphaned.length) {
+            html += '<section class="bsp-section"><h3>Unassigned / needs base review</h3>' +
+                '<div class="bsp-catreq">These proposed units are present in the review payload but did not match a base anchor by id, name, country/side, or coordinates.</div>' +
+                renderUnitTable(orphaned) + '</section>';
+        }
         html += '<section class="bsp-section"><h3>Capability Summary</h3><ul class="bsp-cap-list">' +
             caps.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') +
             '</ul><div class="bsp-tab-body">' + CATALOG_REQUIRED + '</div></section>';
@@ -492,6 +527,10 @@
     window.RmoozBaseStatusPanel = {
         open: render,
         close: close,
-        normalizePlatform: normalizePlatform
+        normalizePlatform: normalizePlatform,
+        _test: {
+            unitBelongsToAnchor: unitBelongsToAnchor,
+            unassignedUnits: unassignedUnits
+        }
     };
 })();

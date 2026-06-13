@@ -364,12 +364,6 @@
         html += '</section>';
         return html;
     }
-        if (!b) return false;
-        var side = String(b.side || '').toUpperCase();
-        if (side === 'BLUE') return true;
-        var st = String(b.site_type || b.base_type || b.anchor_type || '').toLowerCase();
-        return /friendly_trial|trial/.test(st);
-    }
     function renderEnemyBasesReviewPanel(bases, friendlyTrials) {
         var html = '';
         if (bases.length) {
@@ -900,25 +894,6 @@
         bind('cancel', handlers.onCancel || function () { container.style.display = 'none'; });
         // MULTI-COUNTRY-DEMO-A: symbolic demo-movement overlay (demo only â€” no
         // final tasking, no world-state mutation). Shown for coalition briefs.
-        bind('demo-movement', function () {
-            if (window.RmoozDemoMovement && typeof window.RmoozDemoMovement.mount === 'function') {
-                window.RmoozDemoMovement.mount(p);
-            } else {
-                alert('Demo movement module not loaded (shell/demo-movement.js)');
-            }
-        });
-        // FREE-FIGHT-DEMO-A: symbolic RED-attacks-X / BLUE-reacts overlay (demo only).
-        bind('free-fight', function () {
-            if (window.RmoozFreeFightDemo && typeof window.RmoozFreeFightDemo.mount === 'function') {
-                window.RmoozFreeFightDemo.mount(p);
-            } else {
-                alert('Free Fight demo module not loaded (shell/free-fight-demo.js)');
-            }
-        });
-    }
-
-    window.RmoozDocReview = { render: render, esc: esc, assessReviewPayloadCapabilities: assessReviewPayloadCapabilities };
-})();tion briefs.
         bind('demo-movement', function () {
             if (window.RmoozDemoMovement && typeof window.RmoozDemoMovement.mount === 'function') {
                 window.RmoozDemoMovement.mount(p);

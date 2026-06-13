@@ -15781,6 +15781,16 @@
                 summaryEl.setAttribute('hidden', '');
             }
         }
+        function _looksLikeStep1OrOperationalJson(json) {
+            if (!json || typeof json !== 'object' || Array.isArray(json)) return false;
+            if (json.operational_brief && typeof json.operational_brief === 'object') return true;
+            if (json.participants || json.enemy_forces || json.friendly_forces) return true;
+            if (Array.isArray(json.proposed_units) || Array.isArray(json.placement_candidates) || Array.isArray(json.country_bases)) return true;
+            if (Array.isArray(json.countries) && json.countries.some(function (c) {
+                return c && typeof c === 'object' && (Array.isArray(c.bases) || Array.isArray(c.air_bases) || Array.isArray(c.naval_bases) || Array.isArray(c.land_bases));
+            })) return true;
+            return false;
+        }
 
         btn.addEventListener('click', function() {
             var file = input.files && input.files[0];
@@ -15814,7 +15824,11 @@
                     _setSummary(lines.join(' · '));
                 } else {
                     _setStatus(tx('sw-live-import-blocked', 'Import blocked.'), 'error');
-                    _setSummary(result.blockedReasons.join(', '));
+                    if (_looksLikeStep1OrOperationalJson(json)) {
+                        _setSummary('This loader expects a full RMOOZ scenario with steps[]. Use Review AI Understanding for Step 1 / operational JSON.');
+                    } else {
+                        _setSummary(result.blockedReasons.join(', '));
+                    }
                 }
             };
             reader.onerror = function() {

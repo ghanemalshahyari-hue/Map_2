@@ -293,6 +293,96 @@
             el.review = review;
             analyzeBtn.addEventListener('click', runAnalyze);
 
+            // ── IMPORT-SCENARIO-JSON-LOSS-FIX-A: stage one operational JSON ──
+            // This is the lossless Step 1 / multi-country / operational_brief JSON
+            // path. It posts the parsed object directly to /analyze, never through
+            // the full live-scenario steps[] loader.
+            st.jsonImport = null;
+            var jsonRow = document.createElement('div');
+            jsonRow.id = 'wg-wz-json-row';
+            jsonRow.style.cssText = 'margin:10px 0 4px;padding:8px;border:1px dashed #2e7d54;border-radius:6px;background:#101b16;';
+            jsonRow.innerHTML =
+                '<div style="font-size:12px;color:#7fd6a0;margin-bottom:4px;">Step 1 / operational JSON for Review AI Understanding <span style="color:#6a7a8a;">(optional)</span></div>' +
+                '<div style="font-size:11px;color:#9aa3ad;margin-bottom:6px;">Use this for multi-country Step 1, operational_brief, or scenario-understanding JSON. It does not require steps[].</div>' +
+                '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
+                  '<label class="wg-wz-file-btn" for="wg-wz-json" style="margin:0;">' +
+                    '<span>Choose Step 1 JSON</span>' +
+                    '<input type="file" id="wg-wz-json" class="wg-wz-file-input" accept=".json,application/json">' +
+                  '</label>' +
+                  '<span id="wg-wz-json-name" style="font-size:11px;color:#9aa3ad;">No Step 1 JSON staged</span>' +
+                  '<button type="button" id="wg-wz-json-clear" style="display:none;font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#cfd6dd;border-radius:4px;padding:2px 8px;font-size:11px;">Clear</button>' +
+                '</div>';
+            actionRow.parentNode.insertBefore(jsonRow, actionRow);
+            el.jsonInput = jsonRow.querySelector('#wg-wz-json');
+            el.jsonName = jsonRow.querySelector('#wg-wz-json-name');
+            el.jsonClear = jsonRow.querySelector('#wg-wz-json-clear');
+            function arrLen(v) { return Array.isArray(v) ? v.length : 0; }
+            function collectRawJsonCounts(obj) {
+                obj = (obj && typeof obj === 'object' && !Array.isArray(obj)) ? obj : {};
+                var ob = (obj.operational_brief && typeof obj.operational_brief === 'object') ? obj.operational_brief : obj;
+                var p = obj.participants && typeof obj.participants === 'object' ? obj.participants : {};
+                var ef = obj.enemy_forces && typeof obj.enemy_forces === 'object' ? obj.enemy_forces : {};
+                var ff = obj.friendly_forces && typeof obj.friendly_forces === 'object' ? obj.friendly_forces : {};
+                var nestedCountryUnits = 0, nestedCountryBases = 0;
+                arrLen(obj.countries) && obj.countries.forEach(function (c) {
+                    ['bases', 'air_bases', 'naval_bases', 'land_bases'].forEach(function (k) {
+                        (Array.isArray(c && c[k]) ? c[k] : []).forEach(function (b) {
+                            nestedCountryBases++;
+                            nestedCountryUnits += arrLen(b && b.units);
+                        });
+                    });
+                });
+                return {
+                    top_level_keys: Object.keys(obj),
+                    participants: arrLen(p.red) + arrLen(p.blue) + arrLen(p.neutral),
+                    countries: arrLen(obj.countries) + arrLen(ff.countries),
+                    enemy_forces: arrLen(ef.units) + arrLen(ef.bases) + arrLen(ef.air_bases) + arrLen(ef.naval_bases) + arrLen(ef.land_bases),
+                    friendly_forces_countries: arrLen(ff.countries),
+                    proposed_units: arrLen(obj.proposed_units) || arrLen(ob.proposed_units) || nestedCountryUnits,
+                    placement_candidates: arrLen(obj.placement_candidates) || arrLen(ob.placement_candidates) || nestedCountryBases,
+                    bases: arrLen(obj.country_bases) || arrLen(ob.country_bases) || nestedCountryBases || arrLen(ef.bases) + arrLen(ef.air_bases) + arrLen(ef.naval_bases) + arrLen(ef.land_bases),
+                    objectives: arrLen(obj.objectives) || arrLen(ob.objectives),
+                };
+            }
+            function paintJsonStaged() {
+                if (!st.jsonImport) {
+                    el.jsonName.textContent = 'No Step 1 JSON staged';
+                    el.jsonName.style.color = '#9aa3ad';
+                    el.jsonClear.style.display = 'none';
+                } else {
+                    el.jsonName.textContent = st.jsonImport.filename + ' staged: ' +
+                        st.jsonImport.rawCounts.proposed_units + ' proposed units, ' +
+                        st.jsonImport.rawCounts.placement_candidates + ' anchors';
+                    el.jsonName.style.color = '#7fc07f';
+                    el.jsonClear.style.display = '';
+                }
+                updateStartEnabled();
+            }
+            function clearJsonImport() {
+                st.jsonImport = null;
+                if (el.jsonInput) el.jsonInput.value = '';
+                paintJsonStaged();
+            }
+            el.jsonInput.addEventListener('change', function () {
+                var file = el.jsonInput.files && el.jsonInput.files[0];
+                if (!file) return;
+                file.text().then(function (text) {
+                    var parsed;
+                    try { parsed = JSON.parse(text); }
+                    catch (e) { throw new Error('JSON parse error: ' + e.message); }
+                    st.jsonImport = { filename: file.name, text: text, parsed: parsed, rawCounts: collectRawJsonCounts(parsed) };
+                    st.mdmpFiles = [];
+                    if (el.mdmpInput) el.mdmpInput.value = '';
+                    if (typeof paintMdmpStaged === 'function') paintMdmpStaged();
+                    paintJsonStaged();
+                    setStatus('Step 1 / operational JSON staged — click "Review AI Understanding".', '#7fc07f');
+                }).catch(function (e) {
+                    clearJsonImport();
+                    setStatus('Could not read Step 1 JSON: ' + e.message, '#e05252');
+                });
+            });
+            el.jsonClear.addEventListener('click', clearJsonImport);
+
             // ── MDMP-EXTERNAL-1 / G-3 wiring: stage external MDMP JSON files ──
             // The G-2 server adapter accepts { bundle: [{ filename, content }] }
             // on /analyze, but the wizard previously had no way to feed it —
@@ -334,6 +424,7 @@
                     return f.text().then(function (text) { return { filename: f.name, content: text }; });
                 })).then(function (loaded) {
                     st.mdmpFiles = loaded;
+                    clearJsonImport();
                     paintMdmpStaged();
                     setStatus(loaded.length + ' MDMP file(s) staged — click "Review AI Understanding".', '#7fc07f');
                 }).catch(function (e) {
@@ -352,19 +443,104 @@
             el.review.innerHTML = '<div style="color:#e0a93a;font-size:12px;">⚠ ' + esc(msg) + '</div>';
             el.review.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
+        function analyzeCounts(payload) {
+            var ob = payload && payload.brief && payload.brief.operational_brief || {};
+            return {
+                proposed_units: Array.isArray(ob.proposed_units) ? ob.proposed_units.length : 0,
+                placement_candidates: Array.isArray(ob.placement_candidates) ? ob.placement_candidates.length : 0,
+            };
+        }
+        function normToken(s) { return String(s == null ? '' : s).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim(); }
+        function unitBaseIds(u) {
+            return [u && u.assigned_base_id, u && u.base_id, u && u.anchor_id, u && u.placement_candidate_id, u && u.base_location_id]
+                .map(normToken).filter(Boolean);
+        }
+        function anchorBaseIds(a) {
+            return [a && a.base_id, a && a.id, a && a.anchor_id, a && a.placement_candidate_id, a && a.location_id, a && a.assigned_base]
+                .map(normToken).filter(Boolean);
+        }
+        function baseNames(o) {
+            return [o && o.base_name, o && o.base_name_en, o && o.base_name_ar, o && o.assigned_base, o && o.mention, o && o.normalized_name]
+                .map(normToken).filter(Boolean);
+        }
+        function compatibleSideCountry(u, a) {
+            var us = String((u && u.side) || '').toUpperCase();
+            var as = String((a && a.side) || '').toUpperCase();
+            if (us && as && us !== as) return false;
+            var uc = normToken((u && (u.country_key || u.country)) || '');
+            var ac = normToken((a && (a.country_key || a.country)) || '');
+            return !(uc && ac && uc !== ac);
+        }
+        function unitAttachesToAnchor(u, a) {
+            if (!u || !a || !compatibleSideCountry(u, a)) return false;
+            var uids = unitBaseIds(u), aids = anchorBaseIds(a);
+            if (uids.length && aids.some(function (id) { return uids.indexOf(id) !== -1; })) return true;
+            var un = baseNames(u), an = baseNames(a);
+            return un.length && an.some(function (n) { return un.indexOf(n) !== -1; });
+        }
+        function attachDiagnostics(payload, rawCounts) {
+            var ob = payload && payload.brief && payload.brief.operational_brief || {};
+            var units = Array.isArray(ob.proposed_units) ? ob.proposed_units : [];
+            var anchors = []
+                .concat(Array.isArray(ob.placement_candidates) ? ob.placement_candidates : [])
+                .concat(Array.isArray(ob.enemy_bases) ? ob.enemy_bases : [])
+                .concat(Array.isArray(ob.friendly_trial_bases) ? ob.friendly_trial_bases : [])
+                .concat(Array.isArray(ob.country_bases) ? ob.country_bases : []);
+            var attached = 0;
+            units.forEach(function (u) {
+                if (anchors.some(function (a) { return unitAttachesToAnchor(u, a); })) attached++;
+            });
+            payload.import_diagnostics = {
+                raw: rawCounts || {},
+                analyze: analyzeCounts(payload),
+                attached_units: attached,
+                orphaned_units: Math.max(0, units.length - attached),
+            };
+            return payload.import_diagnostics;
+        }
+        function paintImportDiagnostics(payload) {
+            var d = payload && payload.import_diagnostics;
+            if (!d || !el.review) return;
+            var div = document.createElement('div');
+            div.setAttribute('data-el', 'json-import-diagnostics');
+            div.style.cssText = 'margin:8px 0;padding:7px 9px;border:1px dashed #4a7bb8;border-radius:5px;background:#0c141d;color:#9ec2ec;font-size:11px;font-family:Consolas,monospace;direction:ltr;text-align:left;';
+            div.textContent = 'import diagnostics | raw proposed_units ' + (d.raw.proposed_units || 0) +
+                ' | raw placement_candidates ' + (d.raw.placement_candidates || 0) +
+                ' | analyze proposed_units ' + (d.analyze.proposed_units || 0) +
+                ' | analyze placement_candidates ' + (d.analyze.placement_candidates || 0) +
+                ' | units attached ' + d.attached_units +
+                ' | orphaned ' + d.orphaned_units;
+            el.review.insertBefore(div, el.review.firstChild);
+            try { console.log('[json-import-diagnostics]', d); } catch (_) {}
+        }
         function runAnalyze() {
             if (!el.analyze) return;
             el.analyze.disabled = true;
             var prev = el.analyze.textContent;
             el.analyze.textContent = 'Analyzing… جارٍ التحليل';
-            // G-3 wiring: staged external MDMP JSONs go up as the G-2 bundle;
-            // otherwise the empty-body DOCX path runs exactly as before.
-            var analyzeBody = (st.mdmpFiles && st.mdmpFiles.length) ? { bundle: st.mdmpFiles } : null;
+            var rawCounts = null;
+            var analyzeBody = null;
+            if (st.jsonImport && st.jsonImport.parsed) {
+                rawCounts = st.jsonImport.rawCounts;
+                analyzeBody = JSON.parse(JSON.stringify(st.jsonImport.parsed));
+                analyzeBody.source_payload = analyzeBody.source_payload || {
+                    filename: st.jsonImport.filename,
+                    raw_text_length: st.jsonImport.text.length,
+                    counts: rawCounts,
+                };
+            } else if (st.mdmpFiles && st.mdmpFiles.length) {
+                analyzeBody = { bundle: st.mdmpFiles };
+            }
             api('POST', '/api/wargame-sim/analyze', analyzeBody).then(function (r) {
                 el.analyze.disabled = false; el.analyze.textContent = prev;
                 if (!r.body) { showReviewError('No response from analyze (is the server running?).'); return; }
                 if (!r.body.ok) { showReviewError((r.body && r.body.error) || ('analyze failed (' + r.status + ')')); return; }
-                attachPlacement(r.body).then(function () { renderReview(r.body); });
+                if (rawCounts) attachDiagnostics(r.body, rawCounts);
+                attachPlacement(r.body).then(function () {
+                    if (rawCounts) attachDiagnostics(r.body, rawCounts);
+                    renderReview(r.body);
+                    paintImportDiagnostics(r.body);
+                });
             }).catch(function (e) { el.analyze.disabled = false; el.analyze.textContent = prev; showReviewError(e.message); });
         }
         // G-3C: enrich the analyze payload with location placement candidates
@@ -571,8 +747,8 @@
             // at least one document is staged (red OR blue) and we're idle.
             if (el.analyze) {
                 el.analyze.style.display = st.stopped ? 'none' : '';
-                // G-3 wiring: staged MDMP JSONs also enable review (no DOCX needed).
-                el.analyze.disabled = !(st.red || st.blue || (st.mdmpFiles && st.mdmpFiles.length)) || st.running;
+                // JSON understanding imports and staged MDMP JSONs also enable review.
+                el.analyze.disabled = !(st.red || st.blue || st.jsonImport || (st.mdmpFiles && st.mdmpFiles.length)) || st.running;
             }
         }
 

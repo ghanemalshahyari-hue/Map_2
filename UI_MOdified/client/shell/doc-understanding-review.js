@@ -326,9 +326,42 @@
             else if (cat === 'enemy') enemy.push(u);
             else unknown.push(u);
         });
+        // Compact single-line card: name + type chip + count chip + optional warning.
+        // Noisy flags (needs_review, exact_unit_position, source_type) kept as tooltip.
+        function unitRow(u) {
+            var name = u.platform || u.type_ar || u.unit_name || '\u2014';
+            var typeLabel = (u.platform && u.type_ar && u.type_ar !== u.platform) ? u.type_ar : '';
+            var count = (u.estimated_count != null && u.estimated_count !== '') ? '\u00d7' + u.estimated_count : '';
+            var hasWarn = !!(u.warning || (u.warnings && u.warnings.length));
+            var warnText = u.warning || ((u.warnings || []).join('; '));
+            var catalogStatus = u.catalog_status || '';
+            var tooltipParts = ['source: ' + (u.source_type || '\u2014'), 'needs_review: true', 'exact_unit_position: false'];
+            if (warnText) tooltipParts.push('warning: ' + warnText);
+            if (u.confidence != null) tooltipParts.push('confidence: ' + u.confidence);
+            var h = '<div title="' + esc(tooltipParts.join(' | ')) + '" style="display:flex;align-items:center;gap:4px;padding:2px 6px;margin:1px 0;border-radius:3px;background:#0a111a;font-size:11px;min-height:22px;">';
+            h += '<span dir="auto" style="flex:1;color:#e8eaed;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(name) + '</span>';
+            if (typeLabel) h += '<span dir="auto" style="padding:0 5px;border-radius:3px;background:#16222e;color:#8fa5b8;white-space:nowrap;max-width:80px;overflow:hidden;text-overflow:ellipsis;font-size:10px;">' + esc(typeLabel) + '</span>';
+            if (count) h += '<span style="padding:0 5px;border-radius:3px;background:#16222e;color:#cfe6ff;font-size:10px;white-space:nowrap;">' + esc(count) + '</span>';
+            if (catalogStatus) h += '<span style="padding:0 5px;border-radius:3px;background:#0d2a1a;color:#7fd6a0;font-size:10px;white-space:nowrap;">' + esc(catalogStatus) + '</span>';
+            if (hasWarn) h += '<span title="' + esc(warnText) + '" style="color:#e0a93a;font-size:11px;flex-shrink:0;">\u26a0</span>';
+            h += '</div>';
+            return h;
+        }
+        // First ROW_PREVIEW rows visible; remainder behind a native <details>.
+        var ROW_PREVIEW = 10;
+        function previewRows(list) {
+            if (list.length <= ROW_PREVIEW) return list.map(unitRow).join('');
+            var more = list.length - ROW_PREVIEW;
+            return list.slice(0, ROW_PREVIEW).map(unitRow).join('') +
+                '<details style="margin:2px 0;"><summary style="font-size:10px;color:#5a7a96;cursor:pointer;padding:1px 6px;">' +
+                'Show ' + more + ' more\u2026</summary>' +
+                list.slice(ROW_PREVIEW).map(unitRow).join('') +
+                '</details>';
+        }
         function bucket(label, list, sideColor, sideBg, sideBorder) {
             if (!list.length) return '';
             var groups = {};
+            var groupOrder = [];
             list.forEach(function (u) {
                 // IMPORT-UNITS-BASE-PLACEMENT-FIX-A: prefer explicit base id grouping
                 // (assigned_base_id/base_id) to avoid merging distinct anchors that share
@@ -338,37 +371,44 @@
                 var key = (bid != null)
                     ? ('id:' + bid)
                     : ((u.base_name_ar || u.base_name_en || label) + '|' + (u.lat != null ? u.lat : '') + ',' + (u.lon != null ? u.lon : ''));
-                (groups[key] = groups[key] || []).push(u);
+                if (!groups[key]) { groups[key] = []; groupOrder.push(key); }
+                groups[key].push(u);
             });
-            var h = '<div style="margin:8px 0;">' +
-                '<div style="font-size:12px;font-weight:600;color:' + sideColor + ';padding:4px 8px;border-radius:4px;background:' + sideBg + ';border-left:3px solid ' + sideColor + ';margin-bottom:6px;">' +
-                esc(label) + ' <span style="font-weight:400;color:#8fa5b8;font-size:11px;">(' + list.length + ')</span></div>';
-            Object.keys(groups).forEach(function (k) {
+            var h = '<details style="margin:4px 0;">' +
+                '<summary style="cursor:pointer;padding:3px 8px;border-radius:4px;background:' + sideBg + ';border-left:3px solid ' + sideColor + ';font-size:12px;font-weight:600;color:' + sideColor + ';">' +
+                esc(label) + ' <span style="font-weight:400;color:#8fa5b8;font-size:11px;">(' + list.length + ')</span>' +
+                '</summary>';
+            groupOrder.forEach(function (k) {
                 var glist = groups[k], first = glist[0] || {};
-                var coord = (first.lat != null && first.lon != null) ? (first.lat + ', ' + first.lon) : 'pending';
-                h += '<div style="font-size:11px;color:#8fa5b8;direction:rtl;text-align:right;margin:3px 0 2px;">' +
-                    esc(first.base_name_ar || first.base_name_en || '\u2014') + ' (' + esc(coord) + ')</div>';
-                glist.forEach(function (u) {
-                    h += '<div style="margin:3px 0;padding:5px 8px;border:1px solid ' + sideBorder + ';background:' + sideBg + ';border-radius:4px;font-size:12px;">' +
-                        fieldRow('platform', u.platform) +
-                        fieldRow('estimated_count', u.estimated_count) +
-                        fieldRow('type_ar', u.type_ar) +
-                        fieldRow('side', u.side) +
-                        fieldRow('source_type', u.source_type) +
-                        (u.warning || (u.warnings || []).length ? fieldRow('warning', u.warning || (u.warnings || []).join(', ')) : '') +
-                        '<div style="color:#e0a93a;font-size:10px;margin-top:2px;">needs_review: true \u00b7 exact_unit_position: false</div>' +
-                        '</div>';
-                });
+                var baseName = first.base_name_ar || first.base_name_en || null;
+                var coord = (first.lat != null && first.lon != null) ? (first.lat + ', ' + first.lon) : null;
+                var baseLabel = baseName || (coord || ('\u2014 Unassigned'));
+                var coordSuffix = (baseName && coord) ? ' \u00b7 ' + coord : '';
+                h += '<details style="margin:2px 6px;">' +
+                    '<summary style="cursor:pointer;font-size:11px;color:#8fa5b8;padding:2px 6px;border-radius:3px;background:#0e1620;border:1px solid ' + sideBorder + ';">' +
+                    '<span dir="auto">' + esc(baseLabel) + '</span>' +
+                    '<span style="color:#cfe6ff;font-size:10px;margin-inline-start:6px;">(' + glist.length + ')</span>' +
+                    (coordSuffix ? '<span style="color:#5a7a96;font-size:10px;">' + esc(coordSuffix) + '</span>' : '') +
+                    '</summary>' +
+                    previewRows(glist) +
+                    '</details>';
             });
-            h += '</div>';
+            h += '</details>';
             return h;
         }
+        var collapsed = units.length > 20;
         var html = '<section data-el="proposed-units" style="margin:10px 0;padding:8px 0;border-top:1px solid #23303d;">' +
-            '<div style="font-size:13px;color:#cfe6ff;font-weight:600;margin-bottom:6px;">\u0627\u0644\u0648\u062d\u062f\u0627\u062a \u0627\u0644\u0645\u0642\u062a\u0631\u062d\u0629 \u2014 Proposed Units (' + units.length + ')</div>';
+            '<details' + (collapsed ? '' : ' open') + '>' +
+            '<summary style="cursor:pointer;font-size:13px;color:#cfe6ff;font-weight:600;padding:2px 0;margin-bottom:4px;">' +
+            '\u0627\u0644\u0648\u062d\u062f\u0627\u062a \u0627\u0644\u0645\u0642\u062a\u0631\u062d\u0629 \u2014 Proposed Units (' + units.length + ')' +
+            (friendly.length ? ' ' + chip('BLUE', friendly.length, '#7fd6a0') : '') +
+            (enemy.length ? chip('RED', enemy.length, '#f0a0a0') : '') +
+            (unknown.length ? chip('Other', unknown.length, '#c9ced6') : '') +
+            '</summary>';
         html += bucket('Friendly (BLUE) \u2014 \u0627\u0644\u0642\u0648\u0627\u062a \u0627\u0644\u0635\u062f\u064a\u0642\u0629', friendly, '#7fd6a0', '#121a16', '#294333');
         html += bucket('Enemy (RED) \u2014 \u0642\u0648\u0627\u062a \u0627\u0644\u0639\u062f\u0648', enemy, '#f0a0a0', '#1a1212', '#3d2a2a');
         html += bucket('Unknown / Neutral \u2014 \u063a\u064a\u0631 \u0645\u062d\u062f\u062f', unknown, '#c9ced6', '#151a20', '#3d4a57');
-        html += '</section>';
+        html += '</details></section>';
         return html;
     }
     function renderEnemyBasesReviewPanel(bases, friendlyTrials) {

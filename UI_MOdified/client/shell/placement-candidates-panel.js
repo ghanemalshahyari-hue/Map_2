@@ -43,19 +43,46 @@
 
     var lastPayload = null;
 
+    // MAP-ANCHOR-SANITY: normalize a base/anchor type from whichever field the
+    // external Step 1 file used (site_type / base_type / anchor_type, and as a
+    // last resort placement_type). Unknown → base_facility (NEVER an infantry/
+    // unit symbol). Never throws.
+    function baseTypeOf(c) {
+        var raw = String((c && (c.site_type || c.base_type || c.anchor_type)) || '').toLowerCase();
+        var pt = String((c && c.placement_type) || '').toLowerCase();
+        var s = raw || pt;
+        if (/friendly_trial|trial/.test(s)) return 'friendly_trial_anchor';
+        if (/naval|harbou|\bport\b|بحر|مينا/.test(s)) return 'naval_base';
+        if (/land|ground|army|بري|برية/.test(s)) return 'land_base';
+        if (/air|airfield|airport|جو|مطار/.test(s)) return 'air_base';
+        return 'base_facility';
+    }
+    var BASE_GLYPH = { air_base: '✈', naval_base: '⚓', land_base: '▤', friendly_trial_anchor: '◇', base_facility: '⬢' };
     function mapAnchorIcon(c) {
         var side = String(c.side || '').toUpperCase();
-        var color = side === 'BLUE' ? '#7fd6a0' : (side === 'RED' ? '#f0a0a0' : '#cfe6ff');
-        var type = String(c.site_type || c.base_type || '').toLowerCase();
-        if (/naval/.test(type)) color = side === 'BLUE' ? '#7fd6a0' : '#e0b070';
-        else if (/land|ground/.test(type)) color = side === 'BLUE' ? '#7fd6a0' : '#c98';
-        else if (/air/.test(type)) color = side === 'BLUE' ? '#7fd6a0' : '#f0a0a0';
+        // SYMBOL-DB-B: prefer the shared RMOOZ symbol registry (base_type → glyph,
+        // with base_facility / unknown fallback). Local glyphs below are a guard
+        // for when the registry script isn't loaded.
+        var REG = (typeof window !== 'undefined' && window.RmoozSymbolRegistry) || null;
+        if (REG && typeof REG.resolveBaseSymbol === 'function' && typeof REG.iconHtml === 'function') {
+            var rsym = REG.resolveBaseSymbol(c);
+            return window.L.divIcon({
+                className: 'step1-review-placement-anchor step1-anchor-' + (rsym.object_type || 'unknown'),
+                html: REG.iconHtml(rsym, { side: side }), iconSize: [24, 24], iconAnchor: [12, 12],
+            });
+        }
+        var bt = baseTypeOf(c);
+        // Side drives the fill; the glyph signals a BASE / FACILITY anchor — it is
+        // deliberately NOT a unit/infantry symbol (these are Step 1 anchors only).
+        var fill = side === 'BLUE' ? '#1f7a4d' : (side === 'RED' ? '#8f1f1f' : '#33475f');
+        var ring = side === 'BLUE' ? '#7fd6a0' : (side === 'RED' ? '#f0a0a0' : '#cfe6ff');
+        var glyph = BASE_GLYPH[bt] || BASE_GLYPH.base_facility;
         return window.L.divIcon({
-            className: 'step1-review-placement-anchor',
-            html: '<div style="width:18px;height:18px;border-radius:3px;background:' + color +
-                ';border:2px solid #101820;box-shadow:0 0 0 2px rgba(207,230,255,.55);display:flex;align-items:center;justify-content:center;color:#101820;font-size:11px;font-weight:800;">B</div>',
-            iconSize: [22, 22],
-            iconAnchor: [11, 11],
+            className: 'step1-review-placement-anchor step1-anchor-' + bt,
+            html: '<div title="' + esc(bt) + '" style="width:20px;height:20px;border-radius:4px;background:' + fill +
+                ';border:2px solid ' + ring + ';box-shadow:0 0 0 2px rgba(16,24,32,.6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;line-height:1;">' + glyph + '</div>',
+            iconSize: [24, 24],
+            iconAnchor: [12, 12],
         });
     }
 
@@ -95,8 +122,10 @@
             marker.bindPopup('<div style="font-size:12px;color:#e8eaed;background:#0e1620;">' +
                 '<b>' + esc(c.mention || c.base_name_en || c.base_name_ar || 'Placement anchor') + '</b><br>' +
                 (ctry ? 'country: ' + esc(ctry) + '<br>' : '') +
-                (sideLabel ? 'side: ' + esc(sideLabel) + (c.site_type ? ' · ' + esc(c.site_type) : '') + '<br>' : '') +
-                'review marker only<br>exact_unit_position: false<br>click marker for Base Status Panel</div>');
+                (sideLabel ? 'side: ' + esc(sideLabel) + ' · ' + esc(baseTypeOf(c)) + '<br>' : '') +
+                ((c.grouped_units_count != null || c.grouped_unit_count != null) ?
+                    'grouped proposed units: ' + esc(c.grouped_units_count != null ? c.grouped_units_count : c.grouped_unit_count) + '<br>' : '') +
+                'base anchor — review marker only<br>exact_unit_position: false<br>click marker for Base Status Panel</div>');
             if (typeof marker.on === 'function') {
                 marker.on('click', function () {
                     if (window.RmoozBaseStatusPanel && typeof window.RmoozBaseStatusPanel.open === 'function') {

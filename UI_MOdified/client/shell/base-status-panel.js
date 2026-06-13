@@ -88,11 +88,17 @@
         return anchor || {};
     }
     function baseType(anchor, base) {
-        var raw = lower((base && base.site_type) || (anchor && anchor.site_type) || (anchor && anchor.base_type) || '');
-        if (raw.indexOf('friendly_trial') !== -1 || raw.indexOf('trial') !== -1) return 'friendly_trial_anchor';
-        if (raw.indexOf('naval') !== -1) return 'naval_base';
-        if (raw.indexOf('land') !== -1 || raw.indexOf('ground') !== -1) return 'land_base';
-        if (raw.indexOf('air') !== -1) return 'air_base';
+        // MAP-ANCHOR-SANITY: read the type from whichever field the source used
+        // (site_type / base_type / anchor_type, then placement_type as a last
+        // resort). Unknown → base_facility (never infantry/unit).
+        var raw = lower(
+            (base && (base.site_type || base.base_type || base.anchor_type)) ||
+            (anchor && (anchor.site_type || anchor.base_type || anchor.anchor_type)) || '');
+        if (!raw) raw = lower((base && base.placement_type) || (anchor && anchor.placement_type) || '');
+        if (/friendly_trial|trial/.test(raw)) return 'friendly_trial_anchor';
+        if (/naval|harbou|\bport\b|بحر|مينا/.test(raw)) return 'naval_base';
+        if (/land|ground|army|بري|برية/.test(raw)) return 'land_base';
+        if (/air|airfield|airport|جو|مطار/.test(raw)) return 'air_base';
         return 'base_facility';
     }
     function sideOf(anchor, base) {
@@ -201,6 +207,20 @@
             }
         });
         return counts;
+    }
+    // SYMBOL-DB-B: aggregate per-unit catalog status + dominant category for the
+    // base-level Symbol section (units stay grouped — no per-aircraft markers).
+    function catalogSummary(units) {
+        var c = {};
+        units.forEach(function (u) { var s = normalizePlatform(u).catalog_match_status || 'unknown'; c[s] = (c[s] || 0) + 1; });
+        var parts = Object.keys(c).map(function (k) { return k + ' ' + c[k]; });
+        return parts.length ? parts.join(' · ') : 'no units';
+    }
+    function dominantCategory(units) {
+        var tally = {}, best = '-', n = 0;
+        units.forEach(function (u) { var s = normalizePlatform(u).symbol_category || 'unknown'; tally[s] = (tally[s] || 0) + 1; });
+        Object.keys(tally).forEach(function (k) { if (tally[k] > n) { n = tally[k]; best = k; } });
+        return best;
     }
     function capabilitySummary(units) {
         var seen = {};
@@ -336,6 +356,13 @@
         var type = baseType(anchor, base);
         var country = text(anchor.country || base.country, '');
         var counts = categoryCounts(units);
+        // SYMBOL-DB-B: resolve the base symbol from the shared registry (guarded).
+        var REG = (typeof window !== 'undefined' && window.RmoozSymbolRegistry) || null;
+        var sym = (REG && REG.resolveBaseSymbol) ? REG.resolveBaseSymbol({
+            object_type: type, site_type: type,
+            base_name_en: base.base_name_en || anchor.base_name_en,
+            base_name_ar: base.base_name_ar || anchor.base_name_ar,
+        }) : null;
         var caps = capabilitySummary(units);
         var missing = missingForBase(payload, anchor, base);
         var source = anchor.source || base.source || {};
@@ -372,6 +399,16 @@
             row('helicopters', counts.helicopters) + row('UAV', counts.uav) +
             row('naval', counts.naval) + row('ground', counts.ground) + row('unknown', counts.unknown) +
             '</div></section>';
+        // SYMBOL-DB-B: base symbol mapping metadata (registry-sourced; review-only).
+        html += '<section class="bsp-section"><h3>Symbol / الرمز</h3>' +
+            row('object_type', sym ? sym.object_type : type) +
+            row('base_type', type) +
+            row('symbol', sym ? (sym.glyph + '  ' + sym.label_en + ' / ' + sym.label_ar) : '-') +
+            row('symbol_category', dominantCategory(units)) +
+            row('symbol_source', sym ? sym.symbol_source : 'registry_not_loaded') +
+            row('catalog_match_status', catalogSummary(units)) +
+            ((sym && sym.fallback) ? '<div class="bsp-catreq">' + esc(sym.warning || 'symbol fallback used') + '</div>' : '') +
+            '</section>';
         html += '<section class="bsp-section"><h3>Proposed Units</h3>' + renderUnitTable(units) + '</section>';
         html += '<section class="bsp-section"><h3>Capability Summary</h3><ul class="bsp-cap-list">' +
             caps.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') +

@@ -688,7 +688,7 @@
             'cursor:move', 'user-select:none', 'flex-shrink:0', 'border-radius:7px 7px 0 0',
         ].join(';');
         titlebar.innerHTML =
-            '<div style="font-weight:700;color:#f0a0a0;font-size:13px;pointer-events:none;">Free Fight Demo — قتال تجريبي</div>' +
+            '<div style="font-weight:700;color:#f0a0a0;font-size:13px;pointer-events:none;">Free Fight Control Window — نافذة التحكم بالقتال التجريبي</div>' +
             '<div style="display:flex;gap:4px;align-items:center;">' +
             '<button data-act="win-min" title="Minimize" style="background:transparent;border:1px solid #4a5f75;color:#9ec2ec;cursor:pointer;font-size:12px;border-radius:3px;width:22px;height:22px;padding:0;line-height:1;text-align:center;">—</button>' +
             '<button data-act="win-max" title="Maximize / Restore" style="background:transparent;border:1px solid #4a5f75;color:#9ec2ec;cursor:pointer;font-size:12px;border-radius:3px;width:22px;height:22px;padding:0;line-height:1;text-align:center;">□</button>' +
@@ -745,8 +745,12 @@
             if (st.objective_source === 'reused_previous') html += '<div style="margin-bottom:4px;font-size:11px;color:#7fd6a0;">↻ Reusing previous Objective X — إعادة استخدام الهدف السابق</div>';
             html += '<button data-act="place-obj" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#22303f;color:#cfe6ff;border-radius:5px;padding:6px 10px;margin-bottom:8px;">↻ Place new Objective X — ضع هدفاً جديداً</button>';
         }
+        html += '<div style="margin:0 0 6px;padding:5px 8px;border:1px solid #1a3050;border-radius:4px;background:#0a1220;">' +
+            '<div style="font-size:11px;font-weight:700;color:#9ec2ec;letter-spacing:.5px;">GROUP MOVEMENT DEMO</div>' +
+            '<div style="font-size:10px;color:#6a8fa8;margin-top:1px;">Animated group planner — لا علاقة له بالوحدات الحقيقية</div>' +
+            '</div>';
         html += '<div style="margin:2px 0 8px;padding:7px 8px;border:1px solid #2a3f55;border-radius:5px;background:#0c141d;">' +
-            '<label for="rmooz-ff-planner-mode" style="display:block;font-size:11px;color:#9ec2ec;margin-bottom:4px;">Mode:</label>' +
+            '<label for="rmooz-ff-planner-mode" style="display:block;font-size:11px;color:#9ec2ec;margin-bottom:4px;">Group demo mode:</label>' +
             '<select id="rmooz-ff-planner-mode" data-act="planner-mode" style="width:100%;font:inherit;font-size:12px;background:#101b27;color:#e8eaed;border:1px solid #4a5f75;border-radius:4px;padding:5px;">' +
             '<option value="deterministic"' + (_plannerMode === 'deterministic' ? ' selected' : '') + '>Deterministic Planner - RMOOZ planner, works offline</option>' +
             '<option value="llm"' + (_plannerMode === 'llm' ? ' selected' : '') + '>LLM Assisted - Qwen/LiteLLM advisory, needs model</option>' +
@@ -756,24 +760,24 @@
         // objective → disabled + "Place Objective X to start" note.
         var startBtn, startNote = '';
         if (!st.has_anchors) {
-            startBtn = '<button data-act="start" disabled style="font:inherit;cursor:not-allowed;border:1px solid #3a5040;background:#162018;color:#5f8f74;border-radius:5px;padding:5px 10px;opacity:.55;">▶ Start AI Free Fight</button>';
+            startBtn = '<button data-act="start" disabled style="font:inherit;cursor:not-allowed;border:1px solid #3a5040;background:#162018;color:#5f8f74;border-radius:5px;padding:5px 10px;opacity:.55;">▶ Start Group Movement Demo</button>';
             startNote = '<div style="margin:2px 0 6px;font-size:11px;color:#e0a93a;">No map anchors available — لا توجد مراسٍ على الخريطة</div>';
         } else if (!st.can_start) {
-            startBtn = '<button data-act="start" disabled title="Place Objective X first" style="font:inherit;cursor:not-allowed;border:1px solid #3a5040;background:#162018;color:#5f8f74;border-radius:5px;padding:5px 10px;opacity:.6;">▶ Start AI Free Fight</button>';
+            startBtn = '<button data-act="start" disabled title="Place Objective X first" style="font:inherit;cursor:not-allowed;border:1px solid #3a5040;background:#162018;color:#5f8f74;border-radius:5px;padding:5px 10px;opacity:.6;">▶ Start Group Movement Demo</button>';
             startNote = '<div style="margin:2px 0 6px;font-size:11px;color:#e0c060;">Place Objective X to start AI Free Fight<br>ضع الهدف X لبدء القتال التجريبي بالذكاء الاصطناعي</div>';
         } else {
-            startBtn = '<button data-act="start" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:5px;padding:5px 10px;">▶ Start AI Free Fight</button>';
+            startBtn = '<button data-act="start" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:5px;padding:5px 10px;">▶ Start Group Movement Demo</button>';
         }
         html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">' +
             startBtn +
-            '<button data-act="replan" style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#172436;color:#9ec2ec;border-radius:5px;padding:5px 10px;">Re-plan</button>' +
+            '<button data-act="replan" style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#172436;color:#9ec2ec;border-radius:5px;padding:5px 10px;">Re-plan Group Demo</button>' +
             '<button data-act="pause" style="font:inherit;cursor:pointer;border:1px solid #8a6a20;background:#2a2412;color:#e0c060;border-radius:5px;padding:5px 10px;">⏸ Pause</button>' +
-            '<button data-act="reset" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:5px;padding:5px 10px;">⟲ Reset</button>' +
+            '<button data-act="reset" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:5px;padding:5px 10px;">⟲ Reset Group Demo</button>' +
             '<button data-act="clear-obj" style="font:inherit;cursor:pointer;border:1px solid #7a3030;background:#241414;color:#f0a0a0;border-radius:5px;padding:5px 10px;">✕ Clear Objective X</button></div>';
         html += startNote;
         if (_llmStatus && _llmStatus.message) {
             var statusColor = _llmStatus.state === 'received' ? '#7fd6a0' : (_llmStatus.state === 'loading' ? '#e0c060' : '#e0a93a');
-            html += '<div style="margin:2px 0 6px;font-size:11px;color:' + statusColor + ';">' + esc(_llmStatus.message) + '</div>';
+            html += '<div style="margin:2px 0 6px;font-size:11px;color:' + statusColor + ';">Group demo planner: ' + esc(_llmStatus.message) + '</div>';
         }
         html += '<div style="font-size:11px;color:#9aa3ad;margin-bottom:4px;">' + esc(objLine) + '</div>';
         if (st.warnings && st.warnings.length) {
@@ -1021,13 +1025,19 @@
     }
     function renderAiDecisionHtml() {
         var h = '<div style="margin-top:8px;border-top:1px solid #2a3f55;padding-top:8px;">';
-        h += '<div style="font-size:12px;font-weight:600;color:#9ec2ec;margin-bottom:6px;">AI Decision Preview <span style="color:#6a8fa8;font-size:10px;font-weight:400;">(Unit Decision LLM)</span> — معاينة قرار الذكاء الاصطناعي</div>';
+        h += '<div style="margin-bottom:6px;padding:5px 8px;border:1px solid #1a4030;border-radius:4px;background:#091810;">' +
+             '<div style="display:flex;align-items:center;gap:6px;">' +
+             '<span style="font-size:10px;font-weight:700;color:#fff;background:#1a7040;border-radius:3px;padding:1px 6px;letter-spacing:.5px;">MAIN AI TEST</span>' +
+             '<span style="font-size:11px;font-weight:700;color:#7fd6a0;">MAIN AI TEST — Unit Decision LLM</span>' +
+             '</div>' +
+             '<div style="font-size:10px;color:#5a9a70;margin-top:2px;">Real unit-level AI decision — هذا هو الاختبار الفعلي للذكاء الاصطناعي على مستوى الوحدات</div>' +
+             '</div>';
         // LLM toggle + test button
         h += '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;font-size:11px;">';
         h += '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;color:#9ec2ec;" title="Uses local Ollama only — requires RMOOZ_FREE_FIGHT_LLM=1 on the server">';
         h += '<input type="checkbox" data-act="toggle-llm"' + (_useLlm ? ' checked' : '') + ' style="accent-color:#4a9ed6;cursor:pointer;">';
         h += 'Use Local LLM — استخدام LLM المحلي</label>';
-        h += '<button data-act="test-llm" title="Tests and warms the local Ollama model — run this before Preview AI Decision for best results" style="font:inherit;cursor:pointer;border:1px solid #4a5f75;background:#101b27;color:#8fb8e0;border-radius:4px;padding:3px 8px;font-size:10px;">' +
+        h += '<button data-act="test-llm" title="Tests and warms the local Ollama model — run this before Preview Unit AI Decision for best results" style="font:inherit;cursor:pointer;border:1px solid #4a5f75;background:#101b27;color:#8fb8e0;border-radius:4px;padding:3px 8px;font-size:10px;">' +
              (_llmTestStatus && _llmTestStatus.testing ? '⏳ Warming LLM…' : '⚡ Test Local LLM') + '</button>';
         if (_llmTestStatus && !_llmTestStatus.testing) {
             var lts = _llmTestStatus;
@@ -1051,14 +1061,14 @@
         } else if (_aiDecision && !_aiApplied && _useLlm && _aiDecision.llm_status && /timeout|unavailable|error/i.test(_aiDecision.llm_status)) {
             _previewLabel = '🔄 Try LLM Again';
         } else {
-            _previewLabel = '🔍 Preview AI Decision';
+            _previewLabel = '🔍 Preview Unit AI Decision';
         }
         h += '<button data-act="preview-ai" style="font:inherit;cursor:pointer;border:1px solid #2a7a50;background:#131e18;color:#90d0a0;border-radius:5px;padding:5px 10px;font-size:11px;">' + _previewLabel + '</button>';
         if (_aiDecision && _aiDecision.ok && !_aiApplied) {
-            h += '<button data-act="apply-ai" style="font:inherit;cursor:pointer;border:1px solid #3a7a3a;background:#182818;color:#90d090;border-radius:5px;padding:5px 10px;font-size:11px;">✔ Apply AI Action — تطبيق</button>';
+            h += '<button data-act="apply-ai" style="font:inherit;cursor:pointer;border:1px solid #3a7a3a;background:#182818;color:#90d090;border-radius:5px;padding:5px 10px;font-size:11px;">✔ Apply Unit AI Action — تطبيق</button>';
         }
         if (_aiDecision) {
-            h += '<button data-act="reset-ai" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:5px;padding:5px 10px;font-size:11px;">⟲ Reset Decision</button>';
+            h += '<button data-act="reset-ai" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:5px;padding:5px 10px;font-size:11px;">⟲ Reset Unit Decision</button>';
         }
         h += '</div>';
         if (_aiLoading) {
@@ -1106,7 +1116,8 @@
                     var llmStatus = dec.llm_status || (llmCalled ? 'unknown' : 'not_called');
                     var llmStatusColor = llmStatus === 'success' ? '#90d090' : (llmStatus === 'timeout' || llmStatus === 'error' ? '#e0a93a' : '#8fa5b8');
                     var fds = dec.final_decision_source || dec.decision_source || (dec.action && dec.action.source) || 'deterministic_demo_ai';
-                    var fdsColor = fds === 'llm' ? '#90d090' : '#9ab0c0';
+                    var fdsIsLlm = fds === 'llm';
+                    var fdsColor = fdsIsLlm ? '#90d090' : '#e0a93a';
                     h += '<div style="margin-top:6px;border:1px solid #1a3050;border-radius:4px;padding:6px 8px;background:#080e16;font-size:10px;">';
                     h += '<div style="color:#5a7a9a;font-weight:600;margin-bottom:4px;font-size:10.5px;">Decision Trace</div>';
                     h += '<div><span style="color:#7a9ab8;">LLM called:</span> <span style="color:#e0e8f0;">' + (llmCalled ? 'yes' : 'no') + '</span></div>';
@@ -1119,7 +1130,11 @@
                         var lv = dec.llm_validation;
                         h += '<div><span style="color:#7a9ab8;">RMOOZ validator:</span> <span style="color:' + (lv.ok ? '#90d090' : '#e0a93a') + ';">' + (lv.ok ? 'OK' : ('rejected: ' + esc(lv.reason || ''))) + '</span></div>';
                     }
-                    h += '<div><span style="color:#7a9ab8;">Final decision source:</span> <span style="color:' + fdsColor + ';font-weight:600;">' + esc(fds) + '</span></div>';
+                    h += '<div style="margin-top:3px;padding-top:3px;border-top:1px solid #1a3050;">' +
+                         '<span style="color:#7a9ab8;">Final decision source:</span> ' +
+                         '<span style="color:' + fdsColor + ';font-weight:700;font-size:11px;">' + esc(fds) + '</span>' +
+                         (fdsIsLlm ? ' <span style="color:#6a8fa8;font-size:9px;">← LLM answer accepted ✓</span>' : ' <span style="color:#8a6a3a;font-size:9px;">← deterministic fallback</span>') +
+                         '</div>';
                     if (dec.fallback_reason) {
                         h += '<div style="margin-top:2px;"><span style="color:#7a9ab8;">Fallback reason:</span> <span style="color:#e0a93a;">' + esc(dec.fallback_reason) + '</span></div>';
                         if (fds === 'deterministic_demo_ai') {
@@ -1193,6 +1208,7 @@
         getObjective: getObjective, getPlan: getPlan, getLlmStatus: function () { return Object.assign({}, _llmStatus); },
         getAiDecision: function () { return _aiDecision ? Object.assign({}, _aiDecision) : null; },
         _setAiDecisionForTest: function (d, applied) { _aiDecision = d || null; _aiApplied = !!applied; },
+        _repaintForTest: function () { updatePanel(); },
         _setUseLlmForTest: function (v) { _useLlm = !!v; },
         getUseLlm: function () { return _useLlm; },
         _getWinStateForTest: function () { return _winState ? Object.assign({}, _winState) : null; },

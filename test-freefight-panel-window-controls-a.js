@@ -307,7 +307,7 @@ ok('§10 body div has content', bodyHtml.length > 0);
 ok('§10 data-act="preview-ai" in body', /data-act="preview-ai"/.test(bodyHtml));
 ok('§10 data-act="start" in body', /data-act="start"/.test(bodyHtml));
 ok('§10 data-act="reset" in body', /data-act="reset"/.test(bodyHtml));
-ok('§10 AI Decision Preview header present',  /AI Decision Preview/.test(bodyHtml));
+ok('§10 MAIN AI TEST header present',  /MAIN AI TEST/.test(bodyHtml));
 ok('§10 Unit Decision LLM label present', /Unit Decision LLM/.test(bodyHtml));
 ok('§10 Place Objective button present', /Place.*Objective X|Objective X/.test(bodyHtml));
 

@@ -31,10 +31,34 @@ function ok(label, cond) {
 
 // ── DOM + map stub ────────────────────────────────────────────────────────────
 var elById = {};
+function deepQueryEl(el, sel) {
+    if (!el) return null;
+    var mff = sel.match(/^\[data-ff="([^"]+)"\]$/);
+    if (mff) {
+        if (el.attrs && el.attrs['data-ff'] === mff[1]) return el;
+        for (var _i = 0; _i < (el.children || []).length; _i++) { var _r = deepQueryEl(el.children[_i], sel); if (_r) return _r; }
+        return null;
+    }
+    var m = sel.match(/^\[data-act="([^"]+)"\]$/);
+    if (!m) return null;
+    var act = m[1];
+    if (el.attrs && el.attrs['data-act'] === act) return el;
+    for (var _j = 0; _j < (el.children || []).length; _j++) { var _r2 = deepQueryEl(el.children[_j], sel); if (_r2) return _r2; }
+    if (el.innerHTML && el.innerHTML.indexOf('data-act="' + act + '"') !== -1) {
+        return { addEventListener: function () {}, removeEventListener: function () {}, disabled: false, style: {cssText: ''}, textContent: '', checked: false, value: '' };
+    }
+    return null;
+}
+function getAllHtml(el) {
+    if (!el) return '';
+    var s = el.innerHTML || '';
+    (el.children || []).forEach(function (c) { s += getAllHtml(c); });
+    return s;
+}
 function makeEl(tag) {
     var el = {
         tagName: String(tag), id: '', className: '', innerHTML: '', textContent: '',
-        children: [], attrs: {}, style: {}, parentNode: null, checked: false, disabled: false,
+        children: [], attrs: {}, style: {cssText: ''}, parentNode: null, checked: false, disabled: false,
         appendChild: function (c) { this.children.push(c); c.parentNode = this; if (c.id) elById[c.id] = c; return c; },
         removeChild: function (c) { this.children = this.children.filter(function (x) { return x !== c; }); },
         insertBefore: function (c) { this.children.push(c); c.parentNode = this; return c; },
@@ -42,16 +66,10 @@ function makeEl(tag) {
         removeAttribute: function (k) { delete this.attrs[k]; },
         hasAttribute: function (k) { return Object.prototype.hasOwnProperty.call(this.attrs, k); },
         addEventListener: function () {},
+        removeEventListener: function () {},
+        setPointerCapture: function () {},
         querySelectorAll: function () { return []; },
-        querySelector: function (sel) {
-            var m = sel && sel.match(/\[data-act="([^"]+)"\]/);
-            if (!m) return null;
-            var act = m[1];
-            if (this.innerHTML && this.innerHTML.indexOf('data-act="' + act + '"') !== -1) {
-                return { addEventListener: function () {}, disabled: false, style: {}, textContent: '', checked: false };
-            }
-            return null;
-        },
+        querySelector: function (sel) { return deepQueryEl(this, sel); },
     };
     return el;
 }
@@ -63,6 +81,7 @@ var _layerGroupInstance = {
     addLayer: function (l) { _layers.push(l); return this; },
 };
 global.window = {
+    innerWidth: 1280, innerHeight: 800,
     document: {
         body: makeEl('body'),
         head: makeEl('head'),
@@ -70,6 +89,7 @@ global.window = {
         getElementById: function (id) { return elById[id] || null; },
     },
     addEventListener: function () {},
+    removeEventListener: function () {},
     dispatchEvent: function () {},
     L: {
         layerGroup: function () { return Object.assign({}, _layerGroupInstance); },
@@ -203,7 +223,7 @@ function mockFail(errMsg) {
     DEMO.mount(PAYLOAD);
     var p7 = elById['rmooz-free-fight-panel'];
     ok('§7 panel created', !!p7);
-    var h7 = p7 ? p7.innerHTML : '';
+    var h7 = p7 ? getAllHtml(p7) : '';
     ok('§7 Decision source: llm shown', /Decision source.*llm/.test(h7));
     ok('§7 green colour for llm source', /#90d090/.test(h7));
     ok('§7 no Fallback reason line when null', !/Fallback reason/.test(h7));
@@ -220,7 +240,7 @@ function mockFail(errMsg) {
     DEMO._setAiDecisionForTest(fbDec7, false);
     DEMO.mount(PAYLOAD);
     p7 = elById['rmooz-free-fight-panel'];
-    h7 = p7 ? p7.innerHTML : '';
+    h7 = p7 ? getAllHtml(p7) : '';
     ok('§7 Decision source: deterministic_demo_ai shown', /Decision source.*deterministic_demo_ai/.test(h7));
     ok('§7 Fallback reason shown', /Fallback reason/.test(h7));
     ok('§7 fallback value llm_disabled shown', /llm_disabled/.test(h7));
@@ -265,7 +285,7 @@ function mockFail(errMsg) {
     }, false);
     DEMO.mount(PAYLOAD);
     var p9 = elById['rmooz-free-fight-panel'];
-    var h9 = p9 ? p9.innerHTML : '';
+    var h9 = p9 ? getAllHtml(p9) : '';
     ok('§9 checkbox checked when _useLlm=true', /data-act="toggle-llm"[^>]* checked/.test(h9) || /checked[^>]*data-act="toggle-llm"/.test(h9));
     DEMO._setUseLlmForTest(false);
     ok('§9 getUseLlm() reset to false', DEMO.getUseLlm() === false);

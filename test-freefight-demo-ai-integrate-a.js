@@ -28,10 +28,34 @@ var path = require('path');
 
 // ── DOM + map stub ────────────────────────────────────────────────────────────
 var elById = {};
+function deepQueryEl(el, sel) {
+    if (!el) return null;
+    var mff = sel.match(/^\[data-ff="([^"]+)"\]$/);
+    if (mff) {
+        if (el.attrs && el.attrs['data-ff'] === mff[1]) return el;
+        for (var _i = 0; _i < (el.children || []).length; _i++) { var _r = deepQueryEl(el.children[_i], sel); if (_r) return _r; }
+        return null;
+    }
+    var m = sel.match(/^\[data-act="([^"]+)"\]$/);
+    if (!m) return null;
+    var act = m[1];
+    if (el.attrs && el.attrs['data-act'] === act) return el;
+    for (var _j = 0; _j < (el.children || []).length; _j++) { var _r2 = deepQueryEl(el.children[_j], sel); if (_r2) return _r2; }
+    if (el.innerHTML && el.innerHTML.indexOf('data-act="' + act + '"') !== -1) {
+        return { addEventListener: function () {}, removeEventListener: function () {}, disabled: false, style: {cssText: ''}, textContent: '', checked: false, value: '' };
+    }
+    return null;
+}
+function getAllHtml(el) {
+    if (!el) return '';
+    var s = el.innerHTML || '';
+    (el.children || []).forEach(function (c) { s += getAllHtml(c); });
+    return s;
+}
 function makeEl(tag) {
     var el = {
         tagName: String(tag), id: '', className: '', innerHTML: '', textContent: '',
-        children: [], attrs: {}, style: {}, parentNode: null,
+        children: [], attrs: {}, style: {cssText: ''}, parentNode: null,
         disabled: false,
         appendChild: function (c) {
             this.children.push(c); c.parentNode = this;
@@ -44,21 +68,16 @@ function makeEl(tag) {
         removeAttribute: function (k) { delete this.attrs[k]; },
         hasAttribute: function (k) { return Object.prototype.hasOwnProperty.call(this.attrs, k); },
         addEventListener: function () {},
+        removeEventListener: function () {},
+        setPointerCapture: function () {},
         querySelectorAll: function () { return []; },
-        querySelector: function (sel) {
-            var m = sel && sel.match(/\[data-act="([^"]+)"\]/);
-            if (!m) return null;
-            var act = m[1];
-            if (this.innerHTML && this.innerHTML.indexOf('data-act="' + act + '"') !== -1) {
-                return { addEventListener: function () {}, disabled: false, style: {}, textContent: '' };
-            }
-            return null;
-        },
+        querySelector: function (sel) { return deepQueryEl(this, sel); },
     };
     return el;
 }
 var bodyEl = makeEl('body');
 global.window = {
+    innerWidth: 1280, innerHeight: 800,
     document: {
         body: bodyEl,
         head: makeEl('head'),
@@ -66,6 +85,7 @@ global.window = {
         getElementById: function (id) { return elById[id] || null; },
     },
     addEventListener: function () {},
+    removeEventListener: function () {},
     dispatchEvent: function () {},
 };
 
@@ -189,7 +209,7 @@ DEMO._setAiDecisionForTest(DECISION, false);
 DEMO.mount(PAYLOAD);
 var panelEl = elById['rmooz-free-fight-panel'];
 ok('§7 rmooz-free-fight-panel created', !!panelEl);
-var panelHtml = panelEl ? panelEl.innerHTML : '';
+var panelHtml = panelEl ? getAllHtml(panelEl) : '';
 ok('§7 panel has data-act="preview-ai"', /data-act="preview-ai"/.test(panelHtml));
 ok('§7 panel has data-act="apply-ai"', /data-act="apply-ai"/.test(panelHtml));
 ok('§7 panel has data-act="reset-ai"', /data-act="reset-ai"/.test(panelHtml));
@@ -209,7 +229,7 @@ console.log('\n§9  Existing Start/Pause/Reset/Clear controls still in panel HTM
 ok('§9 data-act="start" present', /data-act="start"/.test(panelHtml));
 ok('§9 data-act="pause" present', /data-act="pause"/.test(panelHtml));
 ok('§9 data-act="reset" present', /data-act="reset"/.test(panelHtml));
-ok('§9 data-act="close" present', /data-act="close"/.test(panelHtml));
+ok('§9 window close button present (win-close)', /data-act="win-close"/.test(panelHtml));
 
 // ── §10  Objective X not in proposed_units ────────────────────────────────────
 console.log('\n§10  Objective X coordinates not in proposed_units');

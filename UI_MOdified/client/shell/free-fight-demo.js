@@ -35,6 +35,7 @@
     var _allGroups = [], _red = [], _blue = [], _anchors = [];
     var _progress = 0, _running = false, _paused = false, _timer = null;
     var _layer = null, _panel = null, _card = null, _aiPanel = null;
+    var _winState = null, _viewportResizeHandler = null;
     var _plan = null, _terrain = { available: false }, _objectiveSource = null;
     var _aiDecision = null, _aiLoading = false, _aiApplied = false, _aiDiagnostics = null;
     var _useLlm = false, _llmTestStatus = null;
@@ -532,26 +533,212 @@
         var x = _card.querySelector('[data-act="x"]'); if (x) x.addEventListener('click', function () { if (_card && _card.parentNode) _card.parentNode.removeChild(_card); _card = null; });
     }
 
+    // ── FREEFIGHT-PANEL-WINDOW-CONTROLS-A: window management helpers ─────────
+    var FF_WIN_KEY  = 'rmooz.freeFightPanel.window';
+    var FF_WIN_MINW = 420, FF_WIN_MINH = 260;
+
+    function _defaultWinState() {
+        return { left: 18, top: 128, width: 440, height: 540, minimized: false, maximized: false, prevRect: null };
+    }
+    function _loadWinState() {
+        try {
+            var raw = (typeof sessionStorage !== 'undefined') && sessionStorage.getItem(FF_WIN_KEY);
+            if (raw) { var p = JSON.parse(raw); if (p && typeof p.left === 'number') return p; }
+        } catch (_) {}
+        return _defaultWinState();
+    }
+    function _saveWinState() {
+        try {
+            if (typeof sessionStorage !== 'undefined' && _winState)
+                sessionStorage.setItem(FF_WIN_KEY, JSON.stringify(_winState));
+        } catch (_) {}
+    }
+    function _clampWinState() {
+        if (!_winState) return;
+        var ww = W(), vw = (ww && ww.innerWidth) || 800, vh = (ww && ww.innerHeight) || 600;
+        _winState.width  = Math.min(Math.max(_winState.width  || 440, FF_WIN_MINW), vw - 12);
+        _winState.height = Math.min(Math.max(_winState.height || 540, FF_WIN_MINH), vh - 12);
+        _winState.left   = Math.max(0, Math.min(_winState.left  || 18,  vw - _winState.width));
+        _winState.top    = Math.max(0, Math.min(_winState.top   || 128, vh - 40));
+    }
+    function _applyWinState() {
+        if (!_panel || !_winState) return;
+        var body   = _panel.querySelector('[data-ff="body"]');
+        var handle = _panel.querySelector('[data-ff="resize"]');
+        var ww = W(), vw = (ww && ww.innerWidth) || 800, vh = (ww && ww.innerHeight) || 600;
+        if (_winState.maximized) {
+            _panel.style.left = '12px'; _panel.style.top = '72px';
+            _panel.style.width = (vw - 24) + 'px'; _panel.style.height = (vh - 90) + 'px';
+            if (body)   body.style.display   = '';
+            if (handle) handle.style.display = 'none';
+        } else if (_winState.minimized) {
+            _panel.style.left = _winState.left + 'px'; _panel.style.top  = _winState.top + 'px';
+            _panel.style.width = _winState.width + 'px'; _panel.style.height = '';
+            if (body)   body.style.display   = 'none';
+            if (handle) handle.style.display = 'none';
+        } else {
+            _panel.style.left = _winState.left + 'px'; _panel.style.top  = _winState.top + 'px';
+            _panel.style.width  = _winState.width  + 'px'; _panel.style.height = _winState.height + 'px';
+            if (body)   body.style.display   = '';
+            if (handle) handle.style.display = '';
+        }
+    }
+    function _updateMaxBtn() {
+        if (!_panel || !_winState) return;
+        var b = _panel.querySelector('[data-act="win-max"]');
+        if (b) b.textContent = _winState.maximized ? '❐' : '□';
+    }
+    function _winMinimize() {
+        if (!_winState) return;
+        _winState.minimized = !_winState.minimized;
+        _applyWinState(); _saveWinState();
+    }
+    function _winMaximize() {
+        if (!_winState) return;
+        if (_winState.maximized) {
+            if (_winState.prevRect) {
+                _winState.left = _winState.prevRect.left; _winState.top  = _winState.prevRect.top;
+                _winState.width = _winState.prevRect.width; _winState.height = _winState.prevRect.height;
+            }
+            _winState.maximized = false;
+        } else {
+            _winState.prevRect  = { left: _winState.left, top: _winState.top, width: _winState.width, height: _winState.height };
+            _winState.maximized = true; _winState.minimized = false;
+        }
+        _applyWinState(); _updateMaxBtn(); _saveWinState();
+    }
+    function _attachDrag(titlebar) {
+        titlebar.addEventListener('pointerdown', function (e) {
+            var t = e.target;
+            if (t && (t.tagName === 'BUTTON' || t.tagName === 'INPUT' || t.tagName === 'SELECT' || t.tagName === 'A')) return;
+            if (!_winState || _winState.maximized) return;
+            var startX = e.clientX, startY = e.clientY, origL = _winState.left, origT = _winState.top;
+            if (titlebar.setPointerCapture) titlebar.setPointerCapture(e.pointerId);
+            function onMove(ev) {
+                var ww = W(), vw = (ww && ww.innerWidth) || 800, vh = (ww && ww.innerHeight) || 600;
+                _winState.left = Math.max(0, Math.min(origL + ev.clientX - startX, vw - _winState.width));
+                _winState.top  = Math.max(0, Math.min(origT + ev.clientY - startY, vh - 40));
+                _panel.style.left = _winState.left + 'px'; _panel.style.top = _winState.top + 'px';
+            }
+            function onUp() {
+                titlebar.removeEventListener('pointermove', onMove);
+                titlebar.removeEventListener('pointerup', onUp);
+                _saveWinState();
+            }
+            titlebar.addEventListener('pointermove', onMove);
+            titlebar.addEventListener('pointerup', onUp);
+        });
+    }
+    function _attachResize(handle) {
+        handle.addEventListener('pointerdown', function (e) {
+            e.stopPropagation();
+            if (!_winState) return;
+            var startX = e.clientX, startY = e.clientY, origW = _winState.width, origH = _winState.height;
+            if (handle.setPointerCapture) handle.setPointerCapture(e.pointerId);
+            function onMove(ev) {
+                var ww = W(), vw = (ww && ww.innerWidth) || 800, vh = (ww && ww.innerHeight) || 600;
+                _winState.width  = Math.min(Math.max(origW + ev.clientX - startX, FF_WIN_MINW), vw - _winState.left - 4);
+                _winState.height = Math.min(Math.max(origH + ev.clientY - startY, FF_WIN_MINH), vh - _winState.top  - 4);
+                _panel.style.width = _winState.width + 'px'; _panel.style.height = _winState.height + 'px';
+            }
+            function onUp() {
+                handle.removeEventListener('pointermove', onMove);
+                handle.removeEventListener('pointerup', onUp);
+                _saveWinState();
+            }
+            handle.addEventListener('pointermove', onMove);
+            handle.addEventListener('pointerup', onUp);
+        });
+    }
+    function _attachViewportResize(w) {
+        if (_viewportResizeHandler) { try { w.removeEventListener('resize', _viewportResizeHandler); } catch (_) {} }
+        _viewportResizeHandler = function () {
+            if (!_panel || !_winState) return;
+            _clampWinState(); _applyWinState(); _saveWinState();
+        };
+        w.addEventListener('resize', _viewportResizeHandler);
+    }
+    // ── end FREEFIGHT-PANEL-WINDOW-CONTROLS-A helpers ────────────────────────
+
     // ── Control panel (Start / Pause / Reset / Clear Objective X + labels) ──
     function buildPanel() {
         var w = W();
         if (!w || !w.document || !w.document.body) return;
         if (_panel && _panel.parentNode) _panel.parentNode.removeChild(_panel);
+        if (!_winState) _winState = _loadWinState();
+        _clampWinState();
+
         _panel = w.document.createElement('div');
         _panel.id = 'rmooz-free-fight-panel';
-        _panel.style.cssText = ['position:fixed', 'top:128px', 'left:18px', 'z-index:9955', 'background:#0e1620', 'border:1px solid #7a3030', 'border-radius:8px', 'padding:12px 14px', 'min-width:320px', 'box-shadow:0 4px 20px rgba(0,0,0,.65)', 'color:#e8eaed', 'font-family:inherit', 'direction:ltr'].join(';');
+        _panel.style.cssText = [
+            'position:fixed', 'left:' + _winState.left + 'px', 'top:' + _winState.top + 'px',
+            'width:' + _winState.width + 'px', 'height:' + _winState.height + 'px',
+            'z-index:9955', 'background:#0e1620', 'border:1px solid #7a3030',
+            'border-radius:8px', 'box-shadow:0 4px 20px rgba(0,0,0,.65)',
+            'color:#e8eaed', 'font-family:inherit', 'direction:ltr',
+            'display:flex', 'flex-direction:column', 'overflow:hidden',
+        ].join(';');
+
+        // Permanent titlebar — never re-rendered by updatePanel
+        var titlebar = w.document.createElement('div');
+        titlebar.setAttribute('data-ff', 'titlebar');
+        titlebar.style.cssText = [
+            'display:flex', 'justify-content:space-between', 'align-items:center',
+            'padding:7px 10px', 'background:#121c28', 'border-bottom:1px solid #2a3f55',
+            'cursor:move', 'user-select:none', 'flex-shrink:0', 'border-radius:7px 7px 0 0',
+        ].join(';');
+        titlebar.innerHTML =
+            '<div style="font-weight:700;color:#f0a0a0;font-size:13px;pointer-events:none;">Free Fight Demo — قتال تجريبي</div>' +
+            '<div style="display:flex;gap:4px;align-items:center;">' +
+            '<button data-act="win-min" title="Minimize" style="background:transparent;border:1px solid #4a5f75;color:#9ec2ec;cursor:pointer;font-size:12px;border-radius:3px;width:22px;height:22px;padding:0;line-height:1;text-align:center;">—</button>' +
+            '<button data-act="win-max" title="Maximize / Restore" style="background:transparent;border:1px solid #4a5f75;color:#9ec2ec;cursor:pointer;font-size:12px;border-radius:3px;width:22px;height:22px;padding:0;line-height:1;text-align:center;">□</button>' +
+            '<button data-act="win-close" title="Close" style="background:transparent;border:1px solid #7a3030;color:#f0a0a0;cursor:pointer;font-size:13px;border-radius:3px;width:22px;height:22px;padding:0;line-height:1;text-align:center;">×</button>' +
+            '</div>';
+        _panel.appendChild(titlebar);
+
+        // Scrollable body
+        var body = w.document.createElement('div');
+        body.setAttribute('data-ff', 'body');
+        body.style.cssText = ['overflow-y:auto', 'overflow-x:hidden', 'flex:1', 'padding:10px 12px', 'min-height:0'].join(';');
+        _panel.appendChild(body);
+
+        // Resize handle (↘ bottom-right corner)
+        var rh = w.document.createElement('div');
+        rh.setAttribute('data-ff', 'resize');
+        rh.style.cssText = [
+            'position:absolute', 'bottom:2px', 'right:2px', 'width:16px', 'height:16px',
+            'cursor:se-resize', 'color:#4a5f75', 'font-size:11px',
+            'text-align:center', 'line-height:16px', 'user-select:none',
+        ].join(';');
+        rh.textContent = '↘';
+        _panel.appendChild(rh);
+
         w.document.body.appendChild(_panel);
+        _applyWinState();
+        _updateMaxBtn();
+
+        // Wire titlebar controls
+        var minBtn = titlebar.querySelector('[data-act="win-min"]');
+        var maxBtn = titlebar.querySelector('[data-act="win-max"]');
+        var closeBtn = titlebar.querySelector('[data-act="win-close"]');
+        if (minBtn)   minBtn.addEventListener('click',   _winMinimize);
+        if (maxBtn)   maxBtn.addEventListener('click',   _winMaximize);
+        if (closeBtn) closeBtn.addEventListener('click', clear);
+
+        _attachDrag(titlebar);
+        _attachResize(rh);
+        _attachViewportResize(w);
         updatePanel();
     }
     function updatePanel() {
         if (!_panel) return;
+        var bodyDiv = _panel.querySelector('[data-ff="body"]');
+        if (!bodyDiv) return;
         var st = getState();
         var objLine = st.objective_set
             ? ('Objective X set · RED attack ' + st.red_groups + ' / BLUE react ' + st.blue_groups + ' · progress ' + Math.round(st.progress * 100) + '%' + (st.running ? ' · running' : (st.paused ? ' · paused' : '')))
             : 'No Objective X — place it on the map to begin.';
-        var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
-            '<div style="font-weight:700;color:#f0a0a0;font-size:13px;">Free Fight Demo — قتال تجريبي</div>' +
-            '<button data-act="close" style="background:transparent;border:none;color:#8fa5b8;cursor:pointer;font-size:16px;">✕</button></div>';
+        var html = '';
         if (!st.objective_set) {
             html += '<button data-act="place-obj" style="font:inherit;cursor:pointer;border:1px solid #b8860b;background:#2a2412;color:#e0c060;border-radius:5px;padding:6px 10px;margin-bottom:8px;">＋ Place Objective X — ضع الهدف X</button>';
         } else {
@@ -600,8 +787,8 @@
             '⚠ AI-assisted demo only — not final tasking — requires commander approval<br>' +
             'عرض تجريبي بمساعدة الذكاء الاصطناعي — ليس إسناد واجب نهائي — يحتاج اعتماد القائد</div>';
         html += renderAiDecisionHtml();
-        _panel.innerHTML = html;
-        bind('start', start); bind('replan', replan); bind('pause', pause); bind('reset', reset); bind('clear-obj', clearObjective); bind('close', clear);
+        bodyDiv.innerHTML = html;
+        bind('start', start); bind('replan', replan); bind('pause', pause); bind('reset', reset); bind('clear-obj', clearObjective);
         bind('place-obj', armPlaceObjective);
         bind('preview-ai', _fetchAiDecision); bind('apply-ai', _applyAiDecision); bind('reset-ai', _resetAiDecision);
         bind('test-llm', _testLlm);
@@ -966,6 +1153,7 @@
         var w = W();
         if (_layer && mapReady()) { try { if (w.map.hasLayer(_layer)) w.map.removeLayer(_layer); } catch (_) {} }
         _layer = null;
+        if (_viewportResizeHandler) { try { W().removeEventListener('resize', _viewportResizeHandler); } catch (_) {} _viewportResizeHandler = null; }
         if (_panel && _panel.parentNode) _panel.parentNode.removeChild(_panel); _panel = null;
         if (_aiPanel && _aiPanel.parentNode) _aiPanel.parentNode.removeChild(_aiPanel); _aiPanel = null;
         if (_card && _card.parentNode) _card.parentNode.removeChild(_card); _card = null;
@@ -1007,6 +1195,10 @@
         _setAiDecisionForTest: function (d, applied) { _aiDecision = d || null; _aiApplied = !!applied; },
         _setUseLlmForTest: function (v) { _useLlm = !!v; },
         getUseLlm: function () { return _useLlm; },
+        _getWinStateForTest: function () { return _winState ? Object.assign({}, _winState) : null; },
+        _winMinimizeForTest: function () { if (_panel) _winMinimize(); },
+        _winMaximizeForTest: function () { if (_panel) _winMaximize(); },
+        _resetWinStateForTest: function () { _winState = null; },
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozFreeFightDemo = API;

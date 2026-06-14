@@ -267,5 +267,107 @@ ok('layout: warning cells wrap long Arabic/English text (word-break)', /word-bre
 ok('layout: render wraps content in the scrolling .bsp-body', /<div class="bsp-body">/.test(panel.innerHTML));
 ok('layout: open did not throw with the shared measurer wired (panel rendered)', /Review only/.test(panel.innerHTML) && panel.innerHTML.length > 200);
 
+// ── STEP1-BASE-STATUS-PER-BASE-UNITS-A ───────────────────────────────
+// Verify per-base isolation: each base card shows only its own units in the
+// main Proposed Units table; global orphans live in a collapsed details block.
+
+// Helpers: extract the main Proposed Units section HTML (stops at first </section>)
+function mainSection(html) {
+    var m = html.match(/<h3>Proposed Units<\/h3>([\s\S]*?)<\/section>/);
+    return m ? m[1] : '';
+}
+// Extract the Global Unassigned details block HTML.
+// Inner unit rows contain <details class="bsp-sysd">...</details></td> so we must
+// anchor on </details></section> (the outer boundary) to capture all orphaned rows.
+function unassignedDetails(html) {
+    var m = html.match(/<details class="bsp-unassigned-details">([\s\S]*?)<\/details><\/section>/);
+    return m ? m[1] : '';
+}
+// Count bsp-u-row occurrences in a fragment
+function rowCount(fragment) { return (fragment.match(/bsp-u-row/g) || []).length; }
+// Extract Proposed units count value from Base Summary section
+function proposedCount(html) {
+    var m = html.match(/<span>Proposed units count<\/span><b>(\d+)<\/b>/);
+    return m ? Number(m[1]) : -1;
+}
+
+// T-PERBASE-1: Hamedan main table has only its 2 units (F-14A, F-4E)
+// The marker-click test above (line ~202) replaced open with a mock; cache-delete
+// and re-require resets global.window.RmoozBaseStatusPanel.open to the real render.
+(function () {
+    var _p = require.resolve(path.join(__dirname, 'UI_MOdified/client/shell/base-status-panel.js'));
+    delete require.cache[_p];
+    require(_p); // re-runs IIFE → global.window.RmoozBaseStatusPanel.open = real render
+}());
+
+// Open Hamedan with the existing full payload (2 matched units, 0 orphans)
+global.window.RmoozBaseStatusPanel.open(candidateFromBase(hamedan), payload);
+var ham1 = mainSection(panel.innerHTML);
+ok('T-PERBASE-1: Hamedan main section has exactly 2 rows (F-14A + F-4E)', rowCount(ham1) === 2);
+ok('T-PERBASE-1b: AB-212 (Chabahar unit) absent from Hamedan main section', !/AB-212/.test(ham1));
+ok('T-PERBASE-1c: P-3F Orion (Bandar unit) absent from Hamedan main section', !/P-3F Orion/.test(ham1));
+ok('T-PERBASE-1d: Proposed units count = 2 for Hamedan', proposedCount(panel.innerHTML) === 2);
+
+// T-PERBASE-2: Bandar Abbas main section has exactly 3 rows
+global.window.RmoozBaseStatusPanel.open(candidateFromBase(bandar), payload);
+var ban1 = mainSection(panel.innerHTML);
+ok('T-PERBASE-2: Bandar Abbas main section has exactly 3 rows', rowCount(ban1) === 3);
+ok('T-PERBASE-2b: F-14A (Hamedan unit) absent from Bandar Abbas main section', !/F-14A Tomcat/.test(ban1));
+ok('T-PERBASE-2c: AB-212 (Chabahar unit) absent from Bandar Abbas main section', !/AB-212/.test(ban1));
+ok('T-PERBASE-2d: Proposed units count = 3 for Bandar Abbas', proposedCount(panel.innerHTML) === 3);
+
+// T-PERBASE-3: payload has NO orphans → Global Unassigned section must not appear
+ok('T-PERBASE-3: no Global Unassigned section when all units are matched', unassignedDetails(panel.innerHTML) === '');
+
+// T-PERBASE-4/5/6/7: LLM-filled units (no base_name_en, no assigned_base_id)
+// must NOT appear in any base's main Proposed Units table,
+// must appear ONLY in the collapsed Global Unassigned section.
+var llmPayload = {
+    brief: {
+        operational_brief: {
+            task_assembly: {}, enemy: { units: [] }, friendly: { units: [] }, courses_of_action: [],
+            enemy_bases: [hamedan, bandar],
+            friendly_trial_bases: [],
+            proposed_units: [
+                unit('RED', 'Hamedan', 'F-14A Tomcat', 12, 'مقاتلة'),
+                // LLM-filled: source_type='llm_fill', no base_name_en, no assigned_base_id, no coords
+                { side: 'RED', platform: 'SAM Battery',      estimated_count: 1, lat: null, lon: null, source_type: 'llm_fill', needs_review: true, warnings: ['llm_extracted_unit_requires_operator_review'] },
+                { side: 'RED', platform: 'Fighter Aircraft', estimated_count: 3, lat: null, lon: null, source_type: 'llm_fill', needs_review: true },
+            ],
+            missing_information: [],
+        },
+    },
+};
+
+global.window.RmoozBaseStatusPanel.open(candidateFromBase(hamedan), llmPayload);
+var llmMain = mainSection(panel.innerHTML);
+var llmUD   = unassignedDetails(panel.innerHTML);
+
+ok('T-PERBASE-4: Hamedan main table has only 1 matched unit (F-14A)', rowCount(llmMain) === 1);
+ok('T-PERBASE-4b: SAM Battery absent from Hamedan main table', !/SAM Battery/.test(llmMain));
+ok('T-PERBASE-4c: Fighter Aircraft absent from Hamedan main table', !/Fighter Aircraft/.test(llmMain));
+ok('T-PERBASE-4d: Proposed units count = 1 (not 3) for Hamedan with LLM payload', proposedCount(panel.innerHTML) === 1);
+
+ok('T-PERBASE-5: Global Unassigned section uses <details> (collapsed by default)', /bsp-unassigned-details/.test(panel.innerHTML));
+ok('T-PERBASE-5b: Global Unassigned summary CSS class present', /bsp-unassigned-summary/.test(panel.innerHTML));
+
+ok('T-PERBASE-6: summary label says "not linked to this base"', /not linked to this base/.test(panel.innerHTML));
+ok('T-PERBASE-6b: Arabic label present in summary', /غير مُسندة عامة/.test(panel.innerHTML));
+
+ok('T-PERBASE-7: SAM Battery is in Global Unassigned section', /SAM Battery/.test(llmUD));
+ok('T-PERBASE-7b: Fighter Aircraft is in Global Unassigned section', /Fighter Aircraft/.test(llmUD));
+ok('T-PERBASE-7c: orphan count shown in summary (2)', /\(2\)/.test(panel.innerHTML));
+
+// T-PERBASE-8: open Bandar Abbas with same LLM payload — same behaviour (0 matched here)
+global.window.RmoozBaseStatusPanel.open(candidateFromBase(bandar), llmPayload);
+var banLLMMain = mainSection(panel.innerHTML);
+ok('T-PERBASE-8: Bandar Abbas main table empty when LLM payload has no Bandar units', rowCount(banLLMMain) === 0);
+ok('T-PERBASE-8b: SAM Battery absent from Bandar Abbas main table', !/SAM Battery/.test(banLLMMain));
+ok('T-PERBASE-8c: Proposed units count = 0 for Bandar with LLM-only payload', proposedCount(panel.innerHTML) === 0);
+
+// T-PERBASE-9: details CSS rules injected
+var ud_css = css;
+ok('T-PERBASE-9: .bsp-unassigned-details>summary rule injected', /bsp-unassigned-details/.test(ud_css));
+
 console.log('\n' + passed + ' passed, ' + failed + ' failed');
 process.exit(failed ? 1 : 0);

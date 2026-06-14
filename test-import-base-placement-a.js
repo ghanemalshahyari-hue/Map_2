@@ -98,7 +98,10 @@ function proposedSection(html) {
     var s = html.indexOf('Proposed Units');
     if (s < 0) return '';
     var rest = html.slice(s);
-    var end = rest.indexOf('Unassigned / needs base review');
+    // 'Global Unassigned' is the new heading (STEP1-BASE-STATUS-PER-BASE-UNITS-A);
+    // keep old string as fallback for any cached build, then Capability Summary.
+    var end = rest.indexOf('Global Unassigned');
+    if (end < 0) end = rest.indexOf('Unassigned / needs base review');
     if (end < 0) end = rest.indexOf('Capability Summary');
     return end >= 0 ? rest.slice(0, end) : rest;
 }

@@ -14,6 +14,7 @@
  *   §6  renderDecision handles ok:false gracefully (no crash, shows fallback)
  *   §7  server logic: decideAction + validateAction + applyAction chain ok:true
  *   §8  event_log_entry format matches expected pattern
+ *   §9  PANEL.openPanel is undefined (separate card removed — FREEFIGHT-DEMO-AI-INTEGRATE-A)
  */
 'use strict';
 
@@ -175,6 +176,12 @@ ok('§8 contains side RED', /RED/.test(logEntry));
 ok('§8 contains platform name F-14A Tomcat', /F-14A Tomcat/.test(logEntry));
 ok('§8 contains "reason:"', /reason:/.test(logEntry));
 ok('§8 contains source tag [deterministic_demo_ai]', /\[deterministic_demo_ai\]/.test(logEntry));
+
+// ── §9  openPanel is gone ─────────────────────────────────────────────────────
+console.log('\n§9  PANEL.openPanel is undefined (separate card removed)');
+
+ok('§9 PANEL.openPanel is undefined', typeof PANEL.openPanel === 'undefined');
+ok('§9 PANEL.renderDecision still present', typeof PANEL.renderDecision === 'function');
 
 console.log('\n' + passed + ' passed, ' + failed + ' failed');
 process.exit(failed ? 1 : 0);

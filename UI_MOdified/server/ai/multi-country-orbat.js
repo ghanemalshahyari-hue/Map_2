@@ -362,8 +362,12 @@ function buildMultiCountryStep1(input, opts) {
         [['air_bases', 'air_base'], ['naval_bases', 'naval_base'], ['land_bases', 'land_base']].forEach(function (pair) {
             const field = pair[0], type = pair[1];
             (rc[field] || []).forEach(function (b, bi) {
-                const baseNameAr = String(b.base_name_ar || '').trim();
-                const baseNameEn = String(b.base_name_en || '').trim();
+                // STEP1-EXCEL-JSON-BASE-ASSIGNMENT-A: accept both name_en/name_ar
+                // (the shape Excel-to-JSON converters and the GCC fixture use) and
+                // base_name_en/base_name_ar (the internal canonical field). Without
+                // this, baseNameEn is always '' and nameMatches fails.
+                const baseNameAr = String(b.base_name_ar || b.name_ar || '').trim();
+                const baseNameEn = String(b.base_name_en || b.name_en || '').trim();
                 const lat = validLat(b.lat) ? b.lat : null;
                 const lon = validLon(b.lon) ? b.lon : null;
                 const code = codeFromName(baseNameAr, baseNameEn);
@@ -393,6 +397,9 @@ function buildMultiCountryStep1(input, opts) {
 
                 if (hasCoord) {
                     const anchor = {
+                        // STEP1-EXCEL-JSON-BASE-ASSIGNMENT-A: carry id + base_id so
+                        // baseIdMatches(unit, anchor) fires via the unit's assigned_base_id.
+                        id: baseObj.id, base_id: baseObj.id,
                         mention: baseNameEn || baseNameAr || (name + ' ' + type + ' ' + (bi + 1)),
                         base_name_ar: baseNameAr, base_name_en: baseNameEn,
                         side: side, country: name, country_key: canon ? canon.key : null,
@@ -419,6 +426,10 @@ function buildMultiCountryStep1(input, opts) {
                         id: side + '-' + platformCode(platform) + '-' + code + '-' + bi + '-' + ui,
                         side: side, country: name, country_key: canon ? canon.key : null,
                         base_name_ar: baseNameAr, base_name_en: baseNameEn,
+                        // STEP1-EXCEL-JSON-BASE-ASSIGNMENT-A: explicit link to parent base so
+                        // baseIdMatches(unit, anchor/country_base) fires even when coordinates
+                        // are absent and nameMatches has no tokens to compare.
+                        assigned_base_id: baseObj.id,
                         site_type: type, lat: lat, lon: lon,
                         platform: platform, type_ar: u.type_ar || null,
                         estimated_count: estimated,

@@ -52,6 +52,7 @@ const LOCATION = require(path.join(__dirname, 'ai', 'location-intelligence.js'))
 const XLSX = require(path.join(__dirname, 'ai', 'xlsx-text.js'));
 const MULTICOUNTRY = require(path.join(__dirname, 'ai', 'multi-country-orbat.js'));
 const FREE_FIGHT_LLM = require(path.join(__dirname, 'ai', 'free-fight-llm-plan.js'));
+const STEP1_LLM_FILL = require(path.join(__dirname, 'ai', 'step1-llm-fill.js'));
 
 // Collect a request body and parse it. cb(obj) on success; cb(null) when the
 // body is empty; cb(undefined) when a body is present but not valid JSON.
@@ -1274,6 +1275,10 @@ function handle(req, res, ctx) {
     // whether it is an Operational Brief, an RMOOZ Scenario, or unknown, and
     // validate/normalize accordingly. No writes, no sim, no LLM (graceful gate).
     if (pathname === '/api/wargame-sim/analyze' && (method === 'POST' || method === 'GET')) {
+        // STEP1-AI-LLM-FILL-INTEGRATION-A: run deterministic extraction first;
+        // if the result is weak (0 units, 0 candidates) and a provider is
+        // configured, call the LLM fill stage asynchronously. Falls back to
+        // the deterministic result on any LLM error so the route always responds.
         var analyzeStaged = function () {
             try {
                 var inputs = [];
@@ -1283,7 +1288,16 @@ function handle(req, res, ctx) {
                     if (exists(p)) inputs.push({ slot: slot, filename: SLOT_FILE[slot], bytes: fs.readFileSync(p) });
                 });
                 if (!inputs.length) { sendJson(res, 404, { ok: false, error: 'no staged documents — upload a red and/or blue .docx, or POST a JSON brief/scenario' }); return; }
-                sendJson(res, 200, withAnalyzeDebug(BRIEF.analyzeDocuments(inputs)));
+                var det = BRIEF.analyzeDocuments(inputs);
+                if (STEP1_LLM_FILL.isWeak(det) && STEP1_LLM_FILL.providerAvailable()) {
+                    STEP1_LLM_FILL.fill(det, inputs).then(function (filled) {
+                        sendJson(res, 200, withAnalyzeDebug(filled));
+                    }).catch(function (_e) {
+                        sendJson(res, 200, withAnalyzeDebug(det));
+                    });
+                } else {
+                    sendJson(res, 200, withAnalyzeDebug(det));
+                }
             } catch (e) { sendJson(res, 500, { ok: false, error: 'analyze failed: ' + (e && e.message) }); }
         };
         if (method === 'GET') { analyzeStaged(); return true; }

@@ -328,6 +328,8 @@
         });
         // Compact single-line card: name + type chip + count chip + optional warning.
         // Noisy flags (needs_review, exact_unit_position, source_type) kept as tooltip.
+        // STEP1-AI-LLM-FILL-INTEGRATION-A: items with source_type='llm_fill' get a
+        // visible [AI] badge so operators know the unit came from the LLM, not the doc.
         function unitRow(u) {
             var name = u.platform || u.type_ar || u.unit_name || '\u2014';
             var typeLabel = (u.platform && u.type_ar && u.type_ar !== u.platform) ? u.type_ar : '';
@@ -335,10 +337,13 @@
             var hasWarn = !!(u.warning || (u.warnings && u.warnings.length));
             var warnText = u.warning || ((u.warnings || []).join('; '));
             var catalogStatus = u.catalog_status || '';
+            var isLlmFill = u.source_type === 'llm_fill';
             var tooltipParts = ['source: ' + (u.source_type || '\u2014'), 'needs_review: true', 'exact_unit_position: false'];
+            if (isLlmFill && u.source_evidence) tooltipParts.push('evidence: ' + u.source_evidence);
             if (warnText) tooltipParts.push('warning: ' + warnText);
             if (u.confidence != null) tooltipParts.push('confidence: ' + u.confidence);
             var h = '<div title="' + esc(tooltipParts.join(' | ')) + '" style="display:flex;align-items:center;gap:4px;padding:2px 6px;margin:1px 0;border-radius:3px;background:#0a111a;font-size:11px;min-height:22px;">';
+            if (isLlmFill) h += '<span title="AI-extracted \u2014 needs operator review" style="padding:0 4px;border-radius:3px;background:#1a2a3a;color:#8fb8f0;font-size:9px;white-space:nowrap;flex-shrink:0;border:1px solid #2a4a6a;">AI</span>';
             h += '<span dir="auto" style="flex:1;color:#e8eaed;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(name) + '</span>';
             if (typeLabel) h += '<span dir="auto" style="padding:0 5px;border-radius:3px;background:#16222e;color:#8fa5b8;white-space:nowrap;max-width:80px;overflow:hidden;text-overflow:ellipsis;font-size:10px;">' + esc(typeLabel) + '</span>';
             if (count) h += '<span style="padding:0 5px;border-radius:3px;background:#16222e;color:#cfe6ff;font-size:10px;white-space:nowrap;">' + esc(count) + '</span>';
@@ -800,8 +805,22 @@
         html += renderEnemyBases(p);
         html += renderMissingInformation(p);
         html += renderStaffBrief2(p);
-        if (p.llm_fill && !p.llm_fill.available) {
-            html += '<div style="font-size:11px;color:#9aa3ad;margin:6px 0;">ℹ Deep extraction (exact units &amp; intent) runs on the deployment LLM; this is the offline structural read.</div>';
+        if (p.llm_fill && p.llm_fill.available) {
+            // STEP1-AI-LLM-FILL-INTEGRATION-A: LLM fill succeeded — show what model ran.
+            var fillModel = esc(p.llm_fill.model || 'local LLM');
+            var fillUnits = p.llm_fill.units_added || 0;
+            var fillBases = p.llm_fill.bases_added || 0;
+            var fillConf  = esc(p.llm_fill.overall_confidence || 'low');
+            html += '<div style="font-size:11px;color:#8fb8f0;margin:6px 0;padding:5px 8px;border-radius:4px;background:#0d1e2e;border:1px solid #2a4a6a;">' +
+                '🤖 AI fill active — model: <b>' + fillModel + '</b> · ' +
+                fillUnits + ' units + ' + fillBases + ' bases extracted · confidence: ' + fillConf +
+                ' · all positions are <b>unverified review-only</b> (needs_review:true, exact_unit_position:false)' +
+                '</div>';
+        } else if (p.llm_fill && !p.llm_fill.available) {
+            var fillReason = p.llm_fill.attempted
+                ? '<b>AI fill attempted but failed</b> — ' + esc(p.llm_fill.reason || '')
+                : 'Deep extraction runs on the deployment LLM; this is the offline structural read.';
+            html += '<div style="font-size:11px;color:#9aa3ad;margin:6px 0;">ℹ ' + fillReason + '</div>';
         }
         // DOC-UNDERSTANDING-1 / G-3: COA Review Panel mount point. Painted by
         // shell/coa-review-panel.js when the brief carries courses_of_action[].

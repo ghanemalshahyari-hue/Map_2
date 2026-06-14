@@ -36,7 +36,7 @@
     var _progress = 0, _running = false, _paused = false, _timer = null;
     var _layer = null, _panel = null, _card = null, _aiPanel = null;
     var _plan = null, _terrain = { available: false }, _objectiveSource = null;
-    var _aiDecision = null, _aiLoading = false, _aiApplied = false;
+    var _aiDecision = null, _aiLoading = false, _aiApplied = false, _aiDiagnostics = null;
     var _useLlm = false, _llmTestStatus = null;
     var _plannerMode = 'deterministic';
     var _planSource = 'deterministic';
@@ -288,7 +288,7 @@
     }
     function fallbackToDeterministic(reason, startAfter) {
         selectSample();
-        setLlmStatus('fallback', 'LLM unavailable or invalid response - using RMOOZ deterministic planner', 'rejected', reason || 'llm_unavailable');
+        setLlmStatus('fallback', 'Group Planner LLM: unavailable or invalid response — using RMOOZ deterministic planner', 'rejected', reason || 'llm_unavailable');
         if (mapReady()) syncMarkers();
         renderAiPanel();
         if (startAfter) return startMovementNow();
@@ -712,31 +712,87 @@
         } catch (_) {}
     }
     function _buildAiRequestBody() {
-        var ob = (_payload && _payload.brief && _payload.brief.operational_brief) || (_payload && _payload.operational_brief) || {};
-        // Normalize proposed_units: real scenarios use coord:[lon,lat]+uid instead of lat/lon+id.
-        var raw = Array.isArray(ob.proposed_units) ? ob.proposed_units : [];
-        var units = raw.map(function (u, i) {
+        var w = W();
+        var sourceUsed = 'none';
+        var dTotal = 0, dWithId = 0, dWithCoords = 0, dMovable = 0;
+
+        function normUnit(u) {
             if (!u) return null;
+            var id = u.id || u.uid || u.unit_uid;
+            if (!id) return null;
             var lat = u.lat, lon = u.lon;
             if ((lat == null || lon == null) && Array.isArray(u.coord) && u.coord.length >= 2) {
                 lon = u.coord[0]; lat = u.coord[1];
             }
             if (!Number.isFinite(Number(lat)) || !Number.isFinite(Number(lon))) return null;
-            return { id: u.id || u.uid || ('unit-' + i), lat: lat, lon: lon, side: u.side || 'RED' };
-        }).filter(Boolean);
-        // Fallback: use _allGroups anchor positions when brief has no usable units
-        if (!units.length) {
-            units = _allGroups
-                .filter(function (g) { return g && g.anchor && finiteLL(g.anchor); })
-                .map(function (g) { return { id: g.id, lat: g.anchor.lat, lon: g.anchor.lon, side: g.side || 'RED' }; });
+            return { id: String(id), uid: String(id), lat: +lat, lon: +lon,
+                     side: String(u.side || 'RED').toUpperCase(),
+                     platform: u.platform || u.role || u.label || null };
         }
-        var objectives = Array.isArray(ob.placement_candidates)
-            ? ob.placement_candidates.filter(function (c) { return c && String(c.type || '').toLowerCase() === 'objective'; })
+
+        function tallyRaw(raw) {
+            dTotal = raw.length;
+            dWithId = raw.filter(function(u) { return u && (u.id || u.uid || u.unit_uid); }).length;
+            dWithCoords = raw.filter(function(u) {
+                if (!u) return false;
+                var la = u.lat, lo = u.lon;
+                if ((la == null || lo == null) && Array.isArray(u.coord) && u.coord.length >= 2) { lo = u.coord[0]; la = u.coord[1]; }
+                return Number.isFinite(Number(la)) && Number.isFinite(Number(lo));
+            }).length;
+        }
+
+        var units = [];
+
+        // Priority A: window.RmoozScenario.scenario units (real loaded scenario)
+        var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        if (sc) {
+            var rawA = (Array.isArray(sc.red_units) ? sc.red_units : []).concat(
+                       Array.isArray(sc.blue_units_initial) ? sc.blue_units_initial : []);
+            if (rawA.length) {
+                tallyRaw(rawA);
+                units = rawA.map(normUnit).filter(Boolean);
+                dMovable = units.length;
+                if (units.length) sourceUsed = 'scenario';
+            }
+        }
+
+        // Priority B: operational_brief.proposed_units
+        if (!units.length) {
+            var ob = (_payload && _payload.brief && _payload.brief.operational_brief) || (_payload && _payload.operational_brief) || {};
+            var rawB = Array.isArray(ob.proposed_units) ? ob.proposed_units : [];
+            if (rawB.length) {
+                tallyRaw(rawB);
+                units = rawB.map(normUnit).filter(Boolean);
+                dMovable = units.length;
+                if (units.length) sourceUsed = 'proposed_units';
+            }
+        }
+
+        // Priority C: _allGroups anchor positions
+        if (!units.length) {
+            var grps = _allGroups.filter(function(g) { return g && g.anchor && finiteLL(g.anchor); });
+            if (grps.length) {
+                dTotal = grps.length; dWithId = grps.length; dWithCoords = grps.length;
+                units = grps.map(function(g) {
+                    return { id: g.id, uid: g.id, lat: g.anchor.lat, lon: g.anchor.lon,
+                             side: String(g.side || 'RED').toUpperCase(), platform: null };
+                });
+                dMovable = units.length;
+                sourceUsed = 'groups';
+            }
+        }
+
+        _aiDiagnostics = { source_used: sourceUsed, units_total: dTotal, units_with_id: dWithId, units_with_coords: dWithCoords, units_movable: dMovable };
+
+        var ob2 = (_payload && _payload.brief && _payload.brief.operational_brief) || (_payload && _payload.operational_brief) || {};
+        var objectives = Array.isArray(ob2.placement_candidates)
+            ? ob2.placement_candidates.filter(function(c) { return c && String(c.type || '').toLowerCase() === 'objective'; })
             : [];
-        if (!objectives.length && Array.isArray(ob.objectives)) objectives = ob.objectives;
-        // Fall back to the placed Objective X if the brief has none
+        if (!objectives.length && Array.isArray(ob2.objectives)) objectives = ob2.objectives;
         if (!objectives.length && finiteLL(_objective)) objectives = [{ lat: _objective.lat, lon: _objective.lon, name: 'Objective X' }];
-        return { units: units, objectives: objectives, opts: { preferSide: 'RED', useLlm: _useLlm } };
+
+        var allowedUnitIds = units.map(function(u) { return u.id; });
+        return { units: units, objectives: objectives, opts: { preferSide: 'RED', useLlm: _useLlm, allowed_unit_ids: allowedUnitIds } };
     }
     function _fetchAiDecision() {
         var w = W();
@@ -762,7 +818,7 @@
         updatePanel();
     }
     function _resetAiDecision() {
-        _aiDecision = null; _aiLoading = false; _aiApplied = false;
+        _aiDecision = null; _aiLoading = false; _aiApplied = false; _aiDiagnostics = null;
         if (mapReady()) syncMarkers();
         updatePanel();
     }
@@ -778,7 +834,7 @@
     }
     function renderAiDecisionHtml() {
         var h = '<div style="margin-top:8px;border-top:1px solid #2a3f55;padding-top:8px;">';
-        h += '<div style="font-size:12px;font-weight:600;color:#9ec2ec;margin-bottom:6px;">AI Decision Preview — معاينة قرار الذكاء الاصطناعي</div>';
+        h += '<div style="font-size:12px;font-weight:600;color:#9ec2ec;margin-bottom:6px;">AI Decision Preview <span style="color:#6a8fa8;font-size:10px;font-weight:400;">(Unit Decision LLM)</span> — معاينة قرار الذكاء الاصطناعي</div>';
         // LLM toggle + test button
         h += '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;font-size:11px;">';
         h += '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;color:#9ec2ec;" title="Uses local Ollama only — requires RMOOZ_FREE_FIGHT_LLM=1 on the server">';
@@ -847,7 +903,14 @@
             } else if (_aiDecision._error) {
                 h += '<div style="color:#e0a93a;font-size:11px;padding:4px;">Error: ' + esc(_aiDecision._error) + '</div>';
             } else {
-                h += '<div style="color:#e0a93a;font-size:11px;padding:4px;">No action available — no movable unit found.</div>';
+                h += '<div style="color:#e0a93a;font-size:11px;padding:4px;">No movable units found. Generate scenario or assign unit base/coordinates first.</div>';
+                if (_aiDiagnostics) {
+                    h += '<div style="color:#8fa5b8;font-size:10px;padding:2px 4px;">source: ' + esc(_aiDiagnostics.source_used) +
+                         ' · total: ' + (_aiDiagnostics.units_total || 0) +
+                         ' · with_id: ' + (_aiDiagnostics.units_with_id || 0) +
+                         ' · with_coords: ' + (_aiDiagnostics.units_with_coords || 0) +
+                         ' · movable: ' + (_aiDiagnostics.units_movable || 0) + '</div>';
+                }
             }
         }
         h += '</div>';

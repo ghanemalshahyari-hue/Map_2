@@ -138,26 +138,33 @@ async function askLlmForAction(units, objectives, opts, _providerOverride) {
         'Return ONLY a JSON object matching the required_output_schema.',
         'No other text, explanation, or preamble.',
         'Do not invent new units or objectives outside the supplied lists.',
+        'unit_uid must be exactly one of the allowed_unit_ids listed.',
     ].join(' ');
 
+    const allowedIds = (Array.isArray(opts.allowed_unit_ids) ? opts.allowed_unit_ids : []).filter(Boolean);
+    const unitList = (units || []).map(function (u) {
+        return { id: u.id, side: u.side, lat: u.lat, lon: u.lon, platform: u.platform || u.type || null };
+    });
+    const effectiveAllowed = allowedIds.length ? allowedIds : unitList.map(function(u) { return u.id; }).filter(Boolean);
+
     const prompt = JSON.stringify({
-        units: (units || []).map(function (u) {
-            return { id: u.id, side: u.side, lat: u.lat, lon: u.lon, platform: u.platform || u.type || null };
-        }),
+        units: unitList,
         objectives: (objectives || []).map(function (o) {
             return { lat: o.lat, lon: o.lon, name: o.name || o.label || 'Objective X' };
         }),
         preferSide: opts.preferSide || 'RED',
+        allowed_unit_ids: effectiveAllowed,
         required_output_schema: {
             action_type: 'MOVE_TOWARD_OBJECTIVE|DEFEND_BASE|HOLD_POSITION|PATROL_NEAR_BASE',
             side:        'RED|BLUE',
-            unit_uid:    '<id from the units list>',
+            unit_uid:    '<MUST be one of allowed_unit_ids — no other value>',
             target:      { type: 'objective|base|coord', lat: 0, lon: 0 },
             reason:      '<one sentence max>',
             risk:        'low|medium|high',
             confidence:  'low|medium|high',
             source:      'llm',
         },
+        constraint: 'unit_uid MUST be exactly one of allowed_unit_ids — do not invent IDs',
     });
 
     let result;
@@ -190,12 +197,24 @@ async function askLlmForAction(units, objectives, opts, _providerOverride) {
 
     const normalized = normalizeAction(parsed);
     if (!normalized) {
+        const deterAction = ENGINE.decideAction(units, objectives, opts);
+        if (deterAction) {
+            return { action: deterAction, source: 'deterministic_demo_ai',
+                     fallback_reason: 'llm_invalid_schema — deterministic fallback used',
+                     local_only: true, provider_policy: 'local_only' };
+        }
         return { action: null, source: 'deterministic_demo_ai', fallback_reason: 'llm_invalid_schema',
                  local_only: true, provider_policy: 'local_only' };
     }
 
     const validation = ENGINE.validateAction(normalized, units, objectives);
     if (!validation.ok) {
+        const deterAction = ENGINE.decideAction(units, objectives, opts);
+        if (deterAction) {
+            return { action: deterAction, source: 'deterministic_demo_ai',
+                     fallback_reason: 'llm_validation_failed: ' + str(validation.reason, 120) + ' — deterministic fallback used',
+                     local_only: true, provider_policy: 'local_only' };
+        }
         return { action: null, source: 'deterministic_demo_ai',
                  fallback_reason: 'llm_validation_failed: ' + str(validation.reason, 120),
                  local_only: true, provider_policy: 'local_only' };

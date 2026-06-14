@@ -51,8 +51,9 @@ const LOCATION = require(path.join(__dirname, 'ai', 'location-intelligence.js'))
 // MULTI-COUNTRY-A: dependency-free .xlsx reader + coalition Step 1 ORBAT model.
 const XLSX = require(path.join(__dirname, 'ai', 'xlsx-text.js'));
 const MULTICOUNTRY = require(path.join(__dirname, 'ai', 'multi-country-orbat.js'));
-const FREE_FIGHT_LLM = require(path.join(__dirname, 'ai', 'free-fight-llm-plan.js'));
-const FREE_FIGHT_ENGINE = require(path.join(__dirname, 'ai', 'free-fight-action-engine.js'));
+const FREE_FIGHT_LLM          = require(path.join(__dirname, 'ai', 'free-fight-llm-plan.js'));
+const FREE_FIGHT_ENGINE       = require(path.join(__dirname, 'ai', 'free-fight-action-engine.js'));
+const FREE_FIGHT_LLM_DECISION = require(path.join(__dirname, 'ai', 'free-fight-llm-decision.js'));
 const STEP1_LLM_FILL = require(path.join(__dirname, 'ai', 'step1-llm-fill.js'));
 
 // Collect a request body and parse it. cb(obj) on success; cb(null) when the
@@ -1253,37 +1254,64 @@ function handle(req, res, ctx) {
                 return;
             }
             var b = body || {};
-            var units = Array.isArray(b.units) ? b.units : [];
+            var units      = Array.isArray(b.units) ? b.units : [];
             var objectives = Array.isArray(b.objectives) ? b.objectives
                 : (b.objectives ? [b.objectives] : []);
-            var opts = (b.opts && typeof b.opts === 'object') ? b.opts : {};
+            var opts       = (b.opts && typeof b.opts === 'object') ? b.opts : {};
 
-            var action = FREE_FIGHT_ENGINE.decideAction(units, objectives, opts);
-            if (!action) {
-                sendJson(res, 200, { ok: false, reason: 'no_movable_unit' });
-                return;
+            // Shared finaliser: validate + apply + respond (sync path reused by both branches).
+            function applyAndRespond(action, fallback_reason) {
+                if (!action) {
+                    sendJson(res, 200, { ok: false, reason: 'no_movable_unit', fallback_reason: fallback_reason || null });
+                    return;
+                }
+                var validation  = FREE_FIGHT_ENGINE.validateAction(action, units, objectives);
+                var unitsCopy   = units.map(function (u) { return Object.assign({}, u); });
+                var apply_result  = FREE_FIGHT_ENGINE.applyAction(action, unitsCopy);
+                var changed_unit  = apply_result.ok ? apply_result.unit : null;
+                var scenario_patch = apply_result.ok
+                    ? { unit_uid: action.unit_uid, lat: apply_result.new_pos.lat, lon: apply_result.new_pos.lon }
+                    : null;
+                var event_log_entry = FREE_FIGHT_ENGINE.makeEventLogEntry(action, apply_result);
+                sendJson(res, 200, {
+                    ok:              true,
+                    action:          action,
+                    validation:      validation,
+                    apply_result:    apply_result,
+                    event_log_entry: event_log_entry,
+                    changed_unit:    changed_unit,
+                    scenario_patch:  scenario_patch,
+                    decision_source: action.source || 'deterministic_demo_ai',
+                    fallback_reason: fallback_reason || null,
+                });
             }
 
-            var validation = FREE_FIGHT_ENGINE.validateAction(action, units, objectives);
-            // Apply to a deep copy — never mutate the caller's data
-            var unitsCopy = units.map(function (u) { return Object.assign({}, u); });
-            var apply_result = FREE_FIGHT_ENGINE.applyAction(action, unitsCopy);
-            var changed_unit = apply_result.ok ? apply_result.unit : null;
-            var scenario_patch = apply_result.ok
-                ? { unit_uid: action.unit_uid, lat: apply_result.new_pos.lat, lon: apply_result.new_pos.lon }
-                : null;
-            var event_log_entry = FREE_FIGHT_ENGINE.makeEventLogEntry(action, apply_result);
-
-            sendJson(res, 200, {
-                ok: true,
-                action: action,
-                validation: validation,
-                apply_result: apply_result,
-                event_log_entry: event_log_entry,
-                changed_unit: changed_unit,
-                scenario_patch: scenario_patch,
-            });
+            if (opts.useLlm) {
+                // FREEFIGHT-LLM-DECISION-BRIDGE-A: LLM path with deterministic fallback.
+                FREE_FIGHT_LLM_DECISION.askLlmForAction(units, objectives, opts)
+                    .then(function (llmResult) {
+                        if (llmResult.action) {
+                            applyAndRespond(llmResult.action, null);
+                        } else {
+                            var deterAction = FREE_FIGHT_ENGINE.decideAction(units, objectives, opts);
+                            applyAndRespond(deterAction, llmResult.fallback_reason);
+                        }
+                    })
+                    .catch(function (e) {
+                        var deterAction = FREE_FIGHT_ENGINE.decideAction(units, objectives, opts);
+                        applyAndRespond(deterAction, 'llm_error: ' + String(e && e.message || '').slice(0, 100));
+                    });
+            } else {
+                applyAndRespond(FREE_FIGHT_ENGINE.decideAction(units, objectives, opts), null);
+            }
         });
+        return true;
+    }
+
+    if ((pathname === '/api/wargame-sim/free-fight/test-llm') && (method === 'GET' || method === 'POST')) {
+        FREE_FIGHT_LLM_DECISION.testLlmConnection()
+            .then(function (result) { sendJson(res, 200, result); })
+            .catch(function (e)     { sendJson(res, 200, { ok: false, error: String(e && e.message || e).slice(0, 200) }); });
         return true;
     }
 

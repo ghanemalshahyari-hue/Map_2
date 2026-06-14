@@ -37,6 +37,7 @@
     var _layer = null, _panel = null, _card = null, _aiPanel = null;
     var _plan = null, _terrain = { available: false }, _objectiveSource = null;
     var _aiDecision = null, _aiLoading = false, _aiApplied = false;
+    var _useLlm = false, _llmTestStatus = null;
     var _plannerMode = 'deterministic';
     var _planSource = 'deterministic';
     var _llmStatus = {
@@ -603,8 +604,11 @@
         bind('start', start); bind('replan', replan); bind('pause', pause); bind('reset', reset); bind('clear-obj', clearObjective); bind('close', clear);
         bind('place-obj', armPlaceObjective);
         bind('preview-ai', _fetchAiDecision); bind('apply-ai', _applyAiDecision); bind('reset-ai', _resetAiDecision);
+        bind('test-llm', _testLlm);
         var modeSel = _panel.querySelector('[data-act="planner-mode"]');
         if (modeSel && modeSel.addEventListener) modeSel.addEventListener('change', function () { setPlannerMode(modeSel.value); });
+        var llmCb = _panel.querySelector('[data-act="toggle-llm"]');
+        if (llmCb && llmCb.addEventListener) llmCb.addEventListener('change', function () { _useLlm = !!(llmCb && llmCb.checked); });
     }
     function bind(act, fn) { if (!_panel) return; var b = _panel.querySelector('[data-act="' + act + '"]'); if (b && b.addEventListener) b.addEventListener('click', fn); }
 
@@ -716,7 +720,7 @@
         if (!objectives.length && Array.isArray(ob.objectives)) objectives = ob.objectives;
         // Fall back to the placed Objective X if the brief has none
         if (!objectives.length && finiteLL(_objective)) objectives = [{ lat: _objective.lat, lon: _objective.lon, name: 'Objective X' }];
-        return { units: units, objectives: objectives, opts: { preferSide: 'RED' } };
+        return { units: units, objectives: objectives, opts: { preferSide: 'RED', useLlm: _useLlm } };
     }
     function _fetchAiDecision() {
         var w = W();
@@ -746,9 +750,35 @@
         if (mapReady()) syncMarkers();
         updatePanel();
     }
+    function _testLlm() {
+        var w = W();
+        if (!w || typeof w.fetch !== 'function') return;
+        _llmTestStatus = { testing: true };
+        updatePanel();
+        w.fetch('/api/wargame-sim/free-fight/test-llm', { method: 'POST' })
+            .then(function (r) { return r.json(); })
+            .then(function (result) { _llmTestStatus = result; updatePanel(); })
+            .catch(function (e) { _llmTestStatus = { ok: false, error: e && e.message || 'fetch failed' }; updatePanel(); });
+    }
     function renderAiDecisionHtml() {
         var h = '<div style="margin-top:8px;border-top:1px solid #2a3f55;padding-top:8px;">';
         h += '<div style="font-size:12px;font-weight:600;color:#9ec2ec;margin-bottom:6px;">AI Decision Preview — معاينة قرار الذكاء الاصطناعي</div>';
+        // LLM toggle + test button
+        h += '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;font-size:11px;">';
+        h += '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;color:#9ec2ec;" title="Requires RMOOZ_FREE_FIGHT_LLM=1 on the server">';
+        h += '<input type="checkbox" data-act="toggle-llm"' + (_useLlm ? ' checked' : '') + ' style="accent-color:#4a9ed6;cursor:pointer;">';
+        h += 'Use LLM — استخدام LLM</label>';
+        h += '<button data-act="test-llm" style="font:inherit;cursor:pointer;border:1px solid #4a5f75;background:#101b27;color:#8fb8e0;border-radius:4px;padding:3px 8px;font-size:10px;">' +
+             (_llmTestStatus && _llmTestStatus.testing ? '⏳ Testing…' : '⚡ Test LLM') + '</button>';
+        if (_llmTestStatus && !_llmTestStatus.testing) {
+            var lts = _llmTestStatus;
+            var ltColor = lts.ok ? '#90d090' : '#e0a93a';
+            h += '<span style="color:' + ltColor + ';font-size:10px;">';
+            if (lts.ok) h += 'LLM: connected · ' + esc(lts.provider || '') + (lts.latency_ms ? ' · ' + lts.latency_ms + 'ms' : '');
+            else h += 'LLM: ' + esc(lts.reason || lts.error || 'unavailable');
+            h += '</span>';
+        }
+        h += '</div>';
         h += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;">';
         h += '<button data-act="preview-ai" style="font:inherit;cursor:pointer;border:1px solid #2a7a50;background:#131e18;color:#90d0a0;border-radius:5px;padding:5px 10px;font-size:11px;">' + (_aiLoading ? '⏳ Loading…' : '🔍 Preview AI Decision') + '</button>';
         if (_aiDecision && _aiDecision.ok && !_aiApplied) {
@@ -773,6 +803,11 @@
                 if (aiAct.risk) h += '<div><span style="color:#8fa5b8;">Risk:</span> <span style="color:#e0e8f0;">' + esc(aiAct.risk) + '</span></div>';
                 if (aiAct.source) h += '<div><span style="color:#8fa5b8;">Source:</span> <span style="color:#e0e8f0;">' + esc(aiAct.source) + '</span></div>';
                 if (_aiDecision.validation) h += '<div><span style="color:#8fa5b8;">Validator:</span> <span style="color:#' + (_aiDecision.validation.ok ? '90d090' : 'e0a93a') + ';">' + esc(_aiDecision.validation.ok ? 'OK' : (_aiDecision.validation.reason || 'rejected')) + '</span></div>';
+                // FREEFIGHT-LLM-DECISION-BRIDGE-A: decision_source + fallback_reason
+                var dsrc = _aiDecision.decision_source || aiAct.source || 'deterministic_demo_ai';
+                var dsrcColor = dsrc === 'llm' ? '#90d090' : '#9ab0c0';
+                h += '<div><span style="color:#8fa5b8;">Decision source:</span> <span style="color:' + dsrcColor + ';">' + esc(dsrc) + '</span></div>';
+                if (_aiDecision.fallback_reason) h += '<div><span style="color:#8fa5b8;">Fallback reason:</span> <span style="color:#e0a93a;font-size:10px;">' + esc(_aiDecision.fallback_reason) + '</span></div>';
                 if (aiAr.ok && aiAr.new_pos) h += '<div><span style="color:#8fa5b8;">New Position:</span> <span style="color:#a0e0a0;">' + esc(aiAr.new_pos.lat) + ', ' + esc(aiAr.new_pos.lon) + '</span></div>';
                 if (_aiDecision.event_log_entry) h += '<div style="margin-top:4px;padding:4px 6px;background:#0e1218;border-radius:3px;color:#9ab0c0;font-family:monospace;">' + esc(_aiDecision.event_log_entry) + '</div>';
                 if (_aiApplied) h += '<div style="color:#90d090;margin-top:4px;">✔ Applied — unit moved on map — تم التطبيق</div>';
@@ -832,6 +867,8 @@
         getObjective: getObjective, getPlan: getPlan, getLlmStatus: function () { return Object.assign({}, _llmStatus); },
         getAiDecision: function () { return _aiDecision ? Object.assign({}, _aiDecision) : null; },
         _setAiDecisionForTest: function (d, applied) { _aiDecision = d || null; _aiApplied = !!applied; },
+        _setUseLlmForTest: function (v) { _useLlm = !!v; },
+        getUseLlm: function () { return _useLlm; },
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozFreeFightDemo = API;

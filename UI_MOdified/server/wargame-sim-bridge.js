@@ -1557,7 +1557,7 @@ function handle(req, res, ctx) {
                     if (body.understanding) briefNorm.understanding = body.understanding;
                     else if (briefSrc && briefSrc.understanding) briefNorm.understanding = briefSrc.understanding;
                     if (body.template) briefNorm.template = body.template;
-                    var gen = GEN.generateScenarioFromBrief(briefNorm, { objective: body.objective, template: body.template, name: body.name });
+                    var gen = GEN.generateScenarioFromBrief(briefNorm, { objective: body.objective, template: body.template, name: body.name, placementPolicy: 'reviewed_anchors_only' });
                     if (gen.requiresObjective) { sendJson(res, 422, { ok: false, requires_objective: true, error: gen.reason }); return; }
                     scenario = gen.scenario; genReport = gen.report; mode = 'generate_from_brief';
                 }
@@ -1626,6 +1626,7 @@ function handle(req, res, ctx) {
                     template: body.template || null,
                     name: 'demo_preview',
                     noWrite: true,
+                    placementPolicy: 'reviewed_anchors_only',
                 });
                 if (gen.requiresObjective) {
                     sendJson(res, 422, { ok: false, requires_objective: true, error: gen.reason });

@@ -93,6 +93,10 @@ function generateScenarioFromBrief(brief, opts) {
     // occur from this invocation. This generator is already fs-free (pure in-memory),
     // so noWrite is a contract marker — any future fs.writeFileSync / fs.mkdirSync
     // additions here MUST be gated with `if (!opts.noWrite)`.
+    // opts.placementPolicy: 'reviewed_anchors_only' | 'allow_template_fallback' (default).
+    // When 'reviewed_anchors_only' (import/LLM-fill path), sides without numeric-coord
+    // base anchors produce 0 placed units rather than falling back to template ring geometry.
+    const placementPolicy = opts.placementPolicy || 'allow_template_fallback';
     const ob = (brief && brief.operational_brief) || brief || {};
     const understanding = (brief && brief.understanding) || {};
 
@@ -151,7 +155,10 @@ function generateScenarioFromBrief(brief, opts) {
     function anchorsForSide(side) {
         const cands = Array.isArray(ob.placement_candidates) ? ob.placement_candidates : [];
         return cands.filter(function (c) {
+            // Explicit null check before isFinite: +null === 0 which passes isFinite,
+            // but null coords mean "unresolved" (LLM fill) — must NOT be treated as (0,0).
             return c && String(c.side || '').toUpperCase() === side &&
+                c.lon != null && c.lat != null &&
                 Number.isFinite(+c.lon) && Number.isFinite(+c.lat);
         });
     }
@@ -171,31 +178,33 @@ function generateScenarioFromBrief(brief, opts) {
     }
     const redAnchorCoords = placeFromAnchors('RED', redN);
     const blueAnchorCoords = placeFromAnchors('BLUE', blueN);
-    const redCoords = redAnchorCoords || placeCoords(tpl.red_scheme, redN);
-    const blueCoords = blueAnchorCoords || placeCoords(tpl.blue_scheme, blueN);
-    const RED_PLACEMENT_SRC = redAnchorCoords ? 'reviewed_base_anchor' : 'template_geometry_relative_to_objective';
-    const BLUE_PLACEMENT_SRC = blueAnchorCoords ? 'reviewed_base_anchor' : 'template_geometry_relative_to_objective';
+    // STEP1-LLM-NO-TEMPLATE-FALLBACK-A: when policy is 'reviewed_anchors_only' and a side
+    // has no numeric-coord anchors, use [] — 0 placed units (no ring around OBJ X).
+    const redCoords  = redAnchorCoords  || (placementPolicy === 'allow_template_fallback' ? placeCoords(tpl.red_scheme,  redN)  : []);
+    const blueCoords = blueAnchorCoords || (placementPolicy === 'allow_template_fallback' ? placeCoords(tpl.blue_scheme, blueN) : []);
+    const RED_PLACEMENT_SRC  = redAnchorCoords  ? 'reviewed_base_anchor'
+        : (placementPolicy === 'allow_template_fallback' ? 'template_geometry_relative_to_objective' : 'blocked_no_reviewed_anchor');
+    const BLUE_PLACEMENT_SRC = blueAnchorCoords ? 'reviewed_base_anchor'
+        : (placementPolicy === 'allow_template_fallback' ? 'template_geometry_relative_to_objective' : 'blocked_no_reviewed_anchor');
 
     const red_units = [];
-    for (let i = 0; i < redN; i++) {
+    for (let i = 0; i < redCoords.length; i++) {
         const role = tpl.red_roles[i % tpl.red_roles.length];
         red_units.push({
             uid: 'R-' + String(i + 1).padStart(3, '0'), label: role + '-' + (i + 1),
-            bls: 'BLS-1', appear: 0, role: role, coord: (redCoords[i] || objCoord.slice()),
+            bls: 'BLS-1', appear: 0, role: role, coord: redCoords[i],
             side: 'RED', draft: true, needs_review: true, placement_confidence: 'low',
-            // IMPORT-UNITS-BASE-PLACEMENT-FIX-A (#3): provenance — never an exact/final position.
             exact_unit_position: false, placement_source: RED_PLACEMENT_SRC,
             draft_template_position: RED_PLACEMENT_SRC === 'template_geometry_relative_to_objective',
         });
     }
     const blue_units_initial = [];
-    for (let i = 0; i < blueN; i++) {
+    for (let i = 0; i < blueCoords.length; i++) {
         const role = tpl.blue_roles[i % tpl.blue_roles.length];
         blue_units_initial.push({
             unit_uid: 'B-' + String(i + 1).padStart(3, '0'), base_id: 'b' + (i + 1),
-            role: role, coord: (blueCoords[i] || objCoord.slice()), posture: 'DEFEND',
+            role: role, coord: blueCoords[i], posture: 'DEFEND',
             side: 'BLUE', draft: true, needs_review: true, placement_confidence: 'low',
-            // IMPORT-UNITS-BASE-PLACEMENT-FIX-A (#3): provenance — never an exact/final position.
             exact_unit_position: false, placement_source: BLUE_PLACEMENT_SRC,
             draft_template_position: BLUE_PLACEMENT_SRC === 'template_geometry_relative_to_objective',
         });
@@ -211,11 +220,22 @@ function generateScenarioFromBrief(brief, opts) {
     missing_fields.push('precise coordinates were not taken from the document');
     if (!ob.mission) missing_fields.push('mission text');
     if (!(Array.isArray(ob.constraints) && ob.constraints.length)) missing_fields.push('constraints / ROE');
+    // STEP1-LLM-NO-TEMPLATE-FALLBACK-A: warn when placement was blocked due to missing geocoded anchors.
+    if (RED_PLACEMENT_SRC === 'blocked_no_reviewed_anchor') {
+        missing_fields.push('llm_units_require_geocoded_base_anchor_before_placement (RED): operator must geocode base locations before units can be placed');
+    }
+    if (BLUE_PLACEMENT_SRC === 'blocked_no_reviewed_anchor') {
+        missing_fields.push('llm_units_require_geocoded_base_anchor_before_placement (BLUE): operator must geocode base locations before units can be placed');
+    }
+    const requiresPlacementReview = RED_PLACEMENT_SRC === 'blocked_no_reviewed_anchor' || BLUE_PLACEMENT_SRC === 'blocked_no_reviewed_anchor';
 
     // RMOOZ-DOC-REVIEW-PERSISTENCE-AND-DEMO-CLEANUP-A (Part C): preserve the reviewed
     // base anchors + proposed units as REVIEW-ONLY metadata so a reloaded scenario can
     // redraw the review anchor layer. These are NOT final units / NOT exact positions.
-    const review_placement_candidates = (Array.isArray(ob.placement_candidates) ? ob.placement_candidates : [])
+    // STEP1-LLM-NO-TEMPLATE-FALLBACK-A: map all candidates first, then split into
+    // geocoded (review_placement_candidates, map-safe) and unresolved
+    // (review_unresolved_candidates, null-coord LLM bases awaiting operator geocoding).
+    const _allCandidateMaps = (Array.isArray(ob.placement_candidates) ? ob.placement_candidates : [])
         .map(function (c) {
             return {
                 base_id: c.base_id != null ? c.base_id : (c.id != null ? c.id : null),
@@ -224,8 +244,9 @@ function generateScenarioFromBrief(brief, opts) {
                 base_name_ar: c.base_name_ar || null,
                 country: c.country || null, country_key: c.country_key || null,
                 side: c.side || null,
-                lat: Number.isFinite(+c.lat) ? +c.lat : null,
-                lon: Number.isFinite(+c.lon) ? +c.lon : null,
+                // Explicit null check: +null === 0 passes isFinite but means "unresolved".
+                lat: (c.lat != null && Number.isFinite(+c.lat)) ? +c.lat : null,
+                lon: (c.lon != null && Number.isFinite(+c.lon)) ? +c.lon : null,
                 site_type: c.site_type || c.object_type || null,
                 // STEP1-BASE-TYPE-SYMBOL-RESTORE-A (req #1/#6): always persist a base_type
                 // (air_base | naval_base | land_base | base_facility) so a reloaded scenario
@@ -234,8 +255,9 @@ function generateScenarioFromBrief(brief, opts) {
                 source_type: c.source_type || 'reviewed_placement_candidate',
                 needs_review: true, exact_unit_position: false,
             };
-        })
-        .filter(function (a) { return a.lat != null && a.lon != null; });
+        });
+    const review_placement_candidates = _allCandidateMaps.filter(function (a) { return a.lat != null && a.lon != null; });
+    const review_unresolved_candidates = _allCandidateMaps.filter(function (a) { return a.lat == null || a.lon == null; });
     const review_proposed_units = (Array.isArray(ob.proposed_units) ? ob.proposed_units : [])
         .slice(0, 1000)
         .map(function (u) {
@@ -264,6 +286,7 @@ function generateScenarioFromBrief(brief, opts) {
         generated_from_brief: true,
         // Part C: review-only anchor layer for redraw-on-reload (top-level mirror).
         review_placement_candidates: review_placement_candidates,
+        review_unresolved_candidates: review_unresolved_candidates,
         generation: {
             from: 'operational_brief',
             template: tpl.id, template_name_en: tpl.name_en, template_name_ar: tpl.name_ar,
@@ -273,11 +296,14 @@ function generateScenarioFromBrief(brief, opts) {
             source_citations: (Array.isArray(ob.source_citations) ? ob.source_citations.slice(0, 50) : []),
             missing_fields,
             proposed_unit_counts: { red: redN, blue: blueN },
+            placed_unit_counts: { red: redCoords.length, blue: blueCoords.length },
             // IMPORT-UNITS-BASE-PLACEMENT-FIX-A: where DRAFT unit coords came from.
             placement_sources: { red: RED_PLACEMENT_SRC, blue: BLUE_PLACEMENT_SRC },
             exact_unit_position: false,
+            requiresPlacementReview: requiresPlacementReview,
             // Part C: review-only anchors + proposed rows preserved for reload redraw.
             review_placement_candidates: review_placement_candidates,
+            review_unresolved_candidates: review_unresolved_candidates,
             review_proposed_units: review_proposed_units,
         },
         ported_from: 'brief-to-scenario.js',
@@ -287,7 +313,8 @@ function generateScenarioFromBrief(brief, opts) {
         template: tpl.id, template_name_en: tpl.name_en, template_name_ar: tpl.name_ar,
         objective: { coord: objCoord, name: objName, source: objective.source },
         phases: tpl.phases.map(p => ({ index: p.index, kind: p.kind, name_en: p.name_en, name_ar: p.name_ar })),
-        placed: { red: redN, blue: blueN, bls: blsCount },
+        placed: { red: redCoords.length, blue: blueCoords.length, bls: blsCount },
+        requested_unit_counts: { red: redN, blue: blueN },
         placement_confidence: 'low',
         draft: true,
         missing_fields,

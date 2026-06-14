@@ -1,0 +1,364 @@
+{
+  "name": "beirut-llm-test",
+  "scenario_label": "Attack Objective (draft)",
+  "model_version": "brief-gen-v1",
+  "map_bbox": [
+    34.9,
+    33.28,
+    36.1,
+    34.48
+  ],
+  "obj": {
+    "name": "OBJ X",
+    "coord": [
+      35.5,
+      33.88
+    ],
+    "target_depth_km": 8,
+    "carver": 35,
+    "radius_km": 10
+  },
+  "pipeline": [
+    [
+      34.95797,
+      33.88
+    ],
+    [
+      35.22899,
+      33.88
+    ],
+    [
+      35.5,
+      33.88
+    ]
+  ],
+  "red_units": [
+    {
+      "uid": "R-001",
+      "label": "armor-1",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "armor",
+      "coord": [
+        35.13864,
+        33.73
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low",
+      "exact_unit_position": false,
+      "placement_source": "template_geometry_relative_to_objective",
+      "draft_template_position": true
+    },
+    {
+      "uid": "R-002",
+      "label": "mech_infantry-2",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "mech_infantry",
+      "coord": [
+        35.13864,
+        33.79
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low",
+      "exact_unit_position": false,
+      "placement_source": "template_geometry_relative_to_objective",
+      "draft_template_position": true
+    },
+    {
+      "uid": "R-003",
+      "label": "infantry-3",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "infantry",
+      "coord": [
+        35.13864,
+        33.85
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low",
+      "exact_unit_position": false,
+      "placement_source": "template_geometry_relative_to_objective",
+      "draft_template_position": true
+    },
+    {
+      "uid": "R-004",
+      "label": "recon-4",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "recon",
+      "coord": [
+        35.13864,
+        33.91
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low",
+      "exact_unit_position": false,
+      "placement_source": "template_geometry_relative_to_objective",
+      "draft_template_position": true
+    },
+    {
+      "uid": "R-005",
+      "label": "fires-5",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "fires",
+      "coord": [
+        35.13864,
+        33.97
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low",
+      "exact_unit_position": false,
+      "placement_source": "template_geometry_relative_to_objective",
+      "draft_template_position": true
+    },
+    {
+      "uid": "R-006",
+      "label": "engineer-6",
+      "bls": "BLS-1",
+      "appear": 0,
+      "role": "engineer",
+      "coord": [
+        35.13864,
+        34.03
+      ],
+      "side": "RED",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low",
+      "exact_unit_position": false,
+      "placement_source": "template_geometry_relative_to_objective",
+      "draft_template_position": true
+    }
+  ],
+  "blue_units_base_ids": [
+    "b1",
+    "b2",
+    "b3",
+    "b4",
+    "b5",
+    "b6"
+  ],
+  "blue_units_initial": [
+    {
+      "unit_uid": "B-001",
+      "base_id": "b1",
+      "role": "infantry",
+      "coord": [
+        35.58432,
+        33.88
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low",
+      "exact_unit_position": false,
+      "placement_source": "template_geometry_relative_to_objective",
+      "draft_template_position": true
+    },
+    {
+      "unit_uid": "B-002",
+      "base_id": "b2",
+      "role": "infantry",
+      "coord": [
+        35.54216,
+        33.94062
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low",
+      "exact_unit_position": false,
+      "placement_source": "template_geometry_relative_to_objective",
+      "draft_template_position": true
+    },
+    {
+      "unit_uid": "B-003",
+      "base_id": "b3",
+      "role": "anti_tank",
+      "coord": [
+        35.45784,
+        33.94062
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low",
+      "exact_unit_position": false,
+      "placement_source": "template_geometry_relative_to_objective",
+      "draft_template_position": true
+    },
+    {
+      "unit_uid": "B-004",
+      "base_id": "b4",
+      "role": "air_defense",
+      "coord": [
+        35.41568,
+        33.88
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low",
+      "exact_unit_position": false,
+      "placement_source": "template_geometry_relative_to_objective",
+      "draft_template_position": true
+    },
+    {
+      "unit_uid": "B-005",
+      "base_id": "b5",
+      "role": "reserve",
+      "coord": [
+        35.45784,
+        33.81938
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low",
+      "exact_unit_position": false,
+      "placement_source": "template_geometry_relative_to_objective",
+      "draft_template_position": true
+    },
+    {
+      "unit_uid": "B-006",
+      "base_id": "b6",
+      "role": "infantry",
+      "coord": [
+        35.54216,
+        33.81938
+      ],
+      "posture": "DEFEND",
+      "side": "BLUE",
+      "draft": true,
+      "needs_review": true,
+      "placement_confidence": "low",
+      "exact_unit_position": false,
+      "placement_source": "template_geometry_relative_to_objective",
+      "draft_template_position": true
+    }
+  ],
+  "bls_template": [
+    {
+      "name": "BLS-1",
+      "coord": [
+        35.64454,
+        33.88
+      ],
+      "role": "staging",
+      "draft": true,
+      "needs_review": true
+    }
+  ],
+  "phase_table": [
+    {
+      "index": 0,
+      "time_label": "H0",
+      "elapsed_hours": 0,
+      "phase": "shaping",
+      "kind_native": "shaping"
+    },
+    {
+      "index": 1,
+      "time_label": "H+6",
+      "elapsed_hours": 6,
+      "phase": "approach",
+      "kind_native": "approach"
+    },
+    {
+      "index": 2,
+      "time_label": "H+12",
+      "elapsed_hours": 12,
+      "phase": "assault",
+      "kind_native": "assault"
+    },
+    {
+      "index": 3,
+      "time_label": "H+18",
+      "elapsed_hours": 18,
+      "phase": "consolidate",
+      "kind_native": "consolidate"
+    }
+  ],
+  "steps": [
+    {
+      "index": 0,
+      "time_label": "H0",
+      "elapsed_hours": 0,
+      "phase": "shaping",
+      "kind_native": "shaping"
+    },
+    {
+      "index": 1,
+      "time_label": "H+6",
+      "elapsed_hours": 6,
+      "phase": "approach",
+      "kind_native": "approach"
+    },
+    {
+      "index": 2,
+      "time_label": "H+12",
+      "elapsed_hours": 12,
+      "phase": "assault",
+      "kind_native": "assault"
+    },
+    {
+      "index": 3,
+      "time_label": "H+18",
+      "elapsed_hours": 18,
+      "phase": "consolidate",
+      "kind_native": "consolidate"
+    }
+  ],
+  "terrain_note": "Draft scenario generated from a reviewed Operational Brief. Positions are placeholders for operator review.",
+  "source": "OperationalBrief",
+  "generated_from_brief": true,
+  "review_placement_candidates": [],
+  "generation": {
+    "from": "operational_brief",
+    "template": "attack_objective",
+    "template_name_en": "Attack Objective",
+    "template_name_ar": "هجوم على هدف",
+    "draft": true,
+    "placement_confidence": "low",
+    "objective_source": "operator",
+    "document_set_id": "ds_brief_fd97d24ee1fb",
+    "source_citations": [],
+    "missing_fields": [
+      "enemy (RED) unit count (used default)",
+      "friendly (BLUE) unit count (used default)",
+      "all unit positions are DRAFT — refine on the map",
+      "precise coordinates were not taken from the document",
+      "mission text",
+      "constraints / ROE"
+    ],
+    "proposed_unit_counts": {
+      "red": 6,
+      "blue": 6
+    },
+    "placement_sources": {
+      "red": "template_geometry_relative_to_objective",
+      "blue": "template_geometry_relative_to_objective"
+    },
+    "exact_unit_position": false,
+    "review_placement_candidates": [],
+    "review_proposed_units": []
+  },
+  "ported_from": "brief-to-scenario.js"
+}

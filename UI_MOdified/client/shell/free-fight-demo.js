@@ -713,7 +713,23 @@
     }
     function _buildAiRequestBody() {
         var ob = (_payload && _payload.brief && _payload.brief.operational_brief) || (_payload && _payload.operational_brief) || {};
-        var units = Array.isArray(ob.proposed_units) ? ob.proposed_units : [];
+        // Normalize proposed_units: real scenarios use coord:[lon,lat]+uid instead of lat/lon+id.
+        var raw = Array.isArray(ob.proposed_units) ? ob.proposed_units : [];
+        var units = raw.map(function (u, i) {
+            if (!u) return null;
+            var lat = u.lat, lon = u.lon;
+            if ((lat == null || lon == null) && Array.isArray(u.coord) && u.coord.length >= 2) {
+                lon = u.coord[0]; lat = u.coord[1];
+            }
+            if (!Number.isFinite(Number(lat)) || !Number.isFinite(Number(lon))) return null;
+            return { id: u.id || u.uid || ('unit-' + i), lat: lat, lon: lon, side: u.side || 'RED' };
+        }).filter(Boolean);
+        // Fallback: use _allGroups anchor positions when brief has no usable units
+        if (!units.length) {
+            units = _allGroups
+                .filter(function (g) { return g && g.anchor && finiteLL(g.anchor); })
+                .map(function (g) { return { id: g.id, lat: g.anchor.lat, lon: g.anchor.lon, side: g.side || 'RED' }; });
+        }
         var objectives = Array.isArray(ob.placement_candidates)
             ? ob.placement_candidates.filter(function (c) { return c && String(c.type || '').toLowerCase() === 'objective'; })
             : [];

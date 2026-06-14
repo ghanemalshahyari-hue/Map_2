@@ -70,28 +70,70 @@
             source_type: baseSourceType(base),
         };
     }
-    function enemyBases(p) {
+    // STEP1-MULTICOUNTRY-FRIENDLY-BASES-COUNT-A
+    // Multi-country ORBAT (buildMultiCountryStep1) pushes bases to country_bases
+    // for all sides, but only to enemy_bases for RED.  The old per-bucket readers
+    // (enemyBases / friendlyTrialBases) never looked at country_bases, so BLUE
+    // GCC/coalition bases were silently dropped → "Friendly: 0".
+    //
+    // collectReviewBases() reads all six source arrays, deduplicates by id/name,
+    // and returns { red: [], blue: [] }.  enemyBases / friendlyTrialBases become
+    // thin wrappers so every existing call site works without change.
+    function collectReviewBases(p) {
         var ob = opBrief(p);
-        if (arr(ob.enemy_bases).length) return arr(ob.enemy_bases);
-        var ef = ob.enemy_forces || {};
-        if (arr(ef.bases).length) {
-            return arr(ef.bases).map(function (b) {
-                return normalizeReviewBase(b, 'RED', b && (b.site_type || b.base_type) || 'enemy_base');
-            });
+        var red = [], blue = [], seen = {};
+        function add(base, defaultSide, defaultType) {
+            if (!base || typeof base !== 'object') return;
+            // Dedup key: prefer stable id; fall back to name+side+country+coords
+            var rawKey = (base.id || base.base_id)
+                ? String(base.id || base.base_id)
+                : String(base.base_name_en || base.base_name_ar || base.mention || base.name || '').toLowerCase().replace(/\s+/g, '_') +
+                  '|' + String(base.side || defaultSide || '') +
+                  '|' + String(base.country_key || '') +
+                  '|' + String(base.lat != null ? base.lat : '') +
+                  '|' + String(base.lon != null ? base.lon : '');
+            if (!rawKey || seen[rawKey]) return;
+            seen[rawKey] = true;
+            var n = normalizeReviewBase(base, defaultSide, defaultType);
+            if (base.id)      n.id      = base.id;
+            if (base.base_id) n.base_id = base.base_id;
+            var side = String(n.side || '').toUpperCase();
+            if (side === 'RED')  red.push(n);
+            else if (side === 'BLUE') blue.push(n);
         }
-        return []
-            .concat(arr(ef.air_bases).map(function (b) { return normalizeReviewBase(b, 'RED', 'air_base'); }))
-            .concat(arr(ef.naval_bases).map(function (b) { return normalizeReviewBase(b, 'RED', 'naval_base'); }))
-            .concat(arr(ef.land_bases).map(function (b) { return normalizeReviewBase(b, 'RED', 'land_base'); }));
-    }
-    function friendlyTrialBases(p) {
-        var ob = opBrief(p);
-        if (arr(ob.friendly_trial_bases).length) return arr(ob.friendly_trial_bases);
+        // 1. Legacy flat buckets
+        arr(ob.enemy_bases).forEach(function (b) { add(b, 'RED',  (b && (b.site_type || b.base_type)) || 'enemy_base'); });
+        arr(ob.friendly_trial_bases).forEach(function (b) { add(b, 'BLUE', 'friendly_trial_anchor'); });
+        // 2. enemy_forces sub-buckets
+        var ef = ob.enemy_forces || {};
+        arr(ef.bases).forEach(function (b) { add(b, 'RED',  (b && (b.site_type || b.base_type)) || 'enemy_base'); });
+        arr(ef.air_bases).forEach(function (b)   { add(b, 'RED',  'air_base'); });
+        arr(ef.naval_bases).forEach(function (b) { add(b, 'RED',  'naval_base'); });
+        arr(ef.land_bases).forEach(function (b)  { add(b, 'RED',  'land_base'); });
+        // 3. friendly_forces sub-buckets
         var ff = ob.friendly_forces || {};
-        return arr(ff.trial_bases).map(function (b) {
-            return normalizeReviewBase(b, 'BLUE', 'friendly_trial_anchor');
+        arr(ff.trial_bases).forEach(function (b) { add(b, 'BLUE', 'friendly_trial_anchor'); });
+        arr(ff.bases).forEach(function (b)       { add(b, 'BLUE', (b && (b.site_type || b.base_type)) || 'friendly_base'); });
+        arr(ff.air_bases).forEach(function (b)   { add(b, 'BLUE', 'air_base'); });
+        arr(ff.naval_bases).forEach(function (b) { add(b, 'BLUE', 'naval_base'); });
+        arr(ff.land_bases).forEach(function (b)  { add(b, 'BLUE', 'land_base'); });
+        // 4. Multi-country ORBAT country_bases (both sides).
+        //    RED entries deduplicate against enemy_bases above.
+        //    BLUE entries are NEW — the missing source that caused "Friendly: 0".
+        arr(ob.country_bases).forEach(function (b) {
+            add(b, String((b && b.side) || ''), (b && (b.site_type || b.base_type)) || 'base');
         });
+        // 5. placement_candidates with an explicit side (dedup handles country_base overlap)
+        arr(ob.placement_candidates).forEach(function (c) {
+            var side = String(c && c.side || '').toUpperCase();
+            if (side === 'RED' || side === 'BLUE') {
+                add(c, side, (c && (c.site_type || c.base_type)) || 'base');
+            }
+        });
+        return { red: red, blue: blue };
     }
+    function enemyBases(p)        { return collectReviewBases(p).red;  }
+    function friendlyTrialBases(p) { return collectReviewBases(p).blue; }
     function proposedUnits(p) {
         var ob = opBrief(p);
         return (Array.isArray(ob.proposed_units) && ob.proposed_units.length) ? ob.proposed_units :
@@ -429,7 +471,7 @@
             });
         }
         if (friendlyTrials.length) {
-            html += '<div style="font-size:12px;color:#7fd6a0;font-weight:600;margin:8px 0 3px;">Friendly Anchors (BLUE) — مراسٍ صديقة (' + friendlyTrials.length + ')</div>';
+            html += '<div style="font-size:12px;color:#7fd6a0;font-weight:600;margin:8px 0 3px;">Friendly Bases (BLUE) — القواعد الصديقة (' + friendlyTrials.length + ')</div>';
             friendlyTrials.forEach(function (b) {
                 var coord = (b.lat != null && b.lon != null) ? (b.lat + ', ' + b.lon) : null;
                 html += '<div style="margin:3px 0;padding:6px 8px;border:1px solid #294333;background:#121a16;border-radius:4px;font-size:12px;">' +
@@ -450,7 +492,7 @@
         var friendlyTrials = friendlyTrialBases(p);
         if (!bases.length && !friendlyTrials.length) return '';
         var hasBothSides = bases.length > 0 && friendlyTrials.length > 0;
-        var sectionLabel = hasBothSides ? 'Bases Review — مراجعة القواعد' : (friendlyTrials.length ? 'Friendly Anchors — مراسٍ صديقة' : 'Enemy Bases — قواعد العدو');
+        var sectionLabel = hasBothSides ? 'Bases Review — مراجعة القواعد' : (friendlyTrials.length ? 'Friendly Bases — القواعد الصديقة' : 'Enemy Bases — قواعد العدو');
         var sectionColor = hasBothSides ? '#cfe6ff' : (friendlyTrials.length ? '#7fd6a0' : '#f0a0a0');
         return '<section data-el="enemy-bases" style="margin:10px 0;padding:8px 0;border-top:1px solid #23303d;">' +
             '<div style="font-size:13px;color:' + sectionColor + ';font-weight:600;margin-bottom:6px;">' + esc(sectionLabel) + '</div>' +

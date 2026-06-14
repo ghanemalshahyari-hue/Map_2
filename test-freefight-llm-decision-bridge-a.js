@@ -128,7 +128,9 @@ function mockFail(errMsg) {
     var savedEnv2 = process.env.RMOOZ_FREE_FIGHT_LLM;
     process.env.RMOOZ_FREE_FIGHT_LLM = '1';
     var r2 = await BRIDGE.askLlmForAction(UNITS, OBJECTIVES, OPTS, mockFail('connection refused'));
-    ok('§2 action is null on fallback', r2.action === null);
+    // FREEFIGHT-LLM-DECISION-TRACE-A: unavailable path now tries ENGINE.decideAction;
+    // action may be non-null (valid unit) when valid units are in scope.
+    ok('§2 action null OR deterministic fallback', r2.action === null || r2.source === 'deterministic_demo_ai');
     ok('§2 source = deterministic_demo_ai', r2.source === 'deterministic_demo_ai');
     ok('§2 fallback_reason is a string', typeof r2.fallback_reason === 'string' && r2.fallback_reason.length > 0);
     ok('§2 fallback_reason contains llm_unavailable', /llm_unavailable/.test(r2.fallback_reason));

@@ -1260,13 +1260,23 @@ function handle(req, res, ctx) {
             var opts       = (b.opts && typeof b.opts === 'object') ? b.opts : {};
 
             // Shared finaliser: validate + apply + respond (sync path reused by both branches).
-            // meta: { model_used?, provider_used?, local_only?, provider_policy? }
+            // meta: { model_used?, provider_used?, llm_called?, llm_status?, llm_raw_action?,
+            //         llm_normalized_action?, llm_validation? }
             function applyAndRespond(action, fallback_reason, meta) {
                 meta = meta || {};
+                var finalDecisionSource = action ? (action.source || 'deterministic_demo_ai') : 'none';
+                var llmTrace = {
+                    llm_called:            meta.llm_called !== undefined ? meta.llm_called : false,
+                    llm_status:            meta.llm_status || null,
+                    llm_raw_action:        meta.llm_raw_action || null,
+                    llm_normalized_action: meta.llm_normalized_action || null,
+                    llm_validation:        meta.llm_validation || null,
+                    final_decision_source: finalDecisionSource,
+                };
                 if (!action) {
-                    sendJson(res, 200, { ok: false, reason: 'no_movable_unit',
+                    sendJson(res, 200, Object.assign({ ok: false, reason: 'no_movable_unit',
                         fallback_reason: fallback_reason || null,
-                        local_only: true, provider_policy: 'local_only' });
+                        local_only: true, provider_policy: 'local_only' }, llmTrace));
                     return;
                 }
                 var validation  = FREE_FIGHT_ENGINE.validateAction(action, units, objectives);
@@ -1277,7 +1287,7 @@ function handle(req, res, ctx) {
                     ? { unit_uid: action.unit_uid, lat: apply_result.new_pos.lat, lon: apply_result.new_pos.lon }
                     : null;
                 var event_log_entry = FREE_FIGHT_ENGINE.makeEventLogEntry(action, apply_result);
-                sendJson(res, 200, {
+                sendJson(res, 200, Object.assign({
                     ok:              true,
                     action:          action,
                     validation:      validation,
@@ -1291,29 +1301,39 @@ function handle(req, res, ctx) {
                     provider_policy: 'local_only',
                     model_used:      meta.model_used  || null,
                     provider_used:   meta.provider_used || null,
-                });
+                }, llmTrace));
             }
 
             if (opts.useLlm) {
                 // FREEFIGHT-LOCAL-LLM-ONLY-A: local LLM path (ollama default), deterministic fallback.
                 FREE_FIGHT_LLM_DECISION.askLlmForAction(units, objectives, opts)
                     .then(function (llmResult) {
+                        var llmMeta = {
+                            model_used:            llmResult.model_used,
+                            provider_used:         llmResult.provider_used,
+                            llm_called:            llmResult.llm_called,
+                            llm_status:            llmResult.llm_status,
+                            llm_raw_action:        llmResult.llm_raw_action,
+                            llm_normalized_action: llmResult.llm_normalized_action,
+                            llm_validation:        llmResult.llm_validation,
+                        };
                         if (llmResult.action) {
-                            applyAndRespond(llmResult.action, null, {
-                                model_used:    llmResult.model_used,
-                                provider_used: llmResult.provider_used,
-                            });
+                            applyAndRespond(llmResult.action, llmResult.fallback_reason, llmMeta);
                         } else {
                             var deterAction = FREE_FIGHT_ENGINE.decideAction(units, objectives, opts);
-                            applyAndRespond(deterAction, llmResult.fallback_reason, {});
+                            applyAndRespond(deterAction, llmResult.fallback_reason, llmMeta);
                         }
                     })
                     .catch(function (e) {
                         var deterAction = FREE_FIGHT_ENGINE.decideAction(units, objectives, opts);
-                        applyAndRespond(deterAction, 'local_llm_error: ' + String(e && e.message || '').slice(0, 100), {});
+                        applyAndRespond(deterAction, 'local_llm_error: ' + String(e && e.message || '').slice(0, 100), {
+                            llm_called: true, llm_status: 'error',
+                        });
                     });
             } else {
-                applyAndRespond(FREE_FIGHT_ENGINE.decideAction(units, objectives, opts), null, {});
+                applyAndRespond(FREE_FIGHT_ENGINE.decideAction(units, objectives, opts), null, {
+                    llm_called: false, llm_status: 'disabled',
+                });
             }
         });
         return true;

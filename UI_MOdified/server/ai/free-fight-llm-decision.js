@@ -107,27 +107,37 @@ function parseJsonSafe(text) {
  * askLlmForAction(units, objectives, opts, _providerOverride)
  *   units       — array of proposed_unit objects
  *   objectives  — array of {lat,lon} objects
- *   opts        — { preferSide:'RED'|'BLUE' }
+ *   opts        — { preferSide:'RED'|'BLUE', allowed_unit_ids? }
  *   _p          — optional provider override (for tests)
  *
- * Returns { action, source, fallback_reason, provider_used? }.
+ * Returns { action, source, fallback_reason,
+ *           llm_called, llm_status, llm_raw_action, llm_normalized_action, llm_validation,
+ *           provider_used?, model_used?, local_only, provider_policy }.
  * action is null on fallback; source is 'deterministic_demo_ai' on fallback.
+ * llm_status: 'disabled'|'remote_blocked'|'error'|'timeout'|'unavailable'|
+ *             'invalid_json'|'invalid_schema'|'validation_failed'|'success'|null
  */
 async function askLlmForAction(units, objectives, opts, _providerOverride) {
     opts = opts || {};
     const provider = _providerOverride || aiProvider;
+    const BASE = { local_only: true, provider_policy: 'local_only' };
+    const NO_TRACE = { llm_called: false, llm_status: null, llm_raw_action: null, llm_normalized_action: null, llm_validation: null };
+
+    function ret(action, source, fallback_reason, trace) {
+        return Object.assign({}, BASE, NO_TRACE,
+            { action: action, source: source, fallback_reason: fallback_reason || null },
+            trace || {});
+    }
 
     if (process.env.RMOOZ_FREE_FIGHT_LLM !== '1') {
-        return { action: null, source: 'deterministic_demo_ai', fallback_reason: 'local_llm_disabled',
-                 local_only: true, provider_policy: 'local_only' };
+        return ret(null, 'deterministic_demo_ai', 'local_llm_disabled', { llm_status: 'disabled' });
     }
 
     // LOCAL-ONLY: never read RMOOZ_AI_PROVIDER — Free Fight must not call cloud.
     const providerName = resolveLocalProvider();
     if (isRemoteProvider(providerName)) {
-        return { action: null, source: 'deterministic_demo_ai',
-                 fallback_reason: 'remote_provider_not_allowed_for_free_fight',
-                 local_only: true, provider_policy: 'local_only' };
+        return ret(null, 'deterministic_demo_ai', 'remote_provider_not_allowed_for_free_fight',
+            { llm_status: 'remote_blocked' });
     }
     const model     = resolveLocalModel();
     let   timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_LLM_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '45000', 10);
@@ -179,56 +189,49 @@ async function askLlmForAction(units, objectives, opts, _providerOverride) {
             timeoutMs:  timeoutMs,
         });
     } catch (e) {
-        return { action: null, source: 'deterministic_demo_ai',
-                 fallback_reason: 'local_llm_error: ' + str(e && e.message || e, 120),
-                 local_only: true, provider_policy: 'local_only' };
+        return ret(null, 'deterministic_demo_ai', 'local_llm_error: ' + str(e && e.message || e, 120),
+            { llm_called: true, llm_status: 'error' });
     }
 
     if (!result || !result.ok) {
-        return { action: null, source: 'deterministic_demo_ai',
-                 fallback_reason: 'local_llm_unavailable: ' + str(result && result.error, 120),
-                 local_only: true, provider_policy: 'local_only' };
+        const errStr = str(result && result.error, 120);
+        const isTimeout = /timeout|timed.out/i.test(errStr);
+        const deterAction = ENGINE.decideAction(units, objectives, opts);
+        return ret(deterAction || null, 'deterministic_demo_ai', 'local_llm_unavailable: ' + errStr,
+            { llm_called: true, llm_status: isTimeout ? 'timeout' : 'unavailable' });
     }
 
     let parsed;
     try { parsed = parseJsonSafe(result.response || ''); }
-    catch (e) { return { action: null, source: 'deterministic_demo_ai', fallback_reason: 'llm_invalid_json',
-                         local_only: true, provider_policy: 'local_only' }; }
+    catch (e) {
+        return ret(null, 'deterministic_demo_ai', 'llm_invalid_json',
+            { llm_called: true, llm_status: 'invalid_json' });
+    }
 
     const normalized = normalizeAction(parsed);
     if (!normalized) {
         const deterAction = ENGINE.decideAction(units, objectives, opts);
-        if (deterAction) {
-            return { action: deterAction, source: 'deterministic_demo_ai',
-                     fallback_reason: 'llm_invalid_schema — deterministic fallback used',
-                     local_only: true, provider_policy: 'local_only' };
-        }
-        return { action: null, source: 'deterministic_demo_ai', fallback_reason: 'llm_invalid_schema',
-                 local_only: true, provider_policy: 'local_only' };
+        const fr = 'llm_invalid_schema' + (deterAction ? ' — deterministic fallback used' : '');
+        return ret(deterAction || null, 'deterministic_demo_ai', fr,
+            { llm_called: true, llm_status: 'invalid_schema', llm_raw_action: parsed });
     }
 
     const validation = ENGINE.validateAction(normalized, units, objectives);
     if (!validation.ok) {
         const deterAction = ENGINE.decideAction(units, objectives, opts);
-        if (deterAction) {
-            return { action: deterAction, source: 'deterministic_demo_ai',
-                     fallback_reason: 'llm_validation_failed: ' + str(validation.reason, 120) + ' — deterministic fallback used',
-                     local_only: true, provider_policy: 'local_only' };
-        }
-        return { action: null, source: 'deterministic_demo_ai',
-                 fallback_reason: 'llm_validation_failed: ' + str(validation.reason, 120),
-                 local_only: true, provider_policy: 'local_only' };
+        const fr = 'llm_validation_failed: ' + str(validation.reason, 120) + (deterAction ? ' — deterministic fallback used' : '');
+        return ret(deterAction || null, 'deterministic_demo_ai', fr,
+            { llm_called: true, llm_status: 'validation_failed',
+              llm_normalized_action: normalized, llm_validation: validation });
     }
 
-    return {
-        action:          normalized,
-        source:          'llm',
-        fallback_reason: null,
-        provider_used:   result.providerUsed || providerName,
-        model_used:      model,
-        local_only:      true,
-        provider_policy: 'local_only',
-    };
+    return Object.assign(
+        ret(normalized, 'llm', null, {
+            llm_called: true, llm_status: 'success',
+            llm_raw_action: parsed, llm_normalized_action: normalized, llm_validation: validation,
+        }),
+        { provider_used: result.providerUsed || providerName, model_used: model }
+    );
 }
 
 // ── Health probe ─────────────────────────────────────────────────────────────

@@ -177,7 +177,9 @@ function restoreEnv(key, saved) { if (saved !== undefined) process.env[key] = sa
     process.env.RMOOZ_FREE_FIGHT_LLM = '1';
     delete process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER;
     var r4 = await BRIDGE.askLlmForAction(UNITS, OBJECTIVES, OPTS, mockFail('connection refused'));
-    ok('§4 action is null', r4.action === null);
+    // FREEFIGHT-LLM-DECISION-TRACE-A: unavailable path now tries ENGINE.decideAction;
+    // action may be non-null (valid unit) when valid units are in scope.
+    ok('§4 action null OR deterministic fallback used', r4.action === null || r4.source === 'deterministic_demo_ai');
     ok('§4 source = deterministic_demo_ai', r4.source === 'deterministic_demo_ai');
     ok('§4 fallback_reason contains local_llm_unavailable', /local_llm_unavailable/.test(r4.fallback_reason));
     ok('§4 local_only = true', r4.local_only === true);

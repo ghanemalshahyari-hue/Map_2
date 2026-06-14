@@ -270,5 +270,28 @@ ok('§15 MOVE_TOWARD_OBJECTIVE in output', /MOVE_TOWARD_OBJECTIVE/.test(c.innerH
 ok('§15 Apply AI Action button present', /Apply AI Action/.test(c.innerHTML));
 ok('§15 no crash', true);
 
+// ── §16  Apply adds AI circleMarker (r=10) to _layer ─────────────────────────
+console.log('\n§16  Apply path: AI circleMarker (r=10) added to _layer on syncMarkers');
+// Set applied state, then call mount() — init() inside mount preserves _aiApplied,
+// and the subsequent syncMarkers() picks it up and places the marker.
+DEMO._setAiDecisionForTest(DECISION, true);
+DEMO.mount(PAYLOAD);   // init (keeps _aiApplied) → syncMarkers → buildPanel
+var aiMarkers16 = _layers.filter(function (l) { return l._radius === 10; });
+ok('§16 AI circleMarker (r=10) in _layer after apply', aiMarkers16.length === 1);
+ok('§16 AI circleMarker lat matches scenario_patch', aiMarkers16.length > 0 && Math.abs(aiMarkers16[0]._latlng[0] - DECISION.scenario_patch.lat) < 0.001);
+ok('§16 AI circleMarker lon matches scenario_patch', aiMarkers16.length > 0 && Math.abs(aiMarkers16[0]._latlng[1] - DECISION.scenario_patch.lon) < 0.001);
+ok('§16 layer also has non-AI markers (Objective X present)', _layers.length > aiMarkers16.length);
+
+// ── §17  reset() removes AI circleMarker from _layer ─────────────────────────
+console.log('\n§17  reset() removes AI circleMarker; groups return to anchor');
+DEMO.reset();   // _aiApplied → false; syncMarkers redraws without AI marker
+var aiMarkers17 = _layers.filter(function (l) { return l._radius === 10; });
+ok('§17 no AI circleMarker in _layer after reset()', aiMarkers17.length === 0);
+ok('§17 getAiDecision() null after reset', DEMO.getAiDecision() === null);
+ok('§17 _layer still rendered (syncMarkers ran)', _layers.length >= 1);
+var s17 = DEMO.getState();
+ok('§17 progress reset to 0', s17.progress === 0);
+ok('§17 running is false', s17.running === false);
+
 console.log('\n' + passed + ' passed, ' + failed + ' failed');
 process.exit(failed ? 1 : 0);

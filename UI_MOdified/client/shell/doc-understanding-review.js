@@ -917,8 +917,7 @@
             (showPreviewBtn ? '<button type="button" data-act="preview" style="font:inherit;cursor:pointer;border:1px solid #b8860b;background:#2a2412;color:#e0c060;border-radius:6px;padding:7px 14px;">Preview Decision Steps — معاينة خطوات القرار</button>' : '') +
             (disabledPreview ? '<button type="button" data-act="preview-disabled" disabled title="' + esc('Missing: ' + caps.missing_for_map_preview.join(', ')) + '" style="font:inherit;cursor:not-allowed;border:1px solid #5a4c2a;background:#191711;color:#9a8550;border-radius:6px;padding:7px 14px;">Map Preview Not Ready — معاينة الخريطة غير جاهزة</button>' : '') +
             (coalitionRollup(p) ? '<button type="button" data-act="demo-movement" title="Symbolic demo only — not final tasking" style="font:inherit;cursor:pointer;border:1px solid #b8860b;background:#2a2412;color:#e0c060;border-radius:6px;padding:7px 14px;">Demo Movement — حركة عرض (demo only)</button>' : '') +
-            (canShowFreeFight(p) ? '<button type="button" data-act="free-fight" title="Symbolic AI-assisted demo — not final tasking" style="font:inherit;cursor:pointer;border:1px solid #7a3030;background:#241414;color:#f0a0a0;border-radius:6px;padding:7px 14px;">Free Fight Demo — قتال تجريبي (demo only)</button>' : '') +
-            (canShowFreeFight(p) ? '<button type="button" data-act="free-fight-ai" title="Unit-level AI decision demo — not final tasking" style="font:inherit;cursor:pointer;border:1px solid #2a7a50;background:#131e18;color:#90d0a0;border-radius:6px;padding:7px 14px;">Free Fight AI Demo — قرار الذكاء الاصطناعي</button>' : '') +
+            (canShowFreeFight(p) ? '<button type="button" data-act="free-fight" title="AI-assisted Free Fight demo with AI Decision controls — not final tasking" style="font:inherit;cursor:pointer;border:1px solid #7a3030;background:#241414;color:#f0a0a0;border-radius:6px;padding:7px 14px;">Free Fight Demo — قتال تجريبي (demo only)</button>' : '') +
             '<button type="button" data-act="cancel" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:6px;padding:7px 14px;">Cancel — إلغاء</button>' +
             '</div>' +
             '<details data-el="editbox" style="margin-top:8px;"><summary style="cursor:pointer;font-size:12px;color:#8fa5b8;">Operational Brief JSON — مسودة الموجز</summary>' +
@@ -1016,15 +1015,6 @@
                 window.RmoozFreeFightDemo.mount(p);
             } else {
                 alert('Free Fight demo module not loaded (shell/free-fight-demo.js)');
-            }
-        });
-        // FREEFIGHT-DEMO-AI-UI-WIRE-A: unit-level AI action demo panel.
-        bind('free-fight-ai', function () {
-            if (window.RmoozFreeFightAiPanel && typeof window.RmoozFreeFightAiPanel.openPanel === 'function') {
-                var btn = container.querySelector('[data-act="free-fight-ai"]');
-                window.RmoozFreeFightAiPanel.openPanel(p, btn);
-            } else {
-                alert('Free Fight AI panel not loaded (shell/free-fight-demo-ai-panel.js)');
             }
         });
     }

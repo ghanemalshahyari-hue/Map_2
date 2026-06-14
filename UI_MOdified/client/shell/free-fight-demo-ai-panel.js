@@ -1,14 +1,17 @@
 'use strict';
 /* ============================================================================
- * free-fight-demo-ai-panel.js — FREEFIGHT-DEMO-AI-UI-WIRE-A
+ * free-fight-demo-ai-panel.js — pure renderDecision helper
  * ----------------------------------------------------------------------------
- * Client-side panel for the unit-level Free Fight AI demo.
+ * FREEFIGHT-DEMO-AI-INTEGRATE-A: The separate floating card is gone.
+ * AI decision controls (Preview / Apply / Reset) now live inside the existing
+ * rmooz-free-fight-panel card (free-fight-demo.js).
+ *
+ * This file is kept only as a thin helper that exports renderDecision() for
+ * Node unit-test compatibility (test-freefight-demo-ai-ui-wire-a.js §1-§6).
+ * No DOM elements are created here; no event listeners are registered.
  *
  * Exposes window.RmoozFreeFightAiPanel:
- *   renderDecision(container, decision)  — pure HTML render; testable in Node
- *   openPanel(payload, anchorEl)         — fetches endpoint, mounts panel
- *
- * Safety: review-only; no unit is moved without commander Apply click.
+ *   renderDecision(container, decision) — pure HTML render; testable in Node
  * ========================================================================== */
 (function (win) {
     function esc(s) {
@@ -56,154 +59,5 @@
         ].join('');
     }
 
-    /* ---------------------------------------------------------------------- */
-    /* openPanel(payload, anchorEl)                                            */
-    /* Fetches /api/wargame-sim/free-fight/demo-ai-step and mounts the card.  */
-    /* ---------------------------------------------------------------------- */
-    function openPanel(payload, anchorEl) {
-        var ob = (payload && payload.brief && payload.brief.operational_brief) || {};
-        var units = Array.isArray(ob.proposed_units) ? ob.proposed_units : [];
-        // Objectives: check placement_candidates[type=objective] first, then ob.objectives
-        var objectives = Array.isArray(ob.placement_candidates)
-            ? ob.placement_candidates.filter(function (c) { return c && String(c.type || '').toLowerCase() === 'objective'; })
-            : [];
-        if (!objectives.length && Array.isArray(ob.objectives)) objectives = ob.objectives;
-
-        var panelId = 'rmooz-ff-ai-panel';
-        var doc = win.document;
-        var container = doc && doc.getElementById(panelId);
-        if (!container) {
-            container = doc && doc.createElement('div');
-            if (!container) return;
-            container.id = panelId;
-            if (anchorEl && anchorEl.parentNode) {
-                anchorEl.parentNode.insertBefore(container, anchorEl.nextSibling);
-            } else if (doc && doc.body) {
-                doc.body.appendChild(container);
-            }
-        }
-        container.style.display = '';
-        container.innerHTML = '<div style="color:#9ab0c0;font-size:12px;padding:8px;">Loading AI decision… جاري التحميل</div>';
-
-        var fetchFn = (typeof win.fetch === 'function') ? win.fetch : (typeof fetch === 'function' ? fetch : null);
-        if (!fetchFn) {
-            container.innerHTML = '<div style="color:#e0a93a;font-size:12px;padding:8px;">fetch() not available.</div>';
-            return;
-        }
-
-        fetchFn('/api/wargame-sim/free-fight/demo-ai-step', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ units: units, objectives: objectives, opts: { preferSide: 'RED' } }),
-        })
-        .then(function (r) { return r.json(); })
-        .then(function (decision) {
-            renderDecision(container, decision);
-            var applyBtn = container.querySelector('[data-act="apply-ai"]');
-            if (applyBtn) {
-                applyBtn.addEventListener('click', function () {
-                    _applyDecision(decision, container);
-                });
-            }
-            var closeBtn = container.querySelector('[data-act="close-ai"]');
-            if (closeBtn) {
-                closeBtn.addEventListener('click', function () {
-                    container.innerHTML = '';
-                    container.style.display = 'none';
-                });
-            }
-        })
-        .catch(function (e) {
-            container.innerHTML = '<div style="color:#e0a93a;font-size:12px;padding:8px;">Error: ' + esc(e && e.message) + '</div>';
-        });
-    }
-
-    /* ---------------------------------------------------------------------- */
-    /* _applyDecision — fires when commander clicks "Apply AI Action"         */
-    /* ---------------------------------------------------------------------- */
-    function _applyDecision(decision, container) {
-        if (!decision || !decision.ok || !decision.scenario_patch) {
-            container.innerHTML += '<div style="color:#e0a93a;font-size:11px;padding:4px;">Nothing to apply.</div>';
-            return;
-        }
-        _appendToEventLog(decision.event_log_entry);
-
-        var patch = decision.scenario_patch;
-        if (win.dispatchEvent) {
-            win.dispatchEvent(new CustomEvent('rmooz:ff-ai-unit-moved', {
-                detail: {
-                    unit_uid: patch.unit_uid,
-                    lat: patch.lat,
-                    lon: patch.lon,
-                    event_log_entry: decision.event_log_entry,
-                },
-            }));
-        }
-
-        // Disable apply button after use
-        var applyBtn = container.querySelector('[data-act="apply-ai"]');
-        if (applyBtn) { applyBtn.disabled = true; applyBtn.style.opacity = '0.5'; }
-
-        container.innerHTML += '<div style="color:#90d090;font-size:11px;padding:4px;margin-top:4px;">✔ Applied — unit moved on map — تم التطبيق</div>';
-    }
-
-    /* ---------------------------------------------------------------------- */
-    /* _appendToEventLog                                                       */
-    /* ---------------------------------------------------------------------- */
-    function _appendToEventLog(entry) {
-        if (!entry) return;
-        try {
-            if (win.AppShellEventLog && typeof win.AppShellEventLog.append === 'function') {
-                // OPERATOR is the only allowed category for user-visible AI action events;
-                // 'AI' is blocked by the closed category gate in event-log.js.
-                win.AppShellEventLog.append({ category: 'OPERATOR', severity: 'info', source: 'FF-AI', message: entry });
-                return;
-            }
-            var doc = win.document;
-            var rows = doc && doc.getElementById('sw-live-event-log-rows');
-            if (rows) {
-                var row = doc.createElement('div');
-                row.className = 'ev-row';
-                row.style.cssText = 'padding:3px 6px;border-bottom:1px solid #1e2530;font-size:11px;';
-                row.textContent = entry;
-                rows.appendChild(row);
-                var cnt = doc.getElementById('sw-live-event-log-count');
-                if (cnt) cnt.textContent = String((parseInt(cnt.textContent, 10) || 0) + 1);
-                var empty = doc.getElementById('sw-live-event-log-empty');
-                if (empty) empty.style.display = 'none';
-            }
-        } catch (_) {}
-    }
-
-    /* ---------------------------------------------------------------------- */
-    /* Map marker listener — moves a transient circleMarker on window.map    */
-    /* when the commander clicks Apply.  Demo-only; removed on next Apply.   */
-    /* ---------------------------------------------------------------------- */
-    var _aiMarker = null;
-    if (win.addEventListener) {
-        win.addEventListener('rmooz:ff-ai-unit-moved', function (e) {
-            try {
-                var d = e && e.detail;
-                if (!d || d.lat == null || d.lon == null) return;
-                var map = win.map;
-                var L   = win.L;
-                if (!map || !L) return;
-                if (_aiMarker) { try { map.removeLayer(_aiMarker); } catch (_) {} _aiMarker = null; }
-                _aiMarker = L.circleMarker([Number(d.lat), Number(d.lon)], {
-                    radius: 10, color: '#90d090', weight: 2,
-                    fillColor: '#182818', fillOpacity: 0.85,
-                });
-                var popupHtml =
-                    '<div style="font-size:11px;">' +
-                    '<b style="color:#90d090;">[AI Demo]</b> ' + esc(d.unit_uid || '') + '<br>' +
-                    '<span style="color:#a0b0a0;">' + esc((d.event_log_entry || '').slice(0, 140)) + '</span>' +
-                    '</div>';
-                _aiMarker.bindPopup(popupHtml, { maxWidth: 300 });
-                _aiMarker.addTo(map);
-                _aiMarker.openPopup();
-            } catch (_) {}
-        });
-    }
-
-    win.RmoozFreeFightAiPanel = { renderDecision: renderDecision, openPanel: openPanel };
+    win.RmoozFreeFightAiPanel = { renderDecision: renderDecision };
 }(typeof window !== 'undefined' ? window : global));

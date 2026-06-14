@@ -36,6 +36,7 @@
     var _progress = 0, _running = false, _paused = false, _timer = null;
     var _layer = null, _panel = null, _card = null, _aiPanel = null;
     var _plan = null, _terrain = { available: false }, _objectiveSource = null;
+    var _aiDecision = null, _aiLoading = false, _aiApplied = false;
     var _plannerMode = 'deterministic';
     var _planSource = 'deterministic';
     var _llmStatus = {
@@ -346,6 +347,7 @@
     function reset() {
         _running = false; _paused = false; _progress = 0; clearTimer();
         groups().forEach(function (g) { g.current = cloneLL(g.anchor); g.phase = 'staged'; });
+        _aiDecision = null; _aiLoading = false; _aiApplied = false;
         if (mapReady()) syncMarkers();
         updatePanel();
         return getState();
@@ -450,6 +452,18 @@
             if (typeof m.on === 'function') m.on('click', function () { openDemoUnitCard(g); });
             _layer.addLayer(m);
         });
+        // FREEFIGHT-DEMO-AI-INTEGRATE-A: AI-applied unit marker (only after commander Apply)
+        if (_aiApplied && _aiDecision && _aiDecision.ok && _aiDecision.scenario_patch) {
+            var ap = _aiDecision.scenario_patch;
+            if (Number.isFinite(+ap.lat) && Number.isFinite(+ap.lon)) {
+                var aiM = w.L.circleMarker([+ap.lat, +ap.lon], { radius: 10, color: '#90d090', weight: 2, fillColor: '#182818', fillOpacity: 0.85 });
+                var aiActM = _aiDecision.action || {};
+                aiM.bindPopup('<div style="font-size:11px;"><b style="color:#90d090;">[AI Demo]</b> ' +
+                    esc(ap.unit_uid || aiActM.unit_uid || '') + '<br><span style="color:#a0b0a0;">' +
+                    esc((_aiDecision.event_log_entry || '').slice(0, 140)) + '</span></div>', { maxWidth: 300 });
+                _layer.addLayer(aiM);
+            }
+        }
     }
 
     // SIDC-BRIDGE-A: review-only SIDC preview (app favorites only; never final).
@@ -584,9 +598,11 @@
         html += '<div style="padding:6px 8px;border-radius:5px;background:#2a2412;border:1px solid #b8860b;color:#e0c060;font-size:11px;line-height:1.5;">' +
             '⚠ AI-assisted demo only — not final tasking — requires commander approval<br>' +
             'عرض تجريبي بمساعدة الذكاء الاصطناعي — ليس إسناد واجب نهائي — يحتاج اعتماد القائد</div>';
+        html += renderAiDecisionHtml();
         _panel.innerHTML = html;
         bind('start', start); bind('replan', replan); bind('pause', pause); bind('reset', reset); bind('clear-obj', clearObjective); bind('close', clear);
         bind('place-obj', armPlaceObjective);
+        bind('preview-ai', _fetchAiDecision); bind('apply-ai', _applyAiDecision); bind('reset-ai', _resetAiDecision);
         var modeSel = _panel.querySelector('[data-act="planner-mode"]');
         if (modeSel && modeSel.addEventListener) modeSel.addEventListener('change', function () { setPlannerMode(modeSel.value); });
     }
@@ -681,6 +697,97 @@
         } catch (_) {}
     }
 
+    // ── FREEFIGHT-DEMO-AI-INTEGRATE-A: unit-level AI decision (integrated) ────
+    function _appendToEventLog(entry) {
+        if (!entry) return;
+        try {
+            var w = W();
+            if (w && w.AppShellEventLog && typeof w.AppShellEventLog.append === 'function') {
+                w.AppShellEventLog.append({ category: 'OPERATOR', severity: 'info', source: 'FF-AI', message: entry });
+            }
+        } catch (_) {}
+    }
+    function _buildAiRequestBody() {
+        var ob = (_payload && _payload.brief && _payload.brief.operational_brief) || (_payload && _payload.operational_brief) || {};
+        var units = Array.isArray(ob.proposed_units) ? ob.proposed_units : [];
+        var objectives = Array.isArray(ob.placement_candidates)
+            ? ob.placement_candidates.filter(function (c) { return c && String(c.type || '').toLowerCase() === 'objective'; })
+            : [];
+        if (!objectives.length && Array.isArray(ob.objectives)) objectives = ob.objectives;
+        // Fall back to the placed Objective X if the brief has none
+        if (!objectives.length && finiteLL(_objective)) objectives = [{ lat: _objective.lat, lon: _objective.lon, name: 'Objective X' }];
+        return { units: units, objectives: objectives, opts: { preferSide: 'RED' } };
+    }
+    function _fetchAiDecision() {
+        var w = W();
+        if (!w || typeof w.fetch !== 'function') return;
+        _aiLoading = true; _aiDecision = null; _aiApplied = false;
+        updatePanel();
+        w.fetch('/api/wargame-sim/free-fight/demo-ai-step', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(_buildAiRequestBody()),
+        }).then(function (r) { return r.json(); }).then(function (dec) {
+            _aiDecision = dec; _aiLoading = false; _aiApplied = false;
+            updatePanel();
+        }).catch(function (e) {
+            _aiDecision = { ok: false, _error: (e && e.message) || 'fetch failed' };
+            _aiLoading = false; updatePanel();
+        });
+    }
+    function _applyAiDecision() {
+        if (!_aiDecision || !_aiDecision.ok || !_aiDecision.scenario_patch) return;
+        _aiApplied = true;
+        _appendToEventLog(_aiDecision.event_log_entry);
+        if (mapReady()) syncMarkers();
+        updatePanel();
+    }
+    function _resetAiDecision() {
+        _aiDecision = null; _aiLoading = false; _aiApplied = false;
+        if (mapReady()) syncMarkers();
+        updatePanel();
+    }
+    function renderAiDecisionHtml() {
+        var h = '<div style="margin-top:8px;border-top:1px solid #2a3f55;padding-top:8px;">';
+        h += '<div style="font-size:12px;font-weight:600;color:#9ec2ec;margin-bottom:6px;">AI Decision Preview — معاينة قرار الذكاء الاصطناعي</div>';
+        h += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;">';
+        h += '<button data-act="preview-ai" style="font:inherit;cursor:pointer;border:1px solid #2a7a50;background:#131e18;color:#90d0a0;border-radius:5px;padding:5px 10px;font-size:11px;">' + (_aiLoading ? '⏳ Loading…' : '🔍 Preview AI Decision') + '</button>';
+        if (_aiDecision && _aiDecision.ok && !_aiApplied) {
+            h += '<button data-act="apply-ai" style="font:inherit;cursor:pointer;border:1px solid #3a7a3a;background:#182818;color:#90d090;border-radius:5px;padding:5px 10px;font-size:11px;">✔ Apply AI Action — تطبيق</button>';
+        }
+        if (_aiDecision) {
+            h += '<button data-act="reset-ai" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:5px;padding:5px 10px;font-size:11px;">⟲ Reset Decision</button>';
+        }
+        h += '</div>';
+        if (_aiLoading) {
+            h += '<div style="color:#9ab0c0;font-size:11px;padding:6px;">Loading AI decision… جاري التحميل</div>';
+        } else if (_aiDecision) {
+            var aiAct = _aiDecision.action || {};
+            var aiAr  = _aiDecision.apply_result || {};
+            if (_aiDecision.ok && aiAct.action_type) {
+                h += '<div style="background:#0c141d;border:1px solid #2a3f55;border-radius:5px;padding:8px;font-size:11px;">';
+                h += '<div><span style="color:#8fa5b8;">Action:</span> <span style="color:#e0e8f0;">' + esc(aiAct.action_type) + '</span></div>';
+                h += '<div><span style="color:#8fa5b8;">Unit:</span> <span style="color:#e0e8f0;">' + esc(aiAct.unit_uid) + '</span></div>';
+                h += '<div><span style="color:#8fa5b8;">Side:</span> <span style="color:#e0e8f0;">' + esc(aiAct.side) + '</span></div>';
+                h += '<div><span style="color:#8fa5b8;">Reason:</span> <span style="color:#d0e0d0;font-style:italic;">' + esc(aiAct.reason) + '</span></div>';
+                h += '<div><span style="color:#8fa5b8;">Confidence:</span> <span style="color:#e0e8f0;">' + esc(aiAct.confidence) + '</span></div>';
+                if (aiAct.risk) h += '<div><span style="color:#8fa5b8;">Risk:</span> <span style="color:#e0e8f0;">' + esc(aiAct.risk) + '</span></div>';
+                if (aiAct.source) h += '<div><span style="color:#8fa5b8;">Source:</span> <span style="color:#e0e8f0;">' + esc(aiAct.source) + '</span></div>';
+                if (_aiDecision.validation) h += '<div><span style="color:#8fa5b8;">Validator:</span> <span style="color:#' + (_aiDecision.validation.ok ? '90d090' : 'e0a93a') + ';">' + esc(_aiDecision.validation.ok ? 'OK' : (_aiDecision.validation.reason || 'rejected')) + '</span></div>';
+                if (aiAr.ok && aiAr.new_pos) h += '<div><span style="color:#8fa5b8;">New Position:</span> <span style="color:#a0e0a0;">' + esc(aiAr.new_pos.lat) + ', ' + esc(aiAr.new_pos.lon) + '</span></div>';
+                if (_aiDecision.event_log_entry) h += '<div style="margin-top:4px;padding:4px 6px;background:#0e1218;border-radius:3px;color:#9ab0c0;font-family:monospace;">' + esc(_aiDecision.event_log_entry) + '</div>';
+                if (_aiApplied) h += '<div style="color:#90d090;margin-top:4px;">✔ Applied — unit moved on map — تم التطبيق</div>';
+                h += '</div>';
+            } else if (_aiDecision._error) {
+                h += '<div style="color:#e0a93a;font-size:11px;padding:4px;">Error: ' + esc(_aiDecision._error) + '</div>';
+            } else {
+                h += '<div style="color:#e0a93a;font-size:11px;padding:4px;">No action available — no movable unit found.</div>';
+            }
+        }
+        h += '</div>';
+        return h;
+    }
+    // ── end FREEFIGHT-DEMO-AI-INTEGRATE-A ─────────────────────────────────────
+
     function clear() {
         pause();
         var w = W();
@@ -723,6 +830,8 @@
         setPlannerMode: setPlannerMode,
         getState: getState, getGroups: getGroups, getRed: getRed, getBlue: getBlue,
         getObjective: getObjective, getPlan: getPlan, getLlmStatus: function () { return Object.assign({}, _llmStatus); },
+        getAiDecision: function () { return _aiDecision ? Object.assign({}, _aiDecision) : null; },
+        _setAiDecisionForTest: function (d, applied) { _aiDecision = d || null; _aiApplied = !!applied; },
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozFreeFightDemo = API;

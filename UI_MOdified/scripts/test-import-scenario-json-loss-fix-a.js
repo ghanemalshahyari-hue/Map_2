@@ -95,11 +95,13 @@ test('proposed_units with base_id attach to Base Status anchor', function () {
     assert(/Proposed units count<\/span><b>1/.test(html), 'base_id unit not counted');
 });
 
-test('unmatched proposed_units appear under Unassigned / needs base review', function () {
+test('unmatched proposed_units appear under Global Unassigned collapsed section', function () {
     const payload = { brief: { operational_brief: { proposed_units: [unit({ id: 'U-orphan', assigned_base_id: 'NOPE', platform: 'Mirage 2000' })], placement_candidates: [anchor('B3', 'Anchor Three')], country_bases: [anchor('B3', 'Anchor Three')] } } };
     BSP.open(anchor('B3', 'Anchor Three'), payload);
     const html = global.document.getElementById('step1-base-status-panel').innerHTML;
-    assert(/Unassigned \/ needs base review/.test(html), 'unassigned section missing');
+    // Renamed in STEP1-BASE-STATUS-PER-BASE-UNITS-A: orphaned units now render in
+    // a collapsed <details class="bsp-unassigned-details"> block.
+    assert(/bsp-unassigned-details/.test(html), 'unassigned section missing');
     assert(/Mirage 2000/.test(html), 'orphaned unit not displayed');
 });
 

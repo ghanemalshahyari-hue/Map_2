@@ -100,72 +100,17 @@ function buildPrompt(docTexts) {
 }
 
 // ── JSON extraction ───────────────────────────────────────────────────
-// Tolerate markdown fences, <think>…</think> reasoning blocks (qwen3-coder,
-// DeepSeek-R1, etc.), and leading/trailing prose from the LLM.
-function extractJson(raw) {
-    if (!raw || typeof raw !== 'string') return null;
-    var s = raw.trim();
-    // Strip <think>…</think> reasoning blocks emitted by thinking models
-    s = s.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
-    // Strip markdown code fence if present
-    var fenceMatch = s.match(/```(?:json)?\s*([\s\S]*?)```/);
-    if (fenceMatch) s = fenceMatch[1].trim();
-    // Find the outermost { ... }
-    var start = s.indexOf('{');
-    var end   = s.lastIndexOf('}');
-    if (start === -1 || end <= start) return null;
-    try { return JSON.parse(s.slice(start, end + 1)); }
-    catch (_) { return null; }
-}
+// Delegates to ai-json.js (AI-GLOBAL-REFACTOR-PHASE-1-A).
+// Re-exported here so the public API of this module is unchanged.
+var extractJson = aiJson.extractJson;
 
 // ── Shape normalization ───────────────────────────────────────────────
-// Convert raw LLM JSON → review-safe proposed_units + placement_candidates.
-// All safety invariants are enforced here regardless of LLM output.
-function normalizeUnit(u, idx) {
-    var side = String((u && u.side) || '').trim().toUpperCase();
-    if (side !== 'RED' && side !== 'BLUE' && side !== 'NEUTRAL') side = 'NEUTRAL';
-    return {
-        side: side,
-        platform:        String((u.platform || u.name || '') || '').slice(0, 100) || ('LLM-UNIT-' + (idx + 1)),
-        estimated_count: (typeof u.estimated_count === 'number' && u.estimated_count > 0) ? Math.floor(u.estimated_count) : 1,
-        role:            String(u.role || 'unknown').slice(0, 50),
-        // Coordinates are ALWAYS null from LLM fill — never allow invented positions
-        lat: null,
-        lon: null,
-        // Review-safety flags — locked; cannot be overridden by LLM output
-        exact_unit_position: false,
-        needs_review:        true,
-        review_only:         true,
-        draft:               true,
-        placement_confidence: 'low',
-        source_type:         'llm_fill',
-        confidence:          (u.confidence === 'high' || u.confidence === 'medium') ? u.confidence : 'low',
-        source_evidence:     (typeof u.source_evidence === 'string') ? u.source_evidence.slice(0, 200) : null,
-        warnings:            ['llm_extracted_unit_requires_operator_review'],
-    };
-}
-
-function normalizeBase(b, idx) {
-    var side = String((b && b.side) || '').trim().toUpperCase();
-    if (side !== 'RED' && side !== 'BLUE') side = 'RED';
-    var siteType = String(b.type || 'unknown').toLowerCase();
-    if (!/naval|air|land|unknown/.test(siteType)) siteType = 'unknown';
-    return {
-        side: side,
-        base_name_en:    String((b.name || '') || '').slice(0, 100) || ('LLM-BASE-' + (idx + 1)),
-        site_type:       siteType,
-        // Coordinates locked null — LLM must not invent geocoords
-        lat: null,
-        lon: null,
-        exact_unit_position: false,
-        needs_review:        true,
-        placement_type:      'base_location_anchor',
-        source_type:         'llm_fill',
-        confidence:          (b.confidence === 'high' || b.confidence === 'medium') ? b.confidence : 'low',
-        source_evidence:     (typeof b.source_evidence === 'string') ? b.source_evidence.slice(0, 200) : null,
-        warnings:            ['llm_named_location_requires_geocoding'],
-    };
-}
+// Delegates to ai-guardrails.js (AI-GLOBAL-REFACTOR-PHASE-1-A).
+// Re-exported here so the public API of this module is unchanged.
+// All safety invariants (exact_unit_position:false, lat/lon:null, etc.)
+// are enforced inside ai-guardrails.js — behavior is identical to before.
+var normalizeUnit = aiGuards.normalizeUnit;
+var normalizeBase = aiGuards.normalizeBase;
 
 // ── Main fill function ───────────────────────────────────────────────
 // det  : result of BRIEF.analyzeDocuments(inputs) — NOT mutated

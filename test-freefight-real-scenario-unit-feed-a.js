@@ -21,7 +21,7 @@ const clientSrc = fs.readFileSync(
 ok('_aiDiagnostics declared in state vars',
     /var _aiDecision.*_aiDiagnostics/.test(clientSrc));
 ok('_aiDiagnostics reset in _resetAiDecision',
-    /_resetAiDecision[\s\S]{0,300}_aiDiagnostics\s*=\s*null/.test(clientSrc));
+    /_resetAiDecision[\s\S]{0,1200}_aiDiagnostics\s*=\s*null/.test(clientSrc));
 
 // ── SECTION 2: client — Priority A: window.RmoozScenario ────────────────────
 console.log('\n§2  Priority A: window.RmoozScenario.scenario units');

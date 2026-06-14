@@ -38,6 +38,7 @@
     var _winState = null, _viewportResizeHandler = null;
     var _plan = null, _terrain = { available: false }, _objectiveSource = null;
     var _aiDecision = null, _aiLoading = false, _aiApplied = false, _aiDiagnostics = null;
+    var _aiMovedUnit = null, _aiMovedUnitOldPos = null, _aiMovedUnitSource = null;
     var _useLlm = false, _llmTestStatus = null;
     var _plannerMode = 'deterministic';
     var _planSource = 'deterministic';
@@ -454,16 +455,50 @@
             if (typeof m.on === 'function') m.on('click', function () { openDemoUnitCard(g); });
             _layer.addLayer(m);
         });
-        // FREEFIGHT-DEMO-AI-INTEGRATE-A: AI-applied unit marker (only after commander Apply)
+        // FREEFIGHT-AI-REAL-MAP-MOVE-A: trail + pulse after Apply Unit AI Action
         if (_aiApplied && _aiDecision && _aiDecision.ok && _aiDecision.scenario_patch) {
             var ap = _aiDecision.scenario_patch;
-            if (Number.isFinite(+ap.lat) && Number.isFinite(+ap.lon)) {
-                var aiM = w.L.circleMarker([+ap.lat, +ap.lon], { radius: 10, color: '#90d090', weight: 2, fillColor: '#182818', fillOpacity: 0.85 });
+            var newLat = +ap.lat, newLon = +ap.lon;
+            if (Number.isFinite(newLat) && Number.isFinite(newLon)) {
                 var aiActM = _aiDecision.action || {};
-                aiM.bindPopup('<div style="font-size:11px;"><b style="color:#90d090;">[AI Demo]</b> ' +
-                    esc(ap.unit_uid || aiActM.unit_uid || '') + '<br><span style="color:#a0b0a0;">' +
-                    esc((_aiDecision.event_log_entry || '').slice(0, 140)) + '</span></div>', { maxWidth: 300 });
-                _layer.addLayer(aiM);
+                var popupHtml = '<div style="font-size:11px;min-width:200px;">' +
+                    '<div style="font-weight:700;color:#90d090;margin-bottom:3px;">AI moved ' + esc(ap.unit_uid || aiActM.unit_uid || '') + '</div>';
+                // Trail line: old → new (only if we have an old position)
+                if (_aiMovedUnitOldPos && Number.isFinite(_aiMovedUnitOldPos.lat)) {
+                    var oldLat = _aiMovedUnitOldPos.lat, oldLon = _aiMovedUnitOldPos.lon;
+                    try {
+                        var trail = w.L.polyline([[oldLat, oldLon], [newLat, newLon]], {
+                            color: '#90d090', weight: 3, opacity: 0.85, dashArray: '8 5',
+                        });
+                        _layer.addLayer(trail);
+                        // Arrow head at new position
+                        var arrowIcon = w.L.divIcon({
+                            className: '',
+                            html: '<div style="width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:14px solid #90d090;margin:-7px 0 0 -7px;filter:drop-shadow(0 0 3px #50a050);"></div>',
+                            iconSize: [14, 14], iconAnchor: [7, 14],
+                        });
+                        var arrowM = w.L.marker([newLat, newLon], { icon: arrowIcon, interactive: false, keyboard: false });
+                        _layer.addLayer(arrowM);
+                    } catch (_) {}
+                    popupHtml += '<div style="color:#8fa5b8;margin-bottom:2px;">old: ' + oldLat.toFixed(4) + ', ' + oldLon.toFixed(4) + '</div>';
+                }
+                popupHtml += '<div style="color:#e0e8f0;margin-bottom:2px;">new: ' + newLat.toFixed(4) + ', ' + newLon.toFixed(4) + '</div>';
+                if (aiActM.reason) popupHtml += '<div style="color:#a0c0b0;font-style:italic;">reason: ' + esc(aiActM.reason) + '</div>';
+                if (!_aiDecision.real_unit_moved) {
+                    popupHtml += '<div style="color:#e0a93a;margin-top:3px;">⚠ preview marker only — real scenario unit not found</div>';
+                }
+                popupHtml += '</div>';
+                // Pulse circle at new position
+                var pulse = w.L.circleMarker([newLat, newLon], {
+                    radius: 14, color: '#90d090', weight: 3, fillColor: '#182818', fillOpacity: 0.7,
+                });
+                pulse.bindPopup(popupHtml, { maxWidth: 320 });
+                _layer.addLayer(pulse);
+                // Inner bright dot
+                var dot = w.L.circleMarker([newLat, newLon], {
+                    radius: 5, color: '#c0ffc0', weight: 2, fillColor: '#90d090', fillOpacity: 1,
+                });
+                _layer.addLayer(dot);
             }
         }
     }
@@ -1001,14 +1036,133 @@
             _aiLoading = false; updatePanel();
         });
     }
+    // FREEFIGHT-AI-REAL-MAP-MOVE-A: find the real unit object across all scenario stores.
+    function _findRealUnit(unitUid) {
+        if (!unitUid) return null;
+        var w = W();
+        if (!w) return null;
+        var uid = String(unitUid);
+        function matchesUid(u) {
+            return u && (String(u.id || '') === uid || String(u.uid || '') === uid || String(u.unit_uid || '') === uid);
+        }
+        // Priority A: window.RmoozScenario.scenario
+        var sc = w.RmoozScenario && w.RmoozScenario.scenario;
+        if (sc) {
+            var r = (sc.red_units || []).filter(matchesUid)[0];
+            if (r) return { unit: r, source: 'scenario_red_units' };
+            var b = (sc.blue_units_initial || []).filter(matchesUid)[0];
+            if (b) return { unit: b, source: 'scenario_blue_units_initial' };
+        }
+        // Priority B: direct flat arrays on RmoozScenario
+        var rs = w.RmoozScenario;
+        if (rs) {
+            var r2 = (Array.isArray(rs.red_units) ? rs.red_units : []).filter(matchesUid)[0];
+            if (r2) return { unit: r2, source: 'rmooz_red_units' };
+            var b2 = (Array.isArray(rs.blue_units_initial) ? rs.blue_units_initial : []).filter(matchesUid)[0];
+            if (b2) return { unit: b2, source: 'rmooz_blue_units_initial' };
+        }
+        // Priority C: operational_brief.proposed_units
+        var ob = (_payload && _payload.brief && _payload.brief.operational_brief) ||
+                 (_payload && _payload.operational_brief) || {};
+        var pu = (Array.isArray(ob.proposed_units) ? ob.proposed_units : []).filter(matchesUid)[0];
+        if (pu) return { unit: pu, source: 'proposed_units' };
+        return null;
+    }
+
+    // FREEFIGHT-AI-REAL-MAP-MOVE-A: update real unit coords in-place; return result.
+    function _applyMoveToScenario(unitUid, newLat, newLon) {
+        var found = _findRealUnit(unitUid);
+        if (!found) return { found: false, source: null, unit: null, oldPos: null };
+        var u = found.unit;
+        var oldLat = u.lat != null ? +u.lat : (Array.isArray(u.coord) ? +u.coord[1] : null);
+        var oldLon = u.lon != null ? +u.lon : (Array.isArray(u.coord) ? +u.coord[0] : null);
+        var oldPos = (Number.isFinite(oldLat) && Number.isFinite(oldLon))
+            ? { lat: oldLat, lon: oldLon } : null;
+        // Mutate lat/lon
+        u.lat = +newLat; u.lon = +newLon;
+        // Keep coord array in sync (GeoJSON: [lon, lat])
+        if (Array.isArray(u.coord) && u.coord.length >= 2) {
+            u.coord[0] = +newLon; u.coord[1] = +newLat;
+        } else if (u.coord !== undefined) {
+            u.coord = [+newLon, +newLat];
+        }
+        u._ff_ai_moved_by_ai = true;
+        u._ff_ai_old_coord   = oldPos ? [oldPos.lon, oldPos.lat] : null;
+        u._ff_ai_event_log_entry = _aiDecision ? (_aiDecision.event_log_entry || null) : null;
+        return { found: true, source: found.source, unit: u, oldPos: oldPos };
+    }
+
+    // FREEFIGHT-AI-REAL-MAP-MOVE-A: trigger scenario layer redraw via available bridges.
+    function _triggerScenarioRedraw() {
+        var w = W();
+        if (!w) return;
+        var sc = w.RmoozScenario && w.RmoozScenario.scenario;
+        // Bridge 1: AppAdjudicatorMap.drawScenario (wargame map layer)
+        try {
+            if (w.AppAdjudicatorMap && typeof w.AppAdjudicatorMap.drawScenario === 'function' && sc) {
+                w.AppAdjudicatorMap.drawScenario(sc);
+            }
+        } catch (_) {}
+        // Bridge 2: AppScenarioWorkspace.maybeDrawLiveScenarioOnMap (workspace layer)
+        try {
+            if (w.AppScenarioWorkspace && typeof w.AppScenarioWorkspace.maybeDrawLiveScenarioOnMap === 'function' && sc) {
+                w.AppScenarioWorkspace.maybeDrawLiveScenarioOnMap(sc);
+            }
+        } catch (_) {}
+        // Bridge 3: CustomEvent so other listeners can react
+        try {
+            var ap = _aiDecision && _aiDecision.scenario_patch;
+            if (typeof document !== 'undefined' && document.dispatchEvent && ap) {
+                document.dispatchEvent(new CustomEvent('rmooz:ff-ai-unit-moved', { detail: {
+                    unit_uid: ap.unit_uid, lat: ap.lat, lon: ap.lon,
+                    old_pos: _aiMovedUnitOldPos,
+                    source: _aiMovedUnitSource,
+                }}));
+            }
+        } catch (_) {}
+    }
+
     function _applyAiDecision() {
         if (!_aiDecision || !_aiDecision.ok || !_aiDecision.scenario_patch) return;
+        var ap = _aiDecision.scenario_patch;
+        var unitUid = ap.unit_uid || (_aiDecision.action && _aiDecision.action.unit_uid);
+        // Reset previous move tracking
+        _aiMovedUnit = null; _aiMovedUnitOldPos = null; _aiMovedUnitSource = null;
+        // Attempt real-unit coordinate update
+        var mv = _applyMoveToScenario(unitUid, ap.lat, ap.lon);
+        _aiDecision.real_unit_moved  = mv.found;
+        _aiDecision.real_unit_source = mv.source;
+        if (mv.found) {
+            _aiMovedUnit      = mv.unit;
+            _aiMovedUnitOldPos = mv.oldPos;
+            _aiMovedUnitSource = mv.source;
+        }
         _aiApplied = true;
         _appendToEventLog(_aiDecision.event_log_entry);
-        if (mapReady()) syncMarkers();
+        if (mapReady()) {
+            _triggerScenarioRedraw();
+            syncMarkers(); // draws trail + pulse in FF overlay layer
+            // Pan to new position so move is immediately visible
+            var w = W();
+            try { w.map.panTo([+ap.lat, +ap.lon]); } catch (_) {}
+        }
         updatePanel();
     }
     function _resetAiDecision() {
+        // Restore real unit coords if we mutated them
+        if (_aiMovedUnit && _aiMovedUnitOldPos) {
+            _aiMovedUnit.lat = _aiMovedUnitOldPos.lat;
+            _aiMovedUnit.lon = _aiMovedUnitOldPos.lon;
+            if (Array.isArray(_aiMovedUnit.coord) && _aiMovedUnit.coord.length >= 2) {
+                _aiMovedUnit.coord[0] = _aiMovedUnitOldPos.lon;
+                _aiMovedUnit.coord[1] = _aiMovedUnitOldPos.lat;
+            }
+            _aiMovedUnit._ff_ai_moved_by_ai    = false;
+            _aiMovedUnit._ff_ai_old_coord       = null;
+            _aiMovedUnit._ff_ai_event_log_entry = null;
+            if (mapReady()) _triggerScenarioRedraw();
+        }
+        _aiMovedUnit = null; _aiMovedUnitOldPos = null; _aiMovedUnitSource = null;
         _aiDecision = null; _aiLoading = false; _aiApplied = false; _aiDiagnostics = null;
         if (mapReady()) syncMarkers();
         updatePanel();
@@ -1143,7 +1297,13 @@
                     }
                     h += '</div>';
                 })();
-                if (_aiApplied) h += '<div style="color:#90d090;margin-top:4px;">✔ Applied — unit moved on map — تم التطبيق</div>';
+                if (_aiApplied) {
+                    if (_aiDecision.real_unit_moved) {
+                        h += '<div style="color:#90d090;font-weight:600;margin-top:4px;">✔ Applied — real unit marker moved on map — تم تحريك الوحدة الحقيقية</div>';
+                    } else {
+                        h += '<div style="color:#e0a93a;font-weight:600;margin-top:4px;">⚠ AI action applied to preview marker only — real scenario unit not found.</div>';
+                    }
+                }
                 h += '</div>';
             } else if (_aiDecision._error) {
                 h += '<div style="color:#e0a93a;font-size:11px;padding:4px;">Error: ' + esc(_aiDecision._error) + '</div>';
@@ -1211,6 +1371,15 @@
         _repaintForTest: function () { updatePanel(); },
         _setUseLlmForTest: function (v) { _useLlm = !!v; },
         getUseLlm: function () { return _useLlm; },
+        // FREEFIGHT-AI-REAL-MAP-MOVE-A test seams
+        _findRealUnitForTest:       function (uid) { return _findRealUnit(uid); },
+        _applyMoveToScenarioForTest: function (uid, lat, lon) { return _applyMoveToScenario(uid, lat, lon); },
+        _applyAiDecisionForTest:    function () { _applyAiDecision(); },
+        _resetAiDecisionForTest:    function () { _resetAiDecision(); },
+        _getMovedUnitForTest:       function () { return _aiMovedUnit; },
+        _getMovedUnitOldPosForTest: function () { return _aiMovedUnitOldPos; },
+        _getMovedUnitSourceForTest: function () { return _aiMovedUnitSource; },
+        _triggerScenarioRedrawForTest: null, // set after init for spy injection
         _getWinStateForTest: function () { return _winState ? Object.assign({}, _winState) : null; },
         _winMinimizeForTest: function () { if (_panel) _winMinimize(); },
         _winMaximizeForTest: function () { if (_panel) _winMaximize(); },

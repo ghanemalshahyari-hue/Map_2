@@ -102,6 +102,7 @@ global.window.L = {
     marker: function () { return Object.assign({}, _markerStub); },
     divIcon: function () { return {}; },
     circleMarker: function (ll, opts) { return Object.assign({ _latlng: ll, _radius: opts && opts.radius }, _markerStub); },
+    polyline: function (lls, opts) { return Object.assign({ _lls: lls, _opts: opts || {} }, _markerStub); },
 };
 global.window.map = {
     hasLayer: function () { return false; },
@@ -109,7 +110,9 @@ global.window.map = {
     addLayer: function () {},
     on: function () {},
     off: function () {},
+    panTo: function () {},
 };
+global.window.AppAdjudicatorMap = { drawScenario: function () {} };
 
 // Stub deps that free-fight-demo.js looks for on window
 global.window.RmoozDemoUnits = { buildGroupsFromAnchors: function () { return []; } };
@@ -290,23 +293,26 @@ ok('§15 MOVE_TOWARD_OBJECTIVE in output', /MOVE_TOWARD_OBJECTIVE/.test(c.innerH
 ok('§15 Apply AI Action button present', /Apply AI Action/.test(c.innerHTML));
 ok('§15 no crash', true);
 
-// ── §16  Apply adds AI circleMarker (r=10) to _layer ─────────────────────────
-console.log('\n§16  Apply path: AI circleMarker (r=10) added to _layer on syncMarkers');
+// ── §16  Apply adds AI pulse marker to _layer (FREEFIGHT-AI-REAL-MAP-MOVE-A) ──
+console.log('\n§16  Apply path: AI pulse marker added to _layer on syncMarkers');
 // Set applied state, then call mount() — init() inside mount preserves _aiApplied,
 // and the subsequent syncMarkers() picks it up and places the marker.
 DEMO._setAiDecisionForTest(DECISION, true);
 DEMO.mount(PAYLOAD);   // init (keeps _aiApplied) → syncMarkers → buildPanel
-var aiMarkers16 = _layers.filter(function (l) { return l._radius === 10; });
-ok('§16 AI circleMarker (r=10) in _layer after apply', aiMarkers16.length === 1);
-ok('§16 AI circleMarker lat matches scenario_patch', aiMarkers16.length > 0 && Math.abs(aiMarkers16[0]._latlng[0] - DECISION.scenario_patch.lat) < 0.001);
-ok('§16 AI circleMarker lon matches scenario_patch', aiMarkers16.length > 0 && Math.abs(aiMarkers16[0]._latlng[1] - DECISION.scenario_patch.lon) < 0.001);
+// New impl: pulse (r=14) + inner dot (r=5); no longer a bare r=10 marker.
+var aiMarkers16 = _layers.filter(function (l) { return l._radius === 14 || l._radius === 5; });
+ok('§16 AI pulse marker(s) in _layer after apply', aiMarkers16.length >= 1);
+// Pulse (r=14) at new position
+var pulse16 = _layers.filter(function (l) { return l._radius === 14; });
+ok('§16 AI pulse lat matches scenario_patch', pulse16.length > 0 && Math.abs(pulse16[0]._latlng[0] - DECISION.scenario_patch.lat) < 0.001);
+ok('§16 AI pulse lon matches scenario_patch', pulse16.length > 0 && Math.abs(pulse16[0]._latlng[1] - DECISION.scenario_patch.lon) < 0.001);
 ok('§16 layer also has non-AI markers (Objective X present)', _layers.length > aiMarkers16.length);
 
 // ── §17  reset() removes AI circleMarker from _layer ─────────────────────────
 console.log('\n§17  reset() removes AI circleMarker; groups return to anchor');
 DEMO.reset();   // _aiApplied → false; syncMarkers redraws without AI marker
-var aiMarkers17 = _layers.filter(function (l) { return l._radius === 10; });
-ok('§17 no AI circleMarker in _layer after reset()', aiMarkers17.length === 0);
+var aiMarkers17 = _layers.filter(function (l) { return l._radius === 14 || l._radius === 5; });
+ok('§17 no AI pulse marker in _layer after reset()', aiMarkers17.length === 0);
 ok('§17 getAiDecision() null after reset', DEMO.getAiDecision() === null);
 ok('§17 _layer still rendered (syncMarkers ran)', _layers.length >= 1);
 var s17 = DEMO.getState();

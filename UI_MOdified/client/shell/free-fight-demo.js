@@ -765,17 +765,23 @@
         h += '<div style="font-size:12px;font-weight:600;color:#9ec2ec;margin-bottom:6px;">AI Decision Preview — معاينة قرار الذكاء الاصطناعي</div>';
         // LLM toggle + test button
         h += '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;font-size:11px;">';
-        h += '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;color:#9ec2ec;" title="Requires RMOOZ_FREE_FIGHT_LLM=1 on the server">';
+        h += '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;color:#9ec2ec;" title="Uses local Ollama only — requires RMOOZ_FREE_FIGHT_LLM=1 on the server">';
         h += '<input type="checkbox" data-act="toggle-llm"' + (_useLlm ? ' checked' : '') + ' style="accent-color:#4a9ed6;cursor:pointer;">';
-        h += 'Use LLM — استخدام LLM</label>';
+        h += 'Use Local LLM — استخدام LLM المحلي</label>';
         h += '<button data-act="test-llm" style="font:inherit;cursor:pointer;border:1px solid #4a5f75;background:#101b27;color:#8fb8e0;border-radius:4px;padding:3px 8px;font-size:10px;">' +
-             (_llmTestStatus && _llmTestStatus.testing ? '⏳ Testing…' : '⚡ Test LLM') + '</button>';
+             (_llmTestStatus && _llmTestStatus.testing ? '⏳ Testing…' : '⚡ Test Local LLM') + '</button>';
         if (_llmTestStatus && !_llmTestStatus.testing) {
             var lts = _llmTestStatus;
             var ltColor = lts.ok ? '#90d090' : '#e0a93a';
             h += '<span style="color:' + ltColor + ';font-size:10px;">';
-            if (lts.ok) h += 'LLM: connected · ' + esc(lts.provider || '') + (lts.latency_ms ? ' · ' + lts.latency_ms + 'ms' : '');
-            else h += 'LLM: ' + esc(lts.reason || lts.error || 'unavailable');
+            if (lts.ok) {
+                h += 'LLM: connected · <span style="color:#7fd6a0;">Local only</span> · ' + esc(lts.provider || 'ollama');
+                if (lts.model) h += ' · ' + esc(lts.model);
+                if (lts.latency_ms) h += ' · ' + lts.latency_ms + 'ms';
+            } else {
+                h += 'LLM: ' + esc(lts.reason || lts.error || 'unavailable');
+                if (lts.local_only) h += ' · <span style="color:#7fd6a0;">Local only</span>';
+            }
             h += '</span>';
         }
         h += '</div>';
@@ -803,6 +809,16 @@
                 if (aiAct.risk) h += '<div><span style="color:#8fa5b8;">Risk:</span> <span style="color:#e0e8f0;">' + esc(aiAct.risk) + '</span></div>';
                 if (aiAct.source) h += '<div><span style="color:#8fa5b8;">Source:</span> <span style="color:#e0e8f0;">' + esc(aiAct.source) + '</span></div>';
                 if (_aiDecision.validation) h += '<div><span style="color:#8fa5b8;">Validator:</span> <span style="color:#' + (_aiDecision.validation.ok ? '90d090' : 'e0a93a') + ';">' + esc(_aiDecision.validation.ok ? 'OK' : (_aiDecision.validation.reason || 'rejected')) + '</span></div>';
+                // FREEFIGHT-LOCAL-LLM-ONLY-A: local-only policy display
+                if (_aiDecision.local_only) {
+                    h += '<div><span style="color:#8fa5b8;">LLM mode:</span> <span style="color:#7fd6a0;">Local only</span></div>';
+                }
+                if (_aiDecision.provider_used || _aiDecision.local_only) {
+                    h += '<div><span style="color:#8fa5b8;">Provider:</span> <span style="color:#9ec2ec;">' + esc(_aiDecision.provider_used || 'ollama') + '</span></div>';
+                }
+                if (_aiDecision.model_used) {
+                    h += '<div><span style="color:#8fa5b8;">Model:</span> <span style="color:#9ec2ec;">' + esc(_aiDecision.model_used) + '</span></div>';
+                }
                 // FREEFIGHT-LLM-DECISION-BRIDGE-A: decision_source + fallback_reason
                 var dsrc = _aiDecision.decision_source || aiAct.source || 'deterministic_demo_ai';
                 var dsrcColor = dsrc === 'llm' ? '#90d090' : '#9ab0c0';

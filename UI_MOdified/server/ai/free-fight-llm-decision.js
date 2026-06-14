@@ -1,23 +1,53 @@
 'use strict';
 /* ============================================================================
- * free-fight-llm-decision.js — FREEFIGHT-LLM-DECISION-BRIDGE-A
+ * free-fight-llm-decision.js — FREEFIGHT-LOCAL-LLM-ONLY-A
  * ----------------------------------------------------------------------------
  * Unit-level LLM action bridge for the Free Fight AI Decision Preview.
  *
- * Controlled by RMOOZ_FREE_FIGHT_LLM=1 (same env-var as group-level
- * free-fight-llm-plan.js).  When disabled or on any error, returns a
- * deterministic fallback with a fallback_reason string.
+ * LOCAL-ONLY POLICY: this module ONLY calls local providers (ollama / local).
+ * Remote providers (claude, zen, openai, auto) are BLOCKED — the request falls
+ * back to deterministic_demo_ai with fallback_reason
+ * 'remote_provider_not_allowed_for_free_fight'.
+ *
+ * Provider resolution (never reads RMOOZ_AI_PROVIDER for this module):
+ *   RMOOZ_FREE_FIGHT_LLM_PROVIDER || 'ollama'
+ *
+ * Model resolution:
+ *   RMOOZ_FREE_FIGHT_LLM_MODEL || RMOOZ_LOCAL_LLM_MODEL || RMOOZ_AI_MODEL ||
+ *   'qwen3-coder:latest'
+ *
+ * Controlled by RMOOZ_FREE_FIGHT_LLM=1.  When disabled or on any error,
+ * returns a deterministic fallback with a fallback_reason string.
  *
  * Exports:
  *   normalizeAction(raw)                           → action | null  (pure, sync)
- *   askLlmForAction(units, objectives, opts, _p)   → { action, source, fallback_reason, provider_used? }
- *   testLlmConnection(opts, _p)                    → { ok, provider, model, latency_ms, error? }
+ *   askLlmForAction(units, objectives, opts, _p)   → { action, source, fallback_reason,
+ *                                                       local_only, provider_policy,
+ *                                                       provider_used?, model_used? }
+ *   testLlmConnection(opts, _p)                    → { ok, provider, model, latency_ms,
+ *                                                       local_only, provider_policy, error? }
  *
  * _p (optional last arg) is an ai-provider override for testing.
  * ========================================================================== */
 
 const aiProvider = require('./ai-provider');
 const ENGINE     = require('./free-fight-action-engine');
+
+// ── Local-only provider enforcement ─────────────────────────────────────────
+const REMOTE_PROVIDERS_BLOCKED = ['claude', 'zen', 'openai', 'auto'];
+
+function resolveLocalProvider() {
+    return (process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER || 'ollama').toLowerCase().trim();
+}
+function isRemoteProvider(name) {
+    return REMOTE_PROVIDERS_BLOCKED.includes(String(name || '').toLowerCase().trim());
+}
+function resolveLocalModel() {
+    return process.env.RMOOZ_FREE_FIGHT_LLM_MODEL ||
+           process.env.RMOOZ_LOCAL_LLM_MODEL       ||
+           process.env.RMOOZ_AI_MODEL              ||
+           'qwen3-coder:latest';
+}
 
 const ALLOWED_ACTION_TYPES = ['MOVE_TOWARD_OBJECTIVE', 'DEFEND_BASE', 'HOLD_POSITION', 'PATROL_NEAR_BASE'];
 const ALLOWED_SIDES        = ['RED', 'BLUE'];
@@ -88,12 +118,19 @@ async function askLlmForAction(units, objectives, opts, _providerOverride) {
     const provider = _providerOverride || aiProvider;
 
     if (process.env.RMOOZ_FREE_FIGHT_LLM !== '1') {
-        return { action: null, source: 'deterministic_demo_ai', fallback_reason: 'llm_disabled' };
+        return { action: null, source: 'deterministic_demo_ai', fallback_reason: 'local_llm_disabled',
+                 local_only: true, provider_policy: 'local_only' };
     }
 
-    const providerName = process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER || process.env.RMOOZ_AI_PROVIDER || 'auto';
-    const model        = process.env.RMOOZ_FREE_FIGHT_LLM_MODEL    || process.env.RMOOZ_AI_MODEL    || undefined;
-    let   timeoutMs    = parseInt(process.env.RMOOZ_FREE_FIGHT_LLM_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '15000', 10);
+    // LOCAL-ONLY: never read RMOOZ_AI_PROVIDER — Free Fight must not call cloud.
+    const providerName = resolveLocalProvider();
+    if (isRemoteProvider(providerName)) {
+        return { action: null, source: 'deterministic_demo_ai',
+                 fallback_reason: 'remote_provider_not_allowed_for_free_fight',
+                 local_only: true, provider_policy: 'local_only' };
+    }
+    const model     = resolveLocalModel();
+    let   timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_LLM_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '15000', 10);
     if (!Number.isFinite(timeoutMs)) timeoutMs = 15000;
 
     const system = [
@@ -135,32 +172,43 @@ async function askLlmForAction(units, objectives, opts, _providerOverride) {
             timeoutMs:  timeoutMs,
         });
     } catch (e) {
-        return { action: null, source: 'deterministic_demo_ai', fallback_reason: 'llm_error: ' + str(e && e.message || e, 120) };
+        return { action: null, source: 'deterministic_demo_ai',
+                 fallback_reason: 'local_llm_error: ' + str(e && e.message || e, 120),
+                 local_only: true, provider_policy: 'local_only' };
     }
 
     if (!result || !result.ok) {
-        return { action: null, source: 'deterministic_demo_ai', fallback_reason: 'llm_unavailable: ' + str(result && result.error, 120) };
+        return { action: null, source: 'deterministic_demo_ai',
+                 fallback_reason: 'local_llm_unavailable: ' + str(result && result.error, 120),
+                 local_only: true, provider_policy: 'local_only' };
     }
 
     let parsed;
     try { parsed = parseJsonSafe(result.response || ''); }
-    catch (e) { return { action: null, source: 'deterministic_demo_ai', fallback_reason: 'llm_invalid_json' }; }
+    catch (e) { return { action: null, source: 'deterministic_demo_ai', fallback_reason: 'llm_invalid_json',
+                         local_only: true, provider_policy: 'local_only' }; }
 
     const normalized = normalizeAction(parsed);
     if (!normalized) {
-        return { action: null, source: 'deterministic_demo_ai', fallback_reason: 'llm_invalid_schema' };
+        return { action: null, source: 'deterministic_demo_ai', fallback_reason: 'llm_invalid_schema',
+                 local_only: true, provider_policy: 'local_only' };
     }
 
     const validation = ENGINE.validateAction(normalized, units, objectives);
     if (!validation.ok) {
-        return { action: null, source: 'deterministic_demo_ai', fallback_reason: 'llm_validation_failed: ' + str(validation.reason, 120) };
+        return { action: null, source: 'deterministic_demo_ai',
+                 fallback_reason: 'llm_validation_failed: ' + str(validation.reason, 120),
+                 local_only: true, provider_policy: 'local_only' };
     }
 
     return {
-        action:        normalized,
-        source:        'llm',
+        action:          normalized,
+        source:          'llm',
         fallback_reason: null,
-        provider_used: result.providerUsed || providerName,
+        provider_used:   result.providerUsed || providerName,
+        model_used:      model,
+        local_only:      true,
+        provider_policy: 'local_only',
     };
 }
 
@@ -171,12 +219,22 @@ async function askLlmForAction(units, objectives, opts, _providerOverride) {
  */
 async function testLlmConnection(opts, _providerOverride) {
     const provider     = _providerOverride || aiProvider;
-    const providerName = process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER || process.env.RMOOZ_AI_PROVIDER || 'auto';
-    const model        = process.env.RMOOZ_FREE_FIGHT_LLM_MODEL    || process.env.RMOOZ_AI_MODEL    || undefined;
+    // LOCAL-ONLY: never read RMOOZ_AI_PROVIDER.
+    const providerName = resolveLocalProvider();
+    const model        = resolveLocalModel();
     const start        = Date.now();
 
+    // Remote-provider check runs before the disabled check so a misconfigured
+    // env is caught immediately regardless of the RMOOZ_FREE_FIGHT_LLM flag.
+    if (isRemoteProvider(providerName)) {
+        return { ok: false, reason: 'remote_provider_not_allowed_for_free_fight',
+                 provider: 'ollama', model: model || null, latency_ms: 0,
+                 local_only: true, provider_policy: 'local_only' };
+    }
+
     if (process.env.RMOOZ_FREE_FIGHT_LLM !== '1') {
-        return { ok: false, reason: 'llm_disabled', provider: providerName, model: model || null, latency_ms: 0 };
+        return { ok: false, reason: 'llm_disabled', provider: providerName, model: model || null,
+                 latency_ms: 0, local_only: true, provider_policy: 'local_only' };
     }
 
     try {
@@ -191,11 +249,15 @@ async function testLlmConnection(opts, _providerOverride) {
         });
         const latency_ms = Date.now() - start;
         if (!result || !result.ok) {
-            return { ok: false, provider: result && result.providerUsed || providerName, model: model || null, latency_ms, error: str(result && result.error, 200) };
+            return { ok: false, provider: result && result.providerUsed || providerName, model: model || null,
+                     latency_ms, error: str(result && result.error, 200),
+                     local_only: true, provider_policy: 'local_only' };
         }
-        return { ok: true, provider: result.providerUsed || providerName, model: model || null, latency_ms };
+        return { ok: true, provider: result.providerUsed || providerName, model: model || null,
+                 latency_ms, local_only: true, provider_policy: 'local_only' };
     } catch (e) {
-        return { ok: false, provider: providerName, model: model || null, latency_ms: Date.now() - start, error: str(e && e.message || e, 200) };
+        return { ok: false, provider: providerName, model: model || null, latency_ms: Date.now() - start,
+                 error: str(e && e.message || e, 200), local_only: true, provider_policy: 'local_only' };
     }
 }
 

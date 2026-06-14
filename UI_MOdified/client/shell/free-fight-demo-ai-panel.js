@@ -63,9 +63,11 @@
     function openPanel(payload, anchorEl) {
         var ob = (payload && payload.brief && payload.brief.operational_brief) || {};
         var units = Array.isArray(ob.proposed_units) ? ob.proposed_units : [];
+        // Objectives: check placement_candidates[type=objective] first, then ob.objectives
         var objectives = Array.isArray(ob.placement_candidates)
             ? ob.placement_candidates.filter(function (c) { return c && String(c.type || '').toLowerCase() === 'objective'; })
             : [];
+        if (!objectives.length && Array.isArray(ob.objectives)) objectives = ob.objectives;
 
         var panelId = 'rmooz-ff-ai-panel';
         var doc = win.document;
@@ -152,7 +154,9 @@
         if (!entry) return;
         try {
             if (win.AppShellEventLog && typeof win.AppShellEventLog.append === 'function') {
-                win.AppShellEventLog.append({ category: 'AI', severity: 'INFO', source: 'FF-AI', message: entry });
+                // OPERATOR is the only allowed category for user-visible AI action events;
+                // 'AI' is blocked by the closed category gate in event-log.js.
+                win.AppShellEventLog.append({ category: 'OPERATOR', severity: 'info', source: 'FF-AI', message: entry });
                 return;
             }
             var doc = win.document;
@@ -169,6 +173,36 @@
                 if (empty) empty.style.display = 'none';
             }
         } catch (_) {}
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* Map marker listener — moves a transient circleMarker on window.map    */
+    /* when the commander clicks Apply.  Demo-only; removed on next Apply.   */
+    /* ---------------------------------------------------------------------- */
+    var _aiMarker = null;
+    if (win.addEventListener) {
+        win.addEventListener('rmooz:ff-ai-unit-moved', function (e) {
+            try {
+                var d = e && e.detail;
+                if (!d || d.lat == null || d.lon == null) return;
+                var map = win.map;
+                var L   = win.L;
+                if (!map || !L) return;
+                if (_aiMarker) { try { map.removeLayer(_aiMarker); } catch (_) {} _aiMarker = null; }
+                _aiMarker = L.circleMarker([Number(d.lat), Number(d.lon)], {
+                    radius: 10, color: '#90d090', weight: 2,
+                    fillColor: '#182818', fillOpacity: 0.85,
+                });
+                var popupHtml =
+                    '<div style="font-size:11px;">' +
+                    '<b style="color:#90d090;">[AI Demo]</b> ' + esc(d.unit_uid || '') + '<br>' +
+                    '<span style="color:#a0b0a0;">' + esc((d.event_log_entry || '').slice(0, 140)) + '</span>' +
+                    '</div>';
+                _aiMarker.bindPopup(popupHtml, { maxWidth: 300 });
+                _aiMarker.addTo(map);
+                _aiMarker.openPopup();
+            } catch (_) {}
+        });
     }
 
     win.RmoozFreeFightAiPanel = { renderDecision: renderDecision, openPanel: openPanel };

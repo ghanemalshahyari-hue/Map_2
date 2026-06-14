@@ -52,6 +52,7 @@ const LOCATION = require(path.join(__dirname, 'ai', 'location-intelligence.js'))
 const XLSX = require(path.join(__dirname, 'ai', 'xlsx-text.js'));
 const MULTICOUNTRY = require(path.join(__dirname, 'ai', 'multi-country-orbat.js'));
 const FREE_FIGHT_LLM = require(path.join(__dirname, 'ai', 'free-fight-llm-plan.js'));
+const FREE_FIGHT_ENGINE = require(path.join(__dirname, 'ai', 'free-fight-action-engine.js'));
 const STEP1_LLM_FILL = require(path.join(__dirname, 'ai', 'step1-llm-fill.js'));
 
 // Collect a request body and parse it. cb(obj) on success; cb(null) when the
@@ -1241,6 +1242,47 @@ function handle(req, res, ctx) {
                         error: e && e.message ? String(e.message).slice(0, 240) : String(e),
                     });
                 });
+        });
+        return true;
+    }
+
+    if (pathname === '/api/wargame-sim/free-fight/demo-ai-step' && method === 'POST') {
+        readJsonBody(req, function (body) {
+            if (body === undefined) {
+                sendJson(res, 200, { ok: false, reason: 'invalid_json' });
+                return;
+            }
+            var b = body || {};
+            var units = Array.isArray(b.units) ? b.units : [];
+            var objectives = Array.isArray(b.objectives) ? b.objectives
+                : (b.objectives ? [b.objectives] : []);
+            var opts = (b.opts && typeof b.opts === 'object') ? b.opts : {};
+
+            var action = FREE_FIGHT_ENGINE.decideAction(units, objectives, opts);
+            if (!action) {
+                sendJson(res, 200, { ok: false, reason: 'no_movable_unit' });
+                return;
+            }
+
+            var validation = FREE_FIGHT_ENGINE.validateAction(action, units, objectives);
+            // Apply to a deep copy — never mutate the caller's data
+            var unitsCopy = units.map(function (u) { return Object.assign({}, u); });
+            var apply_result = FREE_FIGHT_ENGINE.applyAction(action, unitsCopy);
+            var changed_unit = apply_result.ok ? apply_result.unit : null;
+            var scenario_patch = apply_result.ok
+                ? { unit_uid: action.unit_uid, lat: apply_result.new_pos.lat, lon: apply_result.new_pos.lon }
+                : null;
+            var event_log_entry = FREE_FIGHT_ENGINE.makeEventLogEntry(action, apply_result);
+
+            sendJson(res, 200, {
+                ok: true,
+                action: action,
+                validation: validation,
+                apply_result: apply_result,
+                event_log_entry: event_log_entry,
+                changed_unit: changed_unit,
+                scenario_patch: scenario_patch,
+            });
         });
         return true;
     }

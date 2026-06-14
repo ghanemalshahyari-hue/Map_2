@@ -15,9 +15,11 @@
  */
 'use strict';
 
-var path  = require('path');
-var AI    = require(path.join(__dirname, 'ollama-client.js'));
-var cfg   = require(path.join(__dirname, 'ai-config.js'));
+var path      = require('path');
+var AI        = require(path.join(__dirname, 'ollama-client.js'));
+var cfg       = require(path.join(__dirname, 'ai-config.js'));
+var aiJson    = require(path.join(__dirname, 'ai-json.js'));
+var aiGuards  = require(path.join(__dirname, 'ai-guardrails.js'));
 
 // ── Weakness detection ───────────────────────────────────────────────
 // Returns true when deterministic extraction produced nothing actionable.

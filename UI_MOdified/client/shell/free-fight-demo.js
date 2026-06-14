@@ -840,8 +840,8 @@
         h += '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;color:#9ec2ec;" title="Uses local Ollama only — requires RMOOZ_FREE_FIGHT_LLM=1 on the server">';
         h += '<input type="checkbox" data-act="toggle-llm"' + (_useLlm ? ' checked' : '') + ' style="accent-color:#4a9ed6;cursor:pointer;">';
         h += 'Use Local LLM — استخدام LLM المحلي</label>';
-        h += '<button data-act="test-llm" style="font:inherit;cursor:pointer;border:1px solid #4a5f75;background:#101b27;color:#8fb8e0;border-radius:4px;padding:3px 8px;font-size:10px;">' +
-             (_llmTestStatus && _llmTestStatus.testing ? '⏳ Testing…' : '⚡ Test Local LLM') + '</button>';
+        h += '<button data-act="test-llm" title="Tests and warms the local Ollama model — run this before Preview AI Decision for best results" style="font:inherit;cursor:pointer;border:1px solid #4a5f75;background:#101b27;color:#8fb8e0;border-radius:4px;padding:3px 8px;font-size:10px;">' +
+             (_llmTestStatus && _llmTestStatus.testing ? '⏳ Warming LLM…' : '⚡ Test Local LLM') + '</button>';
         if (_llmTestStatus && !_llmTestStatus.testing) {
             var lts = _llmTestStatus;
             var ltColor = lts.ok ? '#90d090' : '#e0a93a';
@@ -895,7 +895,13 @@
                 var dsrc = _aiDecision.decision_source || aiAct.source || 'deterministic_demo_ai';
                 var dsrcColor = dsrc === 'llm' ? '#90d090' : '#9ab0c0';
                 h += '<div><span style="color:#8fa5b8;">Decision source:</span> <span style="color:' + dsrcColor + ';">' + esc(dsrc) + '</span></div>';
-                if (_aiDecision.fallback_reason) h += '<div><span style="color:#8fa5b8;">Fallback reason:</span> <span style="color:#e0a93a;font-size:10px;">' + esc(_aiDecision.fallback_reason) + '</span></div>';
+                if (_aiDecision.fallback_reason) {
+                    var fr = _aiDecision.fallback_reason;
+                    var isTimeout = /timeout|timed.out/i.test(fr);
+                    h += '<div><span style="color:#8fa5b8;">Fallback reason:</span> <span style="color:#e0a93a;font-size:10px;">' + esc(fr) + '</span>';
+                    if (isTimeout) h += ' <span style="color:#6a9ab8;font-size:10px;">(click Test Local LLM to warm model, then retry)</span>';
+                    h += '</div>';
+                }
                 if (aiAr.ok && aiAr.new_pos) h += '<div><span style="color:#8fa5b8;">New Position:</span> <span style="color:#a0e0a0;">' + esc(aiAr.new_pos.lat) + ', ' + esc(aiAr.new_pos.lon) + '</span></div>';
                 if (_aiDecision.event_log_entry) h += '<div style="margin-top:4px;padding:4px 6px;background:#0e1218;border-radius:3px;color:#9ab0c0;font-family:monospace;">' + esc(_aiDecision.event_log_entry) + '</div>';
                 if (_aiApplied) h += '<div style="color:#90d090;margin-top:4px;">✔ Applied — unit moved on map — تم التطبيق</div>';

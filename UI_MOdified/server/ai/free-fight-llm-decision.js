@@ -130,8 +130,8 @@ async function askLlmForAction(units, objectives, opts, _providerOverride) {
                  local_only: true, provider_policy: 'local_only' };
     }
     const model     = resolveLocalModel();
-    let   timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_LLM_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '15000', 10);
-    if (!Number.isFinite(timeoutMs)) timeoutMs = 15000;
+    let   timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_LLM_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '45000', 10);
+    if (!Number.isFinite(timeoutMs)) timeoutMs = 45000;
 
     const system = [
         'You are a military wargame AI for an advisory-only demo exercise.',

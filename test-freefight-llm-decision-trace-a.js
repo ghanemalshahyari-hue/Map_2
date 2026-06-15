@@ -47,8 +47,8 @@ function mockThrow(msg) {
 
 (async function() {
     // §1 — LLM success
-    var savedEnv = process.env.RMOOZ_FREE_FIGHT_LLM;
-    process.env.RMOOZ_FREE_FIGHT_LLM = '1';
+    var savedEnv = process.env.RMOOZ_ALLOW_SIM_RUN;
+    process.env.RMOOZ_ALLOW_SIM_RUN = '1';
     var r1 = await BRIDGE.askLlmForAction(UNITS, OBJECTIVES, OPTS, mockOk(VALID_LLM_JSON));
     ok('§1 llm_called = true on success',     r1.llm_called === true);
     ok('§1 llm_status = success',              r1.llm_status === 'success');
@@ -88,14 +88,14 @@ function mockThrow(msg) {
 
     // ── SECTION 5: disabled path ─────────────────────────────────────────────
     console.log('\n§5  LLM disabled path');
-    var savedEnv5 = process.env.RMOOZ_FREE_FIGHT_LLM;
-    delete process.env.RMOOZ_FREE_FIGHT_LLM;
+    var savedEnv5 = process.env.RMOOZ_ALLOW_SIM_RUN;
+    delete process.env.RMOOZ_ALLOW_SIM_RUN;
     var r5 = await BRIDGE.askLlmForAction(UNITS, OBJECTIVES, OPTS, mockOk(VALID_LLM_JSON));
     ok('§5 llm_called = false when disabled',  r5.llm_called === false);
     ok('§5 llm_status = disabled',             r5.llm_status === 'disabled');
     ok('§5 local_only = true',                 r5.local_only === true);
-    if (savedEnv5 !== undefined) process.env.RMOOZ_FREE_FIGHT_LLM = savedEnv5;
-    else delete process.env.RMOOZ_FREE_FIGHT_LLM;
+    if (savedEnv5 !== undefined) process.env.RMOOZ_ALLOW_SIM_RUN = savedEnv5;
+    else delete process.env.RMOOZ_ALLOW_SIM_RUN;
 
     // ── SECTION 6: default timeout 45000ms ───────────────────────────────────
     console.log('\n§6  Default timeout is 45000ms');
@@ -140,8 +140,8 @@ function mockThrow(msg) {
         /Try LLM Again/.test(clientSrc));
 
     // Restore env
-    if (savedEnv !== undefined) process.env.RMOOZ_FREE_FIGHT_LLM = savedEnv;
-    else delete process.env.RMOOZ_FREE_FIGHT_LLM;
+    if (savedEnv !== undefined) process.env.RMOOZ_ALLOW_SIM_RUN = savedEnv;
+    else delete process.env.RMOOZ_ALLOW_SIM_RUN;
 
     // ── Summary ──────────────────────────────────────────────────────────────
     console.log('\n' + '─'.repeat(52));

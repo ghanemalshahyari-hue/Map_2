@@ -10,13 +10,13 @@
  * 'remote_provider_not_allowed_for_free_fight'.
  *
  * Provider resolution (never reads RMOOZ_AI_PROVIDER for this module):
- *   RMOOZ_FREE_FIGHT_LLM_PROVIDER || 'ollama'
+ *   RMOOZ_FREE_FIGHT_PROVIDER || 'ollama'
  *
  * Model resolution:
- *   RMOOZ_FREE_FIGHT_LLM_MODEL || RMOOZ_LOCAL_LLM_MODEL || RMOOZ_AI_MODEL ||
+ *   RMOOZ_FREE_FIGHT_MODEL || RMOOZ_LOCAL_LLM_MODEL || RMOOZ_AI_MODEL ||
  *   'qwen3-coder:latest'
  *
- * Controlled by RMOOZ_FREE_FIGHT_LLM=1.  When disabled or on any error,
+ * Controlled by RMOOZ_ALLOW_SIM_RUN=1.  When disabled or on any error,
  * returns a deterministic fallback with a fallback_reason string.
  *
  * Exports:
@@ -37,13 +37,13 @@ const ENGINE     = require('./free-fight-action-engine');
 const REMOTE_PROVIDERS_BLOCKED = ['claude', 'zen', 'openai', 'auto'];
 
 function resolveLocalProvider() {
-    return (process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER || 'ollama').toLowerCase().trim();
+    return (process.env.RMOOZ_FREE_FIGHT_PROVIDER || 'ollama').toLowerCase().trim();
 }
 function isRemoteProvider(name) {
     return REMOTE_PROVIDERS_BLOCKED.includes(String(name || '').toLowerCase().trim());
 }
 function resolveLocalModel() {
-    return process.env.RMOOZ_FREE_FIGHT_LLM_MODEL ||
+    return process.env.RMOOZ_FREE_FIGHT_MODEL ||
            process.env.RMOOZ_LOCAL_LLM_MODEL       ||
            process.env.RMOOZ_AI_MODEL              ||
            'qwen3-coder:latest';
@@ -129,7 +129,7 @@ async function askLlmForAction(units, objectives, opts, _providerOverride) {
             trace || {});
     }
 
-    if (process.env.RMOOZ_FREE_FIGHT_LLM !== '1') {
+    if (process.env.RMOOZ_ALLOW_SIM_RUN !== '1') {
         return ret(null, 'deterministic_demo_ai', 'local_llm_disabled', { llm_status: 'disabled' });
     }
 
@@ -140,7 +140,7 @@ async function askLlmForAction(units, objectives, opts, _providerOverride) {
             { llm_status: 'remote_blocked' });
     }
     const model     = resolveLocalModel();
-    let   timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_LLM_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '45000', 10);
+    let   timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '45000', 10);
     if (!Number.isFinite(timeoutMs)) timeoutMs = 45000;
 
     const system = [
@@ -247,14 +247,14 @@ async function testLlmConnection(opts, _providerOverride) {
     const start        = Date.now();
 
     // Remote-provider check runs before the disabled check so a misconfigured
-    // env is caught immediately regardless of the RMOOZ_FREE_FIGHT_LLM flag.
+    // env is caught immediately regardless of the RMOOZ_ALLOW_SIM_RUN flag.
     if (isRemoteProvider(providerName)) {
         return { ok: false, reason: 'remote_provider_not_allowed_for_free_fight',
                  provider: 'ollama', model: model || null, latency_ms: 0,
                  local_only: true, provider_policy: 'local_only' };
     }
 
-    if (process.env.RMOOZ_FREE_FIGHT_LLM !== '1') {
+    if (process.env.RMOOZ_ALLOW_SIM_RUN !== '1') {
         return { ok: false, reason: 'llm_disabled', provider: providerName, model: model || null,
                  latency_ms: 0, local_only: true, provider_policy: 'local_only' };
     }

@@ -238,16 +238,16 @@ function envelopeOk(env, name) {
         '§14 not_recommended_for.air_intercept includes ground + naval units');
 
     // ── §15 no remote provider: claude env still works via heuristic ───────────
-    var savedProvider = process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER;
-    var savedFlag = process.env.RMOOZ_FREE_FIGHT_LLM;
-    process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER = 'claude';
-    process.env.RMOOZ_FREE_FIGHT_LLM = '1';
+    var savedProvider = process.env.RMOOZ_FREE_FIGHT_PROVIDER;
+    var savedFlag = process.env.RMOOZ_ALLOW_SIM_RUN;
+    process.env.RMOOZ_FREE_FIGHT_PROVIDER = 'claude';
+    process.env.RMOOZ_ALLOW_SIM_RUN = '1';
     var capRemote = null, threw = false;
     try {
         capRemote = await TC.getCapabilityIntelTool(Object.assign({ opts: { useLlm: true } }, INPUT));
     } catch (e) { threw = true; }
-    if (savedProvider == null) delete process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER; else process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER = savedProvider;
-    if (savedFlag == null) delete process.env.RMOOZ_FREE_FIGHT_LLM; else process.env.RMOOZ_FREE_FIGHT_LLM = savedFlag;
+    if (savedProvider == null) delete process.env.RMOOZ_FREE_FIGHT_PROVIDER; else process.env.RMOOZ_FREE_FIGHT_PROVIDER = savedProvider;
+    if (savedFlag == null) delete process.env.RMOOZ_ALLOW_SIM_RUN; else process.env.RMOOZ_ALLOW_SIM_RUN = savedFlag;
     ok(!threw && capRemote && capRemote.ok === true && capRemote.source !== 'llm_inferred',
         '§15 remote provider blocked → heuristic, no throw, source not llm');
 

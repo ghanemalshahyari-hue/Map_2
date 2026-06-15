@@ -17,7 +17,7 @@
  *   §7  event log contains AI decision reason
  *   §8  HOLD_POSITION does not move unit
  *   §9  DEFEND_BASE (BLUE) action returned when preferSide=BLUE
- *   §10 fallback works without LLM (no env var RMOOZ_FREE_FIGHT_LLM)
+ *   §10 fallback works without LLM (no env var RMOOZ_ALLOW_SIM_RUN)
  *   §11 validator blocks invalid action_type
  *   §12 validator blocks side mismatch
  *   §13 step size ≤ STEP_DEG when unit is far from target
@@ -168,13 +168,13 @@ ok('§9 unit_uid = BLUE unit', action9 && action9.unit_uid === 'UAE-F16-001');
 // ── §10  Fallback without LLM ─────────────────────────────────────────────────
 console.log('\n§10 Fallback works without LLM');
 
-var savedEnv = process.env.RMOOZ_FREE_FIGHT_LLM;
-delete process.env.RMOOZ_FREE_FIGHT_LLM;
+var savedEnv = process.env.RMOOZ_ALLOW_SIM_RUN;
+delete process.env.RMOOZ_ALLOW_SIM_RUN;
 var unitFallback = makeUnit('FALLBACK-001', 'RED', 27.0, 56.0, 'F-14A');
 var actionFallback = ENGINE.decideAction([unitFallback], [OBJ_X]);
 ok('§10 deterministic action still returned without LLM env var', !!actionFallback);
 ok('§10 source = deterministic_demo_ai', actionFallback && actionFallback.source === 'deterministic_demo_ai');
-if (savedEnv !== undefined) process.env.RMOOZ_FREE_FIGHT_LLM = savedEnv;
+if (savedEnv !== undefined) process.env.RMOOZ_ALLOW_SIM_RUN = savedEnv;
 
 // ── §11  Validator blocks invalid action_type ─────────────────────────────────
 console.log('\n§11 Validator: block invalid action_type');

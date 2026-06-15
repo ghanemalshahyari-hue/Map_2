@@ -166,7 +166,7 @@ Open the harness, then in DevTools / via automation:
 
 Per [`free-fight-ai-litellm-design.md`](free-fight-ai-litellm-design.md): an **advisory**
 LLM may later re-rank/re-explain within the deterministic planner's guardrails
-(env-gated `RMOOZ_FREE_FIGHT_LLM=1`; deterministic stays authoritative + fallback +
+(env-gated `RMOOZ_ALLOW_SIM_RUN=1`; deterministic stays authoritative + fallback +
 validator; endpoint/key only in `.env.offline` / `ai-secrets.local.js`, never hardcoded).
 **Today it is fully OFF and the demo does not depend on it.**
 

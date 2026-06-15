@@ -127,6 +127,11 @@ var DEMO = global.window.RmoozFreeFightDemo;
 // RMOOZ-AI-COMMANDER-FREEDOM-B: this suite asserts CONTROLLED-mode loop behavior
 // (deterministic_coa_fallback). Pin the mode — the app default is now High Variation.
 DEMO._setCommanderModeForTest('controlled');
+// RMOOZ-AI-FREE-FIGHT-AI-ONLY-A: this suite tests the loop MECHANICS with the deterministic planner
+// (the sanctioned "deterministic planner for tests" case). Relax the live AI-only gate so the loop
+// drives on deterministic plans here; the AI-only enforcement itself is covered by
+// test-ai-free-fight-ai-only-a.js (no LLM ⇒ no movement).
+if (typeof DEMO._setAiOnlyGateForTest === 'function') DEMO._setAiOnlyGateForTest(false);
 
 var PAYLOAD = { brief: { operational_brief: { proposed_units: [], objectives: [{ label: 'Objective X', lat: 34.95, lon: 48.95 }], placement_candidates: [{ type: 'base', lat: 34.5, lon: 48.5, name: 'AB' }] } } };
 
@@ -254,7 +259,7 @@ function planForCurrentSide() {
     console.log('\n§10  LLM failure falls back to deterministic and continues');
     freshMount();
     var body10 = DEMO._buildLoopRequestBodyForTest();
-    // useLlm on, but RMOOZ_FREE_FIGHT_LLM not set → planner returns deterministic fallback
+    // useLlm on, but RMOOZ_ALLOW_SIM_RUN not set → planner returns deterministic fallback
     var plan10 = await PLANNER.planCoas(body10.units, body10.objectives, body10.context, { preferSide: 'RED', useLlm: true, allowed_unit_ids: body10.opts.allowed_unit_ids });
     ok('§10 plan_source is deterministic_coa_fallback', plan10.plan_source === 'deterministic_coa_fallback');
     DEMO._runTurnCoreForTest(plan10, 0);
@@ -280,12 +285,16 @@ function planForCurrentSide() {
     ok('§11 turn log cleared', DEMO._getTurnLogForTest().length === 0);
 
     // ── §12 Commander Reasoning panel renders after a turn ───────────────────
-    console.log('\n§12  Right-side AI Commander Reasoning panel renders');
+    // RMOOZ-AI-FREE-FIGHT-AI-ONLY-A honest labeling: this suite runs the DETERMINISTIC planner
+    // (controlled mode), so the panel must NOT be titled "AI Commander Reasoning" — it is the
+    // deterministic tactical planner (LLM not used). Only a real LLM turn is labeled AI.
+    console.log('\n§12  Right-side commander panel renders (honest source label)');
     freshMount();
     var p12 = await planForCurrentSide(); DEMO._runTurnCoreForTest(p12, 0);
     var cmdrPanel = elById['rmooz-free-fight-commander-panel'];
     ok('§12 commander panel element created', !!cmdrPanel);
-    ok('§12 panel titled "AI Commander Reasoning"', cmdrPanel && /AI Commander Reasoning/.test(cmdrPanel.innerHTML));
+    ok('§12 deterministic turn titled "Deterministic tactical planner — LLM not used" (not AI)',
+        cmdrPanel && /Deterministic tactical planner — LLM not used/.test(cmdrPanel.innerHTML) && !/AI Commander Reasoning/.test(cmdrPanel.innerHTML));
     ok('§12 panel shows the turn + selected COA', cmdrPanel && /Turn:/.test(cmdrPanel.innerHTML) && /Selected COA:/.test(cmdrPanel.innerHTML));
 
     // ── §13 Objective X is never moved by the loop ───────────────────────────

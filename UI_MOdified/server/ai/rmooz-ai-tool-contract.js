@@ -997,6 +997,7 @@ function composeCommanderPrompt(packEnvelope, extras) {
     });
     var promptObject = {
         mission: 'Produce a commander course-of-action decision. Think like a commander, not a script.',
+        coa_requirement: 'Return 2-3 genuinely different courses of action in "coas" (e.g. a cautious/recon option, a maneuver/flank/deception option, and a direct option). Within EACH COA select ONLY the relevant units — do not move all units.',
         active_side: extras.active_side || null,
         commander_mode: extras.commander_mode || 'free',
         objective: extras.objective || null,
@@ -1031,7 +1032,7 @@ function composeCommanderPrompt(packEnvelope, extras) {
                 risks: ['string'], assumptions: ['string'],
             }],
         },
-        constraints: 'unit_uid MUST be exactly one of allowed_unit_ids; coordinates inside the map; no teleport; no invented units; NEVER engage/destroy/open-fire; return ONLY JSON.',
+        constraints: 'Return 2-3 COAs (not just one). unit_uid MUST be exactly one of allowed_unit_ids; coordinates inside the map; no teleport; no invented units; NEVER engage/destroy/open-fire; return ONLY JSON.',
     };
     return {
         version: version,

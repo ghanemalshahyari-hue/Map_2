@@ -20,7 +20,7 @@
  * calls local providers (ollama / local). Remote providers (claude, zen,
  * openai, auto) are BLOCKED — the request falls back to the deterministic
  * heuristic, which reuses classifyUnit from platform-capability-catalog.js.
- * The LLM is only consulted when opts.useLlm && RMOOZ_FREE_FIGHT_LLM === '1';
+ * The LLM is only consulted when opts.useLlm && RMOOZ_ALLOW_SIM_RUN === '1';
  * any error/timeout/non-JSON/remote condition falls back to the heuristic.
  *
  * Exports:
@@ -66,13 +66,13 @@ function cleanDisplayName(u) {
 var REMOTE_PROVIDERS_BLOCKED = ['claude', 'zen', 'openai', 'auto'];
 
 function resolveLocalProvider() {
-    return (process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER || 'ollama').toLowerCase().trim();
+    return (process.env.RMOOZ_FREE_FIGHT_PROVIDER || 'ollama').toLowerCase().trim();
 }
 function isRemoteProvider(name) {
     return REMOTE_PROVIDERS_BLOCKED.indexOf(String(name || '').toLowerCase().trim()) !== -1;
 }
 function resolveLocalModel() {
-    return process.env.RMOOZ_FREE_FIGHT_LLM_MODEL ||
+    return process.env.RMOOZ_FREE_FIGHT_MODEL ||
            process.env.RMOOZ_LOCAL_LLM_MODEL      ||
            process.env.RMOOZ_AI_MODEL             ||
            'qwen3-coder:latest';
@@ -473,7 +473,7 @@ function analyzeUnitCapabilities(units, context, opts, _providerOverride) {
     }
 
     // ── Decide whether the LLM may be consulted at all ───────────────────────
-    var llmEnabled = !!(opts.useLlm && process.env.RMOOZ_FREE_FIGHT_LLM === '1');
+    var llmEnabled = !!(opts.useLlm && process.env.RMOOZ_ALLOW_SIM_RUN === '1');
     if (!llmEnabled) {
         return Promise.resolve(heuristicAll());
     }
@@ -483,7 +483,7 @@ function analyzeUnitCapabilities(units, context, opts, _providerOverride) {
         return Promise.resolve(heuristicAll());
     }
     var model = resolveLocalModel();
-    var timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_LLM_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '45000', 10);
+    var timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '45000', 10);
     if (!Number.isFinite(timeoutMs)) timeoutMs = 45000;
 
     var system = [

@@ -93,33 +93,66 @@ function getUnitById(units, uid) {
     return arr(units).find(function (u) { return u && (u.id === uid || u.uid === uid || u.unit_uid === uid); }) || null;
 }
 function resolveLocalProvider() {
-    return (process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER || 'ollama').toLowerCase().trim();
+    return (process.env.RMOOZ_FREE_FIGHT_PROVIDER || 'ollama').toLowerCase().trim();
 }
 function isRemoteProvider(name) {
     return REMOTE_PROVIDERS_BLOCKED.indexOf(String(name || '').toLowerCase().trim()) !== -1;
 }
 function resolveLocalModel() {
-    return process.env.RMOOZ_FREE_FIGHT_LLM_MODEL ||
+    return process.env.RMOOZ_FREE_FIGHT_MODEL ||
            process.env.RMOOZ_LOCAL_LLM_MODEL       ||
            process.env.RMOOZ_AI_MODEL              ||
            'qwen3-coder:latest';
 }
-// FREEFIGHT-COA-ROUTE-JSON-GUARD-A: single source of truth for the route's
-// local-only policy + resolved provider/model. The health endpoint surfaces this.
+// FREEFIGHT-COA-ROUTE-JSON-GUARD-A + RMOOZ-AI-EXECUTION-SINGLE-GATE-A: single source of truth for
+// the route's permission gate (RMOOZ_ALLOW_SIM_RUN) + local-only policy + resolved provider/model.
+// The health endpoint surfaces this (and enriches it with model_available via a live provider probe).
+function aiExecutionAllowed() { return process.env.RMOOZ_ALLOW_SIM_RUN === '1'; }
 function routeHealth() {
     var provider = resolveLocalProvider();
     var remoteBlocked = isRemoteProvider(provider);
+    var allow = aiExecutionAllowed();
+    var aiEnabled = allow && !remoteBlocked;
+    var reason = !allow ? 'RMOOZ_ALLOW_SIM_RUN is not enabled'
+        : (remoteBlocked ? 'configured provider is blocked (local-only policy)' : null);
     return {
         planner: 'free-fight-coa-planner',
         local_only: true,
         provider_policy: 'local_only',
+        // RMOOZ-AI-EXECUTION-SINGLE-GATE-A: the single top-level permission gate.
+        allow_sim_run: allow,
+        ai_execution_enabled: aiEnabled,
+        reason_if_blocked: reason,
+        // model_available is filled by the endpoint (live provider probe); default null here.
+        model_available: null,
         // Never report a remote provider — if one is misconfigured it is blocked.
         provider: remoteBlocked ? 'ollama' : provider,
         provider_blocked: remoteBlocked,
         model: resolveLocalModel(),
-        llm_enabled: process.env.RMOOZ_FREE_FIGHT_LLM === '1',
+        llm_enabled: aiEnabled,   // back-compat alias (= ai_execution_enabled)
         remote_providers_blocked: REMOTE_PROVIDERS_BLOCKED.slice(),
     };
+}
+// RMOOZ-AI-EXECUTION-SINGLE-GATE-A: live check that the local provider has the model loaded. Used by
+// the health endpoint to report model_available (state #2: allowed but no local model). Best-effort,
+// short timeout; never throws. Currently knows ollama (/api/tags); other providers → unknown (null).
+async function probeModelAvailable(provider, model) {
+    provider = String(provider || '').toLowerCase();
+    if (provider !== 'ollama') return { available: null, reason: 'model availability check not implemented for provider "' + provider + '"' };
+    var host = (process.env.OLLAMA_HOST || process.env.RMOOZ_OLLAMA_HOST || 'http://localhost:11434').replace(/\/$/, '');
+    try {
+        var ctl = (typeof AbortController === 'function') ? new AbortController() : null;
+        var to = ctl ? setTimeout(function () { try { ctl.abort(); } catch (_) {} }, 4000) : null;
+        var res = await fetch(host + '/api/tags', ctl ? { signal: ctl.signal } : {});
+        if (to) clearTimeout(to);
+        if (!res || !res.ok) return { available: false, reason: 'local provider (ollama) not reachable at ' + host };
+        var data = await res.json();
+        var models = (data && Array.isArray(data.models)) ? data.models.map(function (m) { return m.name || m.model; }) : [];
+        var present = models.indexOf(model) !== -1;
+        return { available: present, reason: present ? null : ('model "' + model + '" is not loaded in the local provider'), models: models };
+    } catch (e) {
+        return { available: false, reason: 'local provider (ollama) not reachable: ' + str(e && e.message || e, 80) };
+    }
 }
 function parseJsonSafe(text) {
     var s = str(text).trim();
@@ -807,7 +840,7 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
         return { ok: false, llm_status: 'remote_blocked', fallback_reason: 'remote_provider_not_allowed_for_free_fight' };
     }
     var model = resolveLocalModel();
-    var timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_LLM_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '45000', 10);
+    var timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '45000', 10);
     if (!Number.isFinite(timeoutMs)) timeoutMs = 45000;
 
     var allowedIds = arr(opts && opts.allowed_unit_ids).filter(Boolean).map(String);
@@ -933,6 +966,11 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
     }
 
     var normalized = parsed.coas.map(function (c) { return normalizeCoa(c, effectiveAllowed); }).filter(Boolean);
+    // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A: the LLM gives DESTINATION targets (often the objective itself,
+    // which is far). Clamp each action's target to ONE tactical bound from the unit — physics-valid
+    // (below the teleport guard) and identical to how the deterministic builder + the apply layer step.
+    // The model's tactical CHOICE (unit / action / direction) is preserved; only the step is capped.
+    _clampLlmTargets(normalized, units);
     if (normalized.length < 2) {
         return { ok: false, llm_status: 'invalid_schema', fallback_reason: 'llm_returned_fewer_than_2_valid_coas (' + normalized.length + ')', partial: normalized };
     }
@@ -1144,13 +1182,14 @@ async function _assemblePlan(P, variationSeed, timer, light) {
     }
 
     var llmCalled = false, llmStatus = null, fallbackReason = null, fallbackMessage = null, providerUsed = null, modelUsed = null;
+    var llmRawResponse = null; // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A: raw model output (when captured)
     var _llmContractRejection = null; // set when the LLM COA is rejected by the tool contract
 
     // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A: the MCP/tool-contract commander prompt is the SINGLE
     // source of truth. Compose it ONCE from the tool pack (the planner sends it verbatim + the UI
     // surfaces it via "View MCP Prompt"). Attached even on the deterministic/disabled path so the
     // operator can see exactly what the AI would be / was instructed with.
-    var llmEnabled = process.env.RMOOZ_FREE_FIGHT_LLM === '1';
+    var llmEnabled = process.env.RMOOZ_ALLOW_SIM_RUN === '1';
     var mcpPrompt = null;
     if (!light && toolPack && toolPack.data) {
         try {
@@ -1174,7 +1213,8 @@ async function _assemblePlan(P, variationSeed, timer, light) {
             commander_mode: commanderMode,
             variation_seed: variationSeed,
             ai_depth: depth,
-            llm_enabled: llmEnabled,
+            allow_sim_run: llmEnabled,   // RMOOZ-AI-EXECUTION-SINGLE-GATE-A (= RMOOZ_ALLOW_SIM_RUN === '1')
+            llm_enabled: llmEnabled,     // back-compat alias
             mcp_prompt: light ? null : mcpPrompt,
             mcp_prompt_version: mcpPrompt ? mcpPrompt.version : ((toolPack && toolPack.version) || null),
             terrain_context: _terrainSummary(),
@@ -1194,12 +1234,15 @@ async function _assemblePlan(P, variationSeed, timer, light) {
             provider_used: (llmInfo && llmInfo.provider_used) || providerUsed,
             model_used: (llmInfo && llmInfo.model_used) || modelUsed,
         };
+        // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A: expose the raw model output only when the caller asks
+        // (opts.capture_raw_llm) — proof for the real-LLM E2E; omitted from normal/light payloads.
+        if (!light && opts && opts.capture_raw_llm) result.llm_raw_response = llmRawResponse;
         if (light) { result.commander_brief = null; return result; }
         return timer.sync('commander_brief_ms', function () { return _attachCommanderBrief(result, intel, units, context); });
     }
 
     // LLM path — only in normal/deep depth, when opted in AND the local LLM is enabled.
-    var llmAllowed = (depth !== 'fast') && opts.useLlm && process.env.RMOOZ_FREE_FIGHT_LLM === '1';
+    var llmAllowed = (depth !== 'fast') && opts.useLlm && process.env.RMOOZ_ALLOW_SIM_RUN === '1';
     if (llmAllowed) {
         llmCalled = true;
         // Give the LLM the freedom context: commander mode, intel (terrain/zone/border),
@@ -1233,6 +1276,7 @@ async function _assemblePlan(P, variationSeed, timer, light) {
                 // (the success path leaves it null otherwise) so the AI-only display gate can
                 // distinguish a real LLM result from a fallback cleanly.
                 llmStatus = llmStatus || 'ok';
+                llmRawResponse = llmResult.raw_response || null; // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A
                 var llmAssess = buildCommanderAssessment(llmCoas, obj, context, 'llm');
                 if (activeSide === 'BLUE' && blueIntent) llmAssess = appendSituationToAssessment(llmAssess, situation);
                 return _finalize('llm', llmCoas, llmValidation, false,
@@ -1266,6 +1310,35 @@ async function _assemblePlan(P, variationSeed, timer, light) {
         assess = appendSituationToAssessment(assess, situation);
     }
     return _finalize(detSource, coas, _llmContractRejection, llmCalled, null, assess);
+}
+
+// RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A: clamp each LLM action target to one tactical bound (≤ the
+// teleport guard) toward the model's chosen destination, from the unit's current position. Keeps the
+// AI's direction/intent; makes the move physics-valid; mirrors the deterministic builder + apply step.
+function _clampLlmTargets(coas, units) {
+    var CAP = 0.10; // below the 0.15° validator teleport guard
+    arr(coas).forEach(function (coa) {
+        arr(coa && coa.phases).forEach(function (ph) {
+            arr(ph && ph.actions).forEach(function (a) {
+                if (!a || !a.target) return;
+                var at = String(a.action_type || '');
+                if (at === 'HOLD_POSITION' || at.toLowerCase() === 'hold') return;
+                var u = getUnitById(units, a.unit_uid);
+                if (!u || !unitHasCoord(u)) return;
+                var from = { lat: +u.lat, lon: +u.lon };
+                var to = { lat: Number(a.target.lat), lon: Number(a.target.lon) };
+                if (!Number.isFinite(to.lat) || !Number.isFinite(to.lon)) return;
+                if (dist(from, to) > CAP) {
+                    var capped = stepToward(from, to, CAP);
+                    a.target.lat = Math.round(capped.lat * 1e5) / 1e5;
+                    a.target.lon = Math.round(capped.lon * 1e5) / 1e5;
+                    a.target_clamped = true;       // honest: capped from the model's destination
+                    a.destination = { lat: Math.round(to.lat * 1e5) / 1e5, lon: Math.round(to.lon * 1e5) / 1e5 };
+                }
+            });
+        });
+    });
+    return coas;
 }
 
 // ── Main entry ────────────────────────────────────────────────────────────────
@@ -1542,6 +1615,8 @@ module.exports = {
     EXECUTION_MODE:         EXECUTION_MODE,           // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A
     _callLlmForTest:        _callLlm,                 // RMOOZ-AI-COMMANDER-FREEDOM-A (prompt inspection)
     routeHealth:            routeHealth,
+    probeModelAvailable:    probeModelAvailable,      // RMOOZ-AI-EXECUTION-SINGLE-GATE-A
+    aiExecutionAllowed:     aiExecutionAllowed,       // RMOOZ-AI-EXECUTION-SINGLE-GATE-A
     resolveLocalProvider:   resolveLocalProvider,
     resolveLocalModel:      resolveLocalModel,
     isRemoteProvider:       isRemoteProvider,

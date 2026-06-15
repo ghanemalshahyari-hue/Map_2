@@ -179,7 +179,7 @@ function validateAndSanitize(plan, groups) {
 }
 
 async function createPlan(body) {
-    if (process.env.RMOOZ_FREE_FIGHT_LLM !== '1') {
+    if (process.env.RMOOZ_ALLOW_SIM_RUN !== '1') {
         return { status: 200, payload: { ok: false, reason: 'llm_disabled' } };
     }
     const llmInput = buildLlmInput(body || {});
@@ -201,10 +201,10 @@ async function createPlan(body) {
             confidence: 'low|medium|high',
         },
     });
-    const timeoutMs = Number.parseInt(process.env.RMOOZ_FREE_FIGHT_LLM_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || process.env.RMOOZ_OLLAMA_TIMEOUT_MS || '30000', 10);
+    const timeoutMs = Number.parseInt(process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || process.env.RMOOZ_OLLAMA_TIMEOUT_MS || '30000', 10);
     const result = await aiProvider.generate({
-        provider: process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER || process.env.RMOOZ_AI_PROVIDER || 'auto',
-        model: process.env.RMOOZ_FREE_FIGHT_LLM_MODEL || process.env.RMOOZ_AI_MODEL || process.env.RMOOZ_OLLAMA_MODEL,
+        provider: process.env.RMOOZ_FREE_FIGHT_PROVIDER || process.env.RMOOZ_AI_PROVIDER || 'auto',
+        model: process.env.RMOOZ_FREE_FIGHT_MODEL || process.env.RMOOZ_AI_MODEL || process.env.RMOOZ_OLLAMA_MODEL,
         system,
         prompt,
         format: 'json',

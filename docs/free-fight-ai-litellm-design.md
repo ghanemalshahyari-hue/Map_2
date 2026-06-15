@@ -142,11 +142,11 @@ entirely and use the deterministic plan.
 ## 5. Env-gating + optional test (do NOT depend on Qwen today)
 
 - **Off by default.** The advisory path activates only when an env flag is set, e.g.
-  `RMOOZ_FREE_FIGHT_LLM=1` **and** a provider is configured in `ai-config.js`
+  `RMOOZ_ALLOW_SIM_RUN=1` **and** a provider is configured in `ai-config.js`
   (`aiProvider` resolvable + reachable). With the flag unset (the default, and the only
   state on the air-gapped dev box today), the code path is never entered.
 - **Optional test** `test-free-fight-llm-advisory-a.js` (future): skips with a clear
-  `SKIP (RMOOZ_FREE_FIGHT_LLM unset / no provider)` message when disabled, so CI on a
+  `SKIP (RMOOZ_ALLOW_SIM_RUN unset / no provider)` message when disabled, so CI on a
   machine with no model stays green. When enabled, it asserts: valid JSON parse, schema
   validation drops out-of-enum / out-of-scope fields, RED/BLUE caps enforced, and that an
   unreachable provider yields the deterministic fallback (no throw).
@@ -163,7 +163,7 @@ entirely and use the deterministic plan.
   routes, with the correct degradation warnings. **This is the intended offline default.**
 - **Switching on a deployment box is config-only** (per `ai-config.js` header):
   - Local Qwen via Ollama: `ollama pull qwen2.5:7b`, set `RMOOZ_OLLAMA_MODEL=qwen2.5:7b`
-    (apiStyle stays `ollama`), set `RMOOZ_FREE_FIGHT_LLM=1`.
+    (apiStyle stays `ollama`), set `RMOOZ_ALLOW_SIM_RUN=1`.
   - Qwen behind a LiteLLM proxy: set `apiStyle:'openai'`, `RMOOZ_OLLAMA_URL=<litellm base>`
     (or the zen block), `RMOOZ_OLLAMA_MODEL=<served qwen id>`, key via
     `RMOOZ_OLLAMA_API_KEY` / gitignored `ai-secrets.local.js`.

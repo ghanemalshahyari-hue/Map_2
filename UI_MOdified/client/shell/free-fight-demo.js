@@ -63,6 +63,8 @@
     // for the loop-MECHANICS suites (the deterministic planner is allowed "for tests", not the card).
     var _aiUnavailableMsg = null;
     var _aiOnlyGate = true;
+    var _captureRawLlm = false;        // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A: ask the server for the raw LLM output (E2E proof)
+    var _lastLoopPlan = null;          // the actual plan the LIVE loop last received (for the real-LLM E2E)
     // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A: recent COA families (for variation) + last intel snapshot
     var _coaFamilyHistory = [];        // newest-last list of recommended_coa_family strings
     var _lastIntel = null;             // last plan.intel snapshot (for the Intel Snapshot UI block)
@@ -75,7 +77,7 @@
     // RMOZ-AI-TOOL-CONTRACT-A: last tool-contract record
     var _lastToolContract = null;
     // FREEFIGHT-COA-ROUTE-JSON-GUARD-A: planner route health probe result
-    var _routeHealth = null;           // { ok, route, method, planner, local_only, provider, model, llm_enabled } | { ok:false, reason }
+    var _routeHealth = null;           // { ok, allow_sim_run, ai_execution_enabled, model_available, provider, model, reason_if_blocked } | { ok:false, reason }
     var _routeUnavailableMsg = null;   // set when a plan fetch returns non-JSON / 405
     // FREEFIGHT-MANUAL-MAP-CAMERA-A: the camera stays where the operator left it.
     // AI movement NEVER pans/zooms/fitBounds the map unless mode is 'follow'.
@@ -1898,7 +1900,9 @@
                 // + coalition detection (UAE→GCC, NATO members→NATO, etc.).
                 scenario_name: (function () { var w = W(); var sc = w && w.RmoozScenario && w.RmoozScenario.scenario; return sc && (sc.name || sc.scenario_label || sc.scenario_name) || null; })(),
             },
-            opts: { preferSide: _activeSide, useLlm: _useLlm, ai_depth: _aiDepth, commander_mode: _commanderMode, allowed_unit_ids: base.units.map(function (u) { return u.id; }) },
+            // RMOOZ-AI-EXECUTION-SINGLE-GATE-A: the AI Free Fight loop ALWAYS requests the LLM — the
+            // single gate is RMOOZ_ALLOW_SIM_RUN on the server, not a separate client toggle.
+            opts: { preferSide: _activeSide, useLlm: true, ai_depth: _aiDepth, commander_mode: _commanderMode, capture_raw_llm: _captureRawLlm, allowed_unit_ids: base.units.map(function (u) { return u.id; }) },
         };
     }
 
@@ -2107,42 +2111,51 @@
         if (p.ai_depth === 'fast') return false;              // fast skips the LLM → reject
         return true;
     }
-    // Is the local LLM disabled (RMOOZ_FREE_FIGHT_LLM not '1')? Then the manual page must tell the
-    // operator how to enable it rather than show anything that looks like an AI result.
-    function _llmDisabled(p) { return !!(p && p.llm_enabled === false); }
-    var LLM_DISABLED_MSG = 'Local LLM is disabled. Enable RMOOZ_FREE_FIGHT_LLM=1 and select a local model to generate an AI plan.';
+    // RMOOZ-AI-EXECUTION-SINGLE-GATE-A: the SINGLE top-level permission gate is RMOOZ_ALLOW_SIM_RUN
+    // (surfaced on the plan as allow_sim_run / on route health as allow_sim_run). These are the only
+    // operator-facing messages — the single gate is RMOOZ_ALLOW_SIM_RUN (no separate free-fight flag).
+    var AI_EXECUTION_DISABLED_MSG = 'AI execution is disabled. Enable RMOOZ_ALLOW_SIM_RUN=1.';
+    var AI_NO_MODEL_MSG = 'AI execution is allowed, but no local LLM/model is available. Select/configure a local model.';
+    var AI_FREE_FIGHT_REQUIRES_LLM = 'Enable RMOOZ_ALLOW_SIM_RUN=1 and select a local model.';
+    // Is AI execution disabled at the gate (RMOOZ_ALLOW_SIM_RUN not '1')?
+    function _llmDisabled(p) { return !!(p && (p.allow_sim_run === false || p.llm_enabled === false)); }
     // Human reason WHY a manual plan is not a real AI result (for the gate message).
     function _aiOnlyReason(p) {
         if (!p) return 'no plan';
-        if (_llmDisabled(p)) return 'local LLM disabled';
+        if (_llmDisabled(p)) return 'AI execution disabled (RMOOZ_ALLOW_SIM_RUN not set)';
         if (p.ai_depth === 'fast') return 'fast mode (LLM skipped)';
         if (p.fallback_reason) return String(p.fallback_reason);
         var st = String(p.llm_status || '').toLowerCase();
         if (/timeout/.test(st)) return 'LLM timeout';
-        if (/unavailable|remote_blocked|error|invalid/.test(st)) return 'LLM ' + st;
-        if (p.llm_called !== true) return 'LLM not used (LLM disabled)';
+        if (/unavailable|remote_blocked|error|invalid/.test(st)) return 'no local model available (LLM ' + st + ')';
+        if (p.llm_called !== true) return 'LLM not used';
         if (p.plan_source && p.plan_source !== 'llm') return 'deterministic fallback (' + p.plan_source + ')';
-        if (!p.provider_used || !p.model_used) return 'LLM provider/model missing (LLM did not run)';
+        if (!p.provider_used || !p.model_used) return 'no local model available (LLM did not run)';
         return 'deterministic fallback';
     }
     // The ONLY thing the manual page shows when the result is not real AI: the honest message
-    // + the diagnostic fields (acceptance #4/#5) + "View MCP Prompt". No cards, no scores, no
-    // fallback dressed as AI.
+    // + the diagnostic fields + "View MCP Prompt". No cards, no scores, no fallback dressed as AI.
     function _aiOnlyGateHtml(p) {
         function row(k, v) { return '<div><span style="color:#7a9ab8;">' + esc(k) + ':</span> <span style="color:#cdd8e4;">' + esc(v == null || v === '' ? '—' : String(v)) + '</span></div>'; }
         var disabled = _llmDisabled(p);
+        // allowed at the gate but the LLM did not actually run (no local model / provider unavailable)
+        var noModel = !disabled && p && p.plan_source !== 'llm';
         var h = '<div data-ff-coa="ai-only-gate" style="color:#f0c060;font-size:11px;padding:8px 10px;border:1px solid #6a5520;border-radius:5px;background:#1c1708;line-height:1.55;">';
         h += '<div style="font-weight:700;color:#f4d57a;">No AI result generated.</div>';
         if (disabled) {
-            // Acceptance #1 — tell the operator exactly how to enable the local LLM.
-            h += '<div data-ff-coa="llm-disabled" style="margin-top:2px;">' + esc(LLM_DISABLED_MSG) + '</div>';
+            // Rule 1 — gate off.
+            h += '<div data-ff-coa="exec-disabled" style="margin-top:2px;">' + esc(AI_EXECUTION_DISABLED_MSG) + '</div>';
+        } else if (noModel) {
+            // Rule 2 — allowed, but the LLM produced nothing usable (no local model / unavailable).
+            h += '<div data-ff-coa="no-model" style="margin-top:2px;">' + esc(AI_NO_MODEL_MSG) + '</div>';
+            h += '<div>Reason: ' + esc(_aiOnlyReason(p)) + '</div>';
         } else {
             h += '<div>LLM was not used.</div>';
             h += '<div>Reason: ' + esc(_aiOnlyReason(p)) + '</div>';
         }
         h += '</div>';
         h += '<div data-ff-coa="ai-only-diag" style="margin-top:6px;font-size:9.5px;line-height:1.5;border:1px solid #20364e;border-radius:4px;padding:5px 8px;background:#0a1420;color:#8fa5b8;">';
-        h += row('LLM enabled', p.llm_enabled === true ? 'yes' : 'no');
+        h += row('AI execution (RMOOZ_ALLOW_SIM_RUN)', (p.allow_sim_run === true || p.llm_enabled === true) ? 'allowed' : 'disabled');
         h += row('provider_used', p.provider_used);
         h += row('model_used', p.model_used);
         h += row('plan_source', p.plan_source);
@@ -2224,7 +2237,7 @@
         var h = '<details data-ff-coa="debug" style="margin-bottom:6px;"><summary style="cursor:pointer;font-size:10px;color:#9ec2ec;font-weight:600;">🔬 Movement execution debug</summary>';
         h += '<div style="font-size:9.5px;line-height:1.5;border:1px solid #20364e;border-radius:4px;padding:5px 8px;background:#0a1420;margin-top:3px;">';
         h += row('plan_source', p.plan_source || '—', p.plan_source === 'llm' ? '#7fd6a0' : '#9ab0c0');
-        h += row('LLM enabled', p.llm_enabled === true ? 'yes' : 'no', p.llm_enabled === true ? '#7fd6a0' : '#e0a040');
+        h += row('AI execution (RMOOZ_ALLOW_SIM_RUN)', (p.allow_sim_run === true || p.llm_enabled === true) ? 'allowed' : 'disabled', (p.allow_sim_run === true || p.llm_enabled === true) ? '#7fd6a0' : '#e0a040');
         h += row('llm_called', String(!!p.llm_called), llmColor);
         h += row('llm_status', p.llm_status || '—');
         h += row('fallback_reason', p.fallback_reason || '—');
@@ -2441,17 +2454,20 @@
                 return;
             }
             _routeUnavailableMsg = null;
+            _lastLoopPlan = plan; // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A: the real plan the live loop received
             // RMOOZ-AI-FREE-FIGHT-AI-ONLY-A: AI-only card — a turn applies movement ONLY for a REAL
             // LLM plan (llm_called + plan_source==='llm' + llm_status ok + no fallback + provider/model
             // + not fast). A deterministic/fallback/fast plan is NEVER applied or animated here: the
             // turn is skipped and the loop pauses (it would only keep producing fallback otherwise).
             if (_aiOnlyGate && !_isRealLlmPlan(plan)) {
+                // Pick the honest message from the gate state on the plan (disabled vs no-model).
+                var blockMsg = (plan && (plan.allow_sim_run === false || plan.llm_enabled === false)) ? AI_EXECUTION_DISABLED_MSG : AI_NO_MODEL_MSG;
                 _appendToEventLog('AI turn skipped — LLM not used' +
                     (plan && plan.fallback_reason ? ' (' + plan.fallback_reason + ')' : (plan && plan.plan_source ? ' (' + plan.plan_source + ')' : '')) + '.');
-                _aiUnavailableMsg = AI_FREE_FIGHT_REQUIRES_LLM;
+                _aiUnavailableMsg = blockMsg;
                 _loopPaused = true;
                 _clearTimeoutSafe(_pendingTimer); _pendingTimer = null;
-                _appendToEventLog('AI Commander Free Fight paused — ' + AI_FREE_FIGHT_REQUIRES_LLM);
+                _appendToEventLog('AI Commander Free Fight paused — ' + blockMsg);
                 updatePanel();
                 return; // no _runTurnCore → no movement, no animation
             }
@@ -2473,19 +2489,17 @@
         }, _ffSpeed().decisionDelayMs);
     }
 
-    // RMOOZ-AI-FREE-FIGHT-AI-ONLY-A: the operator message when the AI-only card cannot run.
-    var AI_FREE_FIGHT_REQUIRES_LLM = 'AI Free Fight requires a local LLM. Enable RMOOZ_FREE_FIGHT_LLM=1 and select a local model.';
-    // Is the local AI/LLM available for the AI Commander Free Fight card? Checks the client-known
-    // signals (LLM toggle on, depth not fast) + the planner route health (RMOOZ_FREE_FIGHT_LLM
-    // enabled, a provider/model available, provider not blocked) when it has been probed.
+    // RMOOZ-AI-EXECUTION-SINGLE-GATE-A: is the AI Commander Free Fight card allowed to run? The SINGLE
+    // gate is RMOOZ_ALLOW_SIM_RUN (route health allow_sim_run); then a local model must be available
+    // (route health model_available); depth must not be fast. Returns a code so the caller picks the
+    // right operator message (disabled vs no-model vs fast). The gate is RMOOZ_ALLOW_SIM_RUN only.
     function _freeFightAiReady() {
-        if (_useLlm !== true) return { ok: false, reason: 'the LLM toggle is off' };
-        if (_aiDepth === 'fast') return { ok: false, reason: 'Fast mode skips the LLM — use Normal or Deep' };
+        if (_aiDepth === 'fast') return { ok: false, code: 'fast', reason: 'Fast mode skips the LLM — use Normal or Deep', msg: AI_FREE_FIGHT_REQUIRES_LLM };
         var rh = _routeHealth;
         if (rh && rh.ok !== false) {
-            if (rh.llm_enabled === false) return { ok: false, reason: 'RMOOZ_FREE_FIGHT_LLM is not enabled on the server' };
-            if (rh.provider_blocked) return { ok: false, reason: 'the configured provider is blocked (local-only policy)' };
-            if (rh.llm_enabled === true && (!rh.provider || !rh.model)) return { ok: false, reason: 'no local provider/model configured' };
+            if (rh.allow_sim_run === false) return { ok: false, code: 'disabled', reason: rh.reason_if_blocked || 'RMOOZ_ALLOW_SIM_RUN is not enabled', msg: AI_EXECUTION_DISABLED_MSG };
+            if (rh.provider_blocked) return { ok: false, code: 'disabled', reason: 'configured provider is blocked (local-only policy)', msg: AI_EXECUTION_DISABLED_MSG };
+            if (rh.allow_sim_run === true && rh.model_available === false) return { ok: false, code: 'no_model', reason: rh.reason_if_blocked || 'no local model available', msg: AI_NO_MODEL_MSG };
         }
         return { ok: true };
     }
@@ -2497,8 +2511,8 @@
         if (_aiOnlyGate) {
             var ready = _freeFightAiReady();
             if (!ready.ok) {
-                _aiUnavailableMsg = AI_FREE_FIGHT_REQUIRES_LLM;
-                try { _appendToEventLog('AI Commander Free Fight not started — ' + ready.reason + '. ' + AI_FREE_FIGHT_REQUIRES_LLM); } catch (_) {}
+                _aiUnavailableMsg = ready.msg || AI_FREE_FIGHT_REQUIRES_LLM;
+                try { _appendToEventLog('AI Commander Free Fight not started — ' + ready.reason + '. ' + _aiUnavailableMsg); } catch (_) {}
                 updatePanel();
                 return;
             }
@@ -2523,8 +2537,8 @@
         if (_aiOnlyGate) {
             var ready = _freeFightAiReady();
             if (!ready.ok) {
-                _aiUnavailableMsg = AI_FREE_FIGHT_REQUIRES_LLM;
-                try { _appendToEventLog('AI Commander Free Fight step skipped — ' + ready.reason + '. ' + AI_FREE_FIGHT_REQUIRES_LLM); } catch (_) {}
+                _aiUnavailableMsg = ready.msg || AI_FREE_FIGHT_REQUIRES_LLM;
+                try { _appendToEventLog('AI Commander Free Fight step skipped — ' + ready.reason + '. ' + _aiUnavailableMsg); } catch (_) {}
                 updatePanel();
                 return;
             }
@@ -2747,7 +2761,12 @@
         h += '<div><span style="color:#8fa5b8;">Provider policy:</span> <span style="color:#7fd6a0;">local only</span>';
         h += ' · <span style="color:#8fa5b8;">Provider:</span> <span style="color:#9ec2ec;">' + esc((rh && rh.provider) || 'ollama') + '</span>';
         h += ' · <span style="color:#8fa5b8;">Model:</span> <span style="color:#9ec2ec;">' + esc((rh && rh.model) || 'qwen3-coder:latest') + '</span></div>';
-        if (rh && rh.llm_enabled != null) h += '<div><span style="color:#8fa5b8;">LLM enabled:</span> <span style="color:#e0e8f0;">' + (rh.llm_enabled ? 'yes' : 'no (deterministic)') + '</span></div>';
+        // RMOOZ-AI-EXECUTION-SINGLE-GATE-A: the single gate + model availability.
+        if (rh && rh.allow_sim_run != null) {
+            h += '<div><span style="color:#8fa5b8;">AI execution (RMOOZ_ALLOW_SIM_RUN):</span> <span style="color:' + (rh.allow_sim_run ? '#7fd6a0' : '#e0a93a') + ';">' + (rh.allow_sim_run ? 'allowed' : 'disabled') + '</span>';
+            h += ' · <span style="color:#8fa5b8;">model available:</span> <span style="color:' + (rh.model_available === true ? '#7fd6a0' : (rh.model_available === false ? '#e0a93a' : '#8fa5b8')) + ';">' + (rh.model_available === true ? 'yes' : (rh.model_available === false ? 'no' : 'unknown')) + '</span></div>';
+            if (rh.reason_if_blocked) h += '<div style="color:#e0a93a;font-size:9px;">' + esc(rh.reason_if_blocked) + '</div>';
+        }
         h += '</div>';
         // Prominent route-unavailable banner — NOT an LLM failure
         if (_routeUnavailableMsg) {
@@ -2866,7 +2885,7 @@
         h += '<div style="font-size:10px;color:#5a7a60;margin-bottom:5px;">Unit Decision LLM — single-unit step test</div>';
         // LLM toggle + test button
         h += '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;font-size:11px;">';
-        h += '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;color:#9ec2ec;" title="Uses local Ollama only — requires RMOOZ_FREE_FIGHT_LLM=1 on the server">';
+        h += '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;color:#9ec2ec;" title="Uses the local model only — requires RMOOZ_ALLOW_SIM_RUN=1 on the server">';
         h += '<input type="checkbox" data-act="toggle-llm"' + (_useLlm ? ' checked' : '') + ' style="accent-color:#4a9ed6;cursor:pointer;">';
         h += 'Use Local LLM — استخدام LLM المحلي</label>';
         h += '<button data-act="test-llm" title="Tests and warms the local Ollama model — run this before Preview Unit AI Decision for best results" style="font:inherit;cursor:pointer;border:1px solid #4a5f75;background:#101b27;color:#8fb8e0;border-radius:4px;padding:3px 8px;font-size:10px;">' +
@@ -3156,6 +3175,11 @@
         _freeFightAiReadyForTest:  function ()            { return _freeFightAiReady(); },
         _getAiUnavailableMsgForTest: function ()          { return _aiUnavailableMsg; },
         _setRouteHealthForTest:    function (h)           { _routeHealth = h; },
+        // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A real-LLM E2E seams
+        _setCaptureRawLlmForTest:  function (v)           { _captureRawLlm = !!v; },
+        _getCoaMovedUnitsForTest:  function ()            { return _coaMovedUnits.slice(); },
+        _getTurnLogForTest:        function ()            { return _turnLog.slice(); },
+        _getLastLoopPlanForTest:   function ()            { return _lastLoopPlan; },
         // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A test seams
         _planSourceNoteHtmlForTest: function (p)          { return _planSourceNoteHtml(p); },
         _coaDebugHtmlForTest:      function (p, applied, moved) { _coaPlan = p; if (applied != null) _coaApplied = applied; if (moved) _coaMovedUnits = moved; return _coaDebugHtml(); },

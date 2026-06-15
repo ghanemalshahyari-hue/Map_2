@@ -71,7 +71,7 @@ second opinion — never as the source of truth. Flow:
 1. **Deterministic parser runs first**, always, and produces the full schema
    (echelon / unit_type / symbol_category / composition / `sidc_candidate:"review_required"` …).
    This output stands on its own with no LLM present (the offline default).
-2. **Optional cross-check** (only when explicitly enabled, e.g. `RMOOZ_FREE_FIGHT_LLM=1`
+2. **Optional cross-check** (only when explicitly enabled, e.g. `RMOOZ_ALLOW_SIM_RUN=1`
    with a configured provider — endpoint/key from `.env.offline` / `ai-secrets.local.js`,
    never hardcoded): the LLM is given the same text and asked to classify into the *same*
    fixed schema (the 14 symbol categories + echelon list). It may not introduce new fields.

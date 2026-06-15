@@ -1340,15 +1340,22 @@ function handle(req, res, ctx) {
         return true;
     }
 
-    // FREEFIGHT-COA-ROUTE-JSON-GUARD-A: cheap GET health probe so the client can tell
-    // "route present" from "stub/old server" WITHOUT a POST that would 405 to plain text.
+    // FREEFIGHT-COA-ROUTE-JSON-GUARD-A + RMOOZ-AI-EXECUTION-SINGLE-GATE-A: cheap GET health probe so
+    // the client can tell "route present" from "stub/old server", AND learn the single gate state
+    // (allow_sim_run / ai_execution_enabled / model_available / reason_if_blocked).
     if (pathname === '/api/wargame-sim/free-fight/plan-coas/health' && (method === 'GET' || method === 'POST')) {
         var hh = COA_PLANNER.routeHealth();
-        sendJson(res, 200, Object.assign({
-            ok: true,
-            route: '/api/wargame-sim/free-fight/plan-coas',
-            method: 'POST',
-        }, hh));
+        // Only probe the provider for model availability when execution is actually allowed.
+        var probe = hh.ai_execution_enabled
+            ? COA_PLANNER.probeModelAvailable(hh.provider, hh.model)
+            : Promise.resolve({ available: false, reason: hh.reason_if_blocked || 'RMOOZ_ALLOW_SIM_RUN is not enabled' });
+        Promise.resolve(probe).then(function (pm) {
+            hh.model_available = (pm && pm.available != null) ? pm.available : null;
+            if (!hh.reason_if_blocked && pm && pm.available === false) hh.reason_if_blocked = pm.reason || 'no local model available';
+            sendJson(res, 200, Object.assign({ ok: true, route: '/api/wargame-sim/free-fight/plan-coas', method: 'POST' }, hh));
+        }).catch(function () {
+            sendJson(res, 200, Object.assign({ ok: true, route: '/api/wargame-sim/free-fight/plan-coas', method: 'POST' }, hh));
+        });
         return true;
     }
 

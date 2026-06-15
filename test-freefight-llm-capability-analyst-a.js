@@ -136,10 +136,10 @@ function mockNotOk() {
 
     // ── §6  LLM cannot invent IDs ─────────────────────────────────────────────
     console.log('\n§6  LLM cannot invent IDs (GHOST-999 dropped)');
-    var s6 = saveEnv('RMOOZ_FREE_FIGHT_LLM');
-    var s6p = saveEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER');
-    process.env.RMOOZ_FREE_FIGHT_LLM = '1';
-    delete process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER;
+    var s6 = saveEnv('RMOOZ_ALLOW_SIM_RUN');
+    var s6p = saveEnv('RMOOZ_FREE_FIGHT_PROVIDER');
+    process.env.RMOOZ_ALLOW_SIM_RUN = '1';
+    delete process.env.RMOOZ_FREE_FIGHT_PROVIDER;
     var u6 = [
         { id: 'REAL-1', side: 'BLUE', platform: 'F-16 Fighter' },
         { id: 'REAL-2', side: 'RED', platform: 'Frigate' },
@@ -158,27 +158,27 @@ function mockNotOk() {
     ok('§6 one profile per input unit', p6.length === u6.length);
     ok('§6 REAL-1 source llm_inferred', p6[0].unit_uid === 'REAL-1' && p6[0].source === 'llm_inferred');
     ok('§6 input order preserved', p6[0].unit_uid === 'REAL-1' && p6[1].unit_uid === 'REAL-2');
-    restoreEnv('RMOOZ_FREE_FIGHT_LLM', s6); restoreEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER', s6p);
+    restoreEnv('RMOOZ_ALLOW_SIM_RUN', s6); restoreEnv('RMOOZ_FREE_FIGHT_PROVIDER', s6p);
 
     // ── §7  remote provider blocked ───────────────────────────────────────────
     console.log('\n§7  remote provider blocked → heuristic, provider never called');
-    var s7 = saveEnv('RMOOZ_FREE_FIGHT_LLM');
-    var s7p = saveEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER');
-    process.env.RMOOZ_FREE_FIGHT_LLM = '1';
-    process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER = 'claude';
+    var s7 = saveEnv('RMOOZ_ALLOW_SIM_RUN');
+    var s7p = saveEnv('RMOOZ_FREE_FIGHT_PROVIDER');
+    process.env.RMOOZ_ALLOW_SIM_RUN = '1';
+    process.env.RMOOZ_FREE_FIGHT_PROVIDER = 'claude';
     var mock7 = mockProfiles([{ unit_uid: 'A1', domain: 'air', class: 'fighter' }]);
     var p7 = await MOD.analyzeUnitCapabilities(u1, {}, { useLlm: true }, mock7);
     ok('§7 provider NOT called (remote blocked)', mock7.wasCalled() === false);
     ok('§7 source = heuristic', p7[0].source === 'heuristic');
     ok('§7 one profile per unit', p7.length === u1.length);
-    restoreEnv('RMOOZ_FREE_FIGHT_LLM', s7); restoreEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER', s7p);
+    restoreEnv('RMOOZ_ALLOW_SIM_RUN', s7); restoreEnv('RMOOZ_FREE_FIGHT_PROVIDER', s7p);
 
     // ── §8  LLM timeout/error → heuristic fallback ────────────────────────────
     console.log('\n§8  LLM timeout/error → heuristic fallback, no throw');
-    var s8 = saveEnv('RMOOZ_FREE_FIGHT_LLM');
-    var s8p = saveEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER');
-    process.env.RMOOZ_FREE_FIGHT_LLM = '1';
-    delete process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER;
+    var s8 = saveEnv('RMOOZ_ALLOW_SIM_RUN');
+    var s8p = saveEnv('RMOOZ_FREE_FIGHT_PROVIDER');
+    process.env.RMOOZ_ALLOW_SIM_RUN = '1';
+    delete process.env.RMOOZ_FREE_FIGHT_PROVIDER;
     var u8 = [{ id: 'A1', side: 'BLUE', platform: 'F-14 Tomcat' }, { id: 'R1', side: 'RED', platform: 'Radar' }];
     var p8reject = await MOD.analyzeUnitCapabilities(u8, {}, { useLlm: true }, mockReject());
     ok('§8 reject → all heuristic', p8reject.every(function (pr) { return pr.source === 'heuristic'; }));
@@ -190,7 +190,7 @@ function mockNotOk() {
     var mockGarbage = { generate: function () { return Promise.resolve({ ok: true, response: 'not json at all' }); } };
     var p8garbage = await MOD.analyzeUnitCapabilities(u8, {}, { useLlm: true }, mockGarbage);
     ok('§8 non-JSON → all heuristic', p8garbage.every(function (pr) { return pr.source === 'heuristic'; }));
-    restoreEnv('RMOOZ_FREE_FIGHT_LLM', s8); restoreEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER', s8p);
+    restoreEnv('RMOOZ_ALLOW_SIM_RUN', s8); restoreEnv('RMOOZ_FREE_FIGHT_PROVIDER', s8p);
 
     // ── §9  buildCapabilitySummary ────────────────────────────────────────────
     console.log('\n§9  buildCapabilitySummary best.* per mission');

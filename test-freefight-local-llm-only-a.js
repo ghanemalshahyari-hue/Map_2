@@ -4,7 +4,7 @@
  *
  * §1   No env → provider defaults to 'ollama', not 'auto'
  * §2   RMOOZ_AI_PROVIDER=claude must not be forwarded by Free Fight
- * §3   RMOOZ_FREE_FIGHT_LLM_PROVIDER=claude rejected (also zen, openai, auto)
+ * §3   RMOOZ_FREE_FIGHT_PROVIDER=claude rejected (also zen, openai, auto)
  * §4   Local provider unavailable → deterministic fallback with local_llm_unavailable
  * §5   Valid local/ollama response → source='llm', local_only=true, model_used set
  * §6   testLlmConnection reports local_only=true (disabled + remote-rejected cases)
@@ -12,8 +12,8 @@
  * §8   Existing deterministic demo still works (no regression)
  * §9   Model defaults to qwen3-coder:latest when no env set
  * §10  Local provider 'local' is allowed (not blocked)
- * §11  RMOOZ_FREE_FIGHT_LLM_PROVIDER=zen rejected
- * §12  RMOOZ_FREE_FIGHT_LLM_PROVIDER=auto rejected
+ * §11  RMOOZ_FREE_FIGHT_PROVIDER=zen rejected
+ * §12  RMOOZ_FREE_FIGHT_PROVIDER=auto rejected
  * §13  normalizeAction unchanged (schema enforcement not regressed)
  * §14  local_llm_disabled returned from askLlmForAction when flag unset
  */
@@ -147,11 +147,11 @@ function restoreEnv(key, saved) { if (saved !== undefined) process.env[key] = sa
 
     // ── §1  No env → provider defaults to 'ollama', not 'auto' ───────────────
     console.log('\n§1  No env → provider defaults to ollama, not auto');
-    var s1_llm = saveEnv('RMOOZ_FREE_FIGHT_LLM');
-    var s1_p   = saveEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER');
+    var s1_llm = saveEnv('RMOOZ_ALLOW_SIM_RUN');
+    var s1_p   = saveEnv('RMOOZ_FREE_FIGHT_PROVIDER');
     var s1_ap  = saveEnv('RMOOZ_AI_PROVIDER');
-    process.env.RMOOZ_FREE_FIGHT_LLM = '1';
-    delete process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER;
+    process.env.RMOOZ_ALLOW_SIM_RUN = '1';
+    delete process.env.RMOOZ_FREE_FIGHT_PROVIDER;
     delete process.env.RMOOZ_AI_PROVIDER;
     var mc1 = mockCapture(VALID_LLM_JSON);
     var r1 = await BRIDGE.askLlmForAction(UNITS, OBJECTIVES, OPTS, mc1);
@@ -159,15 +159,15 @@ function restoreEnv(key, saved) { if (saved !== undefined) process.env[key] = sa
     ok('§1 result.local_only = true', r1.local_only === true);
     ok('§1 result.provider_policy = local_only', r1.provider_policy === 'local_only');
     ok('§1 source = llm (call succeeded)', r1.source === 'llm');
-    restoreEnv('RMOOZ_FREE_FIGHT_LLM', s1_llm); restoreEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER', s1_p); restoreEnv('RMOOZ_AI_PROVIDER', s1_ap);
+    restoreEnv('RMOOZ_ALLOW_SIM_RUN', s1_llm); restoreEnv('RMOOZ_FREE_FIGHT_PROVIDER', s1_p); restoreEnv('RMOOZ_AI_PROVIDER', s1_ap);
 
     // ── §2  RMOOZ_AI_PROVIDER=claude must not be forwarded ───────────────────
     console.log('\n§2  RMOOZ_AI_PROVIDER=claude must not be used by Free Fight');
-    var s2_llm = saveEnv('RMOOZ_FREE_FIGHT_LLM');
-    var s2_p   = saveEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER');
+    var s2_llm = saveEnv('RMOOZ_ALLOW_SIM_RUN');
+    var s2_p   = saveEnv('RMOOZ_FREE_FIGHT_PROVIDER');
     var s2_ap  = saveEnv('RMOOZ_AI_PROVIDER');
-    process.env.RMOOZ_FREE_FIGHT_LLM = '1';
-    delete process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER;
+    process.env.RMOOZ_ALLOW_SIM_RUN = '1';
+    delete process.env.RMOOZ_FREE_FIGHT_PROVIDER;
     process.env.RMOOZ_AI_PROVIDER = 'claude';
     var mc2 = mockCapture(VALID_LLM_JSON);
     var r2 = await BRIDGE.askLlmForAction(UNITS, OBJECTIVES, OPTS, mc2);
@@ -175,27 +175,27 @@ function restoreEnv(key, saved) { if (saved !== undefined) process.env[key] = sa
     ok('§2 provider used is ollama (default, not claude)', mc2.getCapture() && mc2.getCapture().provider === 'ollama');
     ok('§2 local_only = true', r2.local_only === true);
     ok('§2 source = llm (ollama succeeded)', r2.source === 'llm');
-    restoreEnv('RMOOZ_FREE_FIGHT_LLM', s2_llm); restoreEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER', s2_p); restoreEnv('RMOOZ_AI_PROVIDER', s2_ap);
+    restoreEnv('RMOOZ_ALLOW_SIM_RUN', s2_llm); restoreEnv('RMOOZ_FREE_FIGHT_PROVIDER', s2_p); restoreEnv('RMOOZ_AI_PROVIDER', s2_ap);
 
-    // ── §3  RMOOZ_FREE_FIGHT_LLM_PROVIDER=claude rejected ────────────────────
-    console.log('\n§3  RMOOZ_FREE_FIGHT_LLM_PROVIDER=claude must be rejected');
-    var s3_llm = saveEnv('RMOOZ_FREE_FIGHT_LLM');
-    var s3_p   = saveEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER');
-    process.env.RMOOZ_FREE_FIGHT_LLM = '1';
-    process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER = 'claude';
+    // ── §3  RMOOZ_FREE_FIGHT_PROVIDER=claude rejected ────────────────────
+    console.log('\n§3  RMOOZ_FREE_FIGHT_PROVIDER=claude must be rejected');
+    var s3_llm = saveEnv('RMOOZ_ALLOW_SIM_RUN');
+    var s3_p   = saveEnv('RMOOZ_FREE_FIGHT_PROVIDER');
+    process.env.RMOOZ_ALLOW_SIM_RUN = '1';
+    process.env.RMOOZ_FREE_FIGHT_PROVIDER = 'claude';
     var r3 = await BRIDGE.askLlmForAction(UNITS, OBJECTIVES, OPTS, mockOk(VALID_LLM_JSON));
     ok('§3 action is null (remote rejected)', r3.action === null);
     ok('§3 fallback_reason = remote_provider_not_allowed_for_free_fight', r3.fallback_reason === 'remote_provider_not_allowed_for_free_fight');
     ok('§3 source = deterministic_demo_ai', r3.source === 'deterministic_demo_ai');
     ok('§3 local_only = true', r3.local_only === true);
-    restoreEnv('RMOOZ_FREE_FIGHT_LLM', s3_llm); restoreEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER', s3_p);
+    restoreEnv('RMOOZ_ALLOW_SIM_RUN', s3_llm); restoreEnv('RMOOZ_FREE_FIGHT_PROVIDER', s3_p);
 
     // ── §4  Local provider unavailable → deterministic fallback ──────────────
     console.log('\n§4  Local provider unavailable → deterministic fallback');
-    var s4_llm = saveEnv('RMOOZ_FREE_FIGHT_LLM');
-    var s4_p   = saveEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER');
-    process.env.RMOOZ_FREE_FIGHT_LLM = '1';
-    delete process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER;
+    var s4_llm = saveEnv('RMOOZ_ALLOW_SIM_RUN');
+    var s4_p   = saveEnv('RMOOZ_FREE_FIGHT_PROVIDER');
+    process.env.RMOOZ_ALLOW_SIM_RUN = '1';
+    delete process.env.RMOOZ_FREE_FIGHT_PROVIDER;
     var r4 = await BRIDGE.askLlmForAction(UNITS, OBJECTIVES, OPTS, mockFail('connection refused'));
     // FREEFIGHT-LLM-DECISION-TRACE-A: unavailable path now tries ENGINE.decideAction;
     // action may be non-null (valid unit) when valid units are in scope.
@@ -203,16 +203,16 @@ function restoreEnv(key, saved) { if (saved !== undefined) process.env[key] = sa
     ok('§4 source = deterministic_demo_ai', r4.source === 'deterministic_demo_ai');
     ok('§4 fallback_reason contains local_llm_unavailable', /local_llm_unavailable/.test(r4.fallback_reason));
     ok('§4 local_only = true', r4.local_only === true);
-    restoreEnv('RMOOZ_FREE_FIGHT_LLM', s4_llm); restoreEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER', s4_p);
+    restoreEnv('RMOOZ_ALLOW_SIM_RUN', s4_llm); restoreEnv('RMOOZ_FREE_FIGHT_PROVIDER', s4_p);
 
     // ── §5  Valid local/ollama response → source='llm', metadata present ──────
     console.log('\n§5  Valid local/ollama response → source=\'llm\', metadata present');
-    var s5_llm = saveEnv('RMOOZ_FREE_FIGHT_LLM');
-    var s5_p   = saveEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER');
-    var s5_m   = saveEnv('RMOOZ_FREE_FIGHT_LLM_MODEL');
-    process.env.RMOOZ_FREE_FIGHT_LLM = '1';
-    delete process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER;
-    delete process.env.RMOOZ_FREE_FIGHT_LLM_MODEL;
+    var s5_llm = saveEnv('RMOOZ_ALLOW_SIM_RUN');
+    var s5_p   = saveEnv('RMOOZ_FREE_FIGHT_PROVIDER');
+    var s5_m   = saveEnv('RMOOZ_FREE_FIGHT_MODEL');
+    process.env.RMOOZ_ALLOW_SIM_RUN = '1';
+    delete process.env.RMOOZ_FREE_FIGHT_PROVIDER;
+    delete process.env.RMOOZ_FREE_FIGHT_MODEL;
     delete process.env.RMOOZ_LOCAL_LLM_MODEL;
     delete process.env.RMOOZ_AI_MODEL;
     var r5 = await BRIDGE.askLlmForAction(UNITS, OBJECTIVES, OPTS, mockOk(VALID_LLM_JSON));
@@ -222,42 +222,42 @@ function restoreEnv(key, saved) { if (saved !== undefined) process.env[key] = sa
     ok('§5 provider_policy = local_only', r5.provider_policy === 'local_only');
     ok('§5 model_used set', typeof r5.model_used === 'string' && r5.model_used.length > 0);
     ok('§5 fallback_reason = null', r5.fallback_reason === null);
-    restoreEnv('RMOOZ_FREE_FIGHT_LLM', s5_llm); restoreEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER', s5_p); restoreEnv('RMOOZ_FREE_FIGHT_LLM_MODEL', s5_m);
+    restoreEnv('RMOOZ_ALLOW_SIM_RUN', s5_llm); restoreEnv('RMOOZ_FREE_FIGHT_PROVIDER', s5_p); restoreEnv('RMOOZ_FREE_FIGHT_MODEL', s5_m);
 
     // ── §6  testLlmConnection reports local_only=true ─────────────────────────
     console.log('\n§6  testLlmConnection reports local_only=true');
     // 6a: disabled → local_only still set
-    var s6a = saveEnv('RMOOZ_FREE_FIGHT_LLM');
-    var s6ap = saveEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER');
-    delete process.env.RMOOZ_FREE_FIGHT_LLM;
-    delete process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER;
+    var s6a = saveEnv('RMOOZ_ALLOW_SIM_RUN');
+    var s6ap = saveEnv('RMOOZ_FREE_FIGHT_PROVIDER');
+    delete process.env.RMOOZ_ALLOW_SIM_RUN;
+    delete process.env.RMOOZ_FREE_FIGHT_PROVIDER;
     var r6a = await BRIDGE.testLlmConnection();
     ok('§6a local_only = true when disabled', r6a.local_only === true);
     ok('§6a provider_policy = local_only when disabled', r6a.provider_policy === 'local_only');
     ok('§6a reason = llm_disabled (unchanged)', r6a.reason === 'llm_disabled');
-    restoreEnv('RMOOZ_FREE_FIGHT_LLM', s6a); restoreEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER', s6ap);
+    restoreEnv('RMOOZ_ALLOW_SIM_RUN', s6a); restoreEnv('RMOOZ_FREE_FIGHT_PROVIDER', s6ap);
 
     // 6b: remote provider env → rejected, local_only=true
-    var s6b   = saveEnv('RMOOZ_FREE_FIGHT_LLM');
-    var s6bp  = saveEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER');
-    process.env.RMOOZ_FREE_FIGHT_LLM = '1';
-    process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER = 'claude';
+    var s6b   = saveEnv('RMOOZ_ALLOW_SIM_RUN');
+    var s6bp  = saveEnv('RMOOZ_FREE_FIGHT_PROVIDER');
+    process.env.RMOOZ_ALLOW_SIM_RUN = '1';
+    process.env.RMOOZ_FREE_FIGHT_PROVIDER = 'claude';
     var r6b = await BRIDGE.testLlmConnection();
     ok('§6b remote rejected in testLlmConnection', r6b.ok === false);
     ok('§6b reason = remote_provider_not_allowed_for_free_fight', r6b.reason === 'remote_provider_not_allowed_for_free_fight');
     ok('§6b local_only = true', r6b.local_only === true);
     ok('§6b provider reported as ollama', r6b.provider === 'ollama');
-    restoreEnv('RMOOZ_FREE_FIGHT_LLM', s6b); restoreEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER', s6bp);
+    restoreEnv('RMOOZ_ALLOW_SIM_RUN', s6b); restoreEnv('RMOOZ_FREE_FIGHT_PROVIDER', s6bp);
 
     // 6c: local provider, enabled → local_only on success too
-    var s6c   = saveEnv('RMOOZ_FREE_FIGHT_LLM');
-    var s6cp  = saveEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER');
-    process.env.RMOOZ_FREE_FIGHT_LLM = '1';
-    delete process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER;
+    var s6c   = saveEnv('RMOOZ_ALLOW_SIM_RUN');
+    var s6cp  = saveEnv('RMOOZ_FREE_FIGHT_PROVIDER');
+    process.env.RMOOZ_ALLOW_SIM_RUN = '1';
+    delete process.env.RMOOZ_FREE_FIGHT_PROVIDER;
     var r6c = await BRIDGE.testLlmConnection(null, mockOk('{"ok":true}'));
     ok('§6c local_only = true on successful probe', r6c.local_only === true);
     ok('§6c provider_policy = local_only on successful probe', r6c.provider_policy === 'local_only');
-    restoreEnv('RMOOZ_FREE_FIGHT_LLM', s6c); restoreEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER', s6cp);
+    restoreEnv('RMOOZ_ALLOW_SIM_RUN', s6c); restoreEnv('RMOOZ_FREE_FIGHT_PROVIDER', s6cp);
 
     // ── §7  UI renders "Local only" + provider name in panel HTML ─────────────
     console.log('\n§7  UI renders "Local only" + provider name in panel HTML');
@@ -308,67 +308,67 @@ function restoreEnv(key, saved) { if (saved !== undefined) process.env[key] = sa
 
     // ── §8  Existing deterministic demo still works (no regression) ──────────
     console.log('\n§8  Existing deterministic demo still works (no regression)');
-    var s8 = saveEnv('RMOOZ_FREE_FIGHT_LLM');
-    delete process.env.RMOOZ_FREE_FIGHT_LLM;
+    var s8 = saveEnv('RMOOZ_ALLOW_SIM_RUN');
+    delete process.env.RMOOZ_ALLOW_SIM_RUN;
     var a8 = ENGINE.decideAction(UNITS, OBJECTIVES, OPTS);
     ok('§8 decideAction returns action', !!a8);
     ok('§8 source = deterministic_demo_ai', a8 && a8.source === 'deterministic_demo_ai');
     ok('§8 action_type valid', a8 && ['MOVE_TOWARD_OBJECTIVE','DEFEND_BASE','HOLD_POSITION','PATROL_NEAR_BASE'].includes(a8.action_type));
     var v8 = ENGINE.validateAction(a8, UNITS, OBJECTIVES);
     ok('§8 validateAction ok=true for deterministic action', v8.ok === true);
-    restoreEnv('RMOOZ_FREE_FIGHT_LLM', s8);
+    restoreEnv('RMOOZ_ALLOW_SIM_RUN', s8);
 
     // ── §9  Model defaults to qwen3-coder:latest when no env set ─────────────
     console.log('\n§9  Model defaults to qwen3-coder:latest when no env set');
-    var s9_llm = saveEnv('RMOOZ_FREE_FIGHT_LLM');
-    var s9_m1  = saveEnv('RMOOZ_FREE_FIGHT_LLM_MODEL');
+    var s9_llm = saveEnv('RMOOZ_ALLOW_SIM_RUN');
+    var s9_m1  = saveEnv('RMOOZ_FREE_FIGHT_MODEL');
     var s9_m2  = saveEnv('RMOOZ_LOCAL_LLM_MODEL');
     var s9_m3  = saveEnv('RMOOZ_AI_MODEL');
-    process.env.RMOOZ_FREE_FIGHT_LLM = '1';
-    delete process.env.RMOOZ_FREE_FIGHT_LLM_MODEL;
+    process.env.RMOOZ_ALLOW_SIM_RUN = '1';
+    delete process.env.RMOOZ_FREE_FIGHT_MODEL;
     delete process.env.RMOOZ_LOCAL_LLM_MODEL;
     delete process.env.RMOOZ_AI_MODEL;
     var mc9 = mockCapture(VALID_LLM_JSON);
     await BRIDGE.askLlmForAction(UNITS, OBJECTIVES, OPTS, mc9);
     ok('§9 model passed to generate = qwen3-coder:latest', mc9.getCapture() && mc9.getCapture().model === 'qwen3-coder:latest');
-    restoreEnv('RMOOZ_FREE_FIGHT_LLM', s9_llm); restoreEnv('RMOOZ_FREE_FIGHT_LLM_MODEL', s9_m1);
+    restoreEnv('RMOOZ_ALLOW_SIM_RUN', s9_llm); restoreEnv('RMOOZ_FREE_FIGHT_MODEL', s9_m1);
     restoreEnv('RMOOZ_LOCAL_LLM_MODEL', s9_m2); restoreEnv('RMOOZ_AI_MODEL', s9_m3);
 
     // ── §10  Local provider 'local' is allowed ────────────────────────────────
     console.log('\n§10  Local provider \'local\' is allowed (not blocked)');
-    var s10_llm = saveEnv('RMOOZ_FREE_FIGHT_LLM');
-    var s10_p   = saveEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER');
-    process.env.RMOOZ_FREE_FIGHT_LLM = '1';
-    process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER = 'local';
+    var s10_llm = saveEnv('RMOOZ_ALLOW_SIM_RUN');
+    var s10_p   = saveEnv('RMOOZ_FREE_FIGHT_PROVIDER');
+    process.env.RMOOZ_ALLOW_SIM_RUN = '1';
+    process.env.RMOOZ_FREE_FIGHT_PROVIDER = 'local';
     var mc10 = mockCapture(VALID_LLM_JSON);
     var r10 = await BRIDGE.askLlmForAction(UNITS, OBJECTIVES, OPTS, mc10);
     ok('§10 action returned (local provider not blocked)', !!r10.action);
     ok('§10 source = llm', r10.source === 'llm');
     ok('§10 local_only = true', r10.local_only === true);
     ok('§10 provider = local (passed through)', mc10.getCapture() && mc10.getCapture().provider === 'local');
-    restoreEnv('RMOOZ_FREE_FIGHT_LLM', s10_llm); restoreEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER', s10_p);
+    restoreEnv('RMOOZ_ALLOW_SIM_RUN', s10_llm); restoreEnv('RMOOZ_FREE_FIGHT_PROVIDER', s10_p);
 
-    // ── §11  RMOOZ_FREE_FIGHT_LLM_PROVIDER=zen rejected ──────────────────────
-    console.log('\n§11  RMOOZ_FREE_FIGHT_LLM_PROVIDER=zen rejected');
-    var s11_llm = saveEnv('RMOOZ_FREE_FIGHT_LLM');
-    var s11_p   = saveEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER');
-    process.env.RMOOZ_FREE_FIGHT_LLM = '1';
-    process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER = 'zen';
+    // ── §11  RMOOZ_FREE_FIGHT_PROVIDER=zen rejected ──────────────────────
+    console.log('\n§11  RMOOZ_FREE_FIGHT_PROVIDER=zen rejected');
+    var s11_llm = saveEnv('RMOOZ_ALLOW_SIM_RUN');
+    var s11_p   = saveEnv('RMOOZ_FREE_FIGHT_PROVIDER');
+    process.env.RMOOZ_ALLOW_SIM_RUN = '1';
+    process.env.RMOOZ_FREE_FIGHT_PROVIDER = 'zen';
     var r11 = await BRIDGE.askLlmForAction(UNITS, OBJECTIVES, OPTS, mockOk(VALID_LLM_JSON));
     ok('§11 action = null (zen rejected)', r11.action === null);
     ok('§11 fallback_reason = remote_provider_not_allowed_for_free_fight', r11.fallback_reason === 'remote_provider_not_allowed_for_free_fight');
-    restoreEnv('RMOOZ_FREE_FIGHT_LLM', s11_llm); restoreEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER', s11_p);
+    restoreEnv('RMOOZ_ALLOW_SIM_RUN', s11_llm); restoreEnv('RMOOZ_FREE_FIGHT_PROVIDER', s11_p);
 
-    // ── §12  RMOOZ_FREE_FIGHT_LLM_PROVIDER=auto rejected ─────────────────────
-    console.log('\n§12  RMOOZ_FREE_FIGHT_LLM_PROVIDER=auto rejected');
-    var s12_llm = saveEnv('RMOOZ_FREE_FIGHT_LLM');
-    var s12_p   = saveEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER');
-    process.env.RMOOZ_FREE_FIGHT_LLM = '1';
-    process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER = 'auto';
+    // ── §12  RMOOZ_FREE_FIGHT_PROVIDER=auto rejected ─────────────────────
+    console.log('\n§12  RMOOZ_FREE_FIGHT_PROVIDER=auto rejected');
+    var s12_llm = saveEnv('RMOOZ_ALLOW_SIM_RUN');
+    var s12_p   = saveEnv('RMOOZ_FREE_FIGHT_PROVIDER');
+    process.env.RMOOZ_ALLOW_SIM_RUN = '1';
+    process.env.RMOOZ_FREE_FIGHT_PROVIDER = 'auto';
     var r12 = await BRIDGE.askLlmForAction(UNITS, OBJECTIVES, OPTS, mockOk(VALID_LLM_JSON));
     ok('§12 action = null (auto rejected)', r12.action === null);
     ok('§12 fallback_reason = remote_provider_not_allowed_for_free_fight', r12.fallback_reason === 'remote_provider_not_allowed_for_free_fight');
-    restoreEnv('RMOOZ_FREE_FIGHT_LLM', s12_llm); restoreEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER', s12_p);
+    restoreEnv('RMOOZ_ALLOW_SIM_RUN', s12_llm); restoreEnv('RMOOZ_FREE_FIGHT_PROVIDER', s12_p);
 
     // ── §13  normalizeAction not regressed ────────────────────────────────────
     console.log('\n§13  normalizeAction schema enforcement not regressed');
@@ -381,17 +381,17 @@ function restoreEnv(key, saved) { if (saved !== undefined) process.env[key] = sa
     ok('§13 missing uid blocked', BRIDGE.normalizeAction({ action_type: 'HOLD_POSITION', side: 'RED' }) === null);
 
     // ── §14  local_llm_disabled returned from askLlmForAction when flag unset ─
-    console.log('\n§14  local_llm_disabled fallback_reason when RMOOZ_FREE_FIGHT_LLM unset');
-    var s14 = saveEnv('RMOOZ_FREE_FIGHT_LLM');
-    var s14p = saveEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER');
-    delete process.env.RMOOZ_FREE_FIGHT_LLM;
-    delete process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER;
+    console.log('\n§14  local_llm_disabled fallback_reason when RMOOZ_ALLOW_SIM_RUN unset');
+    var s14 = saveEnv('RMOOZ_ALLOW_SIM_RUN');
+    var s14p = saveEnv('RMOOZ_FREE_FIGHT_PROVIDER');
+    delete process.env.RMOOZ_ALLOW_SIM_RUN;
+    delete process.env.RMOOZ_FREE_FIGHT_PROVIDER;
     var r14 = await BRIDGE.askLlmForAction(UNITS, OBJECTIVES, OPTS, mockOk(VALID_LLM_JSON));
     ok('§14 action = null when disabled', r14.action === null);
     ok('§14 fallback_reason = local_llm_disabled', r14.fallback_reason === 'local_llm_disabled');
     ok('§14 source = deterministic_demo_ai', r14.source === 'deterministic_demo_ai');
     ok('§14 local_only = true', r14.local_only === true);
-    restoreEnv('RMOOZ_FREE_FIGHT_LLM', s14); restoreEnv('RMOOZ_FREE_FIGHT_LLM_PROVIDER', s14p);
+    restoreEnv('RMOOZ_ALLOW_SIM_RUN', s14); restoreEnv('RMOOZ_FREE_FIGHT_PROVIDER', s14p);
 
     console.log('\n' + passed + ' passed, ' + failed + ' failed');
     process.exit(failed ? 1 : 0);

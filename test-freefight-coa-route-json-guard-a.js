@@ -96,6 +96,10 @@ var PLANNER = require(path.join(__dirname, 'UI_MOdified/server/ai/free-fight-coa
 require(path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo-ai-panel.js'));
 require(path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo.js'));
 var DEMO = global.window.RmoozFreeFightDemo;
+// RMOOZ-AI-FREE-FIGHT-AI-ONLY-A: this suite tests the route-JSON guard with the deterministic loop
+// (the sanctioned "deterministic planner for tests" case). Relax the live AI-only gate so the loop
+// runs on deterministic plans here; AI-only enforcement is covered by test-ai-free-fight-ai-only-a.js.
+if (typeof DEMO._setAiOnlyGateForTest === 'function') DEMO._setAiOnlyGateForTest(false);
 
 var PAYLOAD = { brief:{ operational_brief:{ proposed_units:[], objectives:[{label:'Objective X',lat:34.9,lon:48.9}], placement_candidates:[{type:'base',lat:34.5,lon:48.5,name:'AB'}] } } };
 function mkUnits(n, side){ var u=[]; for(var i=0;i<n;i++){var lat=34.5+i*0.012,lon=48.5+i*0.012;u.push({uid:side[0]+'-'+String(i+1).padStart(3,'0'),side:side,lat:lat,lon:lon,coord:[lon,lat]});} return u; }
@@ -209,6 +213,9 @@ function realPlan(side){ var b=DEMO._buildLoopRequestBodyForTest(); return PLANN
         sendJson:function(res, status, payload){ sent = { status:status, payload:payload }; },
         scenarios:{},
     });
+    // RMOOZ-AI-EXECUTION-SINGLE-GATE-A: the health endpoint now resolves model_available
+    // asynchronously, so await the response before asserting.
+    await flush(); await flush(); await flush();
     ok('§8 bridge handled the health route', handled === true);
     ok('§8 health returns 200', sent && sent.status === 200);
     ok('§8 health ok:true', sent && sent.payload && sent.payload.ok === true);
@@ -217,13 +224,13 @@ function realPlan(side){ var b=DEMO._buildLoopRequestBodyForTest(); return PLANN
 
     // ── §9 remote provider blocked in routeHealth ────────────────────────────
     console.log('\n§9  routeHealth blocks a misconfigured remote provider');
-    var savedProv = process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER;
-    process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER = 'claude';
+    var savedProv = process.env.RMOOZ_FREE_FIGHT_PROVIDER;
+    process.env.RMOOZ_FREE_FIGHT_PROVIDER = 'claude';
     var rhRemote = PLANNER.routeHealth();
     ok('§9 remote provider is blocked (reported as ollama)', rhRemote.provider === 'ollama');
     ok('§9 provider_blocked flag true', rhRemote.provider_blocked === true);
     ok('§9 still local_only', rhRemote.local_only === true);
-    if (savedProv == null) delete process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER; else process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER = savedProv;
+    if (savedProv == null) delete process.env.RMOOZ_FREE_FIGHT_PROVIDER; else process.env.RMOOZ_FREE_FIGHT_PROVIDER = savedProv;
 
     // ── §10 client renders route status + check button + provider/model ──────
     console.log('\n§10  Client renders Planner route status + Check button + provider/model');

@@ -135,18 +135,18 @@ function mockFail(errMsg) {
 
     // §1  LLM disabled → deterministic path works
     console.log('\n§1  LLM disabled (no env var) → deterministic path works');
-    var savedEnv1 = process.env.RMOOZ_FREE_FIGHT_LLM;
-    delete process.env.RMOOZ_FREE_FIGHT_LLM;
+    var savedEnv1 = process.env.RMOOZ_ALLOW_SIM_RUN;
+    delete process.env.RMOOZ_ALLOW_SIM_RUN;
     var a1 = ENGINE.decideAction(UNITS, OBJECTIVES, OPTS);
     ok('§1 decideAction returns action', !!a1);
     ok('§1 source = deterministic_demo_ai', a1 && a1.source === 'deterministic_demo_ai');
     ok('§1 action_type valid', a1 && ['MOVE_TOWARD_OBJECTIVE','DEFEND_BASE','HOLD_POSITION','PATROL_NEAR_BASE'].includes(a1.action_type));
-    if (savedEnv1 !== undefined) process.env.RMOOZ_FREE_FIGHT_LLM = savedEnv1;
+    if (savedEnv1 !== undefined) process.env.RMOOZ_ALLOW_SIM_RUN = savedEnv1;
 
     // §2  LLM enabled but provider unavailable → fallback
     console.log('\n§2  LLM enabled but provider unavailable → fallback with reason');
-    var savedEnv2 = process.env.RMOOZ_FREE_FIGHT_LLM;
-    process.env.RMOOZ_FREE_FIGHT_LLM = '1';
+    var savedEnv2 = process.env.RMOOZ_ALLOW_SIM_RUN;
+    process.env.RMOOZ_ALLOW_SIM_RUN = '1';
     var r2 = await BRIDGE.askLlmForAction(UNITS, OBJECTIVES, OPTS, mockFail('connection refused'));
     // FREEFIGHT-LLM-DECISION-TRACE-A: unavailable path now tries ENGINE.decideAction;
     // action may be non-null (valid unit) when valid units are in scope.
@@ -154,34 +154,34 @@ function mockFail(errMsg) {
     ok('§2 source = deterministic_demo_ai', r2.source === 'deterministic_demo_ai');
     ok('§2 fallback_reason is a string', typeof r2.fallback_reason === 'string' && r2.fallback_reason.length > 0);
     ok('§2 fallback_reason contains llm_unavailable', /llm_unavailable/.test(r2.fallback_reason));
-    if (savedEnv2 !== undefined) process.env.RMOOZ_FREE_FIGHT_LLM = savedEnv2; else delete process.env.RMOOZ_FREE_FIGHT_LLM;
+    if (savedEnv2 !== undefined) process.env.RMOOZ_ALLOW_SIM_RUN = savedEnv2; else delete process.env.RMOOZ_ALLOW_SIM_RUN;
 
     // §3  LLM returns valid JSON → source='llm'
     console.log('\n§3  LLM returns valid JSON action → source=\'llm\'');
-    var savedEnv3 = process.env.RMOOZ_FREE_FIGHT_LLM;
-    process.env.RMOOZ_FREE_FIGHT_LLM = '1';
+    var savedEnv3 = process.env.RMOOZ_ALLOW_SIM_RUN;
+    process.env.RMOOZ_ALLOW_SIM_RUN = '1';
     var r3 = await BRIDGE.askLlmForAction(UNITS, OBJECTIVES, OPTS, mockOk(VALID_LLM_JSON));
     ok('§3 action returned', !!r3.action);
     ok('§3 source = llm', r3.source === 'llm');
     ok('§3 fallback_reason null', r3.fallback_reason === null);
     ok('§3 action_type = MOVE_TOWARD_OBJECTIVE', r3.action && r3.action.action_type === 'MOVE_TOWARD_OBJECTIVE');
     ok('§3 provider_used = mock-claude', r3.provider_used === 'mock-claude');
-    if (savedEnv3 !== undefined) process.env.RMOOZ_FREE_FIGHT_LLM = savedEnv3; else delete process.env.RMOOZ_FREE_FIGHT_LLM;
+    if (savedEnv3 !== undefined) process.env.RMOOZ_ALLOW_SIM_RUN = savedEnv3; else delete process.env.RMOOZ_ALLOW_SIM_RUN;
 
     // §4  LLM returns invalid JSON → fallback llm_invalid_json
     console.log('\n§4  LLM returns invalid JSON (garbage text) → fallback');
-    var savedEnv4 = process.env.RMOOZ_FREE_FIGHT_LLM;
-    process.env.RMOOZ_FREE_FIGHT_LLM = '1';
+    var savedEnv4 = process.env.RMOOZ_ALLOW_SIM_RUN;
+    process.env.RMOOZ_ALLOW_SIM_RUN = '1';
     var r4 = await BRIDGE.askLlmForAction(UNITS, OBJECTIVES, OPTS, mockOk('Sorry, I cannot help with that.'));
     ok('§4 action is null', r4.action === null);
     ok('§4 source = deterministic_demo_ai', r4.source === 'deterministic_demo_ai');
     ok('§4 fallback_reason = llm_invalid_json', r4.fallback_reason === 'llm_invalid_json');
-    if (savedEnv4 !== undefined) process.env.RMOOZ_FREE_FIGHT_LLM = savedEnv4; else delete process.env.RMOOZ_FREE_FIGHT_LLM;
+    if (savedEnv4 !== undefined) process.env.RMOOZ_ALLOW_SIM_RUN = savedEnv4; else delete process.env.RMOOZ_ALLOW_SIM_RUN;
 
     // §5  LLM returns illegal action_type → blocked/fallback
     console.log('\n§5  LLM returns illegal action_type (NUKE_CITY) → fallback');
-    var savedEnv5 = process.env.RMOOZ_FREE_FIGHT_LLM;
-    process.env.RMOOZ_FREE_FIGHT_LLM = '1';
+    var savedEnv5 = process.env.RMOOZ_ALLOW_SIM_RUN;
+    process.env.RMOOZ_ALLOW_SIM_RUN = '1';
     var illegalJson = JSON.stringify({ action_type: 'NUKE_CITY', side: 'RED', unit_uid: 'IR-F14-LLM-001', reason: 'test', risk: 'high', confidence: 'high', source: 'llm' });
     var r5 = await BRIDGE.askLlmForAction(UNITS, OBJECTIVES, OPTS, mockOk(illegalJson));
     ok('§5 source = deterministic_demo_ai', r5.source === 'deterministic_demo_ai');
@@ -191,7 +191,7 @@ function mockFail(errMsg) {
     // returns an action (not null). When units is empty, action would be null.
     ok('§5 action null OR deterministic (schema fail, valid units → deterministic fallback used)',
         r5.action === null || (r5.action && r5.source === 'deterministic_demo_ai'));
-    if (savedEnv5 !== undefined) process.env.RMOOZ_FREE_FIGHT_LLM = savedEnv5; else delete process.env.RMOOZ_FREE_FIGHT_LLM;
+    if (savedEnv5 !== undefined) process.env.RMOOZ_ALLOW_SIM_RUN = savedEnv5; else delete process.env.RMOOZ_ALLOW_SIM_RUN;
 
     // §6  LLM action passes ENGINE.validateAction before apply
     console.log('\n§6  LLM action passes ENGINE.validateAction before apply');
@@ -328,13 +328,13 @@ function mockFail(errMsg) {
 
     // §14  testLlmConnection returns ok:false when llm_disabled
     console.log('\n§14  testLlmConnection returns ok:false when llm_disabled');
-    var savedEnv14 = process.env.RMOOZ_FREE_FIGHT_LLM;
-    delete process.env.RMOOZ_FREE_FIGHT_LLM;
+    var savedEnv14 = process.env.RMOOZ_ALLOW_SIM_RUN;
+    delete process.env.RMOOZ_ALLOW_SIM_RUN;
     var r14 = await BRIDGE.testLlmConnection();
     ok('§14 ok=false when llm_disabled', r14.ok === false);
     ok('§14 reason=llm_disabled', r14.reason === 'llm_disabled');
     ok('§14 latency_ms=0', r14.latency_ms === 0);
-    if (savedEnv14 !== undefined) process.env.RMOOZ_FREE_FIGHT_LLM = savedEnv14;
+    if (savedEnv14 !== undefined) process.env.RMOOZ_ALLOW_SIM_RUN = savedEnv14;
 
     console.log('\n' + passed + ' passed, ' + failed + ' failed');
     process.exit(failed ? 1 : 0);

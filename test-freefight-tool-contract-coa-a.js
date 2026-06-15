@@ -103,7 +103,7 @@ var ALLOWED = mixed().map(function (x) { return x.uid; });
 
     // ── §8 LLM unavailable → deterministic fallback ──────────────────────────
     console.log('\n§8  LLM requested but unavailable → deterministic fallback, plan ok');
-    var planLlm = await P.planCoas(mixed(), OBJ, { active_side: 'BLUE' }, { preferSide: 'BLUE', useLlm: true }); // RMOOZ_FREE_FIGHT_LLM not set → no LLM
+    var planLlm = await P.planCoas(mixed(), OBJ, { active_side: 'BLUE' }, { preferSide: 'BLUE', useLlm: true }); // RMOOZ_ALLOW_SIM_RUN not set → no LLM
     ok('§8 plan ok', planLlm.ok === true);
     ok('§8 plan_source deterministic', planLlm.plan_source === 'deterministic_coa_fallback');
     ok('§8 tool_contract present on fallback', !!planLlm.tool_contract);
@@ -115,11 +115,11 @@ var ALLOWED = mixed().map(function (x) { return x.uid; });
 
     // ── §11 no remote provider ───────────────────────────────────────────────
     console.log('\n§11  No remote provider used');
-    var savedProv = process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER;
-    process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER = 'claude';
+    var savedProv = process.env.RMOOZ_FREE_FIGHT_PROVIDER;
+    process.env.RMOOZ_FREE_FIGHT_PROVIDER = 'claude';
     var capTool = await T.getCapabilityIntelTool({ units: mixed(), objectives: OBJ, context: { defending_side: 'BLUE' }, opts: { useLlm: true } });
     ok('§11 capability tool ok despite remote env (local fallback)', capTool.ok === true && capTool.source !== 'llm_inferred');
-    if (savedProv == null) delete process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER; else process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER = savedProv;
+    if (savedProv == null) delete process.env.RMOOZ_FREE_FIGHT_PROVIDER; else process.env.RMOOZ_FREE_FIGHT_PROVIDER = savedProv;
 
     // ── §12 scenario-generic ─────────────────────────────────────────────────
     console.log('\n§12  Scenario-generic arbitrary JSON');

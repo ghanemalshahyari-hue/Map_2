@@ -721,14 +721,41 @@ function buildCommanderAssessment(coas, obj, context, planSource) {
     return parts.join(' ');
 }
 
+// RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A: the execution_mode names HOW a unit moves for a given
+// action — the proof that the marker followed the action-specific target (recon standoff, flank
+// off-axis, delay choke, withdraw fallback, …) rather than a generic objective move. Stamped on
+// every action of every COA (LLM, diverse, and controlled/legacy) and surfaced in the event log.
+var EXECUTION_MODE = {
+    // 16 free tactical actions (lower-case)
+    recon: 'recon_standoff_target', observe: 'observe_standoff_target', probe: 'probe_limited_target',
+    screen: 'screen_axis_target', delay: 'delay_choke_target', defend: 'defend_highground_target',
+    withdraw: 'withdraw_fallback_target', flank: 'flank_offaxis_target', deceive: 'deceive_offaxis_target',
+    feint: 'feint_offaxis_target', attack: 'attack_direct_target', hold: 'hold_no_move',
+    reposition: 'reposition_lateral_target', avoid_contact: 'avoid_lateral_target',
+    support: 'support_main_effort_target', reserve: 'reserve_rear_target',
+    // legacy uppercase actions (controlled / doctrine builders)
+    MOVE_TOWARD_OBJECTIVE: 'move_toward_objective', SUPPORT_BY_FIRE: 'support_by_fire',
+    HOLD_POSITION: 'hold_no_move', SCREEN_FLANK: 'screen_flank', RECON_OBJECTIVE: 'recon_objective',
+};
+function executionModeFor(act) {
+    if (!act || act.action_type == null) return 'unknown';
+    var at = String(act.action_type);
+    return EXECUTION_MODE[at] || EXECUTION_MODE[at.toLowerCase()] || (at.toLowerCase() + '_target');
+}
+
 /**
  * enrichCoasWithNarrative(coas, obj, context, planSource) → coas (mutated in place)
- * Adds role_breakdown / rationale / expected_enemy_reaction to each COA.
+ * Adds role_breakdown / rationale / expected_enemy_reaction to each COA, and stamps an
+ * execution_mode on every action (movement-execution proof).
  */
 function enrichCoasWithNarrative(coas, obj, context, planSource) {
     var objName = (obj && (obj.name || obj.label)) || 'Objective X';
     arr(coas).forEach(function (coa) {
         if (!coa || typeof coa !== 'object') return;
+        // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A: stamp execution_mode on each action.
+        arr(coa.phases).forEach(function (ph) {
+            arr(ph && ph.actions).forEach(function (a) { if (a && !a.execution_mode) a.execution_mode = executionModeFor(a); });
+        });
         var rb = computeRoleBreakdown(coa);
         coa.role_breakdown = rb;
         coa.units_moving_count = _movingCount(rb);
@@ -977,7 +1004,11 @@ async function _buildPlanningContext(units, objectives, context, opts, depth, ti
     var terrainCtx = null;
     try {
         terrainCtx = timer.sync('tactical_terrain_context_ms', function () {
-            var _enemyRef = (situation && situation.nearest_red &&
+            // Enemy/threat reference for the terrain axis: BLUE faces the nearest RED; the RED
+            // attacker has only the objective (→ the terrain context derives the approach axis
+            // from own forces, see buildTacticalTerrainContext degeneracy guard). Using a SAME-
+            // side unit here would be wrong, so only BLUE consumes situation.nearest_red.
+            var _enemyRef = (activeSide === 'BLUE' && situation && situation.nearest_red &&
                 Number.isFinite(+situation.nearest_red.lat)) ? situation.nearest_red : obj;
             return TERRAIN_CTX.buildTacticalTerrainContext({
                 objective: obj, nearestEnemy: _enemyRef, situation: situation, intel: intel,
@@ -1148,6 +1179,10 @@ async function _assemblePlan(P, variationSeed, timer, light) {
                 } catch (_) { return { accepted: true }; }
             });
             if (llmValidation.accepted) {
+                // RMOOZ-AI-ATTACK-PLAN-AI-ONLY-A: a validated LLM plan reports llm_status 'ok'
+                // (the success path leaves it null otherwise) so the AI-only display gate can
+                // distinguish a real LLM result from a fallback cleanly.
+                llmStatus = llmStatus || 'ok';
                 var llmAssess = buildCommanderAssessment(llmCoas, obj, context, 'llm');
                 if (activeSide === 'BLUE' && blueIntent) llmAssess = appendSituationToAssessment(llmAssess, situation);
                 return _finalize('llm', llmCoas, llmValidation, false,
@@ -1367,8 +1402,10 @@ function applyCoaPlan(plan, units) {
 
     arr(coa.phases).forEach(function (ph) {
         arr(ph.actions).forEach(function (act) {
-            if (act.action_type === 'HOLD_POSITION') {
-                skipped.push({ unit_uid: act.unit_uid, reason: 'HOLD_POSITION' });
+            var _at = String(act.action_type || ''), _atl = _at.toLowerCase();
+            // HOLD_POSITION (legacy) and the free 'hold' action are no-move by design.
+            if (_at === 'HOLD_POSITION' || _atl === 'hold') {
+                skipped.push({ unit_uid: act.unit_uid, reason: _at, execution_mode: executionModeFor(act) });
                 return;
             }
             var unit = getUnitById(units, act.unit_uid);
@@ -1386,7 +1423,8 @@ function applyCoaPlan(plan, units) {
             }
             var old_pos = { lat: unit.lat, lon: unit.lon };
             var tgt = { lat: Number(act.target.lat), lon: Number(act.target.lon) };
-            var stepSize = act.action_type === 'RECON_OBJECTIVE' ? RECON_STEP_DEG : STEP_DEG;
+            // recon/observe move a shorter tactical bound (standoff), like legacy RECON_OBJECTIVE.
+            var stepSize = (_at === 'RECON_OBJECTIVE' || _atl === 'recon' || _atl === 'observe') ? RECON_STEP_DEG : STEP_DEG;
             var d = dist(old_pos, tgt);
             // Teleport guard
             if (d > MAX_STEP_DEG && stepSize > MAX_STEP_DEG) {
@@ -1403,7 +1441,7 @@ function applyCoaPlan(plan, units) {
                 unit.coord[0] = new_pos.lon; unit.coord[1] = new_pos.lat;
             }
             unit._ff_coa_moved_by_ai = true;
-            moved.push({ unit_uid: act.unit_uid, old_pos: old_pos, new_pos: new_pos, action_type: act.action_type, role: act.role });
+            moved.push({ unit_uid: act.unit_uid, old_pos: old_pos, new_pos: new_pos, action_type: act.action_type, execution_mode: executionModeFor(act), target: { lat: tgt.lat, lon: tgt.lon }, role: act.role });
         });
     });
 
@@ -1450,6 +1488,8 @@ module.exports = {
     buildBlueCoas:          buildBlueCoas,
     buildCoasForSide:       buildCoasForSide,
     buildDiverseCoas:       buildDiverseCoas,         // RMOOZ-AI-COMMANDER-FREEDOM-A
+    executionModeFor:       executionModeFor,         // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A
+    EXECUTION_MODE:         EXECUTION_MODE,           // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A
     _callLlmForTest:        _callLlm,                 // RMOOZ-AI-COMMANDER-FREEDOM-A (prompt inspection)
     routeHealth:            routeHealth,
     resolveLocalProvider:   resolveLocalProvider,

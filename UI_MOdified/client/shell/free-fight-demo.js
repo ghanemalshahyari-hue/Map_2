@@ -1753,14 +1753,18 @@
         }).then(function (plan) {
             if (_isRouteUnavailable(plan)) {
                 _routeUnavailableMsg = _routeUnavailableText(plan);
-                _coaPlan = { ok: false, _error: _routeUnavailableMsg, _route_unavailable: true };
+                _coaPlan = { ok: false, _error: _routeUnavailableMsg, _route_unavailable: true, _requestedVia: 'manual_generate' };
             } else {
-                _coaPlan = plan;
+                _coaPlan = plan || {};
+                // RMOOZ-AI-ATTACK-PLAN-AI-ONLY-A: mark this plan as the manual "Generate AI Attack
+                // Plan" output, so the render applies the strict AI-only display gate (this page
+                // presents real LLM results ONLY — never deterministic/fallback dressed as AI).
+                _coaPlan._requestedVia = 'manual_generate';
             }
             _coaLoading = false; _coaApplied = false;
             updatePanel();
         }).catch(function (e) {
-            _coaPlan = { ok: false, _error: (e && e.message) || 'fetch failed' };
+            _coaPlan = { ok: false, _error: (e && e.message) || 'fetch failed', _requestedVia: 'manual_generate' };
             _coaLoading = false; updatePanel();
         });
     }
@@ -1773,7 +1777,7 @@
         // capped step toward the (intercept) target, and below-epsilon = already in position.
         var moves = _resolveCoaMoves(coa);
         _writeMoveFrame(moves, 1);
-        _coaMovedUnits = moves.filter(function (m) { return !m.held; }).map(function (m) { return { unit: m.unit, oldPos: m.start, role: m.role }; });
+        _coaMovedUnits = _movedRecords(moves);
         _coaHeldCount = moves.filter(function (m) { return m.held; }).length;
         _coaApplied = true;
         // Trigger scenario redraw once after all units updated
@@ -1784,6 +1788,7 @@
             _maybePanToMovedCentroid();
         }
         _buildCoaEventLogEntries().forEach(function (entry) { _appendToEventLog(entry); });
+        _logExecutedMoves(moves); // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A: per-unit execution proof
         updatePanel();
     }
     function _resetCoa() {
@@ -1918,10 +1923,42 @@
                 // FREEFIGHT-BLUE-THREAT-AWARE-MOVEMENT-A: classify below-epsilon as already-in-position.
                 var dLat = round5(fin.lat) - startLat, dLon = round5(fin.lon) - startLon;
                 var held = Math.sqrt(dLat * dLat + dLon * dLon) < MIN_VISIBLE_MOVE_DEG;
-                moves.push({ unit: u, role: act.role || '', held: held, start: { lat: startLat, lon: startLon }, final: { lat: round5(fin.lat), lon: round5(fin.lon) } });
+                // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A: carry the action_type + execution_mode + the
+                // action-specific target so the EXECUTED event log / debug overlay can PROVE the
+                // marker followed the COA's action target (recon standoff / flank off-axis / …).
+                moves.push({ unit: u, uid: act.unit_uid, role: act.role || '', action_type: act.action_type || '',
+                    execution_mode: act.execution_mode || '', held: held,
+                    start: { lat: startLat, lon: startLon }, final: { lat: round5(fin.lat), lon: round5(fin.lon) },
+                    target: { lat: +act.target.lat, lon: +act.target.lon } });
             });
         });
         return moves;
+    }
+
+    // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A: one ledger line per moved unit proving
+    // raw action → applied movement → final marker position, e.g.
+    //   "EXECUTED: B-3 recon from 24.10,54.20 to 24.14,54.24 via recon_standoff_target"
+    function _ll2(o) { return (Number(o.lat)).toFixed(2) + ',' + (Number(o.lon)).toFixed(2); }
+    function _logExecutedMoves(moves) {
+        arr(moves).forEach(function (m) {
+            if (!m) return;
+            var uid = String(m.uid || (m.unit && (m.unit.id || m.unit.uid || m.unit.unit_uid)) || '?');
+            var at = String(m.action_type || '?');
+            var mode = String(m.execution_mode || 'generic_target');
+            if (m.held) {
+                _appendToEventLog('EXECUTED: ' + esc(uid) + ' ' + esc(at) + ' HELD at ' + _ll2(m.start) + ' (already in position) via ' + esc(mode));
+            } else {
+                _appendToEventLog('EXECUTED: ' + esc(uid) + ' ' + esc(at) + ' from ' + _ll2(m.start) + ' to ' + _ll2(m.final) + ' via ' + esc(mode));
+            }
+        });
+    }
+    // Build the enriched moved-unit records (carry action_type / execution_mode / final / target
+    // for the debug overlay). held units are excluded from the moved set (counted separately).
+    function _movedRecords(moves) {
+        return arr(moves).filter(function (m) { return !m.held; }).map(function (m) {
+            return { unit: m.unit, uid: m.uid, oldPos: m.start, finalPos: m.final, role: m.role,
+                action_type: m.action_type, execution_mode: m.execution_mode, target: m.target };
+        });
     }
 
     function _writeMoveFrame(moves, t) {
@@ -1944,10 +1981,11 @@
             _writeMoveFrame(moves, 1);
             // Only count VISIBLY-moved units; held units (already in position) excluded from
             // the moved set + trails, but tracked for the "already in position" count.
-            _coaMovedUnits = moves.filter(function (m) { return !m.held; }).map(function (m) { return { unit: m.unit, oldPos: m.start, role: m.role }; });
+            _coaMovedUnits = _movedRecords(moves);
             _coaHeldCount = moves.filter(function (m) { return m.held; }).length;
             _coaApplied = true;
             if (mapReady()) { _triggerScenarioRedraw(); syncMarkers(); _maybePanToMovedCentroid(); }
+            _logExecutedMoves(moves); // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A: per-unit execution proof
             if (done) done(_coaMovedUnits);
         }
         if (!moves.length) { _coaMovedUnits = []; _coaHeldCount = 0; _coaApplied = true; if (done) done([]); return; }
@@ -2032,6 +2070,109 @@
         if (!parts.length) return '';
         return '<div data-ff-coa="timing" style="margin-bottom:6px;font-size:9.5px;color:#8fa5b8;line-height:1.5;border:1px solid #20364e;border-radius:4px;padding:4px 7px;background:#0a1420;">' +
             '<span style="color:#7a9ab8;font-weight:600;">⏱ Stage timings — </span>' + parts.join(' · ') + '</div>';
+    }
+    // RMOOZ-AI-ATTACK-PLAN-AI-ONLY-A: is this a REAL LLM result? The manual "Generate AI Attack
+    // Plan" page renders cards/numbers ONLY when this is true. Strict gate per the spec.
+    function _isRealLlmPlan(p) {
+        if (!p || p.ok !== true) return false;
+        if (p.llm_called !== true) return false;
+        if (p.plan_source !== 'llm') return false;
+        var st = String(p.llm_status || '').toLowerCase();
+        if (st !== 'ok' && st !== 'success') return false;   // not success/ok → reject
+        if (p.fallback_reason) return false;                  // any fallback → reject
+        if (!p.provider_used || !p.model_used) return false;  // provider/model missing → reject
+        if (p.ai_depth === 'fast') return false;              // fast skips the LLM → reject
+        return true;
+    }
+    // Human reason WHY a manual plan is not a real AI result (for the gate message).
+    function _aiOnlyReason(p) {
+        if (!p) return 'no plan';
+        if (p.ai_depth === 'fast') return 'fast mode (LLM skipped)';
+        if (p.fallback_reason) return String(p.fallback_reason);
+        var st = String(p.llm_status || '').toLowerCase();
+        if (/timeout/.test(st)) return 'LLM timeout';
+        if (/unavailable|remote_blocked|error|invalid/.test(st)) return 'LLM ' + st;
+        if (p.llm_called !== true) return 'LLM not used (LLM disabled)';
+        if (p.plan_source && p.plan_source !== 'llm') return 'deterministic fallback (' + p.plan_source + ')';
+        if (!p.provider_used || !p.model_used) return 'LLM provider/model missing (LLM did not run)';
+        return 'deterministic fallback';
+    }
+    // The ONLY thing the manual page shows when the result is not real AI: the honest message
+    // + the diagnostic fields (acceptance #5). No cards, no scores, no fallback dressed as AI.
+    function _aiOnlyGateHtml(p) {
+        function row(k, v) { return '<div><span style="color:#7a9ab8;">' + esc(k) + ':</span> <span style="color:#cdd8e4;">' + esc(v == null || v === '' ? '—' : String(v)) + '</span></div>'; }
+        var h = '<div data-ff-coa="ai-only-gate" style="color:#f0c060;font-size:11px;padding:8px 10px;border:1px solid #6a5520;border-radius:5px;background:#1c1708;line-height:1.55;">';
+        h += '<div style="font-weight:700;color:#f4d57a;">No AI result generated.</div>';
+        h += '<div>LLM was not used.</div>';
+        h += '<div>Reason: ' + esc(_aiOnlyReason(p)) + '</div>';
+        h += '</div>';
+        h += '<div data-ff-coa="ai-only-diag" style="margin-top:6px;font-size:9.5px;line-height:1.5;border:1px solid #20364e;border-radius:4px;padding:5px 8px;background:#0a1420;color:#8fa5b8;">';
+        h += row('plan_source', p.plan_source);
+        h += row('llm_called', String(!!p.llm_called));
+        h += row('llm_status', p.llm_status);
+        h += row('fallback_reason', p.fallback_reason);
+        h += row('provider_used', p.provider_used);
+        h += row('model_used', p.model_used);
+        h += row('ai_depth', p.ai_depth);
+        h += row('commander_mode', p.commander_mode);
+        h += '</div>';
+        return h;
+    }
+    // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A: state plainly whether the LLM controlled this plan.
+    //  - ai_depth=fast (LLM skipped)          → "Fast tactical planner — no LLM used."
+    //  - plan_source not 'llm' (deterministic) → "LLM not used — deterministic tactical planner."
+    //  - plan_source 'llm'                     → "LLM-planned."
+    function _planSourceNoteHtml(plan) {
+        if (!plan || !plan.ok) return '';
+        var msg, color, bdr, bg;
+        if (plan.ai_depth === 'fast') {
+            msg = 'Fast tactical planner, no LLM.'; color = '#7fd0c0'; bdr = '#205a50'; bg = '#0a1f1a';
+        } else if (plan.plan_source !== 'llm') {
+            msg = 'LLM not used — deterministic tactical planner' + (plan.llm_called ? ' (LLM tried, fell back).' : '.');
+            color = '#cdb86a'; bdr = '#5a4f20'; bg = '#1a1708';
+        } else {
+            msg = 'LLM-planned (validated, review-only).'; color = '#7fd6a0'; bdr = '#205a40'; bg = '#0a1f14';
+        }
+        return '<div data-ff-coa="source-note" style="margin-bottom:5px;font-size:10px;color:' + color + ';padding:4px 7px;border:1px solid ' + bdr + ';border-radius:4px;background:' + bg + ';">' + esc(msg) + '</div>';
+    }
+    // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A: per-COA movement-execution debug overlay. Surfaces the
+    // selected COA's source/mode/depth/seed + lead action's target AND the actual final marker
+    // position after animation — the proof that the marker followed the action-specific target.
+    function _coaDebugHtml() {
+        var p = _coaPlan;
+        if (!p || !p.ok || !Array.isArray(p.coas) || !p.coas.length) return '';
+        var idx = (_coaSelectedIdx >= 0 && _coaSelectedIdx < p.coas.length) ? _coaSelectedIdx : 0;
+        var coa = p.coas[idx] || {};
+        var lead = (coa.phases && coa.phases[0] && coa.phases[0].actions && coa.phases[0].actions[0]) || {};
+        var tgt = lead.target ? (Number(lead.target.lat).toFixed(3) + ',' + Number(lead.target.lon).toFixed(3)) : '—';
+        var finalStr = '(apply to see)';
+        if (_coaApplied) {
+            var rec = arr(_coaMovedUnits).filter(function (m) { return String(m.uid) === String(lead.unit_uid); })[0];
+            if (rec && rec.finalPos) finalStr = Number(rec.finalPos.lat).toFixed(3) + ',' + Number(rec.finalPos.lon).toFixed(3);
+            else {
+                var fu = _findRealUnit(lead.unit_uid);
+                if (fu && fu.unit && fu.unit.lat != null) finalStr = Number(fu.unit.lat).toFixed(3) + ',' + Number(fu.unit.lon).toFixed(3);
+                else finalStr = '(held / no move)';
+            }
+        }
+        function row(k, v, c) { return '<div><span style="color:#7a9ab8;">' + esc(k) + ':</span> <span style="color:' + (c || '#cdd8e4') + ';">' + esc(String(v)) + '</span></div>'; }
+        var llmColor = p.llm_called ? (p.plan_source === 'llm' ? '#7fd6a0' : '#e0a040') : '#9ab0c0';
+        var h = '<details data-ff-coa="debug" style="margin-bottom:6px;"><summary style="cursor:pointer;font-size:10px;color:#9ec2ec;font-weight:600;">🔬 Movement execution debug</summary>';
+        h += '<div style="font-size:9.5px;line-height:1.5;border:1px solid #20364e;border-radius:4px;padding:5px 8px;background:#0a1420;margin-top:3px;">';
+        h += row('plan_source', p.plan_source || '—', p.plan_source === 'llm' ? '#7fd6a0' : '#9ab0c0');
+        h += row('llm_called', String(!!p.llm_called), llmColor);
+        h += row('llm_status', p.llm_status || '—');
+        h += row('fallback_reason', p.fallback_reason || '—');
+        h += row('commander_mode', p.commander_mode || '—', '#d8ccff');
+        h += row('ai_depth', p.ai_depth || '—');
+        h += row('variation_seed', (p.variation_seed != null ? p.variation_seed : '—'));
+        h += row('selected family', coa.coa_family || coa.title || '—', '#d8ccff');
+        h += row('lead action', (lead.action_type || '—') + ' · ' + (lead.execution_mode || '—'), '#bfe89a');
+        h += row('lead unit', lead.unit_uid || '—');
+        h += row('target coord', tgt);
+        h += row('final coord (after anim)', finalStr, '#cfeaff');
+        h += '</div></details>';
+        return h;
     }
     // RMOOZ-AI-COMMANDER-FREEDOM-B + RMOOZ-AI-COA-PERFORMANCE-A: produce 5 COAs for seeds 0–4
     // (High Variation) and show whether the lead family / action / unit changed. ONE request —
@@ -2339,6 +2480,15 @@
             h += '<div style="color:#e0a93a;font-size:11px;padding:4px;">Error: ' + esc(_coaPlan._error || _coaPlan.reason || 'unknown error') + '</div>';
             return h;
         }
+        // RMOOZ-AI-ATTACK-PLAN-AI-ONLY-A: the manual "Generate AI Attack Plan" page presents ONLY
+        // real LLM results. If this plan came from that button and is not a real LLM plan (LLM off
+        // / timeout / unavailable / fast mode / deterministic fallback / provider missing), render
+        // NOTHING but the honest message + diagnostics — no cards, no score numbers, no stale
+        // values, no fallback dressed as AI. (The loop / Generate-5 are separate flows, untouched.)
+        if (_coaPlan._requestedVia === 'manual_generate' && !_isRealLlmPlan(_coaPlan)) {
+            h += _aiOnlyGateHtml(_coaPlan);
+            return h;
+        }
         var coas = _coaPlan.coas || [];
         // Plan source banner
         var srcColor = _coaPlan.plan_source === 'llm' ? '#90d090' : '#9ab0c0';
@@ -2351,8 +2501,12 @@
         if (_coaPlan.fallback_message) {
             h += '<div data-ff-coa="fallback-msg" style="margin-bottom:5px;font-size:10px;color:#e0c060;padding:4px 7px;border:1px solid #6a5a20;border-radius:4px;background:#1f1a08;">⏱ ' + esc(_coaPlan.fallback_message) + '</div>';
         }
+        // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A: state plainly whether the LLM actually ran.
+        h += _planSourceNoteHtml(_coaPlan);
         // RMOOZ-AI-COA-PERFORMANCE-A: stage timings (AI total / LLM / capability / terrain / COA build).
         h += _coaTimingHtml(_coaPlan.debug_timing);
+        // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A: per-COA movement-execution debug overlay.
+        h += _coaDebugHtml();
         // FREEFIGHT-COA-COMMANDER-NARRATIVE-A: Commander AI Assessment banner
         if (_coaPlan.commander_assessment || _coaPlan.recommended_plan_id) {
             h += '<div data-ff-coa="assessment" style="margin-bottom:6px;padding:6px 9px;border:1px solid #2e5d7d;border-radius:5px;background:#0a1622;">';
@@ -2857,6 +3011,16 @@
         _buildAiRequestBodyForTest: function ()           { return _buildAiRequestBody(); },
         _fmtMsForTest:             function (ms)          { return _fmtMs(ms); },
         _coaTimingHtmlForTest:     function (t)           { return _coaTimingHtml(t); },
+        // RMOOZ-AI-ATTACK-PLAN-AI-ONLY-A test seams
+        _isRealLlmPlanForTest:     function (p)           { return _isRealLlmPlan(p); },
+        _renderCoaPlanHtmlForTest: function (p)           { _coaPlan = p; _coaLoading = false; _coaApplied = false; return renderCoaPlanHtml(); },
+        _generateCoaPlanForTest:   function ()            { return _generateCoaPlan(); },
+        _getCoaPlanForTest:        function ()            { return _coaPlan; },
+        _setCoaPlanForTest:        function (p)           { _coaPlan = p; },
+        // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A test seams
+        _planSourceNoteHtmlForTest: function (p)          { return _planSourceNoteHtml(p); },
+        _coaDebugHtmlForTest:      function (p, applied, moved) { _coaPlan = p; if (applied != null) _coaApplied = applied; if (moved) _coaMovedUnits = moved; return _coaDebugHtml(); },
+        _logExecutedMovesForTest:  function (moves)       { return _logExecutedMoves(moves); },
         // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A test seams
         _getLastIntelForTest:        function ()          { return _lastIntel; },
         _getCoaFamilyHistoryForTest: function ()          { return _coaFamilyHistory.slice(); },

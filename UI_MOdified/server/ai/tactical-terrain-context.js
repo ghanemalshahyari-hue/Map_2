@@ -86,23 +86,35 @@ function buildTacticalTerrainContext(opts) {
     provenance.terrain_class = terrainClass === 'unknown' ? 'absent' : 'inferred_text_hint';
     var routeEase = TERRAIN_EASE[terrainClass] || TERRAIN_EASE.unknown;
 
+    // ── approach AXIS reference (corridor / choke / vantage offset) ──
+    // Normally the enemy→objective axis. But when there is NO distinct enemy reference — e.g.
+    // an attacker whose only reference IS the objective (nearestEnemy ≈ objective) — that axis
+    // is degenerate (zero-length) and the corridor/choke/high-ground all COLLAPSE onto the
+    // objective. That made recon/delay/screen/defend indistinguishable from a direct attack
+    // (every "toward" action targeted the objective). Fall back to the own-force approach axis
+    // (ownCenter→objective) so the corridor/choke/vantage are offset from the objective and the
+    // actions move on genuinely different paths. RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A.
+    var axisDegenerate = !enemy || (obj && dist(enemy, obj) < 0.02);
+    var axisFrom = !axisDegenerate ? enemy
+        : ((ownCenter && obj && dist(ownCenter, obj) >= 0.02) ? ownCenter : null);
+
     // ── movement corridor (inferred axis; no road network present) ──
-    var corridor = (enemy && obj) ? { from: enemy, to: obj } : null;
-    provenance.corridor = corridor ? 'inferred_axis' : 'absent';
+    var corridor = (axisFrom && obj) ? { from: axisFrom, to: obj } : null;
+    provenance.corridor = corridor ? (axisDegenerate ? 'inferred_approach_axis' : 'inferred_axis') : 'absent';
 
     // ── choke point on the corridor (inferred; DEM-refined to a relief pinch if available) ──
     var choke = null;
     if (corridor) {
-        choke = lerp(enemy, obj, 0.4);
-        provenance.choke = 'inferred_corridor';
+        choke = lerp(axisFrom, obj, 0.4);
+        provenance.choke = axisDegenerate ? 'inferred_approach_corridor' : 'inferred_corridor';
         if (elevationAt) {
             // Pick the corridor sample with the steepest local relief (a real pinch point).
             var best = null, bestRelief = -1, samples = [0.3, 0.4, 0.5, 0.6];
             for (var i = 0; i < samples.length; i++) {
-                var p = lerp(enemy, obj, samples[i]);
+                var p = lerp(axisFrom, obj, samples[i]);
                 var e0 = elevationAt(p.lat, p.lon);
                 if (e0 == null) continue;
-                var perp = { x: -(obj.lat - enemy.lat), y: (obj.lon - enemy.lon) };
+                var perp = { x: -(obj.lat - axisFrom.lat), y: (obj.lon - axisFrom.lon) };
                 var Lp = Math.hypot(perp.x, perp.y) || 1e-9; perp = { x: perp.x / Lp, y: perp.y / Lp };
                 var eL = elevationAt(p.lat + perp.y * 0.02, p.lon + perp.x * 0.02);
                 var eR = elevationAt(p.lat - perp.y * 0.02, p.lon - perp.x * 0.02);
@@ -115,10 +127,10 @@ function buildTacticalTerrainContext(opts) {
 
     // ── high ground / observation point (real DEM peak when covered; else inferred vantage) ──
     var highGround = null;
-    if (obj && enemy) {
+    if (obj && axisFrom) {
         // Candidate overwatch positions: offset to the friendly flank of the corridor, at the
         // defended-ring standoff from the objective, on the own-force side.
-        var ax = unitVec(enemy, obj);
+        var ax = unitVec(axisFrom, obj);
         var perp2 = { x: -ax.y, y: ax.x };
         if (ownCenter) { var toOwn = unitVec(obj, ownCenter); if ((perp2.x * toOwn.x + perp2.y * toOwn.y) < 0) perp2 = { x: ax.y, y: -ax.x }; }
         var standoff = rings.defended || 0.2;

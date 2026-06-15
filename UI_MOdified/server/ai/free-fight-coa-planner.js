@@ -29,6 +29,7 @@ const aiProvider = require('./ai-provider');
 const TRIGGERS   = require('./free-fight-situation-triggers'); // FREEFIGHT-BLUE-WARNING-ROE-A
 const INTEL      = require('./scenario-intel');                // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A
 const BRIEF      = require('./commander-brief');                // RMOZ-COMMANDER-BRIEF-COALITION-A
+const ANALYST    = require('./free-fight-llm-capability-analyst'); // FREEFIGHT-LLM-CAPABILITY-ANALYST-A
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 var STEP_DEG       = 0.05;   // ≈ 5-6 km per tick
@@ -289,11 +290,26 @@ function buildDeterministicCoas(redUnits, obj) {
  * HOLD_POSITION); teleport guard / validator / apply math stay unchanged.
  * FREEFIGHT-BLUE-THREAT-AWARE-MOVEMENT-A.
  */
-function buildBlueCoas(blueUnits, obj, situation) {
+function buildBlueCoas(blueUnits, obj, situation, capContext) {
     var units = arr(blueUnits).filter(unitHasCoord);
     var total = units.length;
+    // FREEFIGHT-LLM-CAPABILITY-ANALYST-A: order BLUE units by capability-fit for the
+    // threat domain FIRST (so a fighter/interceptor leads an air-threat intercept, a
+    // frigate leads a naval-threat screen, etc.), then by proximity. With uniform-
+    // capability forces the fit term is flat and this reduces to a pure distance sort.
+    var byUid = (capContext && capContext.profiles_by_uid) || {};
+    var fitKey = (capContext && capContext.mission_score_key) || null;
+    function uidOf(u) { return u.id || u.uid || u.unit_uid; }
+    function fitScore(u) {
+        if (!fitKey) return 0;
+        var p = byUid[uidOf(u)];
+        var sc = p && p.capability_scores && Number(p.capability_scores[fitKey]);
+        return Number.isFinite(sc) ? sc : 0;
+    }
     if (obj && finiteLL(obj)) {
         units = units.slice().sort(function (a, b) {
+            var fa = fitScore(a), fb = fitScore(b);
+            if (fb !== fa) return fb - fa; // higher capability-fit leads
             return dist({ lat: a.lat, lon: a.lon }, obj) - dist({ lat: b.lat, lon: b.lon }, obj);
         });
     }
@@ -408,9 +424,9 @@ function buildBlueCoas(blueUnits, obj, situation) {
  * BLUE (defense) deterministic builder based on the active side. The situation
  * (FREEFIGHT-BLUE-THREAT-AWARE-MOVEMENT-A) lets BLUE intercept the RED threat axis.
  */
-function buildCoasForSide(units, obj, side, situation) {
+function buildCoasForSide(units, obj, side, situation, capContext) {
     return String(side || 'RED').toUpperCase() === 'BLUE'
-        ? buildBlueCoas(units, obj, situation)
+        ? buildBlueCoas(units, obj, situation, capContext)
         : buildDeterministicCoas(units, obj);
 }
 
@@ -720,6 +736,22 @@ async function planCoas(units, objectives, context, opts) {
             Object.assign({}, context, { defending_side: 'BLUE', active_side: activeSide }));
     } catch (_) { intel = null; }
 
+    // FREEFIGHT-LLM-CAPABILITY-ANALYST-A: enrich the OOB with capability profiles
+    // (LLM intelligence-analyst when local LLM enabled, heuristic otherwise) BEFORE
+    // COA selection, so the commander picks the right asset for the threat domain.
+    var capProfiles = [], capSummary = null, capByUid = {};
+    try {
+        capProfiles = await ANALYST.analyzeUnitCapabilities(units, Object.assign({}, context, { defending_side: 'BLUE', active_side: activeSide }), opts);
+        capSummary = ANALYST.buildCapabilitySummary(capProfiles);
+        capProfiles.forEach(function (p) { if (p && p.unit_uid) capByUid[p.unit_uid] = p; });
+    } catch (_) { capProfiles = []; capSummary = null; capByUid = {}; }
+    // Mission key for the active threat's domain (drives capability-fit unit ordering).
+    var threatProfile = situation && situation.nearest_red_uid ? capByUid[situation.nearest_red_uid] : null;
+    var threatDomain = (threatProfile && threatProfile.domain) || 'ground';
+    var capContext = { profiles_by_uid: capByUid, threat_domain: threatDomain,
+        mission_score_key: threatDomain === 'air' || threatDomain === 'air_defense' ? 'intercept'
+            : (threatDomain === 'naval' ? 'naval_screen' : 'ground_hold') };
+
     var llmCalled = false, llmStatus = null, fallbackReason = null, providerUsed = null, modelUsed = null;
 
     if (opts.useLlm && process.env.RMOOZ_FREE_FIGHT_LLM === '1') {
@@ -738,6 +770,8 @@ async function planCoas(units, objectives, context, opts) {
                 situation_state: situation,
                 blue_reaction_intent: blueIntent,
                 intel: intel,
+                capability_summary: capSummary,
+                unit_capability_profiles: capProfiles.slice(0, 80),
                 commander_assessment: llmAssess,
                 recommended_plan_id: _recommendedPlanId(llmCoas),
                 llm_called: true,
@@ -750,8 +784,8 @@ async function planCoas(units, objectives, context, opts) {
         fallbackReason = llmResult.fallback_reason || 'llm_failed';
     }
 
-    // Deterministic fallback — side-aware (RED attack vs BLUE defense), threat-aware for BLUE
-    var coas = enrichCoasWithNarrative(buildCoasForSide(allUnits, obj, activeSide, situation), obj, context, 'deterministic_coa_fallback');
+    // Deterministic fallback — side-aware (RED attack vs BLUE defense), threat-aware + capability-driven for BLUE
+    var coas = enrichCoasWithNarrative(buildCoasForSide(allUnits, obj, activeSide, situation, capContext), obj, context, 'deterministic_coa_fallback');
     var assess = buildCommanderAssessment(coas, obj, context, 'deterministic_coa_fallback');
     if (activeSide === 'BLUE' && blueIntent) { applyBlueReaction(coas, situation, blueIntent); assess = appendSituationToAssessment(assess, situation); }
     return _attachCommanderBrief({
@@ -762,6 +796,8 @@ async function planCoas(units, objectives, context, opts) {
         situation_state: situation,
         blue_reaction_intent: blueIntent,
         intel: intel,
+        capability_summary: capSummary,
+        unit_capability_profiles: capProfiles.slice(0, 80),
         commander_assessment: assess,
         recommended_plan_id: _recommendedPlanId(coas),
         llm_called: llmCalled,

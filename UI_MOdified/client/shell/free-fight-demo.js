@@ -63,6 +63,8 @@
     // RMOZ-COMMANDER-BRIEF-COALITION-A: last commander brief (prose + coalition posture)
     var _lastBrief = null;
     var _briefExpanded = false;        // operator toggles the full copyable brief
+    // FREEFIGHT-LLM-CAPABILITY-ANALYST-A: last capability summary (best assets per mission)
+    var _lastCapability = null;
     // FREEFIGHT-COA-ROUTE-JSON-GUARD-A: planner route health probe result
     var _routeHealth = null;           // { ok, route, method, planner, local_only, provider, model, llm_enabled } | { ok:false, reason }
     var _routeUnavailableMsg = null;   // set when a plan fetch returns non-JSON / 405
@@ -1096,6 +1098,36 @@
         return h;
     }
 
+    // FREEFIGHT-LLM-CAPABILITY-ANALYST-A: compact "Capability Intelligence" block —
+    // best asset per mission for the acting side + the selection logic + source.
+    function _capabilityIntelHtml(cap, side, situation) {
+        if (!cap) return '';
+        var best = (cap.best_by_side && cap.best_by_side[side]) || cap.best || {};
+        function line(lbl, b) {
+            if (!b || !b.unit_uid) return '';
+            return '<div><span style="color:#8fa5b8;">' + lbl + ':</span> <span style="color:#cfeaff;">' + esc(b.unit_uid) + ' ' + esc(b.class || '') + '</span></div>';
+        }
+        var rows = line('Best air intercept', best.air_intercept) + line('Best sensor', best.sensor) +
+                   line('Best air defense', best.air_defense) + line('Best naval screen', best.naval_screen) +
+                   line('Best ground hold', best.ground_hold);
+        if (!rows) return '';
+        // Selection logic from the situation/threat.
+        var logic = '';
+        if (situation && situation.alert_state && situation.alert_state !== 'WATCH') {
+            var dom = situation.red_inside_engagement_zone || situation.red_inside_blue_defended_zone || situation.red_inside_blue_warning_zone;
+            logic = 'asset chosen for the active threat (' + esc(situation.alert_state) + ' / ' + esc(situation.roe_state || '') + ')';
+        } else {
+            logic = 'no active threat — assets held in capability-matched roles';
+        }
+        var src = cap.review_required === false ? 'verified' : 'llm_inferred / heuristic — review required';
+        var h = '<div data-ff-cap="block" style="margin-top:5px;border:1px solid #2a4d4d;border-radius:4px;padding:6px 8px;background:#081818;font-size:10px;line-height:1.45;">';
+        h += '<div style="font-weight:700;color:#7fe0d0;margin-bottom:2px;">Capability Intelligence <span style="color:#6a8fa8;font-weight:400;font-size:9px;">(' + esc(src) + ')</span></div>';
+        h += rows;
+        h += '<div><span style="color:#8fa5b8;">Selection logic:</span> <span style="color:#cdd8e4;">' + esc(logic) + '</span></div>';
+        h += '</div>';
+        return h;
+    }
+
     // RMOZ-COMMANDER-BRIEF-COALITION-A: coalition posture line + expandable, copyable
     // "AI Commander Decision" prose brief (review-only).
     function _commanderBriefHtml(brief) {
@@ -1179,6 +1211,8 @@
             if (rec.side === 'BLUE') h += _blueWarningRoeHtml(rec.situation, rec.warning_actions);
             // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A: Intel Snapshot block
             if (rec.intel) h += _intelSnapshotHtml(rec.intel);
+            // FREEFIGHT-LLM-CAPABILITY-ANALYST-A: Capability Intelligence block
+            if (rec.capability) h += _capabilityIntelHtml(rec.capability, rec.side, rec.situation);
             // RMOZ-COMMANDER-BRIEF-COALITION-A: coalition + copyable commander brief
             if (rec.brief) h += _commanderBriefHtml(rec.brief);
             h += '</div>';
@@ -1295,6 +1329,19 @@
         if (intel.terrain_summary) {
             _appendToEventLog('TERRAIN: ' + esc(intel.terrain_summary) + '.');
         }
+    }
+    // FREEFIGHT-LLM-CAPABILITY-ANALYST-A: narrate per-mission asset selection to the
+    // ledger (which unit is the air-intercept / sensor / naval asset, and what is held).
+    function _appendCapabilityEventLog(cap, side, situation) {
+        if (!cap) return;
+        var best = (cap.best_by_side && cap.best_by_side[side]) || cap.best || {};
+        var srcTag = cap.review_required === false ? 'verified' : 'llm_inferred';
+        var airThreat = situation && (situation.red_inside_engagement_zone || situation.red_inside_blue_defended_zone || situation.red_inside_blue_warning_zone);
+        if (best.air_intercept) _appendToEventLog('CAPABILITY: ' + best.air_intercept.unit_uid + ' ' + (best.air_intercept.class || '') + ' selected as air-intercept asset (' + srcTag + ').');
+        if (best.sensor) _appendToEventLog('CAPABILITY: ' + best.sensor.unit_uid + ' radar/sensor kept in sensor support role.');
+        if (best.air_defense) _appendToEventLog('CAPABILITY: ' + best.air_defense.unit_uid + ' ' + (best.air_defense.class || '') + ' held in air-defense posture.');
+        if (best.naval_screen) _appendToEventLog('CAPABILITY: ' + best.naval_screen.unit_uid + ' ' + (best.naval_screen.class || '') + ' available for naval screen.');
+        if (airThreat && best.ground_hold) _appendToEventLog('CAPABILITY: ground reserve ' + best.ground_hold.unit_uid + ' held — not suitable for air intercept.');
     }
     function _buildAiRequestBody() {
         var w = W();
@@ -1934,6 +1981,8 @@
                 intel: plan.intel || null,
                 // RMOZ-COMMANDER-BRIEF-COALITION-A: prose commander brief + coalition posture
                 brief: plan.commander_brief || null,
+                // FREEFIGHT-LLM-CAPABILITY-ANALYST-A: capability summary (best assets per mission)
+                capability: plan.capability_summary || null,
             };
             // Record the recommended COA family so the next turn varies (avoid repeats).
             if (plan.intel && plan.intel.recommended_coa_family) {
@@ -1941,6 +1990,7 @@
                 if (_coaFamilyHistory.length > 12) _coaFamilyHistory = _coaFamilyHistory.slice(-12);
             }
             _lastIntel = plan.intel || _lastIntel;
+            _lastCapability = plan.capability_summary || _lastCapability;
             _lastBrief = plan.commander_brief || _lastBrief;
             _lastCommanderDecision = record;
             _turnLog.push(record);
@@ -1960,6 +2010,8 @@
             }
             // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A: intel narration (INTEL / ROE / CAPABILITY / TERRAIN).
             if (sideForTurn === 'BLUE') _appendIntelEventLog(plan.intel);
+            // FREEFIGHT-LLM-CAPABILITY-ANALYST-A: per-mission capability asset narration.
+            _appendCapabilityEventLog(plan.capability_summary, sideForTurn, plan.situation_state);
             // RMOZ-COMMANDER-BRIEF-COALITION-A: coalition posture narration (COALITION ...).
             if (plan.commander_brief && plan.commander_brief.coalition_posture) {
                 arr(plan.commander_brief.coalition_posture.event_log_entries).forEach(function (e) { _appendToEventLog(e); });
@@ -2049,7 +2101,7 @@
         });
         _loopAllUnitsForReset = [];
         _turnNumber = 0; _activeSide = 'RED';
-        _turnLog = []; _lastCommanderDecision = null; _coaFamilyHistory = []; _lastIntel = null; _lastBrief = null; _briefExpanded = false;
+        _turnLog = []; _lastCommanderDecision = null; _coaFamilyHistory = []; _lastIntel = null; _lastBrief = null; _briefExpanded = false; _lastCapability = null;
         _coaMovedUnits = []; _coaApplied = false; _coaPlan = null;
         if (mapReady()) { _triggerScenarioRedraw(); syncMarkers(); }
         if (_cmdrPanel && _cmdrPanel.parentNode) { _cmdrPanel.parentNode.removeChild(_cmdrPanel); _cmdrPanel = null; }
@@ -2473,7 +2525,7 @@
         _clearTimeoutSafe(_pendingTimer); _pendingTimer = null;
         if (_moveAnimTimer) { _clearIntervalSafe(_moveAnimTimer); _moveAnimTimer = null; }
         _loopRunning = false; _loopPaused = false; _turnNumber = 0; _activeSide = 'RED';
-        _turnLog = []; _lastCommanderDecision = null; _loopAllUnitsForReset = []; _coaFamilyHistory = []; _lastIntel = null; _lastBrief = null; _briefExpanded = false;
+        _turnLog = []; _lastCommanderDecision = null; _loopAllUnitsForReset = []; _coaFamilyHistory = []; _lastIntel = null; _lastBrief = null; _briefExpanded = false; _lastCapability = null;
         _red = []; _blue = []; _allGroups = []; _objective = null; _objectiveSource = null; _plan = null; _terrain = { available: false };
         _planSource = 'deterministic';
         _llmStatus = { state: 'idle', message: '', validation_result: 'not_requested', fallback_reason: null };
@@ -2574,6 +2626,8 @@
         _setBriefExpandedForTest:    function (v)         { _briefExpanded = !!v; },
         // FREEFIGHT-ACTION-REACTION-MAP-OVERLAY-A test seam
         _syncMarkersForTest:         function ()          { if (mapReady()) syncMarkers(); },
+        // FREEFIGHT-LLM-CAPABILITY-ANALYST-A test seam
+        _getLastCapabilityForTest:   function ()          { return _lastCapability; },
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozFreeFightDemo = API;

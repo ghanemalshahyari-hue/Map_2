@@ -60,6 +60,9 @@
     // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A: recent COA families (for variation) + last intel snapshot
     var _coaFamilyHistory = [];        // newest-last list of recommended_coa_family strings
     var _lastIntel = null;             // last plan.intel snapshot (for the Intel Snapshot UI block)
+    // RMOZ-COMMANDER-BRIEF-COALITION-A: last commander brief (prose + coalition posture)
+    var _lastBrief = null;
+    var _briefExpanded = false;        // operator toggles the full copyable brief
     // FREEFIGHT-COA-ROUTE-JSON-GUARD-A: planner route health probe result
     var _routeHealth = null;           // { ok, route, method, planner, local_only, provider, model, llm_enabled } | { ok:false, reason }
     var _routeUnavailableMsg = null;   // set when a plan fetch returns non-JSON / 405
@@ -995,6 +998,31 @@
         return h;
     }
 
+    // RMOZ-COMMANDER-BRIEF-COALITION-A: coalition posture line + expandable, copyable
+    // "AI Commander Decision" prose brief (review-only).
+    function _commanderBriefHtml(brief) {
+        if (!brief) return '';
+        var cp = brief.coalition_posture || {};
+        var h = '<div data-ff-brief="block" style="margin-top:5px;border:1px solid #2a4d6a;border-radius:4px;padding:6px 8px;background:#0a1622;font-size:10px;line-height:1.45;">';
+        h += '<div style="font-weight:700;color:#9ec2ec;margin-bottom:2px;">Commander Brief <span style="color:#6a8fa8;font-weight:400;font-size:9px;">(demo / review-only)</span></div>';
+        if (cp.coalition) {
+            var coalColor = cp.coalition === 'none' ? '#8fa5b8' : '#7fd6a0';
+            h += '<div><span style="color:#8fa5b8;">Coalition:</span> <span style="color:' + coalColor + ';font-weight:700;">' + esc(cp.coalition) + '</span>' +
+                 (cp.lead_nation ? ' <span style="color:#6a8fa8;">(lead: ' + esc(cp.lead_nation) + ')</span>' : '') + '</div>';
+            if (cp.text) h += '<div style="color:#cdd8e4;">' + esc(cp.text) + '</div>';
+        }
+        h += '<div style="margin-top:3px;"><button data-act="brief-toggle" style="font:inherit;cursor:pointer;border:1px solid #4a5f75;background:#101b27;color:#8fb8e0;border-radius:4px;padding:2px 7px;font-size:9px;">' +
+             (_briefExpanded ? '▾ Hide full brief' : '▸ Show full brief (copyable)') + '</button>';
+        if (_briefExpanded) h += ' <button data-act="brief-copy" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:4px;padding:2px 7px;font-size:9px;">⧉ Copy</button>';
+        h += '</div>';
+        if (_briefExpanded) {
+            h += '<textarea data-ff-brief="copy" readonly style="width:100%;box-sizing:border-box;margin-top:4px;height:200px;background:#060c12;color:#cdd8e4;border:1px solid #2a4d6a;border-radius:4px;font:11px/1.4 monospace;padding:6px;resize:vertical;">' +
+                 esc(brief.text || '') + '</textarea>';
+        }
+        h += '</div>';
+        return h;
+    }
+
     // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: the right-side "AI Commander
     // Reasoning" panel — shows the current turn, active side, the auto-selected
     // COA, why it was chosen, units moved, expected next reaction, and a running
@@ -1013,6 +1041,20 @@
             _cmdrPanel.id = 'rmooz-free-fight-commander-panel';
             _cmdrPanel.style.cssText = ['position:fixed', 'top:128px', 'right:24px', 'z-index:9955', 'background:#0a1018', 'border:1px solid #3a6a8a', 'border-radius:8px', 'padding:12px 14px', 'min-width:320px', 'max-width:380px', 'max-height:calc(100vh - 200px)', 'overflow:auto', 'box-shadow:0 4px 20px rgba(0,0,0,.7)', 'color:#e8eaed', 'font-family:inherit', 'direction:ltr'].join(';');
             w.document.body.appendChild(_cmdrPanel);
+            // RMOZ-COMMANDER-BRIEF-COALITION-A: delegated handler for brief toggle / copy.
+            if (typeof _cmdrPanel.addEventListener === 'function') {
+                _cmdrPanel.addEventListener('click', function (ev) {
+                    var t = ev && ev.target; if (!t || !t.getAttribute) return;
+                    var act = t.getAttribute('data-act');
+                    if (act === 'brief-toggle') { _briefExpanded = !_briefExpanded; renderCommanderPanel(); }
+                    else if (act === 'brief-copy') {
+                        try {
+                            var ta = _cmdrPanel.querySelector('[data-ff-brief="copy"]');
+                            if (ta) { if (ta.select) ta.select(); var d = w.document; if (d && d.execCommand) d.execCommand('copy'); else if (w.navigator && w.navigator.clipboard) w.navigator.clipboard.writeText(ta.value || ''); }
+                        } catch (_) {}
+                    }
+                });
+            }
         }
         function blist(list, color) {
             var a = arr(list);
@@ -1039,6 +1081,8 @@
             if (rec.side === 'BLUE') h += _blueWarningRoeHtml(rec.situation, rec.warning_actions);
             // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A: Intel Snapshot block
             if (rec.intel) h += _intelSnapshotHtml(rec.intel);
+            // RMOZ-COMMANDER-BRIEF-COALITION-A: coalition + copyable commander brief
+            if (rec.brief) h += _commanderBriefHtml(rec.brief);
             h += '</div>';
         } else {
             h += '<div style="font-size:11px;color:#7a9ab8;padding:4px 0;">Waiting for first AI commander decision…</div>';
@@ -1170,6 +1214,9 @@
             if (!Number.isFinite(Number(lat)) || !Number.isFinite(Number(lon))) return null;
             return { id: String(id), uid: String(id), lat: +lat, lon: +lon,
                      side: String(u.side || 'RED').toUpperCase(),
+                     // RMOZ-INTEL/COMMANDER-BRIEF: preserve fields the intel layer reads.
+                     role: u.role || null,
+                     country: u.country || u.nation || null,
                      platform: u.platform || u.role || u.label || null };
         }
 
@@ -1614,6 +1661,9 @@
                 // intel layer's COA-variation engine avoids repeating the same family.
                 previous_coa_families: _coaFamilyHistory.slice(-3),
                 defending_side: 'BLUE',
+                // RMOZ-COMMANDER-BRIEF-COALITION-A: scenario name → sovereign-zone country
+                // + coalition detection (UAE→GCC, NATO members→NATO, etc.).
+                scenario_name: (function () { var w = W(); var sc = w && w.RmoozScenario && w.RmoozScenario.scenario; return sc && (sc.name || sc.scenario_label || sc.scenario_name) || null; })(),
             },
             opts: { preferSide: _activeSide, useLlm: _useLlm, allowed_unit_ids: base.units.map(function (u) { return u.id; }) },
         };
@@ -1784,6 +1834,8 @@
                 held: _coaHeldCount,
                 // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A: shared intel snapshot
                 intel: plan.intel || null,
+                // RMOZ-COMMANDER-BRIEF-COALITION-A: prose commander brief + coalition posture
+                brief: plan.commander_brief || null,
             };
             // Record the recommended COA family so the next turn varies (avoid repeats).
             if (plan.intel && plan.intel.recommended_coa_family) {
@@ -1791,6 +1843,7 @@
                 if (_coaFamilyHistory.length > 12) _coaFamilyHistory = _coaFamilyHistory.slice(-12);
             }
             _lastIntel = plan.intel || _lastIntel;
+            _lastBrief = plan.commander_brief || _lastBrief;
             _lastCommanderDecision = record;
             _turnLog.push(record);
             var heldTail = _coaHeldCount > 0 ? (', ' + _coaHeldCount + ' already in position') : '';
@@ -1809,6 +1862,10 @@
             }
             // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A: intel narration (INTEL / ROE / CAPABILITY / TERRAIN).
             if (sideForTurn === 'BLUE') _appendIntelEventLog(plan.intel);
+            // RMOZ-COMMANDER-BRIEF-COALITION-A: coalition posture narration (COALITION ...).
+            if (plan.commander_brief && plan.commander_brief.coalition_posture) {
+                arr(plan.commander_brief.coalition_posture.event_log_entries).forEach(function (e) { _appendToEventLog(e); });
+            }
             renderCommanderPanel();
             updatePanel();
         });
@@ -1894,7 +1951,7 @@
         });
         _loopAllUnitsForReset = [];
         _turnNumber = 0; _activeSide = 'RED';
-        _turnLog = []; _lastCommanderDecision = null; _coaFamilyHistory = []; _lastIntel = null;
+        _turnLog = []; _lastCommanderDecision = null; _coaFamilyHistory = []; _lastIntel = null; _lastBrief = null; _briefExpanded = false;
         _coaMovedUnits = []; _coaApplied = false; _coaPlan = null;
         if (mapReady()) { _triggerScenarioRedraw(); syncMarkers(); }
         if (_cmdrPanel && _cmdrPanel.parentNode) { _cmdrPanel.parentNode.removeChild(_cmdrPanel); _cmdrPanel = null; }
@@ -2318,7 +2375,7 @@
         _clearTimeoutSafe(_pendingTimer); _pendingTimer = null;
         if (_moveAnimTimer) { _clearIntervalSafe(_moveAnimTimer); _moveAnimTimer = null; }
         _loopRunning = false; _loopPaused = false; _turnNumber = 0; _activeSide = 'RED';
-        _turnLog = []; _lastCommanderDecision = null; _loopAllUnitsForReset = []; _coaFamilyHistory = []; _lastIntel = null;
+        _turnLog = []; _lastCommanderDecision = null; _loopAllUnitsForReset = []; _coaFamilyHistory = []; _lastIntel = null; _lastBrief = null; _briefExpanded = false;
         _red = []; _blue = []; _allGroups = []; _objective = null; _objectiveSource = null; _plan = null; _terrain = { available: false };
         _planSource = 'deterministic';
         _llmStatus = { state: 'idle', message: '', validation_result: 'not_requested', fallback_reason: null };
@@ -2414,6 +2471,9 @@
         // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A test seams
         _getLastIntelForTest:        function ()          { return _lastIntel; },
         _getCoaFamilyHistoryForTest: function ()          { return _coaFamilyHistory.slice(); },
+        // RMOZ-COMMANDER-BRIEF-COALITION-A test seams
+        _getLastBriefForTest:        function ()          { return _lastBrief; },
+        _setBriefExpandedForTest:    function (v)         { _briefExpanded = !!v; },
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozFreeFightDemo = API;

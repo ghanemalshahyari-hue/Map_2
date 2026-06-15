@@ -28,6 +28,7 @@
 const aiProvider = require('./ai-provider');
 const TRIGGERS   = require('./free-fight-situation-triggers'); // FREEFIGHT-BLUE-WARNING-ROE-A
 const INTEL      = require('./scenario-intel');                // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A
+const BRIEF      = require('./commander-brief');                // RMOZ-COMMANDER-BRIEF-COALITION-A
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 var STEP_DEG       = 0.05;   // ≈ 5-6 km per tick
@@ -729,7 +730,7 @@ async function planCoas(units, objectives, context, opts) {
             var llmCoas = enrichCoasWithNarrative(llmResult.coas, obj, context, 'llm');
             var llmAssess = buildCommanderAssessment(llmCoas, obj, context, 'llm');
             if (activeSide === 'BLUE' && blueIntent) { applyBlueReaction(llmCoas, situation, blueIntent); llmAssess = appendSituationToAssessment(llmAssess, situation); }
-            return {
+            return _attachCommanderBrief({
                 ok: true,
                 plan_source: 'llm',
                 active_side: activeSide,
@@ -744,7 +745,7 @@ async function planCoas(units, objectives, context, opts) {
                 fallback_reason: null,
                 provider_used: llmResult.provider_used || null,
                 model_used: llmResult.model_used || null,
-            };
+            }, intel, units, context);
         }
         fallbackReason = llmResult.fallback_reason || 'llm_failed';
     }
@@ -753,7 +754,7 @@ async function planCoas(units, objectives, context, opts) {
     var coas = enrichCoasWithNarrative(buildCoasForSide(allUnits, obj, activeSide, situation), obj, context, 'deterministic_coa_fallback');
     var assess = buildCommanderAssessment(coas, obj, context, 'deterministic_coa_fallback');
     if (activeSide === 'BLUE' && blueIntent) { applyBlueReaction(coas, situation, blueIntent); assess = appendSituationToAssessment(assess, situation); }
-    return {
+    return _attachCommanderBrief({
         ok: true,
         plan_source: 'deterministic_coa_fallback',
         active_side: activeSide,
@@ -768,13 +769,27 @@ async function planCoas(units, objectives, context, opts) {
         fallback_reason: fallbackReason,
         provider_used: providerUsed,
         model_used: modelUsed,
-    };
+    }, intel, units, context);
 }
 
 function _recommendedPlanId(coas) {
     var rec = arr(coas).filter(function (c) { return c && c.recommended; })[0];
     if (rec) return rec.plan_id || null;
     return (arr(coas)[0] && arr(coas)[0].plan_id) || null;
+}
+
+// RMOZ-COMMANDER-BRIEF-COALITION-A: compose the prose commander brief (BLUE+RED,
+// coalition posture, copyable text) from the assembled plan + intel. Best-effort.
+function _attachCommanderBrief(result, intel, units, context) {
+    try {
+        result.commander_brief = BRIEF.buildCommanderBrief(result, intel, {
+            includeRed: true,
+            side: result.active_side,
+            units: units,
+            scenario_name: (context && (context.scenario_name || context.name)) || null,
+        });
+    } catch (_) { result.commander_brief = null; }
+    return result;
 }
 
 // FREEFIGHT-BLUE-WARNING-ROE-A: pick the BLUE COA the situation calls for and

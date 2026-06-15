@@ -40,6 +40,9 @@
     var _aiDecision = null, _aiLoading = false, _aiApplied = false, _aiDiagnostics = null;
     var _aiMovedUnit = null, _aiMovedUnitOldPos = null, _aiMovedUnitSource = null;
     var _useLlm = false, _llmTestStatus = null;
+    // FREEFIGHT-AI-COA-PLANNER-A: multi-unit COA state
+    var _coaPlan = null, _coaLoading = false, _coaApplied = false, _coaSelectedIdx = 0;
+    var _coaMovedUnits = [];  // [{unit, oldPos}, ...]
     var _plannerMode = 'deterministic';
     var _planSource = 'deterministic';
     var _llmStatus = {
@@ -501,6 +504,33 @@
                 _layer.addLayer(dot);
             }
         }
+        // FREEFIGHT-AI-COA-PLANNER-A: trails for all COA-moved units
+        if (_coaApplied && _coaMovedUnits.length) {
+            _coaMovedUnits.forEach(function (mv) {
+                if (!mv || !mv.unit || !mv.oldPos) return;
+                var newLat = mv.unit.lat, newLon = mv.unit.lon;
+                if (!Number.isFinite(newLat) || !Number.isFinite(newLon)) return;
+                var oldLat = mv.oldPos.lat, oldLon = mv.oldPos.lon;
+                var role = mv.role || '';
+                var trailColor = role === 'assault' ? '#ff9060' : (role === 'support' ? '#60b0ff' : (role === 'recon' ? '#b0b0b0' : '#90d090'));
+                try {
+                    var coaTrail = w.L.polyline([[oldLat, oldLon], [newLat, newLon]], {
+                        color: trailColor, weight: 2, opacity: 0.7, dashArray: '6 4',
+                    });
+                    _layer.addLayer(coaTrail);
+                    var coaPulse = w.L.circleMarker([newLat, newLon], {
+                        radius: 9, color: trailColor, weight: 2, fillColor: '#101820', fillOpacity: 0.7,
+                    });
+                    var popText = '<div style="font-size:11px;color:#e8eaed;min-width:160px;">' +
+                        '<b style="color:' + esc(trailColor) + ';">' + esc(mv.unit.id || mv.unit.uid || mv.unit_uid || '') + '</b>' +
+                        ' [' + esc(role) + ']<br>' +
+                        'old: ' + oldLat.toFixed(4) + ', ' + oldLon.toFixed(4) + '<br>' +
+                        'new: ' + newLat.toFixed(4) + ', ' + newLon.toFixed(4) + '</div>';
+                    coaPulse.bindPopup(popText, { maxWidth: 260 });
+                    _layer.addLayer(coaPulse);
+                } catch (_e) {}
+            });
+        }
     }
 
     // SIDC-BRIDGE-A: review-only SIDC preview (app favorites only; never final).
@@ -831,6 +861,13 @@
         bind('place-obj', armPlaceObjective);
         bind('preview-ai', _fetchAiDecision); bind('apply-ai', _applyAiDecision); bind('reset-ai', _resetAiDecision);
         bind('test-llm', _testLlm);
+        // FREEFIGHT-AI-COA-PLANNER-A: COA planner bindings
+        bind('generate-coa', _generateCoaPlan);
+        bind('apply-coa', _applySelectedCoa);
+        bind('reset-coa', _resetCoa);
+        bind('select-coa-0', function () { _coaSelectedIdx = 0; updatePanel(); });
+        bind('select-coa-1', function () { _coaSelectedIdx = 1; updatePanel(); });
+        bind('select-coa-2', function () { _coaSelectedIdx = 2; updatePanel(); });
         var modeSel = _panel.querySelector('[data-act="planner-mode"]');
         if (modeSel && modeSel.addEventListener) modeSel.addEventListener('change', function () { setPlannerMode(modeSel.value); });
         var llmCb = _panel.querySelector('[data-act="toggle-llm"]');
@@ -876,7 +913,7 @@
                 (rw.length ? '<div style="color:#e0a93a;">⚠ ' + esc(rw.join('; ')) + '</div>' : '') +
                 '<div style="color:#8fa5b8;">confidence: ' + esc(e.confidence || 'low') + (arr(e.warnings).length ? ' · ⚠ ' + esc(e.warnings.join(', ')) : '') + '</div></div>';
         }
-        var h = '<div style="font-weight:700;color:#9ec2ec;font-size:13px;margin-bottom:4px;">AI Free Fight Reasoning — تفسير قرار الذكاء الاصطناعي</div>' +
+        var h = '<div style="font-weight:700;color:#9ec2ec;font-size:13px;margin-bottom:4px;">AI Attack Plan Reasoning — تفسير قرار الذكاء الاصطناعي</div>' +
             '<div style="font-size:10px;color:#7f93a6;margin-bottom:6px;">' + esc(_plan.planner || 'deterministic heuristic (no LLM)') + ' · terrain_used: ' + (!!_plan.terrain_used) + '</div>';
         h += '<div style="font-size:11px;color:#cdd8e4;margin-bottom:6px;padding:5px 7px;border:1px solid #2a3f55;border-radius:4px;background:#0c141d;">' +
             'planner mode: ' + esc(_plannerMode === 'llm' ? 'LLM Assisted' : 'Deterministic Planner') + '<br>' +
@@ -1191,15 +1228,176 @@
             .then(function (result) { _llmTestStatus = result; updatePanel(); })
             .catch(function (e) { _llmTestStatus = { ok: false, error: e && e.message || 'fetch failed' }; updatePanel(); });
     }
+    // FREEFIGHT-AI-COA-PLANNER-A ───────────────────────────────────────────────
+    function _generateCoaPlan() {
+        var w = W();
+        if (!w || typeof w.fetch !== 'function') return;
+        _coaLoading = true; _coaPlan = null; _coaApplied = false; _coaMovedUnits = [];
+        updatePanel();
+        var body = _buildAiRequestBody();
+        w.fetch('/api/wargame-sim/free-fight/plan-coas', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ units: body.units, objectives: body.objectives, context: {}, opts: body.opts }),
+        }).then(function (r) { return r.json(); }).then(function (plan) {
+            _coaPlan = plan; _coaLoading = false; _coaApplied = false;
+            updatePanel();
+        }).catch(function (e) {
+            _coaPlan = { ok: false, _error: (e && e.message) || 'fetch failed' };
+            _coaLoading = false; updatePanel();
+        });
+    }
+    function _applySelectedCoa() {
+        if (!_coaPlan || !_coaPlan.ok || !Array.isArray(_coaPlan.coas) || !_coaPlan.coas.length) return;
+        var idx = _coaSelectedIdx;
+        if (idx < 0 || idx >= _coaPlan.coas.length) idx = 0;
+        var coa = _coaPlan.coas[idx];
+        _coaMovedUnits = [];
+        // Apply each action in all phases
+        (coa.phases || []).forEach(function (ph) {
+            (ph.actions || []).forEach(function (act) {
+                if (act.action_type === 'HOLD_POSITION') return;
+                if (!act.target || !Number.isFinite(Number(act.target.lat)) || !Number.isFinite(Number(act.target.lon))) return;
+                var mv = _applyMoveToScenario(act.unit_uid, act.target.lat, act.target.lon);
+                if (mv.found) {
+                    _coaMovedUnits.push({ unit: mv.unit, oldPos: mv.oldPos, role: act.role || '' });
+                }
+            });
+        });
+        _coaApplied = true;
+        // Trigger scenario redraw once after all units updated
+        if (mapReady()) {
+            _triggerScenarioRedraw();
+            syncMarkers();
+            // Pan to centroid of moved units
+            var w = W();
+            if (_coaMovedUnits.length) {
+                var latSum = 0, lonSum = 0;
+                _coaMovedUnits.forEach(function (mv) { if (mv.unit) { latSum += mv.unit.lat; lonSum += mv.unit.lon; } });
+                var n = _coaMovedUnits.length;
+                try { w.map.panTo([latSum / n, lonSum / n]); } catch (_) {}
+            }
+        }
+        _buildCoaEventLogEntries().forEach(function (entry) { _appendToEventLog(entry); });
+        updatePanel();
+    }
+    function _resetCoa() {
+        _coaMovedUnits.forEach(function (mv) {
+            if (!mv || !mv.unit || !mv.oldPos) return;
+            mv.unit.lat = mv.oldPos.lat;
+            mv.unit.lon = mv.oldPos.lon;
+            if (Array.isArray(mv.unit.coord) && mv.unit.coord.length >= 2) {
+                mv.unit.coord[0] = mv.oldPos.lon;
+                mv.unit.coord[1] = mv.oldPos.lat;
+            }
+            mv.unit._ff_coa_moved_by_ai = false;
+        });
+        if (mapReady()) { _triggerScenarioRedraw(); syncMarkers(); }
+        _coaMovedUnits = []; _coaApplied = false;
+        updatePanel();
+    }
+    function _buildCoaEventLogEntries() {
+        if (!_coaPlan || !_coaPlan.ok || !Array.isArray(_coaPlan.coas)) return [];
+        var idx = _coaSelectedIdx;
+        if (idx < 0 || idx >= _coaPlan.coas.length) idx = 0;
+        var coa = _coaPlan.coas[idx] || {};
+        var moved = _coaMovedUnits;
+        var srcTag = (_coaPlan.plan_source === 'llm') ? 'llm' : 'deterministic';
+        var roleCounts = {};
+        moved.forEach(function (mv) { var r = mv.role || 'unknown'; roleCounts[r] = (roleCounts[r] || 0) + 1; });
+        var roleStr = Object.keys(roleCounts).map(function (r) { return roleCounts[r] + ' ' + r; }).join(', ');
+        return [
+            'AI COA Applied: ' + esc(coa.plan_id || 'COA-?') + ' ' + esc(coa.title || '') +
+            ' — ' + moved.length + ' units moved' + (roleStr ? ', ' + roleStr : '') +
+            ' [' + srcTag + ']'
+        ];
+    }
+    function renderCoaPlanHtml() {
+        var h = '';
+        if (_coaLoading) {
+            h += '<div style="color:#9ab0c0;font-size:11px;padding:6px;">Loading AI Attack Plan… جاري التحميل</div>';
+            return h;
+        }
+        if (!_coaPlan) {
+            // COA cards shown after generation — typical COAs: Direct Assault, Flank / Fix, Probe / Recon
+            h += '<div style="color:#7a9ab8;font-size:11px;padding:4px 0;">Click "Generate AI Attack Plan" to generate COAs for all RED units.<br>' +
+                 '<span style="color:#5a7a60;font-size:10px;">Typical plans: Direct Assault · Flank / Fix · Probe / Recon</span></div>';
+            return h;
+        }
+        if (_coaPlan._error || !_coaPlan.ok) {
+            h += '<div style="color:#e0a93a;font-size:11px;padding:4px;">Error: ' + esc(_coaPlan._error || _coaPlan.reason || 'unknown error') + '</div>';
+            return h;
+        }
+        var coas = _coaPlan.coas || [];
+        // Plan source banner
+        var srcColor = _coaPlan.plan_source === 'llm' ? '#90d090' : '#9ab0c0';
+        h += '<div style="margin-bottom:5px;font-size:10px;">' +
+             '<span style="color:#7a9ab8;">Plan source:</span> <span style="color:' + srcColor + ';">' + esc(_coaPlan.plan_source || 'deterministic_coa_fallback') + '</span>';
+        if (_coaPlan.fallback_reason) h += ' <span style="color:#e0a93a;font-size:9px;">(' + esc(_coaPlan.fallback_reason) + ')</span>';
+        h += '</div>';
+        // COA cards
+        coas.forEach(function (coa, ci) {
+            var isSelected = (ci === _coaSelectedIdx);
+            var riskColor = coa.risk === 'high' ? '#f08080' : (coa.risk === 'medium' ? '#e0c060' : '#90d090');
+            var selBorder = isSelected ? '#4a9ed6' : '#2a3f55';
+            var selBg     = isSelected ? '#0a1830' : '#0c141d';
+            h += '<div data-act="select-coa-' + ci + '" style="margin-bottom:6px;padding:7px 9px;border:1px solid ' + selBorder + ';border-radius:5px;background:' + selBg + ';cursor:pointer;">';
+            h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">';
+            h += '<span style="font-weight:700;font-size:11px;color:#e8eaed;">' + esc(coa.plan_id) + ' — ' + esc(coa.title) + '</span>';
+            if (coa.recommended) h += '<span style="background:#1a5030;color:#7fd6a0;border-radius:3px;padding:1px 5px;font-size:9px;">Recommended</span>';
+            h += '</div>';
+            h += '<div style="font-size:10px;margin-bottom:3px;">' +
+                 '<span style="color:#8fa5b8;">Risk:</span> <span style="color:' + riskColor + ';">' + esc(coa.risk) + '</span> · ' +
+                 '<span style="color:#8fa5b8;">Confidence:</span> <span style="color:#9ec2ec;">' + esc(coa.confidence) + '</span> · ' +
+                 '<span style="color:#8fa5b8;">Units:</span> <span style="color:#e0e8f0;">' + (coa.units_selected_count || 0) + '/' + (coa.units_total_considered || 0) + '</span></div>';
+            if (coa.summary) h += '<div style="font-size:10px;color:#cdd8e4;margin-bottom:3px;font-style:italic;">' + esc(coa.summary) + '</div>';
+            // Phase actions summary
+            (coa.phases || []).forEach(function (ph) {
+                var roleCounts = {};
+                (ph.actions || []).forEach(function (act) { var r = act.role || 'unknown'; roleCounts[r] = (roleCounts[r] || 0) + 1; });
+                var roleStr = Object.keys(roleCounts).map(function (r) { return roleCounts[r] + ' ' + r; }).join(', ');
+                if (roleStr) h += '<div style="font-size:10px;color:#9ab0c0;">Phase: ' + esc(ph.name || ph.phase_id) + ' — ' + roleStr + '</div>';
+            });
+            if (isSelected) h += '<div style="margin-top:3px;font-size:10px;color:#4a9ed6;font-weight:700;">▶ Selected</div>';
+            h += '</div>';
+        });
+        // Applied status
+        if (_coaApplied) {
+            h += '<div style="margin-top:5px;border:1px solid #1a4050;border-radius:4px;padding:6px 8px;background:#070e14;font-size:10px;" data-ff-truth="coa-status">';
+            h += '<div style="color:#5a8aa8;font-weight:600;margin-bottom:3px;">Map Movement Truth</div>';
+            function flag(val) { return val ? '<span style="color:#90d090;font-weight:700;">yes</span>' : '<span style="color:#e0a93a;font-weight:700;">no</span>'; }
+            h += '<div>Real units updated: ' + flag(_coaMovedUnits.length > 0) + '</div>';
+            h += '<div>Units moved: <span style="color:#e0e8f0;">' + _coaMovedUnits.length + '</span></div>';
+            var visibleOverlay = mapReady() && _coaMovedUnits.length > 0;
+            h += '<div>Visible movement layer: ' + flag(visibleOverlay) + '</div>';
+            h += '</div>';
+        }
+        return h;
+    }
+    // ── end FREEFIGHT-AI-COA-PLANNER-A ────────────────────────────────────────
+
     function renderAiDecisionHtml() {
         var h = '<div style="margin-top:8px;border-top:1px solid #2a3f55;padding-top:8px;">';
         h += '<div style="margin-bottom:6px;padding:5px 8px;border:1px solid #1a4030;border-radius:4px;background:#091810;">' +
              '<div style="display:flex;align-items:center;gap:6px;">' +
              '<span style="font-size:10px;font-weight:700;color:#fff;background:#1a7040;border-radius:3px;padding:1px 6px;letter-spacing:.5px;">MAIN AI TEST</span>' +
-             '<span style="font-size:11px;font-weight:700;color:#7fd6a0;">MAIN AI TEST — Unit Decision LLM</span>' +
+             '<span style="font-size:11px;font-weight:700;color:#7fd6a0;">MAIN AI TEST — Attack Plan / COA Planner</span>' +
              '</div>' +
              '<div style="font-size:10px;color:#5a9a70;margin-top:2px;">Real unit-level AI decision — هذا هو الاختبار الفعلي للذكاء الاصطناعي على مستوى الوحدات</div>' +
              '</div>';
+        // COA Planner buttons
+        h += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;">';
+        h += '<button data-act="generate-coa" style="font:inherit;cursor:pointer;border:1px solid #2a7a50;background:#131e18;color:#90d0a0;border-radius:5px;padding:5px 10px;font-size:11px;">' +
+             (_coaLoading ? '⏳ Loading…' : '⚡ Generate AI Attack Plan') + '</button>';
+        if (_coaPlan && _coaPlan.ok && !_coaApplied) {
+            h += '<button data-act="apply-coa" style="font:inherit;cursor:pointer;border:1px solid #3a7a3a;background:#182818;color:#90d090;border-radius:5px;padding:5px 10px;font-size:11px;">✔ Apply Selected COA — تطبيق</button>';
+        }
+        if (_coaPlan) {
+            h += '<button data-act="reset-coa" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:5px;padding:5px 10px;font-size:11px;">⟲ Reset COA</button>';
+        }
+        h += '</div>';
+        h += renderCoaPlanHtml();
+        h += '<div style="margin-top:10px;border-top:1px solid #2a3f55;padding-top:8px;">';
+        h += '<div style="font-size:10px;color:#5a7a60;margin-bottom:5px;">Unit Decision LLM — single-unit step test</div>';
         // LLM toggle + test button
         h += '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;font-size:11px;">';
         h += '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;color:#9ec2ec;" title="Uses local Ollama only — requires RMOOZ_FREE_FIGHT_LLM=1 on the server">';
@@ -1351,7 +1549,8 @@
                 }
             }
         }
-        h += '</div>';
+        h += '</div>';  // close unit decision inner section
+        h += '</div>';  // close renderAiDecisionHtml outer
         return h;
     }
     // ── end FREEFIGHT-DEMO-AI-INTEGRATE-A ─────────────────────────────────────
@@ -1417,6 +1616,14 @@
         _winMinimizeForTest: function () { if (_panel) _winMinimize(); },
         _winMaximizeForTest: function () { if (_panel) _winMaximize(); },
         _resetWinStateForTest: function () { _winState = null; },
+        // FREEFIGHT-AI-COA-PLANNER-A test seams
+        _generateCoaPlanForTest:  function ()             { _generateCoaPlan(); },
+        _applySelectedCoaForTest: function ()             { _applySelectedCoa(); },
+        _resetCoaForTest:         function ()             { _resetCoa(); },
+        _setCoaPlanForTest:       function (p, applied, idx) { _coaPlan = p || null; _coaApplied = !!applied; _coaSelectedIdx = idx || 0; },
+        _getCoaMovedUnitsForTest: function ()             { return _coaMovedUnits.slice(); },
+        _getCoaAppliedForTest:    function ()             { return _coaApplied; },
+        _getCoaSelectedIdxForTest: function ()            { return _coaSelectedIdx; },
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozFreeFightDemo = API;

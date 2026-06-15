@@ -1,0 +1,612 @@
+'use strict';
+/* ============================================================================
+ * free-fight-coa-planner.js — FREEFIGHT-AI-COA-PLANNER-A
+ * ----------------------------------------------------------------------------
+ * Multi-unit COA (Course of Action) planner for the Free Fight AI demo.
+ * Works with all RED units in a scenario to produce 3 candidate COAs.
+ *
+ * Exports:
+ *   planCoas(units, objectives, context, opts)   → async, main entry
+ *   validateCoaPlan(plan, units, objectives)      → sync
+ *   applyCoaPlan(plan, units)                     → sync, mutates units in-place
+ *   makeCoaEventLogEntries(plan, applyResult)     → sync, returns string[]
+ *   buildDeterministicCoas(redUnits, obj)         → sync
+ *   normalizeCoa(raw, allowedUnitIds)             → sync
+ *   normalizeCoaAction(raw, allowedUnitIds)       → sync
+ *   ALLOWED_COA_ACTION_TYPES, ALLOWED_ROLES, STEP_DEG, RECON_STEP_DEG
+ *
+ * LOCAL-ONLY POLICY: LLM is only called for local providers (ollama / local).
+ * Remote providers (claude, zen, openai, auto) are BLOCKED.
+ *
+ * Safety contract:
+ *   • No new units created.
+ *   • HOLD_POSITION actions never move a unit.
+ *   • Step size capped at MAX_STEP_DEG (teleport guard).
+ *   • All COA actions carry review_only / demo_only stamps.
+ * ========================================================================== */
+
+const aiProvider = require('./ai-provider');
+
+// ── Constants ─────────────────────────────────────────────────────────────────
+var STEP_DEG       = 0.05;   // ≈ 5-6 km per tick
+var RECON_STEP_DEG = 0.03;   // recon moves shorter
+var MAX_STEP_DEG   = 0.15;   // teleport guard
+
+var ALLOWED_COA_ACTION_TYPES = [
+    'MOVE_TOWARD_OBJECTIVE', 'SUPPORT_BY_FIRE', 'HOLD_POSITION',
+    'SCREEN_FLANK', 'RECON_OBJECTIVE'
+];
+var ALLOWED_ROLES = ['assault', 'support', 'screen', 'reserve', 'recon', 'hold'];
+var ALLOWED_RISK        = ['low', 'medium', 'high'];
+var ALLOWED_CONFIDENCE  = ['low', 'medium', 'high'];
+var REMOTE_PROVIDERS_BLOCKED = ['claude', 'zen', 'openai', 'auto'];
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function arr(v) { return Array.isArray(v) ? v : []; }
+function str(v, max) { var s = String(v == null ? '' : v); return max ? s.slice(0, max) : s; }
+function finiteN(v) { var n = Number(v); return Number.isFinite(n) ? n : null; }
+function finiteLL(o) { return !!(o && Number.isFinite(finiteN(o.lat)) && Number.isFinite(finiteN(o.lon))); }
+function dist(a, b) { var dx = a.lat - b.lat, dy = a.lon - b.lon; return Math.sqrt(dx * dx + dy * dy); }
+function stepToward(from, to, step) {
+    var d = dist(from, to);
+    if (d <= step) return { lat: +to.lat, lon: +to.lon };
+    var t = step / d;
+    return { lat: from.lat + (to.lat - from.lat) * t, lon: from.lon + (to.lon - from.lon) * t };
+}
+function unitHasCoord(u) {
+    return !!(u && u.lat != null && u.lon != null &&
+              Number.isFinite(Number(u.lat)) && Number.isFinite(Number(u.lon)));
+}
+function getUnitById(units, uid) {
+    return arr(units).find(function (u) { return u && (u.id === uid || u.uid === uid || u.unit_uid === uid); }) || null;
+}
+function resolveLocalProvider() {
+    return (process.env.RMOOZ_FREE_FIGHT_LLM_PROVIDER || 'ollama').toLowerCase().trim();
+}
+function isRemoteProvider(name) {
+    return REMOTE_PROVIDERS_BLOCKED.indexOf(String(name || '').toLowerCase().trim()) !== -1;
+}
+function resolveLocalModel() {
+    return process.env.RMOOZ_FREE_FIGHT_LLM_MODEL ||
+           process.env.RMOOZ_LOCAL_LLM_MODEL       ||
+           process.env.RMOOZ_AI_MODEL              ||
+           'qwen3-coder:latest';
+}
+function parseJsonSafe(text) {
+    var s = str(text).trim();
+    var m = s.match(/\{[\s\S]*\}/);
+    try { return JSON.parse(m ? m[0] : s); } catch (e) { return null; }
+}
+function bestObjective(objectives) {
+    var list = arr(objectives);
+    for (var i = 0; i < list.length; i++) {
+        var o = list[i];
+        if (!o) continue;
+        if (finiteLL(o)) return { lat: Number(o.lat), lon: Number(o.lon), name: o.name || o.label || 'Objective X' };
+        if (Array.isArray(o.coord) && o.coord.length >= 2 && Number.isFinite(+o.coord[0]) && Number.isFinite(+o.coord[1])) {
+            return { lat: +o.coord[1], lon: +o.coord[0], name: o.name || o.label || 'Objective X' };
+        }
+    }
+    return null;
+}
+
+// ── Deterministic COA builder ─────────────────────────────────────────────────
+/**
+ * buildDeterministicCoas(redUnits, obj)
+ * Returns exactly 3 COA objects.
+ *   COA-1 "Direct Assault"  — recommended:false, risk:high
+ *   COA-2 "Flank / Fix"     — recommended:true,  risk:medium
+ *   COA-3 "Probe / Recon"   — recommended:false, risk:low
+ */
+function buildDeterministicCoas(redUnits, obj) {
+    var units = arr(redUnits).filter(unitHasCoord);
+    var total = units.length;
+
+    // Sort by distance to objective
+    if (obj && finiteLL(obj)) {
+        units = units.slice().sort(function (a, b) {
+            return dist({ lat: a.lat, lon: a.lon }, obj) - dist({ lat: b.lat, lon: b.lon }, obj);
+        });
+    }
+
+    var objName = (obj && (obj.name || obj.label)) || 'Objective X';
+    var objLat = obj ? obj.lat : 0;
+    var objLon = obj ? obj.lon : 0;
+
+    // Unit counts per COA
+    var directCount  = Math.min(Math.max(3, Math.round(total * 0.25)), 12);
+    var flankAssault = Math.min(Math.max(2, Math.round(total * 0.18)), 8);
+    var flankSupport = Math.min(Math.max(2, Math.round(total * 0.12)), 6);
+    var probeCount   = Math.min(Math.max(1, Math.round(total * 0.08)), 4);
+
+    // COA-1: Direct Assault
+    var coa1Actions = [];
+    for (var i = 0; i < total; i++) {
+        var u = units[i];
+        if (i < directCount) {
+            coa1Actions.push({
+                unit_uid: u.id || u.uid || u.unit_uid,
+                side: String(u.side || 'RED').toUpperCase(),
+                role: 'assault',
+                action_type: 'MOVE_TOWARD_OBJECTIVE',
+                target: { lat: objLat, lon: objLon, type: 'objective' },
+                reason: 'Direct assault on ' + objName + ' — nearest unit assigned assault.',
+            });
+        } else {
+            coa1Actions.push({
+                unit_uid: u.id || u.uid || u.unit_uid,
+                side: String(u.side || 'RED').toUpperCase(),
+                role: 'reserve',
+                action_type: 'HOLD_POSITION',
+                target: { lat: u.lat, lon: u.lon, type: 'coord' },
+                reason: 'Reserve — hold position until assault succeeds.',
+            });
+        }
+    }
+
+    // COA-2: Flank / Fix — perpendicular offset ~0.04deg from objective
+    var coa2Actions = [];
+    var supportLat = objLat + 0.04;
+    var supportLon = objLon + 0.04;
+    for (var j = 0; j < total; j++) {
+        var u2 = units[j];
+        if (j < flankAssault) {
+            coa2Actions.push({
+                unit_uid: u2.id || u2.uid || u2.unit_uid,
+                side: String(u2.side || 'RED').toUpperCase(),
+                role: 'assault',
+                action_type: 'MOVE_TOWARD_OBJECTIVE',
+                target: { lat: objLat, lon: objLon, type: 'objective' },
+                reason: 'Flank assault — lead element closes with ' + objName + '.',
+            });
+        } else if (j < flankAssault + flankSupport) {
+            coa2Actions.push({
+                unit_uid: u2.id || u2.uid || u2.unit_uid,
+                side: String(u2.side || 'RED').toUpperCase(),
+                role: 'support',
+                action_type: 'SUPPORT_BY_FIRE',
+                target: { lat: supportLat, lon: supportLon, type: 'coord' },
+                reason: 'Support by fire from perpendicular position — fix enemy at ' + objName + '.',
+            });
+        } else {
+            coa2Actions.push({
+                unit_uid: u2.id || u2.uid || u2.unit_uid,
+                side: String(u2.side || 'RED').toUpperCase(),
+                role: 'reserve',
+                action_type: 'HOLD_POSITION',
+                target: { lat: u2.lat, lon: u2.lon, type: 'coord' },
+                reason: 'Reserve — hold pending flank result.',
+            });
+        }
+    }
+
+    // COA-3: Probe / Recon
+    var coa3Actions = [];
+    for (var k = 0; k < total; k++) {
+        var u3 = units[k];
+        if (k < probeCount) {
+            coa3Actions.push({
+                unit_uid: u3.id || u3.uid || u3.unit_uid,
+                side: String(u3.side || 'RED').toUpperCase(),
+                role: 'recon',
+                action_type: 'RECON_OBJECTIVE',
+                target: { lat: objLat, lon: objLon, type: 'objective' },
+                reason: 'Probe / recon — gather intelligence on ' + objName + ' before committing force.',
+            });
+        } else {
+            coa3Actions.push({
+                unit_uid: u3.id || u3.uid || u3.unit_uid,
+                side: String(u3.side || 'RED').toUpperCase(),
+                role: 'hold',
+                action_type: 'HOLD_POSITION',
+                target: { lat: u3.lat, lon: u3.lon, type: 'coord' },
+                reason: 'Hold position — await recon results before committing.',
+            });
+        }
+    }
+
+    return [
+        {
+            plan_id: 'COA-1',
+            title: 'Direct Assault',
+            objective_id: objName,
+            summary: 'All nearest ' + directCount + ' units assault ' + objName + ' directly. Remaining ' + (total - directCount) + ' hold in reserve.',
+            recommended: false,
+            risk: 'high',
+            confidence: 'medium',
+            units_total_considered: total,
+            units_selected_count: directCount,
+            phases: [{ phase_id: 'phase-1', name: 'Move', actions: coa1Actions }],
+            risks: ['High exposure during direct assault', 'No suppression or support by fire'],
+            assumptions: ['Enemy has not established strong defensive positions'],
+            validation: {},
+        },
+        {
+            plan_id: 'COA-2',
+            title: 'Flank / Fix',
+            objective_id: objName,
+            summary: flankAssault + ' units assault flanking ' + objName + '; ' + flankSupport + ' units provide support by fire from offset position.',
+            recommended: true,
+            risk: 'medium',
+            confidence: 'medium',
+            units_total_considered: total,
+            units_selected_count: flankAssault + flankSupport,
+            phases: [{ phase_id: 'phase-1', name: 'Move', actions: coa2Actions }],
+            risks: ['Coordination required between assault and support elements', 'Support position may be exposed'],
+            assumptions: ['Perpendicular approach is accessible', 'Support element has line-of-sight to objective'],
+            validation: {},
+        },
+        {
+            plan_id: 'COA-3',
+            title: 'Probe / Recon',
+            objective_id: objName,
+            summary: probeCount + ' recon units probe ' + objName + '; all other units hold in place.',
+            recommended: false,
+            risk: 'low',
+            confidence: 'high',
+            units_total_considered: total,
+            units_selected_count: probeCount,
+            phases: [{ phase_id: 'phase-1', name: 'Move', actions: coa3Actions }],
+            risks: ['Slow tempo — enemy may reinforce', 'Recon elements may be detected'],
+            assumptions: ['Intelligence gap requires probe before committing main body'],
+            validation: {},
+        },
+    ];
+}
+
+// ── LLM normalizers ───────────────────────────────────────────────────────────
+/**
+ * normalizeCoaAction(raw, allowedUnitIds) → action | null
+ * Rejects if unit_uid not in allowedUnitIds.
+ */
+function normalizeCoaAction(raw, allowedUnitIds) {
+    if (!raw || typeof raw !== 'object') return null;
+    var at = str(raw.action_type).toUpperCase();
+    if (ALLOWED_COA_ACTION_TYPES.indexOf(at) === -1) return null;
+    var uid = str(raw.unit_uid);
+    if (!uid) return null;
+    var allowed = arr(allowedUnitIds).map(String);
+    if (allowed.length && allowed.indexOf(uid) === -1) return null;
+    var side = str(raw.side || 'RED').toUpperCase();
+    var role = str(raw.role || 'assault').toLowerCase();
+    if (ALLOWED_ROLES.indexOf(role) === -1) role = 'assault';
+    var tgt = (raw.target && typeof raw.target === 'object') ? {
+        type: str(raw.target.type || 'coord', 20),
+        lat:  Number.isFinite(Number(raw.target.lat)) ? Number(raw.target.lat) : 0,
+        lon:  Number.isFinite(Number(raw.target.lon)) ? Number(raw.target.lon) : 0,
+    } : { type: 'coord', lat: 0, lon: 0 };
+    return {
+        unit_uid:    uid,
+        side:        side,
+        role:        role,
+        action_type: at,
+        target:      tgt,
+        reason:      str(raw.reason, 400),
+    };
+}
+
+/**
+ * normalizeCoa(raw, allowedUnitIds) → coa | null
+ * Returns null if COA has zero valid actions across all phases.
+ */
+function normalizeCoa(raw, allowedUnitIds) {
+    if (!raw || typeof raw !== 'object') return null;
+    var phases = arr(raw.phases).map(function (ph) {
+        return {
+            phase_id: str(ph.phase_id || 'phase-1', 40),
+            name: str(ph.name || 'Move', 80),
+            actions: arr(ph.actions).map(function (a) { return normalizeCoaAction(a, allowedUnitIds); }).filter(Boolean),
+        };
+    });
+    var totalActions = phases.reduce(function (s, ph) { return s + ph.actions.length; }, 0);
+    if (totalActions === 0) return null;
+    return {
+        plan_id:               str(raw.plan_id || 'COA-?', 20),
+        title:                 str(raw.title   || 'Unknown COA', 120),
+        objective_id:          str(raw.objective_id || 'Objective X', 80),
+        summary:               str(raw.summary || '', 500),
+        recommended:           !!raw.recommended,
+        risk:                  ALLOWED_RISK.indexOf(str(raw.risk).toLowerCase())        !== -1 ? str(raw.risk).toLowerCase()       : 'medium',
+        confidence:            ALLOWED_CONFIDENCE.indexOf(str(raw.confidence).toLowerCase()) !== -1 ? str(raw.confidence).toLowerCase() : 'medium',
+        units_total_considered: Number.isFinite(Number(raw.units_total_considered)) ? Number(raw.units_total_considered) : 0,
+        units_selected_count:   Number.isFinite(Number(raw.units_selected_count))   ? Number(raw.units_selected_count)   : 0,
+        phases:                phases,
+        risks:                 arr(raw.risks).map(function (r) { return str(r, 200); }),
+        assumptions:           arr(raw.assumptions).map(function (a) { return str(a, 200); }),
+        validation:            {},
+    };
+}
+
+// ── LLM planner ───────────────────────────────────────────────────────────────
+async function _callLlm(units, objectives, context, opts, _providerOverride) {
+    var provider = _providerOverride || aiProvider;
+    var providerName = resolveLocalProvider();
+    if (isRemoteProvider(providerName)) {
+        return { ok: false, llm_status: 'remote_blocked', fallback_reason: 'remote_provider_not_allowed_for_free_fight' };
+    }
+    var model = resolveLocalModel();
+    var timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_LLM_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '45000', 10);
+    if (!Number.isFinite(timeoutMs)) timeoutMs = 45000;
+
+    var allowedIds = arr(opts && opts.allowed_unit_ids).filter(Boolean).map(String);
+    var unitList = arr(units).map(function (u) {
+        return { id: u.id || u.uid || u.unit_uid, side: u.side, lat: u.lat, lon: u.lon, platform: u.platform || u.role || null };
+    }).filter(function (u) { return u.id; });
+    var effectiveAllowed = allowedIds.length ? allowedIds : unitList.map(function (u) { return u.id; });
+
+    var system = [
+        'You are a military wargame AI for an advisory-only demo exercise.',
+        'Return ONLY a JSON object with a "coas" array containing 2-3 COA objects.',
+        'No other text, explanation, or preamble.',
+        'Every unit_uid MUST be from the allowed_unit_ids list — never invent IDs.',
+        'Every COA must have at least one action with a valid unit_uid.',
+    ].join(' ');
+
+    var prompt = JSON.stringify({
+        units: unitList,
+        objectives: arr(objectives).map(function (o) { return { lat: o.lat, lon: o.lon, name: o.name || o.label || 'Objective X' }; }),
+        context: context || {},
+        allowed_unit_ids: effectiveAllowed,
+        required_output_schema: {
+            coas: [{
+                plan_id: 'COA-1',
+                title: 'string',
+                objective_id: 'string',
+                summary: 'string',
+                recommended: false,
+                risk: 'low|medium|high',
+                confidence: 'low|medium|high',
+                units_total_considered: 0,
+                units_selected_count: 0,
+                phases: [{ phase_id: 'phase-1', name: 'Move', actions: [{
+                    unit_uid: '<MUST be one of allowed_unit_ids>',
+                    side: 'RED|BLUE',
+                    role: 'assault|support|screen|reserve|recon|hold',
+                    action_type: 'MOVE_TOWARD_OBJECTIVE|SUPPORT_BY_FIRE|HOLD_POSITION|SCREEN_FLANK|RECON_OBJECTIVE',
+                    target: { lat: 0, lon: 0, type: 'objective|coord' },
+                    reason: '<one sentence>',
+                }]}],
+                risks: ['string'],
+                assumptions: ['string'],
+            }],
+        },
+        constraint: 'unit_uid MUST be exactly one of allowed_unit_ids — do not invent IDs',
+    });
+
+    var result;
+    try {
+        result = await provider.generate({
+            provider:  providerName,
+            model:     model,
+            system:    system,
+            prompt:    prompt,
+            format:    'json',
+            options:   { temperature: 0.2, numPredict: 2500 },
+            timeoutMs: timeoutMs,
+        });
+    } catch (e) {
+        return { ok: false, llm_status: 'error', fallback_reason: 'local_llm_error: ' + str(e && e.message || e, 120) };
+    }
+
+    if (!result || !result.ok) {
+        var errStr = str(result && result.error, 120);
+        var isTimeout = /timeout|timed.out/i.test(errStr);
+        return { ok: false, llm_status: isTimeout ? 'timeout' : 'unavailable', fallback_reason: 'local_llm_unavailable: ' + errStr };
+    }
+
+    var parsed = parseJsonSafe(result.response || '');
+    if (!parsed || !Array.isArray(parsed.coas)) {
+        return { ok: false, llm_status: 'invalid_json', fallback_reason: 'llm_invalid_json_or_no_coas_array' };
+    }
+
+    var normalized = parsed.coas.map(function (c) { return normalizeCoa(c, effectiveAllowed); }).filter(Boolean);
+    if (normalized.length < 2) {
+        return { ok: false, llm_status: 'invalid_schema', fallback_reason: 'llm_returned_fewer_than_2_valid_coas (' + normalized.length + ')', partial: normalized };
+    }
+
+    return { ok: true, coas: normalized, provider_used: result.providerUsed || providerName, model_used: model };
+}
+
+// ── Main entry ────────────────────────────────────────────────────────────────
+/**
+ * planCoas(units, objectives, context, opts)
+ * opts: { useLlm, preferSide, allowed_unit_ids }
+ * Returns { ok, plan_source, coas[], llm_called, llm_status, fallback_reason?,
+ *           provider_used?, model_used? }
+ */
+async function planCoas(units, objectives, context, opts) {
+    opts = opts || {};
+    var obj = bestObjective(arr(objectives));
+    var preferSide = String(opts.preferSide || 'RED').toUpperCase();
+    var allUnits = arr(units).filter(function (u) { return unitHasCoord(u) && String(u.side || 'RED').toUpperCase() === preferSide; });
+    if (!allUnits.length) {
+        // Fall back to any side if no preferred-side units
+        allUnits = arr(units).filter(unitHasCoord);
+    }
+
+    var llmCalled = false, llmStatus = null, fallbackReason = null, providerUsed = null, modelUsed = null;
+
+    if (opts.useLlm && process.env.RMOOZ_FREE_FIGHT_LLM === '1') {
+        llmCalled = true;
+        var llmResult = await _callLlm(allUnits, objectives, context, opts);
+        llmStatus = llmResult.llm_status || null;
+        if (llmResult.ok) {
+            return {
+                ok: true,
+                plan_source: 'llm',
+                coas: llmResult.coas,
+                llm_called: true,
+                llm_status: llmStatus,
+                fallback_reason: null,
+                provider_used: llmResult.provider_used || null,
+                model_used: llmResult.model_used || null,
+            };
+        }
+        fallbackReason = llmResult.fallback_reason || 'llm_failed';
+    }
+
+    // Deterministic fallback
+    var coas = buildDeterministicCoas(allUnits, obj);
+    return {
+        ok: true,
+        plan_source: llmCalled ? 'deterministic_coa_fallback' : 'deterministic_coa_fallback',
+        coas: coas,
+        llm_called: llmCalled,
+        llm_status: llmStatus,
+        fallback_reason: fallbackReason,
+        provider_used: providerUsed,
+        model_used: modelUsed,
+    };
+}
+
+// ── Validator ─────────────────────────────────────────────────────────────────
+/**
+ * validateCoaPlan(plan, units, objectives)
+ * Returns { ok, errors[], warnings[] }
+ */
+function validateCoaPlan(plan, units, objectives) {
+    var errors = [], warnings = [];
+    if (!plan || !Array.isArray(plan.coas) || plan.coas.length === 0) {
+        return { ok: false, errors: ['plan has no coas array'], warnings: warnings };
+    }
+    plan.coas.forEach(function (coa, ci) {
+        arr(coa.phases).forEach(function (ph, pi) {
+            arr(ph.actions).forEach(function (act, ai) {
+                var label = 'COA[' + ci + '].phase[' + pi + '].action[' + ai + '] uid=' + act.unit_uid;
+                // Unit must exist
+                var found = getUnitById(units, act.unit_uid);
+                if (!found) {
+                    errors.push(label + ': unit not found');
+                    return;
+                }
+                // Unit must have coords
+                if (!unitHasCoord(found)) {
+                    errors.push(label + ': unit has no valid coordinates');
+                    return;
+                }
+                // Side must match
+                var unitSide = String(found.side || '').toUpperCase();
+                var actSide  = String(act.side  || '').toUpperCase();
+                if (unitSide && actSide && unitSide !== actSide) {
+                    errors.push(label + ': side mismatch unit=' + unitSide + ' action=' + actSide);
+                }
+                // Action type valid
+                if (ALLOWED_COA_ACTION_TYPES.indexOf(act.action_type) === -1) {
+                    errors.push(label + ': invalid action_type=' + act.action_type);
+                }
+                // Target coords valid (except HOLD_POSITION)
+                if (act.action_type !== 'HOLD_POSITION') {
+                    if (!act.target || !Number.isFinite(Number(act.target.lat)) || !Number.isFinite(Number(act.target.lon))) {
+                        errors.push(label + ': target missing valid lat/lon');
+                    }
+                }
+            });
+        });
+    });
+    return { ok: errors.length === 0, errors: errors, warnings: warnings };
+}
+
+// ── Apply ─────────────────────────────────────────────────────────────────────
+/**
+ * applyCoaPlan(plan, units)
+ * Uses plan.selected_coa_index (default 0) to pick which COA to apply.
+ * Mutates units in-place. Returns { ok, coa_applied, moved[], errors[], skipped[] }
+ */
+function applyCoaPlan(plan, units) {
+    if (!plan || !Array.isArray(plan.coas) || plan.coas.length === 0) {
+        return { ok: false, coa_applied: null, moved: [], errors: ['no coas in plan'], skipped: [] };
+    }
+    var idx = Number.isFinite(Number(plan.selected_coa_index)) ? Number(plan.selected_coa_index) : 0;
+    if (idx < 0 || idx >= plan.coas.length) idx = 0;
+    var coa = plan.coas[idx];
+    var moved = [], errors = [], skipped = [];
+
+    arr(coa.phases).forEach(function (ph) {
+        arr(ph.actions).forEach(function (act) {
+            if (act.action_type === 'HOLD_POSITION') {
+                skipped.push({ unit_uid: act.unit_uid, reason: 'HOLD_POSITION' });
+                return;
+            }
+            var unit = getUnitById(units, act.unit_uid);
+            if (!unit) {
+                errors.push({ unit_uid: act.unit_uid, reason: 'unit not found' });
+                return;
+            }
+            if (!unitHasCoord(unit)) {
+                errors.push({ unit_uid: act.unit_uid, reason: 'unit has no coordinates' });
+                return;
+            }
+            if (!act.target || !Number.isFinite(Number(act.target.lat)) || !Number.isFinite(Number(act.target.lon))) {
+                errors.push({ unit_uid: act.unit_uid, reason: 'invalid target coordinates' });
+                return;
+            }
+            var old_pos = { lat: unit.lat, lon: unit.lon };
+            var tgt = { lat: Number(act.target.lat), lon: Number(act.target.lon) };
+            var stepSize = act.action_type === 'RECON_OBJECTIVE' ? RECON_STEP_DEG : STEP_DEG;
+            var d = dist(old_pos, tgt);
+            // Teleport guard
+            if (d > MAX_STEP_DEG && stepSize > MAX_STEP_DEG) {
+                errors.push({ unit_uid: act.unit_uid, reason: 'step exceeds teleport guard (' + MAX_STEP_DEG + 'deg)' });
+                return;
+            }
+            var new_pos = stepToward(old_pos, tgt, stepSize);
+            // Round to 5 decimal places
+            new_pos.lat = Math.round(new_pos.lat * 1e5) / 1e5;
+            new_pos.lon = Math.round(new_pos.lon * 1e5) / 1e5;
+            unit.lat = new_pos.lat;
+            unit.lon = new_pos.lon;
+            if (Array.isArray(unit.coord) && unit.coord.length >= 2) {
+                unit.coord[0] = new_pos.lon; unit.coord[1] = new_pos.lat;
+            }
+            unit._ff_coa_moved_by_ai = true;
+            moved.push({ unit_uid: act.unit_uid, old_pos: old_pos, new_pos: new_pos, action_type: act.action_type, role: act.role });
+        });
+    });
+
+    return { ok: true, coa_applied: coa.plan_id, moved: moved, errors: errors, skipped: skipped };
+}
+
+// ── Event log ─────────────────────────────────────────────────────────────────
+/**
+ * makeCoaEventLogEntries(plan, applyResult)
+ * Returns string[] — one-line entries for the #event-log ledger.
+ */
+function makeCoaEventLogEntries(plan, applyResult) {
+    if (!plan || !applyResult) return [];
+    var coas = arr(plan.coas);
+    var idx = Number.isFinite(Number(plan.selected_coa_index)) ? Number(plan.selected_coa_index) : 0;
+    if (idx < 0 || idx >= coas.length) idx = 0;
+    var coa = coas[idx] || {};
+    var moved = arr(applyResult.moved);
+    var source = plan.plan_source || 'deterministic_coa_fallback';
+    var srcTag = source === 'llm' ? 'llm' : 'deterministic';
+
+    var roleCounts = {};
+    moved.forEach(function (m) {
+        var r = m.role || 'unknown';
+        roleCounts[r] = (roleCounts[r] || 0) + 1;
+    });
+    var roleStr = Object.keys(roleCounts).map(function (r) { return roleCounts[r] + ' ' + r; }).join(', ');
+
+    return [
+        'AI COA Applied: ' + str(coa.plan_id || 'COA-?') + ' ' + str(coa.title || '') +
+        ' — ' + moved.length + ' units moved' + (roleStr ? ', ' + roleStr : '') +
+        ' [' + srcTag + ']',
+    ];
+}
+
+// ── Module exports ────────────────────────────────────────────────────────────
+module.exports = {
+    planCoas:               planCoas,
+    validateCoaPlan:        validateCoaPlan,
+    applyCoaPlan:           applyCoaPlan,
+    makeCoaEventLogEntries: makeCoaEventLogEntries,
+    buildDeterministicCoas: buildDeterministicCoas,
+    normalizeCoa:           normalizeCoa,
+    normalizeCoaAction:     normalizeCoaAction,
+    ALLOWED_COA_ACTION_TYPES: ALLOWED_COA_ACTION_TYPES,
+    ALLOWED_ROLES:            ALLOWED_ROLES,
+    STEP_DEG:                 STEP_DEG,
+    RECON_STEP_DEG:           RECON_STEP_DEG,
+    MAX_STEP_DEG:             MAX_STEP_DEG,
+};

@@ -54,6 +54,7 @@ const MULTICOUNTRY = require(path.join(__dirname, 'ai', 'multi-country-orbat.js'
 const FREE_FIGHT_LLM          = require(path.join(__dirname, 'ai', 'free-fight-llm-plan.js'));
 const FREE_FIGHT_ENGINE       = require(path.join(__dirname, 'ai', 'free-fight-action-engine.js'));
 const FREE_FIGHT_LLM_DECISION = require(path.join(__dirname, 'ai', 'free-fight-llm-decision.js'));
+const COA_PLANNER             = require(path.join(__dirname, 'ai', 'free-fight-coa-planner.js'));
 const STEP1_LLM_FILL = require(path.join(__dirname, 'ai', 'step1-llm-fill.js'));
 
 // Collect a request body and parse it. cb(obj) on success; cb(null) when the
@@ -1335,6 +1336,30 @@ function handle(req, res, ctx) {
                     llm_called: false, llm_status: 'disabled',
                 });
             }
+        });
+        return true;
+    }
+
+    // FREEFIGHT-AI-COA-PLANNER-A: multi-COA attack planner
+    if (pathname === '/api/wargame-sim/free-fight/plan-coas' && method === 'POST') {
+        readJsonBody(req, function (body) {
+            if (body === undefined) {
+                sendJson(res, 200, { ok: false, reason: 'invalid_json' });
+                return;
+            }
+            var b = body || {};
+            var units      = Array.isArray(b.units)      ? b.units      : [];
+            var objectives = Array.isArray(b.objectives) ? b.objectives : (b.objectives ? [b.objectives] : []);
+            var context    = (b.context && typeof b.context === 'object') ? b.context : {};
+            var opts       = (b.opts    && typeof b.opts    === 'object') ? b.opts    : {};
+            COA_PLANNER.planCoas(units, objectives, context, opts)
+                .then(function (r) { sendJson(res, 200, r); })
+                .catch(function (e) {
+                    sendJson(res, 200, {
+                        ok: false, reason: 'coa_planner_error',
+                        error: e && e.message ? String(e.message).slice(0, 240) : String(e),
+                    });
+                });
         });
         return true;
     }

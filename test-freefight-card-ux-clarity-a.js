@@ -205,39 +205,38 @@ ok('§4 old "Start AI Free Fight" text NOT present', !/Start AI Free Fight/.test
 ok('§4 source does not contain "Start AI Free Fight"', !/Start AI Free Fight/.test(CLIENT_SRC));
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// §5  Unit section header says "MAIN AI TEST — Unit Decision LLM"
+// §5  Unit section header says "MAIN AI TEST — Attack Plan / COA Planner"
 // ═══════════════════════════════════════════════════════════════════════════════
-console.log('\n§5  Unit section header says "MAIN AI TEST — Unit Decision LLM"');
+console.log('\n§5  Unit section header says "MAIN AI TEST — Attack Plan / COA Planner"');
 freshMount();
 panelEl = elById['rmooz-free-fight-panel'];
 bodyDiv = panelEl && deepQueryEl(panelEl, '[data-ff="body"]');
 bodyHtml = bodyDiv ? bodyDiv.innerHTML : '';
 ok('§5 "MAIN AI TEST" badge present', /MAIN AI TEST/.test(bodyHtml));
-ok('§5 "Unit Decision LLM" text present in section header', /Unit Decision LLM/.test(bodyHtml));
+ok('§5 "Attack Plan / COA Planner" text present in section header', /Attack Plan \/ COA Planner/.test(bodyHtml));
 ok('§5 section has Arabic subtitle about real unit AI', /الذكاء الاصطناعي/.test(bodyHtml));
 ok('§5 old "AI Decision Preview" header NOT present', !/AI Decision Preview/.test(bodyHtml));
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// §6  Unit buttons use "Unit" label
+// §6  New COA buttons present; unit buttons still present in subsection
 // ═══════════════════════════════════════════════════════════════════════════════
-console.log('\n§6  Unit buttons: Preview/Apply/Reset use "Unit" label');
+console.log('\n§6  COA buttons: Generate/Apply/Reset COA present');
 freshMount();
 panelEl = elById['rmooz-free-fight-panel'];
 bodyDiv = panelEl && deepQueryEl(panelEl, '[data-ff="body"]');
 bodyHtml = bodyDiv ? bodyDiv.innerHTML : '';
-ok('§6 "Preview Unit AI Decision" text present', /Preview Unit AI Decision/.test(bodyHtml));
-ok('§6 old "Preview AI Decision" (non-Unit) NOT present', !/Preview AI Decision[^<]*[^U]/.test(bodyHtml) || /Preview Unit AI Decision/.test(bodyHtml));
+ok('§6 "Generate AI Attack Plan" text present', /Generate AI Attack Plan/.test(bodyHtml));
 
 // source-level checks
-ok('§6 source contains "Preview Unit AI Decision"', /Preview Unit AI Decision/.test(CLIENT_SRC));
-ok('§6 source contains "Apply Unit AI Action"',     /Apply Unit AI Action/.test(CLIENT_SRC));
-ok('§6 source contains "Reset Unit Decision"',      /Reset Unit Decision/.test(CLIENT_SRC));
-ok('§6 source does NOT contain bare "Preview AI Decision"',
-    !/Preview AI Decision[^,]/.test(CLIENT_SRC.replace(/Preview Unit AI Decision/g, '')));
-ok('§6 source does NOT contain "Apply AI Action"',
-    !/Apply AI Action/.test(CLIENT_SRC.replace(/Apply Unit AI Action/g, '')));
-ok('§6 source does NOT contain bare "Reset Decision"',
-    !/Reset Decision/.test(CLIENT_SRC.replace(/Reset Unit Decision/g, '')));
+ok('§6 source contains "Generate AI Attack Plan"', /Generate AI Attack Plan/.test(CLIENT_SRC));
+ok('§6 source contains "Apply Selected COA"',      /Apply Selected COA/.test(CLIENT_SRC));
+ok('§6 source contains "Reset COA"',               /Reset COA/.test(CLIENT_SRC));
+ok('§6 source has generate-coa button', /data-act="generate-coa"/.test(CLIENT_SRC));
+ok('§6 source has apply-coa button',    /data-act="apply-coa"/.test(CLIENT_SRC));
+ok('§6 source has reset-coa button',    /data-act="reset-coa"/.test(CLIENT_SRC));
+// Old unit-level subsection buttons still preserved
+ok('§6 source still contains "Preview Unit AI Decision"', /Preview Unit AI Decision/.test(CLIENT_SRC));
+ok('§6 source still contains "Apply Unit AI Action"',     /Apply Unit AI Action/.test(CLIENT_SRC));
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // §7  Decision Trace still renders when decision is present

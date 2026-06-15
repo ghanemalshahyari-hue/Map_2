@@ -296,9 +296,9 @@ ok('§9 win-close button triggers clear (source check)',
     /win-close.*clear|closeBtn.*addEventListener.*click.*clear/.test(CLIENT_SRC));
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// §10  Existing AI Decision Preview still renders in body
+// §10  AI Decision panel still renders in body with new COA Planner header
 // ═══════════════════════════════════════════════════════════════════════════════
-console.log('\n§10  Existing AI Decision Preview still renders in body');
+console.log('\n§10  AI Decision panel still renders in body with new COA Planner header');
 freshMount();
 panelEl = elById['rmooz-free-fight-panel'];
 bodyDiv = panelEl && deepQueryEl(panelEl, '[data-ff="body"]');
@@ -308,7 +308,7 @@ ok('§10 data-act="preview-ai" in body', /data-act="preview-ai"/.test(bodyHtml))
 ok('§10 data-act="start" in body', /data-act="start"/.test(bodyHtml));
 ok('§10 data-act="reset" in body', /data-act="reset"/.test(bodyHtml));
 ok('§10 MAIN AI TEST header present',  /MAIN AI TEST/.test(bodyHtml));
-ok('§10 Unit Decision LLM label present', /Unit Decision LLM/.test(bodyHtml));
+ok('§10 Attack Plan / COA Planner label present', /Attack Plan \/ COA Planner/.test(bodyHtml));
 ok('§10 Place Objective button present', /Place.*Objective X|Objective X/.test(bodyHtml));
 
 // ═══════════════════════════════════════════════════════════════════════════════

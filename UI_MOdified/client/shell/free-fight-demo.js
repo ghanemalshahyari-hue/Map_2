@@ -935,6 +935,32 @@
         w.map.on('click', handler);
     }
 
+    // FREEFIGHT-BLUE-WARNING-ROE-A: the BLUE Warning / ROE block — alert state,
+    // ROE state, the top trigger and the BLUE warning/intercept actions. Shown in
+    // both the right-side reasoning panel and the COA card. Review-only, no kills.
+    function _blueWarningRoeHtml(situation, warningActions) {
+        var s = situation;
+        if (!s || !s.ok || !s.alert_state) return '';
+        var alert = s.alert_state, roe = s.roe_state || 'HOLD';
+        var alertColor = alert === 'ENGAGEMENT_READY' ? '#f08080' : (alert === 'ALERT' ? '#f0b060' : (alert === 'WARNING' ? '#e0c060' : '#7fd6a0'));
+        var top = arr(s.triggers)[arr(s.triggers).length - 1];
+        var h = '<div data-ff-roe="block" style="margin-top:5px;border:1px solid ' + (alert === 'WATCH' ? '#2a4d3a' : '#7a5a20') + ';border-radius:4px;padding:6px 8px;background:#1a1408;font-size:10px;line-height:1.45;">';
+        h += '<div style="font-weight:700;color:#e0c060;margin-bottom:2px;">BLUE Warning / ROE</div>';
+        h += '<div><span style="color:#8fa5b8;">Alert:</span> <span style="color:' + alertColor + ';font-weight:700;">' + esc(alert) + '</span> · <span style="color:#8fa5b8;">ROE:</span> <span style="color:' + alertColor + ';font-weight:700;">' + esc(roe) + '</span></div>';
+        if (s.nearest_red_uid && s.nearest_red_to_objective_deg != null) {
+            h += '<div><span style="color:#8fa5b8;">Threat:</span> <span style="color:#f0a0a0;">RED ' + esc(s.nearest_red_uid) + '</span> at ' + esc(s.nearest_red_to_objective_deg) + '° (' + esc(s.nearest_red_to_objective_km) + ' km) from ' + esc((s.objective && s.objective.name) || 'Objective X') + '</div>';
+        }
+        if (top) h += '<div><span style="color:#8fa5b8;">Trigger:</span> <span style="color:#d8c08a;">' + esc(top.text) + '</span></div>';
+        var acts = arr(warningActions);
+        if (acts.length) {
+            h += '<div style="color:#8fa5b8;margin-top:2px;">Action:</div><ul style="margin:1px 0 0;padding-left:15px;">' +
+                acts.map(function (a) { return '<li style="color:#e0d0a0;">' + esc(a) + '</li>'; }).join('') + '</ul>';
+        }
+        h += '<div style="color:#6a8fa8;margin-top:2px;font-size:9px;">Demo heuristic / review-only — no engagement resolution.</div>';
+        h += '</div>';
+        return h;
+    }
+
     // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: the right-side "AI Commander
     // Reasoning" panel — shows the current turn, active side, the auto-selected
     // COA, why it was chosen, units moved, expected next reaction, and a running
@@ -974,6 +1000,8 @@
             if (arr(rec.rationale).length) { h += '<div style="color:#7a9ab8;font-weight:600;margin-top:3px;">Why this COA:</div>'; h += blist(rec.rationale, '#cdd8e4'); }
             if (arr(rec.expected).length) { h += '<div style="color:#7a9ab8;font-weight:600;margin-top:2px;">Expected next reaction <span style="color:#8a6a3a;font-weight:400;">(preview)</span>:</div>'; h += blist(rec.expected, '#d8c08a'); }
             if (rec.summary) { h += '<div style="color:#7a9ab8;font-weight:600;margin-top:2px;">Situation summary:</div><div style="color:#cdd8e4;font-size:10px;line-height:1.4;">' + esc(rec.summary) + '</div>'; }
+            // FREEFIGHT-BLUE-WARNING-ROE-A: BLUE warning / ROE block (when BLUE acted)
+            if (rec.side === 'BLUE') h += _blueWarningRoeHtml(rec.situation, rec.warning_actions);
             h += '</div>';
         } else {
             h += '<div style="font-size:11px;color:#7a9ab8;padding:4px 0;">Waiting for first AI commander decision…</div>';
@@ -1687,12 +1715,19 @@
                 rationale: arr(coa.rationale),
                 expected: arr(coa.expected_enemy_reaction),
                 summary: plan.commander_assessment || '',
+                // FREEFIGHT-BLUE-WARNING-ROE-A: carry the situation + BLUE reaction
+                situation: plan.situation_state || null,
+                warning_actions: arr(coa.warning_actions),
             };
             _lastCommanderDecision = record;
             _turnLog.push(record);
             _appendToEventLog('AI Commander Turn ' + turnNo + ' (' + sideForTurn + '): ' +
                 record.coa_id + ' ' + record.coa_title + ' — ' + moved.length + ' units moved [' +
                 (source === 'llm' ? 'llm' : 'deterministic_coa_fallback') + ']');
+            // BLUE warning / alert event-log entries (RED intrusion). No kill logic.
+            if (sideForTurn === 'BLUE' && plan.blue_reaction_intent && arr(plan.blue_reaction_intent.event_log).length) {
+                plan.blue_reaction_intent.event_log.forEach(function (e) { _appendToEventLog(e); });
+            }
             renderCommanderPanel();
             updatePanel();
         });
@@ -1847,6 +1882,11 @@
                 h += '<div style="margin-top:3px;font-size:10.5px;"><span style="color:#7a9ab8;">Recommended:</span> <span style="color:#7fd6a0;font-weight:700;">' + esc(_coaPlan.recommended_plan_id) + '</span></div>';
             }
             h += '</div>';
+        }
+        // FREEFIGHT-BLUE-WARNING-ROE-A: BLUE Warning / ROE block on the COA card when BLUE is acting
+        if (_coaPlan.active_side === 'BLUE' && _coaPlan.situation_state) {
+            var roeActs = (_coaPlan.blue_reaction_intent && _coaPlan.blue_reaction_intent.warning_actions) || [];
+            h += _blueWarningRoeHtml(_coaPlan.situation_state, roeActs);
         }
         // COA cards
         coas.forEach(function (coa, ci) {

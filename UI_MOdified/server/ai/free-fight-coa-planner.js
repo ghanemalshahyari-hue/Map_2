@@ -26,6 +26,7 @@
  * ========================================================================== */
 
 const aiProvider = require('./ai-provider');
+const TRIGGERS   = require('./free-fight-situation-triggers'); // FREEFIGHT-BLUE-WARNING-ROE-A
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 var STEP_DEG       = 0.05;   // ≈ 5-6 km per tick
@@ -679,6 +680,11 @@ async function planCoas(units, objectives, context, opts) {
         allUnits = arr(units).filter(unitHasCoord);
     }
 
+    // FREEFIGHT-BLUE-WARNING-ROE-A: evaluate the RED-vs-BLUE situation on the FULL
+    // unit set (both sides) BEFORE COA selection, so BLUE reacts to intrusion.
+    var situation = TRIGGERS.evaluateFreeFightSituation(units, objectives, context);
+    var blueIntent = (activeSide === 'BLUE') ? TRIGGERS.buildBlueReactionIntent(situation) : null;
+
     var llmCalled = false, llmStatus = null, fallbackReason = null, providerUsed = null, modelUsed = null;
 
     if (opts.useLlm && process.env.RMOOZ_FREE_FIGHT_LLM === '1') {
@@ -687,12 +693,16 @@ async function planCoas(units, objectives, context, opts) {
         llmStatus = llmResult.llm_status || null;
         if (llmResult.ok) {
             var llmCoas = enrichCoasWithNarrative(llmResult.coas, obj, context, 'llm');
+            var llmAssess = buildCommanderAssessment(llmCoas, obj, context, 'llm');
+            if (activeSide === 'BLUE' && blueIntent) { applyBlueReaction(llmCoas, situation, blueIntent); llmAssess = appendSituationToAssessment(llmAssess, situation); }
             return {
                 ok: true,
                 plan_source: 'llm',
                 active_side: activeSide,
                 coas: llmCoas,
-                commander_assessment: buildCommanderAssessment(llmCoas, obj, context, 'llm'),
+                situation_state: situation,
+                blue_reaction_intent: blueIntent,
+                commander_assessment: llmAssess,
                 recommended_plan_id: _recommendedPlanId(llmCoas),
                 llm_called: true,
                 llm_status: llmStatus,
@@ -706,12 +716,16 @@ async function planCoas(units, objectives, context, opts) {
 
     // Deterministic fallback — side-aware (RED attack vs BLUE defense)
     var coas = enrichCoasWithNarrative(buildCoasForSide(allUnits, obj, activeSide), obj, context, 'deterministic_coa_fallback');
+    var assess = buildCommanderAssessment(coas, obj, context, 'deterministic_coa_fallback');
+    if (activeSide === 'BLUE' && blueIntent) { applyBlueReaction(coas, situation, blueIntent); assess = appendSituationToAssessment(assess, situation); }
     return {
         ok: true,
         plan_source: 'deterministic_coa_fallback',
         active_side: activeSide,
         coas: coas,
-        commander_assessment: buildCommanderAssessment(coas, obj, context, 'deterministic_coa_fallback'),
+        situation_state: situation,
+        blue_reaction_intent: blueIntent,
+        commander_assessment: assess,
         recommended_plan_id: _recommendedPlanId(coas),
         llm_called: llmCalled,
         llm_status: llmStatus,
@@ -725,6 +739,37 @@ function _recommendedPlanId(coas) {
     var rec = arr(coas).filter(function (c) { return c && c.recommended; })[0];
     if (rec) return rec.plan_id || null;
     return (arr(coas)[0] && arr(coas)[0].plan_id) || null;
+}
+
+// FREEFIGHT-BLUE-WARNING-ROE-A: pick the BLUE COA the situation calls for and
+// stamp every BLUE COA with the alert/ROE + warning actions so whichever the
+// operator/loop selects carries the reaction intent.
+function _coaHintToTitleMatch(hint) {
+    if (hint === 'intercept') return /intercept|block/i;
+    if (hint === 'hold_screen') return /screen|hold/i;
+    return /forward defense|reinforce/i;
+}
+function applyBlueReaction(coas, situation, intent) {
+    var list = arr(coas);
+    if (!list.length) return list;
+    var match = _coaHintToTitleMatch(intent.recommended_coa_hint);
+    var chosen = list.filter(function (c) { return match.test(String(c.title || '')); })[0] || list[0];
+    list.forEach(function (c) {
+        c.recommended = (c === chosen);
+        c.alert_state = situation.alert_state;
+        c.roe_state = situation.roe_state;
+        c.warning_actions = intent.warning_actions.slice();
+    });
+    return list;
+}
+// Fold the situation's triggers + alert/ROE into the commander assessment text.
+function appendSituationToAssessment(assessment, situation) {
+    if (!situation || !situation.ok) return assessment;
+    var parts = [assessment];
+    parts.push('BLUE Warning / ROE — Alert: ' + situation.alert_state + ' · ROE: ' + situation.roe_state + '.');
+    var top = arr(situation.triggers)[situation.triggers.length - 1];
+    if (top && top.code !== 'no_red_threat_near_objective') parts.push('Trigger: ' + top.text);
+    return parts.join(' ');
 }
 
 // ── Validator ─────────────────────────────────────────────────────────────────

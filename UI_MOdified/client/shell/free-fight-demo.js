@@ -1313,6 +1313,23 @@
     }
     function renderCoaPlanHtml() {
         var h = '';
+        // FREEFIGHT-COA-COMMANDER-NARRATIVE-A: render a bullet list
+        function bullets(list, color) {
+            var a = arr(list);
+            if (!a.length) return '';
+            return '<ul style="margin:2px 0 0;padding-left:16px;">' +
+                a.map(function (b) { return '<li style="color:' + (color || '#cdd8e4') + ';margin-bottom:1px;">' + esc(b) + '</li>'; }).join('') +
+                '</ul>';
+        }
+        // Role breakdown one-liner from a COA's role_breakdown map (server-provided)
+        function roleLine(coa) {
+            var rb = coa && coa.role_breakdown;
+            if (!rb) return '';
+            var order = ['assault', 'support', 'screen', 'recon', 'reserve', 'hold'];
+            var parts = order.filter(function (r) { return rb[r] > 0; })
+                .map(function (r) { return '<span style="color:#e0e8f0;">' + rb[r] + '</span> ' + r; });
+            return parts.length ? parts.join(' · ') : '';
+        }
         if (_coaLoading) {
             h += '<div style="color:#9ab0c0;font-size:11px;padding:6px;">Loading AI Attack Plan… جاري التحميل</div>';
             return h;
@@ -1334,6 +1351,18 @@
              '<span style="color:#7a9ab8;">Plan source:</span> <span style="color:' + srcColor + ';">' + esc(_coaPlan.plan_source || 'deterministic_coa_fallback') + '</span>';
         if (_coaPlan.fallback_reason) h += ' <span style="color:#e0a93a;font-size:9px;">(' + esc(_coaPlan.fallback_reason) + ')</span>';
         h += '</div>';
+        // FREEFIGHT-COA-COMMANDER-NARRATIVE-A: Commander AI Assessment banner
+        if (_coaPlan.commander_assessment || _coaPlan.recommended_plan_id) {
+            h += '<div data-ff-coa="assessment" style="margin-bottom:6px;padding:6px 9px;border:1px solid #2e5d7d;border-radius:5px;background:#0a1622;">';
+            h += '<div style="font-weight:700;font-size:11px;color:#9ec2ec;margin-bottom:3px;">Commander AI Assessment — تقدير القائد</div>';
+            if (_coaPlan.commander_assessment) {
+                h += '<div style="font-size:10px;color:#cdd8e4;line-height:1.4;">' + esc(_coaPlan.commander_assessment) + '</div>';
+            }
+            if (_coaPlan.recommended_plan_id) {
+                h += '<div style="margin-top:3px;font-size:10.5px;"><span style="color:#7a9ab8;">Recommended:</span> <span style="color:#7fd6a0;font-weight:700;">' + esc(_coaPlan.recommended_plan_id) + '</span></div>';
+            }
+            h += '</div>';
+        }
         // COA cards
         coas.forEach(function (coa, ci) {
             var isSelected = (ci === _coaSelectedIdx);
@@ -1350,6 +1379,9 @@
                  '<span style="color:#8fa5b8;">Confidence:</span> <span style="color:#9ec2ec;">' + esc(coa.confidence) + '</span> · ' +
                  '<span style="color:#8fa5b8;">Units:</span> <span style="color:#e0e8f0;">' + (coa.units_selected_count || 0) + '/' + (coa.units_total_considered || 0) + '</span></div>';
             if (coa.summary) h += '<div style="font-size:10px;color:#cdd8e4;margin-bottom:3px;font-style:italic;">' + esc(coa.summary) + '</div>';
+            // Role breakdown one-liner (server-provided role_breakdown)
+            var rl = roleLine(coa);
+            if (rl) h += '<div style="font-size:10px;color:#9ab0c0;margin-bottom:2px;">Force: ' + rl + '</div>';
             // Phase actions summary
             (coa.phases || []).forEach(function (ph) {
                 var roleCounts = {};
@@ -1360,6 +1392,27 @@
             if (isSelected) h += '<div style="margin-top:3px;font-size:10px;color:#4a9ed6;font-weight:700;">▶ Selected</div>';
             h += '</div>';
         });
+        // FREEFIGHT-COA-COMMANDER-NARRATIVE-A: detailed commander decision for the SELECTED COA
+        var selCoa = coas[_coaSelectedIdx] || coas[0];
+        if (selCoa) {
+            var srb = selCoa.role_breakdown || {};
+            h += '<div data-ff-coa="commander-decision" style="margin-top:4px;margin-bottom:4px;padding:7px 9px;border:1px solid #2a4d6a;border-radius:5px;background:#08131e;">';
+            h += '<div style="font-weight:700;font-size:11px;color:#9ec2ec;margin-bottom:3px;">' +
+                 esc(selCoa.plan_id || '') + ' — Commander Decision</div>';
+            // Why
+            h += '<div style="font-size:10px;color:#7a9ab8;font-weight:600;margin-top:2px;">Why:</div>';
+            h += bullets(selCoa.rationale, '#cdd8e4');
+            // Units
+            var unitOrder = ['assault', 'support', 'screen', 'recon', 'reserve', 'hold'];
+            var unitLines = unitOrder.filter(function (r) { return srb[r] > 0; })
+                .map(function (r) { return r.charAt(0).toUpperCase() + r.slice(1) + ': ' + srb[r]; });
+            h += '<div style="font-size:10px;color:#7a9ab8;font-weight:600;margin-top:3px;">Units:</div>';
+            h += bullets(unitLines, '#e0e8f0');
+            // Expected enemy reaction (PREVIEW — not simulated)
+            h += '<div style="font-size:10px;color:#7a9ab8;font-weight:600;margin-top:3px;">Likely enemy reaction <span style="color:#8a6a3a;font-weight:400;">(preview — not yet simulated)</span>:</div>';
+            h += bullets(selCoa.expected_enemy_reaction, '#d8c08a');
+            h += '</div>';
+        }
         // Applied status
         if (_coaApplied) {
             h += '<div style="margin-top:5px;border:1px solid #1a4050;border-radius:4px;padding:6px 8px;background:#070e14;font-size:10px;" data-ff-truth="coa-status">';

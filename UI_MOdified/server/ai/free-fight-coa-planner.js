@@ -317,6 +317,115 @@ function normalizeCoa(raw, allowedUnitIds) {
     };
 }
 
+// ── Commander narrative (FREEFIGHT-COA-COMMANDER-NARRATIVE-A) ───────────────────
+// Pure, deterministic enrichment that turns a raw COA into a commander-readable
+// decision: role breakdown, "why" rationale, and a PREVIEW (not simulated) hint
+// of likely enemy reaction. Works for both deterministic and LLM COAs. It never
+// creates or moves units — it only describes what the COA already says.
+
+/**
+ * computeRoleBreakdown(coa) → { assault, support, screen, reserve, recon, hold }
+ * Counts actions by role across all phases.
+ */
+function computeRoleBreakdown(coa) {
+    var counts = {};
+    ALLOWED_ROLES.forEach(function (r) { counts[r] = 0; });
+    arr(coa && coa.phases).forEach(function (ph) {
+        arr(ph.actions).forEach(function (act) {
+            var r = (act && act.role) ? String(act.role).toLowerCase() : 'hold';
+            if (counts[r] == null) counts[r] = 0;
+            counts[r]++;
+        });
+    });
+    return counts;
+}
+
+function _movingCount(rb) { return (rb.assault || 0) + (rb.support || 0) + (rb.screen || 0) + (rb.recon || 0); }
+function _holdingCount(rb) { return (rb.reserve || 0) + (rb.hold || 0); }
+
+/**
+ * buildCoaRationale(coa, rb, objName) → string[]
+ * "Why this approach" bullets, derived from the role mix + risk profile.
+ */
+function buildCoaRationale(coa, rb, objName) {
+    var bullets = [];
+    if (rb.assault) bullets.push('Commits ' + rb.assault + ' assault unit' + (rb.assault === 1 ? '' : 's') + ' against ' + objName + '.');
+    if (rb.support) bullets.push('Uses ' + rb.support + ' support unit' + (rb.support === 1 ? '' : 's') + ' to fix the enemy by fire instead of direct exposure.');
+    if (rb.screen)  bullets.push('Screens the flank with ' + rb.screen + ' unit' + (rb.screen === 1 ? '' : 's') + ' to protect the main effort.');
+    if (rb.recon)   bullets.push('Leads with ' + rb.recon + ' recon unit' + (rb.recon === 1 ? '' : 's') + ' to reveal the enemy picture before committing the main body.');
+    var holding = _holdingCount(rb);
+    if (holding)    bullets.push('Keeps ' + holding + ' unit' + (holding === 1 ? '' : 's') + ' in reserve / holding for flexibility.');
+    // Risk-keyed closing judgement
+    if (coa.risk === 'high')        bullets.push('Highest exposure — best only if the commander accepts risk for tempo.');
+    else if (coa.risk === 'medium') bullets.push('Balanced — pressures ' + objName + ' while preserving force and a reserve.');
+    else                            bullets.push('Lowest risk — preserves the force and the information advantage.');
+    return bullets;
+}
+
+/**
+ * buildExpectedEnemyReaction(coa, rb) → string[]
+ * PREVIEW ONLY — a heuristic hint of what the enemy might do. This is NOT a
+ * simulated counteraction; the action/counteraction loop is a separate feature.
+ */
+function buildExpectedEnemyReaction(coa, rb) {
+    var hints = [];
+    if ((rb.assault || 0) >= 3 || coa.risk === 'high') {
+        hints.push('Enemy likely concentrates defensive fires on the assault axis and may counterattack the exposed force.');
+    }
+    if ((rb.support || 0) || (rb.screen || 0)) {
+        hints.push('Support / screen elements complicate enemy repositioning; enemy may reinforce ' + (coa.objective_id || 'the objective') + '.');
+    }
+    if ((rb.recon || 0) && (rb.assault || 0) === 0) {
+        hints.push('Enemy may stay concealed to avoid revealing positions, or displace before the main body commits.');
+    }
+    if (!hints.length) hints.push('Enemy reaction uncertain — run counteraction to evaluate (next-turn feature).');
+    return hints;
+}
+
+/**
+ * buildCommanderAssessment(coas, obj, context, planSource) → string
+ * One plan-level paragraph. Stays truthful about source and approval posture.
+ */
+function buildCommanderAssessment(coas, obj, context, planSource) {
+    var list = arr(coas);
+    var rec = list.filter(function (c) { return c && c.recommended; })[0] || list[0] || null;
+    var total = (list[0] && list[0].units_total_considered) || 0;
+    var parts = [];
+    parts.push('Force pool: ' + total + ' movable unit' + (total === 1 ? '' : 's') + ' considered.');
+    if (!obj) parts.push('No objective is set — define Objective X before issuing tasking.');
+    else parts.push('Objective: ' + ((obj.name || obj.label) || 'Objective X') + '.');
+    parts.push('Generated ' + list.length + ' course' + (list.length === 1 ? '' : 's') + ' of action.');
+    if (rec) parts.push('Recommended: ' + (rec.plan_id || 'COA-?') + ' ' + (rec.title || '') + '.');
+    parts.push(planSource === 'llm'
+        ? 'Source: local LLM (advisory) — RMOOZ validated, commander approval required.'
+        : 'Source: deterministic planner — review-only, commander approval required.');
+    return parts.join(' ');
+}
+
+/**
+ * enrichCoasWithNarrative(coas, obj, context, planSource) → coas (mutated in place)
+ * Adds role_breakdown / rationale / expected_enemy_reaction to each COA.
+ */
+function enrichCoasWithNarrative(coas, obj, context, planSource) {
+    var objName = (obj && (obj.name || obj.label)) || 'Objective X';
+    arr(coas).forEach(function (coa) {
+        if (!coa || typeof coa !== 'object') return;
+        var rb = computeRoleBreakdown(coa);
+        coa.role_breakdown = rb;
+        coa.units_moving_count = _movingCount(rb);
+        coa.units_holding_count = _holdingCount(rb);
+        // Keep any rationale the LLM supplied; otherwise derive it.
+        if (!Array.isArray(coa.rationale) || !coa.rationale.length) {
+            coa.rationale = buildCoaRationale(coa, rb, coa.objective_id || objName);
+        }
+        if (!Array.isArray(coa.expected_enemy_reaction) || !coa.expected_enemy_reaction.length) {
+            coa.expected_enemy_reaction = buildExpectedEnemyReaction(coa, rb);
+        }
+        coa.enemy_reaction_preview_only = true; // honest: not a simulated counteraction
+    });
+    return coas;
+}
+
 // ── LLM planner ───────────────────────────────────────────────────────────────
 async function _callLlm(units, objectives, context, opts, _providerOverride) {
     var provider = _providerOverride || aiProvider;
@@ -431,10 +540,13 @@ async function planCoas(units, objectives, context, opts) {
         var llmResult = await _callLlm(allUnits, objectives, context, opts);
         llmStatus = llmResult.llm_status || null;
         if (llmResult.ok) {
+            var llmCoas = enrichCoasWithNarrative(llmResult.coas, obj, context, 'llm');
             return {
                 ok: true,
                 plan_source: 'llm',
-                coas: llmResult.coas,
+                coas: llmCoas,
+                commander_assessment: buildCommanderAssessment(llmCoas, obj, context, 'llm'),
+                recommended_plan_id: _recommendedPlanId(llmCoas),
                 llm_called: true,
                 llm_status: llmStatus,
                 fallback_reason: null,
@@ -446,17 +558,25 @@ async function planCoas(units, objectives, context, opts) {
     }
 
     // Deterministic fallback
-    var coas = buildDeterministicCoas(allUnits, obj);
+    var coas = enrichCoasWithNarrative(buildDeterministicCoas(allUnits, obj), obj, context, 'deterministic_coa_fallback');
     return {
         ok: true,
-        plan_source: llmCalled ? 'deterministic_coa_fallback' : 'deterministic_coa_fallback',
+        plan_source: 'deterministic_coa_fallback',
         coas: coas,
+        commander_assessment: buildCommanderAssessment(coas, obj, context, 'deterministic_coa_fallback'),
+        recommended_plan_id: _recommendedPlanId(coas),
         llm_called: llmCalled,
         llm_status: llmStatus,
         fallback_reason: fallbackReason,
         provider_used: providerUsed,
         model_used: modelUsed,
     };
+}
+
+function _recommendedPlanId(coas) {
+    var rec = arr(coas).filter(function (c) { return c && c.recommended; })[0];
+    if (rec) return rec.plan_id || null;
+    return (arr(coas)[0] && arr(coas)[0].plan_id) || null;
 }
 
 // ── Validator ─────────────────────────────────────────────────────────────────
@@ -604,6 +724,12 @@ module.exports = {
     buildDeterministicCoas: buildDeterministicCoas,
     normalizeCoa:           normalizeCoa,
     normalizeCoaAction:     normalizeCoaAction,
+    // FREEFIGHT-COA-COMMANDER-NARRATIVE-A
+    computeRoleBreakdown:       computeRoleBreakdown,
+    buildCoaRationale:          buildCoaRationale,
+    buildExpectedEnemyReaction: buildExpectedEnemyReaction,
+    buildCommanderAssessment:   buildCommanderAssessment,
+    enrichCoasWithNarrative:    enrichCoasWithNarrative,
     ALLOWED_COA_ACTION_TYPES: ALLOWED_COA_ACTION_TYPES,
     ALLOWED_ROLES:            ALLOWED_ROLES,
     STEP_DEG:                 STEP_DEG,

@@ -34,6 +34,34 @@
 var aiProvider = require('./ai-provider');
 var CATALOG    = require('./platform-capability-catalog');
 
+// RMOOZ-UNIT-IDENTITY-CONTRACT-A: ONE identity contract, shared with the client. A
+// role token or a synthetic role-index label must NEVER become a platform name.
+var IDENTITY = null;
+try { IDENTITY = require('../../client/shared/unit-identity-resolver.js'); } catch (_) { IDENTITY = null; }
+
+// Clean platform name: prefer the client-attached unit_identity, else the shared
+// resolver, else an authored platform field — but never a role/synthetic label.
+function cleanPlatformName(u) {
+    if (u && u.unit_identity && u.unit_identity.platform_name) {
+        return u.unit_identity.platform_name === 'unknown' ? null : u.unit_identity.platform_name;
+    }
+    if (IDENTITY && IDENTITY.unitIdentityForLlm) {
+        try {
+            var p = IDENTITY.unitIdentityForLlm(u).platform_name;
+            return (p && p !== 'unknown') ? p : null;
+        } catch (_) {}
+    }
+    return (u && (u.platform_name || u.platform)) || null;
+}
+function cleanDisplayName(u) {
+    if (u && u.unit_identity && u.unit_identity.display_name) return u.unit_identity.display_name;
+    if (u && u.display_name) return u.display_name;
+    if (IDENTITY && IDENTITY.displayUnitName) {
+        try { var n = IDENTITY.displayUnitName(u); if (n && n !== '—') return n; } catch (_) {}
+    }
+    return (u && (u.name || u.label)) || null;
+}
+
 // ── Local-only provider enforcement (mirrors free-fight-llm-decision.js) ─────
 var REMOTE_PROVIDERS_BLOCKED = ['claude', 'zen', 'openai', 'auto'];
 
@@ -330,8 +358,8 @@ function heuristicProfile(unit) {
 
     var profile = {
         unit_uid: unitUid(u),
-        original_name: u.name || u.platform || u.label || u.role || null,
-        platform_name: u.platform_name || u.platform || u.name || u.label || u.role || null,
+        original_name: cleanDisplayName(u),
+        platform_name: cleanPlatformName(u),
         side: unitSide(u),
         domain: whitelistDomain(richDomain),
         class: whitelistClass(richClass),
@@ -396,8 +424,8 @@ function normalizeCapabilityProfile(raw, unit) {
 
     return {
         unit_uid: unitUid(u),  // trusted source, NOT raw
-        original_name: u.name || u.platform || u.label || u.role || (raw.original_name != null ? str(raw.original_name, 120) : null),
-        platform_name: u.platform_name || u.platform || u.name || u.label || (raw.platform_name != null ? str(raw.platform_name, 120) : null),
+        original_name: cleanDisplayName(u) || (raw.original_name != null ? str(raw.original_name, 120) : null),
+        platform_name: cleanPlatformName(u) || (raw.platform_name != null ? str(raw.platform_name, 120) : null),
         side: unitSide(u),
         domain: whitelistDomain(raw.domain),
         class: whitelistClass(raw.class),

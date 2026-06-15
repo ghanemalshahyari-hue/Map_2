@@ -1379,12 +1379,20 @@
                 lon = u.coord[0]; lat = u.coord[1];
             }
             if (!Number.isFinite(Number(lat)) || !Number.isFinite(Number(lon))) return null;
+            // RMOOZ-UNIT-IDENTITY-CONTRACT-A: resolve identity ONE way. Never let a
+            // role token or a synthetic role-index label pose as the platform — that
+            // made the LLM mistake a unit for a real platform.
+            var ident = (window.RmoozUnitIdentity && window.RmoozUnitIdentity.unitIdentityForLlm)
+                ? window.RmoozUnitIdentity.unitIdentityForLlm(u, { side: u.side }) : null;
             return { id: String(id), uid: String(id), lat: +lat, lon: +lon,
                      side: String(u.side || 'RED').toUpperCase(),
                      // RMOZ-INTEL/COMMANDER-BRIEF: preserve fields the intel layer reads.
                      role: u.role || null,
                      country: u.country || u.nation || null,
-                     platform: u.platform || u.role || u.label || null };
+                     platform: (ident && ident.platform_name && ident.platform_name !== 'unknown')
+                         ? ident.platform_name : (u.platform || null),
+                     display_name: ident ? ident.display_name : (u.label || u.name || String(id)),
+                     unit_identity: ident || undefined };
         }
 
         function tallyRaw(raw) {

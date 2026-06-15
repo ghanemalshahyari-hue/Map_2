@@ -1,11 +1,11 @@
 {
   "schema_version": "rmooz-operator-overrides-1.0",
   "created_by": "RMOOZ",
-  "created_at": "2026-06-12T18:35:21.297Z",
+  "created_at": "2026-06-15T10:55:59.939Z",
   "objective": {
     "id": "OBJ-X",
-    "lon": 54.66,
-    "lat": 24.33,
+    "lon": 51.01,
+    "lat": 24.81,
     "name_en": "Objective X",
     "depth_km_from_coast": 90.1
   }

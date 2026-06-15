@@ -48,6 +48,17 @@ var contacts      = require('./contact-detection-engine');
 var roe           = require('./roe-escalation-engine');
 var coaVariation  = require('./coa-variation-engine');
 var situationTrig = require('./free-fight-situation-triggers');
+// RMOOZ-UNIT-IDENTITY-CONTRACT-A: shared identity contract, so the LLM OOB carries a
+// resolved display name + platform truth + synthetic warning (never role-as-platform).
+var identityResolver = null;
+try { identityResolver = require('../../client/shared/unit-identity-resolver.js'); } catch (_) { identityResolver = null; }
+function unitIdentityFor(u) {
+    if (u && u.unit_identity && u.unit_identity.uid) return u.unit_identity;
+    if (identityResolver && identityResolver.unitIdentityForLlm) {
+        try { return identityResolver.unitIdentityForLlm(u); } catch (_) {}
+    }
+    return null;
+}
 
 var TOOL_CONTRACT_VERSION = 'rmooz-ai-tool-contract/1.0';
 
@@ -197,6 +208,7 @@ function getScenarioOobTool(input) {
             if (country && !seenCountry[side][country]) { seenCountry[side][country] = true; sides[side].countries.push(country); }
             if (prof.domain && !seenDomain[side][prof.domain]) { seenDomain[side][prof.domain] = true; sides[side].domains.push(prof.domain); }
 
+            var ident = unitIdentityFor(u);
             unitsOut.push({
                 unit_uid: unitUid(u),
                 side: side,
@@ -205,6 +217,13 @@ function getScenarioOobTool(input) {
                 country: country,
                 lat: ll ? ll.lat : null,
                 lon: ll ? ll.lon : null,
+                // RMOOZ-UNIT-IDENTITY-CONTRACT-A: identity the LLM can trust — a
+                // synthetic role-index label is flagged so the model never reads it as
+                // a real platform. platform_name is "unknown" when not authored.
+                display_name: ident ? ident.display_name : null,
+                platform_name: ident ? ident.platform_name : null,
+                identity_confidence: ident ? ident.identity_confidence : null,
+                identity_warning: ident ? ident.warning : null,
             });
         });
 

@@ -36,12 +36,27 @@
         if (el) el.textContent = text;
     }
 
-    // RMOOZ-IMPORT-OBJECTIVE-UNITSTATUS-FIX-B (D): resolve a human display name from
-    // whatever identity field a selected marker actually carries. Scenario markers
-    // pass name / name_ar / uid / unit_uid / base_id (not always `label`), so using
-    // only `unit.label` showed the wrong name. Read-only — never mutates the unit.
+    function esc(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    // RMOOZ-UNIT-IDENTITY-CONTRACT-A: the ONE shared identity contract. The panel,
+    // the map marker, the AI/COA path, and the event log must all derive a unit's name
+    // the same way. Delegate to the shared resolver when present; keep a thin fallback
+    // for the rare case the resolver script has not loaded. Read-only — never mutates.
+    function resolveIdentity(unit) {
+        if (root.RmoozUnitIdentity && typeof root.RmoozUnitIdentity.resolveUnitIdentity === 'function') {
+            try { return root.RmoozUnitIdentity.resolveUnitIdentity(unit); } catch (_) {}
+        }
+        return null;
+    }
     function displayUnitName(unit) {
         if (!unit) return '—';
+        if (unit.identity && unit.identity.display_name) return unit.identity.display_name;
+        var id = resolveIdentity(unit);
+        if (id && id.display_name) return id.display_name;
         return unit.label || unit.name || unit.name_en || unit.name_ar ||
             unit.unit_name || unit.callsign || unit.code || unit.uid ||
             unit.unit_uid || unit.id || unit.base_id || '—';
@@ -641,8 +656,27 @@
     }
 
     // ── Identity ──────────────────────────────────────────────────────
+    // RMOOZ-UNIT-IDENTITY-CONTRACT-A: map the resolver's display_name_source to a
+    // short human label for the "Identity" provenance row.
+    function identitySourceLabel(id) {
+        if (!id) return null;
+        switch (id.source && id.source.display_name_source) {
+            case 'name_en':
+            case 'name':
+            case 'name_ar':       return tr('usp-identity-authored', 'scenario name');
+            case 'platform':      return tr('usp-identity-platform', 'platform');
+            case 'callsign':      return tr('usp-identity-callsign', 'callsign');
+            case 'label':         return tr('usp-identity-label', 'scenario label');
+            case 'label_synthetic': return tr('usp-identity-synthetic', 'synthetic label');
+            case 'uid':           return tr('usp-identity-synthetic-id', 'synthetic id');
+            default:              return tr('usp-identity-unknown', 'unknown');
+        }
+    }
+
     function populateIdentity(unit, enriched, selectedAt) {
         var platformLabel = getPlatformLabel(enriched);
+        var id = (unit && unit.identity) ? unit.identity : resolveIdentity(unit);
+        var synthetic = !!(id && id.warnings && id.warnings.indexOf('synthetic_display_name') >= 0);
 
         // Platform ID line: uid + echelon
         var pidEl = $('usp-platform-id');
@@ -651,14 +685,43 @@
             pidEl.textContent = parts || unit.uid || '—';
         }
 
-        // Platform type: domain + DB1 label
+        // Platform type: prefer an AUTHORED platform (identity truth). If none, fall
+        // back to the DB-Lite capability label but tag it as a fallback, and if even
+        // that is absent show "unknown — requires review" rather than presenting a
+        // generic UNIT/role as the platform truth (rule 5 + 7).
         var ptEl = $('usp-platform-type');
         if (ptEl) {
             var domain = unit.domain ? unit.domain.toUpperCase() : '';
             var role   = unit.role   ? unit.role.replace(/_/g, ' ') : '';
-            ptEl.textContent = platformLabel
-                ? (domain ? domain + ' – ' : '') + platformLabel
-                : [domain, role].filter(Boolean).join(' – ') || '—';
+            var authoredPlatform = (id && id.platform_name && id.platform_name !== 'unknown') ? id.platform_name : null;
+            if (authoredPlatform) {
+                ptEl.textContent = (domain ? domain + ' – ' : '') + authoredPlatform;
+            } else if (platformLabel) {
+                ptEl.textContent = (domain ? domain + ' – ' : '') + platformLabel
+                    + ' · ' + tr('usp-platform-dblite', 'DB-Lite');
+            } else {
+                var base = [domain, role].filter(Boolean).join(' – ');
+                ptEl.textContent = (base ? base + ' · ' : '')
+                    + tr('usp-platform-review', 'unknown — requires review');
+            }
+        }
+
+        // Identity provenance row + synthetic warning chip.
+        var isrcEl = $('usp-identity-source');
+        if (isrcEl) {
+            var srcTxt = identitySourceLabel(id);
+            if (srcTxt) {
+                var chip = synthetic
+                    ? ' <span class="usp-identity-warn">' + esc(tr('usp-identity-review', 'name requires review')) + '</span>'
+                    : '';
+                isrcEl.innerHTML = '<span class="usp-identity-key">'
+                    + esc(tr('usp-identity-label-key', 'Identity')) + ':</span> '
+                    + esc(srcTxt) + chip;
+                isrcEl.style.display = '';
+            } else {
+                isrcEl.textContent = '';
+                isrcEl.style.display = 'none';
+            }
         }
 
         // UID / callsign

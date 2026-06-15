@@ -3490,6 +3490,8 @@
                         <div class="usp-uid" id="unit-uid"></div>
                         <div class="usp-sidc" id="usp-sidc"></div>
                         <div class="usp-code-line" id="usp-code"></div>
+                        <!-- RMOOZ-UNIT-IDENTITY-CONTRACT-A: where the display name came from -->
+                        <div class="usp-identity-source" id="usp-identity-source"></div>
                     </div>
 
                     <div class="usp-stats-row">
@@ -4451,6 +4453,9 @@
     <script src="tool-rail.js?v=4"></script>
     <script src="import-plan.js?v=9"></script>
     <script src="turn-engine.js?v=5"></script>
+    <!-- RMOOZ-UNIT-IDENTITY-CONTRACT-A: shared unit-identity resolver. Must load
+         before adjudicator-map.js, unit-status-panel.js, and free-fight-demo.js. -->
+    <script src="shared/unit-identity-resolver.js?v=1"></script>
     <script src="wargame/approved-actions.js?v=1"></script>
     <script src="wargame/red-team-controller.js?v=4"></script>
     <script src="wargame/scenario-state.js?v=1"></script>
@@ -5660,6 +5665,11 @@
         /* ── Position / SIDC rows in identity block ──────────────────── */
         .usp-sidc { font-size:0.68rem; color:#5aaad4; font-family:'Consolas','Courier New',monospace; word-break:break-all; padding:2px 0; letter-spacing:0.04em; }
         .usp-code-line { font-size:0.65rem; color:#5a7880; font-family:'Consolas','Courier New',monospace; }
+        /* RMOOZ-UNIT-IDENTITY-CONTRACT-A: identity provenance + synthetic warning chip */
+        .usp-identity-source { font-size:0.62rem; color:#6a8090; margin-top:0.2rem; letter-spacing:0.02em; }
+        .usp-identity-source .usp-identity-key { color:#4a6070; text-transform:uppercase; letter-spacing:0.05em; }
+        .usp-identity-warn { display:inline-block; margin-inline-start:0.35rem; padding:0 5px; border-radius:2px;
+            background:#3a2a12; border:1px solid #6a4a1a; color:#e0a040; font-size:0.58rem; letter-spacing:0.03em; text-transform:uppercase; }
         .usp-pos-section { border-bottom:1px solid #141e2a; }
         .usp-pos-section .usp-arow-lbl { color:#2e4a58; }
         .usp-pos-val { font-size:0.73rem; color:#90bcd4; font-family:'Consolas','Courier New',monospace; word-break:break-word; }

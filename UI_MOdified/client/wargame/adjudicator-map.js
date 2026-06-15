@@ -2180,18 +2180,26 @@
             m._iconSize = size;
             m._baseIcon = icon;   // MAP-CLARITY-1: compose the destroyed-X from this
             m._unitId   = unit.uid;
-            m._unitData = {
-                id:    unit.uid,
-                name:  unit.label || unit.name_ar || unit.uid,
-                code:  unit.uid,
-                sidc:  sidc,
-                side:  'hostile',
-                level: unit.echelon || null,
-                role:  unit.role || null,
-                domain: unit.domain || null,
-                bls:   unit.bls || null,
-                _scenario: true,
-            };
+            // RMOOZ-UNIT-IDENTITY-CONTRACT-A: dispatch the FULL normalized unit, not a
+            // thin object. normalizeSelectedUnit preserves every raw scenario field and
+            // overlays a stable id + resolved display name + the LLM identity block, so
+            // Unit Status, the AI path, and the event log all read one identity.
+            m._unitData = (window.RmoozUnitIdentity && window.RmoozUnitIdentity.normalizeSelectedUnit)
+                ? window.RmoozUnitIdentity.normalizeSelectedUnit(
+                    Object.assign({}, unit, { sidc: sidc }),
+                    { side: 'hostile', scenario: true })
+                : {
+                    id:    unit.uid,
+                    name:  unit.label || unit.name_ar || unit.uid,
+                    code:  unit.uid,
+                    sidc:  sidc,
+                    side:  'hostile',
+                    level: unit.echelon || null,
+                    role:  unit.role || null,
+                    domain: unit.domain || null,
+                    bls:   unit.bls || null,
+                    _scenario: true,
+                };
             // P5 (Wargame3 live): clicking a scenario unit selects it and feeds the
             // read-only Selected Unit panel. Uses the marker's live displayed
             // position (Red's raw coord is a stacked staging point).
@@ -2248,19 +2256,24 @@
             m._iconSize = size; // needed so the damaged/active SIDC rebuild keeps the same scale
             m._baseIcon = icon;   // MAP-CLARITY-1: compose the destroyed-X from this
             m._unitId   = unit.unit_uid;
-            m._unitData = {
-                id:    unit.unit_uid,
-                name:  unit.label || unit.name_ar || unit.base_id || unit.unit_uid,
-                code:  unit.base_id || unit.unit_uid,
-                sidc:  sidc || null,
-                side:  'friendly',
-                level: unit.echelon || null,
-                role:  unit.role || null,
-                domain: unit.domain || null,
-                lat:   unit.coord[1],
-                lng:   unit.coord[0],
-                _scenario: true,
-            };
+            // RMOOZ-UNIT-IDENTITY-CONTRACT-A: same shared contract as the Red side.
+            m._unitData = (window.RmoozUnitIdentity && window.RmoozUnitIdentity.normalizeSelectedUnit)
+                ? window.RmoozUnitIdentity.normalizeSelectedUnit(
+                    Object.assign({}, unit, { sidc: sidc || null }),
+                    { side: 'friendly', scenario: true, live_lat: unit.coord[1], live_lng: unit.coord[0] })
+                : {
+                    id:    unit.unit_uid,
+                    name:  unit.label || unit.name_ar || unit.base_id || unit.unit_uid,
+                    code:  unit.base_id || unit.unit_uid,
+                    sidc:  sidc || null,
+                    side:  'friendly',
+                    level: unit.echelon || null,
+                    role:  unit.role || null,
+                    domain: unit.domain || null,
+                    lat:   unit.coord[1],
+                    lng:   unit.coord[0],
+                    _scenario: true,
+                };
             // P5 (Wargame3 live): clicking a scenario unit selects it and feeds the
             // read-only Selected Unit panel. Same event the placed-units layer uses
             // (unit-panel.js renders detail.unit); additive — does not block tooltip.

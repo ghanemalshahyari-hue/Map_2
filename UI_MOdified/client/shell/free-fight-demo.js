@@ -579,6 +579,104 @@
                 } catch (_e) {}
             });
         }
+        // FREEFIGHT-ACTION-REACTION-MAP-OVERLAY-A: draw the action/reaction story
+        // (zones, RED threat axis, block point, BLUE intercept line, alert label).
+        try { renderActionReactionOverlay(w); } catch (_ov) {}
+    }
+
+    // FREEFIGHT-ACTION-REACTION-MAP-OVERLAY-A: review-only map overlay that explains
+    // the action/reaction visually. Fully guarded (no-op without situation data or
+    // when a Leaflet primitive is missing). NEVER moves the camera. No kill markers.
+    function renderActionReactionOverlay(w) {
+        if (!_layer || !w || !w.L) return;
+        var L = w.L;
+        // Latest situation comes from the COA plan (manual + loop both set _coaPlan)
+        // or the last commander decision. No situation/objective → nothing to tell.
+        var plan = _coaPlan;
+        var rec = _lastCommanderDecision;
+        var situation = (plan && plan.situation_state) || (rec && rec.situation) || null;
+        if (!situation || !situation.objective) return;
+        var obj = situation.objective;
+        if (!Number.isFinite(+obj.lat) || !Number.isFinite(+obj.lon)) return;
+        var objLat = +obj.lat, objLon = +obj.lon;
+
+        function add(layer) {
+            if (!layer) return null;
+            layer._rmoozDemoOnly = true; layer._rmoozReviewOnly = true; layer._rmoozActionReaction = true;
+            try { _layer.addLayer(layer); } catch (_) {}
+            return layer;
+        }
+        function label(lat, lon, html, anchor) {
+            if (typeof L.divIcon !== 'function' || typeof L.marker !== 'function') return null;
+            try {
+                var ic = L.divIcon({ className: 'rmooz-ff-overlay-label', html: html, iconSize: [10, 10], iconAnchor: anchor || [5, 5] });
+                return add(L.marker([lat, lon], { icon: ic, interactive: false, keyboard: false }));
+            } catch (_) { return null; }
+        }
+
+        // 1) Warning / defended / engagement rings around the objective (labelled).
+        var th = situation.thresholds_deg || {};
+        if (typeof L.circle === 'function') {
+            [
+                { deg: +th.warning,    color: '#e0a93a', dash: '6 6', text: 'Warning zone — review only' },
+                { deg: +th.defended,   color: '#f08040', dash: '4 5', text: 'Defended zone — review only' },
+                { deg: +th.engagement, color: '#f05050', dash: '2 4', text: 'Engagement-ready zone — review only' },
+            ].forEach(function (r) {
+                if (!Number.isFinite(r.deg) || r.deg <= 0) return;
+                try { add(L.circle([objLat, objLon], { radius: r.deg * 111000, color: r.color, weight: 1.5, opacity: 0.7, fill: false, dashArray: r.dash, interactive: false })); } catch (_) {}
+                label(objLat + r.deg, objLon, '<div data-ff-ovl="ring" style="font-size:9px;color:' + r.color + ';background:rgba(8,14,20,.72);padding:0 3px;border-radius:2px;white-space:nowrap;">' + esc(r.text) + '</div>', [0, 6]);
+            });
+        }
+
+        // 2) RED threat axis: nearest RED → objective.
+        var nr = situation.nearest_red;
+        if (nr && Number.isFinite(+nr.lat) && Number.isFinite(+nr.lon) && typeof L.polyline === 'function') {
+            try { add(L.polyline([[+nr.lat, +nr.lon], [objLat, objLon]], { color: '#f0606a', weight: 2, opacity: 0.85, dashArray: '9 6', interactive: false })); } catch (_) {}
+            label((+nr.lat + objLat) / 2, (+nr.lon + objLon) / 2, '<div data-ff-ovl="red-axis" style="font-size:9px;color:#f0808a;background:rgba(8,14,20,.72);padding:0 3px;border-radius:2px;white-space:nowrap;">RED threat axis</div>', [0, 0]);
+        }
+
+        // 3) + 4) BLUE intercept/block point + intercept line (from the selected COA).
+        var coa = (plan && Array.isArray(plan.coas)) ? (plan.coas[_coaSelectedIdx] || plan.coas[0]) : null;
+        var ip = coa && coa.intercept_point;
+        if (ip && Number.isFinite(+ip.lat) && Number.isFinite(+ip.lon)) {
+            var ipLat = +ip.lat, ipLon = +ip.lon;
+            if (typeof L.circleMarker === 'function') {
+                try { add(L.circleMarker([ipLat, ipLon], { radius: 10, color: '#5ad0d0', weight: 3, fillColor: '#0a2630', fillOpacity: 0.7, interactive: false })); } catch (_) {}
+                try { add(L.circleMarker([ipLat, ipLon], { radius: 4, color: '#c0ffff', weight: 2, fillColor: '#5ad0d0', fillOpacity: 1, interactive: false })); } catch (_) {}
+            }
+            label(ipLat, ipLon, '<div data-ff-ovl="block-point" style="font-size:9px;font-weight:700;color:#9fe8e8;background:rgba(8,14,20,.82);padding:0 4px;border-radius:2px;white-space:nowrap;">BLOCK POINT · نقطة الاعتراض</div>', [0, -12]);
+            // BLUE intercept line: a strong shared line from a moved BLUE unit's start to the block point.
+            if (_coaMovedUnits.length && typeof L.polyline === 'function') {
+                var origin = _coaMovedUnits[0];
+                if (origin && origin.oldPos && Number.isFinite(+origin.oldPos.lat)) {
+                    try { add(L.polyline([[+origin.oldPos.lat, +origin.oldPos.lon], [ipLat, ipLon]], { color: '#5ad0d0', weight: 3, opacity: 0.9, dashArray: '10 5', interactive: false })); } catch (_) {}
+                }
+            }
+        }
+
+        // 5) Floating alert / ROE label near the objective.
+        var alert = situation.alert_state;
+        if (alert && alert !== 'WATCH') {
+            var ru = situation.nearest_red_uid || 'RED';
+            var zoneTxt = situation.red_inside_engagement_zone ? 'engagement zone'
+                : (situation.red_inside_blue_defended_zone ? 'defended zone'
+                : (situation.red_inside_blue_warning_zone ? 'warning zone' : 'approach'));
+            var aColor = alert === 'ENGAGEMENT_READY' ? '#f05050' : (alert === 'ALERT' ? '#f0a040' : '#e0c060');
+            label(objLat, objLon, '<div data-ff-ovl="alert" style="font-size:10px;font-weight:700;color:' + aColor + ';background:rgba(8,14,20,.88);border:1px solid ' + aColor + ';padding:2px 5px;border-radius:3px;white-space:nowrap;">BLUE ' + esc(alert) + ' · ROE: ' + esc(situation.roe_state || '') + '<br>' + esc(ru) + ' inside ' + esc(zoneTxt) + '</div>', [0, 30]);
+        }
+
+        // 6) Role badges on moved BLUE units + a grouped already-in-position label.
+        if (_coaApplied && _coaMovedUnits.length) {
+            _coaMovedUnits.forEach(function (mv) {
+                if (!mv || !mv.unit || !mv.role) return;
+                var lat = mv.unit.lat, lon = mv.unit.lon;
+                if (!Number.isFinite(+lat) || !Number.isFinite(+lon)) return;
+                label(+lat, +lon, '<div data-ff-ovl="role" style="font-size:8px;color:#cfeaff;background:rgba(8,30,40,.8);padding:0 3px;border-radius:2px;white-space:nowrap;">' + esc(mv.role) + '</div>', [0, 14]);
+            });
+        }
+        if (_coaHeldCount > 0) {
+            label(objLat - (+th.warning || 0.2), objLon, '<div data-ff-ovl="held" style="font-size:9px;color:#9ab0c0;background:rgba(8,14,20,.75);padding:0 3px;border-radius:2px;white-space:nowrap;">' + _coaHeldCount + ' BLUE units already in position</div>', [0, 0]);
+        }
     }
 
     // SIDC-BRIDGE-A: review-only SIDC preview (app favorites only; never final).
@@ -2474,6 +2572,8 @@
         // RMOZ-COMMANDER-BRIEF-COALITION-A test seams
         _getLastBriefForTest:        function ()          { return _lastBrief; },
         _setBriefExpandedForTest:    function (v)         { _briefExpanded = !!v; },
+        // FREEFIGHT-ACTION-REACTION-MAP-OVERLAY-A test seam
+        _syncMarkersForTest:         function ()          { if (mapReady()) syncMarkers(); },
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozFreeFightDemo = API;

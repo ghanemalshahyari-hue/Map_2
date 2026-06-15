@@ -75,6 +75,23 @@ function resolveLocalModel() {
            process.env.RMOOZ_AI_MODEL              ||
            'qwen3-coder:latest';
 }
+// FREEFIGHT-COA-ROUTE-JSON-GUARD-A: single source of truth for the route's
+// local-only policy + resolved provider/model. The health endpoint surfaces this.
+function routeHealth() {
+    var provider = resolveLocalProvider();
+    var remoteBlocked = isRemoteProvider(provider);
+    return {
+        planner: 'free-fight-coa-planner',
+        local_only: true,
+        provider_policy: 'local_only',
+        // Never report a remote provider — if one is misconfigured it is blocked.
+        provider: remoteBlocked ? 'ollama' : provider,
+        provider_blocked: remoteBlocked,
+        model: resolveLocalModel(),
+        llm_enabled: process.env.RMOOZ_FREE_FIGHT_LLM === '1',
+        remote_providers_blocked: REMOTE_PROVIDERS_BLOCKED.slice(),
+    };
+}
 function parseJsonSafe(text) {
     var s = str(text).trim();
     var m = s.match(/\{[\s\S]*\}/);
@@ -855,6 +872,10 @@ module.exports = {
     buildDeterministicCoas: buildDeterministicCoas,
     buildBlueCoas:          buildBlueCoas,
     buildCoasForSide:       buildCoasForSide,
+    routeHealth:            routeHealth,
+    resolveLocalProvider:   resolveLocalProvider,
+    resolveLocalModel:      resolveLocalModel,
+    isRemoteProvider:       isRemoteProvider,
     normalizeCoa:           normalizeCoa,
     normalizeCoaAction:     normalizeCoaAction,
     // FREEFIGHT-COA-COMMANDER-NARRATIVE-A

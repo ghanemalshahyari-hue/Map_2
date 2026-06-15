@@ -53,6 +53,9 @@
     var _pendingTimer = null;          // setTimeout handle for next turn
     var _moveAnimTimer = null;         // setInterval handle for cinematic movement
     var _loopAllUnitsForReset = [];    // [{unit, origPos}] captured at loop start for full reset
+    // FREEFIGHT-COA-ROUTE-JSON-GUARD-A: planner route health probe result
+    var _routeHealth = null;           // { ok, route, method, planner, local_only, provider, model, llm_enabled } | { ok:false, reason }
+    var _routeUnavailableMsg = null;   // set when a plan fetch returns non-JSON / 405
     // Cinematic speeds: decisionDelayMs between turns, moveAnimMs per move animation.
     var FF_SPEEDS = {
         x1:    { decisionDelayMs: 8000, moveAnimMs: 6000, label: 'x1' },
@@ -905,6 +908,7 @@
         bind('loop-pause', pauseLoop);
         bind('loop-step', stepOnce);
         bind('loop-reset', resetLoop);
+        bind('loop-route-check', _probeRouteHealth);
         FF_SPEED_ORDER.forEach(function (sp) { bind('loop-speed-' + sp, function () { setFreeFightSpeed(sp); }); });
         renderCommanderPanel();
         var modeSel = _panel.querySelector('[data-act="planner-mode"]');
@@ -1161,15 +1165,69 @@
         var allowedUnitIds = units.map(function(u) { return u.id; });
         return { units: units, objectives: objectives, opts: { preferSide: 'RED', useLlm: _useLlm, allowed_unit_ids: allowedUnitIds } };
     }
+    // FREEFIGHT-COA-ROUTE-JSON-GUARD-A: never blindly call r.json(). A stale/wrong
+    // server answers POSTs to unknown routes with plain "Method Not Allowed" (405),
+    // which would throw "Unexpected token 'M' … is not valid JSON". This reads the
+    // body as text first and returns a structured object on any non-JSON response.
+    function _fetchJsonSafe(url, options) {
+        var w = W();
+        return w.fetch(url, options).then(function (r) {
+            return r.text().then(function (txt) {
+                var parsed = null;
+                try { parsed = txt ? JSON.parse(txt) : null; } catch (_) {}
+                if (!parsed || typeof parsed !== 'object') {
+                    return {
+                        ok: false,
+                        reason: 'non_json_response',
+                        status: r.status,
+                        statusText: r.statusText || '',
+                        body_preview: String(txt || '').slice(0, 240),
+                        route: url,
+                    };
+                }
+                if (!r.ok && parsed.ok !== false) {
+                    parsed.ok = false;
+                    parsed.reason = parsed.reason || ('http_' + r.status);
+                    parsed.status = r.status;
+                }
+                return parsed;
+            });
+        });
+    }
+    // A response signals the route is unavailable (stub/old/wrong server) when it is
+    // non-JSON or an HTTP 405/404 — NOT an LLM failure.
+    function _isRouteUnavailable(resp) {
+        if (!resp || typeof resp !== 'object') return false;
+        if (resp.reason === 'non_json_response') return true;
+        if (resp.status === 405 || resp.status === 404) return true;
+        if (typeof resp.reason === 'string' && /^http_(404|405)/.test(resp.reason)) return true;
+        return false;
+    }
+    function _routeUnavailableText(resp) {
+        var route = (resp && resp.route) || '/api/wargame-sim/free-fight/plan-coas';
+        var detail = '';
+        if (resp && resp.status) detail = ' (HTTP ' + resp.status + (resp.body_preview ? ': ' + resp.body_preview : '') + ')';
+        return 'Planner route unavailable — running server does not support POST ' + route + detail +
+               '. Start the real RMOOZ server, not the stub preview server, and restart after the latest commit.';
+    }
+    // Probe the planner route health endpoint (GET, cheap). Updates _routeHealth.
+    function _probeRouteHealth() {
+        var w = W();
+        if (!w || typeof w.fetch !== 'function') return;
+        _fetchJsonSafe('/api/wargame-sim/free-fight/plan-coas/health', { method: 'GET' })
+            .then(function (h) { _routeHealth = h; updatePanel(); })
+            .catch(function (e) { _routeHealth = { ok: false, reason: 'probe_failed', error: (e && e.message) || 'error' }; updatePanel(); });
+    }
     function _fetchAiDecision() {
         var w = W();
         if (!w || typeof w.fetch !== 'function') return;
         _aiLoading = true; _aiDecision = null; _aiApplied = false;
         updatePanel();
-        w.fetch('/api/wargame-sim/free-fight/demo-ai-step', {
+        _fetchJsonSafe('/api/wargame-sim/free-fight/demo-ai-step', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(_buildAiRequestBody()),
-        }).then(function (r) { return r.json(); }).then(function (dec) {
+        }).then(function (dec) {
+            if (_isRouteUnavailable(dec)) { dec = { ok: false, _error: _routeUnavailableText(dec), _route_unavailable: true }; }
             _aiDecision = dec; _aiLoading = false; _aiApplied = false;
             updatePanel();
         }).catch(function (e) {
@@ -1327,9 +1385,11 @@
         if (!w || typeof w.fetch !== 'function') return;
         _llmTestStatus = { testing: true };
         updatePanel();
-        w.fetch('/api/wargame-sim/free-fight/test-llm', { method: 'POST' })
-            .then(function (r) { return r.json(); })
-            .then(function (result) { _llmTestStatus = result; updatePanel(); })
+        _fetchJsonSafe('/api/wargame-sim/free-fight/test-llm', { method: 'POST' })
+            .then(function (result) {
+                if (_isRouteUnavailable(result)) { result = { ok: false, reason: 'route_unavailable', error: _routeUnavailableText(result) }; }
+                _llmTestStatus = result; updatePanel();
+            })
             .catch(function (e) { _llmTestStatus = { ok: false, error: e && e.message || 'fetch failed' }; updatePanel(); });
     }
     // FREEFIGHT-AI-COA-PLANNER-A ───────────────────────────────────────────────
@@ -1337,13 +1397,20 @@
         var w = W();
         if (!w || typeof w.fetch !== 'function') return;
         _coaLoading = true; _coaPlan = null; _coaApplied = false; _coaMovedUnits = [];
+        _routeUnavailableMsg = null;
         updatePanel();
         var body = _buildAiRequestBody();
-        w.fetch('/api/wargame-sim/free-fight/plan-coas', {
+        _fetchJsonSafe('/api/wargame-sim/free-fight/plan-coas', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ units: body.units, objectives: body.objectives, context: {}, opts: body.opts }),
-        }).then(function (r) { return r.json(); }).then(function (plan) {
-            _coaPlan = plan; _coaLoading = false; _coaApplied = false;
+        }).then(function (plan) {
+            if (_isRouteUnavailable(plan)) {
+                _routeUnavailableMsg = _routeUnavailableText(plan);
+                _coaPlan = { ok: false, _error: _routeUnavailableMsg, _route_unavailable: true };
+            } else {
+                _coaPlan = plan;
+            }
+            _coaLoading = false; _coaApplied = false;
             updatePanel();
         }).catch(function (e) {
             _coaPlan = { ok: false, _error: (e && e.message) || 'fetch failed' };
@@ -1621,16 +1688,26 @@
         if (scheduleNext && !_loopRunning) return;
         if (!w || typeof w.fetch !== 'function') return;
         var body = _buildLoopRequestBody();
-        w.fetch('/api/wargame-sim/free-fight/plan-coas', {
+        _fetchJsonSafe('/api/wargame-sim/free-fight/plan-coas', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body),
-        }).then(function (r) { return r.json(); }).then(function (plan) {
+        }).then(function (plan) {
             if (_loopPaused) return;
+            // Route unavailable (stub/old/wrong server) → pause the loop and show a
+            // clear route message. This is NOT an LLM failure, so don't run a turn.
+            if (_isRouteUnavailable(plan)) {
+                _routeUnavailableMsg = _routeUnavailableText(plan);
+                _appendToEventLog('AI Commander loop paused — ' + _routeUnavailableMsg);
+                _loopPaused = true;
+                _clearTimeoutSafe(_pendingTimer); _pendingTimer = null;
+                updatePanel();
+                return;
+            }
+            _routeUnavailableMsg = null;
             _runTurnCore(plan, _ffSpeed().moveAnimMs);
             if (scheduleNext && _loopRunning && !_loopPaused) _scheduleNextTurn();
         }).catch(function (e) {
-            // LLM/network failure → deterministic fallback handled server-side; if the
-            // fetch itself fails, log and keep the loop alive on the next tick.
+            // Transient network/fetch error → log and keep the loop alive on the next tick.
             _appendToEventLog('AI Commander Turn skipped — planner fetch failed: ' + ((e && e.message) || 'error'));
             if (scheduleNext && _loopRunning && !_loopPaused) _scheduleNextTurn();
         });
@@ -1721,6 +1798,11 @@
             // COA cards shown after generation — typical COAs: Direct Assault, Flank / Fix, Probe / Recon
             h += '<div style="color:#7a9ab8;font-size:11px;padding:4px 0;">Click "Generate AI Attack Plan" to generate COAs for all RED units.<br>' +
                  '<span style="color:#5a7a60;font-size:10px;">Typical plans: Direct Assault · Flank / Fix · Probe / Recon</span></div>';
+            return h;
+        }
+        if (_coaPlan._route_unavailable) {
+            // Route problem — explicitly NOT an LLM failure.
+            h += '<div data-ff-coa="route-unavailable" style="color:#f0b0b0;font-size:11px;padding:6px 8px;border:1px solid #7a3030;border-radius:4px;background:#241414;line-height:1.4;">⚠ ' + esc(_coaPlan._error || _routeUnavailableText(_coaPlan)) + '</div>';
             return h;
         }
         if (_coaPlan._error || !_coaPlan.ok) {
@@ -1832,6 +1914,23 @@
                  '<span style="color:#8fa5b8;">Last decision source:</span> <span style="color:' + dSrcColor + ';">' + esc(d.source) + '</span></div>';
             h += '<div style="font-size:10.5px;color:#cdd8e4;">' +
                  '<span style="color:#8fa5b8;">Last action:</span> <span style="color:#e0e8f0;">' + esc(d.coa_id) + ' ' + esc(d.coa_title) + ' — ' + d.moved + ' units moved</span></div>';
+        }
+        // FREEFIGHT-COA-ROUTE-JSON-GUARD-A: planner route health + local-only provider/model
+        h += '<div data-ff-loop="route-health" style="font-size:10px;color:#cdd8e4;margin-top:4px;border-top:1px solid #1a3050;padding-top:4px;">';
+        var rh = _routeHealth;
+        var rhOk = rh && rh.ok === true;
+        var rhColor = rhOk ? '#7fd6a0' : (rh ? '#e0a93a' : '#8fa5b8');
+        var rhText = rhOk ? 'OK' : (rh ? 'unavailable' : 'unknown — click Check');
+        h += '<span style="color:#8fa5b8;">Planner route:</span> <span style="color:' + rhColor + ';font-weight:700;">' + esc(rhText) + '</span>';
+        h += ' <button data-act="loop-route-check" style="font:inherit;cursor:pointer;border:1px solid #4a5f75;background:#101b27;color:#8fb8e0;border-radius:4px;padding:1px 6px;font-size:9px;">Check route</button>';
+        h += '<div><span style="color:#8fa5b8;">Provider policy:</span> <span style="color:#7fd6a0;">local only</span>';
+        h += ' · <span style="color:#8fa5b8;">Provider:</span> <span style="color:#9ec2ec;">' + esc((rh && rh.provider) || 'ollama') + '</span>';
+        h += ' · <span style="color:#8fa5b8;">Model:</span> <span style="color:#9ec2ec;">' + esc((rh && rh.model) || 'qwen3-coder:latest') + '</span></div>';
+        if (rh && rh.llm_enabled != null) h += '<div><span style="color:#8fa5b8;">LLM enabled:</span> <span style="color:#e0e8f0;">' + (rh.llm_enabled ? 'yes' : 'no (deterministic)') + '</span></div>';
+        h += '</div>';
+        // Prominent route-unavailable banner — NOT an LLM failure
+        if (_routeUnavailableMsg) {
+            h += '<div data-ff-loop="route-unavailable" style="margin-top:5px;padding:6px 8px;border:1px solid #7a3030;border-radius:4px;background:#241414;color:#f0b0b0;font-size:10px;line-height:1.4;">⚠ ' + esc(_routeUnavailableMsg) + '</div>';
         }
         // Control buttons
         h += '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;">';
@@ -2093,6 +2192,9 @@
         }
         if (mapReady()) { syncMarkers(); buildPanel(); }
         renderAiPanel(); probeTerrain();
+        // FREEFIGHT-COA-ROUTE-JSON-GUARD-A: probe the planner route once on open so the
+        // operator sees OK/unavailable + provider/model before starting the loop.
+        try { _probeRouteHealth(); } catch (_) {}
         return getState();
     }
 
@@ -2143,6 +2245,15 @@
         _buildLoopRequestBodyForTest: function ()         { return _buildLoopRequestBody(); },
         _setActiveSideForTest:    function (s)            { _activeSide = s; },
         _pickRecommendedIdxForTest: function (plan)       { return _pickRecommendedIdx(plan); },
+        // FREEFIGHT-COA-ROUTE-JSON-GUARD-A test seams
+        _fetchJsonSafeForTest:     function (url, opts)   { return _fetchJsonSafe(url, opts); },
+        _isRouteUnavailableForTest: function (resp)       { return _isRouteUnavailable(resp); },
+        _routeUnavailableTextForTest: function (resp)     { return _routeUnavailableText(resp); },
+        _probeRouteHealthForTest:  function ()            { return _probeRouteHealth(); },
+        _getRouteHealthForTest:    function ()            { return _routeHealth; },
+        _getRouteUnavailableMsgForTest: function ()       { return _routeUnavailableMsg; },
+        _getCoaPlanForTest:        function ()            { return _coaPlan; },
+        _generateCoaPlanForTest2:  function ()            { return _generateCoaPlan(); },
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozFreeFightDemo = API;

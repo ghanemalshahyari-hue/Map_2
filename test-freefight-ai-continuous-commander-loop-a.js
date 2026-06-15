@@ -113,7 +113,11 @@ global.window.fetch = function (url, opts) {
     var body = JSON.parse(opts.body);
     _fetchBodies.push(body);
     return PLANNER.planCoas(body.units, body.objectives, body.context, body.opts).then(function (plan) {
-        return { json: function () { return Promise.resolve(plan); } };
+        // Client uses _fetchJsonSafe (reads .text() first), so expose both.
+        var s = JSON.stringify(plan);
+        return { ok: true, status: 200, statusText: 'OK',
+                 text: function () { return Promise.resolve(s); },
+                 json: function () { return Promise.resolve(plan); } };
     });
 };
 

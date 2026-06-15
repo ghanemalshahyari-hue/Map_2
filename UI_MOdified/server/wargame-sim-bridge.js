@@ -1340,6 +1340,18 @@ function handle(req, res, ctx) {
         return true;
     }
 
+    // FREEFIGHT-COA-ROUTE-JSON-GUARD-A: cheap GET health probe so the client can tell
+    // "route present" from "stub/old server" WITHOUT a POST that would 405 to plain text.
+    if (pathname === '/api/wargame-sim/free-fight/plan-coas/health' && (method === 'GET' || method === 'POST')) {
+        var hh = COA_PLANNER.routeHealth();
+        sendJson(res, 200, Object.assign({
+            ok: true,
+            route: '/api/wargame-sim/free-fight/plan-coas',
+            method: 'POST',
+        }, hh));
+        return true;
+    }
+
     // FREEFIGHT-AI-COA-PLANNER-A: multi-COA attack planner
     if (pathname === '/api/wargame-sim/free-fight/plan-coas' && method === 'POST') {
         readJsonBody(req, function (body) {

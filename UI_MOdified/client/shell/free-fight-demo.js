@@ -62,6 +62,16 @@
         fire2: { decisionDelayMs: 120,  moveAnimMs: 120,  label: '🔥🔥' },
     };
     var FF_SPEED_ORDER = ['x1', 'x5', 'x15', 'fire', 'fire2'];
+    // Canonical display order for unit roles — RED attack roles, then BLUE defense
+    // roles, then reserve/hold. Any future role still renders (appended).
+    var FF_ROLE_DISPLAY_ORDER = ['assault', 'support', 'screen', 'recon', 'reinforce', 'intercept', 'defend', 'reserve', 'hold'];
+    function _orderedRoleKeys(rb) {
+        if (!rb) return [];
+        var seen = {};
+        var keys = FF_ROLE_DISPLAY_ORDER.filter(function (r) { if (rb[r] > 0) { seen[r] = 1; return true; } return false; });
+        Object.keys(rb).forEach(function (r) { if (rb[r] > 0 && !seen[r]) keys.push(r); });
+        return keys;
+    }
     var _plannerMode = 'deterministic';
     var _planSource = 'deterministic';
     var _llmStatus = {
@@ -531,7 +541,10 @@
                 if (!Number.isFinite(newLat) || !Number.isFinite(newLon)) return;
                 var oldLat = mv.oldPos.lat, oldLon = mv.oldPos.lon;
                 var role = mv.role || '';
-                var trailColor = role === 'assault' ? '#ff9060' : (role === 'support' ? '#60b0ff' : (role === 'recon' ? '#b0b0b0' : '#90d090'));
+                // Role colours — RED attack roles + BLUE defense roles.
+                var ROLE_COLORS = { assault: '#ff9060', support: '#60b0ff', recon: '#b0b0b0',
+                    reinforce: '#7fd6a0', intercept: '#5ad0d0', defend: '#9ec2ec', screen: '#c0a0e0' };
+                var trailColor = ROLE_COLORS[role] || '#90d090';
                 try {
                     var coaTrail = w.L.polyline([[oldLat, oldLon], [newLat, newLon]], {
                         color: trailColor, weight: 2, opacity: 0.7, dashArray: '6 4',
@@ -1120,12 +1133,30 @@
 
         _aiDiagnostics = { source_used: sourceUsed, units_total: dTotal, units_with_id: dWithId, units_with_coords: dWithCoords, units_movable: dMovable };
 
+        // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: the loop must follow the LOADED
+        // scenario's OWN objective — never a stale operator-placed Objective X left
+        // over from a previously-loaded scenario. Priority:
+        //   1. loaded scenario objective (sc.obj / sc.objective / sc.objectives[0])
+        //   2. operator-placed Objective X (_objective) — for scenarios with none
+        //   3. operational_brief objectives from the payload
+        function scenObjToLL(o) {
+            if (!o) return null;
+            if (Array.isArray(o.coord) && o.coord.length >= 2 && Number.isFinite(+o.coord[0]) && Number.isFinite(+o.coord[1]))
+                return { lat: +o.coord[1], lon: +o.coord[0], name: o.name || 'Objective X' };
+            if (Number.isFinite(+o.lat) && Number.isFinite(+o.lon)) return { lat: +o.lat, lon: +o.lon, name: o.name || 'Objective X' };
+            return null;
+        }
+        var objectives = [];
+        var scLL = sc ? (scenObjToLL(sc.obj) || scenObjToLL(sc.objective)) : null;
+        if (!scLL && sc && Array.isArray(sc.objectives) && sc.objectives.length) scLL = scenObjToLL(sc.objectives[0]);
+        if (scLL) objectives = [scLL];
+
         var ob2 = (_payload && _payload.brief && _payload.brief.operational_brief) || (_payload && _payload.operational_brief) || {};
-        var objectives = Array.isArray(ob2.placement_candidates)
-            ? ob2.placement_candidates.filter(function(c) { return c && String(c.type || '').toLowerCase() === 'objective'; })
-            : [];
-        if (!objectives.length && Array.isArray(ob2.objectives)) objectives = ob2.objectives;
         if (!objectives.length && finiteLL(_objective)) objectives = [{ lat: _objective.lat, lon: _objective.lon, name: 'Objective X' }];
+        if (!objectives.length && Array.isArray(ob2.placement_candidates)) {
+            objectives = ob2.placement_candidates.filter(function(c) { return c && String(c.type || '').toLowerCase() === 'objective'; });
+        }
+        if (!objectives.length && Array.isArray(ob2.objectives)) objectives = ob2.objectives;
 
         var allowedUnitIds = units.map(function(u) { return u.id; });
         return { units: units, objectives: objectives, opts: { preferSide: 'RED', useLlm: _useLlm, allowed_unit_ids: allowedUnitIds } };
@@ -1678,8 +1709,7 @@
         function roleLine(coa) {
             var rb = coa && coa.role_breakdown;
             if (!rb) return '';
-            var order = ['assault', 'support', 'screen', 'recon', 'reserve', 'hold'];
-            var parts = order.filter(function (r) { return rb[r] > 0; })
+            var parts = _orderedRoleKeys(rb)
                 .map(function (r) { return '<span style="color:#e0e8f0;">' + rb[r] + '</span> ' + r; });
             return parts.length ? parts.join(' · ') : '';
         }
@@ -1755,9 +1785,8 @@
             // Why
             h += '<div style="font-size:10px;color:#7a9ab8;font-weight:600;margin-top:2px;">Why:</div>';
             h += bullets(selCoa.rationale, '#cdd8e4');
-            // Units
-            var unitOrder = ['assault', 'support', 'screen', 'recon', 'reserve', 'hold'];
-            var unitLines = unitOrder.filter(function (r) { return srb[r] > 0; })
+            // Units (RED attack + BLUE defense roles)
+            var unitLines = _orderedRoleKeys(srb)
                 .map(function (r) { return r.charAt(0).toUpperCase() + r.slice(1) + ': ' + srb[r]; });
             h += '<div style="font-size:10px;color:#7a9ab8;font-weight:600;margin-top:3px;">Units:</div>';
             h += bullets(unitLines, '#e0e8f0');

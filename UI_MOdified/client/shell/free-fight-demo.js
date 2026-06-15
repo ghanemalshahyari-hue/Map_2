@@ -42,7 +42,11 @@
     var _useLlm = false, _llmTestStatus = null;
     // FREEFIGHT-AI-COA-PLANNER-A: multi-unit COA state
     var _coaPlan = null, _coaLoading = false, _coaApplied = false, _coaSelectedIdx = 0;
-    var _coaMovedUnits = [];  // [{unit, oldPos}, ...]
+    var _coaMovedUnits = [];  // [{unit, oldPos}, ...] — only units that VISIBLY moved
+    // FREEFIGHT-BLUE-THREAT-AWARE-MOVEMENT-A: a unit whose move is below this is
+    // "already in position" — not counted as moved (so zero/tiny moves aren't faked).
+    var MIN_VISIBLE_MOVE_DEG = 0.003;
+    var _coaHeldCount = 0;    // units already in position (move below epsilon)
     // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: continuous AI commander loop state
     var _turnNumber = 0;
     var _activeSide = 'RED';
@@ -996,7 +1000,8 @@
             h += '<div style="margin-bottom:2px;"><span style="color:#8fa5b8;">Selected COA:</span> <span style="color:#7fd6a0;font-weight:700;">' + esc(rec.coa_id) + ' — ' + esc(rec.coa_title) + '</span></div>';
             var srcColor = rec.source === 'llm' ? '#90d090' : '#9ab0c0';
             h += '<div style="margin-bottom:2px;"><span style="color:#8fa5b8;">Decision source:</span> <span style="color:' + srcColor + ';">' + esc(rec.source) + '</span></div>';
-            h += '<div style="margin-bottom:2px;"><span style="color:#8fa5b8;">Units moved:</span> <span style="color:#e0e8f0;">' + rec.moved + '</span></div>';
+            h += '<div style="margin-bottom:2px;"><span style="color:#8fa5b8;">Units moved:</span> <span style="color:#e0e8f0;">' + rec.moved + '</span>' +
+                 (rec.held ? ' · <span style="color:#8fa5b8;">Already in position:</span> <span style="color:#9ab0c0;">' + rec.held + '</span>' : '') + '</div>';
             if (arr(rec.rationale).length) { h += '<div style="color:#7a9ab8;font-weight:600;margin-top:3px;">Why this COA:</div>'; h += blist(rec.rationale, '#cdd8e4'); }
             if (arr(rec.expected).length) { h += '<div style="color:#7a9ab8;font-weight:600;margin-top:2px;">Expected next reaction <span style="color:#8a6a3a;font-weight:400;">(preview)</span>:</div>'; h += blist(rec.expected, '#d8c08a'); }
             if (rec.summary) { h += '<div style="color:#7a9ab8;font-weight:600;margin-top:2px;">Situation summary:</div><div style="color:#cdd8e4;font-size:10px;line-height:1.4;">' + esc(rec.summary) + '</div>'; }
@@ -1464,18 +1469,12 @@
         var idx = _coaSelectedIdx;
         if (idx < 0 || idx >= _coaPlan.coas.length) idx = 0;
         var coa = _coaPlan.coas[idx];
-        _coaMovedUnits = [];
-        // Apply each action in all phases
-        (coa.phases || []).forEach(function (ph) {
-            (ph.actions || []).forEach(function (act) {
-                if (act.action_type === 'HOLD_POSITION') return;
-                if (!act.target || !Number.isFinite(Number(act.target.lat)) || !Number.isFinite(Number(act.target.lon))) return;
-                var mv = _applyMoveToScenario(act.unit_uid, act.target.lat, act.target.lon);
-                if (mv.found) {
-                    _coaMovedUnits.push({ unit: mv.unit, oldPos: mv.oldPos, role: act.role || '' });
-                }
-            });
-        });
+        // Use the shared step+epsilon resolver so manual apply matches the loop:
+        // capped step toward the (intercept) target, and below-epsilon = already in position.
+        var moves = _resolveCoaMoves(coa);
+        _writeMoveFrame(moves, 1);
+        _coaMovedUnits = moves.filter(function (m) { return !m.held; }).map(function (m) { return { unit: m.unit, oldPos: m.start, role: m.role }; });
+        _coaHeldCount = moves.filter(function (m) { return m.held; }).length;
         _coaApplied = true;
         // Trigger scenario redraw once after all units updated
         if (mapReady()) {
@@ -1512,9 +1511,10 @@
         var roleCounts = {};
         moved.forEach(function (mv) { var r = mv.role || 'unknown'; roleCounts[r] = (roleCounts[r] || 0) + 1; });
         var roleStr = Object.keys(roleCounts).map(function (r) { return roleCounts[r] + ' ' + r; }).join(', ');
+        var heldStr = _coaHeldCount > 0 ? (', ' + _coaHeldCount + ' already in position') : '';
         return [
             'AI COA Applied: ' + esc(coa.plan_id || 'COA-?') + ' ' + esc(coa.title || '') +
-            ' — ' + moved.length + ' units moved' + (roleStr ? ', ' + roleStr : '') +
+            ' — ' + moved.length + ' units moved' + heldStr + (roleStr ? ', ' + roleStr : '') +
             ' [' + srcTag + ']'
         ];
     }
@@ -1604,7 +1604,10 @@
                 var startLon = u.lon != null ? +u.lon : (Array.isArray(u.coord) ? +u.coord[0] : null);
                 if (!Number.isFinite(startLat) || !Number.isFinite(startLon)) return;
                 var fin = _stepTowardCapped({ lat: startLat, lon: startLon }, { lat: +act.target.lat, lon: +act.target.lon });
-                moves.push({ unit: u, role: act.role || '', start: { lat: startLat, lon: startLon }, final: { lat: round5(fin.lat), lon: round5(fin.lon) } });
+                // FREEFIGHT-BLUE-THREAT-AWARE-MOVEMENT-A: classify below-epsilon as already-in-position.
+                var dLat = round5(fin.lat) - startLat, dLon = round5(fin.lon) - startLon;
+                var held = Math.sqrt(dLat * dLat + dLon * dLon) < MIN_VISIBLE_MOVE_DEG;
+                moves.push({ unit: u, role: act.role || '', held: held, start: { lat: startLat, lon: startLon }, final: { lat: round5(fin.lat), lon: round5(fin.lon) } });
             });
         });
         return moves;
@@ -1628,12 +1631,15 @@
         var moves = _resolveCoaMoves(coa);
         function finishNow() {
             _writeMoveFrame(moves, 1);
-            _coaMovedUnits = moves.map(function (m) { return { unit: m.unit, oldPos: m.start, role: m.role }; });
+            // Only count VISIBLY-moved units; held units (already in position) excluded from
+            // the moved set + trails, but tracked for the "already in position" count.
+            _coaMovedUnits = moves.filter(function (m) { return !m.held; }).map(function (m) { return { unit: m.unit, oldPos: m.start, role: m.role }; });
+            _coaHeldCount = moves.filter(function (m) { return m.held; }).length;
             _coaApplied = true;
             if (mapReady()) { _triggerScenarioRedraw(); syncMarkers(); _maybePanToMovedCentroid(); }
             if (done) done(_coaMovedUnits);
         }
-        if (!moves.length) { _coaMovedUnits = []; _coaApplied = true; if (done) done([]); return; }
+        if (!moves.length) { _coaMovedUnits = []; _coaHeldCount = 0; _coaApplied = true; if (done) done([]); return; }
         // Instant path: tiny anim window, no map, or no usable interval timer.
         if (!mapReady() || !Number.isFinite(animMs) || animMs <= 150 || !_winFn('setInterval')) { finishNow(); return; }
         var frames = Math.max(2, Math.min(24, Math.round(animMs / 250)));
@@ -1718,12 +1724,21 @@
                 // FREEFIGHT-BLUE-WARNING-ROE-A: carry the situation + BLUE reaction
                 situation: plan.situation_state || null,
                 warning_actions: arr(coa.warning_actions),
+                // FREEFIGHT-BLUE-THREAT-AWARE-MOVEMENT-A: held = already-in-position count
+                held: _coaHeldCount,
             };
             _lastCommanderDecision = record;
             _turnLog.push(record);
+            var heldTail = _coaHeldCount > 0 ? (', ' + _coaHeldCount + ' already in position') : '';
             _appendToEventLog('AI Commander Turn ' + turnNo + ' (' + sideForTurn + '): ' +
-                record.coa_id + ' ' + record.coa_title + ' — ' + moved.length + ' units moved [' +
+                record.coa_id + ' ' + record.coa_title + ' — ' + moved.length + ' units moved' + heldTail + ' [' +
                 (source === 'llm' ? 'llm' : 'deterministic_coa_fallback') + ']');
+            // FREEFIGHT-BLUE-THREAT-AWARE-MOVEMENT-A: BLUE intercept event line when BLUE
+            // moves to block the RED axis (only when units actually moved).
+            if (sideForTurn === 'BLUE' && /intercept|block/i.test(record.coa_title) && moved.length > 0) {
+                var objNm = (plan.situation_state && plan.situation_state.objective && plan.situation_state.objective.name) || 'Objective X';
+                _appendToEventLog('BLUE INTERCEPT: ' + moved.length + ' units moved to block RED axis near ' + objNm + '.');
+            }
             // BLUE warning / alert event-log entries (RED intrusion). No kill logic.
             if (sideForTurn === 'BLUE' && plan.blue_reaction_intent && arr(plan.blue_reaction_intent.event_log).length) {
                 plan.blue_reaction_intent.event_log.forEach(function (e) { _appendToEventLog(e); });
@@ -2299,6 +2314,8 @@
         _resetCoaForTest:         function ()             { _resetCoa(); },
         _setCoaPlanForTest:       function (p, applied, idx) { _coaPlan = p || null; _coaApplied = !!applied; _coaSelectedIdx = idx || 0; },
         _getCoaMovedUnitsForTest: function ()             { return _coaMovedUnits.slice(); },
+        _getCoaHeldCountForTest:  function ()             { return _coaHeldCount; },
+        _resolveCoaMovesForTest:  function (coa)          { return _resolveCoaMoves(coa); },
         _getCoaAppliedForTest:    function ()             { return _coaApplied; },
         _getCoaSelectedIdxForTest: function ()            { return _coaSelectedIdx; },
         // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A test seams

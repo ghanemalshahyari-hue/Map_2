@@ -772,6 +772,10 @@
     // the map viewport width changes. Read-only: no scenario/marker mutation.
     function fitScenarioAO() {
         if (!hasMap()) return false;
+        // FREEFIGHT-MANUAL-MAP-CAMERA-A: when an operator-controlled flow (e.g. the
+        // Free Fight AI loop) redraws the scenario, it sets this flag so the camera
+        // stays exactly where the operator left it — no auto fitBounds on redraw.
+        if (typeof window !== 'undefined' && window.__rmoozSuppressAutoFit) return false;
         try {
             const aoPts = [];
             const objectiveLL = resolveCurrentObjectiveCoord(scenarioRef);

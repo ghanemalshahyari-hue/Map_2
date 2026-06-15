@@ -325,8 +325,8 @@ ok('§8 polyline trail added', _polylines.length > 0);
 ok('§8 trail connects old and new positions', _polylines.length > 0 &&
     _polylines[0]._lls && _polylines[0]._lls.length === 2);
 ok('§8 pulse marker added', _layerMarkers.some(function (m) { return m._isCircleMarker; }));
-ok('§8 map.panTo was called to new position', _mapPanToCalls.length > 0 &&
-    Math.abs(_mapPanToCalls[0][0] - 27.10) < 0.01);
+// FREEFIGHT-MANUAL-MAP-CAMERA-A: camera is manual by default — apply must NOT pan.
+ok('§8 map.panTo NOT called by default (manual camera)', _mapPanToCalls.length === 0);
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // §9  Objective X unchanged after Apply

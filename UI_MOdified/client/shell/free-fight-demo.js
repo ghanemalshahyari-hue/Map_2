@@ -56,6 +56,9 @@
     // FREEFIGHT-COA-ROUTE-JSON-GUARD-A: planner route health probe result
     var _routeHealth = null;           // { ok, route, method, planner, local_only, provider, model, llm_enabled } | { ok:false, reason }
     var _routeUnavailableMsg = null;   // set when a plan fetch returns non-JSON / 405
+    // FREEFIGHT-MANUAL-MAP-CAMERA-A: the camera stays where the operator left it.
+    // AI movement NEVER pans/zooms/fitBounds the map unless mode is 'follow'.
+    var _freeFightCameraMode = 'manual'; // 'manual' (default) | 'follow'
     // Cinematic speeds: decisionDelayMs between turns, moveAnimMs per move animation.
     var FF_SPEEDS = {
         x1:    { decisionDelayMs: 8000, moveAnimMs: 6000, label: 'x1' },
@@ -909,6 +912,8 @@
         bind('loop-step', stepOnce);
         bind('loop-reset', resetLoop);
         bind('loop-route-check', _probeRouteHealth);
+        bind('camera-manual', function () { setCameraMode('manual'); });
+        bind('camera-follow', function () { setCameraMode('follow'); });
         FF_SPEED_ORDER.forEach(function (sp) { bind('loop-speed-' + sp, function () { setFreeFightSpeed(sp); }); });
         renderCommanderPanel();
         var modeSel = _panel.querySelector('[data-act="planner-mode"]');
@@ -1298,32 +1303,42 @@
         var called = [];
         if (!w) return { called_bridges: called, fired_count: 0 };
         var sc = w.RmoozScenario && w.RmoozScenario.scenario;
-        // Bridge 1: AppAdjudicatorMap.drawScenario (wargame map layer)
+        // FREEFIGHT-MANUAL-MAP-CAMERA-A: the scenario-layer redraw (drawScenario) would
+        // otherwise auto-fitBounds the camera on every AI move. Suppress that re-frame
+        // during our redraws so the operator's view is preserved; free-fight applies its
+        // OWN camera policy (manual = nothing, follow = panTo) afterwards.
+        var prevSuppress = w.__rmoozSuppressAutoFit;
+        w.__rmoozSuppressAutoFit = true;
         try {
-            if (w.AppAdjudicatorMap && typeof w.AppAdjudicatorMap.drawScenario === 'function' && sc) {
-                w.AppAdjudicatorMap.drawScenario(sc);
-                called.push('AppAdjudicatorMap.drawScenario');
-            }
-        } catch (_) {}
-        // Bridge 2: AppScenarioWorkspace.maybeDrawLiveScenarioOnMap (workspace layer)
-        try {
-            if (w.AppScenarioWorkspace && typeof w.AppScenarioWorkspace.maybeDrawLiveScenarioOnMap === 'function' && sc) {
-                w.AppScenarioWorkspace.maybeDrawLiveScenarioOnMap(sc);
-                called.push('AppScenarioWorkspace.maybeDrawLiveScenarioOnMap');
-            }
-        } catch (_) {}
-        // Bridge 3: CustomEvent so other listeners can react
-        try {
-            var ap = _aiDecision && _aiDecision.scenario_patch;
-            if (typeof document !== 'undefined' && document.dispatchEvent && ap) {
-                document.dispatchEvent(new CustomEvent('rmooz:ff-ai-unit-moved', { detail: {
-                    unit_uid: ap.unit_uid, lat: ap.lat, lon: ap.lon,
-                    old_pos: _aiMovedUnitOldPos,
-                    source: _aiMovedUnitSource,
-                }}));
-                called.push('rmooz:ff-ai-unit-moved');
-            }
-        } catch (_) {}
+            // Bridge 1: AppAdjudicatorMap.drawScenario (wargame map layer)
+            try {
+                if (w.AppAdjudicatorMap && typeof w.AppAdjudicatorMap.drawScenario === 'function' && sc) {
+                    w.AppAdjudicatorMap.drawScenario(sc);
+                    called.push('AppAdjudicatorMap.drawScenario');
+                }
+            } catch (_) {}
+            // Bridge 2: AppScenarioWorkspace.maybeDrawLiveScenarioOnMap (workspace layer)
+            try {
+                if (w.AppScenarioWorkspace && typeof w.AppScenarioWorkspace.maybeDrawLiveScenarioOnMap === 'function' && sc) {
+                    w.AppScenarioWorkspace.maybeDrawLiveScenarioOnMap(sc);
+                    called.push('AppScenarioWorkspace.maybeDrawLiveScenarioOnMap');
+                }
+            } catch (_) {}
+            // Bridge 3: CustomEvent so other listeners can react
+            try {
+                var ap = _aiDecision && _aiDecision.scenario_patch;
+                if (typeof document !== 'undefined' && document.dispatchEvent && ap) {
+                    document.dispatchEvent(new CustomEvent('rmooz:ff-ai-unit-moved', { detail: {
+                        unit_uid: ap.unit_uid, lat: ap.lat, lon: ap.lon,
+                        old_pos: _aiMovedUnitOldPos,
+                        source: _aiMovedUnitSource,
+                    }}));
+                    called.push('rmooz:ff-ai-unit-moved');
+                }
+            } catch (_) {}
+        } finally {
+            w.__rmoozSuppressAutoFit = prevSuppress;
+        }
         return { called_bridges: called, fired_count: called.length };
     }
 
@@ -1355,9 +1370,8 @@
             _aiDecision.map_redraw_bridges  = rdResult.called_bridges;
             syncMarkers(); // draws trail + pulse in FF overlay layer
             _aiDecision.visible_overlay_created = true;
-            // Pan to new position so move is immediately visible
-            var w = W();
-            try { w.map.panTo([+ap.lat, +ap.lon]); } catch (_) {}
+            // FREEFIGHT-MANUAL-MAP-CAMERA-A: camera stays put unless Follow mode is on.
+            _maybeFollowAiMovement([+ap.lat, +ap.lon]);
         }
         updatePanel();
     }
@@ -1439,14 +1453,8 @@
         if (mapReady()) {
             _triggerScenarioRedraw();
             syncMarkers();
-            // Pan to centroid of moved units
-            var w = W();
-            if (_coaMovedUnits.length) {
-                var latSum = 0, lonSum = 0;
-                _coaMovedUnits.forEach(function (mv) { if (mv.unit) { latSum += mv.unit.lat; lonSum += mv.unit.lon; } });
-                var n = _coaMovedUnits.length;
-                try { w.map.panTo([latSum / n, lonSum / n]); } catch (_) {}
-            }
+            // FREEFIGHT-MANUAL-MAP-CAMERA-A: no auto-pan in manual mode (the default).
+            _maybePanToMovedCentroid();
         }
         _buildCoaEventLogEntries().forEach(function (entry) { _appendToEventLog(entry); });
         updatePanel();
@@ -1594,7 +1602,7 @@
             _writeMoveFrame(moves, 1);
             _coaMovedUnits = moves.map(function (m) { return { unit: m.unit, oldPos: m.start, role: m.role }; });
             _coaApplied = true;
-            if (mapReady()) { _triggerScenarioRedraw(); syncMarkers(); _panToMovedCentroid(); }
+            if (mapReady()) { _triggerScenarioRedraw(); syncMarkers(); _maybePanToMovedCentroid(); }
             if (done) done(_coaMovedUnits);
         }
         if (!moves.length) { _coaMovedUnits = []; _coaApplied = true; if (done) done([]); return; }
@@ -1616,12 +1624,24 @@
         }, interval);
     }
 
-    function _panToMovedCentroid() {
-        var w = W();
+    // FREEFIGHT-MANUAL-MAP-CAMERA-A: the ONLY place the camera may move on AI
+    // movement. A no-op in the default 'manual' mode — the operator's view is
+    // preserved. Only 'follow' mode pans (never zoom / flyTo / fitBounds).
+    function _maybeFollowAiMovement(latlng) {
+        if (_freeFightCameraMode !== 'follow') return;
+        if (!mapReady() || !latlng) return;
+        try { W().map.panTo(latlng); } catch (_) {}
+    }
+    function _maybePanToMovedCentroid() {
+        if (_freeFightCameraMode !== 'follow') return; // manual default: never move the camera
         if (!mapReady() || !_coaMovedUnits.length) return;
         var latSum = 0, lonSum = 0, n = 0;
         _coaMovedUnits.forEach(function (mv) { if (mv.unit && Number.isFinite(+mv.unit.lat)) { latSum += +mv.unit.lat; lonSum += +mv.unit.lon; n++; } });
-        if (n) { try { w.map.panTo([latSum / n, lonSum / n]); } catch (_) {} }
+        if (n) _maybeFollowAiMovement([latSum / n, lonSum / n]);
+    }
+    function setCameraMode(mode) {
+        _freeFightCameraMode = (mode === 'follow') ? 'follow' : 'manual';
+        updatePanel();
     }
 
     // Capture original positions of every unit once, so Reset can fully restore.
@@ -1955,6 +1975,17 @@
         });
         h += '</div>';
         h += '<div style="font-size:9.5px;color:#6a8fa8;margin-top:4px;">x1 = cinematic (slow, visible). 🔥🔥 = super fast. AI auto-picks the recommended COA each turn; no manual side selection.</div>';
+        // FREEFIGHT-MANUAL-MAP-CAMERA-A: camera policy toggle — Manual is the default;
+        // the map never moves on AI movement unless the operator chooses Follow AI.
+        h += '<div data-ff-loop="camera" style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:6px;">';
+        h += '<span style="font-size:10px;color:#8fa5b8;">Camera:</span>';
+        [['manual', 'Manual'], ['follow', 'Follow AI']].forEach(function (m) {
+            var on = (_freeFightCameraMode === m[0]);
+            var bg = on ? '#1a4a6a' : '#101b27', bc = on ? '#5ab0e0' : '#4a5f75', fc = on ? '#cfeaff' : '#8fb8e0';
+            h += '<button data-act="camera-' + m[0] + '" style="font:inherit;cursor:pointer;border:1px solid ' + bc + ';background:' + bg + ';color:' + fc + ';border-radius:4px;padding:3px 8px;font-size:10px;font-weight:' + (on ? '700' : '400') + ';">' + m[1] + '</button>';
+        });
+        h += '<span style="font-size:9px;color:#6a8fa8;">' + (_freeFightCameraMode === 'follow' ? 'map pans to follow AI moves' : 'map stays where you left it') + '</span>';
+        h += '</div>';
         // Turn log (most recent first, capped)
         if (_turnLog.length) {
             h += '<div data-ff-loop="turnlog" style="margin-top:6px;border-top:1px solid #1a3050;padding-top:4px;">';
@@ -2254,6 +2285,9 @@
         _getRouteUnavailableMsgForTest: function ()       { return _routeUnavailableMsg; },
         _getCoaPlanForTest:        function ()            { return _coaPlan; },
         _generateCoaPlanForTest2:  function ()            { return _generateCoaPlan(); },
+        // FREEFIGHT-MANUAL-MAP-CAMERA-A test seams
+        _getCameraModeForTest:     function ()            { return _freeFightCameraMode; },
+        _setCameraModeForTest:     function (m)           { setCameraMode(m); },
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozFreeFightDemo = API;

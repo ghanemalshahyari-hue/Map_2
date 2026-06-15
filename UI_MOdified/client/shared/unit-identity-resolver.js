@@ -26,6 +26,15 @@
 (function (root) {
     'use strict';
 
+    // RMOOZ-PLATFORM-IDENTITY-ENRICHMENT-A: the platform-display catalog + provenance chain.
+    // Dual-mode: require() server-side, window.RmoozPlatformIdentity in the browser. Optional
+    // — the resolver degrades to its inline capability labels if it is not loaded.
+    var ENRICH = null;
+    try {
+        if (typeof module !== 'undefined' && module.exports) ENRICH = require('./platform-identity-enrichment.js');
+        else if (root && root.RmoozPlatformIdentity) ENRICH = root.RmoozPlatformIdentity;
+    } catch (_) { ENRICH = null; }
+
     // ── Vocabulary ───────────────────────────────────────────────────────
     // Role keywords — a value equal to one of these (or to the unit's role) is NOT a
     // display/platform name, and (with a trailing index) marks a synthetic role-index key.
@@ -187,9 +196,10 @@
                 return { name: String(authored[i][1]), source: authored[i][0], confidence: 'high', generic: false };
             }
         }
-        // 2. Authored / DB-Lite specific platform.
+        // 2. Resolved platform (authored / DB-Lite exact / document-extracted / catalog).
         if (platform.label) {
-            return { name: platform.label, source: platform.source, confidence: platform.source === 'db_lite_platform' ? 'medium' : 'high', generic: false };
+            var conf = (platform.source === 'document_extracted' || platform.source === 'catalog') ? 'medium' : 'high';
+            return { name: platform.label, source: platform.source, confidence: conf, generic: false };
         }
         // 3. DB-Lite class label, injected by caller.
         if (!isBlank(opts.classLabel)) {
@@ -263,9 +273,27 @@
         var internalKey = resolveInternalKey(unit);
         var canonical = resolveCanonicalId(unit, role);
         var tactical = resolveTacticalCode(unit);
-        var platform = resolvePlatformLabel(unit, role, opts);
-        var capability = firstNonBlank(opts.capabilityLabel, CAPABILITY_LABELS[norm(role)]);
-        var display = resolveDisplayName(unit, role, platform, CAPABILITY_LABELS[norm(role)], tactical.code, canonical.id, opts);
+
+        // RMOOZ-PLATFORM-IDENTITY-ENRICHMENT-A: best AVAILABLE platform label + provenance
+        // (authored → DB-Lite exact → document equipment → catalog → generic capability).
+        var enrich = (ENRICH && ENRICH.enrichPlatform) ? ENRICH.enrichPlatform(unit, {
+            dbLitePlatform: opts.platformLabel,
+            documentEquipment: firstNonBlank(opts.documentEquipment, unit.document_equipment, unit.source_equipment, unit.imported_equipment, unit.equipment_name),
+            catalogPlatform: opts.catalogPlatform,
+            role: role,
+        }) : null;
+        var platform, capability, display;
+        if (enrich) {
+            platform = { label: enrich.generic ? null : enrich.label, source: enrich.provenance }; // a generic capability is NOT a platform
+            capability = enrich.generic ? enrich.label : (enrich.capability_label || CAPABILITY_LABELS[norm(role)] || null);
+            display = resolveDisplayName(unit, role, platform, capability, tactical.code, canonical.id, opts);
+        } else {
+            platform = resolvePlatformLabel(unit, role, opts);
+            capability = firstNonBlank(opts.capabilityLabel, CAPABILITY_LABELS[norm(role)]);
+            display = resolveDisplayName(unit, role, platform, CAPABILITY_LABELS[norm(role)], tactical.code, canonical.id, opts);
+        }
+        var platformProvenance = enrich ? enrich.provenance : (platform.source || 'none');
+        var platformConfidence = enrich ? enrich.confidence : null;
 
         var sideRaw = firstNonBlank(opts.side, unit.side, unit.affiliation);
         var sideNorm = normalizeSide(sideRaw);
@@ -295,6 +323,8 @@
             // operator-facing labels
             displayName: display.name,
             platformLabel: platform.label,
+            platform_provenance: platformProvenance,   // authored|db_lite_exact|document_extracted|catalog|generic_fallback|none
+            platform_confidence: platformConfidence,
             typeLabel: typeLabel,
             capabilityLabel: capability || null,
             // classification + provenance
@@ -336,7 +366,8 @@
     function EMPTY_IDENTITY() {
         return {
             internalKey: null, uid: null, canonicalId: null, tacticalCode: null,
-            displayName: '—', platformLabel: null, typeLabel: null, capabilityLabel: null,
+            displayName: '—', platformLabel: null, platform_provenance: 'none', platform_confidence: null,
+            typeLabel: null, capabilityLabel: null,
             side: null, side_normalized: 'UNKNOWN', affiliation: 'unknown',
             domain: null, role: null, country: null, sidc: null, base_id: null, echelon: null,
             readiness: null, supply: null, fuel: null,
@@ -399,6 +430,7 @@
             tactical_code: id.tacticalCode,
             display_name: id.displayName,
             platform_name: id.platformLabel || 'unknown',
+            platform_provenance: id.platform_provenance || 'none',
             type_label: id.typeLabel,
             capability_label: id.capabilityLabel,
             role: id.role,

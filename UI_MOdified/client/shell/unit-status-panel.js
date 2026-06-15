@@ -220,9 +220,10 @@
         var up = Object.assign({}, base);
         up.displayName = lbl; up.display_name = lbl;
         up.platformLabel = lbl; up.platform_name = lbl;
+        up.platform_provenance = 'db_lite_exact';
         up.confidence = 'medium';
         up.warnings = (base.warnings || []).filter(function (w) { return w !== 'display_name_from_type' && w !== 'platform_unknown'; });
-        up.source = Object.assign({}, base.source, { display_name_source: 'db_lite_platform', platform_source: 'db_lite_platform' });
+        up.source = Object.assign({}, base.source, { display_name_source: 'db_lite_exact', platform_source: 'db_lite_exact' });
         return up;
     }
 
@@ -693,12 +694,17 @@
             case 'name_en':
             case 'name':
             case 'name_ar':         return tr('usp-identity-authored', 'scenario name');
+            case 'authored':
             case 'platform_name':
             case 'platform':        return tr('usp-identity-platform', 'scenario platform');
+            case 'db_lite_exact':
             case 'db_lite_platform':return tr('usp-identity-dblite-platform', 'DB-Lite platform');
+            case 'document_extracted': return tr('usp-identity-doc', 'document equipment');
+            case 'catalog':         return tr('usp-identity-catalog', 'unit catalog');
             case 'db_lite_class':   return tr('usp-identity-dblite-class', 'DB-Lite class (fallback)');
             case 'capability_label':
-            case 'role_capability': return tr('usp-identity-capability', 'capability (by role)');
+            case 'role_capability':
+            case 'generic_fallback':return tr('usp-identity-capability', 'capability (by role)');
             case 'type_label':      return tr('usp-identity-type', 'type (by role)');
             case 'tactical_code':   return tr('usp-identity-code', 'tactical code (fallback)');
             case 'canonical_id':    return tr('usp-identity-id', 'id (fallback)');

@@ -57,6 +57,9 @@
     var _pendingTimer = null;          // setTimeout handle for next turn
     var _moveAnimTimer = null;         // setInterval handle for cinematic movement
     var _loopAllUnitsForReset = [];    // [{unit, origPos}] captured at loop start for full reset
+    // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A: recent COA families (for variation) + last intel snapshot
+    var _coaFamilyHistory = [];        // newest-last list of recommended_coa_family strings
+    var _lastIntel = null;             // last plan.intel snapshot (for the Intel Snapshot UI block)
     // FREEFIGHT-COA-ROUTE-JSON-GUARD-A: planner route health probe result
     var _routeHealth = null;           // { ok, route, method, planner, local_only, provider, model, llm_enabled } | { ok:false, reason }
     var _routeUnavailableMsg = null;   // set when a plan fetch returns non-JSON / 405
@@ -965,6 +968,33 @@
         return h;
     }
 
+    // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A: compact Intel Snapshot block — superiority
+    // by domain, terrain, sovereign zone, ROE, best capability-matched BLUE assets,
+    // and the recommended COA family. Review-only / demo abstraction.
+    function _intelSnapshotHtml(intel) {
+        if (!intel) return '';
+        function supColor(v) { return v === 'BLUE' ? '#7fb0ff' : (v === 'RED' ? '#f0a0a0' : (v === 'contested' ? '#e0c060' : '#8fa5b8')); }
+        function sup(label, v) { return '<span style="color:#8fa5b8;">' + label + ':</span> <span style="color:' + supColor(v) + ';">' + esc(v || 'unknown') + '</span>'; }
+        var s = intel.superiority || {};
+        var zs = intel.zone_state || {};
+        var h = '<div data-ff-intel="block" style="margin-top:5px;border:1px solid #2a4d6a;border-radius:4px;padding:6px 8px;background:#08131e;font-size:10px;line-height:1.45;">';
+        h += '<div style="font-weight:700;color:#9ec2ec;margin-bottom:2px;">Intel Snapshot <span style="color:#6a8fa8;font-weight:400;font-size:9px;">(demo / review-only)</span></div>';
+        h += '<div>' + sup('Air', s.air) + ' · ' + sup('Naval', s.naval) + ' · ' + sup('Ground', s.ground) + ' · ' + sup('Sensor', s.sensor) + '</div>';
+        h += '<div><span style="color:#8fa5b8;">Terrain:</span> <span style="color:#cdd8e4;">' + esc(intel.terrain_summary || 'unknown') + '</span></div>';
+        if (zs.violation) {
+            var ctry = (zs.owner_country && zs.owner_country !== 'unknown') ? (zs.owner_country + ' ') : '';
+            h += '<div><span style="color:#8fa5b8;">Zone:</span> <span style="color:#f0b060;">RED in inferred ' + esc(ctry) + esc(zs.zone_type) + ' zone (' + esc(zs.severity) + ')</span></div>';
+        } else {
+            h += '<div><span style="color:#8fa5b8;">Zone:</span> <span style="color:#7fd6a0;">no inferred-zone violation</span></div>';
+        }
+        h += '<div><span style="color:#8fa5b8;">ROE:</span> <span style="color:#e0c060;">' + esc(intel.alert_state || 'WATCH') + ' / ' + esc(intel.roe_state || 'HOLD') + '</span></div>';
+        var best = arr(intel.best_blue_assets).slice(0, 3).map(function (a) { return (a.unit_uid || '?') + ' ' + (a.class || ''); });
+        if (best.length) h += '<div><span style="color:#8fa5b8;">Best BLUE assets:</span> <span style="color:#cdd8e4;">' + esc(best.join(', ')) + '</span>' + (intel.best_asset_role ? ' <span style="color:#6a8fa8;">(' + esc(intel.best_asset_role) + ')</span>' : '') + '</div>';
+        if (intel.recommended_coa_family) h += '<div><span style="color:#8fa5b8;">COA family:</span> <span style="color:#7fd6a0;">' + esc(intel.recommended_coa_family) + '</span></div>';
+        h += '</div>';
+        return h;
+    }
+
     // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: the right-side "AI Commander
     // Reasoning" panel — shows the current turn, active side, the auto-selected
     // COA, why it was chosen, units moved, expected next reaction, and a running
@@ -1007,6 +1037,8 @@
             if (rec.summary) { h += '<div style="color:#7a9ab8;font-weight:600;margin-top:2px;">Situation summary:</div><div style="color:#cdd8e4;font-size:10px;line-height:1.4;">' + esc(rec.summary) + '</div>'; }
             // FREEFIGHT-BLUE-WARNING-ROE-A: BLUE warning / ROE block (when BLUE acted)
             if (rec.side === 'BLUE') h += _blueWarningRoeHtml(rec.situation, rec.warning_actions);
+            // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A: Intel Snapshot block
+            if (rec.intel) h += _intelSnapshotHtml(rec.intel);
             h += '</div>';
         } else {
             h += '<div style="font-size:11px;color:#7a9ab8;padding:4px 0;">Waiting for first AI commander decision…</div>';
@@ -1101,6 +1133,26 @@
                 w.AppShellEventLog.append({ category: 'OPERATOR', severity: 'info', source: 'FF-AI', message: entry });
             }
         } catch (_) {}
+    }
+    // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A: narrate the intel snapshot to the ledger
+    // (INTEL zone violation, ROE, CAPABILITY asset selection, TERRAIN — honest if N/A).
+    function _appendIntelEventLog(intel) {
+        if (!intel) return;
+        var zs = intel.zone_state;
+        if (zs && zs.violation) {
+            var ctry = zs.owner_country && zs.owner_country !== 'unknown' ? (zs.owner_country + ' ') : '';
+            _appendToEventLog('INTEL: RED unit entered inferred ' + ctry + esc(zs.zone_type) + ' zone (' + esc(zs.severity) + ') — review-only.');
+        }
+        if (intel.roe_state && intel.roe_state !== 'HOLD') {
+            _appendToEventLog('ROE: BLUE alert ' + esc(intel.alert_state) + ' / ROE ' + esc(intel.roe_state) + '.');
+        }
+        var best = arr(intel.best_blue_assets)[0];
+        if (best && intel.best_asset_role) {
+            _appendToEventLog('CAPABILITY: BLUE ' + esc(best.class || 'asset') + ' package selected for ' + esc(intel.best_asset_role) + ' (capability-matched).');
+        }
+        if (intel.terrain_summary) {
+            _appendToEventLog('TERRAIN: ' + esc(intel.terrain_summary) + '.');
+        }
     }
     function _buildAiRequestBody() {
         var w = W();
@@ -1558,6 +1610,10 @@
                 previous_actions: prevActions,
                 moved_units_last_turn: lastMoved,
                 current_objective_pressure: pressure,
+                // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A: feed recent COA families so the
+                // intel layer's COA-variation engine avoids repeating the same family.
+                previous_coa_families: _coaFamilyHistory.slice(-3),
+                defending_side: 'BLUE',
             },
             opts: { preferSide: _activeSide, useLlm: _useLlm, allowed_unit_ids: base.units.map(function (u) { return u.id; }) },
         };
@@ -1726,7 +1782,15 @@
                 warning_actions: arr(coa.warning_actions),
                 // FREEFIGHT-BLUE-THREAT-AWARE-MOVEMENT-A: held = already-in-position count
                 held: _coaHeldCount,
+                // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A: shared intel snapshot
+                intel: plan.intel || null,
             };
+            // Record the recommended COA family so the next turn varies (avoid repeats).
+            if (plan.intel && plan.intel.recommended_coa_family) {
+                _coaFamilyHistory.push(plan.intel.recommended_coa_family);
+                if (_coaFamilyHistory.length > 12) _coaFamilyHistory = _coaFamilyHistory.slice(-12);
+            }
+            _lastIntel = plan.intel || _lastIntel;
             _lastCommanderDecision = record;
             _turnLog.push(record);
             var heldTail = _coaHeldCount > 0 ? (', ' + _coaHeldCount + ' already in position') : '';
@@ -1743,6 +1807,8 @@
             if (sideForTurn === 'BLUE' && plan.blue_reaction_intent && arr(plan.blue_reaction_intent.event_log).length) {
                 plan.blue_reaction_intent.event_log.forEach(function (e) { _appendToEventLog(e); });
             }
+            // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A: intel narration (INTEL / ROE / CAPABILITY / TERRAIN).
+            if (sideForTurn === 'BLUE') _appendIntelEventLog(plan.intel);
             renderCommanderPanel();
             updatePanel();
         });
@@ -1828,7 +1894,7 @@
         });
         _loopAllUnitsForReset = [];
         _turnNumber = 0; _activeSide = 'RED';
-        _turnLog = []; _lastCommanderDecision = null;
+        _turnLog = []; _lastCommanderDecision = null; _coaFamilyHistory = []; _lastIntel = null;
         _coaMovedUnits = []; _coaApplied = false; _coaPlan = null;
         if (mapReady()) { _triggerScenarioRedraw(); syncMarkers(); }
         if (_cmdrPanel && _cmdrPanel.parentNode) { _cmdrPanel.parentNode.removeChild(_cmdrPanel); _cmdrPanel = null; }
@@ -2252,7 +2318,7 @@
         _clearTimeoutSafe(_pendingTimer); _pendingTimer = null;
         if (_moveAnimTimer) { _clearIntervalSafe(_moveAnimTimer); _moveAnimTimer = null; }
         _loopRunning = false; _loopPaused = false; _turnNumber = 0; _activeSide = 'RED';
-        _turnLog = []; _lastCommanderDecision = null; _loopAllUnitsForReset = [];
+        _turnLog = []; _lastCommanderDecision = null; _loopAllUnitsForReset = []; _coaFamilyHistory = []; _lastIntel = null;
         _red = []; _blue = []; _allGroups = []; _objective = null; _objectiveSource = null; _plan = null; _terrain = { available: false };
         _planSource = 'deterministic';
         _llmStatus = { state: 'idle', message: '', validation_result: 'not_requested', fallback_reason: null };
@@ -2345,6 +2411,9 @@
         // FREEFIGHT-MANUAL-MAP-CAMERA-A test seams
         _getCameraModeForTest:     function ()            { return _freeFightCameraMode; },
         _setCameraModeForTest:     function (m)           { setCameraMode(m); },
+        // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A test seams
+        _getLastIntelForTest:        function ()          { return _lastIntel; },
+        _getCoaFamilyHistoryForTest: function ()          { return _coaFamilyHistory.slice(); },
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozFreeFightDemo = API;

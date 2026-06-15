@@ -27,6 +27,7 @@
 
 const aiProvider = require('./ai-provider');
 const TRIGGERS   = require('./free-fight-situation-triggers'); // FREEFIGHT-BLUE-WARNING-ROE-A
+const INTEL      = require('./scenario-intel');                // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 var STEP_DEG       = 0.05;   // ≈ 5-6 km per tick
@@ -710,6 +711,13 @@ async function planCoas(units, objectives, context, opts) {
     // unit set (both sides) BEFORE COA selection, so BLUE reacts to intrusion.
     var situation = TRIGGERS.evaluateFreeFightSituation(units, objectives, context);
     var blueIntent = (activeSide === 'BLUE') ? TRIGGERS.buildBlueReactionIntent(situation) : null;
+    // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A: shared intelligence snapshot (capability,
+    // superiority, terrain, sovereign zone, contacts, ROE, COA family variety, best assets).
+    var intel = null;
+    try {
+        intel = INTEL.buildScenarioIntel(units, objectives,
+            Object.assign({}, context, { defending_side: 'BLUE', active_side: activeSide }));
+    } catch (_) { intel = null; }
 
     var llmCalled = false, llmStatus = null, fallbackReason = null, providerUsed = null, modelUsed = null;
 
@@ -728,6 +736,7 @@ async function planCoas(units, objectives, context, opts) {
                 coas: llmCoas,
                 situation_state: situation,
                 blue_reaction_intent: blueIntent,
+                intel: intel,
                 commander_assessment: llmAssess,
                 recommended_plan_id: _recommendedPlanId(llmCoas),
                 llm_called: true,
@@ -751,6 +760,7 @@ async function planCoas(units, objectives, context, opts) {
         coas: coas,
         situation_state: situation,
         blue_reaction_intent: blueIntent,
+        intel: intel,
         commander_assessment: assess,
         recommended_plan_id: _recommendedPlanId(coas),
         llm_called: llmCalled,

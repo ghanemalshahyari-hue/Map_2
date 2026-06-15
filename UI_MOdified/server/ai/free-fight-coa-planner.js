@@ -625,6 +625,12 @@ function normalizeCoa(raw, allowedUnitIds) {
         phases:                phases,
         risks:                 arr(raw.risks).map(function (r) { return str(r, 200); }),
         assumptions:           arr(raw.assumptions).map(function (a) { return str(a, 200); }),
+        // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A: preserve the commander's "why these units were NOT
+        // moved" — proof the AI selected a force package rather than moving everything.
+        non_selected_units:    arr(raw.non_selected_units).map(function (n) {
+            n = (n && typeof n === 'object') ? n : {};
+            return { unit_uid: str(n.unit_uid, 60), reason: str(n.reason, 200) };
+        }).filter(function (n) { return n.unit_uid; }).slice(0, 60),
         validation:            {},
     };
 }
@@ -773,6 +779,27 @@ function enrichCoasWithNarrative(coas, obj, context, planSource) {
 }
 
 // ── LLM planner ───────────────────────────────────────────────────────────────
+// RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A: the terrain/zone/contact context block the commander reasons
+// from. Shared by the legacy _callLlm prompt AND the MCP composer so both carry the same GIS data.
+function _buildTerrainZoneContext(intel, tctx) {
+    if (!intel && !tctx) return null;
+    return {
+        terrain: (intel && intel.terrain) || null,
+        sovereign_zone: (tctx && tctx.sovereign_zone) || (intel && intel.zone_state) || null,
+        contact_picture: (intel && intel.contact_picture) || null,
+        roe_state: (intel && intel.roe_state) || null,
+        alert_state: (intel && intel.alert_state) || null,
+        coalition: (intel && intel.coalition_posture) || null,
+        gis: tctx ? {
+            terrain_class: tctx.terrain_class, owner_country: tctx.owner_country,
+            threat_rings: tctx.threat_rings, movement_corridor: tctx.corridor,
+            choke_point: tctx.choke, high_ground: tctx.high_ground,
+            route_cost: tctx.route_cost, provenance: tctx.provenance,
+        } : null,
+        note: 'Reason from country/sovereign borders, terrain class, the movement corridor, choke points, high ground, threat rings, route cost, and distance from border/objective — not only enemy proximity to the objective. Provenance marks real GIS vs inferred.',
+    };
+}
+
 async function _callLlm(units, objectives, context, opts, _providerOverride) {
     var provider = _providerOverride || aiProvider;
     var providerName = resolveLocalProvider();
@@ -821,22 +848,7 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
     // GIS / terrain / sovereign-zone / contact context the commander must reason from.
     var intel = context && context._intel;
     var tctx = context && context._terrain_ctx;
-    var terrainZoneContext = (intel || tctx) ? {
-        terrain: intel && intel.terrain || null,
-        sovereign_zone: (tctx && tctx.sovereign_zone) || (intel && intel.zone_state) || null,
-        contact_picture: intel && intel.contact_picture || null,
-        roe_state: intel && intel.roe_state || null,
-        alert_state: intel && intel.alert_state || null,
-        coalition: intel && intel.coalition_posture || null,
-        // GIS terrain-aware tactics: derived terrain features + honest provenance.
-        gis: tctx ? {
-            terrain_class: tctx.terrain_class, owner_country: tctx.owner_country,
-            threat_rings: tctx.threat_rings, movement_corridor: tctx.corridor,
-            choke_point: tctx.choke, high_ground: tctx.high_ground,
-            route_cost: tctx.route_cost, provenance: tctx.provenance,
-        } : null,
-        note: 'Reason from country/sovereign borders, terrain class, the movement corridor, choke points, high ground, threat rings, route cost, and distance from border/objective — not only enemy proximity to the objective. Provenance marks real GIS vs inferred.',
-    } : null;
+    var terrainZoneContext = _buildTerrainZoneContext(intel, tctx);
 
     var actionEnum = freedom
         ? TACTICS.TACTICAL_ACTIONS.join('|')
@@ -884,6 +896,16 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
         constraint: 'unit_uid MUST be exactly one of allowed_unit_ids — do not invent IDs',
     });
 
+    // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A: when the planner supplies the MCP/tool-contract prompt
+    // (the single source of truth), send it VERBATIM. The locally-built system/prompt above stay
+    // only as the fallback when no MCP prompt is threaded (legacy callers / tests).
+    var mcp = context && context._mcp_prompt;
+    if (mcp && mcp.system && mcp.prompt) {
+        system = mcp.system;
+        prompt = mcp.prompt;
+        if (arr(mcp.allowed_unit_ids).length) effectiveAllowed = arr(mcp.allowed_unit_ids).map(String);
+    }
+
     var result;
     try {
         result = await provider.generate({
@@ -915,7 +937,10 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
         return { ok: false, llm_status: 'invalid_schema', fallback_reason: 'llm_returned_fewer_than_2_valid_coas (' + normalized.length + ')', partial: normalized };
     }
 
-    return { ok: true, coas: normalized, provider_used: result.providerUsed || providerName, model_used: model };
+    // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A: carry the RAW model output so the real-LLM E2E can prove
+    // the plan actually came from the local model (the planner otherwise discards it after parsing).
+    return { ok: true, coas: normalized, provider_used: result.providerUsed || providerName, model_used: model,
+             raw_response: str(result.response || '', 20000) };
 }
 
 // ── Timing (RMOOZ-AI-COA-PERFORMANCE-A) ─────────────────────────────────────────
@@ -1121,6 +1146,26 @@ async function _assemblePlan(P, variationSeed, timer, light) {
     var llmCalled = false, llmStatus = null, fallbackReason = null, fallbackMessage = null, providerUsed = null, modelUsed = null;
     var _llmContractRejection = null; // set when the LLM COA is rejected by the tool contract
 
+    // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A: the MCP/tool-contract commander prompt is the SINGLE
+    // source of truth. Compose it ONCE from the tool pack (the planner sends it verbatim + the UI
+    // surfaces it via "View MCP Prompt"). Attached even on the deterministic/disabled path so the
+    // operator can see exactly what the AI would be / was instructed with.
+    var llmEnabled = process.env.RMOOZ_FREE_FIGHT_LLM === '1';
+    var mcpPrompt = null;
+    if (!light && toolPack && toolPack.data) {
+        try {
+            mcpPrompt = CONTRACT.composeCommanderPrompt(toolPack, {
+                objective: obj,
+                terrain_zone_context: _buildTerrainZoneContext(intel, terrainCtx),
+                commander_mode: commanderMode,
+                active_side: activeSide,
+                allowed_tactical_actions: diverseMode ? TACTICS.TACTICAL_ACTIONS.slice() : undefined,
+                coa_archetypes: diverseMode ? TACTICS.COA_ARCHETYPES.map(function (a) { return { key: a.key, label: a.label }; }) : undefined,
+                previous_coa_families: arr(context.previous_coa_families),
+            });
+        } catch (_) { mcpPrompt = null; }
+    }
+
     function _finalize(planSource, coas, validation, fallbackUsed, llmInfo, assess) {
         var result = {
             ok: true,
@@ -1129,6 +1174,9 @@ async function _assemblePlan(P, variationSeed, timer, light) {
             commander_mode: commanderMode,
             variation_seed: variationSeed,
             ai_depth: depth,
+            llm_enabled: llmEnabled,
+            mcp_prompt: light ? null : mcpPrompt,
+            mcp_prompt_version: mcpPrompt ? mcpPrompt.version : ((toolPack && toolPack.version) || null),
             terrain_context: _terrainSummary(),
             coas: coas,
             situation_state: situation,
@@ -1159,6 +1207,8 @@ async function _assemblePlan(P, variationSeed, timer, light) {
         var llmCtx = Object.assign({}, context, {
             commander_mode: commanderMode, variation_seed: variationSeed,
             _intel: intel, _situation: situation, _terrain_ctx: terrainCtx,
+            // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A: send the MCP/tool-contract prompt verbatim.
+            _mcp_prompt: mcpPrompt,
         });
         var llmResult = await timer.async('llm_ms', function () { return _callLlm(allUnits, objectives, llmCtx, opts); });
         llmStatus = llmResult.llm_status || null;

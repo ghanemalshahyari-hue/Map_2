@@ -57,12 +57,19 @@
     var _pendingTimer = null;          // setTimeout handle for next turn
     var _moveAnimTimer = null;         // setInterval handle for cinematic movement
     var _loopAllUnitsForReset = [];    // [{unit, origPos}] captured at loop start for full reset
+    // RMOOZ-AI-FREE-FIGHT-AI-ONLY-A: the "AI Commander Free Fight" card is AI-ONLY. No LLM = no
+    // movement (no deterministic/fallback/fast animation in this card). _aiUnavailableMsg is the
+    // operator message; _aiOnlyGate enforces it for the LIVE loop. A test seam can relax the gate
+    // for the loop-MECHANICS suites (the deterministic planner is allowed "for tests", not the card).
+    var _aiUnavailableMsg = null;
+    var _aiOnlyGate = true;
     // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A: recent COA families (for variation) + last intel snapshot
     var _coaFamilyHistory = [];        // newest-last list of recommended_coa_family strings
     var _lastIntel = null;             // last plan.intel snapshot (for the Intel Snapshot UI block)
     // RMOZ-COMMANDER-BRIEF-COALITION-A: last commander brief (prose + coalition posture)
     var _lastBrief = null;
     var _briefExpanded = false;        // operator toggles the full copyable brief
+    var _mcpPromptExpanded = false;    // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A: "View MCP Prompt" toggle
     // FREEFIGHT-LLM-CAPABILITY-ANALYST-A: last capability summary (best assets per mission)
     var _lastCapability = null;
     // RMOZ-AI-TOOL-CONTRACT-A: last tool-contract record
@@ -1051,6 +1058,7 @@
         bind('camera-follow', function () { setCameraMode('follow'); });
         ['controlled', 'free', 'high_variation'].forEach(function (m) { bind('mode-' + m, function () { setCommanderMode(m); }); });
         ['fast', 'normal', 'deep'].forEach(function (d) { bind('depth-' + d, function () { setAiDepth(d); }); });
+        bind('view-mcp-prompt', function () { _mcpPromptExpanded = !_mcpPromptExpanded; updatePanel(); });
         bind('gen5-coas', generate5Coas);
         FF_SPEED_ORDER.forEach(function (sp) { bind('loop-speed-' + sp, function () { setFreeFightSpeed(sp); }); });
         renderCommanderPanel();
@@ -1222,8 +1230,17 @@
         }
         var sideColor = (rec && rec.side === 'BLUE') ? '#7fb0ff' : '#f0a0a0';
         var runState = _loopRunning ? (_loopPaused ? 'Paused' : 'Running') : 'Stopped';
-        var h = '<div style="font-weight:700;color:#9ec2ec;font-size:13px;margin-bottom:5px;">AI Commander Reasoning — تفكير القائد الآلي</div>';
+        // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A / honest labeling: only call it "AI Commander Reasoning"
+        // when the decision actually came from the LLM. A deterministic/fallback plan must NOT be
+        // presented as AI — it is the deterministic tactical planner (LLM not used).
+        var isLlm = !!(rec && rec.source === 'llm');
+        var title = isLlm ? 'AI Commander Reasoning — تفكير القائد الآلي' : 'Deterministic tactical planner — LLM not used';
+        var titleColor = isLlm ? '#9ec2ec' : '#cdb86a';
+        var h = '<div style="font-weight:700;color:' + titleColor + ';font-size:13px;margin-bottom:5px;">' + title + '</div>';
         h += '<div style="font-size:11px;color:#8fa5b8;margin-bottom:5px;">Status: <span style="color:#e0e8f0;">' + esc(runState) + '</span> · Speed: <span style="color:#e0e8f0;">' + esc(_ffSpeed().label) + '</span></div>';
+        if (rec && !isLlm) {
+            h += '<div data-ff-cmdr="not-ai" style="margin-bottom:5px;font-size:10px;color:#cdb86a;padding:4px 7px;border:1px solid #5a4f20;border-radius:4px;background:#1a1708;line-height:1.45;">Deterministic tactical planner — LLM not used. This is a fallback plan for the demo loop, not AI commander reasoning.</div>';
+        }
         if (rec) {
             h += '<div style="border:1px solid #2a3f55;border-radius:5px;background:#0c141d;padding:7px 9px;font-size:11px;">';
             h += '<div style="margin-bottom:2px;"><span style="color:#8fa5b8;">Turn:</span> <span style="color:#e0e8f0;font-weight:700;">' + rec.turn + '</span> · <span style="color:#8fa5b8;">Active side:</span> <span style="color:' + sideColor + ';font-weight:700;">' + esc(rec.side) + '</span></div>';
@@ -1232,7 +1249,7 @@
             h += '<div style="margin-bottom:2px;"><span style="color:#8fa5b8;">Decision source:</span> <span style="color:' + srcColor + ';">' + esc(rec.source) + '</span></div>';
             h += '<div style="margin-bottom:2px;"><span style="color:#8fa5b8;">Units moved:</span> <span style="color:#e0e8f0;">' + rec.moved + '</span>' +
                  (rec.held ? ' · <span style="color:#8fa5b8;">Already in position:</span> <span style="color:#9ab0c0;">' + rec.held + '</span>' : '') + '</div>';
-            if (arr(rec.rationale).length) { h += '<div style="color:#7a9ab8;font-weight:600;margin-top:3px;">Why this COA:</div>'; h += blist(rec.rationale, '#cdd8e4'); }
+            if (arr(rec.rationale).length) { h += '<div style="color:#7a9ab8;font-weight:600;margin-top:3px;">' + (isLlm ? 'Why this COA:' : 'Planner rationale (deterministic — not AI):') + '</div>'; h += blist(rec.rationale, '#cdd8e4'); }
             if (arr(rec.expected).length) { h += '<div style="color:#7a9ab8;font-weight:600;margin-top:2px;">Expected next reaction <span style="color:#8a6a3a;font-weight:400;">(preview)</span>:</div>'; h += blist(rec.expected, '#d8c08a'); }
             if (rec.summary) { h += '<div style="color:#7a9ab8;font-weight:600;margin-top:2px;">Situation summary:</div><div style="color:#cdd8e4;font-size:10px;line-height:1.4;">' + esc(rec.summary) + '</div>'; }
             // FREEFIGHT-BLUE-WARNING-ROE-A: BLUE warning / ROE block (when BLUE acted)
@@ -1743,13 +1760,19 @@
     function _generateCoaPlan() {
         var w = W();
         if (!w || typeof w.fetch !== 'function') return;
-        _coaLoading = true; _coaPlan = null; _coaApplied = false; _coaMovedUnits = [];
+        _coaLoading = true; _coaPlan = null; _coaApplied = false; _coaMovedUnits = []; _mcpPromptExpanded = false;
         _routeUnavailableMsg = null;
         updatePanel();
         var body = _buildAiRequestBody();
+        // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A: the manual "Generate AI Attack Plan" button FORCES the
+        // AI/MCP commander path — useLlm true, and never fast (fast skips the LLM). If the local LLM
+        // is disabled the server returns no LLM plan and the page says how to enable it (no fallback
+        // presented as AI). commander_mode stays the operator's selection (default high_variation).
+        body.opts.useLlm = true;
+        if (body.opts.ai_depth === 'fast') body.opts.ai_depth = 'normal';
         _fetchJsonSafe('/api/wargame-sim/free-fight/plan-coas', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ units: body.units, objectives: body.objectives, context: {}, opts: body.opts }),
+            body: JSON.stringify({ units: body.units, objectives: body.objectives, context: { commander_mode: body.opts.commander_mode, ai_depth: body.opts.ai_depth }, opts: body.opts }),
         }).then(function (plan) {
             if (_isRouteUnavailable(plan)) {
                 _routeUnavailableMsg = _routeUnavailableText(plan);
@@ -2084,9 +2107,14 @@
         if (p.ai_depth === 'fast') return false;              // fast skips the LLM → reject
         return true;
     }
+    // Is the local LLM disabled (RMOOZ_FREE_FIGHT_LLM not '1')? Then the manual page must tell the
+    // operator how to enable it rather than show anything that looks like an AI result.
+    function _llmDisabled(p) { return !!(p && p.llm_enabled === false); }
+    var LLM_DISABLED_MSG = 'Local LLM is disabled. Enable RMOOZ_FREE_FIGHT_LLM=1 and select a local model to generate an AI plan.';
     // Human reason WHY a manual plan is not a real AI result (for the gate message).
     function _aiOnlyReason(p) {
         if (!p) return 'no plan';
+        if (_llmDisabled(p)) return 'local LLM disabled';
         if (p.ai_depth === 'fast') return 'fast mode (LLM skipped)';
         if (p.fallback_reason) return String(p.fallback_reason);
         var st = String(p.llm_status || '').toLowerCase();
@@ -2098,24 +2126,60 @@
         return 'deterministic fallback';
     }
     // The ONLY thing the manual page shows when the result is not real AI: the honest message
-    // + the diagnostic fields (acceptance #5). No cards, no scores, no fallback dressed as AI.
+    // + the diagnostic fields (acceptance #4/#5) + "View MCP Prompt". No cards, no scores, no
+    // fallback dressed as AI.
     function _aiOnlyGateHtml(p) {
         function row(k, v) { return '<div><span style="color:#7a9ab8;">' + esc(k) + ':</span> <span style="color:#cdd8e4;">' + esc(v == null || v === '' ? '—' : String(v)) + '</span></div>'; }
+        var disabled = _llmDisabled(p);
         var h = '<div data-ff-coa="ai-only-gate" style="color:#f0c060;font-size:11px;padding:8px 10px;border:1px solid #6a5520;border-radius:5px;background:#1c1708;line-height:1.55;">';
         h += '<div style="font-weight:700;color:#f4d57a;">No AI result generated.</div>';
-        h += '<div>LLM was not used.</div>';
-        h += '<div>Reason: ' + esc(_aiOnlyReason(p)) + '</div>';
+        if (disabled) {
+            // Acceptance #1 — tell the operator exactly how to enable the local LLM.
+            h += '<div data-ff-coa="llm-disabled" style="margin-top:2px;">' + esc(LLM_DISABLED_MSG) + '</div>';
+        } else {
+            h += '<div>LLM was not used.</div>';
+            h += '<div>Reason: ' + esc(_aiOnlyReason(p)) + '</div>';
+        }
         h += '</div>';
         h += '<div data-ff-coa="ai-only-diag" style="margin-top:6px;font-size:9.5px;line-height:1.5;border:1px solid #20364e;border-radius:4px;padding:5px 8px;background:#0a1420;color:#8fa5b8;">';
+        h += row('LLM enabled', p.llm_enabled === true ? 'yes' : 'no');
+        h += row('provider_used', p.provider_used);
+        h += row('model_used', p.model_used);
         h += row('plan_source', p.plan_source);
         h += row('llm_called', String(!!p.llm_called));
         h += row('llm_status', p.llm_status);
         h += row('fallback_reason', p.fallback_reason);
-        h += row('provider_used', p.provider_used);
-        h += row('model_used', p.model_used);
-        h += row('ai_depth', p.ai_depth);
+        h += row('MCP prompt pack', p.mcp_prompt_version);
         h += row('commander_mode', p.commander_mode);
+        h += row('ai_depth', p.ai_depth);
         h += '</div>';
+        h += _mcpPromptHtml(p); // "View MCP Prompt" — proves the AI was instructed through MCP
+        return h;
+    }
+    // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A: "View MCP Prompt" toggle — shows the EXACT prompt the MCP
+    // tool-contract composed (commander instructions, tools_context summary, allowed units,
+    // objective, terrain/zone context, system + user message). Proof the AI is instructed via MCP.
+    function _mcpPromptHtml(p) {
+        var mp = p && p.mcp_prompt;
+        if (!mp) return '';
+        var h = '<div style="margin-top:6px;"><button data-act="view-mcp-prompt" style="font:inherit;cursor:pointer;border:1px solid #3a5f7a;background:#0e1c28;color:#9ec2ec;border-radius:4px;padding:3px 9px;font-size:10px;">' + (_mcpPromptExpanded ? '▾ Hide MCP Prompt' : '▸ View MCP Prompt') + '</button></div>';
+        if (_mcpPromptExpanded) {
+            var pre = function (label, body) {
+                return '<div style="margin-top:4px;"><div style="color:#7a9ab8;font-size:9px;font-weight:600;">' + esc(label) + '</div>' +
+                    '<pre style="white-space:pre-wrap;word-break:break-word;margin:2px 0;font-size:9px;color:#cdd8e4;background:#06101a;border:1px solid #1a2c40;border-radius:3px;padding:5px 7px;max-height:220px;overflow:auto;">' + esc(body) + '</pre></div>';
+            };
+            var prettyPrompt = mp.prompt;
+            try { prettyPrompt = JSON.stringify(JSON.parse(mp.prompt), null, 2); } catch (_) {}
+            h += '<div data-ff-coa="mcp-prompt" style="margin-top:4px;border:1px solid #20364e;border-radius:4px;padding:6px 8px;background:#0a1420;">';
+            h += '<div style="font-size:9.5px;color:#8fa5b8;">version: <span style="color:#cdd8e4;">' + esc(mp.version) + '</span> · tools_context: <span style="color:#cdd8e4;">' + esc((mp.tools_context_summary || []).join(', ')) + '</span> · allowed_unit_ids: <span style="color:#cdd8e4;">' + esc((mp.allowed_unit_ids || []).length) + '</span> · force pool: <span style="color:#cdd8e4;">' + esc(mp.force_pool_count) + '</span></div>';
+            if (Array.isArray(mp.commander_instructions)) {
+                h += '<div style="margin-top:4px;color:#7a9ab8;font-size:9px;font-weight:600;">commander instructions</div>';
+                h += '<ul style="margin:2px 0;padding-left:15px;">' + mp.commander_instructions.map(function (r) { return '<li style="color:#bfe89a;font-size:9px;margin-bottom:1px;">' + esc(r) + '</li>'; }).join('') + '</ul>';
+            }
+            h += pre('system (commander instruction)', mp.system);
+            h += pre('prompt (tools_context + objective + terrain/zone + allowed units + schema)', prettyPrompt);
+            h += '</div>';
+        }
         return h;
     }
     // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A: state plainly whether the LLM controlled this plan.
@@ -2160,9 +2224,11 @@
         var h = '<details data-ff-coa="debug" style="margin-bottom:6px;"><summary style="cursor:pointer;font-size:10px;color:#9ec2ec;font-weight:600;">🔬 Movement execution debug</summary>';
         h += '<div style="font-size:9.5px;line-height:1.5;border:1px solid #20364e;border-radius:4px;padding:5px 8px;background:#0a1420;margin-top:3px;">';
         h += row('plan_source', p.plan_source || '—', p.plan_source === 'llm' ? '#7fd6a0' : '#9ab0c0');
+        h += row('LLM enabled', p.llm_enabled === true ? 'yes' : 'no', p.llm_enabled === true ? '#7fd6a0' : '#e0a040');
         h += row('llm_called', String(!!p.llm_called), llmColor);
         h += row('llm_status', p.llm_status || '—');
         h += row('fallback_reason', p.fallback_reason || '—');
+        h += row('MCP prompt pack', p.mcp_prompt_version || '—');
         h += row('commander_mode', p.commander_mode || '—', '#d8ccff');
         h += row('ai_depth', p.ai_depth || '—');
         h += row('variation_seed', (p.variation_seed != null ? p.variation_seed : '—'));
@@ -2375,6 +2441,21 @@
                 return;
             }
             _routeUnavailableMsg = null;
+            // RMOOZ-AI-FREE-FIGHT-AI-ONLY-A: AI-only card — a turn applies movement ONLY for a REAL
+            // LLM plan (llm_called + plan_source==='llm' + llm_status ok + no fallback + provider/model
+            // + not fast). A deterministic/fallback/fast plan is NEVER applied or animated here: the
+            // turn is skipped and the loop pauses (it would only keep producing fallback otherwise).
+            if (_aiOnlyGate && !_isRealLlmPlan(plan)) {
+                _appendToEventLog('AI turn skipped — LLM not used' +
+                    (plan && plan.fallback_reason ? ' (' + plan.fallback_reason + ')' : (plan && plan.plan_source ? ' (' + plan.plan_source + ')' : '')) + '.');
+                _aiUnavailableMsg = AI_FREE_FIGHT_REQUIRES_LLM;
+                _loopPaused = true;
+                _clearTimeoutSafe(_pendingTimer); _pendingTimer = null;
+                _appendToEventLog('AI Commander Free Fight paused — ' + AI_FREE_FIGHT_REQUIRES_LLM);
+                updatePanel();
+                return; // no _runTurnCore → no movement, no animation
+            }
+            _aiUnavailableMsg = null;
             _runTurnCore(plan, _ffSpeed().moveAnimMs);
             if (scheduleNext && _loopRunning && !_loopPaused) _scheduleNextTurn();
         }).catch(function (e) {
@@ -2392,8 +2473,37 @@
         }, _ffSpeed().decisionDelayMs);
     }
 
+    // RMOOZ-AI-FREE-FIGHT-AI-ONLY-A: the operator message when the AI-only card cannot run.
+    var AI_FREE_FIGHT_REQUIRES_LLM = 'AI Free Fight requires a local LLM. Enable RMOOZ_FREE_FIGHT_LLM=1 and select a local model.';
+    // Is the local AI/LLM available for the AI Commander Free Fight card? Checks the client-known
+    // signals (LLM toggle on, depth not fast) + the planner route health (RMOOZ_FREE_FIGHT_LLM
+    // enabled, a provider/model available, provider not blocked) when it has been probed.
+    function _freeFightAiReady() {
+        if (_useLlm !== true) return { ok: false, reason: 'the LLM toggle is off' };
+        if (_aiDepth === 'fast') return { ok: false, reason: 'Fast mode skips the LLM — use Normal or Deep' };
+        var rh = _routeHealth;
+        if (rh && rh.ok !== false) {
+            if (rh.llm_enabled === false) return { ok: false, reason: 'RMOOZ_FREE_FIGHT_LLM is not enabled on the server' };
+            if (rh.provider_blocked) return { ok: false, reason: 'the configured provider is blocked (local-only policy)' };
+            if (rh.llm_enabled === true && (!rh.provider || !rh.model)) return { ok: false, reason: 'no local provider/model configured' };
+        }
+        return { ok: true };
+    }
+
     function startLoop() {
         if (_loopRunning && !_loopPaused) return;
+        // RMOOZ-AI-FREE-FIGHT-AI-ONLY-A: do NOT start (and never run the deterministic fallback) when
+        // the local AI/LLM is unavailable — show how to enable it instead of moving units.
+        if (_aiOnlyGate) {
+            var ready = _freeFightAiReady();
+            if (!ready.ok) {
+                _aiUnavailableMsg = AI_FREE_FIGHT_REQUIRES_LLM;
+                try { _appendToEventLog('AI Commander Free Fight not started — ' + ready.reason + '. ' + AI_FREE_FIGHT_REQUIRES_LLM); } catch (_) {}
+                updatePanel();
+                return;
+            }
+        }
+        _aiUnavailableMsg = null;
         if (!_loopAllUnitsForReset.length) _captureUnitsForReset();
         _loopRunning = true; _loopPaused = false;
         updatePanel();
@@ -2409,13 +2519,23 @@
 
     function stepOnce() {
         // Run exactly one turn without scheduling the next.
+        // RMOOZ-AI-FREE-FIGHT-AI-ONLY-A: a single step is still AI-only — no LLM, no movement.
+        if (_aiOnlyGate) {
+            var ready = _freeFightAiReady();
+            if (!ready.ok) {
+                _aiUnavailableMsg = AI_FREE_FIGHT_REQUIRES_LLM;
+                try { _appendToEventLog('AI Commander Free Fight step skipped — ' + ready.reason + '. ' + AI_FREE_FIGHT_REQUIRES_LLM); } catch (_) {}
+                updatePanel();
+                return;
+            }
+        }
         if (!_loopAllUnitsForReset.length) _captureUnitsForReset();
         _loopPaused = false; // allow this single turn to apply
         runNextTurn(false);
     }
 
     function resetLoop() {
-        _loopRunning = false; _loopPaused = false;
+        _loopRunning = false; _loopPaused = false; _aiUnavailableMsg = null;
         _clearTimeoutSafe(_pendingTimer); _pendingTimer = null;
         if (_moveAnimTimer) { _clearIntervalSafe(_moveAnimTimer); _moveAnimTimer = null; }
         // Restore every captured unit to its original position.
@@ -2507,10 +2627,15 @@
         h += _coaTimingHtml(_coaPlan.debug_timing);
         // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A: per-COA movement-execution debug overlay.
         h += _coaDebugHtml();
-        // FREEFIGHT-COA-COMMANDER-NARRATIVE-A: Commander AI Assessment banner
+        // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A: "View MCP Prompt" on the real-LLM render too.
+        h += _mcpPromptHtml(_coaPlan);
+        // FREEFIGHT-COA-COMMANDER-NARRATIVE-A: Commander assessment banner. Honest labeling —
+        // only an LLM plan is "AI"; a deterministic plan is the tactical planner (LLM not used).
         if (_coaPlan.commander_assessment || _coaPlan.recommended_plan_id) {
-            h += '<div data-ff-coa="assessment" style="margin-bottom:6px;padding:6px 9px;border:1px solid #2e5d7d;border-radius:5px;background:#0a1622;">';
-            h += '<div style="font-weight:700;font-size:11px;color:#9ec2ec;margin-bottom:3px;">Commander AI Assessment — تقدير القائد</div>';
+            var _isLlmPlan = _coaPlan.plan_source === 'llm';
+            var _assessTitle = _isLlmPlan ? 'Commander AI Assessment — تقدير القائد' : 'Tactical Planner Assessment — تقدير المخطط (deterministic — LLM not used)';
+            h += '<div data-ff-coa="assessment" style="margin-bottom:6px;padding:6px 9px;border:1px solid ' + (_isLlmPlan ? '#2e5d7d' : '#5a4f20') + ';border-radius:5px;background:' + (_isLlmPlan ? '#0a1622' : '#1a1708') + ';">';
+            h += '<div style="font-weight:700;font-size:11px;color:' + (_isLlmPlan ? '#9ec2ec' : '#cdb86a') + ';margin-bottom:3px;">' + _assessTitle + '</div>';
             if (_coaPlan.commander_assessment) {
                 h += '<div style="font-size:10px;color:#cdd8e4;line-height:1.4;">' + esc(_coaPlan.commander_assessment) + '</div>';
             }
@@ -2627,6 +2752,11 @@
         // Prominent route-unavailable banner — NOT an LLM failure
         if (_routeUnavailableMsg) {
             h += '<div data-ff-loop="route-unavailable" style="margin-top:5px;padding:6px 8px;border:1px solid #7a3030;border-radius:4px;background:#241414;color:#f0b0b0;font-size:10px;line-height:1.4;">⚠ ' + esc(_routeUnavailableMsg) + '</div>';
+        }
+        // RMOOZ-AI-FREE-FIGHT-AI-ONLY-A: AI-required banner — this card moves units ONLY via a real
+        // local LLM. Shown when the loop was blocked / paused because the LLM was not used.
+        if (_aiUnavailableMsg) {
+            h += '<div data-ff-loop="ai-required" style="margin-top:5px;padding:6px 8px;border:1px solid #6a5520;border-radius:4px;background:#1c1708;color:#f0c060;font-size:10px;line-height:1.45;font-weight:600;">🛑 ' + esc(_aiUnavailableMsg) + '</div>';
         }
         // Control buttons
         h += '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;">';
@@ -3017,6 +3147,15 @@
         _generateCoaPlanForTest:   function ()            { return _generateCoaPlan(); },
         _getCoaPlanForTest:        function ()            { return _coaPlan; },
         _setCoaPlanForTest:        function (p)           { _coaPlan = p; },
+        _setMcpPromptExpandedForTest: function (v)        { _mcpPromptExpanded = !!v; },
+        _llmDisabledForTest:       function (p)           { return _llmDisabled(p); },
+        _renderCommanderPanelForTest: function (rec)      { _lastCommanderDecision = rec; _loopRunning = true; try { renderCommanderPanel(); } catch (_) {} _loopRunning = false; return _cmdrPanel ? _cmdrPanel.innerHTML : ''; },
+        // RMOOZ-AI-FREE-FIGHT-AI-ONLY-A test seams. _setAiOnlyGateForTest(false) is the sanctioned
+        // "deterministic planner for tests" relaxation used by the loop-MECHANICS suites.
+        _setAiOnlyGateForTest:     function (v)           { _aiOnlyGate = (v !== false); },
+        _freeFightAiReadyForTest:  function ()            { return _freeFightAiReady(); },
+        _getAiUnavailableMsgForTest: function ()          { return _aiUnavailableMsg; },
+        _setRouteHealthForTest:    function (h)           { _routeHealth = h; },
         // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A test seams
         _planSourceNoteHtmlForTest: function (p)          { return _planSourceNoteHtml(p); },
         _coaDebugHtmlForTest:      function (p, applied, moved) { _coaPlan = p; if (applied != null) _coaApplied = applied; if (moved) _coaMovedUnits = moved; return _coaDebugHtml(); },

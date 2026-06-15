@@ -940,19 +940,113 @@ function validateCommanderCoaTool(input) {
 // ============================================================================
 // 11. buildCommanderPromptPack — the full deterministic prompt pack. async.
 // ============================================================================
-// RMOOZ-AI-COMMANDER-FREEDOM-B: the contract carries STRUCTURE/PHYSICS rules only. It must
-// NOT bias the model toward a doctrine (intercept/defend/posture/warn) or force family
-// variation — the commander chooses the action freely; the operator reviews.
+// RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A: the MCP/tool-contract layer is the SINGLE SOURCE OF TRUTH
+// for the commander instruction. The planner/UI must not invent a separate prompt — they call
+// composeCommanderPrompt() below. These realism/selection rules are NOT doctrine bias (they do
+// not force intercept/defend/attack — they forbid forcing a full attack and demand the commander
+// SELECT a relevant force package and explain it), so they stay compatible with FREEDOM-B.
+var MCP_COMMANDER_INSTRUCTIONS = [
+    'Think like a commander, not a script.',
+    'Do NOT move all units — select ONLY the units relevant to the objective.',
+    'Prefer nearby, suitable, ready, and supplied units; hold/recon/screen/support with the rest.',
+    'Reason from the objective country / sovereign zone, terrain, threat rings, the movement corridor, the choke point, and the objective location.',
+    'Decide per unit whether to recon, hold, delay, flank, defend, withdraw, deceive, probe, support, reserve, or attack — do NOT force a full attack.',
+    'Do NOT move units from all countries unless there is a clear military reason.',
+    'For every SELECTED unit, explain why_unit it was chosen.',
+    'For units you do NOT move, explain why in non_selected_units.',
+    'Return ONLY valid JSON.',
+];
+// RMOOZ-AI-COMMANDER-FREEDOM-B kept the structure/physics rules + freedom (no doctrine bias);
+// RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A folds in the commander-realism / unit-selection rules.
 var SYSTEM_CONTRACT = [
-    'You are an RMOOZ commander AI.',
+    'You are an RMOOZ commander AI for an advisory-only wargame.',
     'Use ONLY the provided tools_context.',
+    'Think like a commander, not a script: select ONLY the units relevant to the objective and do NOT move all units.',
+    'Prefer nearby, suitable, ready, supplied units; hold/recon/screen/support with the rest.',
+    'Reason from the objective country / sovereign zone, terrain, threat rings, corridor, choke point, and objective location.',
+    'You may freely choose any tactical action (recon/hold/delay/flank/defend/withdraw/deceive/probe/support/reserve/attack); do not force intercept/defend/attack and do NOT force a full attack.',
+    'Do NOT move units from all countries unless there is a clear military reason.',
+    'Explain why each selected unit is used and why the others are not moved.',
     'Return ONLY JSON matching allowed_output_schema.',
-    'Every unit_uid MUST be in allowed_unit_ids.',
-    'Use only coordinates inside the map; do not invent units; do not teleport (no impossible movement).',
-    'NEVER output engage/destroy/kill — movement/positioning only.',
-    'You may freely choose any tactical action; do not force intercept/defend/attack.',
-    'review_required:true.',
+    'Every unit_uid MUST be in allowed_unit_ids; use only coordinates inside the map; do not invent units; do not teleport (no impossible movement).',
+    'NEVER output engage/destroy/kill — movement/positioning only. review_required:true.',
 ].join(' ');
+
+// RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A: compose the EXACT commander messages to send to the local
+// LLM, from the deterministic tool pack. This is the one place the commander prompt is built —
+// the planner sends this verbatim and also attaches it to the plan (so the UI's "View MCP Prompt"
+// shows precisely what the AI was instructed with). Requests the COA-array output the planner
+// consumes. extras: { objective, terrain_zone_context, commander_mode, active_side,
+// allowed_tactical_actions, coa_archetypes, previous_coa_families }.
+function composeCommanderPrompt(packEnvelope, extras) {
+    extras = extras || {};
+    var data = (packEnvelope && packEnvelope.data) || (packEnvelope && packEnvelope.tools_context ? packEnvelope : {});
+    var version = (packEnvelope && packEnvelope.version) || TOOL_CONTRACT_VERSION;
+    var tc = data.tools_context || {};
+    var oob = (tc.oob && tc.oob.data) || {};
+    var capability = (tc.capability && tc.capability.data) || null;
+    var zone = (tc.zone && tc.zone.data) || null;
+    var contacts = (tc.contacts && tc.contacts.data) || null;
+    var roe = (tc.roe && tc.roe.data) || null;
+    var allowedUnitIds = arr(data.allowed_unit_ids);
+    var allowedFamilies = arr(data.allowed_coa_families);
+    // OOB units (identity + country + domain + position) — the force pool the commander selects from.
+    var units = arr(oob.units).map(function (u) {
+        return { unit_uid: u.unit_uid, side: u.side, country: u.country, domain: u.domain, class: u.class,
+            lat: u.lat, lon: u.lon, platform_name: u.platform_name, display_name: u.display_name };
+    });
+    var promptObject = {
+        mission: 'Produce a commander course-of-action decision. Think like a commander, not a script.',
+        active_side: extras.active_side || null,
+        commander_mode: extras.commander_mode || 'free',
+        objective: extras.objective || null,
+        objective_country_zone: zone ? { nearest_red_zone: zone.nearest_red_zone, zones_count: arr(zone.zones).length } : null,
+        force_pool: units,
+        allowed_unit_ids: allowedUnitIds,
+        capability_intel: capability ? { best: capability.best, not_recommended_for: capability.not_recommended_for } : null,
+        terrain_zone_context: extras.terrain_zone_context || null,
+        contact_picture: contacts ? { detected_contacts: arr(contacts.detected_contacts).length } : null,
+        roe_state: roe ? { alert_state: roe.alert_state, roe_state: roe.roe_state } : null,
+        allowed_coa_families: allowedFamilies,
+        allowed_tactical_actions: extras.allowed_tactical_actions || null,
+        coa_archetypes: extras.coa_archetypes || null,
+        previous_coa_families: arr(extras.previous_coa_families),
+        commander_selection_rules: MCP_COMMANDER_INSTRUCTIONS,
+        required_output_schema: {
+            coas: [{
+                plan_id: 'COA-1', title: 'string',
+                coa_family: 'cautious_recon|maneuver_deception|direct_action',
+                objective_id: 'string', summary: 'string', recommended: false,
+                risk: 'low|medium|high', confidence: 'low|medium|high',
+                units_total_considered: 0, units_selected_count: 0,
+                phases: [{ phase_id: 'phase-1', name: 'Move', actions: [{
+                    unit_uid: '<one of allowed_unit_ids>', side: 'RED|BLUE',
+                    role: 'assault|support|screen|reserve|recon|hold|defend',
+                    action_type: (extras.allowed_tactical_actions ? extras.allowed_tactical_actions.join('|') : 'recon|delay|deceive|flank|defend|withdraw|probe|attack|hold|avoid_contact|support|reserve|reposition|screen|observe|feint'),
+                    target: { lat: 0, lon: 0, type: 'objective|coord' },
+                    reason: '<one sentence>', why_unit: '<why THIS unit is in the force package>',
+                    deciding_factor: '<terrain/zone/objective/country factor>',
+                }] }],
+                non_selected_units: [{ unit_uid: '<a unit you did NOT move>', reason: '<why it is held back>' }],
+                risks: ['string'], assumptions: ['string'],
+            }],
+        },
+        constraints: 'unit_uid MUST be exactly one of allowed_unit_ids; coordinates inside the map; no teleport; no invented units; NEVER engage/destroy/open-fire; return ONLY JSON.',
+    };
+    return {
+        version: version,
+        system: SYSTEM_CONTRACT,
+        prompt: JSON.stringify(promptObject),
+        prompt_object: promptObject,
+        commander_instructions: MCP_COMMANDER_INSTRUCTIONS.slice(),
+        tools_context_summary: Object.keys(tc),
+        allowed_unit_ids: allowedUnitIds,
+        allowed_coa_families: allowedFamilies,
+        objective: extras.objective || null,
+        terrain_zone_context: extras.terrain_zone_context || null,
+        force_pool_count: units.length,
+    };
+}
 
 function buildCommanderPromptPack(input) {
     var ctx = readInput(input);
@@ -1012,6 +1106,9 @@ module.exports = {
     COA_FAMILIES: COA_FAMILIES,
     BLOCKED_ACTIONS: BLOCKED_ACTIONS,
     LLM_COMMANDER_DECISION_SCHEMA: LLM_COMMANDER_DECISION_SCHEMA,
+    SYSTEM_CONTRACT: SYSTEM_CONTRACT,                       // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A
+    MCP_COMMANDER_INSTRUCTIONS: MCP_COMMANDER_INSTRUCTIONS, // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A
+    composeCommanderPrompt: composeCommanderPrompt,         // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A
     getScenarioOobTool: getScenarioOobTool,
     getCapabilityIntelTool: getCapabilityIntelTool,
     getTerrainIntelTool: getTerrainIntelTool,

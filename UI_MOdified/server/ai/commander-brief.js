@@ -22,11 +22,39 @@
 
 var coalition = require('./coalition-posture-engine');
 var catalog = require('./platform-capability-catalog');
+// RMOOZ-UNIT-IDENTITY-CONTRACT-A: shared identity contract, so the brief names units by
+// their operator-facing displayName (with the linking code in parentheses), not a bare uid.
+var IDENTITY = null;
+try { IDENTITY = require('../../client/shared/unit-identity-resolver.js'); } catch (_) { IDENTITY = null; }
 
 function arr(v) { return Array.isArray(v) ? v : []; }
 function obj(v) { return (v && typeof v === 'object') ? v : {}; }
 function str(v) { return String(v == null ? '' : v); }
 function cap(s) { var t = str(s); return t ? t.charAt(0).toUpperCase() + t.slice(1) : t; }
+
+// uid/internalKey → { displayName } index over the supplied units (which carry
+// unit_identity from the client). Falls back to the shared resolver when needed.
+function buildNameIndex(units) {
+    var idx = {};
+    arr(units).forEach(function (u) {
+        if (!u) return;
+        var key = u.uid || u.unit_uid || u.id;
+        if (key == null) return;
+        var dn = (u.unit_identity && u.unit_identity.display_name)
+            || (u.identity && u.identity.displayName)
+            || u.display_name
+            || (IDENTITY && IDENTITY.displayUnitName ? IDENTITY.displayUnitName(u) : null);
+        if (dn && dn !== '—') idx[String(key)] = str(dn);
+    });
+    return idx;
+}
+// "Display Name (CODE)" when both differ; just one otherwise; never empty.
+function nameWithCode(uid, index) {
+    var code = str(uid == null ? '' : uid);
+    var dn = index && code && index[code];
+    if (dn && dn !== code) return dn + ' (' + code + ')';
+    return dn || code || 'asset';
+}
 
 // --------------------------------------------------------------------------
 // Section helpers
@@ -169,7 +197,7 @@ function buildRoe(intel) {
 
 // BLUE layered defense — 5 layers, referencing real assets / zone where present.
 function buildLayeredDefense(intel, objectiveName, friendly) {
-    var lead = (friendly[0] && friendly[0].unit_uid != null) ? (' (e.g. ' + friendly[0].unit_uid + ')') : '';
+    var lead = (friendly[0] && (friendly[0].name || friendly[0].unit_uid != null)) ? (' (e.g. ' + str(friendly[0].name || friendly[0].unit_uid) + ')') : '';
     var zs = obj(intel && intel.zone_state);
     var owner = (zs.owner_country && zs.owner_country !== 'unknown') ? (zs.owner_country + ' ') : '';
     return [
@@ -283,13 +311,13 @@ function assembleText(b) {
     if (b.most_capable_friendly.length) {
         lines.push('Most capable friendly assets:');
         b.most_capable_friendly.forEach(function (f) {
-            lines.push('  - ' + str(f.unit_uid != null ? f.unit_uid : 'asset') + ' [' + f.class + '] role ' + f.role + '.');
+            lines.push('  - ' + str(f.name || (f.unit_uid != null ? f.unit_uid : 'asset')) + ' [' + f.class + '] role ' + f.role + '.');
         });
     }
     if (b.most_dangerous_enemy.length) {
         lines.push('Most dangerous enemy:');
         b.most_dangerous_enemy.forEach(function (e) {
-            lines.push('  - ' + str(e.unit_uid != null ? e.unit_uid : 'contact') + ': ' + e.note);
+            lines.push('  - ' + str(e.name || (e.unit_uid != null ? e.unit_uid : 'contact')) + ': ' + e.note);
         });
     }
     lines.push('');
@@ -350,6 +378,12 @@ function buildCommanderBrief(plan, intel, opts) {
     var domains = buildDomains(intel, opts, side);
     var friendly = buildMostCapableFriendly(intel);
     var dangerous = buildMostDangerousEnemy(intel);
+
+    // RMOOZ-UNIT-IDENTITY-CONTRACT-A: name assets by operator-facing displayName (linking
+    // code in parens), consuming the same identity the marker/panel/LLM use.
+    var nameIndex = buildNameIndex(opts.units);
+    friendly.forEach(function (f) { f.name = nameWithCode(f.unit_uid, nameIndex); });
+    dangerous.forEach(function (e) { e.name = nameWithCode(e.unit_uid, nameIndex); });
 
     var recCoa = findRecommendedCoa(plan);
     var recommended_coa = recCoa

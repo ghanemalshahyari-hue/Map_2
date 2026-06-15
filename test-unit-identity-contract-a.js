@@ -1,9 +1,10 @@
 /**
- * test-unit-identity-contract-a.js — RMOOZ-UNIT-IDENTITY-CONTRACT-A
+ * test-unit-identity-contract-a.js — RMOOZ-UNIT-IDENTITY-CONTRACT-A (v2 contract)
  *
- * Standalone (no server). Validates the shared unit-identity resolver contract:
- * canonical id, synthetic-vs-authored display name, role-is-not-a-platform,
- * raw preservation, side normalization, and the LLM-facing identity block.
+ * Standalone (no server). Identity model (owner ruling 2026-06-15):
+ *   internalKey/uid = system key (R-047, kept) · canonicalId = stable authored id
+ *   (fires-47) · tacticalCode = R-047 · displayName = real platform/capability name
+ *   (NEVER the raw code or synthetic key) · type never degrades to UNIT/generic.
  */
 'use strict';
 var assert = require('assert');
@@ -18,187 +19,163 @@ var forLlm = R.unitIdentityForLlm;
 var pass = 0;
 function ok(name, fn) { fn(); pass++; console.log('  ✓ ' + name); }
 
-console.log('\nRMOOZ-UNIT-IDENTITY-CONTRACT-A\n');
+console.log('\nRMOOZ-UNIT-IDENTITY-CONTRACT-A (v2)\n');
 
-// ── §1 Exports + version ──────────────────────────────────────────────
+// ── §1 module shape ───────────────────────────────────────────────────
 console.log('§1 module shape');
-ok('exports the 4 contract functions', function () {
+ok('exports the 4 contract functions + v2 version', function () {
     ['resolveUnitIdentity', 'normalizeSelectedUnit', 'displayUnitName', 'unitIdentityForLlm']
         .forEach(function (k) { assert.strictEqual(typeof R[k], 'function', k); });
-});
-ok('carries a contract version', function () {
-    assert.ok(/^rmooz-unit-identity\//.test(R.VERSION));
+    assert.strictEqual(R.VERSION, 'rmooz-unit-identity/2.0');
 });
 
-// ── §2 Authored names win (rule 4) ────────────────────────────────────
-console.log('§2 authored display names');
-ok('name_en is used as display name (high confidence)', function () {
-    var id = resolve({ uid: 'B1', role: 'fighter', name_en: 'Desert Falcon Sqn', label: 'fighter-1' });
-    assert.strictEqual(id.display_name, 'Desert Falcon Sqn');
-    assert.strictEqual(id.source.display_name_source, 'name_en');
-    assert.strictEqual(id.confidence, 'high');
-    assert.deepStrictEqual(id.warnings, []);
-});
-ok('authored platform becomes display + platform_name', function () {
-    var id = resolve({ uid: 'B2', role: 'fighter', platform: 'F-15 Eagle' });
-    assert.strictEqual(id.platform_name, 'F-15 Eagle');
-    assert.strictEqual(id.source.platform_source, 'platform');
-    assert.strictEqual(id.display_name, 'F-15 Eagle');
-    assert.strictEqual(id.source.display_name_source, 'platform');
-});
-ok('name_ar used when no latin authored name', function () {
-    var id = resolve({ uid: 'B3', role: 'armor', name_ar: 'كتيبة الدبابات' });
-    assert.strictEqual(id.display_name, 'كتيبة الدبابات');
-    assert.strictEqual(id.source.display_name_source, 'name_ar');
+// ── §2 THE owner-specified input (item 4) ─────────────────────────────
+console.log('§2 owner item-4 input');
+ok('{ uid:fires-47, id:fires-47, side:red, type:fires, name:R-047 } resolves correctly', function () {
+    var id = resolve({ uid: 'fires-47', id: 'fires-47', side: 'red', type: 'fires', name: 'R-047' });
+    assert.strictEqual(id.canonicalId, 'fires-47', 'canonicalId');
+    assert.strictEqual(id.internalKey, 'fires-47', 'internalKey (uid field is fires-47 here)');
+    assert.strictEqual(id.uid, 'fires-47');
+    assert.strictEqual(id.tacticalCode, 'R-047', 'R-047 (code-like name) → tacticalCode');
+    assert.notStrictEqual(id.displayName, 'R-047', 'displayName must NOT be the raw code');
+    assert.notStrictEqual(id.displayName, 'fires-47', 'displayName must NOT be the synthetic key');
+    assert.strictEqual(id.displayName, 'Rocket Artillery Battery', 'fires → capability name');
+    assert.strictEqual(id.typeLabel, 'Fires', 'type must not degrade to UNIT/generic');
+    assert.strictEqual(id.side_normalized, 'RED');
 });
 
-// ── §3 Synthetic / low-confidence (rule 6) ────────────────────────────
-console.log('§3 synthetic display names');
-ok('label "fires-47" + uid "R-047" → synthetic, low confidence', function () {
-    var id = resolve({ uid: 'R-047', role: 'fires', label: 'fires-47' });
-    assert.strictEqual(id.display_name, 'fires-47');         // displayed
-    assert.strictEqual(id.uid, 'R-047');                     // but uid kept
-    assert.strictEqual(id.confidence, 'low');
-    assert.deepStrictEqual(id.warnings, ['synthetic_display_name']);
-    assert.strictEqual(id.source.display_name_source, 'label_synthetic');
+// ── §3 the REAL scenario data shape (uid=R-047, label=fires-47) ───────
+console.log('§3 real data: uid=R-047, label=fires-47');
+ok('canonicalId=fires-47 (label), internalKey/uid=R-047 (kept), tacticalCode=R-047', function () {
+    var id = resolve({ uid: 'R-047', label: 'fires-47', role: 'fires', side: 'red' });
+    assert.strictEqual(id.internalKey, 'R-047', 'system key kept as R-047 (no sim change)');
+    assert.strictEqual(id.uid, 'R-047');
+    assert.strictEqual(id.canonicalId, 'fires-47', 'authored role-index key → canonicalId');
+    assert.strictEqual(id.tacticalCode, 'R-047', 'R-code → tacticalCode');
+    assert.strictEqual(id.displayName, 'Rocket Artillery Battery', 'real capability name, not a code/key');
+    assert.notStrictEqual(id.displayName, 'R-047');
+    assert.notStrictEqual(id.displayName, 'fires-47');
 });
-ok('synthetic detector matches role-index patterns only', function () {
-    assert.strictEqual(R._isSyntheticName('fires-47', 'fires'), true);
-    assert.strictEqual(R._isSyntheticName('armor_3', 'armor'), true);
-    assert.strictEqual(R._isSyntheticName('infantry 12', null), true);  // role-token prefix
-    assert.strictEqual(R._isSyntheticName('R-047', 'fires'), false);    // uid/code, not synthetic
-    assert.strictEqual(R._isSyntheticName('BLUE_lc', 'recon'), false);  // no trailing digits
-    assert.strictEqual(R._isSyntheticName('Tomcat-1', 'fighter'), false); // real name prefix
-});
-ok('uid-only unit falls back to uid as low-confidence synthetic', function () {
-    var id = resolve({ uid: 'X9', role: 'recon' });
-    assert.strictEqual(id.display_name, 'X9');
-    assert.strictEqual(id.confidence, 'low');
-    assert.ok(id.warnings.indexOf('synthetic_display_name') >= 0);
-});
-
-// ── §4 Role is NOT a platform (rule 5) ────────────────────────────────
-console.log('§4 role is not a platform');
-ok('role-only "fires" never becomes platform_name', function () {
-    var id = resolve({ uid: 'R-047', role: 'fires', platform: 'fires', label: 'fires-47' });
-    assert.strictEqual(id.platform_name, 'unknown');
-    assert.strictEqual(id.source.platform_source, 'none');
-});
-ok('generic "UNIT"/"unit_type" is rejected as platform', function () {
-    var id = resolve({ uid: 'R-1', role: 'armor', unit_type: 'UNIT' });
-    assert.strictEqual(id.platform_name, 'unknown');
-});
-ok('role-only detector', function () {
-    assert.strictEqual(R._isRoleOnly('fires', 'fires'), true);
-    assert.strictEqual(R._isRoleOnly('UNIT', 'armor'), true);
-    assert.strictEqual(R._isRoleOnly('F-15 Eagle', 'fighter'), false);
+ok('display/type do NOT degrade to UNIT/generic for assorted roles', function () {
+    var armor = resolve({ uid: 'R-001', label: 'armor-1', role: 'armor', side: 'red' });
+    assert.strictEqual(armor.typeLabel, 'Armor');
+    assert.strictEqual(armor.displayName, 'Armored / Tank Unit');
+    var uav = resolve({ uid: 'R-003', label: 'uav-3', role: 'uav', side: 'red' });
+    assert.strictEqual(uav.displayName, 'Unmanned Aerial Vehicle');
+    var sam = resolve({ uid: 'R-009', label: 'sam-9', role: 'sam', side: 'red' });
+    assert.strictEqual(sam.displayName, 'Surface-to-Air Missile Battery');
+    // None may degrade to the bare placeholder forms.
+    [armor, uav, sam].forEach(function (id) {
+        assert.ok(!/^(unit|generic)$/i.test(id.displayName), 'bare degraded name: ' + id.displayName);
+        assert.ok(!/\(default\)/i.test(id.displayName), 'default placeholder: ' + id.displayName);
+        assert.ok(!/^(unit|generic)$/i.test(id.typeLabel || ''), 'bare type: ' + id.typeLabel);
+    });
 });
 
-// ── §5 Canonical id (rule 3) ──────────────────────────────────────────
-console.log('§5 canonical id normalization');
-ok('uid/unit_uid/id all resolve to one stable value', function () {
-    var a = resolve({ uid: 'R-047', role: 'fires' });
-    assert.strictEqual(a.uid, 'R-047');
-    assert.strictEqual(a.unit_uid, 'R-047');
-    assert.strictEqual(a.id, 'R-047');
-    var b = resolve({ unit_uid: 'BLUE_lc', role: 'recon' });
-    assert.strictEqual(b.uid, 'BLUE_lc');
-    assert.strictEqual(b.unit_uid, 'BLUE_lc');
-    assert.strictEqual(b.id, 'BLUE_lc');
-    assert.strictEqual(b.source.identity_source, 'unit_uid');
-});
-
-// ── §6 Side normalization ─────────────────────────────────────────────
-console.log('§6 side / affiliation');
-ok('hostile → RED, friendly → BLUE', function () {
-    assert.strictEqual(resolve({ uid: 'a' }, { side: 'hostile' }).side_normalized, 'RED');
-    assert.strictEqual(resolve({ uid: 'b' }, { side: 'friendly' }).side_normalized, 'BLUE');
-    assert.strictEqual(resolve({ uid: 'c', side: 'RED' }).affiliation, 'hostile');
-    assert.strictEqual(resolve({ uid: 'd', side: 'BLUE' }).affiliation, 'friendly');
-});
-
-// ── §7 Raw preservation + no mutation (rules 1, 2) ────────────────────
-console.log('§7 normalizeSelectedUnit preserves raw, no mutation');
-ok('marker _unitData preserves full raw fields', function () {
-    var raw = {
-        uid: 'R-047', role: 'fires', label: 'fires-47', sidc: '10061000151303000000',
-        domain: 'ground', echelon: 'battalion', country: 'UAE', bls: 'BLS-1',
-        sensors: ['eo'], weapons: ['155mm'], coord: [54.3, 24.4],
-    };
-    var frozen = JSON.stringify(raw);
-    var out = normalize(raw, { side: 'hostile', live_lat: 24.41, live_lng: 54.31, scenario: true });
-    // raw untouched
-    assert.strictEqual(JSON.stringify(raw), frozen, 'raw must not mutate');
-    // original fields preserved on the copy
-    assert.deepStrictEqual(out.sensors, ['eo']);
-    assert.deepStrictEqual(out.weapons, ['155mm']);
-    assert.strictEqual(out.bls, 'BLS-1');
-    assert.strictEqual(out.country, 'UAE');
-    assert.strictEqual(out.sidc, '10061000151303000000');
-    // normalized overlays
-    assert.strictEqual(out.uid, 'R-047');
-    assert.strictEqual(out.side, 'hostile');
-    assert.strictEqual(out.lat, 24.41);
-    assert.strictEqual(out.lng, 54.31);
-    assert.strictEqual(out._scenario, true);
-    // identity attached
-    assert.ok(out.identity && out.identity.display_name === 'fires-47');
-    assert.ok(out.unit_identity && out.unit_identity.uid === 'R-047');
-});
-
-// ── §8 displayUnitName is the same everywhere ─────────────────────────
-console.log('§8 displayUnitName consistency');
-ok('panel hero name == resolver display name', function () {
-    var raw = { uid: 'R-047', role: 'fires', label: 'fires-47' };
-    var fromResolve = resolve(raw).display_name;
-    var fromHelper = displayName(raw);
-    var fromNormalized = displayName(normalize(raw, { side: 'hostile' }));
-    assert.strictEqual(fromHelper, fromResolve);
-    assert.strictEqual(fromNormalized, fromResolve);
-    assert.strictEqual(fromHelper, 'fires-47');
-});
-ok('displayUnitName reuses an already-resolved identity', function () {
-    var n = normalize({ uid: 'B2', platform: 'F-15 Eagle', role: 'fighter' }, {});
-    assert.strictEqual(displayName(n), 'F-15 Eagle');
-});
-
-// ── §9 LLM identity block ─────────────────────────────────────────────
-console.log('§9 unitIdentityForLlm');
-ok('LLM block carries id, synthetic warning, platform unknown', function () {
-    var llm = forLlm({ uid: 'R-047', role: 'fires', domain: 'ground', label: 'fires-47' });
-    assert.strictEqual(llm.uid, 'R-047');
-    assert.strictEqual(llm.display_name, 'fires-47');
-    assert.strictEqual(llm.role, 'fires');
-    assert.strictEqual(llm.domain, 'ground');
-    assert.strictEqual(llm.platform_name, 'unknown');           // NOT "fires"
-    assert.strictEqual(llm.identity_confidence, 'low');
-    assert.strictEqual(llm.warning, 'synthetic_display_name');
-});
-ok('LLM block for an authored platform has no warning', function () {
-    var llm = forLlm({ uid: 'B2', role: 'fighter', domain: 'air', platform: 'F-15 Eagle' });
-    assert.strictEqual(llm.platform_name, 'F-15 Eagle');
-    assert.strictEqual(llm.warning, null);
-    assert.strictEqual(llm.identity_confidence, 'high');
-});
-
-// ── §10 Red + Blue both normalize; arbitrary scenario ─────────────────
-console.log('§10 red + blue + arbitrary scenario');
-ok('blue unit with base_id resolves cleanly', function () {
-    var id = resolve({ unit_uid: 'BLUE_lc', base_id: 'AB-001', role: 'air_defense', name_en: 'Liwa Air Defense' }, { side: 'friendly' });
-    assert.strictEqual(id.uid, 'BLUE_lc');
-    assert.strictEqual(id.code, 'AB-001');
-    assert.strictEqual(id.display_name, 'Liwa Air Defense');
+// ── §4 authored real names + DB-Lite specific platform win ────────────
+console.log('§4 authored / DB-Lite specific names');
+ok('authored name_en becomes displayName', function () {
+    var id = resolve({ unit_uid: 'BLUE_adf', base_id: 'AB-204', role: 'air_defense', name_en: 'Liwa Air Defense Bn' }, { side: 'friendly' });
+    assert.strictEqual(id.displayName, 'Liwa Air Defense Bn');
+    assert.strictEqual(id.internalKey, 'BLUE_adf');
+    assert.strictEqual(id.canonicalId, 'BLUE_adf');
     assert.strictEqual(id.side_normalized, 'BLUE');
 });
-ok('arbitrary scenario unit (unknown fields) does not throw', function () {
-    var id = resolve({ some_id: 'zzz', weird: true });
-    assert.ok(id);                       // no throw
-    assert.strictEqual(id.uid, null);    // no canonical id
-    assert.ok(id.warnings.indexOf('no_stable_id') >= 0);
+ok('DB-Lite specific platform label (injected) becomes displayName + platformLabel', function () {
+    var id = resolve({ uid: 'R-047', label: 'fires-47', role: 'fires' }, { platformLabel: 'BM-21 Grad' });
+    assert.strictEqual(id.platformLabel, 'BM-21 Grad');
+    assert.strictEqual(id.displayName, 'BM-21 Grad');
 });
+
+// ── §5 DB-Lite does NOT overwrite explicit scenario identity ──────────
+console.log('§5 DB-Lite must not override authored identity');
+ok('authored name beats an injected DB-Lite label', function () {
+    var id = resolve(
+        { uid: 'R-047', label: 'fires-47', role: 'fires', name_en: 'Northern Rocket Group' },
+        { platformLabel: 'Generic SAM (default)', classLabel: 'ground_unit (default)' });
+    assert.strictEqual(id.displayName, 'Northern Rocket Group', 'authored identity must win');
+    assert.strictEqual(id.source.display_name_source, 'name_en');
+});
+
+// ── §6 stale copy resolves from canonical scenario lookup ─────────────
+console.log('§6 stale-copy canonical reconciliation');
+ok('degraded marker copy re-resolves identity from the scenario', function () {
+    var scenario = { red_units: [{ uid: 'R-047', label: 'fires-47', role: 'fires', domain: 'ground', sidc: '100610...' }] };
+    // A stale copy that lost label/role/domain but kept the system key + live coords.
+    var stale = { uid: 'R-047', lat: 24.41, lng: 54.31 };
+    var id = resolve(stale, { scenario: scenario, side: 'red' });
+    assert.strictEqual(id.canonicalId, 'fires-47', 'recovered authored key');
+    assert.strictEqual(id.role, 'fires', 'recovered role');
+    assert.strictEqual(id.displayName, 'Rocket Artillery Battery', 'recovered capability name');
+    assert.strictEqual(id.typeLabel, 'Fires');
+    assert.ok(id.warnings.indexOf('resolved_from_canonical') >= 0);
+});
+ok('canonicalUnits array lookup also works', function () {
+    var id = resolve({ uid: 'R-001' }, { canonicalUnits: [{ uid: 'R-001', label: 'armor-1', role: 'armor' }] });
+    assert.strictEqual(id.canonicalId, 'armor-1');
+    assert.strictEqual(id.displayName, 'Armored / Tank Unit');
+});
+
+// ── §7 detectors ──────────────────────────────────────────────────────
+console.log('§7 detectors');
+ok('tactical-code vs role-index discrimination', function () {
+    assert.strictEqual(R._looksLikeTacticalCode('R-047'), true);
+    assert.strictEqual(R._looksLikeTacticalCode('B-012'), true);
+    assert.strictEqual(R._looksLikeTacticalCode('fires-47'), false); // role-index, not a code
+    assert.strictEqual(R._looksLikeTacticalCode('BLUE_lc'), false);
+    assert.strictEqual(R._isRoleIndexKey('fires-47', 'fires'), true);
+    assert.strictEqual(R._isRoleIndexKey('armor_3', null), true);
+    assert.strictEqual(R._isRoleIndexKey('R-047', 'fires'), false);
+});
+
+// ── §8 normalizeSelectedUnit: preserve raw, keep system key, no mutate ──
+console.log('§8 normalizeSelectedUnit');
+ok('marker _unitData keeps system key R-047, preserves raw, attaches identity', function () {
+    var raw = { uid: 'R-047', label: 'fires-47', role: 'fires', sidc: '10061000151303000000', domain: 'ground', sensors: ['eo'], coord: [54.3, 24.4] };
+    var frozen = JSON.stringify(raw);
+    var out = normalize(raw, { side: 'hostile', live_lat: 24.41, live_lng: 54.31, scenario: true });
+    assert.strictEqual(JSON.stringify(raw), frozen, 'raw must not mutate');
+    assert.deepStrictEqual(out.sensors, ['eo']);
+    assert.strictEqual(out.sidc, '10061000151303000000');
+    assert.strictEqual(out.uid, 'R-047', 'system key kept');
+    assert.strictEqual(out.id, 'R-047');
+    assert.strictEqual(out.name, 'Rocket Artillery Battery', 'display name overlaid');
+    assert.strictEqual(out.canonical_id, 'fires-47');
+    assert.strictEqual(out.tactical_code, 'R-047');
+    assert.strictEqual(out.lat, 24.41);
+    assert.ok(out.identity && out.identity.canonicalId === 'fires-47');
+});
+
+// ── §9 displayUnitName consistency ────────────────────────────────────
+console.log('§9 displayUnitName');
+ok('panel/marker/AI all yield the same display name', function () {
+    var raw = { uid: 'R-047', label: 'fires-47', role: 'fires' };
+    var a = resolve(raw).displayName;
+    assert.strictEqual(displayName(raw), a);
+    assert.strictEqual(displayName(normalize(raw, { side: 'red' })), a);
+    assert.strictEqual(forLlm(raw).display_name, a);
+    assert.strictEqual(a, 'Rocket Artillery Battery');
+});
+
+// ── §10 LLM block keeps the linking uid + real platform ───────────────
+console.log('§10 unitIdentityForLlm');
+ok('LLM block: uid=R-047 (linking), canonical=fires-47, real display, platform unknown', function () {
+    var llm = forLlm({ uid: 'R-047', label: 'fires-47', role: 'fires', domain: 'ground' });
+    assert.strictEqual(llm.uid, 'R-047', 'keep system key for engine linking');
+    assert.strictEqual(llm.canonical_id, 'fires-47');
+    assert.strictEqual(llm.tactical_code, 'R-047');
+    assert.strictEqual(llm.display_name, 'Rocket Artillery Battery');
+    assert.strictEqual(llm.platform_name, 'unknown');     // no exact platform claimed
+    assert.strictEqual(llm.role, 'fires');
+    assert.strictEqual(llm.domain, 'ground');
+});
+
+// ── §11 safety ─────────────────────────────────────────────────────────
+console.log('§11 safety');
 ok('null / non-object input is safe', function () {
-    assert.strictEqual(resolve(null).display_name, '—');
+    assert.strictEqual(resolve(null).displayName, '—');
     assert.strictEqual(displayName(undefined), '—');
+    assert.ok(resolve({}).warnings.indexOf('no_internal_key') >= 0);
 });
 
 console.log('\n✅ ' + pass + ' assertions passed (test-unit-identity-contract-a.js)\n');

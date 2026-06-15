@@ -200,10 +200,38 @@
     }
 
     // ── Main populate ─────────────────────────────────────────────────
+    // RMOOZ-UNIT-IDENTITY-CONTRACT-A: resolve ONE identity for this selection, injecting
+    // the DB-Lite *specific* platform label (a named entry, never a generic default) so
+    // displayName upgrades to e.g. "F-16C Fighting Falcon" when known — while authored
+    // names still win. Attaching it to the unit makes every downstream displayUnitName()
+    // (hero, fuel/ammo, fuel-section, image alt) show the same name.
+    function resolvePanelIdentity(unit, enriched) {
+        var base = (unit && unit.identity) ? unit.identity
+            : (root.RmoozUnitIdentity && root.RmoozUnitIdentity.resolveUnitIdentity ? root.RmoozUnitIdentity.resolveUnitIdentity(unit) : null);
+        if (!base) return null;
+        // DB-Lite *named* platform (capabilityFor returns a label only for named entries,
+        // never a generic default). Use it ONLY to upgrade a type-derived name — an
+        // authored scenario name always wins, so DB-Lite never overwrites real identity.
+        var lbl = null;
+        try { lbl = getPlatformLabel(enriched); } catch (_) {}
+        if (!lbl) return base;
+        var generic = base.warnings && base.warnings.indexOf('display_name_from_type') >= 0;
+        if (!generic) return base;
+        var up = Object.assign({}, base);
+        up.displayName = lbl; up.display_name = lbl;
+        up.platformLabel = lbl; up.platform_name = lbl;
+        up.confidence = 'medium';
+        up.warnings = (base.warnings || []).filter(function (w) { return w !== 'display_name_from_type' && w !== 'platform_unknown'; });
+        up.source = Object.assign({}, base.source, { display_name_source: 'db_lite_platform', platform_source: 'db_lite_platform' });
+        return up;
+    }
+
     function populatePanel(unit, selectedAt) {
         if (!unit) { _showEmpty(); return; }
         currentUnit = unit;
         var enriched = enrichUnitForDisplay(unit);
+        var ident = resolvePanelIdentity(unit, enriched);
+        if (ident) unit.identity = ident;
         var eventLog = getEventLog();
         _showBody();
         populateHero(unit, enriched);
@@ -656,63 +684,60 @@
     }
 
     // ── Identity ──────────────────────────────────────────────────────
-    // RMOOZ-UNIT-IDENTITY-CONTRACT-A: map the resolver's display_name_source to a
+    // RMOOZ-UNIT-IDENTITY-CONTRACT-A (v2): map the resolver's display_name_source to a
     // short human label for the "Identity" provenance row.
     function identitySourceLabel(id) {
         if (!id) return null;
         switch (id.source && id.source.display_name_source) {
+            case 'display_name':
             case 'name_en':
             case 'name':
-            case 'name_ar':       return tr('usp-identity-authored', 'scenario name');
-            case 'platform':      return tr('usp-identity-platform', 'platform');
-            case 'callsign':      return tr('usp-identity-callsign', 'callsign');
-            case 'label':         return tr('usp-identity-label', 'scenario label');
-            case 'label_synthetic': return tr('usp-identity-synthetic', 'synthetic label');
-            case 'uid':           return tr('usp-identity-synthetic-id', 'synthetic id');
-            default:              return tr('usp-identity-unknown', 'unknown');
+            case 'name_ar':         return tr('usp-identity-authored', 'scenario name');
+            case 'platform_name':
+            case 'platform':        return tr('usp-identity-platform', 'scenario platform');
+            case 'db_lite_platform':return tr('usp-identity-dblite-platform', 'DB-Lite platform');
+            case 'db_lite_class':   return tr('usp-identity-dblite-class', 'DB-Lite class (fallback)');
+            case 'capability_label':
+            case 'role_capability': return tr('usp-identity-capability', 'capability (by role)');
+            case 'type_label':      return tr('usp-identity-type', 'type (by role)');
+            case 'tactical_code':   return tr('usp-identity-code', 'tactical code (fallback)');
+            case 'canonical_id':    return tr('usp-identity-id', 'id (fallback)');
+            default:                return tr('usp-identity-unknown', 'unknown');
         }
     }
 
     function populateIdentity(unit, enriched, selectedAt) {
-        var platformLabel = getPlatformLabel(enriched);
         var id = (unit && unit.identity) ? unit.identity : resolveIdentity(unit);
-        var synthetic = !!(id && id.warnings && id.warnings.indexOf('synthetic_display_name') >= 0);
+        // A "generic" display name (derived from role/type, no authored or named platform)
+        // is reviewable — the operator should know the name is type-derived, not authored.
+        var generic = !!(id && id.warnings && id.warnings.indexOf('display_name_from_type') >= 0);
 
-        // Platform ID line: uid + echelon
+        // Platform ID line: canonicalId (stable authored id) + echelon
         var pidEl = $('usp-platform-id');
         if (pidEl) {
-            var parts = [unit.uid || unit.id || unit.code, unit.echelon].filter(Boolean).join(' · ');
-            pidEl.textContent = parts || unit.uid || '—';
+            var canon = id ? id.canonicalId : (unit.canonical_id || unit.uid);
+            var parts = [canon, unit.echelon].filter(Boolean).join(' · ');
+            pidEl.textContent = parts || canon || '—';
         }
 
-        // Platform type: prefer an AUTHORED platform (identity truth). If none, fall
-        // back to the DB-Lite capability label but tag it as a fallback, and if even
-        // that is absent show "unknown — requires review" rather than presenting a
-        // generic UNIT/role as the platform truth (rule 5 + 7).
+        // Platform / type line: domain + the best capability/platform label. typeLabel /
+        // capabilityLabel guarantee this never degrades to a bare UNIT/role token.
         var ptEl = $('usp-platform-type');
         if (ptEl) {
             var domain = unit.domain ? unit.domain.toUpperCase() : '';
-            var role   = unit.role   ? unit.role.replace(/_/g, ' ') : '';
-            var authoredPlatform = (id && id.platform_name && id.platform_name !== 'unknown') ? id.platform_name : null;
-            if (authoredPlatform) {
-                ptEl.textContent = (domain ? domain + ' – ' : '') + authoredPlatform;
-            } else if (platformLabel) {
-                ptEl.textContent = (domain ? domain + ' – ' : '') + platformLabel
-                    + ' · ' + tr('usp-platform-dblite', 'DB-Lite');
-            } else {
-                var base = [domain, role].filter(Boolean).join(' – ');
-                ptEl.textContent = (base ? base + ' · ' : '')
-                    + tr('usp-platform-review', 'unknown — requires review');
-            }
+            var label = id
+                ? (id.platformLabel || id.capabilityLabel || id.typeLabel)
+                : (unit.role ? unit.role.replace(/_/g, ' ') : '');
+            ptEl.textContent = (domain ? domain + ' – ' : '') + (label || tr('usp-platform-review', 'unknown — requires review'));
         }
 
-        // Identity provenance row + synthetic warning chip.
+        // Identity provenance row + (when the name is type-derived) a review chip.
         var isrcEl = $('usp-identity-source');
         if (isrcEl) {
             var srcTxt = identitySourceLabel(id);
             if (srcTxt) {
-                var chip = synthetic
-                    ? ' <span class="usp-identity-warn">' + esc(tr('usp-identity-review', 'name requires review')) + '</span>'
+                var chip = generic
+                    ? ' <span class="usp-identity-warn">' + esc(tr('usp-identity-review', 'generic — review')) + '</span>'
                     : '';
                 isrcEl.innerHTML = '<span class="usp-identity-key">'
                     + esc(tr('usp-identity-label-key', 'Identity')) + ':</span> '
@@ -724,8 +749,8 @@
             }
         }
 
-        // UID / callsign
-        setText('unit-uid', unit.uid || unit.unit_uid || displayUnitName(unit));
+        // Canonical id row (stable authored identity, advanced/debug).
+        setText('unit-uid', (id && id.canonicalId) || unit.canonical_id || unit.uid || '—');
 
         // SIDC (monospace, shown when present)
         var sidcEl = $('usp-sidc');
@@ -734,10 +759,10 @@
             sidcEl.style.display = '';
         }
 
-        // Unit code (like B1, B-d1-51-002)
+        // Tactical / debug code (the R-/B-style registration code) — secondary.
         var codeEl = $('usp-code');
         if (codeEl) {
-            var codeVal = unit.code || unit.id || '';
+            var codeVal = (id && id.tacticalCode) || unit.tactical_code || unit.code || '';
             codeEl.textContent = codeVal || '—';
             codeEl.style.display = codeVal ? '' : 'none';
         }

@@ -342,7 +342,13 @@
         document.addEventListener('rmooz:unit-selected', (e) => {
             const u = e && e.detail && e.detail.unit;
             if (!u) return;
-            const name = (u.name && String(u.name).trim()) || tr('up-unknown-name', 'Unnamed unit');
+            // RMOOZ-UNIT-IDENTITY-CONTRACT-A: log the operator-facing displayName from the
+            // shared identity contract — same name the marker tooltip / Unit Status show.
+            let resolvedName = (u.identity && u.identity.displayName) || null;
+            if (!resolvedName && window.RmoozUnitIdentity && window.RmoozUnitIdentity.displayUnitName) {
+                try { const dn = window.RmoozUnitIdentity.displayUnitName(u); if (dn && dn !== '—') resolvedName = dn; } catch (_) {}
+            }
+            const name = resolvedName || (u.name && String(u.name).trim()) || tr('up-unknown-name', 'Unnamed unit');
             append({
                 severity:    SEVERITY.NOTICE,
                 category:    CATEGORY.OPERATOR,

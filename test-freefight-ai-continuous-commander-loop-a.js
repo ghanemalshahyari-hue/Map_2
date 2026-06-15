@@ -124,6 +124,9 @@ global.window.fetch = function (url, opts) {
 require(path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo-ai-panel.js'));
 require(path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo.js'));
 var DEMO = global.window.RmoozFreeFightDemo;
+// RMOOZ-AI-COMMANDER-FREEDOM-B: this suite asserts CONTROLLED-mode loop behavior
+// (deterministic_coa_fallback). Pin the mode — the app default is now High Variation.
+DEMO._setCommanderModeForTest('controlled');
 
 var PAYLOAD = { brief: { operational_brief: { proposed_units: [], objectives: [{ label: 'Objective X', lat: 34.95, lon: 48.95 }], placement_candidates: [{ type: 'base', lat: 34.5, lon: 48.5, name: 'AB' }] } } };
 

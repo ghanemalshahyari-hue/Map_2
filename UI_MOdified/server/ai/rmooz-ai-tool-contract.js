@@ -762,11 +762,11 @@ var LLM_COMMANDER_DECISION_SCHEMA = {
     alternatives: [],
     unit_assignments: [{
         unit_uid: '<MUST be one of allowed_unit_ids>',
-        role: '<role valid for the unit domain>',
-        action_type: '<posture/intercept/warn — NEVER engage/destroy/kill>',
+        role: '<the tactical role you choose>',
+        action_type: '<recon|delay|deceive|flank|defend|withdraw|probe|attack|hold|avoid_contact|support|reserve|reposition|screen|observe|feint — movement/positioning only, NEVER engage/destroy/kill>',
         target: '<{lat,lon} or objective ref>',
         reason: '<short phrase>',
-        capability_reason: '<why this unit fits the role>',
+        capability_reason: '<why this unit fits the action>',
         source_tool_refs: [],
     }],
     warning_actions: [],
@@ -930,13 +930,17 @@ function validateCommanderCoaTool(input) {
 // ============================================================================
 // 11. buildCommanderPromptPack — the full deterministic prompt pack. async.
 // ============================================================================
+// RMOOZ-AI-COMMANDER-FREEDOM-B: the contract carries STRUCTURE/PHYSICS rules only. It must
+// NOT bias the model toward a doctrine (intercept/defend/posture/warn) or force family
+// variation — the commander chooses the action freely; the operator reviews.
 var SYSTEM_CONTRACT = [
     'You are an RMOOZ commander AI.',
     'Use ONLY the provided tools_context.',
     'Return ONLY JSON matching allowed_output_schema.',
     'Every unit_uid MUST be in allowed_unit_ids.',
-    'selected_coa_family MUST be in allowed_coa_families and SHOULD NOT repeat avoid_repeating.',
-    'NEVER output engage/destroy/kill — posture/intercept/warn only.',
+    'Use only coordinates inside the map; do not invent units; do not teleport (no impossible movement).',
+    'NEVER output engage/destroy/kill — movement/positioning only.',
+    'You may freely choose any tactical action; do not force intercept/defend/attack.',
     'review_required:true.',
 ].join(' ');
 

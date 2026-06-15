@@ -162,5 +162,66 @@ function unitPos(uid) { var u = UNITS.find(function (x) { return x.uid === uid; 
         assert.ok(a.reason && a.reason.length > 0, 'no reason');
     });
 
+    // ══ RMOOZ-AI-COMMANDER-FREEDOM-B ══════════════════════════════════
+    var fs = require('fs');
+
+    // ── §10 prompt cleanliness: no doctrine bias, has the freedom directive ──
+    console.log('§10 freedom prompt has no intercept/posture bias (FREEDOM-B)');
+    await (async function () {
+        var captured = null;
+        var fake = { generate: function (req) { captured = req; return Promise.resolve({ ok: false, error: 'capture' }); } };
+        await P._callLlmForTest(UNITS.filter(function (u) { return u.side === 'BLUE'; }), OBJ,
+            { active_side: 'BLUE', commander_mode: 'high_variation', _intel: { terrain: { summary: 'desert' }, zone_state: { owner_country: 'UAE' } } },
+            { allowed_unit_ids: ['B-1', 'B-2', 'B-3'] }, fake);
+        ok('freedom prompt explicitly allows the tactical actions + "Do not force intercept/defend/attack"', function () {
+            var s = captured.system;
+            assert.ok(/may choose recon, delay, deception, flank, defend, withdraw, probe, attack/i.test(s), 'missing action list: ' + s);
+            assert.ok(/Do not force intercept\/defend\/attack/i.test(s), 'missing no-force directive');
+            assert.ok(/terrain, border\/zone, enemy movement, objective, readiness, supply/i.test(s), 'missing decision factors');
+        });
+        ok('freedom prompt drops the old posture/intercept/warn bias wording', function () {
+            var blob = String(captured.system) + ' ' + String(captured.prompt);
+            assert.ok(!/posture\/intercept\/warn/i.test(blob), 'stale "posture/intercept/warn" bias present');
+            assert.ok(!/SHOULD NOT repeat/i.test(blob), 'stale "SHOULD NOT repeat" bias present');
+            assert.ok(!/role valid for the unit domain/i.test(blob), 'stale "role valid for the unit domain" bias present');
+        });
+    })();
+    ok('tool-contract SYSTEM_CONTRACT carries no doctrine bias', function () {
+        var src = fs.readFileSync(path.join(__dirname, 'UI_MOdified/server/ai/rmooz-ai-tool-contract.js'), 'utf8');
+        var i = src.indexOf('var SYSTEM_CONTRACT'); var blk = src.slice(i, i + 700);
+        assert.ok(!/posture\/intercept\/warn only/.test(blk), 'SYSTEM_CONTRACT still says posture/intercept/warn only');
+        assert.ok(!/SHOULD NOT repeat avoid_repeating/.test(blk), 'SYSTEM_CONTRACT still forces family variation');
+        assert.ok(/do not force intercept\/defend\/attack/i.test(blk), 'SYSTEM_CONTRACT should grant freedom');
+    });
+
+    // ── §11 "Generate 5 COAs" variation (FREEDOM-B item 5) ────────────
+    console.log('§11 five seeds produce variation in family/action/unit');
+    var fiveRows = [];
+    for (var seed = 0; seed < 5; seed++) {
+        var p = await plan('high_variation', seed);
+        var rec = p.coas.filter(function (c) { return c.recommended; })[0] || p.coas[0];
+        var lead = rec.phases[0].actions[0] || {};
+        fiveRows.push({ seed: seed, family: rec.coa_family, action: lead.action_type, unit: lead.unit_uid });
+    }
+    ok('lead family / action / unit changes across the 5 seeds', function () {
+        var fams = {}, acts = {}, units = {};
+        fiveRows.forEach(function (r) { fams[r.family] = 1; acts[r.action] = 1; units[r.unit] = 1; });
+        var varied = Object.keys(fams).length > 1 || Object.keys(acts).length > 1 || Object.keys(units).length > 1;
+        assert.ok(varied, 'no variation across seeds: ' + JSON.stringify(fiveRows));
+    });
+    var echoPlan = await plan('high_variation', 2);
+    ok('the plan echoes commander_mode + variation_seed for the event log', function () {
+        assert.strictEqual(echoPlan.commander_mode, 'high_variation');
+        assert.strictEqual(echoPlan.variation_seed, 2);
+    });
+
+    // ── §12 app default is no longer Controlled ───────────────────────
+    console.log('§12 app default mode is High Variation (FREEDOM-B item 1)');
+    ok('free-fight-demo defaults _commanderMode to high_variation', function () {
+        var src = fs.readFileSync(path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo.js'), 'utf8');
+        assert.ok(/var _commanderMode = 'high_variation'/.test(src), 'client default is not high_variation');
+        assert.ok(!/var _commanderMode = 'controlled'/.test(src), 'client default still controlled');
+    });
+
     console.log('\n✅ ' + pass + ' assertions passed (test-ai-commander-freedom-a.js)\n');
 })().catch(function (e) { console.error('\n✗ FAILED:', e && e.message, '\n', e && e.stack); process.exit(1); });

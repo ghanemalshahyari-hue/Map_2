@@ -82,6 +82,10 @@ global.window.RmoozFreeFightAI = null;
 require(path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo-ai-panel.js'));
 require(path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo.js'));
 var DEMO = global.window.RmoozFreeFightDemo;
+// RMOOZ-AI-COMMANDER-FREEDOM-B: this suite asserts the CONTROLLED-mode intercept/overlay
+// behavior (block point, intercept line). Pin the mode explicitly — the app default is now
+// High Variation, which deliberately produces recon/flank instead of intercept geometry.
+DEMO._setCommanderModeForTest('controlled');
 
 function u(id, side, role, lat, lon) { return { uid: id, unit_uid: id, side: side, role: role, label: role, coord: [lon, lat] }; }
 function mountScenario(scen, objLL) {

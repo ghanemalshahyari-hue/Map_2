@@ -77,9 +77,10 @@
     //   'controlled'    : doctrine-guided (intercept/defend bias)
     //   'free'          : free tactical reasoning (recon/flank/delay/deceive/withdraw/…)
     //   'high_variation': creative, rotates the recommended approach each cycle
-    // Default 'controlled' (doctrine-guided) preserves the intercept/overlay behavior;
-    // the operator opts into Free / High-variation for free tactical reasoning.
-    var _commanderMode = 'controlled';
+    // RMOOZ-AI-COMMANDER-FREEDOM-B: default to High Variation while testing AI freedom, so
+    // the app exercises genuine tactical variety out of the box. Controlled stays available
+    // as an explicit operator option (it keeps the doctrine-guided intercept/overlay path).
+    var _commanderMode = 'high_variation';
     var FF_COMMANDER_MODES = {
         controlled:     { label: 'Controlled' },
         free:           { label: 'Free Tactical' },
@@ -1039,6 +1040,7 @@
         bind('camera-manual', function () { setCameraMode('manual'); });
         bind('camera-follow', function () { setCameraMode('follow'); });
         ['controlled', 'free', 'high_variation'].forEach(function (m) { bind('mode-' + m, function () { setCommanderMode(m); }); });
+        bind('gen5-coas', generate5Coas);
         FF_SPEED_ORDER.forEach(function (sp) { bind('loop-speed-' + sp, function () { setFreeFightSpeed(sp); }); });
         renderCommanderPanel();
         var modeSel = _panel.querySelector('[data-act="planner-mode"]');
@@ -1985,6 +1987,50 @@
         updatePanel();
     }
 
+    // RMOOZ-AI-COMMANDER-FREEDOM-B: run 5 planning cycles with different variation seeds
+    // (High Variation) and show whether the lead family / action / unit changed.
+    function generate5Coas() {
+        var resultEl = _panel && _panel.querySelector('[data-ff-gen5="result"]');
+        var base;
+        try { base = _buildLoopRequestBody(); } catch (e) { if (resultEl) resultEl.textContent = 'No scenario loaded.'; return; }
+        if (!base.units || !base.units.length) { if (resultEl) resultEl.textContent = 'No movable units for the active side.'; return; }
+        if (resultEl) resultEl.innerHTML = '<span style="color:#8fa5b8;">Running 5 cycles (seeds 0–4, High Variation)…</span>';
+        var seeds = [0, 1, 2, 3, 4], rows = [], pending = seeds.length;
+        seeds.forEach(function (seed) {
+            var body = {
+                units: base.units, objectives: base.objectives,
+                context: Object.assign({}, base.context, { commander_mode: 'high_variation', variation_seed: seed }),
+                opts: Object.assign({}, base.opts, { commander_mode: 'high_variation' }),
+            };
+            _fetchJsonSafe('/api/wargame-sim/free-fight/plan-coas', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+                .then(function (plan) {
+                    var coas = arr(plan && plan.coas);
+                    var rec = coas.filter(function (c) { return c.recommended; })[0] || coas[0] || {};
+                    var lead = (rec.phases && rec.phases[0] && rec.phases[0].actions && rec.phases[0].actions[0]) || {};
+                    rows.push({ seed: seed, family: rec.coa_family || rec.title || '?', action: lead.action_type || '?', unit: lead.unit_uid || '?' });
+                })
+                .catch(function () { rows.push({ seed: seed, family: 'error', action: '-', unit: '-' }); })
+                .then(function () { if (--pending === 0) _renderGen5(rows, resultEl); });
+        });
+    }
+    function _renderGen5(rows, el) {
+        if (!el) return;
+        rows.sort(function (a, b) { return a.seed - b.seed; });
+        var fams = {}, acts = {}, units = {};
+        rows.forEach(function (r) { fams[r.family] = 1; acts[r.action] = 1; units[r.unit] = 1; });
+        var varied = (Object.keys(fams).length > 1) || (Object.keys(acts).length > 1) || (Object.keys(units).length > 1);
+        var h = '<table data-ff-gen5="table" style="border-collapse:collapse;font-size:10px;width:100%;">' +
+            '<tr style="color:#7a9ab8;"><th style="text-align:left;padding:2px 5px;">seed</th><th style="text-align:left;padding:2px 5px;">family</th><th style="text-align:left;padding:2px 5px;">lead action</th><th style="text-align:left;padding:2px 5px;">lead unit</th></tr>';
+        rows.forEach(function (r) {
+            h += '<tr><td style="padding:2px 5px;color:#cfeaff;">' + esc(String(r.seed)) + '</td><td style="padding:2px 5px;color:#d8ccff;">' + esc(r.family) + '</td><td style="padding:2px 5px;color:#bfe89a;">' + esc(r.action) + '</td><td style="padding:2px 5px;color:#aec0d8;">' + esc(r.unit) + '</td></tr>';
+        });
+        h += '</table>';
+        h += '<div data-ff-gen5="verdict" style="margin-top:4px;font-weight:700;color:' + (varied ? '#7ad07a' : '#e0a040') + ';">' +
+            (varied ? '✓ Variation confirmed: family / action / unit changed across seeds.' : '⚠ No variation detected across seeds.') + '</div>';
+        el.innerHTML = h;
+        try { _appendToEventLog('AI TEST: Generate 5 COAs — ' + (varied ? 'variation confirmed across seeds 0–4 (family/action/unit changed).' : 'no variation detected across seeds.')); } catch (_) {}
+    }
+
     // Capture original positions of every unit once, so Reset can fully restore.
     function _captureUnitsForReset() {
         _loopAllUnitsForReset = [];
@@ -2062,11 +2108,15 @@
             try {
                 var leadAct = (coa.phases && coa.phases[0] && coa.phases[0].actions && coa.phases[0].actions[0]) || null;
                 if (leadAct && leadAct.action_type) {
-                    var fam = coa.coa_family ? (' [' + esc(coa.coa_family) + ']') : '';
+                    // RMOOZ-AI-COMMANDER-FREEDOM-B: mode + seed + family + lead action + why.
+                    var modeTag = plan.commander_mode || _commanderMode || 'controlled';
+                    var seedTag = (plan.variation_seed != null) ? plan.variation_seed : turnNo;
+                    var fam = coa.coa_family ? (' family: ' + esc(coa.coa_family)) : '';
                     var why = leadAct.why_action || leadAct.reason || leadAct.behavior || '';
-                    var factor = leadAct.deciding_factor ? (' — factor: ' + esc(leadAct.deciding_factor)) : '';
-                    _appendToEventLog('AI REASONING' + fam + ': lead action ' + esc(String(leadAct.action_type)) +
-                        (why ? ' — ' + esc(String(why)).slice(0, 160) : '') + factor + '.');
+                    var factor = leadAct.deciding_factor ? (' · factor: ' + esc(leadAct.deciding_factor)) : '';
+                    _appendToEventLog('AI REASONING [mode: ' + esc(modeTag) + ' · seed: ' + esc(String(seedTag)) + ']' +
+                        fam + ' · lead: ' + esc(String(leadAct.unit_uid || '')) + ' ' + esc(String(leadAct.action_type)) +
+                        (why ? ' — ' + esc(String(why)).slice(0, 150) : '') + factor + '.');
                 }
             } catch (_) {}
             // FREEFIGHT-BLUE-THREAT-AWARE-MOVEMENT-A: BLUE intercept event line when BLUE
@@ -2387,9 +2437,10 @@
         });
         h += '<span style="font-size:9px;color:#6a8fa8;">' + (_freeFightCameraMode === 'follow' ? 'map pans to follow AI moves' : 'map stays where you left it') + '</span>';
         h += '</div>';
-        // RMOOZ-AI-COMMANDER-FREEDOM-A: AI Commander Mode — controlled / free / high variation.
-        h += '<div data-ff-loop="commander-mode" style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:6px;">';
-        h += '<span style="font-size:10px;color:#8fa5b8;">AI mode:</span>';
+        // RMOOZ-AI-COMMANDER-FREEDOM-A/B: AI Commander Mode + a visible current-mode indicator.
+        h += '<div data-ff-ai-mode="indicator" style="margin-top:7px;font-size:10.5px;font-weight:700;color:#d8ccff;">Current AI Mode: <span style="color:#b89aff;">' + esc(FF_COMMANDER_MODES[_commanderMode].label) + '</span></div>';
+        h += '<div data-ff-loop="commander-mode" style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:3px;">';
+        h += '<span style="font-size:10px;color:#8fa5b8;">Set mode:</span>';
         ['controlled', 'free', 'high_variation'].forEach(function (m) {
             var on = (_commanderMode === m);
             var bg = on ? '#2a1a4a' : '#101b27', bc = on ? '#9a7be0' : '#4a5f75', fc = on ? '#d8ccff' : '#9fb8e0';
@@ -2400,6 +2451,11 @@
             (_commanderMode === 'controlled' ? 'Doctrine-guided: intercept / defend.' :
              _commanderMode === 'high_variation' ? 'Creative: rotates recon / flank / deceive / delay / attack each cycle.' :
              'Free tactical reasoning: AI may choose recon, delay, flank, deceive, withdraw, defend, probe, or attack — operator reviews.') + '</div>';
+        // RMOOZ-AI-COMMANDER-FREEDOM-B: quick variation test — run 5 cycles with seeds 0-4.
+        h += '<div style="margin-top:6px;">';
+        h += '<button data-act="gen5-coas" style="font:inherit;cursor:pointer;border:1px solid #6a9a4a;background:#16240f;color:#bfe89a;border-radius:5px;padding:4px 9px;font-size:10.5px;font-weight:600;">⚙ Generate 5 different COAs</button>';
+        h += '<div data-ff-gen5="result" style="margin-top:5px;font-size:10px;color:#aec0d8;"></div>';
+        h += '</div>';
         // Turn log (most recent first, capped)
         if (_turnLog.length) {
             h += '<div data-ff-loop="turnlog" style="margin-top:6px;border-top:1px solid #1a3050;padding-top:4px;">';
@@ -2708,6 +2764,9 @@
         _getCommanderModeForTest:  function ()            { return _commanderMode; },
         _setCommanderModeForTest:  function (m)           { setCommanderMode(m); },
         _buildLoopRequestBodyForTest: function ()         { return _buildLoopRequestBody(); },
+        // RMOOZ-AI-COMMANDER-FREEDOM-B test seams
+        _generate5CoasForTest:     function ()            { return generate5Coas(); },
+        _renderGen5ForTest:        function (rows, el)    { return _renderGen5(rows, el); },
         // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A test seams
         _getLastIntelForTest:        function ()          { return _lastIntel; },
         _getCoaFamilyHistoryForTest: function ()          { return _coaFamilyHistory.slice(); },

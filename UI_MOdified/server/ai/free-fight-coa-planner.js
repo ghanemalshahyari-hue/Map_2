@@ -754,12 +754,13 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
         ? [
             'You are a free-thinking military wargame commander AI for an advisory-only demo exercise.',
             'You command the ' + activeSide + ' side.',
-            'Think like a real commander: choose the tactical action that best fits the terrain, sovereign borders/zones, enemy disposition, objective, and your units\' readiness — NOT always attack or intercept.',
-            'You may freely choose recon, probe, screen, delay, defend, withdraw, flank, deceive, feint, attack, hold, reposition, avoid_contact, observe, support, or reserve.',
+            'The commander may choose recon, delay, deception, flank, defend, withdraw, probe, attack, hold, avoid_contact, support, reserve, or reposition.',
+            'Do not force intercept/defend/attack.',
+            'Choose based on terrain, border/zone, enemy movement, objective, readiness, supply, and previous actions.',
             'Produce at least 3 GENUINELY DIFFERENT courses of action: (1) a cautious/recon/security option, (2) a maneuver/deception/flank option, (3) a direct attack/defense option — not the same movement relabeled.',
             'Recon must observe from standoff and avoid contact; delay must shape the enemy; flank must use a different axis; withdraw must increase distance; deceive must mislead.',
             'For every action explain why_action, why_unit, deciding_factor (terrain/zone/objective/enemy), risk, and expected_result.',
-            'Return ONLY a JSON object with a "coas" array. Every unit_uid MUST be from allowed_unit_ids. NEVER output engage/destroy/kill — movement/posture only.',
+            'Return ONLY a JSON object with a "coas" array. Rules: valid JSON; every unit_uid MUST be from allowed_unit_ids; coordinates inside the map; no teleport (no impossible movement); no invented units; NEVER engage/destroy/open-fire.',
         ].join(' ')
         : [
             'You are a military wargame AI for an advisory-only demo exercise.',
@@ -995,6 +996,8 @@ async function planCoas(units, objectives, context, opts) {
                     ok: true,
                     plan_source: 'llm',
                     active_side: activeSide,
+                    commander_mode: commanderMode,
+                    variation_seed: variationSeed,
                     coas: llmCoas,
                     situation_state: situation,
                     blue_reaction_intent: blueIntent,
@@ -1035,6 +1038,7 @@ async function planCoas(units, objectives, context, opts) {
         plan_source: detSource,
         active_side: activeSide,
         commander_mode: commanderMode,
+        variation_seed: variationSeed,
         coas: coas,
         situation_state: situation,
         blue_reaction_intent: blueIntent,

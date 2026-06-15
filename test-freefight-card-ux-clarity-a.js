@@ -199,10 +199,13 @@ bodyHtml = bodyDiv ? bodyDiv.innerHTML : '';
 ok('§4 "Start Group Movement Demo" text present', /Start Group Movement Demo/.test(bodyHtml));
 ok('§4 "Re-plan Group Demo" button present', /Re-plan Group Demo/.test(bodyHtml));
 ok('§4 "Reset Group Demo" button present', /Reset Group Demo/.test(bodyHtml));
-ok('§4 old "Start AI Free Fight" text NOT present', !/Start AI Free Fight/.test(bodyHtml));
-
-// source-level guard: "Start AI Free Fight" must not exist in source
-ok('§4 source does not contain "Start AI Free Fight"', !/Start AI Free Fight/.test(CLIENT_SRC));
+// The GROUP start button (data-act="start") must keep the group label — it must
+// NOT be the AI loop button. The continuous-loop start button (data-act="loop-start")
+// legitimately says "Start AI Free Fight" — the two subsystems stay clearly distinct.
+ok('§4 group start button keeps group label',
+    /data-act="start"[\s\S]{0,200}Start Group Movement Demo/.test(CLIENT_SRC));
+ok('§4 loop start button uses "Start AI Free Fight"',
+    /data-act="loop-start"[\s\S]{0,200}Start AI Free Fight/.test(CLIENT_SRC));
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // §5  Unit section header says "MAIN AI TEST — Attack Plan / COA Planner"

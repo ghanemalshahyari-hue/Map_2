@@ -36,7 +36,10 @@ var ALLOWED_COA_ACTION_TYPES = [
     'MOVE_TOWARD_OBJECTIVE', 'SUPPORT_BY_FIRE', 'HOLD_POSITION',
     'SCREEN_FLANK', 'RECON_OBJECTIVE'
 ];
-var ALLOWED_ROLES = ['assault', 'support', 'screen', 'reserve', 'recon', 'hold'];
+// RED (attacker) roles + BLUE (defender) roles. FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A
+// adds the defensive roles so the planner can plan for the active side either way.
+var ALLOWED_ROLES = ['assault', 'support', 'screen', 'reserve', 'recon', 'hold',
+                     'defend', 'intercept', 'reinforce'];
 var ALLOWED_RISK        = ['low', 'medium', 'high'];
 var ALLOWED_CONFIDENCE  = ['low', 'medium', 'high'];
 var REMOTE_PROVIDERS_BLOCKED = ['claude', 'zen', 'openai', 'auto'];
@@ -254,6 +257,117 @@ function buildDeterministicCoas(redUnits, obj) {
     ];
 }
 
+// ── BLUE defensive COA builder (FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A) ──────
+/**
+ * buildBlueCoas(blueUnits, obj) → 3 defensive COA objects.
+ *   COA-1 "Forward Defense"  — recommended:true,  risk:medium (reinforce the objective)
+ *   COA-2 "Intercept Line"   — recommended:false, risk:high   (move to intercept midpoints)
+ *   COA-3 "Hold & Screen"    — recommended:false, risk:low    (screen flanks, main body holds)
+ * Uses only existing safe action types (MOVE_TOWARD_OBJECTIVE / SCREEN_FLANK /
+ * HOLD_POSITION) — the defensive intent is carried by the role, so the teleport
+ * guard, validator and apply math all stay unchanged.
+ */
+function buildBlueCoas(blueUnits, obj) {
+    var units = arr(blueUnits).filter(unitHasCoord);
+    var total = units.length;
+    if (obj && finiteLL(obj)) {
+        units = units.slice().sort(function (a, b) {
+            return dist({ lat: a.lat, lon: a.lon }, obj) - dist({ lat: b.lat, lon: b.lon }, obj);
+        });
+    }
+    var objName = (obj && (obj.name || obj.label)) || 'Objective X';
+    var objLat = obj ? obj.lat : 0;
+    var objLon = obj ? obj.lon : 0;
+
+    var reinforceCount = Math.min(Math.max(3, Math.round(total * 0.25)), 12);
+    var interceptCount = Math.min(Math.max(2, Math.round(total * 0.18)), 8);
+    var screenCount    = Math.min(Math.max(2, Math.round(total * 0.12)), 6);
+
+    function uid(u) { return u.id || u.uid || u.unit_uid; }
+    function side(u) { return String(u.side || 'BLUE').toUpperCase(); }
+
+    // COA-1: Forward Defense / Reinforce
+    var a1 = [];
+    for (var i = 0; i < total; i++) {
+        var u = units[i];
+        if (i < reinforceCount) {
+            a1.push({ unit_uid: uid(u), side: side(u), role: 'reinforce', action_type: 'MOVE_TOWARD_OBJECTIVE',
+                      target: { lat: objLat, lon: objLon, type: 'objective' },
+                      reason: 'Forward defense — reinforce ' + objName + ' to blunt the attack.' });
+        } else {
+            a1.push({ unit_uid: uid(u), side: side(u), role: 'reserve', action_type: 'HOLD_POSITION',
+                      target: { lat: u.lat, lon: u.lon, type: 'coord' },
+                      reason: 'Reserve — hold depth position behind the defense.' });
+        }
+    }
+
+    // COA-2: Intercept Line — each interceptor moves to the midpoint between itself and the objective
+    var a2 = [];
+    for (var j = 0; j < total; j++) {
+        var u2 = units[j];
+        if (j < interceptCount) {
+            var midLat = (u2.lat + objLat) / 2, midLon = (u2.lon + objLon) / 2;
+            a2.push({ unit_uid: uid(u2), side: side(u2), role: 'intercept', action_type: 'MOVE_TOWARD_OBJECTIVE',
+                      target: { lat: midLat, lon: midLon, type: 'coord' },
+                      reason: 'Move to intercept line forward of ' + objName + '.' });
+        } else {
+            a2.push({ unit_uid: uid(u2), side: side(u2), role: 'reserve', action_type: 'HOLD_POSITION',
+                      target: { lat: u2.lat, lon: u2.lon, type: 'coord' },
+                      reason: 'Reserve — hold pending intercept result.' });
+        }
+    }
+
+    // COA-3: Hold & Screen
+    var a3 = [];
+    var screenLat = objLat + 0.04, screenLon = objLon - 0.04;
+    for (var k = 0; k < total; k++) {
+        var u3 = units[k];
+        if (k < screenCount) {
+            a3.push({ unit_uid: uid(u3), side: side(u3), role: 'screen', action_type: 'SCREEN_FLANK',
+                      target: { lat: screenLat, lon: screenLon, type: 'coord' },
+                      reason: 'Screen the flank to give early warning while the main body holds.' });
+        } else {
+            a3.push({ unit_uid: uid(u3), side: side(u3), role: 'defend', action_type: 'HOLD_POSITION',
+                      target: { lat: u3.lat, lon: u3.lon, type: 'coord' },
+                      reason: 'Hold prepared defensive position.' });
+        }
+    }
+
+    return [
+        { plan_id: 'COA-1', title: 'Forward Defense', objective_id: objName,
+          summary: reinforceCount + ' units reinforce ' + objName + '; remaining ' + (total - reinforceCount) + ' hold in depth.',
+          recommended: true, risk: 'medium', confidence: 'medium',
+          units_total_considered: total, units_selected_count: reinforceCount,
+          phases: [{ phase_id: 'phase-1', name: 'Reinforce', actions: a1 }],
+          risks: ['Forward units may be fixed by enemy fire', 'Depth may be thinned'],
+          assumptions: ['Objective is the enemy main effort'], validation: {} },
+        { plan_id: 'COA-2', title: 'Intercept Line', objective_id: objName,
+          summary: interceptCount + ' units move forward to an intercept line ahead of ' + objName + '.',
+          recommended: false, risk: 'high', confidence: 'medium',
+          units_total_considered: total, units_selected_count: interceptCount,
+          phases: [{ phase_id: 'phase-1', name: 'Intercept', actions: a2 }],
+          risks: ['Interceptors exposed forward of prepared positions', 'Enemy may bypass'],
+          assumptions: ['Enemy axis is predictable'], validation: {} },
+        { plan_id: 'COA-3', title: 'Hold & Screen', objective_id: objName,
+          summary: screenCount + ' units screen the flank; the main body holds prepared positions.',
+          recommended: false, risk: 'low', confidence: 'high',
+          units_total_considered: total, units_selected_count: screenCount,
+          phases: [{ phase_id: 'phase-1', name: 'Screen', actions: a3 }],
+          risks: ['Cedes initiative to the attacker'],
+          assumptions: ['Prepared positions are strong enough to hold'], validation: {} },
+    ];
+}
+
+/**
+ * buildCoasForSide(units, obj, side) — dispatch to the RED (attack) or BLUE
+ * (defense) deterministic builder based on the active side.
+ */
+function buildCoasForSide(units, obj, side) {
+    return String(side || 'RED').toUpperCase() === 'BLUE'
+        ? buildBlueCoas(units, obj)
+        : buildDeterministicCoas(units, obj);
+}
+
 // ── LLM normalizers ───────────────────────────────────────────────────────────
 /**
  * normalizeCoaAction(raw, allowedUnitIds) → action | null
@@ -391,6 +505,13 @@ function buildCommanderAssessment(coas, obj, context, planSource) {
     var rec = list.filter(function (c) { return c && c.recommended; })[0] || list[0] || null;
     var total = (list[0] && list[0].units_total_considered) || 0;
     var parts = [];
+    // Loop context: turn + active side, when present.
+    var ctx = context || {};
+    if (ctx.turn_number != null || ctx.active_side) {
+        var head = 'Turn ' + (ctx.turn_number != null ? ctx.turn_number : '?');
+        if (ctx.active_side) head += ' · ' + String(ctx.active_side).toUpperCase() + ' acting';
+        parts.push(head + '.');
+    }
     parts.push('Force pool: ' + total + ' movable unit' + (total === 1 ? '' : 's') + ' considered.');
     if (!obj) parts.push('No objective is set — define Objective X before issuing tasking.');
     else parts.push('Objective: ' + ((obj.name || obj.label) || 'Objective X') + '.');
@@ -443,8 +564,13 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
     }).filter(function (u) { return u.id; });
     var effectiveAllowed = allowedIds.length ? allowedIds : unitList.map(function (u) { return u.id; });
 
+    var activeSide = String((context && context.active_side) || (opts && opts.preferSide) || 'RED').toUpperCase();
+    var sideDoctrine = activeSide === 'BLUE'
+        ? 'You command the BLUE (defending) side: defend, intercept, screen, reinforce, or hold.'
+        : 'You command the RED (attacking) side: attack, probe, flank, support, or hold.';
     var system = [
         'You are a military wargame AI for an advisory-only demo exercise.',
+        sideDoctrine,
         'Return ONLY a JSON object with a "coas" array containing 2-3 COA objects.',
         'No other text, explanation, or preamble.',
         'Every unit_uid MUST be from the allowed_unit_ids list — never invent IDs.',
@@ -525,11 +651,14 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
  */
 async function planCoas(units, objectives, context, opts) {
     opts = opts || {};
+    context = context || {};
     var obj = bestObjective(arr(objectives));
-    var preferSide = String(opts.preferSide || 'RED').toUpperCase();
-    var allUnits = arr(units).filter(function (u) { return unitHasCoord(u) && String(u.side || 'RED').toUpperCase() === preferSide; });
+    // Active side: loop context wins, then opts.preferSide, then RED.
+    var activeSide = String(context.active_side || opts.preferSide || 'RED').toUpperCase();
+    if (activeSide !== 'RED' && activeSide !== 'BLUE') activeSide = 'RED';
+    var allUnits = arr(units).filter(function (u) { return unitHasCoord(u) && String(u.side || 'RED').toUpperCase() === activeSide; });
     if (!allUnits.length) {
-        // Fall back to any side if no preferred-side units
+        // Fall back to any side if the active side has no movable units
         allUnits = arr(units).filter(unitHasCoord);
     }
 
@@ -544,6 +673,7 @@ async function planCoas(units, objectives, context, opts) {
             return {
                 ok: true,
                 plan_source: 'llm',
+                active_side: activeSide,
                 coas: llmCoas,
                 commander_assessment: buildCommanderAssessment(llmCoas, obj, context, 'llm'),
                 recommended_plan_id: _recommendedPlanId(llmCoas),
@@ -557,11 +687,12 @@ async function planCoas(units, objectives, context, opts) {
         fallbackReason = llmResult.fallback_reason || 'llm_failed';
     }
 
-    // Deterministic fallback
-    var coas = enrichCoasWithNarrative(buildDeterministicCoas(allUnits, obj), obj, context, 'deterministic_coa_fallback');
+    // Deterministic fallback — side-aware (RED attack vs BLUE defense)
+    var coas = enrichCoasWithNarrative(buildCoasForSide(allUnits, obj, activeSide), obj, context, 'deterministic_coa_fallback');
     return {
         ok: true,
         plan_source: 'deterministic_coa_fallback',
+        active_side: activeSide,
         coas: coas,
         commander_assessment: buildCommanderAssessment(coas, obj, context, 'deterministic_coa_fallback'),
         recommended_plan_id: _recommendedPlanId(coas),
@@ -722,6 +853,8 @@ module.exports = {
     applyCoaPlan:           applyCoaPlan,
     makeCoaEventLogEntries: makeCoaEventLogEntries,
     buildDeterministicCoas: buildDeterministicCoas,
+    buildBlueCoas:          buildBlueCoas,
+    buildCoasForSide:       buildCoasForSide,
     normalizeCoa:           normalizeCoa,
     normalizeCoaAction:     normalizeCoaAction,
     // FREEFIGHT-COA-COMMANDER-NARRATIVE-A

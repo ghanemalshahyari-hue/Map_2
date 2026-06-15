@@ -34,7 +34,7 @@
     var _payload = null, _objective = null;
     var _allGroups = [], _red = [], _blue = [], _anchors = [];
     var _progress = 0, _running = false, _paused = false, _timer = null;
-    var _layer = null, _panel = null, _card = null, _aiPanel = null;
+    var _layer = null, _panel = null, _card = null, _aiPanel = null, _cmdrPanel = null;
     var _winState = null, _viewportResizeHandler = null;
     var _plan = null, _terrain = { available: false }, _objectiveSource = null;
     var _aiDecision = null, _aiLoading = false, _aiApplied = false, _aiDiagnostics = null;
@@ -43,6 +43,25 @@
     // FREEFIGHT-AI-COA-PLANNER-A: multi-unit COA state
     var _coaPlan = null, _coaLoading = false, _coaApplied = false, _coaSelectedIdx = 0;
     var _coaMovedUnits = [];  // [{unit, oldPos}, ...]
+    // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: continuous AI commander loop state
+    var _turnNumber = 0;
+    var _activeSide = 'RED';
+    var _loopRunning = false, _loopPaused = false;
+    var _freeFightSpeed = 'x1';
+    var _lastCommanderDecision = null; // { turn, side, coa_id, coa_title, source, moved, rationale[], expected[], summary }
+    var _turnLog = [];                 // newest-last list of per-turn records
+    var _pendingTimer = null;          // setTimeout handle for next turn
+    var _moveAnimTimer = null;         // setInterval handle for cinematic movement
+    var _loopAllUnitsForReset = [];    // [{unit, origPos}] captured at loop start for full reset
+    // Cinematic speeds: decisionDelayMs between turns, moveAnimMs per move animation.
+    var FF_SPEEDS = {
+        x1:    { decisionDelayMs: 8000, moveAnimMs: 6000, label: 'x1' },
+        x5:    { decisionDelayMs: 3000, moveAnimMs: 2500, label: 'x5' },
+        x15:   { decisionDelayMs: 1200, moveAnimMs: 1000, label: 'x15' },
+        fire:  { decisionDelayMs: 500,  moveAnimMs: 450,  label: '🔥' },
+        fire2: { decisionDelayMs: 120,  moveAnimMs: 120,  label: '🔥🔥' },
+    };
+    var FF_SPEED_ORDER = ['x1', 'x5', 'x15', 'fire', 'fire2'];
     var _plannerMode = 'deterministic';
     var _planSource = 'deterministic';
     var _llmStatus = {
@@ -868,6 +887,13 @@
         bind('select-coa-0', function () { _coaSelectedIdx = 0; updatePanel(); });
         bind('select-coa-1', function () { _coaSelectedIdx = 1; updatePanel(); });
         bind('select-coa-2', function () { _coaSelectedIdx = 2; updatePanel(); });
+        // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: loop + speed bindings
+        bind('loop-start', startLoop);
+        bind('loop-pause', pauseLoop);
+        bind('loop-step', stepOnce);
+        bind('loop-reset', resetLoop);
+        FF_SPEED_ORDER.forEach(function (sp) { bind('loop-speed-' + sp, function () { setFreeFightSpeed(sp); }); });
+        renderCommanderPanel();
         var modeSel = _panel.querySelector('[data-act="planner-mode"]');
         if (modeSel && modeSel.addEventListener) modeSel.addEventListener('change', function () { setPlannerMode(modeSel.value); });
         var llmCb = _panel.querySelector('[data-act="toggle-llm"]');
@@ -885,6 +911,53 @@
             if (e && e.latlng) setObjective({ lat: e.latlng.lat, lon: e.latlng.lng });
         };
         w.map.on('click', handler);
+    }
+
+    // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: the right-side "AI Commander
+    // Reasoning" panel — shows the current turn, active side, the auto-selected
+    // COA, why it was chosen, units moved, expected next reaction, and a running
+    // situation summary. Read-only mirror of the loop state.
+    function renderCommanderPanel() {
+        var w = W();
+        if (!w || !w.document || !w.document.body) return;
+        var rec = _lastCommanderDecision;
+        // Only show while the loop has produced (or is producing) a decision.
+        if (!rec && !_loopRunning) {
+            if (_cmdrPanel && _cmdrPanel.parentNode) { _cmdrPanel.parentNode.removeChild(_cmdrPanel); _cmdrPanel = null; }
+            return;
+        }
+        if (!_cmdrPanel) {
+            _cmdrPanel = w.document.createElement('div');
+            _cmdrPanel.id = 'rmooz-free-fight-commander-panel';
+            _cmdrPanel.style.cssText = ['position:fixed', 'top:128px', 'right:24px', 'z-index:9955', 'background:#0a1018', 'border:1px solid #3a6a8a', 'border-radius:8px', 'padding:12px 14px', 'min-width:320px', 'max-width:380px', 'max-height:calc(100vh - 200px)', 'overflow:auto', 'box-shadow:0 4px 20px rgba(0,0,0,.7)', 'color:#e8eaed', 'font-family:inherit', 'direction:ltr'].join(';');
+            w.document.body.appendChild(_cmdrPanel);
+        }
+        function blist(list, color) {
+            var a = arr(list);
+            if (!a.length) return '';
+            return '<ul style="margin:2px 0 4px;padding-left:16px;">' +
+                a.map(function (b) { return '<li style="color:' + (color || '#cdd8e4') + ';margin-bottom:1px;">' + esc(b) + '</li>'; }).join('') + '</ul>';
+        }
+        var sideColor = (rec && rec.side === 'BLUE') ? '#7fb0ff' : '#f0a0a0';
+        var runState = _loopRunning ? (_loopPaused ? 'Paused' : 'Running') : 'Stopped';
+        var h = '<div style="font-weight:700;color:#9ec2ec;font-size:13px;margin-bottom:5px;">AI Commander Reasoning — تفكير القائد الآلي</div>';
+        h += '<div style="font-size:11px;color:#8fa5b8;margin-bottom:5px;">Status: <span style="color:#e0e8f0;">' + esc(runState) + '</span> · Speed: <span style="color:#e0e8f0;">' + esc(_ffSpeed().label) + '</span></div>';
+        if (rec) {
+            h += '<div style="border:1px solid #2a3f55;border-radius:5px;background:#0c141d;padding:7px 9px;font-size:11px;">';
+            h += '<div style="margin-bottom:2px;"><span style="color:#8fa5b8;">Turn:</span> <span style="color:#e0e8f0;font-weight:700;">' + rec.turn + '</span> · <span style="color:#8fa5b8;">Active side:</span> <span style="color:' + sideColor + ';font-weight:700;">' + esc(rec.side) + '</span></div>';
+            h += '<div style="margin-bottom:2px;"><span style="color:#8fa5b8;">Selected COA:</span> <span style="color:#7fd6a0;font-weight:700;">' + esc(rec.coa_id) + ' — ' + esc(rec.coa_title) + '</span></div>';
+            var srcColor = rec.source === 'llm' ? '#90d090' : '#9ab0c0';
+            h += '<div style="margin-bottom:2px;"><span style="color:#8fa5b8;">Decision source:</span> <span style="color:' + srcColor + ';">' + esc(rec.source) + '</span></div>';
+            h += '<div style="margin-bottom:2px;"><span style="color:#8fa5b8;">Units moved:</span> <span style="color:#e0e8f0;">' + rec.moved + '</span></div>';
+            if (arr(rec.rationale).length) { h += '<div style="color:#7a9ab8;font-weight:600;margin-top:3px;">Why this COA:</div>'; h += blist(rec.rationale, '#cdd8e4'); }
+            if (arr(rec.expected).length) { h += '<div style="color:#7a9ab8;font-weight:600;margin-top:2px;">Expected next reaction <span style="color:#8a6a3a;font-weight:400;">(preview)</span>:</div>'; h += blist(rec.expected, '#d8c08a'); }
+            if (rec.summary) { h += '<div style="color:#7a9ab8;font-weight:600;margin-top:2px;">Situation summary:</div><div style="color:#cdd8e4;font-size:10px;line-height:1.4;">' + esc(rec.summary) + '</div>'; }
+            h += '</div>';
+        } else {
+            h += '<div style="font-size:11px;color:#7a9ab8;padding:4px 0;">Waiting for first AI commander decision…</div>';
+        }
+        h += '<div style="margin-top:6px;padding:5px 7px;border-radius:4px;background:#2a2412;border:1px solid #b8860b;color:#e0c060;font-size:10px;">AI-controlled free fight demo — review-only — not final tasking — requires commander approval</div>';
+        _cmdrPanel.innerHTML = h;
     }
 
     // FREE-FIGHT-AI-LITE-A: the "AI Free Fight Reasoning" panel (why RED/BLUE
@@ -1311,6 +1384,286 @@
             ' [' + srcTag + ']'
         ];
     }
+
+    // ── FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A ───────────────────────────────
+    // A continuous, AI-controlled commander loop. Each turn: read state → ask the
+    // planner for the active side → auto-pick the recommended COA → move units
+    // (cinematically at slow speeds) → log → switch side → schedule next turn.
+    function round5(n) { return Math.round(n * 1e5) / 1e5; }
+    function _ffSpeed() { return FF_SPEEDS[_freeFightSpeed] || FF_SPEEDS.x1; }
+    function _winFn(name) { var w = W(); return (w && typeof w[name] === 'function') ? w[name].bind(w) : (typeof global !== 'undefined' && typeof global[name] === 'function' ? global[name] : (typeof globalThis !== 'undefined' ? globalThis[name] : null)); }
+    function _setTimeoutSafe(fn, ms) { var f = _winFn('setTimeout'); return f ? f(fn, ms) : null; }
+    function _clearTimeoutSafe(t) { var f = _winFn('clearTimeout'); if (f && t != null) f(t); }
+    function _setIntervalSafe(fn, ms) { var f = _winFn('setInterval'); return f ? f(fn, ms) : null; }
+    function _clearIntervalSafe(t) { var f = _winFn('clearInterval'); if (f && t != null) f(t); }
+
+    // Cap a move toward the target by one tactical step (≈ STEP_DEG), like the server.
+    var FF_LOOP_STEP_DEG = 0.05;
+    function _stepTowardCapped(from, to) {
+        var dx = to.lat - from.lat, dy = to.lon - from.lon;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        if (d <= FF_LOOP_STEP_DEG || d === 0) return { lat: +to.lat, lon: +to.lon };
+        var t = FF_LOOP_STEP_DEG / d;
+        return { lat: from.lat + dx * t, lon: from.lon + dy * t };
+    }
+
+    // Build the plan-coas request body for the active side, with loop context.
+    function _buildLoopRequestBody() {
+        var base = _buildAiRequestBody(); // units + objectives + opts (preferSide RED)
+        var pressure = _computeObjectivePressure(base.units, base.objectives);
+        var lastMoved = (_lastCommanderDecision && _lastCommanderDecision.moved) || 0;
+        var prevActions = _turnLog.slice(-3).map(function (t) {
+            return { turn: t.turn, side: t.side, coa_id: t.coa_id, moved: t.moved };
+        });
+        return {
+            units: base.units,
+            objectives: base.objectives,
+            context: {
+                turn_number: _turnNumber + 1,
+                active_side: _activeSide,
+                previous_actions: prevActions,
+                moved_units_last_turn: lastMoved,
+                current_objective_pressure: pressure,
+            },
+            opts: { preferSide: _activeSide, useLlm: _useLlm, allowed_unit_ids: base.units.map(function (u) { return u.id; }) },
+        };
+    }
+
+    // Simple pressure metric: fraction of RED units within ~0.15° of the objective.
+    function _computeObjectivePressure(units, objectives) {
+        var obj = arr(objectives)[0];
+        if (!obj || !Number.isFinite(+obj.lat) || !Number.isFinite(+obj.lon)) return 0;
+        var red = arr(units).filter(function (u) { return String(u.side || 'RED').toUpperCase() === 'RED'; });
+        if (!red.length) return 0;
+        var near = red.filter(function (u) {
+            var dx = (+u.lat) - (+obj.lat), dy = (+u.lon) - (+obj.lon);
+            return Math.sqrt(dx * dx + dy * dy) <= 0.15;
+        }).length;
+        return Math.round((near / red.length) * 100) / 100;
+    }
+
+    // Auto-pick the recommended COA index (falls back to 0).
+    function _pickRecommendedIdx(plan) {
+        if (!plan || !Array.isArray(plan.coas)) return 0;
+        if (plan.recommended_plan_id) {
+            for (var i = 0; i < plan.coas.length; i++) {
+                if (plan.coas[i] && plan.coas[i].plan_id === plan.recommended_plan_id) return i;
+            }
+        }
+        for (var j = 0; j < plan.coas.length; j++) {
+            if (plan.coas[j] && plan.coas[j].recommended) return j;
+        }
+        return 0;
+    }
+
+    // Resolve the non-HOLD moves in a COA into {unit, start, final, role} records.
+    function _resolveCoaMoves(coa) {
+        var moves = [];
+        arr(coa && coa.phases).forEach(function (ph) {
+            arr(ph.actions).forEach(function (act) {
+                if (!act || act.action_type === 'HOLD_POSITION') return;
+                if (!act.target || !Number.isFinite(+act.target.lat) || !Number.isFinite(+act.target.lon)) return;
+                var found = _findRealUnit(act.unit_uid);
+                if (!found || !found.unit) return;
+                var u = found.unit;
+                var startLat = u.lat != null ? +u.lat : (Array.isArray(u.coord) ? +u.coord[1] : null);
+                var startLon = u.lon != null ? +u.lon : (Array.isArray(u.coord) ? +u.coord[0] : null);
+                if (!Number.isFinite(startLat) || !Number.isFinite(startLon)) return;
+                var fin = _stepTowardCapped({ lat: startLat, lon: startLon }, { lat: +act.target.lat, lon: +act.target.lon });
+                moves.push({ unit: u, role: act.role || '', start: { lat: startLat, lon: startLon }, final: { lat: round5(fin.lat), lon: round5(fin.lon) } });
+            });
+        });
+        return moves;
+    }
+
+    function _writeMoveFrame(moves, t) {
+        moves.forEach(function (m) {
+            var lat = m.start.lat + (m.final.lat - m.start.lat) * t;
+            var lon = m.start.lon + (m.final.lon - m.start.lon) * t;
+            m.unit.lat = round5(lat); m.unit.lon = round5(lon);
+            if (Array.isArray(m.unit.coord) && m.unit.coord.length >= 2) { m.unit.coord[0] = round5(lon); m.unit.coord[1] = round5(lat); }
+            else if (m.unit.coord !== undefined) { m.unit.coord = [round5(lon), round5(lat)]; }
+            m.unit._ff_coa_moved_by_ai = true;
+        });
+    }
+
+    // Apply a COA. Cinematic at slow speeds (animate over animMs), instant when
+    // animMs is tiny or no map. Calls done(movedUnits) when finished.
+    function _applyCoaAnimated(coa, animMs, done) {
+        if (_moveAnimTimer) { _clearIntervalSafe(_moveAnimTimer); _moveAnimTimer = null; }
+        var moves = _resolveCoaMoves(coa);
+        function finishNow() {
+            _writeMoveFrame(moves, 1);
+            _coaMovedUnits = moves.map(function (m) { return { unit: m.unit, oldPos: m.start, role: m.role }; });
+            _coaApplied = true;
+            if (mapReady()) { _triggerScenarioRedraw(); syncMarkers(); _panToMovedCentroid(); }
+            if (done) done(_coaMovedUnits);
+        }
+        if (!moves.length) { _coaMovedUnits = []; _coaApplied = true; if (done) done([]); return; }
+        // Instant path: tiny anim window, no map, or no usable interval timer.
+        if (!mapReady() || !Number.isFinite(animMs) || animMs <= 150 || !_winFn('setInterval')) { finishNow(); return; }
+        var frames = Math.max(2, Math.min(24, Math.round(animMs / 250)));
+        var interval = Math.max(40, animMs / frames);
+        var f = 0;
+        _moveAnimTimer = _setIntervalSafe(function () {
+            f++;
+            var t = f / frames;
+            if (t >= 1) {
+                _clearIntervalSafe(_moveAnimTimer); _moveAnimTimer = null;
+                finishNow();
+            } else {
+                _writeMoveFrame(moves, t);
+                if (mapReady()) { _triggerScenarioRedraw(); syncMarkers(); }
+            }
+        }, interval);
+    }
+
+    function _panToMovedCentroid() {
+        var w = W();
+        if (!mapReady() || !_coaMovedUnits.length) return;
+        var latSum = 0, lonSum = 0, n = 0;
+        _coaMovedUnits.forEach(function (mv) { if (mv.unit && Number.isFinite(+mv.unit.lat)) { latSum += +mv.unit.lat; lonSum += +mv.unit.lon; n++; } });
+        if (n) { try { w.map.panTo([latSum / n, lonSum / n]); } catch (_) {} }
+    }
+
+    // Capture original positions of every unit once, so Reset can fully restore.
+    function _captureUnitsForReset() {
+        _loopAllUnitsForReset = [];
+        var body = _buildAiRequestBody();
+        body.units.forEach(function (nu) {
+            var found = _findRealUnit(nu.id);
+            if (found && found.unit) {
+                var u = found.unit;
+                var lat = u.lat != null ? +u.lat : (Array.isArray(u.coord) ? +u.coord[1] : null);
+                var lon = u.lon != null ? +u.lon : (Array.isArray(u.coord) ? +u.coord[0] : null);
+                if (Number.isFinite(lat) && Number.isFinite(lon)) _loopAllUnitsForReset.push({ unit: u, origPos: { lat: lat, lon: lon } });
+            }
+        });
+    }
+
+    function _switchSide() { _activeSide = (_activeSide === 'RED') ? 'BLUE' : 'RED'; }
+
+    // The core of one turn, given a fetched plan. Synchronous + testable.
+    // Returns a summary record. Does NOT schedule the next turn.
+    function _runTurnCore(plan, animMs) {
+        if (!plan || !plan.ok || !Array.isArray(plan.coas) || !plan.coas.length) {
+            return { ok: false, reason: (plan && (plan._error || plan.reason)) || 'no_plan' };
+        }
+        var idx = _pickRecommendedIdx(plan);
+        _coaPlan = plan;
+        _coaSelectedIdx = idx;
+        var coa = plan.coas[idx] || {};
+        var source = plan.plan_source || 'deterministic_coa_fallback';
+        var sideForTurn = plan.active_side || _activeSide;
+        _turnNumber += 1;
+        var turnNo = _turnNumber;
+        // Apply (animated or instant). The callback records moved + logs.
+        _applyCoaAnimated(coa, animMs, function (moved) {
+            var record = {
+                turn: turnNo,
+                side: sideForTurn,
+                coa_id: coa.plan_id || 'COA-?',
+                coa_title: coa.title || '',
+                source: source,
+                moved: moved.length,
+                rationale: arr(coa.rationale),
+                expected: arr(coa.expected_enemy_reaction),
+                summary: plan.commander_assessment || '',
+            };
+            _lastCommanderDecision = record;
+            _turnLog.push(record);
+            _appendToEventLog('AI Commander Turn ' + turnNo + ' (' + sideForTurn + '): ' +
+                record.coa_id + ' ' + record.coa_title + ' — ' + moved.length + ' units moved [' +
+                (source === 'llm' ? 'llm' : 'deterministic_coa_fallback') + ']');
+            renderCommanderPanel();
+            updatePanel();
+        });
+        // Switch side for the NEXT turn (simple alternation policy).
+        _switchSide();
+        return { ok: true, turn: turnNo, coa_id: coa.plan_id, source: source };
+    }
+
+    // Fetch a plan and run one turn. scheduleNext=true continues the loop.
+    function runNextTurn(scheduleNext) {
+        var w = W();
+        if (_loopPaused) return;
+        if (scheduleNext && !_loopRunning) return;
+        if (!w || typeof w.fetch !== 'function') return;
+        var body = _buildLoopRequestBody();
+        w.fetch('/api/wargame-sim/free-fight/plan-coas', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        }).then(function (r) { return r.json(); }).then(function (plan) {
+            if (_loopPaused) return;
+            _runTurnCore(plan, _ffSpeed().moveAnimMs);
+            if (scheduleNext && _loopRunning && !_loopPaused) _scheduleNextTurn();
+        }).catch(function (e) {
+            // LLM/network failure → deterministic fallback handled server-side; if the
+            // fetch itself fails, log and keep the loop alive on the next tick.
+            _appendToEventLog('AI Commander Turn skipped — planner fetch failed: ' + ((e && e.message) || 'error'));
+            if (scheduleNext && _loopRunning && !_loopPaused) _scheduleNextTurn();
+        });
+    }
+
+    function _scheduleNextTurn() {
+        _clearTimeoutSafe(_pendingTimer);
+        _pendingTimer = _setTimeoutSafe(function () {
+            _pendingTimer = null;
+            if (_loopRunning && !_loopPaused) runNextTurn(true);
+        }, _ffSpeed().decisionDelayMs);
+    }
+
+    function startLoop() {
+        if (_loopRunning && !_loopPaused) return;
+        if (!_loopAllUnitsForReset.length) _captureUnitsForReset();
+        _loopRunning = true; _loopPaused = false;
+        updatePanel();
+        runNextTurn(true);
+    }
+
+    function pauseLoop() {
+        _loopPaused = true;
+        _clearTimeoutSafe(_pendingTimer); _pendingTimer = null;
+        if (_moveAnimTimer) { _clearIntervalSafe(_moveAnimTimer); _moveAnimTimer = null; }
+        updatePanel();
+    }
+
+    function stepOnce() {
+        // Run exactly one turn without scheduling the next.
+        if (!_loopAllUnitsForReset.length) _captureUnitsForReset();
+        _loopPaused = false; // allow this single turn to apply
+        runNextTurn(false);
+    }
+
+    function resetLoop() {
+        _loopRunning = false; _loopPaused = false;
+        _clearTimeoutSafe(_pendingTimer); _pendingTimer = null;
+        if (_moveAnimTimer) { _clearIntervalSafe(_moveAnimTimer); _moveAnimTimer = null; }
+        // Restore every captured unit to its original position.
+        _loopAllUnitsForReset.forEach(function (rec) {
+            if (!rec || !rec.unit || !rec.origPos) return;
+            rec.unit.lat = rec.origPos.lat; rec.unit.lon = rec.origPos.lon;
+            if (Array.isArray(rec.unit.coord) && rec.unit.coord.length >= 2) {
+                rec.unit.coord[0] = rec.origPos.lon; rec.unit.coord[1] = rec.origPos.lat;
+            }
+            rec.unit._ff_coa_moved_by_ai = false;
+        });
+        _loopAllUnitsForReset = [];
+        _turnNumber = 0; _activeSide = 'RED';
+        _turnLog = []; _lastCommanderDecision = null;
+        _coaMovedUnits = []; _coaApplied = false; _coaPlan = null;
+        if (mapReady()) { _triggerScenarioRedraw(); syncMarkers(); }
+        if (_cmdrPanel && _cmdrPanel.parentNode) { _cmdrPanel.parentNode.removeChild(_cmdrPanel); _cmdrPanel = null; }
+        updatePanel();
+    }
+
+    function setFreeFightSpeed(sp) {
+        if (FF_SPEEDS[sp]) { _freeFightSpeed = sp; }
+        // If running, re-arm the next-turn timer with the new cadence.
+        if (_loopRunning && !_loopPaused && _pendingTimer != null) { _scheduleNextTurn(); }
+        updatePanel();
+    }
+
     function renderCoaPlanHtml() {
         var h = '';
         // FREEFIGHT-COA-COMMANDER-NARRATIVE-A: render a bullet list
@@ -1428,6 +1781,66 @@
     }
     // ── end FREEFIGHT-AI-COA-PLANNER-A ────────────────────────────────────────
 
+    // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: the continuous AI commander control block.
+    function renderCommanderLoopHtml() {
+        var h = '';
+        h += '<div data-ff-loop="panel" style="margin-bottom:8px;padding:7px 9px;border:1px solid #2e5d7d;border-radius:5px;background:#0a1420;">';
+        h += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">' +
+             '<span style="font-size:10px;font-weight:700;color:#04121e;background:#5ab0e0;border-radius:3px;padding:1px 6px;letter-spacing:.5px;">AI COMMANDER</span>' +
+             '<span style="font-size:11px;font-weight:700;color:#9ec2ec;">AI Commander Free Fight — القتال الحر بقيادة الذكاء الاصطناعي</span></div>';
+        var runState = _loopRunning ? (_loopPaused ? 'Paused' : 'Running') : 'Stopped';
+        var runColor = _loopRunning ? (_loopPaused ? '#e0c060' : '#7fd6a0') : '#9ab0c0';
+        var sideColor = _activeSide === 'BLUE' ? '#7fb0ff' : '#f0a0a0';
+        h += '<div style="font-size:10.5px;color:#cdd8e4;line-height:1.5;">';
+        h += '<span style="color:#8fa5b8;">Status:</span> <span style="color:' + runColor + ';font-weight:700;">' + esc(runState) + '</span>';
+        h += ' · <span style="color:#8fa5b8;">Turn:</span> <span style="color:#e0e8f0;font-weight:700;">' + _turnNumber + '</span>';
+        h += ' · <span style="color:#8fa5b8;">Active side:</span> <span style="color:' + sideColor + ';font-weight:700;">' + esc(_activeSide) + '</span>';
+        h += '</div>';
+        if (_lastCommanderDecision) {
+            var d = _lastCommanderDecision;
+            var dSrcColor = d.source === 'llm' ? '#90d090' : '#9ab0c0';
+            h += '<div style="font-size:10.5px;color:#cdd8e4;margin-top:2px;">' +
+                 '<span style="color:#8fa5b8;">Last decision source:</span> <span style="color:' + dSrcColor + ';">' + esc(d.source) + '</span></div>';
+            h += '<div style="font-size:10.5px;color:#cdd8e4;">' +
+                 '<span style="color:#8fa5b8;">Last action:</span> <span style="color:#e0e8f0;">' + esc(d.coa_id) + ' ' + esc(d.coa_title) + ' — ' + d.moved + ' units moved</span></div>';
+        }
+        // Control buttons
+        h += '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;">';
+        if (!_loopRunning || _loopPaused) {
+            h += '<button data-act="loop-start" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:5px;padding:5px 9px;font-size:11px;">▶ Start AI Free Fight</button>';
+        }
+        if (_loopRunning && !_loopPaused) {
+            h += '<button data-act="loop-pause" style="font:inherit;cursor:pointer;border:1px solid #8a6a20;background:#2a2412;color:#e0c060;border-radius:5px;padding:5px 9px;font-size:11px;">⏸ Pause</button>';
+        }
+        h += '<button data-act="loop-step" style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#172436;color:#9ec2ec;border-radius:5px;padding:5px 9px;font-size:11px;">⏭ Step Once</button>';
+        h += '<button data-act="loop-reset" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:5px;padding:5px 9px;font-size:11px;">⟲ Reset</button>';
+        h += '</div>';
+        // Speed control
+        h += '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;align-items:center;">';
+        h += '<span style="font-size:10px;color:#8fa5b8;">Speed:</span>';
+        FF_SPEED_ORDER.forEach(function (sp) {
+            var active = (_freeFightSpeed === sp);
+            var bg = active ? '#1a4a6a' : '#101b27';
+            var bc = active ? '#5ab0e0' : '#4a5f75';
+            var fc = active ? '#cfeaff' : '#8fb8e0';
+            h += '<button data-act="loop-speed-' + sp + '" title="' + esc(sp) + '" style="font:inherit;cursor:pointer;border:1px solid ' + bc + ';background:' + bg + ';color:' + fc + ';border-radius:4px;padding:3px 7px;font-size:10px;font-weight:' + (active ? '700' : '400') + ';">' + esc(FF_SPEEDS[sp].label) + '</button>';
+        });
+        h += '</div>';
+        h += '<div style="font-size:9.5px;color:#6a8fa8;margin-top:4px;">x1 = cinematic (slow, visible). 🔥🔥 = super fast. AI auto-picks the recommended COA each turn; no manual side selection.</div>';
+        // Turn log (most recent first, capped)
+        if (_turnLog.length) {
+            h += '<div data-ff-loop="turnlog" style="margin-top:6px;border-top:1px solid #1a3050;padding-top:4px;">';
+            h += '<div style="font-size:10px;color:#7a9ab8;font-weight:600;margin-bottom:2px;">Turn log (' + _turnLog.length + '):</div>';
+            _turnLog.slice(-8).reverse().forEach(function (t) {
+                var sc = t.side === 'BLUE' ? '#7fb0ff' : '#f0a0a0';
+                h += '<div style="font-size:9.5px;color:#9ab0c0;">T' + t.turn + ' <span style="color:' + sc + ';">' + esc(t.side) + '</span> · ' + esc(t.coa_id) + ' ' + esc(t.coa_title) + ' · ' + t.moved + ' moved · ' + esc(t.source === 'llm' ? 'llm' : 'det') + '</div>';
+            });
+            h += '</div>';
+        }
+        h += '</div>';
+        return h;
+    }
+
     function renderAiDecisionHtml() {
         var h = '<div style="margin-top:8px;border-top:1px solid #2a3f55;padding-top:8px;">';
         h += '<div style="margin-bottom:6px;padding:5px 8px;border:1px solid #1a4030;border-radius:4px;background:#091810;">' +
@@ -1437,6 +1850,9 @@
              '</div>' +
              '<div style="font-size:10px;color:#5a9a70;margin-top:2px;">Real unit-level AI decision — هذا هو الاختبار الفعلي للذكاء الاصطناعي على مستوى الوحدات</div>' +
              '</div>';
+        // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: continuous loop controls on top
+        h += renderCommanderLoopHtml();
+        h += '<div style="font-size:10px;color:#5a7a60;margin:2px 0 6px;border-top:1px solid #2a3f55;padding-top:6px;">Manual COA planner (single turn) — تخطيط يدوي</div>';
         // COA Planner buttons
         h += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;">';
         h += '<button data-act="generate-coa" style="font:inherit;cursor:pointer;border:1px solid #2a7a50;background:#131e18;color:#90d0a0;border-radius:5px;padding:5px 10px;font-size:11px;">' +
@@ -1616,7 +2032,13 @@
         if (_viewportResizeHandler) { try { W().removeEventListener('resize', _viewportResizeHandler); } catch (_) {} _viewportResizeHandler = null; }
         if (_panel && _panel.parentNode) _panel.parentNode.removeChild(_panel); _panel = null;
         if (_aiPanel && _aiPanel.parentNode) _aiPanel.parentNode.removeChild(_aiPanel); _aiPanel = null;
+        if (_cmdrPanel && _cmdrPanel.parentNode) _cmdrPanel.parentNode.removeChild(_cmdrPanel); _cmdrPanel = null;
         if (_card && _card.parentNode) _card.parentNode.removeChild(_card); _card = null;
+        // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: tear down loop timers + state
+        _clearTimeoutSafe(_pendingTimer); _pendingTimer = null;
+        if (_moveAnimTimer) { _clearIntervalSafe(_moveAnimTimer); _moveAnimTimer = null; }
+        _loopRunning = false; _loopPaused = false; _turnNumber = 0; _activeSide = 'RED';
+        _turnLog = []; _lastCommanderDecision = null; _loopAllUnitsForReset = [];
         _red = []; _blue = []; _allGroups = []; _objective = null; _objectiveSource = null; _plan = null; _terrain = { available: false };
         _planSource = 'deterministic';
         _llmStatus = { state: 'idle', message: '', validation_result: 'not_requested', fallback_reason: null };
@@ -1677,6 +2099,21 @@
         _getCoaMovedUnitsForTest: function ()             { return _coaMovedUnits.slice(); },
         _getCoaAppliedForTest:    function ()             { return _coaApplied; },
         _getCoaSelectedIdxForTest: function ()            { return _coaSelectedIdx; },
+        // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A test seams
+        _startLoopForTest:        function ()             { startLoop(); },
+        _pauseLoopForTest:        function ()             { pauseLoop(); },
+        _stepOnceForTest:         function ()             { stepOnce(); },
+        _resetLoopForTest:        function ()             { resetLoop(); },
+        _runTurnCoreForTest:      function (plan, animMs) { return _runTurnCore(plan, animMs == null ? 0 : animMs); },
+        _setSpeedForTest:         function (sp)           { setFreeFightSpeed(sp); },
+        _getSpeedForTest:         function ()             { return _freeFightSpeed; },
+        _getSpeedConfigForTest:   function (sp)           { return FF_SPEEDS[sp || _freeFightSpeed]; },
+        _getLoopStateForTest:     function ()             { return { running: _loopRunning, paused: _loopPaused, turn: _turnNumber, side: _activeSide }; },
+        _getTurnLogForTest:       function ()             { return _turnLog.slice(); },
+        _getLastDecisionForTest:  function ()             { return _lastCommanderDecision; },
+        _buildLoopRequestBodyForTest: function ()         { return _buildLoopRequestBody(); },
+        _setActiveSideForTest:    function (s)            { _activeSide = s; },
+        _pickRecommendedIdxForTest: function (plan)       { return _pickRecommendedIdx(plan); },
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozFreeFightDemo = API;

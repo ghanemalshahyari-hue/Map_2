@@ -114,9 +114,11 @@ function envelopeOk(env, name) {
         previous_coa_families: ['air_intercept'],
         allowed_families: ['air_intercept', 'maintain_intercept', 'sensor_tasking'],
     });
-    ok(bad1b.data.accepted === false &&
-        bad1b.data.violations.some(function (v) { return v.code === 'repeated_coa_family'; }),
-        '§4 non-allowed family-repeat rejected');
+    // RMOOZ-AI-COMMANDER-FREEDOM-A: repeated family is NO LONGER rejected — forcing
+    // variation is doctrine, not physics. The validator checks structure/physics only.
+    ok(bad1b.data.accepted === true &&
+        !bad1b.data.violations.some(function (v) { return v.code === 'repeated_coa_family'; }),
+        '§4 repeated family is ACCEPTED (doctrine removed)');
 
     // ── §5 invented unit id ────────────────────────────────────────────────────
     var inv = TC.validateCommanderCoaTool({
@@ -128,35 +130,39 @@ function envelopeOk(env, name) {
         inv.data.violations.some(function (v) { return v.code === 'invented_unit_id'; }),
         '§5 invented unit id rejected');
 
-    // ── §6 ground unit assigned air intercept ──────────────────────────────────
+    // ── §6 ground unit + tactical action: ACCEPTED (doctrine not enforced) ──────
     var g = TC.validateCommanderCoaTool({
-        decision: { selected_coa_family: 'air_intercept', unit_assignments: [{ unit_uid: 'BLU-INF-1', role: 'intercept', action_type: 'INTERCEPT' }] },
+        decision: { selected_coa_family: 'cautious_recon', unit_assignments: [{ unit_uid: 'BLU-INF-1', action_type: 'recon' }] },
         units: UNITS, allowed_unit_ids: allowedIds,
         allowed_families: allowedFamilies,
     });
-    ok(g.data.accepted === false &&
-        g.data.violations.some(function (v) { return v.code === 'ground_unit_air_intercept'; }),
-        '§6 ground unit air intercept rejected');
+    ok(g.data.accepted === true,
+        '§6 ground unit assigned a tactical action is ACCEPTED (validator does not judge doctrine)');
 
-    // ── §7 naval unit assigned ground/land role ────────────────────────────────
+    // ── §7 naval unit + ground role: ACCEPTED; but explicit land_move: REJECTED ──
     var nv = TC.validateCommanderCoaTool({
-        decision: { selected_coa_family: 'ground_block', unit_assignments: [{ unit_uid: 'BLU-FRG-1', role: 'ground_hold' }] },
+        decision: { selected_coa_family: 'ground_block', unit_assignments: [{ unit_uid: 'BLU-FRG-1', action_type: 'defend' }] },
         units: UNITS, allowed_unit_ids: allowedIds,
         allowed_families: allowedFamilies,
     });
-    ok(nv.data.accepted === false &&
-        nv.data.violations.some(function (v) { return v.code === 'naval_unit_on_land' || v.code === 'impossible_domain_role'; }),
-        '§7 naval unit on land rejected');
+    ok(nv.data.accepted === true,
+        '§7 naval unit with a non-land action is ACCEPTED (doctrine removed)');
+    var nvLand = TC.validateCommanderCoaTool({
+        decision: { selected_coa_family: 'x', unit_assignments: [{ unit_uid: 'BLU-FRG-1', action_type: 'land_move' }] },
+        units: UNITS, allowed_unit_ids: allowedIds,
+    });
+    ok(nvLand.data.accepted === false &&
+        nvLand.data.violations.some(function (v) { return v.code === 'naval_land_move'; }),
+        '§7 naval explicit land_move IS rejected (physics kept)');
 
-    // ── §8 aircraft assigned infantry/ground_hold ──────────────────────────────
+    // ── §8 aircraft + ground action: ACCEPTED (doctrine removed) ────────────────
     var ac = TC.validateCommanderCoaTool({
-        decision: { selected_coa_family: 'ground_block', unit_assignments: [{ unit_uid: 'BLU-FTR-1', role: 'ground_hold' }] },
+        decision: { selected_coa_family: 'ground_block', unit_assignments: [{ unit_uid: 'BLU-FTR-1', action_type: 'defend' }] },
         units: UNITS, allowed_unit_ids: allowedIds,
         allowed_families: allowedFamilies,
     });
-    ok(ac.data.accepted === false &&
-        ac.data.violations.some(function (v) { return v.code === 'aircraft_as_infantry'; }),
-        '§8 aircraft as infantry rejected');
+    ok(ac.data.accepted === true,
+        '§8 aircraft with a ground action is ACCEPTED (doctrine removed)');
 
     // ── §9 kill/destroy action ─────────────────────────────────────────────────
     var kill = TC.validateCommanderCoaTool({
@@ -178,23 +184,21 @@ function envelopeOk(env, name) {
         tp.data.violations.some(function (v) { return v.code === 'teleport_guard'; }),
         '§10 teleport guard rejected');
 
-    // ── §11 repeated COA family → repaired_decision swaps to non-repeating ─────
+    // ── §11 repeated COA family is ACCEPTED (variation is encouraged, not enforced) ─
     var rep = TC.validateCommanderCoaTool({
         decision: {
             selected_coa_family: 'air_intercept',
-            unit_assignments: [{ unit_uid: 'BLU-FTR-1', role: 'intercept', target: { lat: 24.54, lon: 54.54 } }],
+            unit_assignments: [{ unit_uid: 'BLU-FTR-1', role: 'intercept' }],
         },
         units: UNITS, allowed_unit_ids: allowedIds,
         previous_coa_families: ['air_intercept'],
         allowed_families: ['air_intercept', 'maintain_intercept', 'sensor_tasking'],
     });
-    ok(rep.data.accepted === false &&
-        rep.data.violations.some(function (v) { return v.code === 'repeated_coa_family'; }),
-        '§11 repeated COA family rejected');
-    ok(rep.data.repaired_decision &&
-        rep.data.repaired_decision.selected_coa_family !== 'air_intercept' &&
-        ['maintain_intercept', 'sensor_tasking'].indexOf(rep.data.repaired_decision.selected_coa_family) !== -1,
-        '§11 repaired_decision swaps to non-repeating family');
+    ok(rep.data.accepted === true &&
+        !rep.data.violations.some(function (v) { return v.code === 'repeated_coa_family'; }),
+        '§11 repeated COA family is ACCEPTED (doctrine removed)');
+    ok(rep.data.checks === 'structure_physics_only',
+        '§11 validator reports structure/physics-only checks');
 
     // ── §12 a clean decision → accepted:true ───────────────────────────────────
     var clean = TC.validateCommanderCoaTool({

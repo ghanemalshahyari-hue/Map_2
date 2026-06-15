@@ -113,10 +113,25 @@ function unitSide(u) { return String((u && u.side) || 'RED').toUpperCase(); }
 function unitLL(u) {
     if (!u) return null;
     var la = finiteN(u.lat), lo = finiteN(u.lon);
+    if ((la == null || lo == null) && (u.lng != null)) { lo = finiteN(u.lng); }
     if ((la == null || lo == null) && Array.isArray(u.coord) && u.coord.length >= 2) {
         lo = finiteN(u.coord[0]); la = finiteN(u.coord[1]);
     }
     return (la != null && lo != null) ? { lat: la, lon: lo } : null;
+}
+// PHYSICS — a target must be a real coordinate inside the world (or a supplied AO box).
+function targetInBounds(ll, mapBounds) {
+    if (!ll) return false;
+    if (ll.lat < -90 || ll.lat > 90 || ll.lon < -180 || ll.lon > 180) return false;
+    if (isObj(mapBounds)) {
+        var minLat = finiteN(mapBounds.minLat), maxLat = finiteN(mapBounds.maxLat);
+        var minLon = finiteN(mapBounds.minLon), maxLon = finiteN(mapBounds.maxLon);
+        if (minLat != null && ll.lat < minLat) return false;
+        if (maxLat != null && ll.lat > maxLat) return false;
+        if (minLon != null && ll.lon < minLon) return false;
+        if (maxLon != null && ll.lon > maxLon) return false;
+    }
+    return true;
 }
 function objLL(objectives, context) {
     var list = arr(objectives);
@@ -842,34 +857,36 @@ function validateCommanderCoaTool(input) {
                 dropped = true;
             }
 
-            // domain-role legality (only when the unit actually exists).
+            // RMOOZ-AI-COMMANDER-FREEDOM-A: the validator checks STRUCTURE and PHYSICS only.
+            // It does NOT enforce doctrine — it must not reject recon/delay/screen/flank/
+            // deceive/withdraw just because they are not attack/intercept/defend. The old
+            // domain-role matrix (ground_unit_air_intercept / aircraft_as_infantry /
+            // impossible_domain_role) and the repeated-family rule were doctrine and are
+            // removed. The AI is free to choose a realistic action; the operator reviews it.
             var u = uid != null ? unitByUid[uid] : null;
-            if (u) {
-                var domain = catalog.classifyUnit(u).domain;
-                if (domain === 'ground' && roleIsAirIntercept(role, action)) {
-                    violations.push({ code: 'ground_unit_air_intercept', unit_uid: uid, text: 'Ground unit assigned an air-intercept role/action.' });
-                    dropped = true;
-                } else if (domain === 'air' && roleIsGround(role)) {
-                    violations.push({ code: 'aircraft_as_infantry', unit_uid: uid, text: 'Aircraft assigned a ground/infantry role.' });
-                    dropped = true;
-                } else if (domain === 'naval' && (roleIsGround(role) || lc(action) === 'land_move')) {
-                    violations.push({ code: 'naval_unit_on_land', unit_uid: uid, text: 'Naval unit assigned a ground/land role or land move.' });
-                    dropped = true;
-                } else {
-                    // generic allowed-role matrix check for air/naval/air_defense/radar/base.
-                    var matrix = ALLOWED_ROLE_MATRIX[domain];
-                    if (matrix && role != null && matrix.indexOf(lc(role)) === -1) {
-                        violations.push({ code: 'impossible_domain_role', unit_uid: uid, text: 'Role "' + role + '" is not allowed for a ' + domain + ' unit.' });
-                        dropped = true;
-                    }
-                }
+
+            // PHYSICS — naval unit cannot perform an explicit land move (kept; data-based,
+            // not a label). Only triggers on an explicit land_move action_type.
+            if (u && catalog.classifyUnit(u).domain === 'naval' && lc(action) === 'land_move') {
+                violations.push({ code: 'naval_land_move', unit_uid: uid, text: 'Naval unit assigned an explicit land move.' });
+                dropped = true;
             }
 
-            // teleport guard — target too far from the unit's current position.
-            if (u) {
-                var tgt = a.target && unitLL(a.target);
+            // PHYSICS — a target, if present, must be well-formed and inside the world.
+            var tgt = a.target ? unitLL(a.target) : null;
+            if (a.target && !tgt) {
+                violations.push({ code: 'malformed_target', unit_uid: uid, text: 'Assignment target has no valid lat/lon.' });
+                dropped = true;
+            }
+            if (tgt && !targetInBounds(tgt, inp.map_bounds)) {
+                violations.push({ code: 'out_of_bounds', unit_uid: uid, text: 'Target coordinate is outside the map bounds.' });
+                dropped = true;
+            }
+
+            // PHYSICS — teleport guard: target too far from the unit's current position.
+            if (u && tgt) {
                 var ull = unitLL(u);
-                if (tgt && ull) {
+                if (ull) {
                     var d = degDist(ull, tgt);
                     if (d != null && d > SAFE_STEP_DEG) {
                         violations.push({ code: 'teleport_guard', unit_uid: uid, text: 'Target is ' + round4(d) + '° away (> ' + SAFE_STEP_DEG + '° safe step).' });
@@ -881,31 +898,20 @@ function validateCommanderCoaTool(input) {
             if (!dropped) keptAssignments.push(a);
         });
 
-        // Repeated COA family when alternatives exist.
-        var selectedFamily = decision.selected_coa_family != null ? String(decision.selected_coa_family) : null;
-        var familyRepeats = false;
-        if (selectedFamily != null && prevFamilies.indexOf(selectedFamily) !== -1) {
-            var altCount = allowedFamilies.filter(function (f) { return f !== selectedFamily; }).length;
-            if (altCount >= 1) {
-                familyRepeats = true;
-                violations.push({ code: 'repeated_coa_family', text: 'selected_coa_family "' + selectedFamily + '" repeats a previous turn while alternatives exist.' });
-            }
-        }
+        // NOTE: repeated_coa_family was removed — forcing family variation is doctrine, not
+        // physics. Diversity is encouraged by generation/prompting, never by rejection.
+        // prevFamilies/allowedFamilies are accepted for signature compatibility but do not
+        // cause rejection here.
+        void prevFamilies; void allowedFamilies;
 
         var accepted = violations.length === 0;
 
-        // Build a repaired_decision: drop offending assignments, swap a repeating family.
+        // Build a repaired_decision: drop only the physically/structurally invalid
+        // assignments. Tactical choice is preserved verbatim.
         var repaired = null;
         if (!accepted) {
             repaired = Object.assign({}, decision);
             repaired.unit_assignments = keptAssignments;
-            if (familyRepeats) {
-                var swap = null;
-                for (var i = 0; i < allowedFamilies.length; i++) {
-                    if (prevFamilies.indexOf(allowedFamilies[i]) === -1) { swap = allowedFamilies[i]; break; }
-                }
-                if (swap) repaired.selected_coa_family = swap;
-            }
             repaired.review_required = true;
         }
 
@@ -914,6 +920,7 @@ function validateCommanderCoaTool(input) {
             rejected_reason: accepted ? null : (violations[0] && violations[0].code) || 'rejected',
             violations: violations,
             repaired_decision: repaired,
+            checks: 'structure_physics_only',  // doctrine is NOT validated
         });
     } catch (e) {
         return fail('validateCommanderCoaTool', e && e.message);

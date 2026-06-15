@@ -31,16 +31,30 @@ const INTEL      = require('./scenario-intel');                // RMOZ-INTEL-CAP
 const BRIEF      = require('./commander-brief');                // RMOZ-COMMANDER-BRIEF-COALITION-A
 const ANALYST    = require('./free-fight-llm-capability-analyst'); // FREEFIGHT-LLM-CAPABILITY-ANALYST-A
 const CONTRACT   = require('./rmooz-ai-tool-contract');            // RMOZ-AI-TOOL-CONTRACT-A
+const TACTICS    = require('./tactical-action-library');           // RMOOZ-AI-COMMANDER-FREEDOM-A
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 var STEP_DEG       = 0.05;   // ≈ 5-6 km per tick
 var RECON_STEP_DEG = 0.03;   // recon moves shorter
 var MAX_STEP_DEG   = 0.15;   // teleport guard
 
-var ALLOWED_COA_ACTION_TYPES = [
+// RMOOZ-AI-COMMANDER-FREEDOM-A: the action vocabulary now includes the 16 free
+// tactical actions (lower-case) PLUS the legacy uppercase actions (back-compat). The
+// validator checks structure/physics only — it does not judge which action was chosen.
+var LEGACY_COA_ACTION_TYPES = [
     'MOVE_TOWARD_OBJECTIVE', 'SUPPORT_BY_FIRE', 'HOLD_POSITION',
     'SCREEN_FLANK', 'RECON_OBJECTIVE'
 ];
+var ALLOWED_COA_ACTION_TYPES = LEGACY_COA_ACTION_TYPES.concat(
+    TACTICS.TACTICAL_ACTIONS.map(function (a) { return a.toUpperCase(); })
+);
+// action_type → planner role (for ALLOWED_ROLES); keeps roles within the existing set.
+var ACTION_ROLE = {
+    recon: 'recon', observe: 'recon', probe: 'recon', screen: 'screen', delay: 'screen',
+    defend: 'defend', withdraw: 'reserve', avoid_contact: 'screen', flank: 'assault',
+    deceive: 'support', feint: 'support', attack: 'assault', hold: 'hold',
+    reposition: 'support', support: 'support', reserve: 'reserve',
+};
 // RED (attacker) roles + BLUE (defender) roles. FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A
 // adds the defensive roles so the planner can plan for the active side either way.
 var ALLOWED_ROLES = ['assault', 'support', 'screen', 'reserve', 'recon', 'hold',
@@ -421,11 +435,101 @@ function buildBlueCoas(blueUnits, obj, situation, capContext) {
 }
 
 /**
- * buildCoasForSide(units, obj, side, situation) — dispatch to the RED (attack) or
- * BLUE (defense) deterministic builder based on the active side. The situation
- * (FREEFIGHT-BLUE-THREAT-AWARE-MOVEMENT-A) lets BLUE intercept the RED threat axis.
+ * buildDiverseCoas — RMOOZ-AI-COMMANDER-FREEDOM-A. Produce the THREE required COA
+ * archetypes (cautious/recon/security, maneuver/deception/flank, direct/attack/defense),
+ * each assigning a GENUINELY different tactical action per unit via the tactical action
+ * library (recon stands off, flank uses a different axis, withdraw breaks contact, …).
+ * Unit selection is capability-fit ordered then rotated by `seed`, so the lead unit and
+ * assignments vary across planning cycles (not always the same unit). The recommended
+ * archetype depends on the commander mode + situation (free) or rotates (high_variation).
  */
-function buildCoasForSide(units, obj, side, situation, capContext) {
+function buildDiverseCoas(units, obj, side, situation, capContext, mode, seed) {
+    function r5(x) { return Math.round(x * 1e5) / 1e5; }
+    var list = arr(units).filter(unitHasCoord);
+    var total = list.length;
+    var sideU = String(side || 'RED').toUpperCase();
+    var objName = (obj && (obj.name || obj.label)) || 'Objective X';
+    var objPt = (obj && finiteLL(obj)) ? { lat: obj.lat, lon: obj.lon } : null;
+
+    // Enemy reference for the active side: BLUE faces the nearest RED; the attacker faces
+    // the defended objective (its defenders).
+    var enemy = null;
+    if (sideU === 'BLUE' && situation && situation.nearest_red &&
+        Number.isFinite(+situation.nearest_red.lat) && Number.isFinite(+situation.nearest_red.lon)) {
+        enemy = { lat: +situation.nearest_red.lat, lon: +situation.nearest_red.lon };
+    } else if (objPt) { enemy = objPt; }
+    var threatR = (situation && situation.thresholds_deg &&
+        (situation.thresholds_deg.defended || situation.thresholds_deg.warning)) || 0.10;
+    // Rear fallback for withdraw: away from the objective from the force centroid.
+    var fallback = null;
+    if (objPt && total) {
+        var cl = 0, cn = 0; list.forEach(function (u) { cl += u.lat; cn += u.lon; });
+        var c = { lat: cl / total, lon: cn / total };
+        fallback = { lat: c.lat + (c.lat - objPt.lat) * 0.5, lon: c.lon + (c.lon - objPt.lon) * 0.5 };
+    }
+    var ctxBase = { nearestEnemy: enemy, objective: objPt, threatZoneRadiusDeg: threatR, fallback: fallback, side: sideU };
+
+    function uid(u) { return u.id || u.uid || u.unit_uid; }
+    function usideStr(u) { return String(u.side || sideU).toUpperCase(); }
+
+    // capability-fit ordering, then rotate by seed so assignments vary across cycles.
+    var byUid = (capContext && capContext.profiles_by_uid) || {};
+    var fitKey = (capContext && capContext.mission_score_key) || null;
+    function fit(u) { var p = byUid[uid(u)]; var s = p && p.capability_scores && Number(p.capability_scores[fitKey]); return Number.isFinite(s) ? s : 0; }
+    var ordered = list.slice();
+    if (objPt) ordered.sort(function (a, b) { var fa = fit(a), fb = fit(b); if (fb !== fa) return fb - fa; return dist({ lat: a.lat, lon: a.lon }, objPt) - dist({ lat: b.lat, lon: b.lon }, objPt); });
+    var rot = total > 1 ? ((Number(seed) || 0) % total) : 0;
+    if (rot > 0) ordered = ordered.slice(rot).concat(ordered.slice(0, rot));
+
+    var riskByArch = { cautious_recon: 'low', maneuver_deception: 'medium', direct_action: 'high' };
+    var leadCount = Math.max(1, Math.ceil(total * 0.4));
+    var coas = TACTICS.COA_ARCHETYPES.map(function (A, idx) {
+        var actions = ordered.map(function (u, i) {
+            var act = (i < leadCount) ? A.actions[0] : (A.actions[(i % (A.actions.length - 1)) + 1] || A.actions[0]);
+            var g = TACTICS.computeActionGeometry(act, u, ctxBase);
+            return {
+                unit_uid: uid(u), side: usideStr(u), role: (ACTION_ROLE[act] || 'support'),
+                action_type: act,
+                target: { lat: r5(g.target.lat), lon: r5(g.target.lon), type: 'coord' },
+                reason: g.reason, behavior: g.behavior,
+                why_unit: 'Chosen by capability-fit and position for the ' + A.label.toLowerCase() + ' option.',
+                deciding_factor: g.flags.different_axis ? 'alternate axis / terrain' :
+                    (g.flags.stays_outside_threat ? 'standoff from the threat zone' :
+                    (g.flags.increases_distance_from_threat ? 'preserve the force' : 'mission suitability / proximity')),
+            };
+        });
+        return {
+            plan_id: 'COA-' + (idx + 1), title: A.label, objective_id: objName, coa_family: A.key,
+            summary: A.label + ' — ' + actions.length + ' units; lead action: ' + A.actions[0] + ' toward ' + objName + '.',
+            recommended: false, risk: riskByArch[A.key] || 'medium',
+            confidence: (A.key === 'cautious_recon') ? 'high' : 'medium',
+            units_total_considered: total, units_selected_count: actions.length,
+            phases: [{ phase_id: 'phase-1', name: A.label, actions: actions }],
+            risks: [], assumptions: [], validation: {},
+        };
+    });
+
+    // Recommended archetype: high_variation rotates by seed; free is situation-driven.
+    var recIdx;
+    if (mode === 'high_variation') recIdx = ((Number(seed) || 0) % coas.length);
+    else {
+        var hot = situation && (situation.alert_state === 'ALERT' || situation.alert_state === 'ENGAGEMENT_READY' || situation.red_inside_defended_zone);
+        recIdx = hot ? 2 : 0; // direct under pressure, cautious/recon otherwise
+    }
+    (coas[recIdx] || coas[0]).recommended = true;
+    return coas;
+}
+
+/**
+ * buildCoasForSide(units, obj, side, situation) — dispatch to the deterministic builder.
+ * In 'free'/'high_variation' commander modes the diverse archetype builder runs (genuine
+ * tactical variety); 'controlled' (doctrine-guided, default) keeps the side-aware
+ * intercept/defense builders. FREEFIGHT-BLUE-THREAT-AWARE-MOVEMENT-A + COMMANDER-FREEDOM-A.
+ */
+function buildCoasForSide(units, obj, side, situation, capContext, mode, seed) {
+    if (mode === 'free' || mode === 'high_variation') {
+        return buildDiverseCoas(units, obj, side, situation, capContext, mode, seed);
+    }
     return String(side || 'RED').toUpperCase() === 'BLUE'
         ? buildBlueCoas(units, obj, situation, capContext)
         : buildDeterministicCoas(units, obj);
@@ -438,21 +542,27 @@ function buildCoasForSide(units, obj, side, situation, capContext) {
  */
 function normalizeCoaAction(raw, allowedUnitIds) {
     if (!raw || typeof raw !== 'object') return null;
-    var at = str(raw.action_type).toUpperCase();
-    if (ALLOWED_COA_ACTION_TYPES.indexOf(at) === -1) return null;
+    // RMOOZ-AI-COMMANDER-FREEDOM-A: accept the 16 free tactical actions (kept lower-case)
+    // as well as the legacy uppercase actions. Do NOT reject a creative-but-valid action.
+    var rawAt = str(raw.action_type);
+    var lowAt = rawAt.toLowerCase().trim();
+    var at;
+    if (TACTICS.isTacticalAction(lowAt)) at = lowAt;
+    else if (LEGACY_COA_ACTION_TYPES.indexOf(rawAt.toUpperCase()) !== -1) at = rawAt.toUpperCase();
+    else return null;
     var uid = str(raw.unit_uid);
     if (!uid) return null;
     var allowed = arr(allowedUnitIds).map(String);
     if (allowed.length && allowed.indexOf(uid) === -1) return null;
     var side = str(raw.side || 'RED').toUpperCase();
-    var role = str(raw.role || 'assault').toLowerCase();
-    if (ALLOWED_ROLES.indexOf(role) === -1) role = 'assault';
+    var role = str(raw.role || ACTION_ROLE[at] || 'assault').toLowerCase();
+    if (ALLOWED_ROLES.indexOf(role) === -1) role = ACTION_ROLE[at] || 'assault';
     var tgt = (raw.target && typeof raw.target === 'object') ? {
         type: str(raw.target.type || 'coord', 20),
         lat:  Number.isFinite(Number(raw.target.lat)) ? Number(raw.target.lat) : 0,
         lon:  Number.isFinite(Number(raw.target.lon)) ? Number(raw.target.lon) : 0,
     } : { type: 'coord', lat: 0, lon: 0 };
-    return {
+    var out = {
         unit_uid:    uid,
         side:        side,
         role:        role,
@@ -460,6 +570,13 @@ function normalizeCoaAction(raw, allowedUnitIds) {
         target:      tgt,
         reason:      str(raw.reason, 400),
     };
+    // RMOOZ-AI-COMMANDER-FREEDOM-A: preserve the commander's reasoning when present.
+    if (raw.why_action != null) out.why_action = str(raw.why_action, 300);
+    if (raw.why_unit != null) out.why_unit = str(raw.why_unit, 300);
+    if (raw.deciding_factor != null) out.deciding_factor = str(raw.deciding_factor, 200);
+    if (raw.risk != null) out.risk = str(raw.risk, 200);
+    if (raw.expected_result != null) out.expected_result = str(raw.expected_result, 300);
+    return out;
 }
 
 /**
@@ -628,27 +745,64 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
     var effectiveAllowed = allowedIds.length ? allowedIds : unitList.map(function (u) { return u.id; });
 
     var activeSide = String((context && context.active_side) || (opts && opts.preferSide) || 'RED').toUpperCase();
-    var sideDoctrine = activeSide === 'BLUE'
-        ? 'You command the BLUE (defending) side: defend, intercept, screen, reinforce, or hold.'
-        : 'You command the RED (attacking) side: attack, probe, flank, support, or hold.';
-    var system = [
-        'You are a military wargame AI for an advisory-only demo exercise.',
-        sideDoctrine,
-        'Return ONLY a JSON object with a "coas" array containing 2-3 COA objects.',
-        'No other text, explanation, or preamble.',
-        'Every unit_uid MUST be from the allowed_unit_ids list — never invent IDs.',
-        'Every COA must have at least one action with a valid unit_uid.',
-    ].join(' ');
+    // RMOOZ-AI-COMMANDER-FREEDOM-A: commander mode drives doctrine-freedom + temperature.
+    var mode = String((context && context.commander_mode) || 'controlled').toLowerCase();
+    var freedom = (mode === 'free' || mode === 'high_variation');
+    var temperature = mode === 'high_variation' ? 0.85 : (mode === 'free' ? 0.5 : 0.2);
+
+    var system = freedom
+        ? [
+            'You are a free-thinking military wargame commander AI for an advisory-only demo exercise.',
+            'You command the ' + activeSide + ' side.',
+            'Think like a real commander: choose the tactical action that best fits the terrain, sovereign borders/zones, enemy disposition, objective, and your units\' readiness — NOT always attack or intercept.',
+            'You may freely choose recon, probe, screen, delay, defend, withdraw, flank, deceive, feint, attack, hold, reposition, avoid_contact, observe, support, or reserve.',
+            'Produce at least 3 GENUINELY DIFFERENT courses of action: (1) a cautious/recon/security option, (2) a maneuver/deception/flank option, (3) a direct attack/defense option — not the same movement relabeled.',
+            'Recon must observe from standoff and avoid contact; delay must shape the enemy; flank must use a different axis; withdraw must increase distance; deceive must mislead.',
+            'For every action explain why_action, why_unit, deciding_factor (terrain/zone/objective/enemy), risk, and expected_result.',
+            'Return ONLY a JSON object with a "coas" array. Every unit_uid MUST be from allowed_unit_ids. NEVER output engage/destroy/kill — movement/posture only.',
+        ].join(' ')
+        : [
+            'You are a military wargame AI for an advisory-only demo exercise.',
+            (activeSide === 'BLUE'
+                ? 'You command the BLUE (defending) side: defend, intercept, screen, reinforce, or hold.'
+                : 'You command the RED (attacking) side: attack, probe, flank, support, or hold.'),
+            'Return ONLY a JSON object with a "coas" array containing 2-3 COA objects.',
+            'No other text, explanation, or preamble.',
+            'Every unit_uid MUST be from the allowed_unit_ids list — never invent IDs.',
+            'Every COA must have at least one action with a valid unit_uid.',
+        ].join(' ');
+
+    // GIS / terrain / sovereign-zone / contact context the commander must reason from.
+    var intel = context && context._intel;
+    var terrainZoneContext = intel ? {
+        terrain: intel.terrain || null,
+        sovereign_zone: intel.zone_state || null,
+        contact_picture: intel.contact_picture || null,
+        roe_state: intel.roe_state || null,
+        alert_state: intel.alert_state || null,
+        coalition: intel.coalition_posture || null,
+        note: 'Reason from country/sovereign borders, terrain, choke points, and distance from border/objective — not only enemy proximity to the objective.',
+    } : null;
+
+    var actionEnum = freedom
+        ? TACTICS.TACTICAL_ACTIONS.join('|')
+        : 'MOVE_TOWARD_OBJECTIVE|SUPPORT_BY_FIRE|HOLD_POSITION|SCREEN_FLANK|RECON_OBJECTIVE';
 
     var prompt = JSON.stringify({
         units: unitList,
         objectives: arr(objectives).map(function (o) { return { lat: o.lat, lon: o.lon, name: o.name || o.label || 'Objective X' }; }),
-        context: context || {},
+        context: { active_side: activeSide, commander_mode: mode },
         allowed_unit_ids: effectiveAllowed,
+        allowed_tactical_actions: freedom ? TACTICS.TACTICAL_ACTIONS.slice() : undefined,
+        coa_archetypes: freedom ? TACTICS.COA_ARCHETYPES.map(function (a) { return { key: a.key, label: a.label }; }) : undefined,
+        terrain_zone_context: terrainZoneContext,
+        previous_coa_families: arr(context && context.previous_coa_families),
+        instruction: freedom ? 'Produce a DIFFERENT tactical approach than the previous COA family when appropriate; pick the realistic action, the operator will review.' : undefined,
         required_output_schema: {
             coas: [{
                 plan_id: 'COA-1',
                 title: 'string',
+                coa_family: freedom ? 'cautious_recon|maneuver_deception|direct_action' : undefined,
                 objective_id: 'string',
                 summary: 'string',
                 recommended: false,
@@ -659,10 +813,15 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
                 phases: [{ phase_id: 'phase-1', name: 'Move', actions: [{
                     unit_uid: '<MUST be one of allowed_unit_ids>',
                     side: 'RED|BLUE',
-                    role: 'assault|support|screen|reserve|recon|hold',
-                    action_type: 'MOVE_TOWARD_OBJECTIVE|SUPPORT_BY_FIRE|HOLD_POSITION|SCREEN_FLANK|RECON_OBJECTIVE',
+                    role: 'assault|support|screen|reserve|recon|hold|defend',
+                    action_type: actionEnum,
                     target: { lat: 0, lon: 0, type: 'objective|coord' },
                     reason: '<one sentence>',
+                    why_action: freedom ? '<why this action>' : undefined,
+                    why_unit: freedom ? '<why this unit>' : undefined,
+                    deciding_factor: freedom ? '<terrain/zone/objective/enemy factor>' : undefined,
+                    risk: freedom ? '<the risk>' : undefined,
+                    expected_result: freedom ? '<expected result>' : undefined,
                 }]}],
                 risks: ['string'],
                 assumptions: ['string'],
@@ -679,7 +838,7 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
             system:    system,
             prompt:    prompt,
             format:    'json',
-            options:   { temperature: 0.2, numPredict: 2500 },
+            options:   { temperature: temperature, numPredict: 2500 },
             timeoutMs: timeoutMs,
         });
     } catch (e) {
@@ -719,6 +878,13 @@ async function planCoas(units, objectives, context, opts) {
     // Active side: loop context wins, then opts.preferSide, then RED.
     var activeSide = String(context.active_side || opts.preferSide || 'RED').toUpperCase();
     if (activeSide !== 'RED' && activeSide !== 'BLUE') activeSide = 'RED';
+    // RMOOZ-AI-COMMANDER-FREEDOM-A: AI Commander Mode — controlled (doctrine-guided,
+    // default), free (free tactical reasoning), high_variation (creative / rotates).
+    var commanderMode = String(opts.commander_mode || context.commander_mode || 'controlled').toLowerCase().trim();
+    if (['controlled', 'free', 'high_variation'].indexOf(commanderMode) === -1) commanderMode = 'controlled';
+    var variationSeed = Number.isFinite(+context.variation_seed) ? +context.variation_seed
+        : (Number.isFinite(+context.turn_index) ? +context.turn_index : arr(context.previous_coa_families).length);
+    var diverseMode = (commanderMode === 'free' || commanderMode === 'high_variation');
     var allUnits = arr(units).filter(function (u) { return unitHasCoord(u) && String(u.side || 'RED').toUpperCase() === activeSide; });
     if (!allUnits.length) {
         // Fall back to any side if the active side has no movable units
@@ -799,7 +965,13 @@ async function planCoas(units, objectives, context, opts) {
 
     if (opts.useLlm && process.env.RMOOZ_FREE_FIGHT_LLM === '1') {
         llmCalled = true;
-        var llmResult = await _callLlm(allUnits, objectives, context, opts);
+        // Give the LLM the freedom context: commander mode, intel (terrain/zone/border),
+        // situation, and the variation seed — so it can reason and choose a tactical action.
+        var llmCtx = Object.assign({}, context, {
+            commander_mode: commanderMode, variation_seed: variationSeed,
+            _intel: intel, _situation: situation,
+        });
+        var llmResult = await _callLlm(allUnits, objectives, llmCtx, opts);
         llmStatus = llmResult.llm_status || null;
         if (llmResult.ok) {
             var llmCoas = enrichCoasWithNarrative(llmResult.coas, obj, context, 'llm');
@@ -847,21 +1019,29 @@ async function planCoas(units, objectives, context, opts) {
         }
     }
 
-    // Deterministic fallback — side-aware (RED attack vs BLUE defense), threat-aware + capability-driven for BLUE
-    var coas = enrichCoasWithNarrative(buildCoasForSide(allUnits, obj, activeSide, situation, capContext), obj, context, 'deterministic_coa_fallback');
-    var assess = buildCommanderAssessment(coas, obj, context, 'deterministic_coa_fallback');
-    if (activeSide === 'BLUE' && blueIntent) { applyBlueReaction(coas, situation, blueIntent); assess = appendSituationToAssessment(assess, situation); }
+    // Deterministic plan. In 'free'/'high_variation' this is the diverse archetype
+    // builder (genuine tactical variety); in 'controlled' it is the side-aware
+    // doctrine-guided builder. The intercept-override (applyBlueReaction) is skipped in
+    // diverse mode so the chosen tactical actions (recon/flank/delay/…) are preserved.
+    var detSource = diverseMode ? 'deterministic_diverse_coa' : 'deterministic_coa_fallback';
+    var coas = enrichCoasWithNarrative(buildCoasForSide(allUnits, obj, activeSide, situation, capContext, commanderMode, variationSeed), obj, context, detSource);
+    var assess = buildCommanderAssessment(coas, obj, context, detSource);
+    if (activeSide === 'BLUE' && blueIntent) {
+        if (!diverseMode) applyBlueReaction(coas, situation, blueIntent);
+        assess = appendSituationToAssessment(assess, situation);
+    }
     return _attachCommanderBrief({
         ok: true,
-        plan_source: 'deterministic_coa_fallback',
+        plan_source: detSource,
         active_side: activeSide,
+        commander_mode: commanderMode,
         coas: coas,
         situation_state: situation,
         blue_reaction_intent: blueIntent,
         intel: intel,
         capability_summary: capSummary,
         unit_capability_profiles: capProfiles.slice(0, 80),
-        tool_contract: _toolContract('deterministic_coa_fallback', _llmContractRejection, llmCalled, false),
+        tool_contract: _toolContract(detSource, _llmContractRejection, llmCalled, false),
         commander_assessment: assess,
         recommended_plan_id: _recommendedPlanId(coas),
         llm_called: llmCalled,
@@ -1068,6 +1248,8 @@ module.exports = {
     buildDeterministicCoas: buildDeterministicCoas,
     buildBlueCoas:          buildBlueCoas,
     buildCoasForSide:       buildCoasForSide,
+    buildDiverseCoas:       buildDiverseCoas,         // RMOOZ-AI-COMMANDER-FREEDOM-A
+    _callLlmForTest:        _callLlm,                 // RMOOZ-AI-COMMANDER-FREEDOM-A (prompt inspection)
     routeHealth:            routeHealth,
     resolveLocalProvider:   resolveLocalProvider,
     resolveLocalModel:      resolveLocalModel,

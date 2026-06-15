@@ -75,27 +75,31 @@ var ALLOWED = mixed().map(function (x) { return x.uid; });
     var v4 = T.validateCommanderCoaTool({ decision: inv, units: mixed(), allowed_unit_ids: ALLOWED, previous_coa_families: [], allowed_families: ['air_intercept'] }).data;
     ok('§4 rejected', v4.accepted === false && /invented_unit_id/.test(v4.rejected_reason));
 
-    // ── §5 ground → air intercept ────────────────────────────────────────────
-    console.log('\n§5  Ground unit assigned air-intercept rejected');
-    var g5 = { selected_coa_family: 'air_intercept', unit_assignments: [{ unit_uid: 'B-INF', role: 'air_superiority', action_type: 'MOVE_TOWARD_OBJECTIVE', target: { lat: 24.44, lon: 54.37 } }] };
-    var v5 = T.validateCommanderCoaTool({ decision: g5, units: mixed(), allowed_unit_ids: ALLOWED, previous_coa_families: [], allowed_families: ['air_intercept'] }).data;
-    ok('§5 rejected (ground_unit_air_intercept)', v5.accepted === false && /ground_unit_air_intercept|impossible_domain_role/.test(v5.rejected_reason));
+    // RMOOZ-AI-COMMANDER-FREEDOM-A: the validator is structure/physics ONLY — it no
+    // longer rejects a COA for not matching expected doctrine.
+    // ── §5 ground unit + tactical action: ACCEPTED ────────────────────────────
+    console.log('\n§5  Ground unit + tactical action ACCEPTED (doctrine not enforced)');
+    var g5 = { selected_coa_family: 'cautious_recon', unit_assignments: [{ unit_uid: 'B-INF', action_type: 'recon', target: { lat: 24.44, lon: 54.37 } }] };
+    var v5 = T.validateCommanderCoaTool({ decision: g5, units: mixed(), allowed_unit_ids: ALLOWED, previous_coa_families: [], allowed_families: ['cautious_recon'] }).data;
+    ok('§5 ground recon COA accepted (no doctrine rejection)', v5.accepted === true);
 
-    // ── §6 naval → land ──────────────────────────────────────────────────────
-    console.log('\n§6  Naval unit assigned ground/land role rejected');
-    var n6 = { selected_coa_family: 'ground_block', unit_assignments: [{ unit_uid: 'B-FRIG', role: 'ground_hold', action_type: 'HOLD_POSITION', target: { lat: 24.55, lon: 54.15 } }] };
-    var v6 = T.validateCommanderCoaTool({ decision: n6, units: mixed(), allowed_unit_ids: ALLOWED, previous_coa_families: [], allowed_families: ['ground_block'] }).data;
-    ok('§6 rejected (naval on land)', v6.accepted === false && /naval_unit_on_land|impossible_domain_role/.test(v6.rejected_reason));
+    // ── §6 naval unit + non-land action: ACCEPTED; explicit land_move: REJECTED ─
+    console.log('\n§6  Naval non-land action ACCEPTED; explicit land_move REJECTED');
+    var n6 = { selected_coa_family: 'maneuver_deception', unit_assignments: [{ unit_uid: 'B-FRIG', action_type: 'screen', target: { lat: 24.55, lon: 54.15 } }] };
+    var v6 = T.validateCommanderCoaTool({ decision: n6, units: mixed(), allowed_unit_ids: ALLOWED, previous_coa_families: [], allowed_families: ['maneuver_deception'] }).data;
+    ok('§6 naval screen COA accepted', v6.accepted === true);
+    var n6b = { selected_coa_family: 'x', unit_assignments: [{ unit_uid: 'B-FRIG', action_type: 'land_move' }] };
+    var v6b = T.validateCommanderCoaTool({ decision: n6b, units: mixed(), allowed_unit_ids: ALLOWED }).data;
+    ok('§6 naval explicit land_move rejected (physics kept)', v6b.accepted === false && /naval_land_move/.test(v6b.rejected_reason));
 
-    // ── §7 repeated family avoided ───────────────────────────────────────────
-    console.log('\n§7  Repeated COA family avoided (tool_contract.recommended_family ≠ previous)');
+    // ── §7 family-variety is SUGGESTED (not enforced); repeated family ACCEPTED ─
+    console.log('\n§7  Family variety suggested (not enforced); repeated family ACCEPTED');
     ok('§7 recommended_family avoids the just-used family', tc.recommended_family && tc.avoid_repeating.indexOf(tc.recommended_family) === -1, tc.recommended_family + ' vs ' + JSON.stringify(tc.avoid_repeating));
     ok('§7 avoid_repeating reflects previous_coa_families', tc.avoid_repeating.indexOf('air_intercept') !== -1);
-    // and the validator rejects a repeated family when alternatives exist
-    var rep = { selected_coa_family: 'air_intercept', unit_assignments: [{ unit_uid: 'B-FIGHT', role: 'intercept', action_type: 'MOVE_TOWARD_OBJECTIVE', target: { lat: 24.38, lon: 54.34 } }] };
+    var rep = { selected_coa_family: 'air_intercept', unit_assignments: [{ unit_uid: 'B-FIGHT', action_type: 'attack', target: { lat: 24.38, lon: 54.34 } }] };
     var v7 = T.validateCommanderCoaTool({ decision: rep, units: mixed(), allowed_unit_ids: ALLOWED, previous_coa_families: ['air_intercept'], allowed_families: ['air_intercept', 'sensor_tasking', 'maintain_intercept'] }).data;
-    ok('§7 validator rejects repeated family when alternatives exist', v7.accepted === false && /repeated_coa_family/.test(v7.rejected_reason));
-    ok('§7 repaired_decision swaps to a non-repeating family', v7.repaired_decision && v7.repaired_decision.selected_coa_family !== 'air_intercept');
+    ok('§7 repeated family is ACCEPTED (variation not enforced by validator)', v7.accepted === true && !/repeated_coa_family/.test(String(v7.rejected_reason)));
+    ok('§7 validator reports structure/physics-only checks', v7.checks === 'structure_physics_only');
 
     // ── §8 LLM unavailable → deterministic fallback ──────────────────────────
     console.log('\n§8  LLM requested but unavailable → deterministic fallback, plan ok');

@@ -73,6 +73,18 @@
     // FREEFIGHT-MANUAL-MAP-CAMERA-A: the camera stays where the operator left it.
     // AI movement NEVER pans/zooms/fitBounds the map unless mode is 'follow'.
     var _freeFightCameraMode = 'manual'; // 'manual' (default) | 'follow'
+    // RMOOZ-AI-COMMANDER-FREEDOM-A: AI Commander Mode —
+    //   'controlled'    : doctrine-guided (intercept/defend bias)
+    //   'free'          : free tactical reasoning (recon/flank/delay/deceive/withdraw/…)
+    //   'high_variation': creative, rotates the recommended approach each cycle
+    // Default 'controlled' (doctrine-guided) preserves the intercept/overlay behavior;
+    // the operator opts into Free / High-variation for free tactical reasoning.
+    var _commanderMode = 'controlled';
+    var FF_COMMANDER_MODES = {
+        controlled:     { label: 'Controlled' },
+        free:           { label: 'Free Tactical' },
+        high_variation: { label: 'High Variation' },
+    };
     // Cinematic speeds: decisionDelayMs between turns, moveAnimMs per move animation.
     var FF_SPEEDS = {
         x1:    { decisionDelayMs: 8000, moveAnimMs: 6000, label: 'x1' },
@@ -1026,6 +1038,7 @@
         bind('loop-route-check', _probeRouteHealth);
         bind('camera-manual', function () { setCameraMode('manual'); });
         bind('camera-follow', function () { setCameraMode('follow'); });
+        ['controlled', 'free', 'high_variation'].forEach(function (m) { bind('mode-' + m, function () { setCommanderMode(m); }); });
         FF_SPEED_ORDER.forEach(function (sp) { bind('loop-speed-' + sp, function () { setFreeFightSpeed(sp); }); });
         renderCommanderPanel();
         var modeSel = _panel.querySelector('[data-act="planner-mode"]');
@@ -1836,11 +1849,15 @@
                 // intel layer's COA-variation engine avoids repeating the same family.
                 previous_coa_families: _coaFamilyHistory.slice(-3),
                 defending_side: 'BLUE',
+                // RMOOZ-AI-COMMANDER-FREEDOM-A: commander mode + a per-turn variation seed
+                // so high-variation rotates the recommended approach across cycles.
+                commander_mode: _commanderMode,
+                variation_seed: _turnNumber + 1,
                 // RMOZ-COMMANDER-BRIEF-COALITION-A: scenario name → sovereign-zone country
                 // + coalition detection (UAE→GCC, NATO members→NATO, etc.).
                 scenario_name: (function () { var w = W(); var sc = w && w.RmoozScenario && w.RmoozScenario.scenario; return sc && (sc.name || sc.scenario_label || sc.scenario_name) || null; })(),
             },
-            opts: { preferSide: _activeSide, useLlm: _useLlm, allowed_unit_ids: base.units.map(function (u) { return u.id; }) },
+            opts: { preferSide: _activeSide, useLlm: _useLlm, commander_mode: _commanderMode, allowed_unit_ids: base.units.map(function (u) { return u.id; }) },
         };
     }
 
@@ -1958,6 +1975,15 @@
         _freeFightCameraMode = (mode === 'follow') ? 'follow' : 'manual';
         updatePanel();
     }
+    // RMOOZ-AI-COMMANDER-FREEDOM-A: switch the AI Commander Mode (controlled / free /
+    // high_variation). Takes effect on the next planning cycle; logged for transparency.
+    function setCommanderMode(mode) {
+        if (!FF_COMMANDER_MODES[mode]) return;
+        _commanderMode = mode;
+        try { _appendToEventLog('AI COMMANDER MODE: ' + FF_COMMANDER_MODES[mode].label + ' — ' +
+            (mode === 'controlled' ? 'doctrine-guided' : mode === 'high_variation' ? 'creative / rotating approach' : 'free tactical reasoning') + '.'); } catch (_) {}
+        updatePanel();
+    }
 
     // Capture original positions of every unit once, so Reset can fully restore.
     function _captureUnitsForReset() {
@@ -2030,7 +2056,19 @@
             var heldTail = _coaHeldCount > 0 ? (', ' + _coaHeldCount + ' already in position') : '';
             _appendToEventLog('AI Commander Turn ' + turnNo + ' (' + sideForTurn + '): ' +
                 record.coa_id + ' ' + record.coa_title + ' — ' + moved.length + ' units moved' + heldTail + ' [' +
-                (source === 'llm' ? 'llm' : 'deterministic_coa_fallback') + ']');
+                (source === 'llm' ? 'llm' : (plan.plan_source || 'deterministic')) + ']');
+            // RMOOZ-AI-COMMANDER-FREEDOM-A: explain the AI's tactical reasoning — the chosen
+            // COA family + the lead unit's action, why, and the deciding factor.
+            try {
+                var leadAct = (coa.phases && coa.phases[0] && coa.phases[0].actions && coa.phases[0].actions[0]) || null;
+                if (leadAct && leadAct.action_type) {
+                    var fam = coa.coa_family ? (' [' + esc(coa.coa_family) + ']') : '';
+                    var why = leadAct.why_action || leadAct.reason || leadAct.behavior || '';
+                    var factor = leadAct.deciding_factor ? (' — factor: ' + esc(leadAct.deciding_factor)) : '';
+                    _appendToEventLog('AI REASONING' + fam + ': lead action ' + esc(String(leadAct.action_type)) +
+                        (why ? ' — ' + esc(String(why)).slice(0, 160) : '') + factor + '.');
+                }
+            } catch (_) {}
             // FREEFIGHT-BLUE-THREAT-AWARE-MOVEMENT-A: BLUE intercept event line when BLUE
             // moves to block the RED axis (only when units actually moved).
             if (sideForTurn === 'BLUE' && /intercept|block/i.test(record.coa_title) && moved.length > 0) {
@@ -2349,6 +2387,19 @@
         });
         h += '<span style="font-size:9px;color:#6a8fa8;">' + (_freeFightCameraMode === 'follow' ? 'map pans to follow AI moves' : 'map stays where you left it') + '</span>';
         h += '</div>';
+        // RMOOZ-AI-COMMANDER-FREEDOM-A: AI Commander Mode — controlled / free / high variation.
+        h += '<div data-ff-loop="commander-mode" style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:6px;">';
+        h += '<span style="font-size:10px;color:#8fa5b8;">AI mode:</span>';
+        ['controlled', 'free', 'high_variation'].forEach(function (m) {
+            var on = (_commanderMode === m);
+            var bg = on ? '#2a1a4a' : '#101b27', bc = on ? '#9a7be0' : '#4a5f75', fc = on ? '#d8ccff' : '#9fb8e0';
+            h += '<button data-act="mode-' + m + '" style="font:inherit;cursor:pointer;border:1px solid ' + bc + ';background:' + bg + ';color:' + fc + ';border-radius:4px;padding:3px 8px;font-size:10px;font-weight:' + (on ? '700' : '400') + ';">' + esc(FF_COMMANDER_MODES[m].label) + '</button>';
+        });
+        h += '</div>';
+        h += '<div style="font-size:9px;color:#6a8fa8;margin-top:3px;">' +
+            (_commanderMode === 'controlled' ? 'Doctrine-guided: intercept / defend.' :
+             _commanderMode === 'high_variation' ? 'Creative: rotates recon / flank / deceive / delay / attack each cycle.' :
+             'Free tactical reasoning: AI may choose recon, delay, flank, deceive, withdraw, defend, probe, or attack — operator reviews.') + '</div>';
         // Turn log (most recent first, capped)
         if (_turnLog.length) {
             h += '<div data-ff-loop="turnlog" style="margin-top:6px;border-top:1px solid #1a3050;padding-top:4px;">';
@@ -2653,6 +2704,10 @@
         // FREEFIGHT-MANUAL-MAP-CAMERA-A test seams
         _getCameraModeForTest:     function ()            { return _freeFightCameraMode; },
         _setCameraModeForTest:     function (m)           { setCameraMode(m); },
+        // RMOOZ-AI-COMMANDER-FREEDOM-A test seams
+        _getCommanderModeForTest:  function ()            { return _commanderMode; },
+        _setCommanderModeForTest:  function (m)           { setCommanderMode(m); },
+        _buildLoopRequestBodyForTest: function ()         { return _buildLoopRequestBody(); },
         // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A test seams
         _getLastIntelForTest:        function ()          { return _lastIntel; },
         _getCoaFamilyHistoryForTest: function ()          { return _coaFamilyHistory.slice(); },

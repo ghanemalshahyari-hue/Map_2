@@ -26,6 +26,7 @@
  * ========================================================================== */
 
 const aiProvider = require('./ai-provider');
+const AI_CONFIG  = require('./ai-config');                     // RMOOZ-AI-FREE-FIGHT-MODEL-SOT-A: single default-model source
 const TRIGGERS   = require('./free-fight-situation-triggers'); // FREEFIGHT-BLUE-WARNING-ROE-A
 const INTEL      = require('./scenario-intel');                // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A
 const BRIEF      = require('./commander-brief');                // RMOZ-COMMANDER-BRIEF-COALITION-A
@@ -99,10 +100,14 @@ function isRemoteProvider(name) {
     return REMOTE_PROVIDERS_BLOCKED.indexOf(String(name || '').toLowerCase().trim()) !== -1;
 }
 function resolveLocalModel() {
+    // RMOOZ-AI-FREE-FIGHT-MODEL-SOT-A: free-fight env vars win, but the committed DEFAULT lives in
+    // exactly one place — ai-config.js (defaultModel, itself RMOOZ_OLLAMA_MODEL-overridable). The old
+    // hardcoded 'qwen3-coder:latest' diverged from ai-config and bit any machine that hadn't pulled it.
     return process.env.RMOOZ_FREE_FIGHT_MODEL ||
            process.env.RMOOZ_LOCAL_LLM_MODEL       ||
            process.env.RMOOZ_AI_MODEL              ||
-           'qwen3-coder:latest';
+           (AI_CONFIG && AI_CONFIG.defaultModel)   ||
+           'qwen2.5:7b';
 }
 // FREEFIGHT-COA-ROUTE-JSON-GUARD-A + RMOOZ-AI-EXECUTION-SINGLE-GATE-A: single source of truth for
 // the route's permission gate (RMOOZ_ALLOW_SIM_RUN) + local-only policy + resolved provider/model.
@@ -840,8 +845,18 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
         return { ok: false, llm_status: 'remote_blocked', fallback_reason: 'remote_provider_not_allowed_for_free_fight' };
     }
     var model = resolveLocalModel();
-    var timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '45000', 10);
-    if (!Number.isFinite(timeoutMs)) timeoutMs = 45000;
+    // RMOOZ-AI-COA-TIMEOUT-RETRY-A: 45s was too tight for a 7B-class model on CPU/modest GPU —
+    // the COA prompt asks for up to 2500 tokens of JSON, which routinely needs 40-70s (longer on a
+    // cold model load). The repo's own real-LLM e2e harness already uses 180s. Default to 120s and
+    // keep the env override (RMOOZ_FREE_FIGHT_TIMEOUT_MS) for slower/faster hardware.
+    var timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '120000', 10);
+    if (!Number.isFinite(timeoutMs)) timeoutMs = 120000;
+    // RMOOZ-AI-COA-TIMEOUT-RETRY-A: real local models are flaky on strict JSON — a single attempt that
+    // returns malformed JSON or <2 valid COAs would silently drop to the deterministic floor. Retry the
+    // FAST failure modes (bad JSON / too-few-valid) a couple of times. We do NOT retry timeouts/unavailable
+    // (those would stack the full timeout and blow up latency); the higher base timeout covers slowness.
+    var maxAttempts = parseInt(process.env.RMOOZ_FREE_FIGHT_ATTEMPTS || '2', 10);
+    if (!Number.isFinite(maxAttempts) || maxAttempts < 1) maxAttempts = 2;
 
     var allowedIds = arr(opts && opts.allowed_unit_ids).filter(Boolean).map(String);
     var unitList = arr(units).map(function (u) {
@@ -939,46 +954,56 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
         if (arr(mcp.allowed_unit_ids).length) effectiveAllowed = arr(mcp.allowed_unit_ids).map(String);
     }
 
-    var result;
-    try {
-        result = await provider.generate({
-            provider:  providerName,
-            model:     model,
-            system:    system,
-            prompt:    prompt,
-            format:    'json',
-            options:   { temperature: temperature, numPredict: 2500 },
-            timeoutMs: timeoutMs,
-        });
-    } catch (e) {
-        return { ok: false, llm_status: 'error', fallback_reason: 'local_llm_error: ' + str(e && e.message || e, 120) };
+    // RMOOZ-AI-COA-TIMEOUT-RETRY-A: retry the fast failure modes (bad JSON / <2 valid COAs); return
+    // immediately on timeout/unavailable/transport error so we never stack full-length timeouts.
+    var lastFail = null;
+    for (var attempt = 1; attempt <= maxAttempts; attempt++) {
+        var result;
+        try {
+            result = await provider.generate({
+                provider:  providerName,
+                model:     model,
+                system:    system,
+                prompt:    prompt,
+                format:    'json',
+                options:   { temperature: temperature, numPredict: 2500 },
+                timeoutMs: timeoutMs,
+            });
+        } catch (e) {
+            return { ok: false, llm_status: 'error', fallback_reason: 'local_llm_error: ' + str(e && e.message || e, 120) };
+        }
+
+        if (!result || !result.ok) {
+            var errStr = str(result && result.error, 120);
+            var isTimeout = /timeout|timed.out/i.test(errStr);
+            return { ok: false, llm_status: isTimeout ? 'timeout' : 'unavailable', fallback_reason: 'local_llm_unavailable: ' + errStr };
+        }
+
+        var parsed = parseJsonSafe(result.response || '');
+        if (!parsed || !Array.isArray(parsed.coas)) {
+            lastFail = { ok: false, llm_status: 'invalid_json', fallback_reason: 'llm_invalid_json_or_no_coas_array (attempt ' + attempt + '/' + maxAttempts + ')' };
+            continue; // retryable: model responded but output was not parseable
+        }
+
+        var normalized = parsed.coas.map(function (c) { return normalizeCoa(c, effectiveAllowed); }).filter(Boolean);
+        // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A: the LLM gives DESTINATION targets (often the objective itself,
+        // which is far). Clamp each action's target to ONE tactical bound from the unit — physics-valid
+        // (below the teleport guard) and identical to how the deterministic builder + the apply layer step.
+        // The model's tactical CHOICE (unit / action / direction) is preserved; only the step is capped.
+        _clampLlmTargets(normalized, units);
+        if (normalized.length < 2) {
+            lastFail = { ok: false, llm_status: 'invalid_schema', fallback_reason: 'llm_returned_fewer_than_2_valid_coas (' + normalized.length + ', attempt ' + attempt + '/' + maxAttempts + ')', partial: normalized };
+            continue; // retryable: model invented IDs / produced too few usable COAs
+        }
+
+        // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A: carry the RAW model output so the real-LLM E2E can prove
+        // the plan actually came from the local model (the planner otherwise discards it after parsing).
+        return { ok: true, coas: normalized, provider_used: result.providerUsed || providerName, model_used: model,
+                 raw_response: str(result.response || '', 20000), attempts: attempt };
     }
 
-    if (!result || !result.ok) {
-        var errStr = str(result && result.error, 120);
-        var isTimeout = /timeout|timed.out/i.test(errStr);
-        return { ok: false, llm_status: isTimeout ? 'timeout' : 'unavailable', fallback_reason: 'local_llm_unavailable: ' + errStr };
-    }
-
-    var parsed = parseJsonSafe(result.response || '');
-    if (!parsed || !Array.isArray(parsed.coas)) {
-        return { ok: false, llm_status: 'invalid_json', fallback_reason: 'llm_invalid_json_or_no_coas_array' };
-    }
-
-    var normalized = parsed.coas.map(function (c) { return normalizeCoa(c, effectiveAllowed); }).filter(Boolean);
-    // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A: the LLM gives DESTINATION targets (often the objective itself,
-    // which is far). Clamp each action's target to ONE tactical bound from the unit — physics-valid
-    // (below the teleport guard) and identical to how the deterministic builder + the apply layer step.
-    // The model's tactical CHOICE (unit / action / direction) is preserved; only the step is capped.
-    _clampLlmTargets(normalized, units);
-    if (normalized.length < 2) {
-        return { ok: false, llm_status: 'invalid_schema', fallback_reason: 'llm_returned_fewer_than_2_valid_coas (' + normalized.length + ')', partial: normalized };
-    }
-
-    // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A: carry the RAW model output so the real-LLM E2E can prove
-    // the plan actually came from the local model (the planner otherwise discards it after parsing).
-    return { ok: true, coas: normalized, provider_used: result.providerUsed || providerName, model_used: model,
-             raw_response: str(result.response || '', 20000) };
+    // Exhausted retries on a fast failure mode.
+    return lastFail || { ok: false, llm_status: 'unavailable', fallback_reason: 'llm_failed' };
 }
 
 // ── Timing (RMOOZ-AI-COA-PERFORMANCE-A) ─────────────────────────────────────────
@@ -1287,9 +1312,16 @@ async function _assemblePlan(P, variationSeed, timer, light) {
             _llmContractRejection = llmValidation;
         } else {
             fallbackReason = llmResult.fallback_reason || 'llm_failed';
-            // RMOOZ-AI-COA-PERFORMANCE-A: honest operator message on a slow/unavailable LLM.
-            if (/timeout|unavailable|error|remote_blocked/i.test(String(llmStatus || ''))) {
-                fallbackMessage = 'LLM slow/unavailable — used fast tactical planner.';
+            // RMOOZ-AI-COA-PERFORMANCE-A / RMOOZ-AI-COA-TIMEOUT-RETRY-A: honest operator message that
+            // distinguishes a slow/unreachable model from one that answered with an unusable plan —
+            // so "no model available" is no longer shown when the model IS available but timed out or
+            // returned malformed/too-few COAs.
+            if (/timeout|timed.out/i.test(String(llmStatus || ''))) {
+                fallbackMessage = 'Local AI timed out — used fast tactical planner. Raise RMOOZ_FREE_FIGHT_TIMEOUT_MS or use a faster model.';
+            } else if (/unavailable|error|remote_blocked/i.test(String(llmStatus || ''))) {
+                fallbackMessage = 'Local AI unavailable — used fast tactical planner.';
+            } else if (/invalid_schema|invalid_json/i.test(String(llmStatus || ''))) {
+                fallbackMessage = 'Local AI returned an unusable plan after retries — used fast tactical planner.';
             }
         }
     }

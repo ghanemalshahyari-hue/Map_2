@@ -127,7 +127,7 @@ function cfg() {
         runsDir:         path.join(wgen, 'runs'),
         allowRun:        process.env.RMOOZ_ALLOW_SIM_RUN === '1',
         python:          resolvePython(testingAi),
-        simModel:        process.env.RMOOZ_SIM_MODEL || 'qwen2.5:3b',
+        simModel:        process.env.RMOOZ_SIM_MODEL || 'qwen2.5:7b',
     };
 }
 
@@ -226,7 +226,7 @@ function latestRunDir(c) {
 
 function manualCommands(c) {
     return {
-        full_run:  `cd "${c.wgen}" && LLM_LOCAL_FORCE_FALLBACK=1 LLM_MODEL=${c.simModel} ${c.python} tests/test_full_run.py --all`,
+        full_run:  `cd "${c.wgen}" && LLM_BASE_URL=http://localhost:11434/v1 LLM_API_KEY=ollama LLM_USE_RESPONSES_API=0 LLM_LOCAL_FORCE_FALLBACK=1 LLM_MODEL=${c.simModel} ${c.python} tests/test_full_run.py --all`,
         regenerate:`cd "${c.wgen}" && ${c.python} -m src.tools.regenerate_outputs`,
         note: 'RMOOZ runs the full sim only when RMOOZ_ALLOW_SIM_RUN=1; otherwise run the above manually, then Import.',
     };
@@ -1834,7 +1834,18 @@ function handle(req, res, ctx) {
         // schema fallback for structured commander/adjudicator calls. Small local
         // models often hang or emit malformed JSON on those long schema prompts;
         // fallback keeps generation moving without inventing combat effects.
-        const env = Object.assign({}, process.env, { LLM_LOCAL_FORCE_FALLBACK: '1', LLM_MODEL: c.simModel });
+        // Point WarGamingGEN's Python at the LOCAL Ollama backend explicitly, so a
+        // run uses the local model regardless of which TestingAI dir resolves (the
+        // co-located tree has no .env) and never crashes on a missing OPENAI_API_KEY
+        // or tries the OpenAI Responses API (Ollama only speaks chat-completions).
+        // Any value already in the parent environment / a .env still wins.
+        const env = Object.assign({}, process.env, {
+            LLM_BASE_URL:           process.env.LLM_BASE_URL          || 'http://localhost:11434/v1',
+            LLM_API_KEY:            process.env.LLM_API_KEY           || 'ollama',
+            LLM_USE_RESPONSES_API:  process.env.LLM_USE_RESPONSES_API || '0',
+            LLM_LOCAL_FORCE_FALLBACK: '1',
+            LLM_MODEL: c.simModel,
+        });
         // Run-id gating (Part A): remember the newest run that EXISTS right now.
         // While the spawned process hasn't created its own run dir yet, the
         // newest-on-disk run is this baseline (a previous, possibly complete

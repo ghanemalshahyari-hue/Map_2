@@ -32,6 +32,7 @@
  * ========================================================================== */
 
 var aiProvider = require('./ai-provider');
+var AI_CONFIG  = require('./ai-config'); // RMOOZ-AI-FREE-FIGHT-MODEL-SOT-A: single default-model source
 var CATALOG    = require('./platform-capability-catalog');
 
 // RMOOZ-UNIT-IDENTITY-CONTRACT-A: ONE identity contract, shared with the client. A
@@ -72,10 +73,12 @@ function isRemoteProvider(name) {
     return REMOTE_PROVIDERS_BLOCKED.indexOf(String(name || '').toLowerCase().trim()) !== -1;
 }
 function resolveLocalModel() {
+    // RMOOZ-AI-FREE-FIGHT-MODEL-SOT-A: committed default comes from ai-config.js (single source).
     return process.env.RMOOZ_FREE_FIGHT_MODEL ||
            process.env.RMOOZ_LOCAL_LLM_MODEL      ||
            process.env.RMOOZ_AI_MODEL             ||
-           'qwen3-coder:latest';
+           (AI_CONFIG && AI_CONFIG.defaultModel)  ||
+           'qwen2.5:7b';
 }
 
 // ── Allowed enum sets for the profile schema ─────────────────────────────────
@@ -483,8 +486,9 @@ function analyzeUnitCapabilities(units, context, opts, _providerOverride) {
         return Promise.resolve(heuristicAll());
     }
     var model = resolveLocalModel();
-    var timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '45000', 10);
-    if (!Number.isFinite(timeoutMs)) timeoutMs = 45000;
+    // RMOOZ-AI-COA-TIMEOUT-RETRY-A: 45s was too tight for a 7B-class model on CPU/modest GPU. 120s default.
+    var timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '120000', 10);
+    if (!Number.isFinite(timeoutMs)) timeoutMs = 120000;
 
     var system = [
         'You are an intelligence analyst for an advisory-only demo.',

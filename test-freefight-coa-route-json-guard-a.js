@@ -20,6 +20,9 @@
 
 var path = require('path');
 var fs   = require('fs');
+// RMOOZ-AI-FREE-FIGHT-MODEL-SOT-A: the committed default model lives ONLY in ai-config.js. Tests
+// assert against it rather than re-hardcoding a model name (which is exactly the drift we removed).
+var AI_CFG = require(path.join(__dirname, 'UI_MOdified/server/ai/ai-config.js'));
 
 var PASS = 0, FAIL = 0;
 function ok(label, cond, detail) {
@@ -106,7 +109,7 @@ function mkUnits(n, side){ var u=[]; for(var i=0;i<n;i++){var lat=34.5+i*0.012,l
 function freshMount(){
     elById={}; bodyEl.children=[]; sessionStorage._data={}; _eventLog=[]; _timeouts=[]; _intervals=[];
     global.window.RmoozScenario = { scenario:{ red_units:mkUnits(10,'RED'), blue_units_initial:mkUnits(6,'BLUE'), obj:{name:'Objective X',coord:[48.9,34.9]} } };
-    __fetchHandler = function(){ return Promise.resolve(respJson({ ok:true, route:'/api/wargame-sim/free-fight/plan-coas', method:'POST', planner:'free-fight-coa-planner', local_only:true, provider:'ollama', model:'qwen3-coder:latest', llm_enabled:false })); };
+    __fetchHandler = function(){ return Promise.resolve(respJson({ ok:true, route:'/api/wargame-sim/free-fight/plan-coas', method:'POST', planner:'free-fight-coa-planner', local_only:true, provider:'ollama', model:AI_CFG.defaultModel, llm_enabled:false })); };
     DEMO._resetWinStateForTest(); DEMO.clear(); DEMO.mount(PAYLOAD);
 }
 function realPlan(side){ var b=DEMO._buildLoopRequestBodyForTest(); return PLANNER.planCoas(b.units,b.objectives,{active_side:side||'RED'},{preferSide:side||'RED',useLlm:false,allowed_unit_ids:b.units.map(function(u){return u.id;})}); }
@@ -198,7 +201,7 @@ function realPlan(side){ var b=DEMO._buildLoopRequestBodyForTest(); return PLANN
     ok('§7 local_only true', rh.local_only === true);
     ok('§7 provider_policy local_only', rh.provider_policy === 'local_only');
     ok('§7 provider is ollama (local)', rh.provider === 'ollama');
-    ok('§7 model defaults to qwen3-coder:latest', /qwen3-coder/.test(rh.model));
+    ok('§7 model defaults to ai-config defaultModel', rh.model === AI_CFG.defaultModel && !!rh.model);
     ok('§7 llm_enabled is boolean', typeof rh.llm_enabled === 'boolean');
     ok('§7 remote providers listed as blocked', Array.isArray(rh.remote_providers_blocked) && rh.remote_providers_blocked.indexOf('claude') !== -1);
 
@@ -220,7 +223,7 @@ function realPlan(side){ var b=DEMO._buildLoopRequestBodyForTest(); return PLANN
     ok('§8 health returns 200', sent && sent.status === 200);
     ok('§8 health ok:true', sent && sent.payload && sent.payload.ok === true);
     ok('§8 health names the route + POST method', sent && sent.payload.route === '/api/wargame-sim/free-fight/plan-coas' && sent.payload.method === 'POST');
-    ok('§8 health local_only + provider/model', sent && sent.payload.local_only === true && sent.payload.provider === 'ollama' && /qwen3-coder/.test(sent.payload.model));
+    ok('§8 health local_only + provider/model', sent && sent.payload.local_only === true && sent.payload.provider === 'ollama' && sent.payload.model === AI_CFG.defaultModel);
 
     // ── §9 remote provider blocked in routeHealth ────────────────────────────
     console.log('\n§9  routeHealth blocks a misconfigured remote provider');
@@ -241,7 +244,7 @@ function realPlan(side){ var b=DEMO._buildLoopRequestBodyForTest(); return PLANN
     ok('§10 "Planner route:" label present', /Planner route:/.test(html10));
     ok('§10 "Check route" button present', /data-act="loop-route-check"/.test(html10));
     ok('§10 "Provider policy: local only" shown', /Provider policy:[\s\S]{0,80}local only/.test(html10));
-    ok('§10 model qwen3-coder shown', /qwen3-coder/.test(html10));
+    ok('§10 model (ai-config default) shown', html10.indexOf(AI_CFG.defaultModel) !== -1);
     // source-level: all three fetch sites use _fetchJsonSafe
     var src = fs.readFileSync(path.join(__dirname,'UI_MOdified/client/shell/free-fight-demo.js'),'utf8');
     var safeCount = (src.match(/_fetchJsonSafe\(/g) || []).length;

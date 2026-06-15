@@ -82,7 +82,7 @@ const defaults = {
     //     - 'qwen2.5:7b'     (~5 GB)
     //   Heavy (best plans, slow on CPU):
     //     - 'gpt-oss:20b'    (~14 GB, ~24 tok/s CPU)
-    defaultModel: 'llama3.2:1b',
+    defaultModel: 'qwen2.5:7b',
 
     // ── Auth (optional) ──────────────────────────────────────────────
     // Empty string = no Authorization header sent (correct for local
@@ -153,7 +153,9 @@ const defaults = {
     //   'auto'   = first configured of (claude > zen > ollama)
     // Per-call override is supported via the `provider` arg in
     // adjudicator-agent.js / monte-carlo-runner.js / web-server.js routes.
-    aiProvider: 'auto',
+    // Forced to local Ollama so the app uses the local model only and can
+    // never silently fall through to a cloud backend even if a key appears.
+    aiProvider: 'ollama',
 };
 
 // ── Optional gitignored overlay (secrets) ───────────────────────────

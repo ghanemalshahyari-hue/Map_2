@@ -31,6 +31,7 @@
  * ========================================================================== */
 
 const aiProvider = require('./ai-provider');
+const AI_CONFIG  = require('./ai-config'); // RMOOZ-AI-FREE-FIGHT-MODEL-SOT-A: single default-model source
 const ENGINE     = require('./free-fight-action-engine');
 
 // ── Local-only provider enforcement ─────────────────────────────────────────
@@ -43,10 +44,12 @@ function isRemoteProvider(name) {
     return REMOTE_PROVIDERS_BLOCKED.includes(String(name || '').toLowerCase().trim());
 }
 function resolveLocalModel() {
+    // RMOOZ-AI-FREE-FIGHT-MODEL-SOT-A: committed default comes from ai-config.js (single source).
     return process.env.RMOOZ_FREE_FIGHT_MODEL ||
            process.env.RMOOZ_LOCAL_LLM_MODEL       ||
            process.env.RMOOZ_AI_MODEL              ||
-           'qwen3-coder:latest';
+           (AI_CONFIG && AI_CONFIG.defaultModel)   ||
+           'qwen2.5:7b';
 }
 
 const ALLOWED_ACTION_TYPES = ['MOVE_TOWARD_OBJECTIVE', 'DEFEND_BASE', 'HOLD_POSITION', 'PATROL_NEAR_BASE'];
@@ -140,8 +143,9 @@ async function askLlmForAction(units, objectives, opts, _providerOverride) {
             { llm_status: 'remote_blocked' });
     }
     const model     = resolveLocalModel();
-    let   timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '45000', 10);
-    if (!Number.isFinite(timeoutMs)) timeoutMs = 45000;
+    // RMOOZ-AI-COA-TIMEOUT-RETRY-A: 45s was too tight for a 7B-class model on CPU/modest GPU. 120s default.
+    let   timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '120000', 10);
+    if (!Number.isFinite(timeoutMs)) timeoutMs = 120000;
 
     const system = [
         'You are a military wargame AI for an advisory-only demo exercise.',

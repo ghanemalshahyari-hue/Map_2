@@ -85,6 +85,11 @@ UI_MOdified/data/imports/wargame_outputs/*
 # uk.json, wargame3.json, beirut-llm-test.json, …) are NOT matched and stay tracked.
 UI_MOdified/data/scenarios/_active.json
 UI_MOdified/data/scenarios/*draft*.json
+# Dev/test scenario fixtures (e.g. test_gcc.json — 19k generated lines). Machine-local;
+# the external auto-committer kept sweeping them into commits. Named reference scenarios
+# (final.json, uk.json, wargame3.json, beirut-llm-test.json) start with other prefixes
+# and are NOT matched — they stay tracked.
+UI_MOdified/data/scenarios/test_*.json
 
 # Local API key/archive secret files
 UI_MOdified/TestingAI/_archive/apik.rtf

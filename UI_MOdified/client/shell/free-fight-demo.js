@@ -2760,7 +2760,7 @@
         h += ' <button data-act="loop-route-check" style="font:inherit;cursor:pointer;border:1px solid #4a5f75;background:#101b27;color:#8fb8e0;border-radius:4px;padding:1px 6px;font-size:9px;">Check route</button>';
         h += '<div><span style="color:#8fa5b8;">Provider policy:</span> <span style="color:#7fd6a0;">local only</span>';
         h += ' · <span style="color:#8fa5b8;">Provider:</span> <span style="color:#9ec2ec;">' + esc((rh && rh.provider) || 'ollama') + '</span>';
-        h += ' · <span style="color:#8fa5b8;">Model:</span> <span style="color:#9ec2ec;">' + esc((rh && rh.model) || 'qwen3-coder:latest') + '</span></div>';
+        h += ' · <span style="color:#8fa5b8;">Model:</span> <span style="color:#9ec2ec;">' + esc((rh && rh.model) || 'qwen2.5:7b') + '</span></div>';
         // RMOOZ-AI-EXECUTION-SINGLE-GATE-A: the single gate + model availability.
         if (rh && rh.allow_sim_run != null) {
             h += '<div><span style="color:#8fa5b8;">AI execution (RMOOZ_ALLOW_SIM_RUN):</span> <span style="color:' + (rh.allow_sim_run ? '#7fd6a0' : '#e0a93a') + ';">' + (rh.allow_sim_run ? 'allowed' : 'disabled') + '</span>';
@@ -2974,7 +2974,7 @@
                     h += '<div><span style="color:#7a9ab8;">LLM called:</span> <span style="color:#e0e8f0;">' + (llmCalled ? 'yes' : 'no') + '</span></div>';
                     if (llmCalled || dec.provider_used) {
                         h += '<div><span style="color:#7a9ab8;">LLM provider:</span> <span style="color:#9ec2ec;">' + esc(dec.provider_used || 'ollama') + '</span></div>';
-                        h += '<div><span style="color:#7a9ab8;">LLM model:</span> <span style="color:#9ec2ec;">' + esc(dec.model_used || 'qwen3-coder:latest') + '</span></div>';
+                        h += '<div><span style="color:#7a9ab8;">LLM model:</span> <span style="color:#9ec2ec;">' + esc(dec.model_used || 'qwen2.5:7b') + '</span></div>';
                     }
                     h += '<div><span style="color:#7a9ab8;">LLM result:</span> <span style="color:' + llmStatusColor + ';">' + esc(llmStatus) + '</span></div>';
                     if (dec.llm_validation) {

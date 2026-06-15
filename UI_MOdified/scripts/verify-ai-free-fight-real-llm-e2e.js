@@ -37,7 +37,8 @@ var EXTERNAL = process.env.RMOOZ_VERIFY_BASE_URL || null;
 var PORT = process.env.RMOOZ_VERIFY_PORT || '8099';
 var BASE = EXTERNAL || ('http://localhost:' + PORT);
 var PROVIDER = (process.env.RMOOZ_FREE_FIGHT_PROVIDER || 'ollama').toLowerCase();
-var MODEL = process.env.RMOOZ_FREE_FIGHT_MODEL || 'qwen3-coder:latest';
+// RMOOZ-AI-FREE-FIGHT-MODEL-SOT-A: default matches ai-config.js committed default (single source).
+var MODEL = process.env.RMOOZ_FREE_FIGHT_MODEL || 'qwen2.5:7b';
 var OLLAMA = (process.env.OLLAMA_HOST || 'http://localhost:11434').replace(/\/$/, '');
 var LLM_TIMEOUT_MS = parseInt(process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS || '180000', 10);
 var ATTEMPTS = parseInt(process.env.RMOOZ_VERIFY_ATTEMPTS || '3', 10); // real LLMs are flaky on strict JSON
@@ -250,7 +251,7 @@ function finish() {
         console.log('\n❌ REAL-LLM E2E FAILED (' + fails.length + '):');
         fails.forEach(function (m) { console.log('   - ' + m); });
         console.log('\nThis acceptance requires a REAL local LLM. Start the server with RMOOZ_ALLOW_SIM_RUN=1 and a');
-        console.log('loaded local model (e.g. `ollama pull qwen3-coder`), then re-run. Mocks / deterministic / fast / test');
+        console.log('loaded local model (e.g. `ollama pull qwen2.5:7b`), then re-run. Mocks / deterministic / fast / test');
         console.log('bypass do NOT satisfy this test by design.');
         process.exit(1);
     }

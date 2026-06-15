@@ -10,7 +10,7 @@
  * §6   testLlmConnection reports local_only=true (disabled + remote-rejected cases)
  * §7   UI renders "Local only" + provider name in panel HTML
  * §8   Existing deterministic demo still works (no regression)
- * §9   Model defaults to qwen3-coder:latest when no env set
+ * §9   Model defaults to ai-config defaultModel when no env set
  * §10  Local provider 'local' is allowed (not blocked)
  * §11  RMOOZ_FREE_FIGHT_PROVIDER=zen rejected
  * §12  RMOOZ_FREE_FIGHT_PROVIDER=auto rejected
@@ -21,6 +21,8 @@
 
 const path   = require('path');
 const BRIDGE = require(path.join(__dirname, 'UI_MOdified/server/ai/free-fight-llm-decision.js'));
+// RMOOZ-AI-FREE-FIGHT-MODEL-SOT-A: committed default model lives only in ai-config.js — assert against it.
+const AI_CFG = require(path.join(__dirname, 'UI_MOdified/server/ai/ai-config.js'));
 const ENGINE = require(path.join(__dirname, 'UI_MOdified/server/ai/free-fight-action-engine.js'));
 
 var passed = 0, failed = 0;
@@ -318,8 +320,8 @@ function restoreEnv(key, saved) { if (saved !== undefined) process.env[key] = sa
     ok('§8 validateAction ok=true for deterministic action', v8.ok === true);
     restoreEnv('RMOOZ_ALLOW_SIM_RUN', s8);
 
-    // ── §9  Model defaults to qwen3-coder:latest when no env set ─────────────
-    console.log('\n§9  Model defaults to qwen3-coder:latest when no env set');
+    // ── §9  Model defaults to ai-config defaultModel when no free-fight env set ─
+    console.log('\n§9  Model defaults to ai-config defaultModel when no env set');
     var s9_llm = saveEnv('RMOOZ_ALLOW_SIM_RUN');
     var s9_m1  = saveEnv('RMOOZ_FREE_FIGHT_MODEL');
     var s9_m2  = saveEnv('RMOOZ_LOCAL_LLM_MODEL');
@@ -330,7 +332,7 @@ function restoreEnv(key, saved) { if (saved !== undefined) process.env[key] = sa
     delete process.env.RMOOZ_AI_MODEL;
     var mc9 = mockCapture(VALID_LLM_JSON);
     await BRIDGE.askLlmForAction(UNITS, OBJECTIVES, OPTS, mc9);
-    ok('§9 model passed to generate = qwen3-coder:latest', mc9.getCapture() && mc9.getCapture().model === 'qwen3-coder:latest');
+    ok('§9 model passed to generate = ai-config defaultModel', mc9.getCapture() && !!AI_CFG.defaultModel && mc9.getCapture().model === AI_CFG.defaultModel);
     restoreEnv('RMOOZ_ALLOW_SIM_RUN', s9_llm); restoreEnv('RMOOZ_FREE_FIGHT_MODEL', s9_m1);
     restoreEnv('RMOOZ_LOCAL_LLM_MODEL', s9_m2); restoreEnv('RMOOZ_AI_MODEL', s9_m3);
 

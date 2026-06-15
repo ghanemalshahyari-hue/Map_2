@@ -1093,20 +1093,24 @@
     }
 
     // FREEFIGHT-AI-REAL-MAP-MOVE-A: trigger scenario layer redraw via available bridges.
+    // Returns {called_bridges: string[], fired_count: number} for status tracking.
     function _triggerScenarioRedraw() {
         var w = W();
-        if (!w) return;
+        var called = [];
+        if (!w) return { called_bridges: called, fired_count: 0 };
         var sc = w.RmoozScenario && w.RmoozScenario.scenario;
         // Bridge 1: AppAdjudicatorMap.drawScenario (wargame map layer)
         try {
             if (w.AppAdjudicatorMap && typeof w.AppAdjudicatorMap.drawScenario === 'function' && sc) {
                 w.AppAdjudicatorMap.drawScenario(sc);
+                called.push('AppAdjudicatorMap.drawScenario');
             }
         } catch (_) {}
         // Bridge 2: AppScenarioWorkspace.maybeDrawLiveScenarioOnMap (workspace layer)
         try {
             if (w.AppScenarioWorkspace && typeof w.AppScenarioWorkspace.maybeDrawLiveScenarioOnMap === 'function' && sc) {
                 w.AppScenarioWorkspace.maybeDrawLiveScenarioOnMap(sc);
+                called.push('AppScenarioWorkspace.maybeDrawLiveScenarioOnMap');
             }
         } catch (_) {}
         // Bridge 3: CustomEvent so other listeners can react
@@ -1118,8 +1122,10 @@
                     old_pos: _aiMovedUnitOldPos,
                     source: _aiMovedUnitSource,
                 }}));
+                called.push('rmooz:ff-ai-unit-moved');
             }
         } catch (_) {}
+        return { called_bridges: called, fired_count: called.length };
     }
 
     function _applyAiDecision() {
@@ -1139,9 +1145,17 @@
         }
         _aiApplied = true;
         _appendToEventLog(_aiDecision.event_log_entry);
+        // FREEFIGHT-AI-VISIBLE-MARKER-TRUTH-A: track redraw + overlay for UI status
+        _aiDecision.real_unit_updated = mv.found;
+        _aiDecision.map_redraw_called = false;
+        _aiDecision.map_redraw_bridges = [];
+        _aiDecision.visible_overlay_created = false;
         if (mapReady()) {
-            _triggerScenarioRedraw();
+            var rdResult = _triggerScenarioRedraw();
+            _aiDecision.map_redraw_called   = rdResult.fired_count > 0;
+            _aiDecision.map_redraw_bridges  = rdResult.called_bridges;
             syncMarkers(); // draws trail + pulse in FF overlay layer
+            _aiDecision.visible_overlay_created = true;
             // Pan to new position so move is immediately visible
             var w = W();
             try { w.map.panTo([+ap.lat, +ap.lon]); } catch (_) {}
@@ -1303,6 +1317,25 @@
                     } else {
                         h += '<div style="color:#e0a93a;font-weight:600;margin-top:4px;">⚠ AI action applied to preview marker only — real scenario unit not found.</div>';
                     }
+                    // FREEFIGHT-AI-VISIBLE-MARKER-TRUTH-A: movement truth status panel
+                    (function() {
+                        var ruu  = _aiDecision.real_unit_updated;
+                        var mrc  = _aiDecision.map_redraw_called;
+                        var voc  = _aiDecision.visible_overlay_created;
+                        var bridges = _aiDecision.map_redraw_bridges || [];
+                        function flag(val) {
+                            return val ? '<span style="color:#90d090;font-weight:700;">yes</span>'
+                                       : '<span style="color:#e0a93a;font-weight:700;">no</span>';
+                        }
+                        h += '<div style="margin-top:5px;border:1px solid #1a4050;border-radius:4px;padding:6px 8px;background:#070e14;font-size:10px;" data-ff-truth="status">';
+                        h += '<div style="color:#5a8aa8;font-weight:600;margin-bottom:3px;">Map Movement Truth</div>';
+                        h += '<div>Real unit object updated: ' + flag(ruu) + '</div>';
+                        h += '<div>Map redraw called: ' + flag(mrc);
+                        if (mrc && bridges.length) h += ' <span style="color:#6a8fa8;">(' + esc(bridges.join(', ')) + ')</span>';
+                        h += '</div>';
+                        h += '<div>Visible movement layer: ' + flag(voc) + '</div>';
+                        h += '</div>';
+                    })();
                 }
                 h += '</div>';
             } else if (_aiDecision._error) {

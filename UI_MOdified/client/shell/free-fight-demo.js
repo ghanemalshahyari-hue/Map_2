@@ -65,6 +65,8 @@
     var _briefExpanded = false;        // operator toggles the full copyable brief
     // FREEFIGHT-LLM-CAPABILITY-ANALYST-A: last capability summary (best assets per mission)
     var _lastCapability = null;
+    // RMOZ-AI-TOOL-CONTRACT-A: last tool-contract record
+    var _lastToolContract = null;
     // FREEFIGHT-COA-ROUTE-JSON-GUARD-A: planner route health probe result
     var _routeHealth = null;           // { ok, route, method, planner, local_only, provider, model, llm_enabled } | { ok:false, reason }
     var _routeUnavailableMsg = null;   // set when a plan fetch returns non-JSON / 405
@@ -1215,6 +1217,16 @@
             if (rec.capability) h += _capabilityIntelHtml(rec.capability, rec.side, rec.situation);
             // RMOZ-COMMANDER-BRIEF-COALITION-A: coalition + copyable commander brief
             if (rec.brief) h += _commanderBriefHtml(rec.brief);
+            // RMOZ-AI-TOOL-CONTRACT-A: compact tool-contract status line
+            if (rec.tool_contract) {
+                var tc = rec.tool_contract;
+                var vColor = tc.validated ? '#7fd6a0' : '#f0a040';
+                h += '<div data-ff-toolcontract="line" style="margin-top:5px;font-size:9.5px;color:#8fa5b8;border-top:1px solid #1a3050;padding-top:3px;">' +
+                     'AI Tool Contract: <span style="color:' + vColor + ';font-weight:700;">' + (tc.validated ? 'valid' : 'rejected') + '</span>' +
+                     (tc.rejected_reason ? ' <span style="color:#e0a93a;">(' + esc(tc.rejected_reason) + ')</span>' : '') +
+                     ' · tools: <span style="color:#cdd8e4;">' + esc(arr(tc.tools_used).join(', ')) + '</span>' +
+                     ' · fallback: <span style="color:#cdd8e4;">' + (tc.fallback_used ? 'yes' : 'no') + '</span></div>';
+            }
             h += '</div>';
         } else {
             h += '<div style="font-size:11px;color:#7a9ab8;padding:4px 0;">Waiting for first AI commander decision…</div>';
@@ -1342,6 +1354,16 @@
         if (best.air_defense) _appendToEventLog('CAPABILITY: ' + best.air_defense.unit_uid + ' ' + (best.air_defense.class || '') + ' held in air-defense posture.');
         if (best.naval_screen) _appendToEventLog('CAPABILITY: ' + best.naval_screen.unit_uid + ' ' + (best.naval_screen.class || '') + ' available for naval screen.');
         if (airThreat && best.ground_hold) _appendToEventLog('CAPABILITY: ground reserve ' + best.ground_hold.unit_uid + ' held — not suitable for air intercept.');
+    }
+    // RMOZ-AI-TOOL-CONTRACT-A: narrate the tool-contract pipeline to the ledger.
+    function _appendToolContractEventLog(tc) {
+        if (!tc) return;
+        _appendToEventLog('AI TOOL: ' + arr(tc.tools_used).join(' + ') + ' context built (' + tc.version + ').');
+        if (tc.recommended_family) {
+            var avoided = arr(tc.avoid_repeating)[0];
+            _appendToEventLog('AI TOOL: COA family selected: ' + tc.recommended_family + (avoided ? ', previous family avoided: ' + avoided : '') + '.');
+        }
+        _appendToEventLog('AI VALIDATOR: COA ' + (tc.validated ? 'accepted' : ('rejected — ' + (tc.rejected_reason || 'invalid') + (tc.fallback_used ? ' (deterministic fallback used)' : ''))) + '.');
     }
     function _buildAiRequestBody() {
         var w = W();
@@ -1983,6 +2005,8 @@
                 brief: plan.commander_brief || null,
                 // FREEFIGHT-LLM-CAPABILITY-ANALYST-A: capability summary (best assets per mission)
                 capability: plan.capability_summary || null,
+                // RMOZ-AI-TOOL-CONTRACT-A: tool-contract record (validated / fallback / families)
+                tool_contract: plan.tool_contract || null,
             };
             // Record the recommended COA family so the next turn varies (avoid repeats).
             if (plan.intel && plan.intel.recommended_coa_family) {
@@ -1991,6 +2015,7 @@
             }
             _lastIntel = plan.intel || _lastIntel;
             _lastCapability = plan.capability_summary || _lastCapability;
+            _lastToolContract = plan.tool_contract || _lastToolContract;
             _lastBrief = plan.commander_brief || _lastBrief;
             _lastCommanderDecision = record;
             _turnLog.push(record);
@@ -2012,6 +2037,8 @@
             if (sideForTurn === 'BLUE') _appendIntelEventLog(plan.intel);
             // FREEFIGHT-LLM-CAPABILITY-ANALYST-A: per-mission capability asset narration.
             _appendCapabilityEventLog(plan.capability_summary, sideForTurn, plan.situation_state);
+            // RMOZ-AI-TOOL-CONTRACT-A: tool-contract + validator narration.
+            _appendToolContractEventLog(plan.tool_contract);
             // RMOZ-COMMANDER-BRIEF-COALITION-A: coalition posture narration (COALITION ...).
             if (plan.commander_brief && plan.commander_brief.coalition_posture) {
                 arr(plan.commander_brief.coalition_posture.event_log_entries).forEach(function (e) { _appendToEventLog(e); });
@@ -2101,7 +2128,7 @@
         });
         _loopAllUnitsForReset = [];
         _turnNumber = 0; _activeSide = 'RED';
-        _turnLog = []; _lastCommanderDecision = null; _coaFamilyHistory = []; _lastIntel = null; _lastBrief = null; _briefExpanded = false; _lastCapability = null;
+        _turnLog = []; _lastCommanderDecision = null; _coaFamilyHistory = []; _lastIntel = null; _lastBrief = null; _briefExpanded = false; _lastCapability = null; _lastToolContract = null;
         _coaMovedUnits = []; _coaApplied = false; _coaPlan = null;
         if (mapReady()) { _triggerScenarioRedraw(); syncMarkers(); }
         if (_cmdrPanel && _cmdrPanel.parentNode) { _cmdrPanel.parentNode.removeChild(_cmdrPanel); _cmdrPanel = null; }
@@ -2525,7 +2552,7 @@
         _clearTimeoutSafe(_pendingTimer); _pendingTimer = null;
         if (_moveAnimTimer) { _clearIntervalSafe(_moveAnimTimer); _moveAnimTimer = null; }
         _loopRunning = false; _loopPaused = false; _turnNumber = 0; _activeSide = 'RED';
-        _turnLog = []; _lastCommanderDecision = null; _loopAllUnitsForReset = []; _coaFamilyHistory = []; _lastIntel = null; _lastBrief = null; _briefExpanded = false; _lastCapability = null;
+        _turnLog = []; _lastCommanderDecision = null; _loopAllUnitsForReset = []; _coaFamilyHistory = []; _lastIntel = null; _lastBrief = null; _briefExpanded = false; _lastCapability = null; _lastToolContract = null;
         _red = []; _blue = []; _allGroups = []; _objective = null; _objectiveSource = null; _plan = null; _terrain = { available: false };
         _planSource = 'deterministic';
         _llmStatus = { state: 'idle', message: '', validation_result: 'not_requested', fallback_reason: null };
@@ -2628,6 +2655,8 @@
         _syncMarkersForTest:         function ()          { if (mapReady()) syncMarkers(); },
         // FREEFIGHT-LLM-CAPABILITY-ANALYST-A test seam
         _getLastCapabilityForTest:   function ()          { return _lastCapability; },
+        // RMOZ-AI-TOOL-CONTRACT-A test seam
+        _getLastToolContractForTest: function ()          { return _lastToolContract; },
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozFreeFightDemo = API;

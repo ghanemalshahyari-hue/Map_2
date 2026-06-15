@@ -30,6 +30,7 @@ const TRIGGERS   = require('./free-fight-situation-triggers'); // FREEFIGHT-BLUE
 const INTEL      = require('./scenario-intel');                // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A
 const BRIEF      = require('./commander-brief');                // RMOZ-COMMANDER-BRIEF-COALITION-A
 const ANALYST    = require('./free-fight-llm-capability-analyst'); // FREEFIGHT-LLM-CAPABILITY-ANALYST-A
+const CONTRACT   = require('./rmooz-ai-tool-contract');            // RMOZ-AI-TOOL-CONTRACT-A
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 var STEP_DEG       = 0.05;   // ≈ 5-6 km per tick
@@ -752,7 +753,49 @@ async function planCoas(units, objectives, context, opts) {
         mission_score_key: threatDomain === 'air' || threatDomain === 'air_defense' ? 'intercept'
             : (threatDomain === 'naval' ? 'naval_screen' : 'ground_hold') };
 
+    // RMOZ-AI-TOOL-CONTRACT-A: build the stable, versioned tool pack (deterministic
+    // intelligence context + COA-family options + allowed schema) so every local model
+    // receives the same input and is held to one validated output shape.
+    var toolPack = null, coaFamilyOpts = null, allowedFamilies = [], allowedUnitIds = [];
+    try {
+        toolPack = await CONTRACT.buildCommanderPromptPack({
+            units: units, objectives: objectives,
+            context: Object.assign({}, context, { defending_side: 'BLUE', active_side: activeSide }), opts: opts,
+        });
+        var tc = (toolPack && toolPack.data) || {};
+        allowedFamilies = arr(tc.allowed_coa_families);
+        allowedUnitIds = arr(tc.allowed_unit_ids);
+        var cfoTool = tc.tools_context && tc.tools_context.coa_family_options;
+        coaFamilyOpts = (cfoTool && cfoTool.data) || null;
+    } catch (_) { toolPack = null; }
+    function _toolContract(planSource, validation, fallbackUsed, repaired) {
+        var tcd = (toolPack && toolPack.data) || {};
+        return {
+            version: CONTRACT.TOOL_CONTRACT_VERSION,
+            tools_used: (tcd.tools_context ? Object.keys(tcd.tools_context) : []),
+            allowed_coa_families: allowedFamilies,
+            recommended_family: (coaFamilyOpts && coaFamilyOpts.recommended_family) || null,
+            avoid_repeating: (coaFamilyOpts && coaFamilyOpts.avoid_repeating) || [],
+            plan_source: planSource,
+            validated: validation ? !!validation.accepted : true,
+            rejected_reason: validation ? (validation.rejected_reason || null) : null,
+            repaired: !!repaired,
+            fallback_used: !!fallbackUsed,
+        };
+    }
+    // Convert a COA into the contract's decision shape for validation.
+    function _coaToDecision(coa) {
+        var assigns = [];
+        arr(coa && coa.phases).forEach(function (ph) {
+            arr(ph.actions).forEach(function (a) {
+                assigns.push({ unit_uid: a.unit_uid, role: a.role, action_type: a.action_type, target: a.target });
+            });
+        });
+        return { selected_coa_family: (intel && intel.recommended_coa_family) || 'air_intercept', unit_assignments: assigns };
+    }
+
     var llmCalled = false, llmStatus = null, fallbackReason = null, providerUsed = null, modelUsed = null;
+    var _llmContractRejection = null; // set when the LLM COA is rejected by the tool contract
 
     if (opts.useLlm && process.env.RMOOZ_FREE_FIGHT_LLM === '1') {
         llmCalled = true;
@@ -760,28 +803,48 @@ async function planCoas(units, objectives, context, opts) {
         llmStatus = llmResult.llm_status || null;
         if (llmResult.ok) {
             var llmCoas = enrichCoasWithNarrative(llmResult.coas, obj, context, 'llm');
-            var llmAssess = buildCommanderAssessment(llmCoas, obj, context, 'llm');
-            if (activeSide === 'BLUE' && blueIntent) { applyBlueReaction(llmCoas, situation, blueIntent); llmAssess = appendSituationToAssessment(llmAssess, situation); }
-            return _attachCommanderBrief({
-                ok: true,
-                plan_source: 'llm',
-                active_side: activeSide,
-                coas: llmCoas,
-                situation_state: situation,
-                blue_reaction_intent: blueIntent,
-                intel: intel,
-                capability_summary: capSummary,
-                unit_capability_profiles: capProfiles.slice(0, 80),
-                commander_assessment: llmAssess,
-                recommended_plan_id: _recommendedPlanId(llmCoas),
-                llm_called: true,
-                llm_status: llmStatus,
-                fallback_reason: null,
-                provider_used: llmResult.provider_used || null,
-                model_used: llmResult.model_used || null,
-            }, intel, units, context);
+            if (activeSide === 'BLUE' && blueIntent) { applyBlueReaction(llmCoas, situation, blueIntent); }
+            // RMOZ-AI-TOOL-CONTRACT-A: gate the LLM answer through the validator. If it
+            // assigns invented IDs / impossible domain roles / kill actions / a repeated
+            // family, reject and fall through to the deterministic floor.
+            var llmRecIdx = 0; for (var li = 0; li < llmCoas.length; li++) { if (llmCoas[li].recommended) { llmRecIdx = li; break; } }
+            var llmValidation = { accepted: true };
+            try {
+                llmValidation = CONTRACT.validateCommanderCoaTool({
+                    decision: _coaToDecision(llmCoas[llmRecIdx]), units: allUnits, objectives: objectives,
+                    allowed_unit_ids: allowedUnitIds, previous_coa_families: arr(context.previous_coa_families),
+                    allowed_families: allowedFamilies,
+                }).data || { accepted: true };
+            } catch (_) { llmValidation = { accepted: true }; }
+            if (llmValidation.accepted) {
+                var llmAssess = buildCommanderAssessment(llmCoas, obj, context, 'llm');
+                if (activeSide === 'BLUE' && blueIntent) llmAssess = appendSituationToAssessment(llmAssess, situation);
+                return _attachCommanderBrief({
+                    ok: true,
+                    plan_source: 'llm',
+                    active_side: activeSide,
+                    coas: llmCoas,
+                    situation_state: situation,
+                    blue_reaction_intent: blueIntent,
+                    intel: intel,
+                    capability_summary: capSummary,
+                    unit_capability_profiles: capProfiles.slice(0, 80),
+                    tool_contract: _toolContract('llm', llmValidation, false, false),
+                    commander_assessment: llmAssess,
+                    recommended_plan_id: _recommendedPlanId(llmCoas),
+                    llm_called: true,
+                    llm_status: llmStatus,
+                    fallback_reason: null,
+                    provider_used: llmResult.provider_used || null,
+                    model_used: llmResult.model_used || null,
+                }, intel, units, context);
+            }
+            // LLM COA rejected by the contract → record + drop to deterministic floor.
+            fallbackReason = 'coa_contract_rejected: ' + (llmValidation.rejected_reason || 'invalid');
+            _llmContractRejection = llmValidation;
+        } else {
+            fallbackReason = llmResult.fallback_reason || 'llm_failed';
         }
-        fallbackReason = llmResult.fallback_reason || 'llm_failed';
     }
 
     // Deterministic fallback — side-aware (RED attack vs BLUE defense), threat-aware + capability-driven for BLUE
@@ -798,6 +861,7 @@ async function planCoas(units, objectives, context, opts) {
         intel: intel,
         capability_summary: capSummary,
         unit_capability_profiles: capProfiles.slice(0, 80),
+        tool_contract: _toolContract('deterministic_coa_fallback', _llmContractRejection, llmCalled, false),
         commander_assessment: assess,
         recommended_plan_id: _recommendedPlanId(coas),
         llm_called: llmCalled,

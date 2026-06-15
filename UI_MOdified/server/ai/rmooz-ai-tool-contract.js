@@ -277,10 +277,17 @@ function getCapabilityIntelTool(input) {
     var defending = String(ctx.context.defending_side || 'BLUE').toUpperCase();
     var useLlm = ctx.opts.useLlm === true;
     var providerOverride = ctx.opts._providerOverride || null;
+    // RMOOZ-AI-COA-PERFORMANCE-A: reuse capability profiles already built by the caller
+    // (planCoas hands us _precomputed_profiles) so the LLM/heuristic analyst is NOT run a
+    // second time for the same units/context. Optional _timing hook records the span.
+    var precomputed = Array.isArray(ctx.opts._precomputed_profiles) ? ctx.opts._precomputed_profiles : null;
+    var timing = (typeof ctx.opts._timing === 'function') ? ctx.opts._timing : null;
+    var _capStart = Date.now();
 
     // analyzeUnitCapabilities is async (Promise) — wrap the whole tool in a Promise.
     return Promise.resolve()
         .then(function () {
+            if (precomputed && precomputed.length) return precomputed; // reuse — no 2nd analyst call
             return analyst.analyzeUnitCapabilities(ctx.units, ctx.context, { useLlm: useLlm }, providerOverride);
         })
         .then(function (profiles) {
@@ -315,6 +322,7 @@ function getCapabilityIntelTool(input) {
                     .filter(function (id) { return id != null; });
             });
 
+            if (timing) timing('get_capability_intel_tool_ms', Date.now() - _capStart);
             return ok(
                 'getCapabilityIntelTool',
                 llmUsed ? 'llm_inferred' : 'catalog',
@@ -334,10 +342,12 @@ function getCapabilityIntelTool(input) {
                     },
                     profiles_count: profiles.length,
                     profile_source: llmUsed ? 'llm_inferred' : 'heuristic',
+                    profile_reused: !!(precomputed && precomputed.length),  // RMOOZ-AI-COA-PERFORMANCE-A
                 }
             );
         })
         .catch(function (e) {
+            if (timing) timing('get_capability_intel_tool_ms', Date.now() - _capStart);
             return fail('getCapabilityIntelTool', e && e.message);
         });
 }

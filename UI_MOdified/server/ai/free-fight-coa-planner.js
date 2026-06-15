@@ -453,7 +453,7 @@ function buildBlueCoas(blueUnits, obj, situation, capContext) {
  * assignments vary across planning cycles (not always the same unit). The recommended
  * archetype depends on the commander mode + situation (free) or rotates (high_variation).
  */
-function buildDiverseCoas(units, obj, side, situation, capContext, mode, seed, intel) {
+function buildDiverseCoas(units, obj, side, situation, capContext, mode, seed, intel, elevationFn) {
     function r5(x) { return Math.round(x * 1e5) / 1e5; }
     var list = arr(units).filter(unitHasCoord);
     var total = list.length;
@@ -473,9 +473,13 @@ function buildDiverseCoas(units, obj, side, situation, capContext, mode, seed, i
     // GIS terrain-aware tactics: assemble borders/zones, corridor, choke, high ground,
     // terrain class, threat rings, and route cost (real DEM where covered, else inferred —
     // with provenance). recon/flank/delay/defend/withdraw reason from this ctx.
+    // RMOOZ-AI-COA-PERFORMANCE-A: DEM elevation sampling is the costly part of the terrain
+    // context. fast mode passes elevationFn=null (inferred terrain only); normal/deep keep the
+    // real DEM — unchanged geometry. Undefined (legacy callers/tests) → demElevationAt.
+    var elevAt = (elevationFn === null) ? null : (typeof elevationFn === 'function' ? elevationFn : demElevationAt);
     var ctxBase = TERRAIN_CTX.buildTacticalTerrainContext({
         objective: objPt, nearestEnemy: enemy, situation: situation, intel: intel,
-        ownUnits: list, side: sideU, elevationAt: demElevationAt,
+        ownUnits: list, side: sideU, elevationAt: elevAt,
     });
     ctxBase.side = sideU;
     if (!Number.isFinite(ctxBase.threatZoneRadiusDeg)) ctxBase.threatZoneRadiusDeg = threatR;
@@ -540,9 +544,9 @@ function buildDiverseCoas(units, obj, side, situation, capContext, mode, seed, i
  * tactical variety); 'controlled' (doctrine-guided, default) keeps the side-aware
  * intercept/defense builders. FREEFIGHT-BLUE-THREAT-AWARE-MOVEMENT-A + COMMANDER-FREEDOM-A.
  */
-function buildCoasForSide(units, obj, side, situation, capContext, mode, seed, intel) {
+function buildCoasForSide(units, obj, side, situation, capContext, mode, seed, intel, elevationFn) {
     if (mode === 'free' || mode === 'high_variation') {
-        return buildDiverseCoas(units, obj, side, situation, capContext, mode, seed, intel);
+        return buildDiverseCoas(units, obj, side, situation, capContext, mode, seed, intel, elevationFn);
     }
     return String(side || 'RED').toUpperCase() === 'BLUE'
         ? buildBlueCoas(units, obj, situation, capContext)
@@ -887,26 +891,66 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
     return { ok: true, coas: normalized, provider_used: result.providerUsed || providerName, model_used: model };
 }
 
-// ── Main entry ────────────────────────────────────────────────────────────────
-/**
- * planCoas(units, objectives, context, opts)
- * opts: { useLlm, preferSide, allowed_unit_ids }
- * Returns { ok, plan_source, coas[], llm_called, llm_status, fallback_reason?,
- *           provider_used?, model_used? }
- */
-async function planCoas(units, objectives, context, opts) {
-    opts = opts || {};
-    context = context || {};
+// ── Timing (RMOOZ-AI-COA-PERFORMANCE-A) ─────────────────────────────────────────
+// Lightweight per-request span timer. Records named spans (ms) so the planner can
+// return plan.debug_timing and log a one-line breakdown. Request-scoped — a fresh
+// timer per planCoas / planCoaVariations call (no global state, no stale carry-over).
+function _now() { return Date.now(); }
+function makeTimer() {
+    var spans = {};
+    return {
+        sync: function (name, fn) { var s = _now(); try { return fn(); } finally { spans[name] = (spans[name] || 0) + (_now() - s); } },
+        async: function (name, thunk) {
+            var s = _now();
+            return Promise.resolve().then(thunk).then(
+                function (v) { spans[name] = (spans[name] || 0) + (_now() - s); return v; },
+                function (e) { spans[name] = (spans[name] || 0) + (_now() - s); throw e; }
+            );
+        },
+        mark: function (name, ms) { if (Number.isFinite(ms)) spans[name] = (spans[name] || 0) + ms; },
+        spans: function () { return spans; },
+    };
+}
+function _finalizeTimings(timer, tStart) {
+    var out = Object.assign({}, timer.spans());
+    out.total_ms = _now() - tStart;
+    return out;
+}
+function _logTimings(tag, result) {
+    var d = result && result.debug_timing; if (!d) return;
+    try {
+        console.log('[free-fight/' + tag + '] total=' + d.total_ms + 'ms' +
+            ' llm=' + (d.llm_ms || 0) + ' cap=' + (d.analyze_unit_capabilities_ms || 0) +
+            ' intel=' + (d.build_scenario_intel_ms || 0) + ' terrain=' + (d.tactical_terrain_context_ms || 0) +
+            ' pack=' + (d.build_commander_prompt_pack_ms || 0) + '(capTool=' + (d.get_capability_intel_tool_ms || 0) + ')' +
+            ' coa=' + (d.build_diverse_coas_ms || 0) + ' valid=' + (d.validation_ms || 0) +
+            ' brief=' + (d.commander_brief_ms || 0) +
+            ' [source=' + (result.plan_source || '?') + ' depth=' + (result.ai_depth || '?') + ']');
+    } catch (_) {}
+}
+// ai_depth tier: fast (heuristic caps, no LLM, terrain summary only — no DEM sampling),
+// normal (current behavior), deep (full LLM + full terrain/provenance). Default normal.
+function _resolveAiDepth(opts, context) {
+    var d = String((opts && opts.ai_depth) || (context && context.ai_depth) || 'normal').toLowerCase().trim();
+    return (d === 'fast' || d === 'deep') ? d : 'normal';
+}
+
+// ── Planning context (RMOOZ-AI-COA-PERFORMANCE-A) ───────────────────────────────
+// Build the heavy, REUSABLE part of a planning request exactly once: situation,
+// scenario intel, terrain context, capability profiles, and the commander tool pack.
+// Generate-5 builds this ONCE and assembles many COA variants from it (only seed /
+// buildDiverseCoas varies) — so the costly capability analyst + tool pack run a single
+// time. The capability profiles are computed here and HANDED to the tool pack
+// (_precomputed_profiles) so the analyst is never run twice for the same units/context.
+async function _buildPlanningContext(units, objectives, context, opts, depth, timer) {
     var obj = bestObjective(arr(objectives));
     // Active side: loop context wins, then opts.preferSide, then RED.
     var activeSide = String(context.active_side || opts.preferSide || 'RED').toUpperCase();
     if (activeSide !== 'RED' && activeSide !== 'BLUE') activeSide = 'RED';
-    // RMOOZ-AI-COMMANDER-FREEDOM-A: AI Commander Mode — controlled (doctrine-guided,
-    // default), free (free tactical reasoning), high_variation (creative / rotates).
+    // RMOOZ-AI-COMMANDER-FREEDOM-A: AI Commander Mode — controlled (doctrine-guided),
+    // free (free tactical reasoning), high_variation (creative / rotates).
     var commanderMode = String(opts.commander_mode || context.commander_mode || 'controlled').toLowerCase().trim();
     if (['controlled', 'free', 'high_variation'].indexOf(commanderMode) === -1) commanderMode = 'controlled';
-    var variationSeed = Number.isFinite(+context.variation_seed) ? +context.variation_seed
-        : (Number.isFinite(+context.turn_index) ? +context.turn_index : arr(context.previous_coa_families).length);
     var diverseMode = (commanderMode === 'free' || commanderMode === 'high_variation');
     var allUnits = arr(units).filter(function (u) { return unitHasCoord(u) && String(u.side || 'RED').toUpperCase() === activeSide; });
     if (!allUnits.length) {
@@ -916,28 +960,94 @@ async function planCoas(units, objectives, context, opts) {
 
     // FREEFIGHT-BLUE-WARNING-ROE-A: evaluate the RED-vs-BLUE situation on the FULL
     // unit set (both sides) BEFORE COA selection, so BLUE reacts to intrusion.
-    var situation = TRIGGERS.evaluateFreeFightSituation(units, objectives, context);
+    var situation = timer.sync('situation_ms', function () { return TRIGGERS.evaluateFreeFightSituation(units, objectives, context); });
     var blueIntent = (activeSide === 'BLUE') ? TRIGGERS.buildBlueReactionIntent(situation) : null;
-    // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A: shared intelligence snapshot (capability,
-    // superiority, terrain, sovereign zone, contacts, ROE, COA family variety, best assets).
+    // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A: shared intelligence snapshot.
     var intel = null;
     try {
-        intel = INTEL.buildScenarioIntel(units, objectives,
-            Object.assign({}, context, { defending_side: 'BLUE', active_side: activeSide }));
+        intel = timer.sync('build_scenario_intel_ms', function () {
+            return INTEL.buildScenarioIntel(units, objectives,
+                Object.assign({}, context, { defending_side: 'BLUE', active_side: activeSide }));
+        });
     } catch (_) { intel = null; }
 
-    // GIS terrain-aware tactics: a terrain/zone context (borders, zones, corridor, choke,
-    // high ground, terrain class, threat rings, route cost — real DEM where covered, else
-    // inferred, with provenance) — surfaced to the LLM and attached to the plan.
+    // GIS terrain-aware tactics. fast depth → no DEM elevation sampling (inferred terrain
+    // only); normal/deep keep the real DEM where covered — unchanged geometry.
+    var elevFn = (depth === 'fast') ? null : demElevationAt;
     var terrainCtx = null;
     try {
-        var _enemyRef = (situation && situation.nearest_red &&
-            Number.isFinite(+situation.nearest_red.lat)) ? situation.nearest_red : obj;
-        terrainCtx = TERRAIN_CTX.buildTacticalTerrainContext({
-            objective: obj, nearestEnemy: _enemyRef, situation: situation, intel: intel,
-            ownUnits: allUnits, side: activeSide, elevationAt: demElevationAt,
+        terrainCtx = timer.sync('tactical_terrain_context_ms', function () {
+            var _enemyRef = (situation && situation.nearest_red &&
+                Number.isFinite(+situation.nearest_red.lat)) ? situation.nearest_red : obj;
+            return TERRAIN_CTX.buildTacticalTerrainContext({
+                objective: obj, nearestEnemy: _enemyRef, situation: situation, intel: intel,
+                ownUnits: allUnits, side: activeSide, elevationAt: elevFn,
+            });
         });
     } catch (_) { terrainCtx = null; }
+
+    // FREEFIGHT-LLM-CAPABILITY-ANALYST-A: capability profiles. fast depth forces the
+    // heuristic (no LLM analyst); normal/deep keep the caller's useLlm. Computed ONCE here
+    // and reused by the tool pack below (no duplicate analyst call) + capability-fit ordering.
+    var capOpts = Object.assign({}, opts, { useLlm: (depth === 'fast') ? false : opts.useLlm });
+    var capProfiles = [], capSummary = null, capByUid = {};
+    try {
+        capProfiles = await timer.async('analyze_unit_capabilities_ms', function () {
+            return ANALYST.analyzeUnitCapabilities(units, Object.assign({}, context, { defending_side: 'BLUE', active_side: activeSide }), capOpts);
+        });
+        capSummary = ANALYST.buildCapabilitySummary(capProfiles);
+        capProfiles.forEach(function (p) { if (p && p.unit_uid) capByUid[p.unit_uid] = p; });
+    } catch (_) { capProfiles = []; capSummary = null; capByUid = {}; }
+    // Mission key for the active threat's domain (drives capability-fit unit ordering).
+    var threatProfile = situation && situation.nearest_red_uid ? capByUid[situation.nearest_red_uid] : null;
+    var threatDomain = (threatProfile && threatProfile.domain) || 'ground';
+    var capContext = { profiles_by_uid: capByUid, threat_domain: threatDomain,
+        mission_score_key: threatDomain === 'air' || threatDomain === 'air_defense' ? 'intercept'
+            : (threatDomain === 'naval' ? 'naval_screen' : 'ground_hold') };
+
+    // RMOZ-AI-TOOL-CONTRACT-A: build the versioned tool pack. Reuse the capability profiles
+    // we just built (_precomputed_profiles → getCapabilityIntelTool does NOT re-run the
+    // analyst), and thread a timing hook so the capability-tool span is captured.
+    var toolPack = null, coaFamilyOpts = null, allowedFamilies = [], allowedUnitIds = [];
+    try {
+        toolPack = await timer.async('build_commander_prompt_pack_ms', function () {
+            return CONTRACT.buildCommanderPromptPack({
+                units: units, objectives: objectives,
+                context: Object.assign({}, context, { defending_side: 'BLUE', active_side: activeSide }),
+                opts: Object.assign({}, opts, {
+                    _precomputed_profiles: capProfiles,
+                    _timing: function (n, ms) { timer.mark(n, ms); },
+                }),
+            });
+        });
+        var tc = (toolPack && toolPack.data) || {};
+        allowedFamilies = arr(tc.allowed_coa_families);
+        allowedUnitIds = arr(tc.allowed_unit_ids);
+        var cfoTool = tc.tools_context && tc.tools_context.coa_family_options;
+        coaFamilyOpts = (cfoTool && cfoTool.data) || null;
+    } catch (_) { toolPack = null; }
+
+    return {
+        obj: obj, activeSide: activeSide, commanderMode: commanderMode, diverseMode: diverseMode,
+        allUnits: allUnits, units: units, objectives: objectives, context: context, opts: opts,
+        depth: depth, elevFn: elevFn,
+        situation: situation, blueIntent: blueIntent, intel: intel, terrainCtx: terrainCtx,
+        capProfiles: capProfiles, capSummary: capSummary, capByUid: capByUid, capContext: capContext,
+        toolPack: toolPack, coaFamilyOpts: coaFamilyOpts, allowedFamilies: allowedFamilies, allowedUnitIds: allowedUnitIds,
+    };
+}
+
+// Assemble ONE COA plan from an already-built planning context P, for a given variation
+// seed. LLM is consulted only in normal/deep depth when enabled; fast depth and the
+// Generate-5 non-deep path go straight to the deterministic (diverse/doctrine) builder.
+// light=true trims the heavy echo fields (intel / profiles / brief) for multi-variant payloads.
+async function _assemblePlan(P, variationSeed, timer, light) {
+    var obj = P.obj, activeSide = P.activeSide, commanderMode = P.commanderMode, diverseMode = P.diverseMode;
+    var allUnits = P.allUnits, units = P.units, objectives = P.objectives, context = P.context, opts = P.opts, depth = P.depth;
+    var situation = P.situation, blueIntent = P.blueIntent, intel = P.intel, terrainCtx = P.terrainCtx;
+    var capProfiles = P.capProfiles, capSummary = P.capSummary, capContext = P.capContext;
+    var allowedFamilies = P.allowedFamilies, allowedUnitIds = P.allowedUnitIds, coaFamilyOpts = P.coaFamilyOpts, toolPack = P.toolPack;
+
     function _terrainSummary() {
         if (!terrainCtx) return null;
         return {
@@ -951,38 +1061,6 @@ async function planCoas(units, objectives, context, opts) {
             provenance: terrainCtx.provenance,
         };
     }
-
-    // FREEFIGHT-LLM-CAPABILITY-ANALYST-A: enrich the OOB with capability profiles
-    // (LLM intelligence-analyst when local LLM enabled, heuristic otherwise) BEFORE
-    // COA selection, so the commander picks the right asset for the threat domain.
-    var capProfiles = [], capSummary = null, capByUid = {};
-    try {
-        capProfiles = await ANALYST.analyzeUnitCapabilities(units, Object.assign({}, context, { defending_side: 'BLUE', active_side: activeSide }), opts);
-        capSummary = ANALYST.buildCapabilitySummary(capProfiles);
-        capProfiles.forEach(function (p) { if (p && p.unit_uid) capByUid[p.unit_uid] = p; });
-    } catch (_) { capProfiles = []; capSummary = null; capByUid = {}; }
-    // Mission key for the active threat's domain (drives capability-fit unit ordering).
-    var threatProfile = situation && situation.nearest_red_uid ? capByUid[situation.nearest_red_uid] : null;
-    var threatDomain = (threatProfile && threatProfile.domain) || 'ground';
-    var capContext = { profiles_by_uid: capByUid, threat_domain: threatDomain,
-        mission_score_key: threatDomain === 'air' || threatDomain === 'air_defense' ? 'intercept'
-            : (threatDomain === 'naval' ? 'naval_screen' : 'ground_hold') };
-
-    // RMOZ-AI-TOOL-CONTRACT-A: build the stable, versioned tool pack (deterministic
-    // intelligence context + COA-family options + allowed schema) so every local model
-    // receives the same input and is held to one validated output shape.
-    var toolPack = null, coaFamilyOpts = null, allowedFamilies = [], allowedUnitIds = [];
-    try {
-        toolPack = await CONTRACT.buildCommanderPromptPack({
-            units: units, objectives: objectives,
-            context: Object.assign({}, context, { defending_side: 'BLUE', active_side: activeSide }), opts: opts,
-        });
-        var tc = (toolPack && toolPack.data) || {};
-        allowedFamilies = arr(tc.allowed_coa_families);
-        allowedUnitIds = arr(tc.allowed_unit_ids);
-        var cfoTool = tc.tools_context && tc.tools_context.coa_family_options;
-        coaFamilyOpts = (cfoTool && cfoTool.data) || null;
-    } catch (_) { toolPack = null; }
     function _toolContract(planSource, validation, fallbackUsed, repaired) {
         var tcd = (toolPack && toolPack.data) || {};
         return {
@@ -1009,10 +1087,41 @@ async function planCoas(units, objectives, context, opts) {
         return { selected_coa_family: (intel && intel.recommended_coa_family) || 'air_intercept', unit_assignments: assigns };
     }
 
-    var llmCalled = false, llmStatus = null, fallbackReason = null, providerUsed = null, modelUsed = null;
+    var llmCalled = false, llmStatus = null, fallbackReason = null, fallbackMessage = null, providerUsed = null, modelUsed = null;
     var _llmContractRejection = null; // set when the LLM COA is rejected by the tool contract
 
-    if (opts.useLlm && process.env.RMOOZ_FREE_FIGHT_LLM === '1') {
+    function _finalize(planSource, coas, validation, fallbackUsed, llmInfo, assess) {
+        var result = {
+            ok: true,
+            plan_source: planSource,
+            active_side: activeSide,
+            commander_mode: commanderMode,
+            variation_seed: variationSeed,
+            ai_depth: depth,
+            terrain_context: _terrainSummary(),
+            coas: coas,
+            situation_state: situation,
+            blue_reaction_intent: blueIntent,
+            intel: light ? null : intel,
+            capability_summary: light ? null : capSummary,
+            unit_capability_profiles: light ? [] : capProfiles.slice(0, 80),
+            tool_contract: _toolContract(planSource, validation, fallbackUsed, false),
+            commander_assessment: assess,
+            recommended_plan_id: _recommendedPlanId(coas),
+            llm_called: llmCalled,
+            llm_status: llmStatus,
+            fallback_reason: fallbackReason,
+            fallback_message: fallbackMessage,
+            provider_used: (llmInfo && llmInfo.provider_used) || providerUsed,
+            model_used: (llmInfo && llmInfo.model_used) || modelUsed,
+        };
+        if (light) { result.commander_brief = null; return result; }
+        return timer.sync('commander_brief_ms', function () { return _attachCommanderBrief(result, intel, units, context); });
+    }
+
+    // LLM path — only in normal/deep depth, when opted in AND the local LLM is enabled.
+    var llmAllowed = (depth !== 'fast') && opts.useLlm && process.env.RMOOZ_FREE_FIGHT_LLM === '1';
+    if (llmAllowed) {
         llmCalled = true;
         // Give the LLM the freedom context: commander mode, intel (terrain/zone/border),
         // situation, and the variation seed — so it can reason and choose a tactical action.
@@ -1020,90 +1129,127 @@ async function planCoas(units, objectives, context, opts) {
             commander_mode: commanderMode, variation_seed: variationSeed,
             _intel: intel, _situation: situation, _terrain_ctx: terrainCtx,
         });
-        var llmResult = await _callLlm(allUnits, objectives, llmCtx, opts);
+        var llmResult = await timer.async('llm_ms', function () { return _callLlm(allUnits, objectives, llmCtx, opts); });
         llmStatus = llmResult.llm_status || null;
         if (llmResult.ok) {
             var llmCoas = enrichCoasWithNarrative(llmResult.coas, obj, context, 'llm');
             if (activeSide === 'BLUE' && blueIntent) { applyBlueReaction(llmCoas, situation, blueIntent); }
-            // RMOZ-AI-TOOL-CONTRACT-A: gate the LLM answer through the validator. If it
-            // assigns invented IDs / impossible domain roles / kill actions / a repeated
-            // family, reject and fall through to the deterministic floor.
+            // RMOZ-AI-TOOL-CONTRACT-A: gate the LLM answer through the validator (structure/
+            // physics only). If it assigns invented IDs / kill actions / teleports, reject and
+            // fall through to the deterministic floor.
             var llmRecIdx = 0; for (var li = 0; li < llmCoas.length; li++) { if (llmCoas[li].recommended) { llmRecIdx = li; break; } }
-            var llmValidation = { accepted: true };
-            try {
-                llmValidation = CONTRACT.validateCommanderCoaTool({
-                    decision: _coaToDecision(llmCoas[llmRecIdx]), units: allUnits, objectives: objectives,
-                    allowed_unit_ids: allowedUnitIds, previous_coa_families: arr(context.previous_coa_families),
-                    allowed_families: allowedFamilies,
-                }).data || { accepted: true };
-            } catch (_) { llmValidation = { accepted: true }; }
+            var llmValidation = timer.sync('validation_ms', function () {
+                try {
+                    return CONTRACT.validateCommanderCoaTool({
+                        decision: _coaToDecision(llmCoas[llmRecIdx]), units: allUnits, objectives: objectives,
+                        allowed_unit_ids: allowedUnitIds, previous_coa_families: arr(context.previous_coa_families),
+                        allowed_families: allowedFamilies,
+                    }).data || { accepted: true };
+                } catch (_) { return { accepted: true }; }
+            });
             if (llmValidation.accepted) {
                 var llmAssess = buildCommanderAssessment(llmCoas, obj, context, 'llm');
                 if (activeSide === 'BLUE' && blueIntent) llmAssess = appendSituationToAssessment(llmAssess, situation);
-                return _attachCommanderBrief({
-                    ok: true,
-                    plan_source: 'llm',
-                    active_side: activeSide,
-                    commander_mode: commanderMode,
-                    variation_seed: variationSeed,
-                    terrain_context: _terrainSummary(),
-                    coas: llmCoas,
-                    situation_state: situation,
-                    blue_reaction_intent: blueIntent,
-                    intel: intel,
-                    capability_summary: capSummary,
-                    unit_capability_profiles: capProfiles.slice(0, 80),
-                    tool_contract: _toolContract('llm', llmValidation, false, false),
-                    commander_assessment: llmAssess,
-                    recommended_plan_id: _recommendedPlanId(llmCoas),
-                    llm_called: true,
-                    llm_status: llmStatus,
-                    fallback_reason: null,
-                    provider_used: llmResult.provider_used || null,
-                    model_used: llmResult.model_used || null,
-                }, intel, units, context);
+                return _finalize('llm', llmCoas, llmValidation, false,
+                    { provider_used: llmResult.provider_used || null, model_used: llmResult.model_used || null }, llmAssess);
             }
             // LLM COA rejected by the contract → record + drop to deterministic floor.
             fallbackReason = 'coa_contract_rejected: ' + (llmValidation.rejected_reason || 'invalid');
             _llmContractRejection = llmValidation;
         } else {
             fallbackReason = llmResult.fallback_reason || 'llm_failed';
+            // RMOOZ-AI-COA-PERFORMANCE-A: honest operator message on a slow/unavailable LLM.
+            if (/timeout|unavailable|error|remote_blocked/i.test(String(llmStatus || ''))) {
+                fallbackMessage = 'LLM slow/unavailable — used fast tactical planner.';
+            }
         }
     }
 
-    // Deterministic plan. In 'free'/'high_variation' this is the diverse archetype
-    // builder (genuine tactical variety); in 'controlled' it is the side-aware
-    // doctrine-guided builder. The intercept-override (applyBlueReaction) is skipped in
-    // diverse mode so the chosen tactical actions (recon/flank/delay/…) are preserved.
+    // Deterministic plan. In 'free'/'high_variation' this is the diverse archetype builder
+    // (genuine tactical variety); in 'controlled' it is the side-aware doctrine-guided
+    // builder. The intercept-override (applyBlueReaction) is skipped in diverse mode so the
+    // chosen tactical actions (recon/flank/delay/…) are preserved. P.elevFn gates DEM by depth.
     var detSource = diverseMode ? 'deterministic_diverse_coa' : 'deterministic_coa_fallback';
-    var coas = enrichCoasWithNarrative(buildCoasForSide(allUnits, obj, activeSide, situation, capContext, commanderMode, variationSeed, intel), obj, context, detSource);
+    var coas = timer.sync('build_diverse_coas_ms', function () {
+        return enrichCoasWithNarrative(
+            buildCoasForSide(allUnits, obj, activeSide, situation, capContext, commanderMode, variationSeed, intel, P.elevFn),
+            obj, context, detSource);
+    });
     var assess = buildCommanderAssessment(coas, obj, context, detSource);
     if (activeSide === 'BLUE' && blueIntent) {
         if (!diverseMode) applyBlueReaction(coas, situation, blueIntent);
         assess = appendSituationToAssessment(assess, situation);
     }
-    return _attachCommanderBrief({
+    return _finalize(detSource, coas, _llmContractRejection, llmCalled, null, assess);
+}
+
+// ── Main entry ────────────────────────────────────────────────────────────────
+/**
+ * planCoas(units, objectives, context, opts)
+ * opts: { useLlm, preferSide, allowed_unit_ids, ai_depth, commander_mode }
+ * Returns { ok, plan_source, coas[], llm_called, llm_status, fallback_reason?,
+ *           fallback_message?, ai_depth, debug_timing, provider_used?, model_used? }
+ */
+async function planCoas(units, objectives, context, opts) {
+    opts = opts || {};
+    context = context || {};
+    var depth = _resolveAiDepth(opts, context);
+    var timer = makeTimer();
+    var tStart = _now();
+    var P = await _buildPlanningContext(arr(units), objectives, context, opts, depth, timer);
+    // Variation seed: explicit, else turn index, else number of prior families (unchanged).
+    var seed = Number.isFinite(+context.variation_seed) ? +context.variation_seed
+        : (Number.isFinite(+context.turn_index) ? +context.turn_index : arr(context.previous_coa_families).length);
+    var result = await _assemblePlan(P, seed, timer, false);
+    result.debug_timing = _finalizeTimings(timer, tStart);
+    _logTimings('plan-coas', result);
+    return result;
+}
+
+// RMOOZ-AI-COA-PERFORMANCE-A: Generate-N. Build the heavy planning context ONCE, then
+// assemble one COA variant per seed (only the seed / buildDiverseCoas varies). Non-deep
+// reuses the cached context with NO further LLM calls (so it is NOT N× slower); deep
+// re-runs the LLM per seed. Returns { ok, variations[], shared_debug_timing, debug_timing }.
+async function planCoaVariations(units, objectives, context, opts) {
+    opts = opts || {};
+    context = context || {};
+    var depth = _resolveAiDepth(opts, context);
+    var seeds = arr(opts.variation_seeds).map(Number).filter(function (n) { return Number.isFinite(n); });
+    if (!seeds.length) seeds = [0, 1, 2, 3, 4];
+    var timer = makeTimer();
+    var tStart = _now();
+    var P = await _buildPlanningContext(arr(units), objectives, context, opts, depth, timer);
+    var sharedTimings = Object.assign({}, timer.spans()); // the once-built context spans
+    var variations = [];
+    for (var i = 0; i < seeds.length; i++) {
+        var vTimer = makeTimer();
+        var vStart = _now();
+        // Non-deep: reuse the cached context, no LLM. Deep: full per-seed assembly (LLM each).
+        var seedOpts = (depth === 'deep') ? P.opts : Object.assign({}, P.opts, { useLlm: false });
+        var Pv = Object.assign({}, P, { opts: seedOpts });
+        var plan = await _assemblePlan(Pv, seeds[i], vTimer, true);
+        plan.debug_timing = _finalizeTimings(vTimer, vStart);
+        variations.push(plan);
+    }
+    var totalMs = _now() - tStart;
+    var out = {
         ok: true,
-        plan_source: detSource,
-        active_side: activeSide,
-        commander_mode: commanderMode,
-        variation_seed: variationSeed,
-        terrain_context: _terrainSummary(),
-        coas: coas,
-        situation_state: situation,
-        blue_reaction_intent: blueIntent,
-        intel: intel,
-        capability_summary: capSummary,
-        unit_capability_profiles: capProfiles.slice(0, 80),
-        tool_contract: _toolContract(detSource, _llmContractRejection, llmCalled, false),
-        commander_assessment: assess,
-        recommended_plan_id: _recommendedPlanId(coas),
-        llm_called: llmCalled,
-        llm_status: llmStatus,
-        fallback_reason: fallbackReason,
-        provider_used: providerUsed,
-        model_used: modelUsed,
-    }, intel, units, context);
+        ai_depth: depth,
+        active_side: P.activeSide,
+        commander_mode: P.commanderMode,
+        shared_context: true,
+        seeds: seeds,
+        variations: variations,
+        shared_debug_timing: sharedTimings,
+        debug_timing: Object.assign({}, sharedTimings, { total_ms: totalMs, variations_count: variations.length }),
+    };
+    try {
+        console.log('[free-fight/plan-coa-variations] seeds=' + seeds.length + ' total=' + totalMs + 'ms' +
+            ' shared(cap=' + (sharedTimings.analyze_unit_capabilities_ms || 0) + ' pack=' + (sharedTimings.build_commander_prompt_pack_ms || 0) +
+            ' terrain=' + (sharedTimings.tactical_terrain_context_ms || 0) + ') depth=' + depth +
+            ' (one shared context, not ' + seeds.length + '×)');
+    } catch (_) {}
+    return out;
 }
 
 function _recommendedPlanId(coas) {
@@ -1296,6 +1442,7 @@ function makeCoaEventLogEntries(plan, applyResult) {
 // ── Module exports ────────────────────────────────────────────────────────────
 module.exports = {
     planCoas:               planCoas,
+    planCoaVariations:      planCoaVariations,        // RMOOZ-AI-COA-PERFORMANCE-A (Generate-N, shared context)
     validateCoaPlan:        validateCoaPlan,
     applyCoaPlan:           applyCoaPlan,
     makeCoaEventLogEntries: makeCoaEventLogEntries,

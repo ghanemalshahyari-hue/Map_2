@@ -1364,7 +1364,13 @@ function handle(req, res, ctx) {
             var objectives = Array.isArray(b.objectives) ? b.objectives : (b.objectives ? [b.objectives] : []);
             var context    = (b.context && typeof b.context === 'object') ? b.context : {};
             var opts       = (b.opts    && typeof b.opts    === 'object') ? b.opts    : {};
-            COA_PLANNER.planCoas(units, objectives, context, opts)
+            // RMOOZ-AI-COA-PERFORMANCE-A: Generate-N reuses ONE shared planning context (built
+            // once) and varies only the seed/buildDiverseCoas — so it is not N× slower than a
+            // single plan (unless Deep mode re-runs the LLM per seed).
+            var planner = (Array.isArray(opts.variation_seeds) && opts.variation_seeds.length)
+                ? COA_PLANNER.planCoaVariations(units, objectives, context, opts)
+                : COA_PLANNER.planCoas(units, objectives, context, opts);
+            planner
                 .then(function (r) { sendJson(res, 200, r); })
                 .catch(function (e) {
                     sendJson(res, 200, {

@@ -86,6 +86,16 @@
         free:           { label: 'Free Tactical' },
         high_variation: { label: 'High Variation' },
     };
+    // RMOOZ-AI-COA-PERFORMANCE-A: AI planning depth —
+    //   'fast'   : heuristic capability, NO LLM analyst, terrain summary only (no DEM sampling) — quickest
+    //   'normal' : current behavior (LLM analyst/commander when enabled), real terrain
+    //   'deep'   : full LLM + full terrain/provenance; Generate-5 re-runs the LLM per seed
+    var _aiDepth = 'normal';
+    var FF_AI_DEPTHS = {
+        fast:   { label: 'Fast' },
+        normal: { label: 'Normal' },
+        deep:   { label: 'Deep' },
+    };
     // Cinematic speeds: decisionDelayMs between turns, moveAnimMs per move animation.
     var FF_SPEEDS = {
         x1:    { decisionDelayMs: 8000, moveAnimMs: 6000, label: 'x1' },
@@ -1040,6 +1050,7 @@
         bind('camera-manual', function () { setCameraMode('manual'); });
         bind('camera-follow', function () { setCameraMode('follow'); });
         ['controlled', 'free', 'high_variation'].forEach(function (m) { bind('mode-' + m, function () { setCommanderMode(m); }); });
+        ['fast', 'normal', 'deep'].forEach(function (d) { bind('depth-' + d, function () { setAiDepth(d); }); });
         bind('gen5-coas', generate5Coas);
         FF_SPEED_ORDER.forEach(function (sp) { bind('loop-speed-' + sp, function () { setFreeFightSpeed(sp); }); });
         renderCommanderPanel();
@@ -1490,7 +1501,7 @@
         if (!objectives.length && Array.isArray(ob2.objectives)) objectives = ob2.objectives;
 
         var allowedUnitIds = units.map(function(u) { return u.id; });
-        return { units: units, objectives: objectives, opts: { preferSide: 'RED', useLlm: _useLlm, allowed_unit_ids: allowedUnitIds } };
+        return { units: units, objectives: objectives, opts: { preferSide: 'RED', useLlm: _useLlm, ai_depth: _aiDepth, commander_mode: _commanderMode, allowed_unit_ids: allowedUnitIds } };
     }
     // FREEFIGHT-COA-ROUTE-JSON-GUARD-A: never blindly call r.json(). A stale/wrong
     // server answers POSTs to unknown routes with plain "Method Not Allowed" (405),
@@ -1859,7 +1870,7 @@
                 // + coalition detection (UAE→GCC, NATO members→NATO, etc.).
                 scenario_name: (function () { var w = W(); var sc = w && w.RmoozScenario && w.RmoozScenario.scenario; return sc && (sc.name || sc.scenario_label || sc.scenario_name) || null; })(),
             },
-            opts: { preferSide: _activeSide, useLlm: _useLlm, commander_mode: _commanderMode, allowed_unit_ids: base.units.map(function (u) { return u.id; }) },
+            opts: { preferSide: _activeSide, useLlm: _useLlm, ai_depth: _aiDepth, commander_mode: _commanderMode, allowed_unit_ids: base.units.map(function (u) { return u.id; }) },
         };
     }
 
@@ -1986,34 +1997,76 @@
             (mode === 'controlled' ? 'doctrine-guided' : mode === 'high_variation' ? 'creative / rotating approach' : 'free tactical reasoning') + '.'); } catch (_) {}
         updatePanel();
     }
+    // RMOOZ-AI-COA-PERFORMANCE-A: switch the AI planning depth (fast / normal / deep).
+    // Takes effect on the next planning request; logged for transparency.
+    function setAiDepth(depth) {
+        if (!FF_AI_DEPTHS[depth]) return;
+        _aiDepth = depth;
+        try { _appendToEventLog('AI DEPTH: ' + FF_AI_DEPTHS[depth].label + ' — ' +
+            (depth === 'fast' ? 'heuristic capability, no LLM, terrain summary only' :
+             depth === 'deep' ? 'full LLM + full terrain/provenance' : 'LLM when enabled, real terrain') + '.'); } catch (_) {}
+        updatePanel();
+    }
 
-    // RMOOZ-AI-COMMANDER-FREEDOM-B: run 5 planning cycles with different variation seeds
-    // (High Variation) and show whether the lead family / action / unit changed.
+    // Format a millisecond span for the operator (seconds once it crosses ~1s).
+    function _fmtMs(ms) {
+        var n = Number(ms);
+        if (!Number.isFinite(n)) return '—';
+        return n >= 1000 ? (Math.round(n / 100) / 10) + 's' : Math.round(n) + 'ms';
+    }
+    // RMOOZ-AI-COA-PERFORMANCE-A: compact "Stage timings" block from plan.debug_timing
+    // (AI total / LLM / capability / terrain / COA build). Returns '' when no timing present.
+    function _coaTimingHtml(t) {
+        if (!t || typeof t !== 'object') return '';
+        function row(label, ms, color) {
+            if (ms == null) return '';
+            return '<span style="color:#7a9ab8;">' + esc(label) + ':</span> <span style="color:' + (color || '#cdd8e4') + ';">' + esc(_fmtMs(ms)) + '</span>';
+        }
+        var parts = [
+            row('AI total', t.total_ms, '#cfe8ff'),
+            (t.llm_ms ? row('LLM', t.llm_ms, '#90d0b0') : ''),
+            row('capability', t.analyze_unit_capabilities_ms, '#d8ccff'),
+            row('terrain', t.tactical_terrain_context_ms),
+            row('COA build', t.build_diverse_coas_ms, '#bfe89a'),
+        ].filter(Boolean);
+        if (!parts.length) return '';
+        return '<div data-ff-coa="timing" style="margin-bottom:6px;font-size:9.5px;color:#8fa5b8;line-height:1.5;border:1px solid #20364e;border-radius:4px;padding:4px 7px;background:#0a1420;">' +
+            '<span style="color:#7a9ab8;font-weight:600;">⏱ Stage timings — </span>' + parts.join(' · ') + '</div>';
+    }
+    // RMOOZ-AI-COMMANDER-FREEDOM-B + RMOOZ-AI-COA-PERFORMANCE-A: produce 5 COAs for seeds 0–4
+    // (High Variation) and show whether the lead family / action / unit changed. ONE request —
+    // the server builds the heavy intel/capability/tool-pack ONCE and varies only the seed /
+    // buildDiverseCoas (not 5× planning), unless Deep mode re-runs the LLM per seed.
     function generate5Coas() {
         var resultEl = _panel && _panel.querySelector('[data-ff-gen5="result"]');
         var base;
         try { base = _buildLoopRequestBody(); } catch (e) { if (resultEl) resultEl.textContent = 'No scenario loaded.'; return; }
         if (!base.units || !base.units.length) { if (resultEl) resultEl.textContent = 'No movable units for the active side.'; return; }
-        if (resultEl) resultEl.innerHTML = '<span style="color:#8fa5b8;">Running 5 cycles (seeds 0–4, High Variation)…</span>';
-        var seeds = [0, 1, 2, 3, 4], rows = [], pending = seeds.length;
-        seeds.forEach(function (seed) {
-            var body = {
-                units: base.units, objectives: base.objectives,
-                context: Object.assign({}, base.context, { commander_mode: 'high_variation', variation_seed: seed }),
-                opts: Object.assign({}, base.opts, { commander_mode: 'high_variation' }),
-            };
-            _fetchJsonSafe('/api/wargame-sim/free-fight/plan-coas', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
-                .then(function (plan) {
-                    var coas = arr(plan && plan.coas);
+        var deepTag = (_aiDepth === 'deep') ? ' · Deep: LLM per seed' : ' · one shared context';
+        if (resultEl) resultEl.innerHTML = '<span style="color:#8fa5b8;">Planning… 5 COAs (seeds 0–4, High Variation' + esc(deepTag) + ')</span>';
+        var seeds = [0, 1, 2, 3, 4];
+        var body = {
+            units: base.units, objectives: base.objectives,
+            context: Object.assign({}, base.context, { commander_mode: 'high_variation' }),
+            opts: Object.assign({}, base.opts, { commander_mode: 'high_variation', ai_depth: _aiDepth, variation_seeds: seeds }),
+        };
+        _fetchJsonSafe('/api/wargame-sim/free-fight/plan-coas', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+            .then(function (resp) {
+                if (_isRouteUnavailable(resp)) { if (resultEl) resultEl.textContent = _routeUnavailableText(resp); return; }
+                var variations = arr(resp && resp.variations);
+                if (!variations.length) { if (resultEl) resultEl.textContent = 'Generate-5 returned no variations.'; return; }
+                var rows = variations.map(function (v, i) {
+                    var coas = arr(v && v.coas);
                     var rec = coas.filter(function (c) { return c.recommended; })[0] || coas[0] || {};
                     var lead = (rec.phases && rec.phases[0] && rec.phases[0].actions && rec.phases[0].actions[0]) || {};
-                    rows.push({ seed: seed, family: rec.coa_family || rec.title || '?', action: lead.action_type || '?', unit: lead.unit_uid || '?' });
-                })
-                .catch(function () { rows.push({ seed: seed, family: 'error', action: '-', unit: '-' }); })
-                .then(function () { if (--pending === 0) _renderGen5(rows, resultEl); });
-        });
+                    var seed = (v && v.variation_seed != null) ? v.variation_seed : ((resp.seeds && resp.seeds[i] != null) ? resp.seeds[i] : i);
+                    return { seed: seed, family: rec.coa_family || rec.title || '?', action: lead.action_type || '?', unit: lead.unit_uid || '?' };
+                });
+                _renderGen5(rows, resultEl, resp.debug_timing, resp.shared_context, resp.ai_depth);
+            })
+            .catch(function () { if (resultEl) resultEl.textContent = 'Generate-5 failed (fetch error).'; });
     }
-    function _renderGen5(rows, el) {
+    function _renderGen5(rows, el, timing, shared, depth) {
         if (!el) return;
         rows.sort(function (a, b) { return a.seed - b.seed; });
         var fams = {}, acts = {}, units = {};
@@ -2027,8 +2080,19 @@
         h += '</table>';
         h += '<div data-ff-gen5="verdict" style="margin-top:4px;font-weight:700;color:' + (varied ? '#7ad07a' : '#e0a040') + ';">' +
             (varied ? '✓ Variation confirmed: family / action / unit changed across seeds.' : '⚠ No variation detected across seeds.') + '</div>';
+        // RMOOZ-AI-COA-PERFORMANCE-A: timing + the "one shared context, not N× planning" fact.
+        if (timing) {
+            h += '<div data-ff-gen5="timing" style="margin-top:3px;font-size:9px;color:#8fa5b8;line-height:1.4;">' +
+                'Total: ' + esc(_fmtMs(timing.total_ms)) + ' · ' + rows.length + ' COAs' +
+                (depth ? ' · depth ' + esc(depth) : '') +
+                (shared ? '<br>shared context built once — capability ' + esc(_fmtMs(timing.analyze_unit_capabilities_ms)) +
+                    ', tool-pack ' + esc(_fmtMs(timing.build_commander_prompt_pack_ms)) +
+                    ', terrain ' + esc(_fmtMs(timing.tactical_terrain_context_ms)) +
+                    ' (not ' + rows.length + '× planning)' : '') + '</div>';
+        }
         el.innerHTML = h;
-        try { _appendToEventLog('AI TEST: Generate 5 COAs — ' + (varied ? 'variation confirmed across seeds 0–4 (family/action/unit changed).' : 'no variation detected across seeds.')); } catch (_) {}
+        try { _appendToEventLog('AI TEST: Generate 5 COAs — ' + (varied ? 'variation confirmed across seeds 0–4 (family/action/unit changed).' : 'no variation detected across seeds.') +
+            (timing ? ' [total ' + _fmtMs(timing.total_ms) + (shared ? ', one shared context' : '') + ']' : '')); } catch (_) {}
     }
 
     // Capture original positions of every unit once, so Reset can fully restore.
@@ -2257,7 +2321,7 @@
             return parts.length ? parts.join(' · ') : '';
         }
         if (_coaLoading) {
-            h += '<div style="color:#9ab0c0;font-size:11px;padding:6px;">Loading AI Attack Plan… جاري التحميل</div>';
+            h += '<div style="color:#9ab0c0;font-size:11px;padding:6px;">Planning… التخطيط جارٍ<span style="color:#6a8fa8;font-size:9px;"> (' + esc(FF_AI_DEPTHS[_aiDepth] ? FF_AI_DEPTHS[_aiDepth].label : _aiDepth) + ' · ' + esc(FF_COMMANDER_MODES[_commanderMode] ? FF_COMMANDER_MODES[_commanderMode].label : _commanderMode) + ')</span></div>';
             return h;
         }
         if (!_coaPlan) {
@@ -2281,7 +2345,14 @@
         h += '<div style="margin-bottom:5px;font-size:10px;">' +
              '<span style="color:#7a9ab8;">Plan source:</span> <span style="color:' + srcColor + ';">' + esc(_coaPlan.plan_source || 'deterministic_coa_fallback') + '</span>';
         if (_coaPlan.fallback_reason) h += ' <span style="color:#e0a93a;font-size:9px;">(' + esc(_coaPlan.fallback_reason) + ')</span>';
+        if (_coaPlan.ai_depth) h += ' <span style="color:#7a9ab8;font-size:9px;">· depth ' + esc(_coaPlan.ai_depth) + '</span>';
         h += '</div>';
+        // RMOOZ-AI-COA-PERFORMANCE-A: honest message when the LLM was slow/unavailable.
+        if (_coaPlan.fallback_message) {
+            h += '<div data-ff-coa="fallback-msg" style="margin-bottom:5px;font-size:10px;color:#e0c060;padding:4px 7px;border:1px solid #6a5a20;border-radius:4px;background:#1f1a08;">⏱ ' + esc(_coaPlan.fallback_message) + '</div>';
+        }
+        // RMOOZ-AI-COA-PERFORMANCE-A: stage timings (AI total / LLM / capability / terrain / COA build).
+        h += _coaTimingHtml(_coaPlan.debug_timing);
         // FREEFIGHT-COA-COMMANDER-NARRATIVE-A: Commander AI Assessment banner
         if (_coaPlan.commander_assessment || _coaPlan.recommended_plan_id) {
             h += '<div data-ff-coa="assessment" style="margin-bottom:6px;padding:6px 9px;border:1px solid #2e5d7d;border-radius:5px;background:#0a1622;">';
@@ -2451,6 +2522,19 @@
             (_commanderMode === 'controlled' ? 'Doctrine-guided: intercept / defend.' :
              _commanderMode === 'high_variation' ? 'Creative: rotates recon / flank / deceive / delay / attack each cycle.' :
              'Free tactical reasoning: AI may choose recon, delay, flank, deceive, withdraw, defend, probe, or attack — operator reviews.') + '</div>';
+        // RMOOZ-AI-COA-PERFORMANCE-A: AI planning depth (speed vs depth trade-off).
+        h += '<div data-ff-loop="ai-depth" style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:6px;">';
+        h += '<span style="font-size:10px;color:#8fa5b8;">Depth:</span>';
+        ['fast', 'normal', 'deep'].forEach(function (d) {
+            var on = (_aiDepth === d);
+            var bg = on ? '#143a30' : '#101b27', bc = on ? '#4ab090' : '#4a5f75', fc = on ? '#aef0d0' : '#9fb8e0';
+            h += '<button data-act="depth-' + d + '" style="font:inherit;cursor:pointer;border:1px solid ' + bc + ';background:' + bg + ';color:' + fc + ';border-radius:4px;padding:3px 8px;font-size:10px;font-weight:' + (on ? '700' : '400') + ';">' + esc(FF_AI_DEPTHS[d].label) + '</button>';
+        });
+        h += '</div>';
+        h += '<div style="font-size:9px;color:#6a8fa8;margin-top:3px;">' +
+            (_aiDepth === 'fast' ? 'Fast: heuristic capability, no LLM, terrain summary only — quickest.' :
+             _aiDepth === 'deep' ? 'Deep: full LLM + full terrain/provenance (Generate-5 re-runs the LLM per seed).' :
+             'Normal: LLM analyst/commander when enabled, real terrain.') + '</div>';
         // RMOOZ-AI-COMMANDER-FREEDOM-B: quick variation test — run 5 cycles with seeds 0-4.
         h += '<div style="margin-top:6px;">';
         h += '<button data-act="gen5-coas" style="font:inherit;cursor:pointer;border:1px solid #6a9a4a;background:#16240f;color:#bfe89a;border-radius:5px;padding:4px 9px;font-size:10.5px;font-weight:600;">⚙ Generate 5 different COAs</button>';
@@ -2766,7 +2850,13 @@
         _buildLoopRequestBodyForTest: function ()         { return _buildLoopRequestBody(); },
         // RMOOZ-AI-COMMANDER-FREEDOM-B test seams
         _generate5CoasForTest:     function ()            { return generate5Coas(); },
-        _renderGen5ForTest:        function (rows, el)    { return _renderGen5(rows, el); },
+        _renderGen5ForTest:        function (rows, el, t, s, d) { return _renderGen5(rows, el, t, s, d); },
+        // RMOOZ-AI-COA-PERFORMANCE-A test seams
+        _getAiDepthForTest:        function ()            { return _aiDepth; },
+        _setAiDepthForTest:        function (d)           { return setAiDepth(d); },
+        _buildAiRequestBodyForTest: function ()           { return _buildAiRequestBody(); },
+        _fmtMsForTest:             function (ms)          { return _fmtMs(ms); },
+        _coaTimingHtmlForTest:     function (t)           { return _coaTimingHtml(t); },
         // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A test seams
         _getLastIntelForTest:        function ()          { return _lastIntel; },
         _getCoaFamilyHistoryForTest: function ()          { return _coaFamilyHistory.slice(); },

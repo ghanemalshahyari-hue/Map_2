@@ -69,12 +69,23 @@ function clampOutside(target, centre, r) {
     if (!isFinite(v.x) || (v.x === 0 && v.y === 0)) v = { x: 1, y: 0 };
     return add(centre, v, r * 1.05);
 }
+// pull a point radially IN toward a centre so it stays within maxR (own-territory clamp)
+function clampInsideOwn(target, centre, maxR) {
+    if (!centre || !(maxR > 0)) return target;
+    var d = dist(target, centre);
+    if (d <= maxR) return target;
+    var v = norm(vec(centre, target));
+    return add(centre, v, maxR);
+}
 
 function emptyFlags() {
     return {
         no_move: false, stays_outside_threat: false, keeps_distance: false,
         increases_distance_from_threat: false, different_axis: false, misleading: false,
         shaping: false, occupies_terrain: false, limited_commitment: false, reconnoiters: false,
+        // GIS terrain-aware flags
+        uses_high_ground: false, respects_threat_ring: false, within_own_zone: false,
+        seeks_los: false, holds_choke_point: false, follows_corridor: false, toward_own_territory: false,
     };
 }
 
@@ -91,10 +102,20 @@ function computeActionGeometry(action, unit, ctx) {
     var obj = pt(ctx.objective);
     var threatR = Number(ctx.threatZoneRadiusDeg);
     if (!Number.isFinite(threatR) || threatR <= 0) threatR = 0.10;
-    var fallback = pt(ctx.fallback);
+    var fallback = pt(ctx.fallback) || pt(ctx.border_ref);
     var flags = emptyFlags();
     var target = u ? { lat: u.lat, lon: u.lon } : { lat: 0, lon: 0 };
     var behavior = '', reason = '', corridorFraction = null;
+
+    // GIS terrain-aware tactics: richer context (gated — degrades to pure geometry when absent).
+    var rings = ctx.threat_rings || null;                                   // {warning,defended,engagement}
+    var warnR = rings && Number.isFinite(+rings.warning) ? +rings.warning : threatR;
+    var chokePt = (ctx.choke && pt(ctx.choke)) || (ctx.terrain && pt(ctx.terrain.choke));
+    var highGround = (ctx.high_ground && pt(ctx.high_ground)) || (ctx.terrain && pt(ctx.terrain.high_ground));
+    var ownCenter = pt(ctx.own_center);
+    var terrainClass = ctx.terrain_class || (ctx.terrain && ctx.terrain.terrain_class) || null;
+    var prov = ctx.provenance || {};
+    var terrainBasis = [];   // which GIS factors drove this action (for the event log / LLM)
 
     if (!u) {
         return { target: target, action: action, archetype: ACTION_TO_ARCHETYPE[action] || 'direct_action',
@@ -108,16 +129,27 @@ function computeActionGeometry(action, unit, ctx) {
     switch (action) {
         case 'recon':
         case 'observe': {
-            // Move toward an observation vantage on the objective/enemy, but STAND OFF —
-            // never inside the threat zone. observe takes a smaller, LOS-seeking step.
+            // Move to a HIGH-GROUND observation point with line of sight, standing off the
+            // WARNING ring (not just the inner zone) and staying inside own territory.
             var look = obj || enemy;
             var step = (action === 'observe') ? MAX_STEP_DEG * 0.4 : MAX_STEP_DEG * 0.8;
-            var vantage = ctx.terrain && pt(ctx.terrain.high_ground);
-            target = vantage ? toward(u, vantage, step) : (look ? toward(u, look, step) : { lat: u.lat, lon: u.lon });
-            target = clampOutside(target, enemy, threatR);
-            flags.stays_outside_threat = true; flags.keeps_distance = true; flags.reconnoiters = true;
-            behavior = (action === 'observe') ? 'occupy a line-of-sight vantage and observe' : 'move to an observation area and report, staying outside the threat zone';
-            reason = 'Gain situational awareness on the objective/enemy without committing to contact.';
+            if (highGround) {
+                target = toward(u, highGround, step);
+                flags.uses_high_ground = true; terrainBasis.push('high_ground:' + (prov.high_ground || 'inferred'));
+            } else {
+                target = look ? toward(u, look, step) : { lat: u.lat, lon: u.lon };
+            }
+            // Stand off the warning ring around the threat (terrain-aware standoff).
+            target = clampOutside(target, enemy, warnR);
+            if (rings) { flags.respects_threat_ring = true; terrainBasis.push('threat_ring:warning'); }
+            // Do not cross into enemy ground: keep within own sovereign zone if known.
+            if (ownCenter && obj) {
+                var beyond = dist(target, ownCenter) - dist(obj, ownCenter);
+                if (beyond > 0) { target = clampInsideOwn(target, ownCenter, dist(obj, ownCenter)); flags.within_own_zone = true; terrainBasis.push('sovereign_zone'); }
+            }
+            flags.stays_outside_threat = true; flags.keeps_distance = true; flags.reconnoiters = true; flags.seeks_los = !!highGround;
+            behavior = (highGround ? 'occupy high ground for observation/LOS' : 'move to an observation area') + ', standing off the warning ring' + (flags.within_own_zone ? ' inside own territory' : '');
+            reason = 'Gain situational awareness from a covered vantage without crossing the threat ring or the border.';
             break;
         }
         case 'probe': {
@@ -138,37 +170,56 @@ function computeActionGeometry(action, unit, ctx) {
             break;
         }
         case 'delay': {
-            // Shape the enemy's advance: occupy a point on the enemy→objective corridor,
-            // forward of the objective (closer to the enemy), to slow movement.
-            if (enemy && obj) {
+            // Occupy the CHOKE POINT on the enemy's movement corridor to slow/shape the
+            // advance (a real relief pinch when DEM-derived, else a corridor point).
+            if (chokePt) {
+                target = toward(u, chokePt, MAX_STEP_DEG);
+                flags.shaping = true; flags.holds_choke_point = true; flags.follows_corridor = true;
+                terrainBasis.push('choke:' + (prov.choke || 'inferred'));
+                corridorFraction = 0.4;
+            } else if (enemy && obj) {
                 corridorFraction = 0.35;
-                var shapePoint = lerp(enemy, obj, corridorFraction);
-                target = toward(u, shapePoint, MAX_STEP_DEG);
-                flags.shaping = true;
+                target = toward(u, lerp(enemy, obj, corridorFraction), MAX_STEP_DEG);
+                flags.shaping = true; flags.follows_corridor = true;
             } else if (enemy) {
                 target = toward(u, enemy, MAX_STEP_DEG * 0.5); flags.shaping = true;
             }
-            behavior = 'occupy successive positions on the enemy corridor to slow/shape the advance';
-            reason = 'Trade space for time and disrupt the enemy timetable short of decisive battle.';
+            behavior = (chokePt ? 'occupy the choke point on the enemy corridor' : 'occupy a position on the enemy corridor') + ' to slow/shape the advance';
+            reason = 'Trade space for time at the terrain pinch and disrupt the enemy timetable short of decisive battle.';
             break;
         }
         case 'defend': {
-            // Occupy terrain near the protected area / own ground — do NOT chase.
-            var hold = (ctx.terrain && pt(ctx.terrain.high_ground)) || obj || u;
-            target = toward(u, hold, MAX_STEP_DEG * 0.35);
+            // Occupy defensible HIGH GROUND covering the objective — do NOT chase. Urban/
+            // coastal terrain favours holding close to the objective; open ground allows a
+            // forward defensible position.
+            var hold = highGround || obj || u;
+            var holdStep = (terrainClass === 'urban' || terrainClass === 'coastal') ? MAX_STEP_DEG * 0.25 : MAX_STEP_DEG * 0.4;
+            target = toward(u, hold, holdStep);
+            // Keep the defensive position inside own territory.
+            if (ownCenter && obj) { target = clampInsideOwn(target, ownCenter, Math.max(dist(obj, ownCenter), warnR)); flags.within_own_zone = true; }
             flags.occupies_terrain = true;
-            behavior = 'occupy and hold defensible terrain covering the objective';
-            reason = 'Deny the approach from prepared positions rather than pursuing the enemy.';
+            if (highGround) { flags.uses_high_ground = true; terrainBasis.push('high_ground:' + (prov.high_ground || 'inferred')); }
+            if (terrainClass) terrainBasis.push('terrain:' + terrainClass);
+            behavior = (highGround ? 'occupy defensible high ground' : 'hold prepared positions') + ' covering the objective' + (terrainClass && terrainClass !== 'unknown' ? ' (' + terrainClass + ' approach)' : '');
+            reason = 'Deny the approach from covered, defensible terrain rather than pursuing the enemy.';
             break;
         }
         case 'withdraw': {
-            // Increase distance from the nearest threat / move to a fallback.
-            if (fallback) target = toward(u, fallback, MAX_STEP_DEG);
-            else if (enemy) target = away(u, enemy, MAX_STEP_DEG);
-            else if (obj) target = away(u, obj, MAX_STEP_DEG);
+            // Break contact and fall back toward OWN territory / the border (rear fallback),
+            // increasing distance from the threat rings.
+            if (fallback) {
+                target = toward(u, fallback, MAX_STEP_DEG);
+                flags.toward_own_territory = true; terrainBasis.push('own_border:' + (prov.own_border || 'inferred'));
+            } else if (ownCenter) {
+                target = toward(u, ownCenter, MAX_STEP_DEG); flags.toward_own_territory = true;
+            } else if (enemy) { target = away(u, enemy, MAX_STEP_DEG); }
+            else if (obj) { target = away(u, obj, MAX_STEP_DEG); }
+            // Make sure we actually open distance from the threat ring.
+            if (enemy && dist(target, enemy) <= dist(u, enemy)) { target = away(u, enemy, MAX_STEP_DEG); flags.toward_own_territory = !!fallback; }
             flags.increases_distance_from_threat = true;
-            behavior = 'break contact and move to a fallback position';
-            reason = 'Preserve the force; current exposure/supply does not favour holding.';
+            if (rings) { flags.respects_threat_ring = true; terrainBasis.push('threat_ring:warning'); }
+            behavior = 'break contact and fall back toward own territory' + (fallback ? ' / the border' : '');
+            reason = 'Preserve the force; fall back along the corridor toward own ground, opening distance from the threat.';
             break;
         }
         case 'avoid_contact': {
@@ -183,20 +234,29 @@ function computeActionGeometry(action, unit, ctx) {
             break;
         }
         case 'flank': {
-            // Approach from a DIFFERENT axis: mostly perpendicular to the direct line,
-            // with a small forward component.
+            // Approach from a DIFFERENT axis — offset perpendicular to the direct line and
+            // OFF the enemy corridor/choke, with a small forward component. Open terrain
+            // allows a wider flank; urban/mountain forces a tighter one.
             var d = norm(directAxis);
             var perp = { x: -d.y, y: d.x };
-            // choose the perpendicular side that points toward the enemy's flank if known
-            if (enemy) {
+            // Prefer the flank side AWAY from the choke point (avoid the enemy's covered pinch);
+            // otherwise the side toward the enemy's flank.
+            if (chokePt) {
+                var toChoke = vec(u, chokePt);
+                if ((perp.x * toChoke.x + perp.y * toChoke.y) > 0) { perp = { x: d.y, y: -d.x }; }
+                flags.follows_corridor = true; terrainBasis.push('avoid_choke:' + (prov.choke || 'inferred'));
+            } else if (enemy) {
                 var toEnemy = vec(u, enemy);
                 if ((perp.x * toEnemy.x + perp.y * toEnemy.y) < 0) { perp = { x: d.y, y: -d.x }; }
             }
-            var sideStep = add(u, perp, MAX_STEP_DEG * 0.9);
+            var width = (terrainClass === 'urban' || terrainClass === 'mountain') ? 0.7
+                : (terrainClass === 'open' || terrainClass === 'desert') ? 1.0 : 0.9;
+            if (terrainClass) terrainBasis.push('terrain:' + terrainClass);
+            var sideStep = add(u, perp, MAX_STEP_DEG * width);
             target = add(sideStep, d, MAX_STEP_DEG * 0.3);
             flags.different_axis = true;
-            behavior = 'maneuver on a flanking axis offset from the direct approach';
-            reason = 'Avoid the enemy\'s strength on the direct line; threaten a flank.';
+            behavior = 'maneuver on a flanking axis offset from the direct approach' + (chokePt ? ', avoiding the choke point' : '');
+            reason = 'Avoid the enemy\'s strength and the corridor choke; threaten a flank on favourable terrain.';
             break;
         }
         case 'deceive':
@@ -270,6 +330,7 @@ function computeActionGeometry(action, unit, ctx) {
         axis_offset_deg: Math.round(axisOffset * 10) / 10,
         distance_to_threat_deg: distThreat == null ? null : Math.round(distThreat * 10000) / 10000,
         corridor_fraction: corridorFraction,
+        terrain_basis: terrainBasis,   // GIS factors that drove this action (with provenance tags)
     };
 }
 

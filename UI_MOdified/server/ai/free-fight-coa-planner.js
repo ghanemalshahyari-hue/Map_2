@@ -32,6 +32,16 @@ const BRIEF      = require('./commander-brief');                // RMOZ-COMMANDE
 const ANALYST    = require('./free-fight-llm-capability-analyst'); // FREEFIGHT-LLM-CAPABILITY-ANALYST-A
 const CONTRACT   = require('./rmooz-ai-tool-contract');            // RMOZ-AI-TOOL-CONTRACT-A
 const TACTICS    = require('./tactical-action-library');           // RMOOZ-AI-COMMANDER-FREEDOM-A
+const TERRAIN_CTX = require('./tactical-terrain-context');         // GIS terrain-aware tactics
+// Optional REAL elevation (DEM). Lazy + guarded: returns null off-coverage (e.g. Libya-only
+// dataset) so high-ground / route-cost gracefully fall back to inferred geometry.
+var _demFn = null;
+function demElevationAt(lat, lon) {
+    if (_demFn === false) return null;
+    if (!_demFn) { try { var dem = require('../dem-service'); _demFn = (dem && typeof dem.getElevation === 'function') ? dem.getElevation : false; } catch (_) { _demFn = false; } }
+    if (!_demFn) return null;
+    try { var e = _demFn(lon, lat); return (e == null ? null : e); } catch (_) { return null; }
+}
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 var STEP_DEG       = 0.05;   // ≈ 5-6 km per tick
@@ -443,7 +453,7 @@ function buildBlueCoas(blueUnits, obj, situation, capContext) {
  * assignments vary across planning cycles (not always the same unit). The recommended
  * archetype depends on the commander mode + situation (free) or rotates (high_variation).
  */
-function buildDiverseCoas(units, obj, side, situation, capContext, mode, seed) {
+function buildDiverseCoas(units, obj, side, situation, capContext, mode, seed, intel) {
     function r5(x) { return Math.round(x * 1e5) / 1e5; }
     var list = arr(units).filter(unitHasCoord);
     var total = list.length;
@@ -460,14 +470,15 @@ function buildDiverseCoas(units, obj, side, situation, capContext, mode, seed) {
     } else if (objPt) { enemy = objPt; }
     var threatR = (situation && situation.thresholds_deg &&
         (situation.thresholds_deg.defended || situation.thresholds_deg.warning)) || 0.10;
-    // Rear fallback for withdraw: away from the objective from the force centroid.
-    var fallback = null;
-    if (objPt && total) {
-        var cl = 0, cn = 0; list.forEach(function (u) { cl += u.lat; cn += u.lon; });
-        var c = { lat: cl / total, lon: cn / total };
-        fallback = { lat: c.lat + (c.lat - objPt.lat) * 0.5, lon: c.lon + (c.lon - objPt.lon) * 0.5 };
-    }
-    var ctxBase = { nearestEnemy: enemy, objective: objPt, threatZoneRadiusDeg: threatR, fallback: fallback, side: sideU };
+    // GIS terrain-aware tactics: assemble borders/zones, corridor, choke, high ground,
+    // terrain class, threat rings, and route cost (real DEM where covered, else inferred —
+    // with provenance). recon/flank/delay/defend/withdraw reason from this ctx.
+    var ctxBase = TERRAIN_CTX.buildTacticalTerrainContext({
+        objective: objPt, nearestEnemy: enemy, situation: situation, intel: intel,
+        ownUnits: list, side: sideU, elevationAt: demElevationAt,
+    });
+    ctxBase.side = sideU;
+    if (!Number.isFinite(ctxBase.threatZoneRadiusDeg)) ctxBase.threatZoneRadiusDeg = threatR;
 
     function uid(u) { return u.id || u.uid || u.unit_uid; }
     function usideStr(u) { return String(u.side || sideU).toUpperCase(); }
@@ -487,15 +498,18 @@ function buildDiverseCoas(units, obj, side, situation, capContext, mode, seed) {
         var actions = ordered.map(function (u, i) {
             var act = (i < leadCount) ? A.actions[0] : (A.actions[(i % (A.actions.length - 1)) + 1] || A.actions[0]);
             var g = TACTICS.computeActionGeometry(act, u, ctxBase);
+            var tb = (g.terrain_basis && g.terrain_basis.length) ? g.terrain_basis.join(', ') : null;
             return {
                 unit_uid: uid(u), side: usideStr(u), role: (ACTION_ROLE[act] || 'support'),
                 action_type: act,
                 target: { lat: r5(g.target.lat), lon: r5(g.target.lon), type: 'coord' },
                 reason: g.reason, behavior: g.behavior,
+                terrain_basis: g.terrain_basis,    // GIS factors that drove this action (+ provenance)
                 why_unit: 'Chosen by capability-fit and position for the ' + A.label.toLowerCase() + ' option.',
-                deciding_factor: g.flags.different_axis ? 'alternate axis / terrain' :
+                deciding_factor: tb ? ('terrain/zone: ' + tb) :
+                    (g.flags.different_axis ? 'alternate axis / terrain' :
                     (g.flags.stays_outside_threat ? 'standoff from the threat zone' :
-                    (g.flags.increases_distance_from_threat ? 'preserve the force' : 'mission suitability / proximity')),
+                    (g.flags.increases_distance_from_threat ? 'preserve the force' : 'mission suitability / proximity'))),
             };
         });
         return {
@@ -526,9 +540,9 @@ function buildDiverseCoas(units, obj, side, situation, capContext, mode, seed) {
  * tactical variety); 'controlled' (doctrine-guided, default) keeps the side-aware
  * intercept/defense builders. FREEFIGHT-BLUE-THREAT-AWARE-MOVEMENT-A + COMMANDER-FREEDOM-A.
  */
-function buildCoasForSide(units, obj, side, situation, capContext, mode, seed) {
+function buildCoasForSide(units, obj, side, situation, capContext, mode, seed, intel) {
     if (mode === 'free' || mode === 'high_variation') {
-        return buildDiverseCoas(units, obj, side, situation, capContext, mode, seed);
+        return buildDiverseCoas(units, obj, side, situation, capContext, mode, seed, intel);
     }
     return String(side || 'RED').toUpperCase() === 'BLUE'
         ? buildBlueCoas(units, obj, situation, capContext)
@@ -775,14 +789,22 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
 
     // GIS / terrain / sovereign-zone / contact context the commander must reason from.
     var intel = context && context._intel;
-    var terrainZoneContext = intel ? {
-        terrain: intel.terrain || null,
-        sovereign_zone: intel.zone_state || null,
-        contact_picture: intel.contact_picture || null,
-        roe_state: intel.roe_state || null,
-        alert_state: intel.alert_state || null,
-        coalition: intel.coalition_posture || null,
-        note: 'Reason from country/sovereign borders, terrain, choke points, and distance from border/objective — not only enemy proximity to the objective.',
+    var tctx = context && context._terrain_ctx;
+    var terrainZoneContext = (intel || tctx) ? {
+        terrain: intel && intel.terrain || null,
+        sovereign_zone: (tctx && tctx.sovereign_zone) || (intel && intel.zone_state) || null,
+        contact_picture: intel && intel.contact_picture || null,
+        roe_state: intel && intel.roe_state || null,
+        alert_state: intel && intel.alert_state || null,
+        coalition: intel && intel.coalition_posture || null,
+        // GIS terrain-aware tactics: derived terrain features + honest provenance.
+        gis: tctx ? {
+            terrain_class: tctx.terrain_class, owner_country: tctx.owner_country,
+            threat_rings: tctx.threat_rings, movement_corridor: tctx.corridor,
+            choke_point: tctx.choke, high_ground: tctx.high_ground,
+            route_cost: tctx.route_cost, provenance: tctx.provenance,
+        } : null,
+        note: 'Reason from country/sovereign borders, terrain class, the movement corridor, choke points, high ground, threat rings, route cost, and distance from border/objective — not only enemy proximity to the objective. Provenance marks real GIS vs inferred.',
     } : null;
 
     var actionEnum = freedom
@@ -904,6 +926,32 @@ async function planCoas(units, objectives, context, opts) {
             Object.assign({}, context, { defending_side: 'BLUE', active_side: activeSide }));
     } catch (_) { intel = null; }
 
+    // GIS terrain-aware tactics: a terrain/zone context (borders, zones, corridor, choke,
+    // high ground, terrain class, threat rings, route cost — real DEM where covered, else
+    // inferred, with provenance) — surfaced to the LLM and attached to the plan.
+    var terrainCtx = null;
+    try {
+        var _enemyRef = (situation && situation.nearest_red &&
+            Number.isFinite(+situation.nearest_red.lat)) ? situation.nearest_red : obj;
+        terrainCtx = TERRAIN_CTX.buildTacticalTerrainContext({
+            objective: obj, nearestEnemy: _enemyRef, situation: situation, intel: intel,
+            ownUnits: allUnits, side: activeSide, elevationAt: demElevationAt,
+        });
+    } catch (_) { terrainCtx = null; }
+    function _terrainSummary() {
+        if (!terrainCtx) return null;
+        return {
+            terrain_class: terrainCtx.terrain_class,
+            owner_country: terrainCtx.owner_country,
+            threat_rings: terrainCtx.threat_rings,
+            corridor: terrainCtx.corridor,
+            choke: terrainCtx.choke,
+            high_ground: terrainCtx.high_ground,
+            route_cost: terrainCtx.route_cost,
+            provenance: terrainCtx.provenance,
+        };
+    }
+
     // FREEFIGHT-LLM-CAPABILITY-ANALYST-A: enrich the OOB with capability profiles
     // (LLM intelligence-analyst when local LLM enabled, heuristic otherwise) BEFORE
     // COA selection, so the commander picks the right asset for the threat domain.
@@ -970,7 +1018,7 @@ async function planCoas(units, objectives, context, opts) {
         // situation, and the variation seed — so it can reason and choose a tactical action.
         var llmCtx = Object.assign({}, context, {
             commander_mode: commanderMode, variation_seed: variationSeed,
-            _intel: intel, _situation: situation,
+            _intel: intel, _situation: situation, _terrain_ctx: terrainCtx,
         });
         var llmResult = await _callLlm(allUnits, objectives, llmCtx, opts);
         llmStatus = llmResult.llm_status || null;
@@ -998,6 +1046,7 @@ async function planCoas(units, objectives, context, opts) {
                     active_side: activeSide,
                     commander_mode: commanderMode,
                     variation_seed: variationSeed,
+                    terrain_context: _terrainSummary(),
                     coas: llmCoas,
                     situation_state: situation,
                     blue_reaction_intent: blueIntent,
@@ -1027,7 +1076,7 @@ async function planCoas(units, objectives, context, opts) {
     // doctrine-guided builder. The intercept-override (applyBlueReaction) is skipped in
     // diverse mode so the chosen tactical actions (recon/flank/delay/…) are preserved.
     var detSource = diverseMode ? 'deterministic_diverse_coa' : 'deterministic_coa_fallback';
-    var coas = enrichCoasWithNarrative(buildCoasForSide(allUnits, obj, activeSide, situation, capContext, commanderMode, variationSeed), obj, context, detSource);
+    var coas = enrichCoasWithNarrative(buildCoasForSide(allUnits, obj, activeSide, situation, capContext, commanderMode, variationSeed, intel), obj, context, detSource);
     var assess = buildCommanderAssessment(coas, obj, context, detSource);
     if (activeSide === 'BLUE' && blueIntent) {
         if (!diverseMode) applyBlueReaction(coas, situation, blueIntent);
@@ -1039,6 +1088,7 @@ async function planCoas(units, objectives, context, opts) {
         active_side: activeSide,
         commander_mode: commanderMode,
         variation_seed: variationSeed,
+        terrain_context: _terrainSummary(),
         coas: coas,
         situation_state: situation,
         blue_reaction_intent: blueIntent,

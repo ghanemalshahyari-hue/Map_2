@@ -32,7 +32,9 @@ function bad(n, e) { fail++; console.log('  ✗ ' + n + (e ? (' — ' + (e && e.
 // so one count covers every path in a request.
 var _origAnalyze = ANALYST.analyzeUnitCapabilities;
 var _analyzeCalls = 0;
-function spyOn() { _analyzeCalls = 0; ANALYST.analyzeUnitCapabilities = function () { _analyzeCalls++; return _origAnalyze.apply(this, arguments); }; }
+// RMOOZ-AI-SPEED-ARCHITECTURE-J: clear the new cross-turn capability cache so call-count assertions
+// see a COLD cache (otherwise a warm cache correctly makes the analyst run 0× — a separate behavior).
+function spyOn() { _analyzeCalls = 0; if (P._clearPerfCacheForTest) P._clearPerfCacheForTest(); ANALYST.analyzeUnitCapabilities = function () { _analyzeCalls++; return _origAnalyze.apply(this, arguments); }; }
 function spyOff() { ANALYST.analyzeUnitCapabilities = _origAnalyze; }
 
 var UNITS = [
@@ -146,7 +148,9 @@ async function main() {
         assert(p7.llm_called === true, 'LLM was attempted');
         // No real local LLM available → must fall back to the deterministic floor.
         assert(p7.plan_source !== 'llm', 'fell back off the LLM path');
-        assert(typeof p7.fallback_message === 'string' && /fast tactical planner/i.test(p7.fallback_message),
+        // RMOOZ-AI-SPEED-ARCHITECTURE-J: wording changed by RMOOZ-AI-COMMANDER-REPAIR-LOOP-A (commit
+        // 4af0fdc) from "fast tactical planner" → "Staff-Safe planner"; accept either (drift fix).
+        assert(typeof p7.fallback_message === 'string' && /fast tactical planner|staff-safe planner/i.test(p7.fallback_message),
             'honest fallback_message set: ' + p7.fallback_message);
         assert(Array.isArray(p7.coas) && p7.coas.length >= 3, 'fallback still produced COAs');
         ok('timeout/fallback: slow/unavailable LLM falls back + sets the honest fallback_message');

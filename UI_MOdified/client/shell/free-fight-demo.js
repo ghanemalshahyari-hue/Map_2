@@ -2524,9 +2524,9 @@
         if (!Number.isFinite(n)) return '—';
         return n >= 1000 ? (Math.round(n / 100) / 10) + 's' : Math.round(n) + 'ms';
     }
-    // RMOOZ-AI-COA-PERFORMANCE-A: compact "Stage timings" block from plan.debug_timing
-    // (AI total / LLM / capability / terrain / COA build). Returns '' when no timing present.
-    function _coaTimingHtml(t) {
+    // RMOOZ-AI-SPEED-ARCHITECTURE-J #3: "AI Performance Breakdown" — every debug_timing span plus the
+    // cache hit/miss, repair attempts, provider/model, and token usage. Returns '' when no timing.
+    function _coaTimingHtml(t, plan) {
         if (!t || typeof t !== 'object') return '';
         function row(label, ms, color) {
             if (ms == null) return '';
@@ -2535,13 +2535,29 @@
         var parts = [
             row('AI total', t.total_ms, '#cfe8ff'),
             (t.llm_ms ? row('LLM', t.llm_ms, '#90d0b0') : ''),
+            (t.llm_repair_ms ? row('LLM repair', t.llm_repair_ms, '#e0c060') : ''),
             row('capability', t.analyze_unit_capabilities_ms, '#d8ccff'),
+            row('intel', t.build_scenario_intel_ms),
             row('terrain', t.tactical_terrain_context_ms),
+            row('prompt pack', t.build_commander_prompt_pack_ms),
+            row('validation', t.validation_ms),
+            row('brief', t.commander_brief_ms),
             row('COA build', t.build_diverse_coas_ms, '#bfe89a'),
         ].filter(Boolean);
         if (!parts.length) return '';
-        return '<div data-ff-coa="timing" style="margin-bottom:6px;font-size:9.5px;color:#8fa5b8;line-height:1.5;border:1px solid #20364e;border-radius:4px;padding:4px 7px;background:#0a1420;">' +
-            '<span style="color:#7a9ab8;font-weight:600;">⏱ Stage timings — </span>' + parts.join(' · ') + '</div>';
+        // cache + repair + provider/model + tokens (only show what's present)
+        var meta = [];
+        if (t.cap_cache) meta.push('<span style="color:#7a9ab8;">capability cache:</span> <span style="color:' + (t.cap_cache === 'hit' ? '#7fd6a0' : '#e0a93a') + ';font-weight:600;">' + esc(t.cap_cache) + '</span>' +
+            ((t.cap_cache_hits != null) ? ' <span style="color:#5a7a90;">(' + (t.cap_cache_hits || 0) + ' hits / ' + (t.cap_cache_misses || 0) + ' miss)</span>' : ''));
+        var p = plan || {};
+        if (p.attempts != null || p.repair_attempts != null) meta.push('<span style="color:#7a9ab8;">repair attempts:</span> <span style="color:#cdd8e4;">' + (p.repair_attempts != null ? p.repair_attempts : (p.attempts > 1 ? (p.attempts - 1) : 0)) + '</span>');
+        if (p.provider_used || p.model_used) meta.push('<span style="color:#7a9ab8;">provider/model:</span> <span style="color:#9ec2ec;">' + esc((p.provider_used || '—') + ' · ' + (p.model_used || '—')) + '</span>');
+        var usage = p.usage || (p.llm_raw_response && p.llm_raw_response.usage) || null;
+        if (usage && (usage.output_tokens != null || usage.completion_tokens != null)) meta.push('<span style="color:#7a9ab8;">output tokens:</span> <span style="color:#cdd8e4;">' + (usage.output_tokens != null ? usage.output_tokens : usage.completion_tokens) + '</span>');
+        return '<div data-ff-coa="timing" style="margin-bottom:6px;font-size:9.5px;color:#8fa5b8;line-height:1.6;border:1px solid #20364e;border-radius:4px;padding:5px 8px;background:#0a1420;">' +
+            '<div style="color:#9ec2ec;font-weight:700;margin-bottom:2px;">⏱ AI Performance Breakdown</div>' +
+            '<div>' + parts.join(' · ') + '</div>' +
+            (meta.length ? '<div style="margin-top:2px;">' + meta.join(' · ') + '</div>' : '') + '</div>';
     }
     // RMOOZ-AI-ATTACK-PLAN-AI-ONLY-A: is this a REAL LLM result? The manual "Generate AI Attack
     // Plan" page renders cards/numbers ONLY when this is true. Strict gate per the spec.
@@ -3371,7 +3387,7 @@
         // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A: state plainly whether the LLM actually ran.
         h += _planSourceNoteHtml(_coaPlan);
         // RMOOZ-AI-COA-PERFORMANCE-A: stage timings (AI total / LLM / capability / terrain / COA build).
-        h += _coaTimingHtml(_coaPlan.debug_timing);
+        h += _coaTimingHtml(_coaPlan.debug_timing, _coaPlan);
         // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A: per-COA movement-execution debug overlay.
         h += _coaDebugHtml();
         // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A: "View MCP Prompt" on the real-LLM render too.
@@ -3948,7 +3964,7 @@
         _setAiDepthForTest:        function (d)           { return setAiDepth(d); },
         _buildAiRequestBodyForTest: function ()           { return _buildAiRequestBody(); },
         _fmtMsForTest:             function (ms)          { return _fmtMs(ms); },
-        _coaTimingHtmlForTest:     function (t)           { return _coaTimingHtml(t); },
+        _coaTimingHtmlForTest:     function (t, plan)     { return _coaTimingHtml(t, plan); },
         // RMOOZ-AI-ATTACK-PLAN-AI-ONLY-A test seams
         _isRealLlmPlanForTest:     function (p)           { return _isRealLlmPlan(p); },
         _renderCoaPlanHtmlForTest: function (p)           { _coaPlan = p; _coaLoading = false; _coaApplied = false; return renderCoaPlanHtml(); },

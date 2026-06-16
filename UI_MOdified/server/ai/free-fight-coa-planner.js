@@ -1005,6 +1005,18 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
         if (arr(mcp.allowed_unit_ids).length) effectiveAllowed = arr(mcp.allowed_unit_ids).map(String);
     }
 
+    // RMOOZ-AI-SPEED-ARCHITECTURE-J Phase 1.3: mode-based output cap so a normal turn isn't billed for
+    // 2500 tokens of generation latency. fast→800, normal→1200, deep/full-COA→2500. Override per tier
+    // with RMOOZ_AI_MAX_OUTPUT_{FAST,NORMAL,DEEP}. Deep keeps the full COA budget (req Phase 1.4).
+    var _depth = String((opts && opts.ai_depth) || (context && context.ai_depth) || 'normal').toLowerCase().trim();
+    function _envInt(name, dflt) { var n = parseInt(process.env[name], 10); return Number.isFinite(n) && n > 0 ? n : dflt; }
+    var maxOut = _depth === 'fast' ? _envInt('RMOOZ_AI_MAX_OUTPUT_FAST', 800)
+               : _depth === 'deep' ? _envInt('RMOOZ_AI_MAX_OUTPUT_DEEP', 2500)
+               : _envInt('RMOOZ_AI_MAX_OUTPUT_NORMAL', 1200);
+    // RMOOZ-AI-SPEED-ARCHITECTURE-J Phase 4: strict JSON schema for the COA output (OpenRouter only,
+    // env-gated default OFF until validated against a live valid key). The openrouter-client self-heals
+    // to json_object if the model rejects the schema; ollama ignores `schema` (uses json_object).
+    var _coaSchema = (process.env.RMOOZ_OPENROUTER_COA_SCHEMA === '1') ? _coaOutputSchema() : null;
     // RMOOZ-AI-COA-TIMEOUT-RETRY-A: retry the fast failure modes (bad JSON / <2 valid COAs); return
     // immediately on timeout/unavailable/transport error so we never stack full-length timeouts.
     var lastFail = null;
@@ -1017,7 +1029,9 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
                 system:    system,
                 prompt:    prompt,
                 format:    'json',
-                options:   { temperature: temperature, numPredict: 2500 },
+                schema:    _coaSchema || undefined,
+                schemaName:'rmooz_coa_set',
+                options:   { temperature: temperature, numPredict: maxOut },
                 timeoutMs: timeoutMs,
             });
         } catch (e) {
@@ -1064,6 +1078,7 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
 function _now() { return Date.now(); }
 function makeTimer() {
     var spans = {};
+    var metas = {};   // RMOOZ-AI-SPEED-ARCHITECTURE-J: non-ms fields (cache hit/miss, counters) for debug_timing
     return {
         sync: function (name, fn) { var s = _now(); try { return fn(); } finally { spans[name] = (spans[name] || 0) + (_now() - s); } },
         async: function (name, thunk) {
@@ -1074,11 +1089,13 @@ function makeTimer() {
             );
         },
         mark: function (name, ms) { if (Number.isFinite(ms)) spans[name] = (spans[name] || 0) + ms; },
+        meta: function (k, v) { metas[k] = v; },
         spans: function () { return spans; },
+        metas: function () { return metas; },
     };
 }
 function _finalizeTimings(timer, tStart) {
-    var out = Object.assign({}, timer.spans());
+    var out = Object.assign({}, timer.spans(), (timer.metas ? timer.metas() : {}));
     out.total_ms = _now() - tStart;
     return out;
 }
@@ -1099,6 +1116,54 @@ function _logTimings(tag, result) {
 function _resolveAiDepth(opts, context) {
     var d = String((opts && opts.ai_depth) || (context && context.ai_depth) || 'normal').toLowerCase().trim();
     return (d === 'fast' || d === 'deep') ? d : 'normal';
+}
+
+// ── Perf cache (RMOOZ-AI-SPEED-ARCHITECTURE-J Phase 3) ──────────────────────────
+// Cache the single heaviest REUSABLE cost across turns: the capability analyst (LLM-backed → ~seconds
+// per turn). Keyed by the OOB's capability-relevant fields ONLY (id|side|platform|role|type|equipment)
+// — NOT position — so the cache survives units moving; + active side + analyst mode + model + objective,
+// so it invalidates exactly when OOB/equipment/objective/side changes (req Phase 3.1/3.5). Bounded
+// LRU-ish (cap 64). Disable via RMOOZ_AI_PERF_CACHE=0.
+// NOTE: terrain context is intentionally NOT cached — it is ~1ms (not a bottleneck) AND it derives the
+// approach axis from live unit positions, so an objective-only cache would return a stale axis (would
+// change terrain behaviour — out of scope per "do not change terrain facts").
+var _capCache = new Map();
+var _capCacheStats = { hits: 0, misses: 0 };
+function _perfCacheEnabled() { return String(process.env.RMOOZ_AI_PERF_CACHE || '1').trim() !== '0'; }
+function _stableHash(obj) {
+    var s = (typeof obj === 'string') ? obj : JSON.stringify(obj);
+    var h = 0x811c9dc5;   // FNV-1a, dependency-free
+    for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0; }
+    return ('00000000' + h.toString(16)).slice(-8);
+}
+function _capCacheKey(units, activeSide, useLlm, obj) {
+    var rows = arr(units).map(function (u) {
+        return [u.id || u.uid || u.unit_uid, u.side, u.platform || u.role || '', u.type || '', String(u.equipment || u.systems || u.weapons || '')].join('|');
+    }).sort();
+    var o = obj ? (Number(obj.lat).toFixed(3) + ',' + Number(obj.lon).toFixed(3)) : 'none';
+    return _stableHash({ u: rows, side: activeSide, llm: !!useLlm, model: resolveLocalModel(), obj: o });
+}
+// Returns { value, hit }. compute() is the (async) analyst call, run only on a miss.
+function _capCacheGet(key, compute) {
+    if (!_perfCacheEnabled()) return Promise.resolve(compute()).then(function (v) { return { value: v, hit: false }; });
+    if (_capCache.has(key)) { var v = _capCache.get(key); _capCache.delete(key); _capCache.set(key, v); _capCacheStats.hits++; return Promise.resolve({ value: v, hit: true }); }
+    return Promise.resolve(compute()).then(function (v) {
+        _capCache.set(key, v); _capCacheStats.misses++;
+        if (_capCache.size > 64) { _capCache.delete(_capCache.keys().next().value); }
+        return { value: v, hit: false };
+    });
+}
+function _clearPerfCacheForTest() { _capCache.clear(); _capCacheStats = { hits: 0, misses: 0 }; }
+// Permissive JSON Schema for the COA set (Phase 4, opt-in via RMOOZ_OPENROUTER_COA_SCHEMA). Not strict
+// (the openrouter-client self-heals to json_object if the model/provider rejects it).
+function _coaOutputSchema() {
+    return { type: 'object', properties: { coas: { type: 'array', items: { type: 'object',
+        properties: {
+            plan_id: { type: 'string' }, title: { type: 'string' }, summary: { type: 'string' },
+            phases: { type: 'array', items: { type: 'object', properties: { actions: { type: 'array', items: { type: 'object',
+                properties: { unit_uid: { type: 'string' }, action_type: { type: 'string' }, target: { type: 'object' }, reason: { type: 'string' } },
+                required: ['unit_uid', 'action_type'] } } } } } },
+        required: ['phases'] } } }, required: ['coas'] };
 }
 
 // ── Planning context (RMOOZ-AI-COA-PERFORMANCE-A) ───────────────────────────────
@@ -1162,9 +1227,19 @@ async function _buildPlanningContext(units, objectives, context, opts, depth, ti
     var capOpts = Object.assign({}, opts, { useLlm: (depth === 'fast') ? false : opts.useLlm });
     var capProfiles = [], capSummary = null, capByUid = {};
     try {
-        capProfiles = await timer.async('analyze_unit_capabilities_ms', function () {
-            return ANALYST.analyzeUnitCapabilities(units, Object.assign({}, context, { defending_side: 'BLUE', active_side: activeSide }), capOpts);
+        // RMOOZ-AI-SPEED-ARCHITECTURE-J Phase 3: reuse capability profiles across turns — keyed by OOB
+        // capability fields (position-independent) so the analyst (the per-turn LLM-backed bottleneck)
+        // runs once per scenario/OOB, not every move. A HIT makes analyze_unit_capabilities_ms ~0.
+        var capKey = _capCacheKey(units, activeSide, capOpts.useLlm, obj);
+        var capRes = await timer.async('analyze_unit_capabilities_ms', function () {
+            return _capCacheGet(capKey, function () {
+                return ANALYST.analyzeUnitCapabilities(units, Object.assign({}, context, { defending_side: 'BLUE', active_side: activeSide }), capOpts);
+            });
         });
+        capProfiles = (capRes && capRes.value) || [];
+        timer.meta('cap_cache', (capRes && capRes.hit) ? 'hit' : 'miss');
+        timer.meta('cap_cache_hits', _capCacheStats.hits);
+        timer.meta('cap_cache_misses', _capCacheStats.misses);
         capSummary = ANALYST.buildCapabilitySummary(capProfiles);
         capProfiles.forEach(function (p) { if (p && p.unit_uid) capByUid[p.unit_uid] = p; });
     } catch (_) { capProfiles = []; capSummary = null; capByUid = {}; }
@@ -1847,6 +1922,8 @@ module.exports = {
     executionModeFor:       executionModeFor,         // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A
     EXECUTION_MODE:         EXECUTION_MODE,           // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A
     _callLlmForTest:        _callLlm,                 // RMOOZ-AI-COMMANDER-FREEDOM-A (prompt inspection)
+    _clearPerfCacheForTest: _clearPerfCacheForTest,   // RMOOZ-AI-SPEED-ARCHITECTURE-J Phase 3 (cache reset)
+    _coaOutputSchemaForTest: _coaOutputSchema,        // RMOOZ-AI-SPEED-ARCHITECTURE-J Phase 4
     routeHealth:            routeHealth,
     probeModelAvailable:    probeModelAvailable,      // RMOOZ-AI-EXECUTION-SINGLE-GATE-A
     aiExecutionAllowed:     aiExecutionAllowed,       // RMOOZ-AI-EXECUTION-SINGLE-GATE-A

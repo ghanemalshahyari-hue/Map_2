@@ -45,6 +45,23 @@ function keyLooksValid() {
     return /^sk-or-(v1-)?[A-Za-z0-9_-]{32,}$/.test(k);
 }
 
+// RMOOZ-AI-SPEED-ARCHITECTURE-J Phase 1.1: OpenRouter provider routing preferences. `sort` is the
+// real OpenRouter speed control (prefer latency|throughput|price). Default 'latency' (the whole point
+// of this task is speed); override via RMOOZ_OPENROUTER_PROVIDER_SORT. The p90/p50 knobs are advisory
+// (OpenRouter has no public p90/p50 filter param) — surfaced for diagnostics, not sent as fake fields.
+function providerPrefs() {
+    var sort = String(process.env.RMOOZ_OPENROUTER_PROVIDER_SORT || 'latency').trim().toLowerCase();
+    if (sort === 'none' || sort === 'off') return null;
+    if (sort !== 'latency' && sort !== 'throughput' && sort !== 'price') sort = 'latency';
+    return { sort: sort };
+}
+// RMOOZ-AI-SPEED-ARCHITECTURE-J Phase 4: strict json_schema is on by default; disable per-model that
+// rejects it via RMOOZ_OPENROUTER_STRUCTURED_OUTPUT=0 (the generate() fallback also self-heals on a
+// response_format error).
+function useStructuredOutput() {
+    return String(process.env.RMOOZ_OPENROUTER_STRUCTURED_OUTPUT || '1').trim() !== '0';
+}
+
 function maskedKey() {
     const k = (orCfg().apiKey || '').trim();
     if (!k) return null;
@@ -266,7 +283,16 @@ async function generate(args) {
         stream:      false,
     };
     if (Number.isFinite(opts.top_p))        body.top_p           = opts.top_p;
-    if (args.format === 'json')             body.response_format = { type: 'json_object' };
+    // RMOOZ-AI-SPEED-ARCHITECTURE-J Phase 1.1: OpenRouter provider routing — prefer faster providers.
+    const prov = providerPrefs();
+    if (prov) body.provider = prov;
+    // RMOOZ-AI-SPEED-ARCHITECTURE-J Phase 4: strict structured output when a schema is supplied
+    // (reduces invalid-JSON repair round-trips); fall back to json_object, then plain json.
+    if (args.schema && useStructuredOutput()) {
+        body.response_format = { type: 'json_schema', json_schema: { name: args.schemaName || 'rmooz_output', strict: true, schema: args.schema } };
+    } else if (args.schema || args.format === 'json') {
+        body.response_format = { type: 'json_object' };
+    }
     if (Array.isArray(opts.stop_sequences)) body.stop            = opts.stop_sequences;
 
     try {
@@ -278,9 +304,21 @@ async function generate(args) {
             response: stripCodeFence(text),
             raw,
             usage:    extractUsage(raw),
+            response_format: body.response_format ? body.response_format.type : null,
         };
     } catch (e) {
-        return { ok: false, error: e.message || String(e) };
+        // RMOOZ-AI-SPEED-ARCHITECTURE-J Phase 4: a model that rejects json_schema → self-heal once with
+        // json_object (then plain) so a strict-schema model and a non-schema model both work.
+        const msg = String(e && e.message || e);
+        if (body.response_format && body.response_format.type === 'json_schema' && /response_format|json_schema|schema|structured|400/i.test(msg)) {
+            try {
+                const body2 = Object.assign({}, body, { response_format: { type: 'json_object' } });
+                const raw = await postJson('/chat/completions', body2, args.timeoutMs || orCfg().requestTimeoutMs);
+                const c0 = raw && raw.choices && raw.choices[0];
+                return { ok: true, response: stripCodeFence((c0 && c0.message && c0.message.content) || ''), raw, usage: extractUsage(raw), response_format: 'json_object', schema_fallback: true };
+            } catch (_) { /* fall through to the original error */ }
+        }
+        return { ok: false, error: msg };
     }
 }
 
@@ -291,6 +329,8 @@ module.exports = {
     parseModelList,           // exposed for tests (parse without network)
     isConfigured,
     keyLooksValid,            // RMOOZ-OPENROUTER-FREE-FIGHT-CONTROL-FIX-I: pre-flight key format check (no secret)
+    providerPrefs,            // RMOOZ-AI-SPEED-ARCHITECTURE-J: provider routing prefs (tests)
+    useStructuredOutput,
     DEFAULT_MODEL: () => orCfg().defaultModel,
     API_STYLE: 'openrouter',
 };

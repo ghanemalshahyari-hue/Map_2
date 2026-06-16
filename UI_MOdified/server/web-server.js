@@ -305,11 +305,14 @@ async function buildModelsPayload(providerOverride) {
                 error: cloud_allowed ? 'OPENROUTER_API_KEY not set' : 'Cloud AI disabled (set RMOOZ_ALLOW_CLOUD_AI=1 to use OpenRouter)',
             });
         }
+        // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A: use the FULL OpenRouter catalog (listModels is
+        // uncapped) — not the 50-capped ping list — so a valid slug like qwen/qwen3.5-397b-a17b is
+        // selectable in the dropdown AND reports model_available:true (else the loop would falsely block).
         let names = [], reachable = false, pingErr = null;
         try {
-            const p = await openrouterClient.ping();
-            if (p && p.ok && Array.isArray(p.models)) { names = p.models; reachable = true; }
-            else if (p && p.error) { pingErr = p.error; }
+            names = await openrouterClient.listModels();
+            reachable = names.length > 0;
+            if (!reachable) pingErr = 'OpenRouter returned no models (check OPENROUTER_API_KEY / network)';
         } catch (e) { pingErr = e && e.message || String(e); }
         const models = names.map(n => ({ name: n, available: true }));
         const model_available = !!selected && names.indexOf(selected) !== -1;

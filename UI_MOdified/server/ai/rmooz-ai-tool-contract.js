@@ -1049,6 +1049,83 @@ function composeCommanderPrompt(packEnvelope, extras) {
     };
 }
 
+// RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: compose a REPAIR instruction after validateCommanderCoaTool
+// rejects an LLM COA. Sends the validator's violations back to the model so it fixes ONLY the broken
+// assignments, reusing the same allowed lists + output schema. Returns the same
+// { version, system, prompt, allowed_unit_ids } shape composeCommanderPrompt does, so the planner's
+// _callLlm can send it verbatim (via context._mcp_prompt). Deterministic; no LLM call of its own.
+// extras: { previous_coas, violations, allowed_unit_ids, allowed_actions, objective, active_side }.
+function composeRepairPrompt(extras) {
+    extras = extras || {};
+    var allowedUnitIds = arr(extras.allowed_unit_ids);
+    var violations = arr(extras.violations).map(function (v) {
+        return { code: v && v.code, unit_uid: (v && v.unit_uid) || null, problem: String((v && v.text) || '').slice(0, 200) };
+    });
+    // Trim the rejected COAs to the essentials the model needs to repair.
+    var prevCoas = arr(extras.previous_coas).map(function (c) {
+        return {
+            plan_id: c && c.plan_id, title: c && c.title, recommended: !!(c && c.recommended),
+            phases: arr(c && c.phases).map(function (ph) {
+                return { name: ph && ph.name, actions: arr(ph && ph.actions).map(function (a) {
+                    return { unit_uid: a && a.unit_uid, action_type: a && a.action_type, target: a && a.target };
+                }) };
+            }),
+        };
+    });
+    var allowedActions = arr(extras.allowed_actions);
+    var actionEnum = allowedActions.length
+        ? allowedActions.join('|')
+        : 'recon|delay|deceive|flank|defend|withdraw|probe|attack|hold|avoid_contact|support|reserve|reposition|screen|observe|feint';
+    var system = [
+        'You are an RMOOZ commander AI. Your previous course-of-action JSON was REJECTED by the staff validator.',
+        'Repair it so EVERY action is executable by a real unit. Fix ONLY the listed problems; keep the rest of your plan.',
+        'Use ONLY unit IDs from allowed_unit_ids and ONLY the allowed actions.',
+        'Targets must be inside the map and a small step from the unit (no teleport).',
+        'NEVER output engage/destroy/kill — movement/positioning only.',
+        'Return ONLY valid JSON with a "coas" array (2-3 COAs), same shape as before.',
+    ].join(' ');
+    var promptObject = {
+        instruction: 'Repair the rejected courses of action. Resolve every validator rejection below.',
+        validator_rejections: violations,
+        fix_rules: [
+            'Replace any invalid/invented unit_uid with one from allowed_unit_ids.',
+            'Use ONLY the allowed actions.',
+            'Keep targets inside the map; move at most a small step (no teleport).',
+            'Never engage/destroy/open_fire.',
+            'Return 2-3 COAs in the same JSON shape.',
+        ],
+        allowed_unit_ids: allowedUnitIds,
+        allowed_actions: allowedActions.length ? allowedActions : undefined,
+        objective: extras.objective || null,
+        active_side: extras.active_side || null,
+        previous_coas: prevCoas,
+        required_output_schema: {
+            coas: [{
+                plan_id: 'COA-1', title: 'string', objective_id: 'string', summary: 'string',
+                recommended: false, risk: 'low|medium|high', confidence: 'low|medium|high',
+                phases: [{ phase_id: 'phase-1', name: 'Move', actions: [{
+                    unit_uid: '<one of allowed_unit_ids>', side: 'RED|BLUE',
+                    role: 'assault|support|screen|reserve|recon|hold|defend',
+                    action_type: actionEnum,
+                    target: { lat: 0, lon: 0, type: 'objective|coord' },
+                    reason: '<one sentence>', why_unit: '<why this unit>',
+                }] }],
+                non_selected_units: [{ unit_uid: '<a unit you did NOT move>', reason: '<why held back>' }],
+                risks: ['string'], assumptions: ['string'],
+            }],
+        },
+        constraints: 'unit_uid MUST be one of allowed_unit_ids; no teleport; no invented units; NEVER engage/destroy/open-fire; return ONLY JSON.',
+    };
+    return {
+        version: TOOL_CONTRACT_VERSION + '/repair',
+        system: system,
+        prompt: JSON.stringify(promptObject),
+        prompt_object: promptObject,
+        allowed_unit_ids: allowedUnitIds,
+        is_repair: true,
+    };
+}
+
 function buildCommanderPromptPack(input) {
     var ctx = readInput(input);
 
@@ -1110,6 +1187,7 @@ module.exports = {
     SYSTEM_CONTRACT: SYSTEM_CONTRACT,                       // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A
     MCP_COMMANDER_INSTRUCTIONS: MCP_COMMANDER_INSTRUCTIONS, // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A
     composeCommanderPrompt: composeCommanderPrompt,         // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A
+    composeRepairPrompt: composeRepairPrompt,               // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A
     getScenarioOobTool: getScenarioOobTool,
     getCapabilityIntelTool: getCapabilityIntelTool,
     getTerrainIntelTool: getTerrainIntelTool,

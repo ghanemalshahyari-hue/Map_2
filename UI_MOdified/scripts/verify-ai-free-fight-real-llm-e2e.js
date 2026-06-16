@@ -254,6 +254,12 @@ async function main() {
     need(executed.length > 0, 'event log has an EXECUTED line (action → movement → final position)');
     var skipped = (run && run.eventLog || []).filter(function (m) { return /AI turn skipped/.test(m); });
     need(skipped.length === 0, 'no "AI turn skipped" — the real LLM turn was applied, not blocked');
+    // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: a real LLM plan must carry the demo-facing planning trace,
+    // badged as AI Commander. (Lenient: only asserted when the loop plan exposes the trace.)
+    if (plan.planning_trace) {
+        need(plan.planning_trace.input_understood && plan.planning_trace.validation, 'planning_trace has Input-understood + Validation');
+        need(plan.planning_trace.mode === 'ai_commander', 'planning_trace.mode === "ai_commander" (got ' + plan.planning_trace.mode + ')');
+    }
 
     // ── capture dump (the proof artifact) ──
     console.log('\n[4] Capture');
@@ -264,6 +270,8 @@ async function main() {
     info('llm_called / llm_status', plan.llm_called + ' / ' + plan.llm_status);
     info('provider_used / model_used', plan.provider_used + ' / ' + plan.model_used);
     info('fallback_reason', plan.fallback_reason || '(none)');
+    info('repaired / attempts', plan.repaired + ' / ' + (plan.repair_attempts || 0));
+    info('planning_trace.mode', plan.planning_trace && plan.planning_trace.mode);
     info('mcp_prompt version', plan.mcp_prompt && plan.mcp_prompt.version);
     info('selected COA', (recCoa.plan_id || '?') + ' / ' + (recCoa.coa_family || recCoa.title || '?'));
     info('selected units', (recCoa.phases && recCoa.phases[0] ? (recCoa.phases[0].actions || []).map(function (a) { return a.unit_uid + ':' + a.action_type; }).join(', ') : ''));

@@ -108,6 +108,11 @@
         normal: { label: 'Normal' },
         deep:   { label: 'Deep' },
     };
+    // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: planning mode — 'commander' (LLM drafts + RMOOZ validates/
+    // repairs) is the demo default; 'staff_safe' = deterministic staff planner (also the auto-fallback).
+    var _planningMode = 'commander';
+    var _coaLoadingStart = 0;   // ms when the current Generate started (for the live "thinking" timer)
+    var _coaLoadingTimer = null;
     // Cinematic speeds: decisionDelayMs between turns, moveAnimMs per move animation.
     var FF_SPEEDS = {
         x1:    { decisionDelayMs: 8000, moveAnimMs: 6000, label: 'x1' },
@@ -1065,6 +1070,7 @@
         bind('camera-follow', function () { setCameraMode('follow'); });
         ['controlled', 'free', 'high_variation'].forEach(function (m) { bind('mode-' + m, function () { setCommanderMode(m); }); });
         ['fast', 'normal', 'deep'].forEach(function (d) { bind('depth-' + d, function () { setAiDepth(d); }); });
+        ['commander', 'staff_safe'].forEach(function (pm) { bind('planmode-' + pm, function () { setPlanningMode(pm); }); }); // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A
         bind('view-mcp-prompt', function () { _mcpPromptExpanded = !_mcpPromptExpanded; updatePanel(); });
         bind('gen5-coas', generate5Coas);
         FF_SPEED_ORDER.forEach(function (sp) { bind('loop-speed-' + sp, function () { setFreeFightSpeed(sp); }); });
@@ -1534,7 +1540,7 @@
         if (!objectives.length && Array.isArray(ob2.objectives)) objectives = ob2.objectives;
 
         var allowedUnitIds = units.map(function(u) { return u.id; });
-        return { units: units, objectives: objectives, opts: { preferSide: 'RED', useLlm: _useLlm, ai_depth: _aiDepth, commander_mode: _commanderMode, allowed_unit_ids: allowedUnitIds } };
+        return { units: units, objectives: objectives, opts: { preferSide: 'RED', useLlm: _useLlm, ai_depth: _aiDepth, commander_mode: _commanderMode, planning_mode: _planningMode, allowed_unit_ids: allowedUnitIds } };
     }
     // FREEFIGHT-COA-ROUTE-JSON-GUARD-A: never blindly call r.json(). A stale/wrong
     // server answers POSTs to unknown routes with plain "Method Not Allowed" (405),
@@ -1852,6 +1858,8 @@
         if (!w || typeof w.fetch !== 'function') return;
         _coaLoading = true; _coaPlan = null; _coaApplied = false; _coaMovedUnits = []; _mcpPromptExpanded = false;
         _routeUnavailableMsg = null;
+        _coaLoadingStart = (function () { try { return Date.now(); } catch (_) { return 0; } })();
+        _startCoaLoadingTicker();   // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: live elapsed timer while the model thinks
         updatePanel();
         var body = _buildAiRequestBody();
         // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A: the manual "Generate AI Attack Plan" button FORCES the
@@ -1874,12 +1882,28 @@
                 // presents real LLM results ONLY — never deterministic/fallback dressed as AI).
                 _coaPlan._requestedVia = 'manual_generate';
             }
-            _coaLoading = false; _coaApplied = false;
+            _coaLoading = false; _coaApplied = false; _stopCoaLoadingTicker();
             updatePanel();
         }).catch(function (e) {
             _coaPlan = { ok: false, _error: (e && e.message) || 'fetch failed', _requestedVia: 'manual_generate' };
-            _coaLoading = false; updatePanel();
+            _coaLoading = false; _stopCoaLoadingTicker(); updatePanel();
         });
+    }
+    // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: tick the in-flight "AI Planning Trace" elapsed timer (~1s)
+    // while a plan is generating, so the wait visibly reads as the AI thinking. Cleared on completion.
+    function _startCoaLoadingTicker() {
+        _stopCoaLoadingTicker();
+        var w = W();
+        if (w && typeof w.setInterval === 'function') {
+            _coaLoadingTimer = w.setInterval(function () {
+                if (_coaLoading) { try { updatePanel(); } catch (_) {} } else { _stopCoaLoadingTicker(); }
+            }, 1000);
+        }
+    }
+    function _stopCoaLoadingTicker() {
+        var w = W();
+        if (_coaLoadingTimer && w && typeof w.clearInterval === 'function') { try { w.clearInterval(_coaLoadingTimer); } catch (_) {} }
+        _coaLoadingTimer = null;
     }
     function _applySelectedCoa() {
         if (!_coaPlan || !_coaPlan.ok || !Array.isArray(_coaPlan.coas) || !_coaPlan.coas.length) return;
@@ -1990,7 +2014,7 @@
             },
             // RMOOZ-AI-EXECUTION-SINGLE-GATE-A: the AI Free Fight loop ALWAYS requests the LLM — the
             // single gate is RMOOZ_ALLOW_SIM_RUN on the server, not a separate client toggle.
-            opts: { preferSide: _activeSide, useLlm: true, ai_depth: _aiDepth, commander_mode: _commanderMode, capture_raw_llm: _captureRawLlm, allowed_unit_ids: base.units.map(function (u) { return u.id; }) },
+            opts: { preferSide: _activeSide, useLlm: true, ai_depth: _aiDepth, commander_mode: _commanderMode, planning_mode: _planningMode, capture_raw_llm: _captureRawLlm, allowed_unit_ids: base.units.map(function (u) { return u.id; }) },
         };
     }
 
@@ -2148,6 +2172,16 @@
         _commanderMode = mode;
         try { _appendToEventLog('AI COMMANDER MODE: ' + FF_COMMANDER_MODES[mode].label + ' — ' +
             (mode === 'controlled' ? 'doctrine-guided' : mode === 'high_variation' ? 'creative / rotating approach' : 'free tactical reasoning') + '.'); } catch (_) {}
+        updatePanel();
+    }
+    // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: switch the planning mode — 'commander' (LLM drafts +
+    // RMOOZ validates/repairs) or 'staff_safe' (deterministic staff planner, the manual + auto fallback).
+    function setPlanningMode(mode) {
+        if (mode !== 'commander' && mode !== 'staff_safe') return;
+        _planningMode = mode;
+        try { _appendToEventLog('AI PLANNER: ' + (mode === 'commander'
+            ? 'AI Commander — LLM drafts COAs, RMOOZ validates & repairs.'
+            : 'Staff-Safe — deterministic staff planner (no LLM).')); } catch (_) {}
         updatePanel();
     }
     // RMOOZ-AI-COA-PERFORMANCE-A: switch the AI planning depth (fast / normal / deep).
@@ -2665,6 +2699,64 @@
         updatePanel();
     }
 
+    // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: the demo-facing "AI Planning Trace" — Input understood →
+    // AI reasoning → Validation — plus a clear AI Commander / Staff-Safe mode badge. Renders ONLY
+    // real server data (plan.planning_trace); nothing when absent (older server). The Staff-Safe badge
+    // + the why-not-AI note keep it honest (deterministic plans are never dressed as AI).
+    function renderPlanningTraceHtml(plan) {
+        var t = plan && plan.planning_trace;
+        if (!t) return '';
+        function row(ok, label) {
+            return '<div style="font-size:10px;color:' + (ok ? '#90d090' : '#e0a93a') + ';margin-bottom:1px;">' + (ok ? '✓' : '•') + ' ' + esc(label) + '</div>';
+        }
+        var iu = t.input_understood || {}, rc = iu.role_counts || {}, en = iu.enemy_assessment || {}, v = t.validation || {};
+        var isCmd = t.mode === 'ai_commander';
+        var modeColor = isCmd ? '#7fd6a0' : '#e0c060';
+        var modeBorder = isCmd ? '#2e7d54' : '#6a5a20';
+        var modeBg = isCmd ? '#0f2418' : '#241f08';
+        var modeLabel = isCmd ? 'AI Commander Mode — وضع القائد بالذكاء الاصطناعي'
+                              : 'Staff-Safe Mode — الوضع الآمن (تخطيط حتمي)';
+        var h = '<div data-ff-coa="planning-trace" data-ff-mode="' + (isCmd ? 'ai_commander' : 'staff_safe') + '" style="margin:2px 0 7px;padding:7px 9px;border:1px solid ' + modeBorder + ';border-radius:5px;background:' + modeBg + ';">';
+        h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;gap:6px;">' +
+            '<span style="font-weight:700;font-size:11px;color:' + modeColor + ';">' + (isCmd ? '🧠 ' : '🛡 ') + esc(modeLabel) + '</span>' +
+            (t.model_used ? '<span style="font-size:9px;color:#7a9ab8;white-space:nowrap;">' + esc(t.provider_used || '') + ' · ' + esc(t.model_used) + '</span>' : '') +
+            '</div>';
+        // 1) Input understood
+        h += '<div style="font-weight:700;font-size:10px;color:#9ec2ec;margin:3px 0 2px;">Input understood — الإدخال مفهوم</div>';
+        h += row(true, (iu.total_units || 0) + ' units analyzed');
+        var rcParts = ['maneuver', 'fires', 'air_defense', 'recon', 'support']
+            .filter(function (k) { return rc[k]; })
+            .map(function (k) { return rc[k] + ' ' + k.replace('_', '-'); });
+        if (rcParts.length) h += row(true, 'Force (' + esc(iu.active_side || '') + '): ' + rcParts.join(' · '));
+        if (en && en.total) h += row(true, 'Enemy (' + esc(en.side || '') + '): ' + (en.air_defense || 0) + ' air-defense · ' + (en.armor || 0) + ' armor · ' + (en.recon || 0) + ' recon');
+        h += row(true, (iu.objectives || 0) + ' objective(s) prioritized');
+        if (iu.terrain_class) h += row(true, 'Terrain: ' + esc(iu.terrain_class) + ' (' + esc(iu.terrain_provenance || 'inferred') + ')');
+        if (iu.alert_state || iu.roe_state) h += row(true, 'Posture: alert ' + esc(iu.alert_state || '—') + ' · ROE ' + esc(iu.roe_state || '—'));
+        // 2) AI reasoning
+        var rs = arr(t.reasoning);
+        if (rs.length) {
+            h += '<div style="font-weight:700;font-size:10px;color:#9ec2ec;margin:5px 0 2px;">AI reasoning — تفسير الذكاء الاصطناعي</div>';
+            rs.forEach(function (c) {
+                h += '<div style="font-size:10px;color:#cdd8e4;margin-bottom:1px;">' + (c.recommended ? '★ ' : '• ') + esc(c.plan_id || '') + (c.title ? ' (' + esc(c.title) + ')' : '') + (c.why ? ': ' + esc(c.why) : '') + '</div>';
+                arr(c.rejected_units).slice(0, 3).forEach(function (ru) {
+                    h += '<div style="font-size:9px;color:#8a9aa8;margin-left:12px;">— not used: ' + esc(ru.unit_uid || '') + (ru.reason ? ' (' + esc(ru.reason) + ')' : '') + '</div>';
+                });
+            });
+        }
+        // 3) Validation
+        h += '<div style="font-weight:700;font-size:10px;color:#9ec2ec;margin:5px 0 2px;">Validation — التحقق</div>';
+        h += row(v.unit_ids_valid !== false, 'All unit IDs valid');
+        h += row(v.actions_matched !== false, 'All actions matched to real units');
+        h += row(v.kill_actions_blocked !== false, 'Kill/engage actions blocked');
+        h += row(v.within_bounds !== false, 'Targets within map bounds (no teleport)');
+        if (v.repaired) h += row(true, 'Repaired ' + (v.repaired_count || 1) + ' invalid reference(s) — AI revised after staff validation');
+        h += row((v.valid_coa_count || 0) > 0, (v.valid_coa_count || 0) + ' valid COA(s) generated');
+        if (!isCmd && (plan.fallback_message || plan.fallback_reason)) {
+            h += '<div style="font-size:9px;color:#cdb86a;margin-top:4px;">' + esc(plan.fallback_message || ('AI did not run: ' + plan.fallback_reason)) + '</div>';
+        }
+        h += '</div>';
+        return h;
+    }
     function renderCoaPlanHtml() {
         var h = '';
         // FREEFIGHT-COA-COMMANDER-NARRATIVE-A: render a bullet list
@@ -2684,7 +2776,18 @@
             return parts.length ? parts.join(' · ') : '';
         }
         if (_coaLoading) {
-            h += '<div style="color:#9ab0c0;font-size:11px;padding:6px;">Planning… التخطيط جارٍ<span style="color:#6a8fa8;font-size:9px;"> (' + esc(FF_AI_DEPTHS[_aiDepth] ? FF_AI_DEPTHS[_aiDepth].label : _aiDepth) + ' · ' + esc(FF_COMMANDER_MODES[_commanderMode] ? FF_COMMANDER_MODES[_commanderMode].label : _commanderMode) + ')</span></div>';
+            // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: a live "AI Planning Trace" while the local model thinks.
+            // Honest in-progress (no fake token streaming); the elapsed timer ticks via _coaLoadingTimer.
+            var _elapsed = _coaLoadingStart ? Math.max(0, Math.round((Date.now() - _coaLoadingStart) / 1000)) : 0;
+            var _hdr = (_planningMode === 'staff_safe') ? '🛡 Staff-Safe planner working…' : '🧠 AI Commander reasoning…';
+            h += '<div data-ff-coa="planning-inflight" style="padding:8px 9px;border:1px solid #2e5d7d;border-radius:5px;background:#0a1622;">';
+            h += '<div style="font-weight:700;font-size:11px;color:#9ec2ec;">' + _hdr + ' <span style="color:#7fd6a0;">' + _elapsed + 's</span></div>';
+            h += '<div style="font-size:9px;color:#6a8fa8;margin:2px 0 5px;">' + esc(FF_AI_DEPTHS[_aiDepth] ? FF_AI_DEPTHS[_aiDepth].label : _aiDepth) + ' · ' + esc(FF_COMMANDER_MODES[_commanderMode] ? FF_COMMANDER_MODES[_commanderMode].label : _commanderMode) + ' · local model</div>';
+            ['Reading OOB, capability & terrain', 'Drafting courses of action', 'Validating against real units', 'Repairing invalid references'].forEach(function (s, i) {
+                h += '<div style="font-size:10px;color:#8a9aa8;margin-bottom:1px;">' + (i === 0 ? '◐' : '○') + ' ' + esc(s) + '</div>';
+            });
+            h += '<div style="font-size:9px;color:#5a7a90;margin-top:4px;">Local LLM on this hardware can take 1–3 minutes — the commander is thinking. التخطيط جارٍ</div>';
+            h += '</div>';
             return h;
         }
         if (!_coaPlan) {
@@ -2707,7 +2810,11 @@
         // / timeout / unavailable / fast mode / deterministic fallback / provider missing), render
         // NOTHING but the honest message + diagnostics — no cards, no score numbers, no stale
         // values, no fallback dressed as AI. (The loop / Generate-5 are separate flows, untouched.)
-        if (_coaPlan._requestedVia === 'manual_generate' && !_isRealLlmPlan(_coaPlan)) {
+        // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: Staff-Safe (explicit OR auto-fallback) is a legitimate,
+        // clearly-badged mode — SHOW its deterministic COAs (not dressed as AI). Only a true no-plan
+        // failure (no coas at all) still hits the AI-only honesty gate. The planning-trace below carries
+        // the honest "Staff-Safe / why the AI didn't run" labeling.
+        if (_coaPlan._requestedVia === 'manual_generate' && !_isRealLlmPlan(_coaPlan) && !arr(_coaPlan.coas).length) {
             h += _aiOnlyGateHtml(_coaPlan);
             return h;
         }
@@ -2719,6 +2826,9 @@
         if (_coaPlan.fallback_reason) h += ' <span style="color:#e0a93a;font-size:9px;">(' + esc(_coaPlan.fallback_reason) + ')</span>';
         if (_coaPlan.ai_depth) h += ' <span style="color:#7a9ab8;font-size:9px;">· depth ' + esc(_coaPlan.ai_depth) + '</span>';
         h += '</div>';
+        // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: the demo-facing "AI Planning Trace" (Input understood →
+        // AI reasoning → Validation) + the AI Commander / Staff-Safe mode badge.
+        h += renderPlanningTraceHtml(_coaPlan);
         // RMOOZ-AI-COA-PERFORMANCE-A: honest message when the LLM was slow/unavailable.
         if (_coaPlan.fallback_message) {
             h += '<div data-ff-coa="fallback-msg" style="margin-bottom:5px;font-size:10px;color:#e0c060;padding:4px 7px;border:1px solid #6a5a20;border-radius:4px;background:#1f1a08;">⏱ ' + esc(_coaPlan.fallback_message) + '</div>';
@@ -2913,6 +3023,23 @@
             (_commanderMode === 'controlled' ? 'Doctrine-guided: intercept / defend.' :
              _commanderMode === 'high_variation' ? 'Creative: rotates recon / flank / deceive / delay / attack each cycle.' :
              'Free tactical reasoning: AI may choose recon, delay, flank, deceive, withdraw, defend, probe, or attack — operator reviews.') + '</div>';
+        // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: planning mode — AI Commander (LLM drafts + RMOOZ
+        // validates/repairs) vs Staff-Safe (deterministic staff planner). Commander is the default.
+        h += '<div data-ff-loop="planning-mode" style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:6px;">';
+        h += '<span style="font-size:10px;color:#8fa5b8;">Planner:</span>';
+        [['commander', 'AI Commander'], ['staff_safe', 'Staff-Safe']].forEach(function (pm) {
+            var on = (_planningMode === pm[0]);
+            var isCmd = pm[0] === 'commander';
+            var bg = on ? (isCmd ? '#0f2a1c' : '#241f08') : '#101b27';
+            var bc = on ? (isCmd ? '#2e9d6a' : '#a08a30') : '#4a5f75';
+            var fc = on ? (isCmd ? '#9fe8c0' : '#e8d68a') : '#9fb8e0';
+            h += '<button data-act="planmode-' + pm[0] + '" style="font:inherit;cursor:pointer;border:1px solid ' + bc + ';background:' + bg + ';color:' + fc + ';border-radius:4px;padding:3px 8px;font-size:10px;font-weight:' + (on ? '700' : '400') + ';">' + esc(pm[1]) + '</button>';
+        });
+        h += '</div>';
+        h += '<div style="font-size:9px;color:#6a8fa8;margin-top:3px;">' +
+            (_planningMode === 'staff_safe'
+                ? 'Staff-Safe: deterministic staff planner builds the COAs (no LLM) — guaranteed, instant.'
+                : 'AI Commander: the local LLM drafts COAs; RMOOZ validates and sends invalid parts back to the AI to repair. Auto-falls to Staff-Safe if the AI cannot produce a valid plan.') + '</div>';
         // RMOOZ-AI-COA-PERFORMANCE-A: AI planning depth (speed vs depth trade-off).
         h += '<div data-ff-loop="ai-depth" style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:6px;">';
         h += '<span style="font-size:10px;color:#8fa5b8;">Depth:</span>';
@@ -3268,6 +3395,11 @@
         // RMOOZ-AI-ATTACK-PLAN-AI-ONLY-A test seams
         _isRealLlmPlanForTest:     function (p)           { return _isRealLlmPlan(p); },
         _renderCoaPlanHtmlForTest: function (p)           { _coaPlan = p; _coaLoading = false; _coaApplied = false; return renderCoaPlanHtml(); },
+        // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A test seams
+        _renderPlanningTraceHtmlForTest: function (p)     { return renderPlanningTraceHtml(p); },
+        _setPlanningModeForTest:   function (m)           { return setPlanningMode(m); },
+        _getPlanningModeForTest:   function ()            { return _planningMode; },
+        _buildAiRequestBodyForTest2: function ()          { return _buildAiRequestBody(); },
         _generateCoaPlanForTest:   function ()            { return _generateCoaPlan(); },
         _getCoaPlanForTest:        function ()            { return _coaPlan; },
         _setCoaPlanForTest:        function (p)           { _coaPlan = p; },

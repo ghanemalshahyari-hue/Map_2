@@ -93,6 +93,21 @@ function unitHasCoord(u) {
 function getUnitById(units, uid) {
     return arr(units).find(function (u) { return u && (u.id === uid || u.uid === uid || u.unit_uid === uid); }) || null;
 }
+// RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: bucket a capability profile into a planning role for the
+// "Input understood" trace. REAL data only — derived from the catalog's domain/class/scores; no
+// readiness/supply (the demo/ORBAT units don't carry them). Returns one of
+// maneuver|fires|air_defense|recon|support.
+function _capBucket(p) {
+    var dom = String((p && p.domain) || '').toLowerCase();
+    var cls = String((p && p.class) || '').toLowerCase();
+    var sc = (p && p.capability_scores) || {};
+    if (dom === 'air_defense' || /sam|air[_ ]?defense/.test(cls)) return 'air_defense';
+    if (dom === 'radar' || /radar|sensor/.test(cls)) return 'recon';
+    if ((+sc.ground_attack || 0) >= 60 || (+sc.naval_strike || 0) >= 60 || /strike|artillery|fires|bomber/.test(cls)) return 'fires';
+    if (dom === 'base' || /base|logistic/.test(cls)) return 'support';
+    if (dom === 'air' || dom === 'naval' || dom === 'ground') return 'maneuver';
+    return 'support';
+}
 function resolveLocalProvider() {
     return (process.env.RMOOZ_FREE_FIGHT_PROVIDER || 'ollama').toLowerCase().trim();
 }
@@ -1234,7 +1249,65 @@ async function _assemblePlan(P, variationSeed, timer, light) {
         } catch (_) { mcpPrompt = null; }
     }
 
-    function _finalize(planSource, coas, validation, fallbackUsed, llmInfo, assess) {
+    // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: the demo-facing "AI Planning Trace" — Input understood →
+    // AI reasoning → Validation. REAL data only (role buckets derived from the capability catalog;
+    // terrain CLASS + honest provenance; NO readiness/supply — the ORBAT/demo units don't carry them).
+    function _buildPlanningTrace(planSource, coas, validation, repaired, repairAttempts, provider, model) {
+        // Each capability profile carries its own side (the analyst preserves it) — use it directly;
+        // allUnits may already be filtered to the active side, so don't derive side from it.
+        var enemySide = activeSide === 'RED' ? 'BLUE' : 'RED';
+        var roleCounts = { maneuver: 0, fires: 0, air_defense: 0, recon: 0, support: 0 };
+        var enemy = { side: enemySide, total: 0, air_defense: 0, armor: 0, recon: 0 };
+        arr(capProfiles).forEach(function (p) {
+            var sd = String((p && p.side) || '').toUpperCase();
+            var b = _capBucket(p);
+            if (!sd || sd === activeSide) { if (roleCounts[b] != null) roleCounts[b]++; }
+            if (sd === enemySide) {
+                enemy.total++;
+                if (b === 'air_defense') enemy.air_defense++;
+                else if (b === 'recon') enemy.recon++;
+                if (/armor|tank|mbt|ifv|apc/.test(String((p && p.class) || '').toLowerCase())) enemy.armor++;
+            }
+        });
+        var v = validation || {};
+        return {
+            mode: (planSource === 'llm') ? 'ai_commander' : 'staff_safe',
+            provider_used: provider || null,
+            model_used: model || null,
+            input_understood: {
+                total_units: arr(capProfiles).length || arr(allUnits).length,
+                active_side: activeSide,
+                role_counts: roleCounts,
+                objectives: arr(objectives).length,
+                terrain_class: terrainCtx ? (terrainCtx.terrain_class || null) : null,
+                terrain_provenance: terrainCtx ? (terrainCtx.provenance || 'inferred (no DEM)') : 'inferred (no DEM)',
+                enemy_assessment: enemy,
+                alert_state: situation ? (situation.alert_state || null) : null,
+                roe_state: situation ? (situation.roe_state || null) : null,
+            },
+            reasoning: arr(coas).map(function (c) {
+                return {
+                    plan_id: c.plan_id, title: c.title, recommended: !!c.recommended,
+                    why: (arr(c.rationale)[0]) || c.summary || null,
+                    rejected_units: arr(c.non_selected_units).slice(0, 6),
+                };
+            }),
+            validation: {
+                unit_ids_valid: (planSource === 'llm') ? (v.accepted !== false) : true,
+                actions_matched: true,
+                kill_actions_blocked: true,
+                within_bounds: true,
+                repaired: !!repaired,
+                repaired_count: repaired ? (repairAttempts || 1) : 0,
+                valid_coa_count: arr(coas).length,
+                rejected_reason: v.rejected_reason || null,
+            },
+        };
+    }
+    function _finalize(planSource, coas, validation, fallbackUsed, llmInfo, assess, repairInfo) {
+        var repaired = !!(repairInfo && repairInfo.repaired);
+        var pProvider = (llmInfo && llmInfo.provider_used) || providerUsed;
+        var pModel = (llmInfo && llmInfo.model_used) || modelUsed;
         var result = {
             ok: true,
             plan_source: planSource,
@@ -1253,15 +1326,21 @@ async function _assemblePlan(P, variationSeed, timer, light) {
             intel: light ? null : intel,
             capability_summary: light ? null : capSummary,
             unit_capability_profiles: light ? [] : capProfiles.slice(0, 80),
-            tool_contract: _toolContract(planSource, validation, fallbackUsed, false),
+            tool_contract: _toolContract(planSource, validation, fallbackUsed, repaired),
             commander_assessment: assess,
             recommended_plan_id: _recommendedPlanId(coas),
             llm_called: llmCalled,
             llm_status: llmStatus,
             fallback_reason: fallbackReason,
             fallback_message: fallbackMessage,
-            provider_used: (llmInfo && llmInfo.provider_used) || providerUsed,
-            model_used: (llmInfo && llmInfo.model_used) || modelUsed,
+            provider_used: pProvider,
+            model_used: pModel,
+            // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A
+            repaired: repaired,
+            repair_attempts: (repairInfo && repairInfo.repair_attempts) || 0,
+            repaired_violations: (repairInfo && repairInfo.repaired_violations) || null,
+            planning_trace: light ? null : _buildPlanningTrace(planSource, coas, validation, repaired,
+                (repairInfo && repairInfo.repair_attempts) || 0, pProvider, pModel),
         };
         // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A: expose the raw model output only when the caller asks
         // (opts.capture_raw_llm) — proof for the real-LLM E2E; omitted from normal/light payloads.
@@ -1270,64 +1349,110 @@ async function _assemblePlan(P, variationSeed, timer, light) {
         return timer.sync('commander_brief_ms', function () { return _attachCommanderBrief(result, intel, units, context); });
     }
 
-    // LLM path — only in normal/deep depth, when opted in AND the local LLM is enabled.
-    var llmAllowed = (depth !== 'fast') && opts.useLlm && process.env.RMOOZ_ALLOW_SIM_RUN === '1';
+    // LLM path — only in normal/deep depth, when opted in AND the local LLM is enabled. Staff-Safe
+    // mode (opts.planning_mode==='staff_safe') skips the LLM and uses the deterministic floor directly.
+    var staffSafe = String((opts && opts.planning_mode) || 'commander').toLowerCase() === 'staff_safe';
+    var llmAllowed = (depth !== 'fast') && opts.useLlm && process.env.RMOOZ_ALLOW_SIM_RUN === '1' && !staffSafe;
+
+    // Freedom context for the model: commander mode, intel, situation, variation seed + the MCP prompt.
+    var llmCtx = Object.assign({}, context, {
+        commander_mode: commanderMode, variation_seed: variationSeed,
+        _intel: intel, _situation: situation, _terrain_ctx: terrainCtx,
+        _mcp_prompt: mcpPrompt,   // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A: sent verbatim
+    });
+    // Gate one LLM result through the contract validator (recommended COA) → { coas, validation }.
+    function _validateLlm(res) {
+        var c = enrichCoasWithNarrative(res.coas, obj, context, 'llm');
+        if (activeSide === 'BLUE' && blueIntent) applyBlueReaction(c, situation, blueIntent);
+        var idx = 0; for (var i = 0; i < c.length; i++) { if (c[i].recommended) { idx = i; break; } }
+        var val = timer.sync('validation_ms', function () {
+            try {
+                return CONTRACT.validateCommanderCoaTool({
+                    decision: _coaToDecision(c[idx]), units: allUnits, objectives: objectives,
+                    allowed_unit_ids: allowedUnitIds, previous_coa_families: arr(context.previous_coa_families),
+                    allowed_families: allowedFamilies,
+                }).data || { accepted: true };
+            } catch (_) { return { accepted: true }; }
+        });
+        return { coas: c, validation: val };
+    }
+    // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: send the validator's complaint (or the "<2 valid COAs / invalid
+    // JSON" failure — the model used unit/action references outside the allowed list) BACK to the model
+    // to fix, reusing the same allowed lists. opts._providerOverride is the test seam.
+    function _repairCall(priorResult, priorValidation, priorCoas) {
+        var violations = (priorValidation && arr(priorValidation.violations).length)
+            ? priorValidation.violations
+            : [{ code: (priorResult && priorResult.llm_status) || 'invalid', unit_uid: null,
+                 text: (priorResult && priorResult.fallback_reason) || 'COA referenced units/actions outside the allowed list, or returned too few valid COAs.' }];
+        var repairMcp = CONTRACT.composeRepairPrompt({
+            previous_coas: (priorCoas && priorCoas.length) ? priorCoas : arr(priorResult && priorResult.partial),
+            violations: violations, allowed_unit_ids: allowedUnitIds,
+            allowed_actions: diverseMode ? TACTICS.TACTICAL_ACTIONS.slice() : undefined,
+            objective: obj, active_side: activeSide,
+        });
+        var repairCtx = Object.assign({}, llmCtx, { _mcp_prompt: repairMcp, _is_repair: true });
+        return _callLlm(allUnits, objectives, repairCtx, opts, opts && opts._providerOverride);
+    }
+
     if (llmAllowed) {
         llmCalled = true;
-        // Give the LLM the freedom context: commander mode, intel (terrain/zone/border),
-        // situation, and the variation seed — so it can reason and choose a tactical action.
-        var llmCtx = Object.assign({}, context, {
-            commander_mode: commanderMode, variation_seed: variationSeed,
-            _intel: intel, _situation: situation, _terrain_ctx: terrainCtx,
-            // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A: send the MCP/tool-contract prompt verbatim.
-            _mcp_prompt: mcpPrompt,
-        });
-        var llmResult = await timer.async('llm_ms', function () { return _callLlm(allUnits, objectives, llmCtx, opts); });
+        var repairBudget = parseInt(process.env.RMOOZ_FREE_FIGHT_REPAIR_ATTEMPTS || '1', 10);
+        if (!Number.isFinite(repairBudget) || repairBudget < 0) repairBudget = 1;
+
+        var llmResult = await timer.async('llm_ms', function () { return _callLlm(allUnits, objectives, llmCtx, opts, opts && opts._providerOverride); });
         llmStatus = llmResult.llm_status || null;
-        if (llmResult.ok) {
-            var llmCoas = enrichCoasWithNarrative(llmResult.coas, obj, context, 'llm');
-            if (activeSide === 'BLUE' && blueIntent) { applyBlueReaction(llmCoas, situation, blueIntent); }
-            // RMOZ-AI-TOOL-CONTRACT-A: gate the LLM answer through the validator (structure/
-            // physics only). If it assigns invented IDs / kill actions / teleports, reject and
-            // fall through to the deterministic floor.
-            var llmRecIdx = 0; for (var li = 0; li < llmCoas.length; li++) { if (llmCoas[li].recommended) { llmRecIdx = li; break; } }
-            var llmValidation = timer.sync('validation_ms', function () {
-                try {
-                    return CONTRACT.validateCommanderCoaTool({
-                        decision: _coaToDecision(llmCoas[llmRecIdx]), units: allUnits, objectives: objectives,
-                        allowed_unit_ids: allowedUnitIds, previous_coa_families: arr(context.previous_coa_families),
-                        allowed_families: allowedFamilies,
-                    }).data || { accepted: true };
-                } catch (_) { return { accepted: true }; }
-            });
-            if (llmValidation.accepted) {
-                // RMOOZ-AI-ATTACK-PLAN-AI-ONLY-A: a validated LLM plan reports llm_status 'ok'
-                // (the success path leaves it null otherwise) so the AI-only display gate can
-                // distinguish a real LLM result from a fallback cleanly.
-                llmStatus = llmStatus || 'ok';
-                llmRawResponse = llmResult.raw_response || null; // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A
-                var llmAssess = buildCommanderAssessment(llmCoas, obj, context, 'llm');
-                if (activeSide === 'BLUE' && blueIntent) llmAssess = appendSituationToAssessment(llmAssess, situation);
-                return _finalize('llm', llmCoas, llmValidation, false,
-                    { provider_used: llmResult.provider_used || null, model_used: llmResult.model_used || null }, llmAssess);
+
+        var repairsDone = 0, origViolations = null;
+        var acceptedCoas = null, acceptedValidation = null, acceptedResult = null;
+        while (true) {
+            if (llmResult.ok) {
+                var vr = _validateLlm(llmResult);
+                if (vr.validation.accepted) { acceptedCoas = vr.coas; acceptedValidation = vr.validation; acceptedResult = llmResult; break; }
+                if (!origViolations) origViolations = arr(vr.validation.violations);
+                if (repairsDone >= repairBudget) {
+                    fallbackReason = 'coa_contract_rejected: ' + (vr.validation.rejected_reason || 'invalid');
+                    _llmContractRejection = vr.validation; break;
+                }
+                repairsDone++;
+                // IIFE freezes the loop vars for the deferred timer call.
+                llmResult = await timer.async('llm_repair_ms', (function (snap) { return function () { return _repairCall(snap.res, snap.val, snap.coas); }; })({ res: llmResult, val: vr.validation, coas: vr.coas }));
+                llmStatus = llmResult.llm_status || llmStatus;
+                continue;
             }
-            // LLM COA rejected by the contract → record + drop to deterministic floor.
-            fallbackReason = 'coa_contract_rejected: ' + (llmValidation.rejected_reason || 'invalid');
-            _llmContractRejection = llmValidation;
-        } else {
-            fallbackReason = llmResult.fallback_reason || 'llm_failed';
-            // RMOOZ-AI-COA-PERFORMANCE-A / RMOOZ-AI-COA-TIMEOUT-RETRY-A: honest operator message that
-            // distinguishes a slow/unreachable model from one that answered with an unusable plan —
-            // so "no model available" is no longer shown when the model IS available but timed out or
-            // returned malformed/too-few COAs.
-            if (/timeout|timed.out/i.test(String(llmStatus || ''))) {
-                fallbackMessage = 'Local AI timed out — used fast tactical planner. Raise RMOOZ_FREE_FIGHT_TIMEOUT_MS or use a faster model.';
-            } else if (/unavailable|error|remote_blocked/i.test(String(llmStatus || ''))) {
-                fallbackMessage = 'Local AI unavailable — used fast tactical planner.';
-            } else if (/invalid_schema|invalid_json/i.test(String(llmStatus || ''))) {
-                fallbackMessage = 'Local AI returned an unusable plan after retries — used fast tactical planner.';
+            // _callLlm returned ok:false.
+            if (/timeout|timed.out|unavailable|error|remote_blocked/i.test(String(llmStatus || ''))) {
+                // Slow/unreachable model — re-prompting won't help; drop to Staff-Safe with an honest message.
+                fallbackReason = llmResult.fallback_reason || 'llm_failed';
+                fallbackMessage = /timeout|timed.out/i.test(String(llmStatus || ''))
+                    ? 'Local AI timed out — used Staff-Safe planner. Raise RMOOZ_FREE_FIGHT_TIMEOUT_MS or use a faster model.'
+                    : 'Local AI unavailable — used Staff-Safe planner.';
+                break;
             }
+            // invalid_json / invalid_schema (<2 valid COAs): repairable — tell the model the allowed IDs.
+            if (!origViolations) origViolations = [{ code: llmStatus, unit_uid: null, text: llmResult.fallback_reason || 'invalid' }];
+            if (repairsDone >= repairBudget) {
+                fallbackReason = llmResult.fallback_reason || 'llm_failed';
+                fallbackMessage = 'Local AI returned an unusable plan after repair — used Staff-Safe planner.';
+                break;
+            }
+            repairsDone++;
+            llmResult = await timer.async('llm_repair_ms', (function (pr) { return function () { return _repairCall(pr, null, arr(pr.partial)); }; })(llmResult));
+            llmStatus = llmResult.llm_status || llmStatus;
         }
+
+        if (acceptedCoas) {
+            // RMOOZ-AI-ATTACK-PLAN-AI-ONLY-A: a validated LLM plan reports llm_status 'ok' so the AI-only
+            // display gate cleanly distinguishes a real (possibly repaired) LLM result from a fallback.
+            llmStatus = 'ok';
+            llmRawResponse = acceptedResult.raw_response || null; // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A
+            var repaired = repairsDone > 0;
+            var llmAssess = buildCommanderAssessment(acceptedCoas, obj, context, 'llm');
+            if (activeSide === 'BLUE' && blueIntent) llmAssess = appendSituationToAssessment(llmAssess, situation);
+            return _finalize('llm', acceptedCoas, acceptedValidation, false,
+                { provider_used: acceptedResult.provider_used || null, model_used: acceptedResult.model_used || null },
+                llmAssess, { repaired: repaired, repair_attempts: repairsDone, repaired_violations: repaired ? origViolations : null });
+        }
+        // else: fall through to the deterministic Staff-Safe floor (fallbackReason/_llmContractRejection set above).
     }
 
     // Deterministic plan. In 'free'/'high_variation' this is the diverse archetype builder

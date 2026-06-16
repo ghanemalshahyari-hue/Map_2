@@ -2786,6 +2786,126 @@
     // AI reasoning → Validation — plus a clear AI Commander / Staff-Safe mode badge. Renders ONLY
     // real server data (plan.planning_trace); nothing when absent (older server). The Staff-Safe badge
     // + the why-not-AI note keep it honest (deterministic plans are never dressed as AI).
+    // ── RMOOZ-AI-FREE-FIGHT-UX-PROOF-A: operator-facing proof blocks ─────────────
+    // These CONSOLIDATE data RMOOZ already produces (route health, candidate pre-filter,
+    // COA actions, moved-unit records, non_selected_units) into clearly-labelled blocks so
+    // an operator/demo can understand what happened WITHOUT reading server logs. No planner
+    // logic changes — pure rendering of existing fields.
+
+    // Resolve an operator label for a unit uid (display name + code + country + location)
+    // from the real scenario unit via the shared identity contract.
+    function _aiUnitLabel(uid) {
+        var out = { name: String(uid == null ? '?' : uid), code: String(uid == null ? '?' : uid), country: '', loc: '' };
+        var fr = _findRealUnit(uid); var u = fr && fr.unit; if (!u) return out;
+        var w = W();
+        var ident = (w && w.RmoozUnitIdentity && w.RmoozUnitIdentity.unitIdentityForLlm) ? w.RmoozUnitIdentity.unitIdentityForLlm(u, { side: u.side }) : null;
+        out.name = (ident && ident.display_name) || u.name || u.label || u.platform || out.code;
+        out.country = u.country || u.nation || '';
+        var lat = (u.lat != null) ? u.lat : (Array.isArray(u.coord) ? u.coord[1] : null);
+        var lon = (u.lon != null) ? u.lon : (Array.isArray(u.coord) ? u.coord[0] : null);
+        if (lat != null && lon != null && Number.isFinite(+lat) && Number.isFinite(+lon)) out.loc = (+lat).toFixed(3) + ',' + (+lon).toFixed(3);
+        return out;
+    }
+
+    // 1) AI Readiness — gate / provider / selected model / model available, then (after a
+    //    plan) plan source + LLM status. Reuses _aiGateStatusHtml (gate-card-d) for the gate
+    //    signals + fixes, then appends the post-generation result.
+    function _aiReadinessHtml(plan) {
+        var rh = _routeHealth;
+        var h = '<div data-ff-coa="ai-readiness" style="margin:2px 0 7px;padding:7px 9px;border:1px solid #25455f;border-radius:5px;background:#0a1622;">';
+        h += '<div style="font-weight:700;font-size:11px;color:#9ec2ec;margin-bottom:4px;">🛰 AI Readiness — جاهزية الذكاء الاصطناعي</div>';
+        var gate = _aiGateStatusHtml();
+        if (gate) h += gate;
+        else h += '<div style="font-size:10px;color:#8fa5b8;">Route health unknown — click "Check route" to probe the gate.</div>';
+        // Selected model (explicit row) + post-generation result.
+        function row(k, v, c) { return '<div style="font-size:10px;"><span style="color:#7a9ab8;">' + esc(k) + ':</span> <span style="color:' + (c || '#cdd8e4') + ';font-weight:600;">' + esc(v == null || v === '' ? '—' : String(v)) + '</span></div>'; }
+        h += '<div style="margin-top:4px;border-top:1px solid #16324a;padding-top:4px;">';
+        h += row('Selected model', (rh && rh.model) || (plan && plan.model_used) || '—');
+        if (plan && plan.ok) {
+            var isLlm = plan.plan_source === 'llm';
+            h += row('Plan source (after generation)', plan.plan_source || 'deterministic_coa_fallback', isLlm ? '#90d090' : '#e0a93a');
+            h += row('LLM status', (plan.llm_status || (plan.llm_called ? 'called' : 'not called')) + (plan.fallback_reason ? ' · ' + plan.fallback_reason : ''), isLlm ? '#90d090' : '#e0a93a');
+            h += '<div data-ff-coa="readiness-verdict" style="margin-top:3px;font-size:10px;font-weight:700;color:' + (isLlm ? '#7fd6a0' : '#e0a93a') + ';">' +
+                (isLlm ? '✅ Movement came from the local LLM (plan_source=llm).' : '⚠ Deterministic plan — the LLM did not produce this (not "AI").') + '</div>';
+        } else {
+            h += row('Plan source (after generation)', 'not generated yet', '#8fa5b8');
+        }
+        h += '</div></div>';
+        return h;
+    }
+
+    // 2) AI Candidate Filter — "the AI saw only X of Y units" + exclusions + top reasons.
+    //    Shown before generation (explainer) and after (real numbers from planning_trace).
+    function _aiCandidateFilterHtml(plan) {
+        var cand = plan && plan.planning_trace && plan.planning_trace.input_understood && plan.planning_trace.input_understood.candidates;
+        var h = '<div data-ff-coa="ai-candidate-filter" style="margin:2px 0 7px;padding:7px 9px;border:1px solid #3a4a5f;border-radius:5px;background:#0c141d;">';
+        h += '<div style="font-weight:700;font-size:11px;color:#9ec2ec;margin-bottom:3px;">🎯 AI Candidate Filter — تصفية الوحدات</div>';
+        if (cand && cand.applied) {
+            h += '<div data-ff-coa="cand-counts" style="font-size:10.5px;color:#cdd8e4;">Candidate units sent to AI: <b style="color:#7fd6a0;">' + (cand.sent || 0) + '</b> / total <b style="color:#e0e8f0;">' + (cand.total || 0) + '</b> · Excluded units: <b style="color:#e0c060;">' + (cand.excluded || 0) + '</b></div>';
+            var tx = arr(cand.top_exclusions);
+            if (tx.length) {
+                h += '<div style="font-size:9.5px;color:#7a9ab8;margin-top:3px;">Top exclusion reasons:</div><ul style="margin:1px 0 0;padding-left:16px;">';
+                tx.forEach(function (x) { h += '<li style="font-size:9.5px;color:#9ab0c0;">' + (x.count || 0) + ' — ' + esc(x.label || x.reason || 'excluded') + '</li>'; });
+                h += '</ul>';
+            }
+            h += '<div data-ff-coa="cand-proof" style="font-size:9.5px;color:#5a8a6a;margin-top:3px;">Proof: the AI reasoned over only ' + (cand.sent || 0) + ' of ' + (cand.total || 0) + ' units (the rest were pre-filtered as far / out-of-reach / different-country / low-relevance).</div>';
+        } else if (cand && cand.total) {
+            h += '<div data-ff-coa="cand-counts" style="font-size:10.5px;color:#cdd8e4;">All <b style="color:#e0e8f0;">' + cand.total + '</b> units sent to AI (force is below the pre-filter size — no exclusions).</div>';
+        } else {
+            h += '<div data-ff-coa="cand-preview" style="font-size:10px;color:#8fa5b8;">Before generation: the candidate pre-filter sends only the most relevant units (top ~10–25) of the active-side force to the AI; the rest are excluded as out-of-reach / different-country-zone / far-from-objective / not-relevant-role. The real X / Y appears here after you generate.</div>';
+        }
+        h += '</div>';
+        return h;
+    }
+
+    // 3) AI Selected Units — per selected/moved unit: name(code) · country/loc · action ·
+    //    execution_mode · why_unit · target coord · final coord (after animation).
+    function _aiSelectedUnitsHtml(plan) {
+        var coas = arr(plan && plan.coas); if (!coas.length) return '';
+        var coa = coas[(_coaSelectedIdx >= 0 && _coaSelectedIdx < coas.length) ? _coaSelectedIdx : 0] || {};
+        var actions = [];
+        arr(coa.phases).forEach(function (ph) { arr(ph.actions).forEach(function (a) { if (a) actions.push(a); }); });
+        if (!actions.length) return '';
+        // uid → finalPos (after animation) from the applied moved-unit records.
+        var finalByUid = {};
+        arr(_coaMovedUnits).forEach(function (m) { if (m && m.uid != null && m.finalPos) finalByUid[String(m.uid)] = m.finalPos; });
+        var h = '<div data-ff-coa="ai-selected-units" style="margin:2px 0 7px;padding:7px 9px;border:1px solid #2a4d6a;border-radius:5px;background:#08131e;">';
+        h += '<div style="font-weight:700;font-size:11px;color:#9ec2ec;margin-bottom:3px;">✅ AI Selected Units (' + actions.length + ') — الوحدات المختارة</div>';
+        actions.forEach(function (a) {
+            var lbl = _aiUnitLabel(a.unit_uid);
+            var tgt = (a.target && a.target.lat != null) ? (Number(a.target.lat).toFixed(3) + ',' + Number(a.target.lon).toFixed(3)) : '—';
+            var fp = finalByUid[String(a.unit_uid)];
+            var finalStr = fp ? (Number(fp.lat).toFixed(3) + ',' + Number(fp.lon).toFixed(3)) : (_coaApplied ? '(held / no move)' : '(apply to see)');
+            h += '<div data-ff-coa="sel-unit" style="margin-bottom:4px;padding:4px 6px;border:1px solid #16324a;border-radius:4px;background:#0a1622;">';
+            h += '<div style="font-size:10.5px;color:#e8eaed;font-weight:600;">' + esc(lbl.name) + ' <span style="color:#7a9ab8;font-weight:400;">(' + esc(lbl.code) + ')</span>' +
+                 (lbl.country ? ' <span style="color:#8a9aa8;font-weight:400;">· ' + esc(lbl.country) + '</span>' : '') +
+                 (lbl.loc ? ' <span style="color:#5a7a90;font-weight:400;">· ' + esc(lbl.loc) + '</span>' : '') + '</div>';
+            h += '<div style="font-size:9.5px;color:#bfe89a;">' + esc(a.action_type || '—') + ' · <span style="color:#9ab0c0;">' + esc(a.execution_mode || 'generic_target') + '</span></div>';
+            if (a.why_unit) h += '<div style="font-size:9.5px;color:#cdd8e4;"><span style="color:#7a9ab8;">why:</span> ' + esc(a.why_unit) + '</div>';
+            h += '<div style="font-size:9px;color:#7a9ab8;">target <span style="color:#cfeaff;">' + esc(tgt) + '</span> → final <span style="color:#cfeaff;">' + esc(finalStr) + '</span></div>';
+            h += '</div>';
+        });
+        return h;
+    }
+
+    // 4) AI Non-Selected Units — the units the AI deliberately did NOT move + why. Collapsed.
+    function _aiNonSelectedUnitsHtml(plan) {
+        var coas = arr(plan && plan.coas); if (!coas.length) return '';
+        var coa = coas[(_coaSelectedIdx >= 0 && _coaSelectedIdx < coas.length) ? _coaSelectedIdx : 0] || {};
+        var ns = arr(coa.non_selected_units);
+        if (!ns.length) return '';
+        var h = '<details data-ff-coa="ai-non-selected" style="margin:2px 0 7px;">';
+        h += '<summary style="cursor:pointer;font-size:11px;font-weight:700;color:#cdb86a;">⊘ AI Non-Selected Units (' + ns.length + ') — وحدات لم تتحرك (انقر للتوسيع)</summary>';
+        h += '<div style="margin-top:3px;padding:6px 8px;border:1px solid #4a4020;border-radius:4px;background:#16130a;">';
+        h += '<div style="font-size:9.5px;color:#8a9aa8;margin-bottom:2px;">Why the AI held these candidates back:</div>';
+        ns.forEach(function (n) {
+            var lbl = _aiUnitLabel(n && n.unit_uid);
+            h += '<div data-ff-coa="nonsel-unit" style="font-size:9.5px;color:#cdd8e4;margin-bottom:1px;">• ' + esc(lbl.name) + ' <span style="color:#7a9ab8;">(' + esc(lbl.code) + ')</span>' + ((n && n.reason) ? ': ' + esc(n.reason) : '') + '</div>';
+        });
+        h += '</div></details>';
+        return h;
+    }
+
     function renderPlanningTraceHtml(plan) {
         var t = plan && plan.planning_trace;
         if (!t) return '';
@@ -2885,6 +3005,10 @@
             return h;
         }
         if (!_coaPlan) {
+            // RMOOZ-AI-FREE-FIGHT-UX-PROOF-A: show Readiness + the Candidate-Filter explainer BEFORE
+            // generation so the operator knows the gate state and that the AI sees a filtered subset.
+            h += _aiReadinessHtml(null);
+            h += _aiCandidateFilterHtml(null);
             // COA cards shown after generation — typical COAs: Direct Assault, Flank / Fix, Probe / Recon
             h += '<div style="color:#7a9ab8;font-size:11px;padding:4px 0;">Click "Generate AI Attack Plan" to generate COAs for all RED units.<br>' +
                  '<span style="color:#5a7a60;font-size:10px;">Typical plans: Direct Assault · Flank / Fix · Probe / Recon</span></div>';
@@ -2920,6 +3044,12 @@
         if (_coaPlan.fallback_reason) h += ' <span style="color:#e0a93a;font-size:9px;">(' + esc(_coaPlan.fallback_reason) + ')</span>';
         if (_coaPlan.ai_depth) h += ' <span style="color:#7a9ab8;font-size:9px;">· depth ' + esc(_coaPlan.ai_depth) + '</span>';
         h += '</div>';
+        // RMOOZ-AI-FREE-FIGHT-UX-PROOF-A: lead with the operator-facing proof blocks (Readiness →
+        // Candidate Filter → Selected Units → Non-Selected), then the existing detail (trace/cards/debug).
+        h += _aiReadinessHtml(_coaPlan);
+        h += _aiCandidateFilterHtml(_coaPlan);
+        h += _aiSelectedUnitsHtml(_coaPlan);
+        h += _aiNonSelectedUnitsHtml(_coaPlan);
         // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: the demo-facing "AI Planning Trace" (Input understood →
         // AI reasoning → Validation) + the AI Commander / Staff-Safe mode badge.
         h += renderPlanningTraceHtml(_coaPlan);
@@ -3523,6 +3653,12 @@
         _aiGateStatusHtmlForTest:  function (h)           { if (h !== undefined) _routeHealth = h; return _aiGateStatusHtml(); },
         _aiBlockReasonsForTest:    function (h)           { return _aiBlockReasons(h); },
         _renderAiDecisionHtmlForTest: function ()         { return renderAiDecisionHtml(); },
+        // RMOOZ-AI-FREE-FIGHT-UX-PROOF-A test seams
+        _aiReadinessHtmlForTest:   function (rh, plan)    { if (rh !== undefined) _routeHealth = rh; return _aiReadinessHtml(plan); },
+        _aiCandidateFilterHtmlForTest: function (plan)    { return _aiCandidateFilterHtml(plan); },
+        _aiSelectedUnitsHtmlForTest: function (plan, applied, moved) { _coaSelectedIdx = 0; if (applied != null) _coaApplied = applied; if (moved) _coaMovedUnits = moved; return _aiSelectedUnitsHtml(plan); },
+        _aiNonSelectedUnitsHtmlForTest: function (plan)   { _coaSelectedIdx = 0; return _aiNonSelectedUnitsHtml(plan); },
+        _aiUnitLabelForTest:       function (uid)         { return _aiUnitLabel(uid); },
         // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A real-LLM E2E seams
         _setCaptureRawLlmForTest:  function (v)           { _captureRawLlm = !!v; },
         _getCoaMovedUnitsForTest:  function ()            { return _coaMovedUnits.slice(); },

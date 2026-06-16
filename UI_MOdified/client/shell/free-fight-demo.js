@@ -2301,6 +2301,44 @@
         if (sc) { cnt(sc.red_units); cnt(sc.blue_units_initial); }
         return n;
     }
+    // ── COA-exec persistence (RMOOZ-COA-COMMIT-PERSISTENCE-M) ────────────────────
+    // Persist the committed-COA state to sessionStorage (operator UI state, scenario-keyed) so it
+    // survives a browser refresh. This is NOT scenario world-state or a journal write — it does not
+    // touch the AI/sim boundary. The deterministic tick executor is UNCHANGED, so a restored COA ticks
+    // with the SAME no-LLM guarantee (llm_called_this_tick=false, no /plan-coas fetch).
+    var COA_EXEC_STORE_KEY = 'rmooz_coa_exec_state';
+    function _coaStore() { try { var w = W(); return (w && w.sessionStorage) ? w.sessionStorage : null; } catch (_) { return null; } }
+    function _scenarioKey() {
+        var w = W(); var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        return (sc && (sc.id || sc.scenario_id || sc.name)) ? String(sc.id || sc.scenario_id || sc.name) : 'default';
+    }
+    function _persistCoaExec() {
+        var s = _coaStore(); if (!s) return;
+        try {
+            if (_coaExec && _coaExec.active) {
+                var save = {}; for (var k in _coaExec) { if (k !== '_restored') save[k] = _coaExec[k]; }   // don't persist the transient restored flag
+                s.setItem(COA_EXEC_STORE_KEY, JSON.stringify({ v: 1, scenario_key: _scenarioKey(), state: save }));
+            } else { s.removeItem(COA_EXEC_STORE_KEY); }
+        } catch (_) { /* quota/serialize — best-effort, never throw */ }
+    }
+    function _peekPersistedCoaExec() {
+        var s = _coaStore(); if (!s) return null;
+        try { var raw = s.getItem(COA_EXEC_STORE_KEY); return raw ? JSON.parse(raw) : null; } catch (_) { return null; }
+    }
+    // Restore on UI mount / scenario resume. Returns true if a (matching-scenario) state was restored.
+    // Restored state comes back PAUSED — the operator presses Run to resume (no auto-run, no AI call).
+    function _restoreCoaExec() {
+        if (_coaExec) return false;                              // live state already present
+        var blob = _peekPersistedCoaExec();
+        if (!blob || !blob.state || !blob.state.selected_coa) return false;
+        if (blob.scenario_key !== _scenarioKey()) return false;  // different scenario → ignore stale
+        _coaExec = blob.state;
+        _coaExec.paused = true; _coaExec._restored = true;       // restored = paused until the operator runs
+        if (_coaExecTimer) { _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null; }
+        try { _appendToEventLog('COA restored from session — ' + esc(_coaExec.selected_coa_id || 'COA-?') + ' (phase ' + (_coaExec.current_phase_index + 1) + (_coaExec.replan_required ? ', replan required' : '') + '). Press Run to resume; the AI is NOT called on resume.'); } catch (_) {}
+        updatePanel();
+        return true;
+    }
     // Resolve the moves for ONE phase's actions (same guard/HOLD logic as _resolveCoaMoves). Adds
     // `reached` (unit is within epsilon of the ACTION target → the order is complete).
     function _resolvePhaseMoves(actions) {
@@ -2349,6 +2387,7 @@
             last_tick_timing: { coa_commit_ms: _nowMs() - t0, coa_tick_execute_ms: 0, replan_trigger_check_ms: 0, llm_called_this_tick: false },
         };
         try { _appendToEventLog('COA committed — ' + esc(_coaExec.selected_coa_id) + ' (' + arr(coa.phases).length + ' phases). RMOOZ will execute it; the AI is NOT called on normal ticks.'); } catch (_) {}
+        _persistCoaExec();   // RMOOZ-COA-COMMIT-PERSISTENCE-M
         updatePanel();
         return _coaExec;
     }
@@ -2381,6 +2420,7 @@
         _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
         if (_coaExec) { _coaExec.phase_status = 'blocked'; _coaExec.replan_required = true; _coaExec.replan_reason = reason; _coaExec.replan_code = code; _coaExec.updated_at = _nowISO(); }
         try { _appendToEventLog('COA execution PAUSED — replan trigger: ' + esc(reason) + ' (choose: Continue / Replan / Staff-Safe).'); } catch (_) {}
+        _persistCoaExec();   // RMOOZ-COA-COMMIT-PERSISTENCE-M: blocked/replan state survives refresh
         updatePanel();
     }
     // One deterministic execution tick — NO LLM. Executes the current phase, advances phases, checks
@@ -2389,7 +2429,7 @@
         if (!_coaExec || !_coaExec.active || _coaExec.paused || _coaExec.replan_required) return null;
         var coa = _coaExec.selected_coa;
         var phases = arr(coa && coa.phases);
-        if (_coaExec.current_phase_index >= phases.length) { _coaExec.phase_status = 'complete'; _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null; updatePanel(); return { llm_called_this_tick: false }; }
+        if (_coaExec.current_phase_index >= phases.length) { _coaExec.phase_status = 'complete'; _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null; _persistCoaExec(); updatePanel(); return { llm_called_this_tick: false }; }
         // 1) replan trigger check FIRST
         var tc0 = _nowMs();
         var trig = _checkReplanTriggers();
@@ -2431,6 +2471,7 @@
         }
         _coaExec.ticks++; _coaExec.updated_at = _nowISO();
         _coaExec.last_tick_timing = { coa_tick_execute_ms: _nowMs() - te0, replan_trigger_check_ms: replan_trigger_check_ms, llm_called_this_tick: false };
+        _persistCoaExec();   // RMOOZ-COA-COMMIT-PERSISTENCE-M: phase advance / order status survive refresh
         if (mapReady()) { _triggerScenarioRedraw(); syncMarkers(); _maybePanToMovedCentroid(); }
         updatePanel();
         return _coaExec.last_tick_timing;
@@ -2438,6 +2479,7 @@
     function _runCommittedCoa() {
         if (!_coaExec || !_coaExec.active) return;
         if (_coaExec.phase_status === 'complete') return;
+        _coaExec._restored = false;   // resuming → drop the "restored from session" banner
         _coaExec.paused = false; _coaExec.replan_required = false; _coaExec.replan_reason = null; _coaExec.phase_status = 'running';
         _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
         _coaExecTick();   // run one immediately
@@ -2449,11 +2491,13 @@
         _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
         if (_coaExec) { _coaExec.paused = true; _coaExec.updated_at = _nowISO(); }
         try { _appendToEventLog('COA execution paused by operator.'); } catch (_) {}
+        _persistCoaExec();   // RMOOZ-COA-COMMIT-PERSISTENCE-M
         updatePanel();
     }
     function _resetCoaExec() {
         _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
         _coaExec = null;
+        _persistCoaExec();   // RMOOZ-COA-COMMIT-PERSISTENCE-M: !_coaExec → removes the persisted key (safe clear, req #8)
         updatePanel();
     }
     // The ONLY operator path that re-engages the AI: stop executing + run a fresh Deep Plan (LLM).
@@ -2489,6 +2533,7 @@
             var ordersDone = arr(ex.completed_orders).filter(function (o) { return o.phase === ex.current_phase_index; }).length;
             var statusColor = ex.phase_status === 'complete' ? '#7fd6a0' : (ex.replan_required ? '#f0a0a0' : (running ? '#7fd6a0' : '#e0c060'));
             h += '<div style="margin-top:4px;font-size:10px;color:#cdd8e4;line-height:1.55;">';
+            if (ex._restored) h += '<div data-ff-coa="restored-note" style="color:#9fe8c0;font-weight:700;margin-bottom:2px;">↺ Restored committed COA from session. Press Run to resume.</div>';
             h += '<div><span style="color:#8fa5b8;">Active COA:</span> <span style="color:#e8eaed;font-weight:700;">' + esc(ex.selected_coa_id) + '</span> <span style="color:#7a9ab8;">· side ' + esc(ex.side) + '</span></div>';
             h += '<div><span style="color:#8fa5b8;">Current phase:</span> <span style="color:#cfe6ff;">' + (ex.phase_status === 'complete' ? 'all done' : ((ex.current_phase_index + 1) + ' / ' + phases.length + (phase.name ? ' — ' + esc(phase.name) : ''))) + '</span></div>';
             h += '<div><span style="color:#8fa5b8;">Orders complete:</span> <span style="color:#bfe89a;">' + ordersDone + ' / ' + ordersTotal + '</span> · <span style="color:#8fa5b8;">status</span> <span style="color:' + statusColor + ';font-weight:700;">' + esc(ex.phase_status) + '</span> · <span style="color:#7a9ab8;">tick ' + ex.ticks + '</span></div>';
@@ -4099,6 +4144,9 @@
         try { _probeRouteHealth(); } catch (_) {}
         // RMOOZ-LOCAL-MODEL-SELECTOR-A: populate the card's model dropdown on open.
         try { _fetchModels(); } catch (_) {}
+        // RMOOZ-COA-COMMIT-PERSISTENCE-M: restore a committed COA from session (survives browser refresh).
+        // Restored PAUSED — the operator presses Run to resume; no auto-run and no AI call on restore.
+        try { _restoreCoaExec(); } catch (_) {}
         return getState();
     }
 
@@ -4221,11 +4269,16 @@
         _commitCoaForTest:         function (idx)         { return _commitCoa(idx); },
         _getCoaExecForTest:        function ()            { return _coaExec; },
         _coaExecTickForTest:       function ()            { return _coaExecTick(); },
+        _runCommittedCoaForTest:   function ()            { return _runCommittedCoa(); },
         _checkReplanTriggersForTest: function ()          { return _checkReplanTriggers(); },
         _pauseCommittedCoaForTest: function ()            { return _pauseCommittedCoa(); },
         _resetCoaExecForTest:      function ()            { return _resetCoaExec(); },
         _replanCoaForTest:         function ()            { return _replanCoa(); },
         _coaExecHtmlForTest:       function ()            { return _coaExecHtml(); },
+        // RMOOZ-COA-COMMIT-PERSISTENCE-M test seams
+        _restoreCoaExecForTest:    function ()            { return _restoreCoaExec(); },
+        _peekPersistedCoaExecForTest: function ()         { return _peekPersistedCoaExec(); },
+        _forgetCoaExecInMemoryForTest: function ()        { _coaExec = null; if (_coaExecTimer) { _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null; } },  // simulate a refresh (memory gone, sessionStorage kept)
         _setMcpPromptExpandedForTest: function (v)        { _mcpPromptExpanded = !!v; },
         _llmDisabledForTest:       function (p)           { return _llmDisabled(p); },
         _renderCommanderPanelForTest: function (rec)      { _lastCommanderDecision = rec; _loopRunning = true; try { renderCommanderPanel(); } catch (_) {} _loopRunning = false; return _cmdrPanel ? _cmdrPanel.innerHTML : ''; },

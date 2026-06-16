@@ -3031,6 +3031,9 @@
             // disabled for an unavailable cloud slug and ENABLED when the cloud slug is in the catalog.
             if (rh.allow_sim_run === true && _modelAvailableEffective() === false) return { ok: false, code: 'no_model', reason: rh.reason_if_blocked || 'no model available', msg: AI_NO_MODEL_MSG };
         }
+        // RMOOZ-OPENROUTER-FREE-FIGHT-CONTROL-FIX-I: a present-but-malformed cloud key (not sk-or-…) will
+        // 401 at generation — disable Start so the card's pre-flight warning and the button agree.
+        if (_modelInfo && _modelInfo.key_format_ok === false) return { ok: false, code: 'bad_key', reason: 'openrouter key malformed', msg: AI_NO_MODEL_MSG };
         return { ok: true };
     }
 

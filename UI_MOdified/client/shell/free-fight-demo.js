@@ -1608,12 +1608,42 @@
                '. Start the real RMOOZ server, not the stub preview server, and restart after the latest commit.';
     }
     // Probe the planner route health endpoint (GET, cheap). Updates _routeHealth.
+    // RMOOZ-AI-MODEL-READY-STATE-A: returns the promise so callers (e.g. _selectModel) can chain/await,
+    // and a transient probe failure does NOT clobber a known-good health (e.g. one just reconciled
+    // from a model selection) — otherwise a flaky probe would wrongly drop the card out of "Ready".
     function _probeRouteHealth() {
         var w = W();
-        if (!w || typeof w.fetch !== 'function') return;
-        _fetchJsonSafe('/api/wargame-sim/free-fight/plan-coas/health', { method: 'GET' })
-            .then(function (h) { _routeHealth = h; updatePanel(); })
-            .catch(function (e) { _routeHealth = { ok: false, reason: 'probe_failed', error: (e && e.message) || 'error' }; updatePanel(); });
+        if (!w || typeof w.fetch !== 'function') return Promise.resolve(_routeHealth);
+        return _fetchJsonSafe('/api/wargame-sim/free-fight/plan-coas/health', { method: 'GET' })
+            .then(function (h) { _routeHealth = h; updatePanel(); return h; })
+            .catch(function (e) {
+                if (!_routeHealth || _routeHealth.allow_sim_run == null) {
+                    _routeHealth = { ok: false, reason: 'probe_failed', error: (e && e.message) || 'error' };
+                }
+                updatePanel();
+                return _routeHealth;
+            });
+    }
+    // RMOOZ-AI-MODEL-READY-STATE-A: the /api/ai/models (and /model/select) payload is the authoritative,
+    // up-to-the-moment model state for the CURRENT selection (gate + provider + model_available, cloud
+    // flags). The route-health probe is a second async round-trip that lags it. To make the card flip to
+    // "Ready" the instant an available model is selected (no reload, no waiting on the probe), fold that
+    // fresh model state into _routeHealth — the single signal _freeFightAiReady()/_modelFlowStatus() read.
+    // The async probe then re-confirms (idempotent: they agree — same local /api/tags check).
+    function _reconcileRouteHealthFromModelInfo(m) {
+        if (!m || m.ok === false) return;
+        var prev = _routeHealth || {};
+        var cloud = (m.is_cloud === true) || (m.provider === 'openrouter');
+        _routeHealth = Object.assign({}, prev, {
+            ok: true,
+            allow_sim_run:    (m.allow_sim_run    != null) ? m.allow_sim_run    : prev.allow_sim_run,
+            model_available:  (m.model_available  != null) ? m.model_available  : prev.model_available,
+            provider_blocked: (m.provider_blocked != null) ? !!m.provider_blocked : prev.provider_blocked,
+            configured_provider: m.configured_provider || (cloud ? 'openrouter' : 'ollama'),
+            provider: (m.provider_blocked ? 'ollama' : (cloud ? 'openrouter' : 'ollama')),
+            model:          m.selected_model || prev.model,
+            selected_model: m.selected_model || prev.selected_model,
+        });
     }
     // RMOOZ-LOCAL-MODEL-SELECTOR-A: list models + current selection (mirrors the global header HUD).
     // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: optional provider ('openrouter') previews the cloud
@@ -1657,9 +1687,9 @@
     // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: provider is optional ('ollama' default | 'openrouter' cloud).
     function _selectModel(model, provider) {
         var w = W();
-        if (!model || !w || typeof w.fetch !== 'function') return;
+        if (!model || !w || typeof w.fetch !== 'function') return Promise.resolve();
         var body = provider ? { model: model, provider: provider } : { model: model };
-        _fetchJsonSafe('/api/ai/model/select', {
+        return _fetchJsonSafe('/api/ai/model/select', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body),
@@ -1667,6 +1697,9 @@
             if (m && m.ok) {
                 _modelInfo = m;
                 _pendingModel = m.selected_model || model;
+                // RMOOZ-AI-MODEL-READY-STATE-A: fold the fresh model state into _routeHealth NOW so the
+                // card flips to "Ready" on this render — without waiting on the route-health probe.
+                _reconcileRouteHealthFromModelInfo(m);
                 try {
                     document.dispatchEvent(new CustomEvent('rmooz:ai-model-changed',
                         { detail: { model: _pendingModel, source: 'free_fight_card', model_available: !!m.model_available } }));
@@ -1674,8 +1707,8 @@
             } else {
                 _modelInfo = Object.assign({}, _modelInfo || {}, { ok: false, error: (m && m.error) || 'select_failed' });
             }
-            _probeRouteHealth();   // refresh model_available / reason_if_blocked
-            updatePanel();
+            updatePanel();                 // immediate: shows Ready from the reconciled state
+            return _probeRouteHealth();    // re-confirm with the authoritative server health (idempotent)
         }).catch(function (e) {
             _modelInfo = Object.assign({}, _modelInfo || {}, { ok: false, error: (e && e.message) || 'select_failed' });
             updatePanel();
@@ -3778,7 +3811,7 @@
         _getRouteHealthForTest:    function ()            { return _routeHealth; },
         // RMOOZ-LOCAL-MODEL-SELECTOR-A test seams
         _fetchModelsForTest:       function ()            { return _fetchModels(); },
-        _selectModelForTest:       function (m)           { return _selectModel(m); },
+        _selectModelForTest:       function (m, p)        { return _selectModel(m, p); },
         _getModelInfoForTest:      function ()            { return _modelInfo; },
         _setModelInfoForTest:      function (m)           { _modelInfo = m; _pendingModel = (m && m.selected_model) || _pendingModel; updatePanel(); },
         _renderModelSelectorHtmlForTest: function ()      { return renderModelSelectorHtml(); },

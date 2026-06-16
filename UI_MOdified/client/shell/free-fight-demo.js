@@ -3058,35 +3058,11 @@
         return h;
     }
 
-    // 3) AI Selected Units — per selected/moved unit: name(code) · country/loc · action ·
-    //    execution_mode · why_unit · target coord · final coord (after animation).
-    function _aiSelectedUnitsHtml(plan) {
-        var coas = arr(plan && plan.coas); if (!coas.length) return '';
-        var coa = coas[(_coaSelectedIdx >= 0 && _coaSelectedIdx < coas.length) ? _coaSelectedIdx : 0] || {};
-        var actions = [];
-        arr(coa.phases).forEach(function (ph) { arr(ph.actions).forEach(function (a) { if (a) actions.push(a); }); });
-        if (!actions.length) return '';
-        // uid → finalPos (after animation) from the applied moved-unit records.
-        var finalByUid = {};
-        arr(_coaMovedUnits).forEach(function (m) { if (m && m.uid != null && m.finalPos) finalByUid[String(m.uid)] = m.finalPos; });
-        var h = '<div data-ff-coa="ai-selected-units" style="margin:2px 0 7px;padding:7px 9px;border:1px solid #2a4d6a;border-radius:5px;background:#08131e;">';
-        h += '<div style="font-weight:700;font-size:11px;color:#9ec2ec;margin-bottom:3px;">✅ AI Selected Units (' + actions.length + ') — الوحدات المختارة</div>';
-        actions.forEach(function (a) {
-            var lbl = _aiUnitLabel(a.unit_uid);
-            var tgt = (a.target && a.target.lat != null) ? (Number(a.target.lat).toFixed(3) + ',' + Number(a.target.lon).toFixed(3)) : '—';
-            var fp = finalByUid[String(a.unit_uid)];
-            var finalStr = fp ? (Number(fp.lat).toFixed(3) + ',' + Number(fp.lon).toFixed(3)) : (_coaApplied ? '(held / no move)' : '(apply to see)');
-            h += '<div data-ff-coa="sel-unit" style="margin-bottom:4px;padding:4px 6px;border:1px solid #16324a;border-radius:4px;background:#0a1622;">';
-            h += '<div style="font-size:10.5px;color:#e8eaed;font-weight:600;">' + esc(lbl.name) + ' <span style="color:#7a9ab8;font-weight:400;">(' + esc(lbl.code) + ')</span>' +
-                 (lbl.country ? ' <span style="color:#8a9aa8;font-weight:400;">· ' + esc(lbl.country) + '</span>' : '') +
-                 (lbl.loc ? ' <span style="color:#5a7a90;font-weight:400;">· ' + esc(lbl.loc) + '</span>' : '') + '</div>';
-            h += '<div style="font-size:9.5px;color:#bfe89a;">' + esc(a.action_type || '—') + ' · <span style="color:#9ab0c0;">' + esc(a.execution_mode || 'generic_target') + '</span></div>';
-            if (a.why_unit) h += '<div style="font-size:9.5px;color:#cdd8e4;"><span style="color:#7a9ab8;">why:</span> ' + esc(a.why_unit) + '</div>';
-            h += '<div style="font-size:9px;color:#7a9ab8;">target <span style="color:#cfeaff;">' + esc(tgt) + '</span> → final <span style="color:#cfeaff;">' + esc(finalStr) + '</span></div>';
-            h += '</div>';
-        });
-        return h;
-    }
+    // RMOOZ-SELECTED-UNITS-REMOVE: the "AI Selected Units (N)" per-unit roster (UX-PROOF-A block 3)
+    // was removed at owner request — surfacing "AI moved N units" as a long list is noise, not
+    // commander insight. The COA cards, AI Planning Trace, and the map markers already convey what
+    // the AI did. The Candidate Filter (how many units the AI reasoned over) and the collapsed
+    // Non-Selected Units block remain.
 
     // 4) AI Non-Selected Units — the units the AI deliberately did NOT move + why. Collapsed.
     function _aiNonSelectedUnitsHtml(plan) {
@@ -3245,10 +3221,12 @@
         if (_coaPlan.ai_depth) h += ' <span style="color:#7a9ab8;font-size:9px;">· depth ' + esc(_coaPlan.ai_depth) + '</span>';
         h += '</div>';
         // RMOOZ-AI-FREE-FIGHT-UX-PROOF-A: lead with the operator-facing proof blocks (Readiness →
-        // Candidate Filter → Selected Units → Non-Selected), then the existing detail (trace/cards/debug).
+        // Candidate Filter → Non-Selected), then the existing detail (trace/cards/debug).
+        // RMOOZ-SELECTED-UNITS-REMOVE: the per-unit "AI Selected Units (N)" roster was removed at
+        // owner request — a long "AI moved N units" list is noise, not commander insight. The COA
+        // cards + AI Planning Trace + the map already show what the AI did.
         h += _aiReadinessHtml(_coaPlan);
         h += _aiCandidateFilterHtml(_coaPlan);
-        h += _aiSelectedUnitsHtml(_coaPlan);
         h += _aiNonSelectedUnitsHtml(_coaPlan);
         // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: the demo-facing "AI Planning Trace" (Input understood →
         // AI reasoning → Validation) + the AI Commander / Staff-Safe mode badge.
@@ -3858,7 +3836,6 @@
         // RMOOZ-AI-FREE-FIGHT-UX-PROOF-A test seams
         _aiReadinessHtmlForTest:   function (rh, plan)    { if (rh !== undefined) _routeHealth = rh; return _aiReadinessHtml(plan); },
         _aiCandidateFilterHtmlForTest: function (plan)    { return _aiCandidateFilterHtml(plan); },
-        _aiSelectedUnitsHtmlForTest: function (plan, applied, moved) { _coaSelectedIdx = 0; if (applied != null) _coaApplied = applied; if (moved) _coaMovedUnits = moved; return _aiSelectedUnitsHtml(plan); },
         _aiNonSelectedUnitsHtmlForTest: function (plan)   { _coaSelectedIdx = 0; return _aiNonSelectedUnitsHtml(plan); },
         _aiUnitLabelForTest:       function (uid)         { return _aiUnitLabel(uid); },
         // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A real-LLM E2E seams

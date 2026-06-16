@@ -10,9 +10,11 @@
  *   2) Selected model appears (AI Readiness)
  *   3) plan_source=llm proof appears ONLY for a real LLM result
  *   4) deterministic/fallback is NOT labelled as AI
- *   5) selected units render with why_unit + execution_mode (+ target/final coord)
- *   6) non_selected_units render COLLAPSED (<details>, no `open`)
- *   7) candidate filter shows a "before generation" explainer when no plan
+ *   5) non_selected_units render COLLAPSED (<details>, no `open`)
+ *   6) candidate filter shows a "before generation" explainer when no plan
+ *
+ * (The per-unit "AI Selected Units (N)" roster was removed at owner request —
+ *  RMOOZ-SELECTED-UNITS-REMOVE — so that block is no longer asserted.)
  *
  * Run: node scripts/test-free-fight-ux-proof-a.js   (exit 0 = green)
  * ========================================================================== */
@@ -80,19 +82,7 @@ test('deterministic plan → "not AI" verdict, no LLM-proof line', function () {
     assert.ok(/invalid_json/.test(h), 'shows the honest llm_status/fallback');
 });
 
-console.log('\n5) AI Selected Units — why_unit + execution_mode render');
-test('selected unit shows name, action, execution_mode, why_unit, target→final', function () {
-    const h = S(DEMO._aiSelectedUnitsHtmlForTest(LLM_PLAN, true, [{ uid: 'R-1', finalPos: { lat: 25.315, lon: 51.225 } }]));
-    assert.ok(/AI Selected Units \(1\)/.test(h), 'block titled with count');
-    assert.ok(/Qatari F-16 Squadron/.test(h), 'resolves the display name');
-    assert.ok(/\(R-1\)/.test(h) && /Qatar/.test(h), 'shows code + country');
-    assert.ok(/flank/.test(h) && /flank_offaxis_target/.test(h), 'action_type + execution_mode');
-    assert.ok(/covers the open flank/.test(h), 'why_unit');
-    assert.ok(/25\.310,51\.220/.test(h), 'target coord');
-    assert.ok(/25\.315,51\.225/.test(h), 'final coord after animation');
-});
-
-console.log('\n6) AI Non-Selected Units — collapsed <details>');
+console.log('\n5) AI Non-Selected Units — collapsed <details>');
 test('non_selected_units render in a collapsed <details> with reasons', function () {
     const h = S(DEMO._aiNonSelectedUnitsHtmlForTest(LLM_PLAN));
     assert.ok(/^<details/.test(h.trim()), 'is a <details> element');
@@ -102,7 +92,7 @@ test('non_selected_units render in a collapsed <details> with reasons', function
     assert.ok(/too far from the objective/.test(h), 'shows why it was not moved');
 });
 
-console.log('\n7) Candidate Filter — "before generation" explainer (no plan)');
+console.log('\n6) Candidate Filter — "before generation" explainer (no plan)');
 test('no plan → explainer preview is shown', function () {
     const h = S(DEMO._aiCandidateFilterHtmlForTest(null));
     assert.ok(/AI Candidate Filter/.test(h), 'block present before generation');

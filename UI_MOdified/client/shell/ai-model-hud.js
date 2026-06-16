@@ -102,9 +102,13 @@
     }
 
     // ── rendering ──────────────────────────────────────────────────────────────
+    // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D: a selected/installed model does NOT mean Free Fight can run.
+    // The execution gate (RMOOZ_ALLOW_SIM_RUN) or a remote raw provider (local-only policy) can still
+    // block it — surface that here so this selector never implies Free Fight is ready when it isn't.
     function statusClass() {
         if (!info || info.ok === false) return 'is-error';
         if (info.allow_sim_run !== true) return 'is-idle';
+        if (info.provider_blocked === true) return 'is-error';
         if (info.model_available === false) return 'is-error';
         return 'is-ok';
     }
@@ -113,7 +117,10 @@
         var sel = info.selected_model || '—';
         var avail = info.model_available === true ? '✓' : (info.model_available === false ? '✗ not installed' : '?');
         var gate = info.allow_sim_run === true ? 'gate on' : 'gate off';
-        return sel + ' · ' + avail + ' · ' + gate;
+        var ff = (info.allow_sim_run !== true) ? ' · FF blocked (gate)'
+               : (info.provider_blocked === true) ? ' · FF blocked (remote provider)'
+               : '';
+        return sel + ' · ' + avail + ' · ' + gate + ff;
     }
     function statusTitle() {
         if (!info) return 'AI model — النموذج المحلي';
@@ -124,6 +131,12 @@
             'Provider: ' + (info.provider || 'ollama') + (info.provider_reachable === false ? ' (unreachable)' : ''),
             'Installed models: ' + (info.available_models_count != null ? info.available_models_count : '?'),
             'AI execution gate (RMOOZ_ALLOW_SIM_RUN): ' + (info.allow_sim_run === true ? 'ON' : 'OFF'),
+            // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D: Free Fight readiness is separate from "a model is selected".
+            (info.provider_blocked === true
+                ? 'Free Fight: BLOCKED — configured provider "' + (info.configured_provider || '?') + '" is remote. Set RMOOZ_LLM_PROVIDER=ollama or remove the remote provider env.'
+                : (info.allow_sim_run !== true
+                    ? 'Free Fight: BLOCKED — set RMOOZ_ALLOW_SIM_RUN=1 and restart the server.'
+                    : 'Free Fight: ready (local-only).')),
         ];
         return lines.join('\n');
     }

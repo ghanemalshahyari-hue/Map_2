@@ -107,7 +107,9 @@ function llmPlanFor(body) { // a REAL LLM plan (real coas, LLM markers)
 var RH_DISABLED = { ok: true, allow_sim_run: false, ai_execution_enabled: false, model_available: false, reason_if_blocked: 'RMOOZ_ALLOW_SIM_RUN is not enabled', provider: 'ollama', model: 'qwen3-coder:latest' };
 var RH_NO_MODEL = { ok: true, allow_sim_run: true, ai_execution_enabled: true, model_available: false, reason_if_blocked: 'model "qwen3-coder:latest" is not loaded in the local provider', provider: 'ollama', model: 'qwen3-coder:latest' };
 var RH_READY = { ok: true, allow_sim_run: true, ai_execution_enabled: true, model_available: true, reason_if_blocked: null, provider: 'ollama', model: 'qwen3-coder:latest' };
-var DISABLED_MSG = /AI execution is disabled\. Enable RMOOZ_ALLOW_SIM_RUN=1\./;
+// RMOOZ-FREE-FIGHT-AI-GATE-CARD-D: the exec-gate fix message now reads "Set RMOOZ_ALLOW_SIM_RUN=1
+// and restart the server." (the spec-exact wording; _freeFightAiReady composes it from _aiBlockReasons).
+var DISABLED_MSG = /AI execution is disabled\. Set RMOOZ_ALLOW_SIM_RUN=1 and restart the server\./;
 var NO_MODEL_MSG = /AI execution is allowed, but no local LLM\/model is available\. Select\/configure a local model\./;
 
 function reset(routeHealth, depth) {

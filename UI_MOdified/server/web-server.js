@@ -48,6 +48,7 @@ const demService   = require('./dem-service');
 const ollama       = require('./ai/ollama-client');
 const aiProvider   = require('./ai/ai-provider');
 const modelSelection = require('./ai/model-selection'); // RMOOZ-LOCAL-MODEL-SELECTOR-A: single model source
+const llmRuntimeConfig = require('./ai/llm-runtime-config'); // RMOOZ-LLM-RUNTIME-CONFIG-A: raw provider for the gate card
 const redTeam      = require('./ai/red-team-agent');
 const adjudicator  = require('./ai/adjudicator-agent');
 const scenarios    = require('./ai/scenario-loader');
@@ -289,9 +290,17 @@ async function buildModelsPayload() {
     // (available:false) and the operator can see it needs `ollama pull <model>`.
     if (selected && !model_available) models.push({ name: selected, available: false });
 
+    // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D: the RAW configured provider (from llm-runtime-config)
+    // + whether Free Fight's local-only policy blocks it, so the global model HUD never implies
+    // Free Fight can run when the provider gate is blocked. `provider` above stays masked.
+    const configured_provider = llmRuntimeConfig.getProvider();
+    const provider_blocked = configured_provider !== 'ollama' && configured_provider !== 'local';
+
     return {
         ok: true,
         provider,
+        configured_provider,
+        provider_blocked,
         selected_model: selected,
         selection_source: modelSelection.selectionSource(),
         models,

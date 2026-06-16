@@ -2250,6 +2250,60 @@
     // time budget — say so honestly (the old code mislabeled it "no model available").
     var AI_TIMEOUT_MSG = 'The local AI timed out — the selected model is too slow for the current time budget. Pick a faster model (e.g. qwen2.5:3b) in the model selector, raise RMOOZ_FREE_FIGHT_TIMEOUT_MS, or switch to Staff-Safe mode.';
     var AI_FREE_FIGHT_REQUIRES_LLM = 'Enable RMOOZ_ALLOW_SIM_RUN=1 and select a local model.';
+    // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D: the EXACT fix per blocking gate. Free Fight can be blocked
+    // independently by (1) the execution gate RMOOZ_ALLOW_SIM_RUN and (2) a remote raw provider
+    // (local-only policy) — both can be true at once, so we show ALL that apply (req #4/#5/#6).
+    var AI_FIX_EXEC_GATE = 'AI execution is disabled. Set RMOOZ_ALLOW_SIM_RUN=1 and restart the server.';
+    function _aiProviderFix(provider) {
+        return 'Free Fight is local-only. Current provider is ' + (provider || 'unknown') + '. Set RMOOZ_LLM_PROVIDER=ollama or remove remote provider env.';
+    }
+    // Read the route-health and return the list of ACTIVE blocking reasons (gate + provider).
+    // [] when nothing at the gate level blocks. Each: { code, fix }.
+    function _aiBlockReasons(rh) {
+        var out = [];
+        if (!rh || rh.ok === false || rh.allow_sim_run == null) return out;
+        if (rh.allow_sim_run === false) out.push({ code: 'exec_gate', fix: AI_FIX_EXEC_GATE });
+        if (rh.provider_blocked === true) out.push({ code: 'provider', fix: _aiProviderFix(rh.configured_provider || rh.provider) });
+        return out;
+    }
+    // The structured AI-gate status card: shows the FOUR signals separately (execution gate,
+    // raw provider, model availability, local-only policy) + the EXACT fix for every active
+    // block. Reads the route health (_routeHealth). Returns '' when health is unknown.
+    function _aiGateStatusHtml() {
+        var rh = _routeHealth;
+        if (!rh || rh.ok === false || rh.allow_sim_run == null) return '';
+        var GREEN = '#7fd6a0', AMBER = '#e0a93a', GREY = '#8fa5b8';
+        var gateOk = rh.allow_sim_run === true;
+        var providerBlocked = rh.provider_blocked === true;
+        var cfgProvider = rh.configured_provider || rh.provider || 'ollama';
+        var modelAvail = rh.model_available;                 // true | false | null
+        var reasons = _aiBlockReasons(rh);
+        var blocked = reasons.length > 0;
+        function sig(label, value, color) {
+            return '<div><span style="color:#7a9ab8;">' + esc(label) + ':</span> <span style="color:' + color + ';font-weight:600;">' + esc(value) + '</span></div>';
+        }
+        var h = '<div data-ff-coa="ai-gate-status" style="font-size:10px;line-height:1.55;border:1px solid ' + (blocked ? '#5a4520' : '#205a40') + ';border-radius:5px;padding:6px 9px;background:' + (blocked ? '#1b1608' : '#0a1f14') + ';">';
+        h += '<div data-ff-coa="ai-gate-headline" style="font-weight:700;color:' + (blocked ? '#f4d57a' : GREEN) + ';margin-bottom:3px;">' + (blocked ? '🛑 Free Fight AI is blocked' : '✅ Free Fight AI is ready') + '</div>';
+        // FOUR separate signals (req #3)
+        h += sig('Execution gate (RMOOZ_ALLOW_SIM_RUN)', gateOk ? 'enabled' : 'DISABLED', gateOk ? GREEN : AMBER);
+        h += sig('Provider (llm-runtime-config)', providerBlocked ? (cfgProvider + ' — REMOTE, blocked') : (cfgProvider + ' — local'), providerBlocked ? AMBER : GREEN);
+        h += sig('Model available', (modelAvail === true ? 'yes' : (modelAvail === false ? 'no' : 'unknown')) + (rh.model ? ' (' + rh.model + ')' : ''), modelAvail === true ? GREEN : (modelAvail === false ? AMBER : GREY));
+        h += sig('Local-only policy', 'enforced', GREEN);
+        // EXACT fixes — show ALL active blocks (req #4/#5/#6)
+        if (blocked) {
+            h += '<div data-ff-coa="ai-gate-fixes" style="margin-top:4px;border-top:1px solid #3a3018;padding-top:4px;">';
+            reasons.forEach(function (r) {
+                h += '<div data-ff-coa="fix-' + esc(r.code) + '" style="color:#f0c060;margin-bottom:2px;">• ' + esc(r.fix) + '</div>';
+            });
+            h += '</div>';
+            // Staff-Safe escape hatch stays available (req #9)
+            h += '<div data-ff-coa="staff-safe-hint" style="margin-top:4px;color:#cdb86a;font-size:9.5px;">Staff-Safe (deterministic, no LLM) is still available — switch the Planner to Staff-Safe for a guaranteed plan.</div>';
+        } else if (modelAvail === false) {
+            h += '<div data-ff-coa="fix-model" style="margin-top:4px;color:#f0c060;border-top:1px solid #3a3018;padding-top:4px;">• The selected model is not installed. Run <code>ollama pull ' + esc(rh.model || '<model>') + '</code> or pick an installed model.</div>';
+        }
+        h += '</div>';
+        return h;
+    }
     function _isTimeoutPlan(p) {
         var blob = String((p && p.llm_status) || '').toLowerCase() + ' ' + String((p && p.fallback_reason) || '').toLowerCase();
         return /timeout|timed.?out/.test(blob);
@@ -2277,7 +2331,11 @@
         var disabled = _llmDisabled(p);
         // allowed at the gate but the LLM did not actually run (no local model / provider unavailable)
         var noModel = !disabled && p && p.plan_source !== 'llm';
-        var h = '<div data-ff-coa="ai-only-gate" style="color:#f0c060;font-size:11px;padding:8px 10px;border:1px solid #6a5520;border-radius:5px;background:#1c1708;line-height:1.55;">';
+        // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D: lead with the structured gate status (the EXACT
+        // blocking reasons + fixes, separated by gate) from route health, then the plan diagnostics.
+        var gateStatus = _aiGateStatusHtml();
+        var h = gateStatus ? ('<div style="margin-bottom:6px;">' + gateStatus + '</div>') : '';
+        h += '<div data-ff-coa="ai-only-gate" style="color:#f0c060;font-size:11px;padding:8px 10px;border:1px solid #6a5520;border-radius:5px;background:#1c1708;line-height:1.55;">';
         h += '<div style="font-weight:700;color:#f4d57a;">No AI result generated.</div>';
         if (disabled) {
             // Rule 1 — gate off.
@@ -2638,8 +2696,14 @@
         if (_aiDepth === 'fast') return { ok: false, code: 'fast', reason: 'Fast mode skips the LLM — use Normal or Deep', msg: AI_FREE_FIGHT_REQUIRES_LLM };
         var rh = _routeHealth;
         if (rh && rh.ok !== false) {
-            if (rh.allow_sim_run === false) return { ok: false, code: 'disabled', reason: rh.reason_if_blocked || 'RMOOZ_ALLOW_SIM_RUN is not enabled', msg: AI_EXECUTION_DISABLED_MSG };
-            if (rh.provider_blocked) return { ok: false, code: 'disabled', reason: 'configured provider is blocked (local-only policy)', msg: AI_EXECUTION_DISABLED_MSG };
+            // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D: combine ALL active blocks (exec gate + remote provider),
+            // not just the first one, so the operator sees every reason + fix at once (req #6).
+            var reasons = _aiBlockReasons(rh);
+            if (reasons.length) {
+                return { ok: false, code: 'disabled',
+                    reason: reasons.map(function (r) { return r.code; }).join(' + '),
+                    msg: reasons.map(function (r) { return r.fix; }).join('  ') };
+            }
             if (rh.allow_sim_run === true && rh.model_available === false) return { ok: false, code: 'no_model', reason: rh.reason_if_blocked || 'no local model available', msg: AI_NO_MODEL_MSG };
         }
         return { ok: true };
@@ -2986,14 +3050,16 @@
         var rhText = rhOk ? 'OK' : (rh ? 'unavailable' : 'unknown — click Check');
         h += '<span style="color:#8fa5b8;">Planner route:</span> <span style="color:' + rhColor + ';font-weight:700;">' + esc(rhText) + '</span>';
         h += ' <button data-act="loop-route-check" style="font:inherit;cursor:pointer;border:1px solid #4a5f75;background:#101b27;color:#8fb8e0;border-radius:4px;padding:1px 6px;font-size:9px;">Check route</button>';
-        h += '<div><span style="color:#8fa5b8;">Provider policy:</span> <span style="color:#7fd6a0;">local only</span>';
-        h += ' · <span style="color:#8fa5b8;">Provider:</span> <span style="color:#9ec2ec;">' + esc((rh && rh.provider) || 'ollama') + '</span>';
-        h += ' · <span style="color:#8fa5b8;">Model:</span> <span style="color:#9ec2ec;">' + esc((rh && rh.model) || 'qwen2.5:7b') + '</span></div>';
-        // RMOOZ-AI-EXECUTION-SINGLE-GATE-A: the single gate + model availability.
-        if (rh && rh.allow_sim_run != null) {
-            h += '<div><span style="color:#8fa5b8;">AI execution (RMOOZ_ALLOW_SIM_RUN):</span> <span style="color:' + (rh.allow_sim_run ? '#7fd6a0' : '#e0a93a') + ';">' + (rh.allow_sim_run ? 'allowed' : 'disabled') + '</span>';
-            h += ' · <span style="color:#8fa5b8;">model available:</span> <span style="color:' + (rh.model_available === true ? '#7fd6a0' : (rh.model_available === false ? '#e0a93a' : '#8fa5b8')) + ';">' + (rh.model_available === true ? 'yes' : (rh.model_available === false ? 'no' : 'unknown')) + '</span></div>';
-            if (rh.reason_if_blocked) h += '<div style="color:#e0a93a;font-size:9px;">' + esc(rh.reason_if_blocked) + '</div>';
+        // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D: the structured gate status (4 separate signals — execution
+        // gate, raw provider, model availability, local-only policy — + the EXACT fix per active
+        // block) replaces the old single-line gate/model/reason rendering.
+        var gateStatus = _aiGateStatusHtml();
+        if (gateStatus) {
+            h += '<div style="margin-top:4px;">' + gateStatus + '</div>';
+        } else {
+            h += '<div><span style="color:#8fa5b8;">Provider policy:</span> <span style="color:#7fd6a0;">local only</span>';
+            h += ' · <span style="color:#8fa5b8;">Provider:</span> <span style="color:#9ec2ec;">' + esc((rh && rh.provider) || 'ollama') + '</span>';
+            h += ' · <span style="color:#8fa5b8;">Model:</span> <span style="color:#9ec2ec;">' + esc((rh && rh.model) || 'qwen2.5:7b') + '</span></div>';
         }
         h += '</div>';
         // Prominent route-unavailable banner — NOT an LLM failure
@@ -3116,9 +3182,19 @@
         h += renderCommanderLoopHtml();
         h += '<div style="font-size:10px;color:#5a7a60;margin:2px 0 6px;border-top:1px solid #2a3f55;padding-top:6px;">Manual COA planner (single turn) — تخطيط يدوي</div>';
         // COA Planner buttons
+        // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D: when the planner is AI Commander but Free Fight is blocked
+        // (exec gate and/or remote provider), warn CLEARLY + point to the fix and to Staff-Safe (which
+        // stays available — req #8/#9). Staff-Safe mode is deterministic and never blocked.
+        var _cmdReady = _freeFightAiReady();
+        var _cmdBlocked = (_planningMode !== 'staff_safe') && !_cmdReady.ok && _cmdReady.code !== 'fast';
+        if (_cmdBlocked) {
+            h += '<div data-ff-coa="generate-warning" style="margin-bottom:6px;padding:6px 9px;border:1px solid #6a5520;border-radius:5px;background:#1c1708;color:#f0c060;font-size:10px;line-height:1.45;">' +
+                 '⚠ <b>AI Commander cannot run right now.</b> ' + esc(_cmdReady.msg || '') +
+                 '<br><span style="color:#cdb86a;">Tip: switch the Planner to <b>Staff-Safe</b> for a guaranteed deterministic plan (no LLM).</span></div>';
+        }
         h += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;">';
-        h += '<button data-act="generate-coa" style="font:inherit;cursor:pointer;border:1px solid #2a7a50;background:#131e18;color:#90d0a0;border-radius:5px;padding:5px 10px;font-size:11px;">' +
-             (_coaLoading ? '⏳ Loading…' : (_planningMode === 'staff_safe' ? '⚡ Generate Staff-Safe Plan (fast)' : '⚡ Generate AI Attack Plan')) + '</button>';
+        h += '<button data-act="generate-coa" title="' + (_cmdBlocked ? esc(_cmdReady.msg || '') : '') + '" style="font:inherit;cursor:pointer;border:1px solid ' + (_cmdBlocked ? '#8a6a20' : '#2a7a50') + ';background:' + (_cmdBlocked ? '#241f08' : '#131e18') + ';color:' + (_cmdBlocked ? '#e8d68a' : '#90d0a0') + ';border-radius:5px;padding:5px 10px;font-size:11px;">' +
+             (_coaLoading ? '⏳ Loading…' : (_planningMode === 'staff_safe' ? '⚡ Generate Staff-Safe Plan (fast)' : (_cmdBlocked ? '⚠ Generate AI Attack Plan (blocked)' : '⚡ Generate AI Attack Plan'))) + '</button>';
         if (_coaPlan && _coaPlan.ok && !_coaApplied) {
             h += '<button data-act="apply-coa" style="font:inherit;cursor:pointer;border:1px solid #3a7a3a;background:#182818;color:#90d090;border-radius:5px;padding:5px 10px;font-size:11px;">✔ Apply Selected COA — تطبيق</button>';
         }
@@ -3443,6 +3519,10 @@
         _freeFightAiReadyForTest:  function ()            { return _freeFightAiReady(); },
         _getAiUnavailableMsgForTest: function ()          { return _aiUnavailableMsg; },
         _setRouteHealthForTest:    function (h)           { _routeHealth = h; },
+        // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D test seams
+        _aiGateStatusHtmlForTest:  function (h)           { if (h !== undefined) _routeHealth = h; return _aiGateStatusHtml(); },
+        _aiBlockReasonsForTest:    function (h)           { return _aiBlockReasons(h); },
+        _renderAiDecisionHtmlForTest: function ()         { return renderAiDecisionHtml(); },
         // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A real-LLM E2E seams
         _setCaptureRawLlmForTest:  function (v)           { _captureRawLlm = !!v; },
         _getCoaMovedUnitsForTest:  function ()            { return _coaMovedUnits.slice(); },

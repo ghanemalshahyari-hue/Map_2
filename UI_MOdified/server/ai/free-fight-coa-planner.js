@@ -156,9 +156,13 @@ function routeHealth() {
         // (live /api/tags probe); default null here.
         model_available: null,
         available_models_count: null,
-        // Never report a remote provider — if one is misconfigured it is blocked.
+        // Never report a remote provider as ACTIVE — if one is misconfigured it is blocked.
         provider: remoteBlocked ? 'ollama' : provider,
         provider_blocked: remoteBlocked,
+        // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D: the RAW configured provider (from llm-runtime-config),
+        // surfaced so the AI gate card can name it in the local-only fix message ("Current
+        // provider is <x>"). Diagnostic only — `provider` above stays masked to ollama.
+        configured_provider: provider,
         model: resolveLocalModel(),
         // RMOOZ-LOCAL-MODEL-SELECTOR-A: surface the operator-selected model + where it
         // came from. `model` and `selected_model` are the same value (kept both for

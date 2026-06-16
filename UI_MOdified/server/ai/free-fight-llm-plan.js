@@ -1,6 +1,7 @@
 'use strict';
 
 const aiProvider = require('./ai-provider');
+const MODEL_SELECTION = require('./model-selection'); // RMOOZ-LOCAL-MODEL-SELECTOR-A: single model source
 
 const ALLOWED_CONFIDENCE = new Set(['low', 'medium', 'high']);
 const ALLOWED_REACTIONS = new Set(['intercept', 'defend_objective', 'screen', 'hold']);
@@ -204,8 +205,10 @@ async function createPlan(body) {
     // RMOOZ-AI-COA-TIMEOUT-RETRY-A: 30s was too tight for a 7B-class model on CPU/modest GPU. 120s default.
     const timeoutMs = Number.parseInt(process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || process.env.RMOOZ_OLLAMA_TIMEOUT_MS || '120000', 10);
     const result = await aiProvider.generate({
-        provider: process.env.RMOOZ_FREE_FIGHT_PROVIDER || process.env.RMOOZ_AI_PROVIDER || 'auto',
-        model: process.env.RMOOZ_FREE_FIGHT_MODEL || process.env.RMOOZ_AI_MODEL || process.env.RMOOZ_OLLAMA_MODEL,
+        // RMOOZ-LOCAL-MODEL-SELECTOR-A: local-only (never 'auto'/cloud — matches the
+        // free-fight local-only policy) + the one shared operator-selected model.
+        provider: (process.env.RMOOZ_FREE_FIGHT_PROVIDER || 'ollama').toLowerCase().trim(),
+        model: MODEL_SELECTION.getSelectedModel(),
         system,
         prompt,
         format: 'json',

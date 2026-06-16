@@ -26,7 +26,7 @@
  * ========================================================================== */
 
 const aiProvider = require('./ai-provider');
-const AI_CONFIG  = require('./ai-config');                     // RMOOZ-AI-FREE-FIGHT-MODEL-SOT-A: single default-model source
+const MODEL_SELECTION = require('./model-selection');          // RMOOZ-LOCAL-MODEL-SELECTOR-A: single model source
 const TRIGGERS   = require('./free-fight-situation-triggers'); // FREEFIGHT-BLUE-WARNING-ROE-A
 const INTEL      = require('./scenario-intel');                // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A
 const BRIEF      = require('./commander-brief');                // RMOZ-COMMANDER-BRIEF-COALITION-A
@@ -100,14 +100,11 @@ function isRemoteProvider(name) {
     return REMOTE_PROVIDERS_BLOCKED.indexOf(String(name || '').toLowerCase().trim()) !== -1;
 }
 function resolveLocalModel() {
-    // RMOOZ-AI-FREE-FIGHT-MODEL-SOT-A: free-fight env vars win, but the committed DEFAULT lives in
-    // exactly one place — ai-config.js (defaultModel, itself RMOOZ_OLLAMA_MODEL-overridable). The old
-    // hardcoded 'qwen3-coder:latest' diverged from ai-config and bit any machine that hadn't pulled it.
-    return process.env.RMOOZ_FREE_FIGHT_MODEL ||
-           process.env.RMOOZ_LOCAL_LLM_MODEL       ||
-           process.env.RMOOZ_AI_MODEL              ||
-           (AI_CONFIG && AI_CONFIG.defaultModel)   ||
-           'qwen2.5:7b';
+    // RMOOZ-LOCAL-MODEL-SELECTOR-A: one resolver for the whole app — the operator's UI
+    // selection wins, then RMOOZ_OLLAMA_MODEL, then the free-fight/local/AI env vars, then
+    // ai-config's committed default. Replaces the old per-module env chain that ignored
+    // RMOOZ_OLLAMA_MODEL and defaulted to an uninstalled 'qwen3-coder:latest'.
+    return MODEL_SELECTION.getSelectedModel();
 }
 // FREEFIGHT-COA-ROUTE-JSON-GUARD-A + RMOOZ-AI-EXECUTION-SINGLE-GATE-A: single source of truth for
 // the route's permission gate (RMOOZ_ALLOW_SIM_RUN) + local-only policy + resolved provider/model.
@@ -128,12 +125,19 @@ function routeHealth() {
         allow_sim_run: allow,
         ai_execution_enabled: aiEnabled,
         reason_if_blocked: reason,
-        // model_available is filled by the endpoint (live provider probe); default null here.
+        // model_available + available_models_count are filled by the endpoint
+        // (live /api/tags probe); default null here.
         model_available: null,
+        available_models_count: null,
         // Never report a remote provider — if one is misconfigured it is blocked.
         provider: remoteBlocked ? 'ollama' : provider,
         provider_blocked: remoteBlocked,
         model: resolveLocalModel(),
+        // RMOOZ-LOCAL-MODEL-SELECTOR-A: surface the operator-selected model + where it
+        // came from. `model` and `selected_model` are the same value (kept both for
+        // back-compat); selection_source tells the UI whether it's a UI pick or env/default.
+        selected_model: resolveLocalModel(),
+        selection_source: MODEL_SELECTION.selectionSource(),
         llm_enabled: aiEnabled,   // back-compat alias (= ai_execution_enabled)
         remote_providers_blocked: REMOTE_PROVIDERS_BLOCKED.slice(),
     };

@@ -52,6 +52,10 @@ UI_MOdified/Offline_Deployment/dist/bundle/.env.offline
 # is loaded on top and is gitignored so secrets stay on the machine.
 UI_MOdified/server/ai/ai-secrets.local.js
 
+# RMOOZ-LOCAL-MODEL-SELECTOR-A: operator's runtime model choice — machine-local,
+# set via the RMOOZ UI (POST /api/ai/model/select). Regenerated on demand.
+UI_MOdified/runtime/
+
 # SQLite databases (runtime data)
 *.sqlite
 *.db

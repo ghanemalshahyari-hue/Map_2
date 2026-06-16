@@ -5575,6 +5575,59 @@ body.orbat-dock-resizing .map-workspace .leaflet-bottom {
     No shell-level RTL override is required here. */
 
 /* ═══════════════════════════════════════════════════════════════════
+ * RMOOZ-LOCAL-MODEL-SELECTOR-A — global AI model picker in the header.
+ * Compact inline group (provider chip · dropdown · refresh · use · status).
+ * Reuses .wargame-state-pill for the status pill; logical props keep it RTL-safe.
+ * ═══════════════════════════════════════════════════════════════════ */
+.ai-model-hud {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    max-width: 360px;
+}
+.ai-model-hud-provider {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 7px;
+    border: 1px solid var(--panel-border);
+    border-radius: 2px;
+    color: var(--text-muted);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.ai-model-hud-select {
+    appearance: none;
+    background: rgba(15, 23, 42, 0.9);
+    color: var(--text-main, #e2e8f0);
+    border: 1px solid var(--panel-border);
+    border-radius: 2px;
+    padding: 3px 6px;
+    font: inherit;
+    font-size: 11px;
+    max-width: 150px;
+}
+.ai-model-hud-btn {
+    appearance: none;
+    background: rgba(15, 23, 42, 0.9);
+    color: var(--text-muted);
+    border: 1px solid var(--panel-border);
+    border-radius: 2px;
+    padding: 3px 7px;
+    font: inherit;
+    font-size: 10px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.12s, background 0.12s;
+}
+.ai-model-hud-btn:hover { color: var(--text-main); background: rgba(148, 163, 184, 0.12); }
+.ai-model-hud-btn:disabled { opacity: 0.55; cursor: progress; }
+.ai-model-hud-btn--use { color: #86efac; border-color: rgba(34, 197, 94, 0.45); }
+.ai-model-hud-status { font-size: 10px; white-space: nowrap; }
+
+/* ═══════════════════════════════════════════════════════════════════
  * PR-3 — Selected Unit Panel Foundation
  *
  * Right-edge overlay anchored inside .workspace. Always mounted;

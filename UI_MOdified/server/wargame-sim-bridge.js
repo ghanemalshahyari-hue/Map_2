@@ -1351,6 +1351,8 @@ function handle(req, res, ctx) {
             : Promise.resolve({ available: false, reason: hh.reason_if_blocked || 'RMOOZ_ALLOW_SIM_RUN is not enabled' });
         Promise.resolve(probe).then(function (pm) {
             hh.model_available = (pm && pm.available != null) ? pm.available : null;
+            // RMOOZ-LOCAL-MODEL-SELECTOR-A: count of installed local models (from the /api/tags probe).
+            if (pm && Array.isArray(pm.models)) hh.available_models_count = pm.models.length;
             if (!hh.reason_if_blocked && pm && pm.available === false) hh.reason_if_blocked = pm.reason || 'no local model available';
             sendJson(res, 200, Object.assign({ ok: true, route: '/api/wargame-sim/free-fight/plan-coas', method: 'POST' }, hh));
         }).catch(function () {

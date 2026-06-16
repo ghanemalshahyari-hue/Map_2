@@ -19,10 +19,16 @@ const https = require('https');
 const { URL } = require('url');
 
 const cfg = require('./ai-config');
+// RMOOZ-LOCAL-MODEL-SELECTOR-A: the default model is now the operator-selected
+// model (single source of truth in model-selection.js), resolved LIVE per call so
+// a UI selection takes effect without a server restart. When nothing is selected
+// it falls back to the same env/ai-config chain as before, so behaviour is
+// unchanged for setups that never touch the selector.
+const modelSelection = require('./model-selection');
 
 const API_STYLE       = cfg.apiStyle;
 const DEFAULT_URL     = cfg.url;
-const DEFAULT_MODEL   = cfg.defaultModel;
+function defaultModel() { return modelSelection.getSelectedModel(); }
 const DEFAULT_TIMEOUT = cfg.requestTimeoutMs;
 const DEFAULT_OPTIONS = cfg.options || {};
 
@@ -213,7 +219,7 @@ function applyOllamaOptions(body, options) {
 
 async function ollamaGenerateViaChat({ model, prompt, system, format, options, timeoutMs }) {
     const body = {
-        model:    model || DEFAULT_MODEL,
+        model:    model || defaultModel(),
         messages: [],
         stream:   false,
     };
@@ -229,7 +235,7 @@ async function ollamaGenerateViaChat({ model, prompt, system, format, options, t
 }
 
 async function ollamaGenerate({ model, prompt, system, format, options, timeoutMs }) {
-    const chosenModel = model || DEFAULT_MODEL;
+    const chosenModel = model || defaultModel();
     if (shouldGenerateViaChat(chosenModel)) {
         return ollamaGenerateViaChat({ model: chosenModel, prompt, system, format, options, timeoutMs });
     }
@@ -248,7 +254,7 @@ async function ollamaGenerate({ model, prompt, system, format, options, timeoutM
 
 async function ollamaChat({ model, messages, format, options, timeoutMs }) {
     const body = {
-        model:    model || DEFAULT_MODEL,
+        model:    model || defaultModel(),
         messages,
         stream:   false,
     };
@@ -295,7 +301,7 @@ async function openaiGenerate({ model, prompt, system, format, options, timeoutM
     if (system) messages.push({ role: 'system', content: system });
     messages.push({ role: 'user', content: prompt });
     const body = {
-        model:  model || DEFAULT_MODEL,
+        model:  model || defaultModel(),
         messages,
         stream: false,
         ...openaiTranslateOptions(options),
@@ -311,7 +317,7 @@ async function openaiGenerate({ model, prompt, system, format, options, timeoutM
 
 async function openaiChat({ model, messages, format, options, timeoutMs }) {
     const body = {
-        model:  model || DEFAULT_MODEL,
+        model:  model || defaultModel(),
         messages,
         stream: false,
         ...openaiTranslateOptions(options),
@@ -332,9 +338,9 @@ async function ping() {
     const auth = maskedKey();
     try {
         const r = API_STYLE === 'openai' ? await openaiPing() : await ollamaPing();
-        return { ok: true, url: DEFAULT_URL, apiStyle: API_STYLE, defaultModel: DEFAULT_MODEL, models: r.models, auth };
+        return { ok: true, url: DEFAULT_URL, apiStyle: API_STYLE, defaultModel: defaultModel(), models: r.models, auth };
     } catch (e) {
-        return { ok: false, url: DEFAULT_URL, apiStyle: API_STYLE, defaultModel: DEFAULT_MODEL, error: e.message || String(e), auth };
+        return { ok: false, url: DEFAULT_URL, apiStyle: API_STYLE, defaultModel: defaultModel(), error: e.message || String(e), auth };
     }
 }
 
@@ -364,4 +370,8 @@ async function chat(args) {
     }
 }
 
-module.exports = { ping, generate, chat, DEFAULT_URL, DEFAULT_MODEL, API_STYLE };
+module.exports = { ping, generate, chat, DEFAULT_URL, API_STYLE };
+// DEFAULT_MODEL stays on the public surface but is now a live getter (the
+// operator-selected model), so any consumer reading ollama.DEFAULT_MODEL keeps
+// working and always sees the current selection.
+Object.defineProperty(module.exports, 'DEFAULT_MODEL', { enumerable: true, get: defaultModel });

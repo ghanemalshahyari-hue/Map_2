@@ -32,7 +32,7 @@
  * ========================================================================== */
 
 var aiProvider = require('./ai-provider');
-var AI_CONFIG  = require('./ai-config'); // RMOOZ-AI-FREE-FIGHT-MODEL-SOT-A: single default-model source
+var MODEL_SELECTION = require('./model-selection'); // RMOOZ-LOCAL-MODEL-SELECTOR-A: single model source
 var CATALOG    = require('./platform-capability-catalog');
 
 // RMOOZ-UNIT-IDENTITY-CONTRACT-A: ONE identity contract, shared with the client. A
@@ -73,12 +73,9 @@ function isRemoteProvider(name) {
     return REMOTE_PROVIDERS_BLOCKED.indexOf(String(name || '').toLowerCase().trim()) !== -1;
 }
 function resolveLocalModel() {
-    // RMOOZ-AI-FREE-FIGHT-MODEL-SOT-A: committed default comes from ai-config.js (single source).
-    return process.env.RMOOZ_FREE_FIGHT_MODEL ||
-           process.env.RMOOZ_LOCAL_LLM_MODEL      ||
-           process.env.RMOOZ_AI_MODEL             ||
-           (AI_CONFIG && AI_CONFIG.defaultModel)  ||
-           'qwen2.5:7b';
+    // RMOOZ-LOCAL-MODEL-SELECTOR-A: one resolver for the whole app (operator UI
+    // selection wins, then the env chain). Shared with the rest of the AI surfaces.
+    return MODEL_SELECTION.getSelectedModel();
 }
 
 // ── Allowed enum sets for the profile schema ─────────────────────────────────

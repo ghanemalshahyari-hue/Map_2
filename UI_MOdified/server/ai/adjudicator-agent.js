@@ -26,6 +26,7 @@ const crypto = require('crypto');
 
 const aiProvider   = require('./ai-provider');
 const aiCfg        = require('./ai-config');
+const modelSelection = require('./model-selection'); // RMOOZ-LOCAL-MODEL-SELECTOR-A: single model source
 const loader       = require('./scenario-loader');
 const schema       = require('./adjudicator-schema');
 const validator    = require('./adjudicator-validator');
@@ -732,7 +733,7 @@ async function adjudicateStep(args) {
         model:        model || (
                           providerName === 'claude' ? (aiCfg.claude && aiCfg.claude.defaultModel) || 'claude-default' :
                           providerName === 'zen'    ? (aiCfg.zen    && aiCfg.zen.defaultModel)    || 'zen-default'    :
-                          aiCfg.defaultModel || 'qwen2.5:7b'
+                          modelSelection.getSelectedModel()   // RMOOZ-LOCAL-MODEL-SELECTOR-A: shared selection
                       ),
         trialId,
         trialSeed,

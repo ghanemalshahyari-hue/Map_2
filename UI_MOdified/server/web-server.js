@@ -42,6 +42,7 @@ const roadmapStore = require('./roadmap-store'); // ROADMAP-4: isolated; reads/w
 const demService   = require('./dem-service');
 const ollama       = require('./ai/ollama-client');
 const aiProvider   = require('./ai/ai-provider');
+const modelSelection = require('./ai/model-selection'); // RMOOZ-LOCAL-MODEL-SELECTOR-A: single model source
 const redTeam      = require('./ai/red-team-agent');
 const adjudicator  = require('./ai/adjudicator-agent');
 const scenarios    = require('./ai/scenario-loader');
@@ -258,6 +259,43 @@ function readJsonBody(req, opts = {}) {
         });
         req.on('error', reject);
     });
+}
+
+// RMOOZ-LOCAL-MODEL-SELECTOR-A: shared payload for GET /api/ai/models and the
+// POST /api/ai/model/select response. Lists the local provider's installed models
+// (live /api/tags via ollama.ping), the operator's current selection, and whether
+// that selection is actually installed (model_available). Best-effort: an
+// unreachable provider yields an empty list + model_available:false, never throws.
+async function buildModelsPayload() {
+    const provider = modelSelection.getProvider();
+    const selected = modelSelection.getSelectedModel();
+    let names = [];
+    let reachable = false;
+    let pingErr = null;
+    try {
+        const ping = await ollama.ping();
+        if (ping && ping.ok && Array.isArray(ping.models)) { names = ping.models; reachable = true; }
+        else if (ping && ping.error) { pingErr = ping.error; }
+    } catch (e) { pingErr = e && e.message || String(e); }
+
+    const models = names.map(n => ({ name: n, available: true }));
+    const model_available = names.indexOf(selected) !== -1;
+    // Surface the selection even when it isn't installed, so the dropdown shows it
+    // (available:false) and the operator can see it needs `ollama pull <model>`.
+    if (selected && !model_available) models.push({ name: selected, available: false });
+
+    return {
+        ok: true,
+        provider,
+        selected_model: selected,
+        selection_source: modelSelection.selectionSource(),
+        models,
+        available_models_count: names.length,
+        model_available,
+        provider_reachable: reachable,
+        allow_sim_run: process.env.RMOOZ_ALLOW_SIM_RUN === '1',
+        error: reachable ? null : (pingErr || 'local provider not reachable'),
+    };
 }
 
 function ensureUploadsDir() {
@@ -504,6 +542,45 @@ const server = http.createServer((req, res) => {
         aiProvider.getStatus()
             .then(r => sendJson(res, 200, { ok: true, ...r }))
             .catch(e => sendJson(res, 500, { ok: false, error: e.message || String(e) }));
+        return;
+    }
+    // RMOOZ-LOCAL-MODEL-SELECTOR-A: list the local provider's installed models +
+    // the operator's current selection, so the UI can offer a model dropdown
+    // instead of the operator editing env vars. 200 even when the provider is
+    // down (models:[], model_available:false) so the HUD can render a clear state.
+    if (pathname === '/api/ai/models' && req.method === 'GET') {
+        buildModelsPayload()
+            .then(p => sendJson(res, 200, p))
+            .catch(e => sendJson(res, 200, {
+                ok: false, error: e.message || String(e),
+                provider: modelSelection.getProvider(),
+                selected_model: modelSelection.getSelectedModel(),
+                models: [], available_models_count: 0, model_available: false,
+                allow_sim_run: process.env.RMOOZ_ALLOW_SIM_RUN === '1',
+            }));
+        return;
+    }
+    // RMOOZ-LOCAL-MODEL-SELECTOR-A: persist the operator's model choice to
+    // runtime/ai-model-selection.json. Every AI surface resolves its model from
+    // model-selection.js, so this takes effect app-wide immediately (no restart,
+    // no env edit). Body: { model: "<tag>" }.
+    if (pathname === '/api/ai/model/select' && req.method === 'POST') {
+        readJsonBody(req).then(async (body) => {
+            const model = body && typeof body.model === 'string' ? body.model.trim() : '';
+            const sel = modelSelection.setSelectedModel(model);
+            if (!sel.ok) {
+                sendJson(res, 400, { ok: false, error: sel.error || 'invalid model',
+                    selected_model: sel.selected_model });
+                return;
+            }
+            const p = await buildModelsPayload();
+            sendJson(res, 200, Object.assign(p, {
+                selected: true,
+                persisted: sel.persisted !== false,
+                warning: sel.warning || (p.model_available ? null
+                    : 'selected model "' + model + '" is not installed in the local provider — run `ollama pull ' + model + '` before generating'),
+            }));
+        }).catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
         return;
     }
     // COA generator — produces 3-5 candidate Courses of Action for the

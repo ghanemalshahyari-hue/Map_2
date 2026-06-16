@@ -22,6 +22,7 @@ const path = require('path');
 
 const aiProvider = require('./ai-provider');
 const aiCfg      = require('./ai-config');
+const modelSelection = require('./model-selection'); // RMOOZ-LOCAL-MODEL-SELECTOR-A: single model source
 const coaSchema  = require('./coa-schema');
 const { extractJson } = require('./red-team-agent');
 
@@ -268,7 +269,7 @@ async function generateCoaSet(args) {
         model:        args.model || (
                           providerName === 'claude' ? (aiCfg.claude && aiCfg.claude.defaultModel) || 'claude-default' :
                           providerName === 'zen'    ? (aiCfg.zen    && aiCfg.zen.defaultModel)    || 'zen-default'    :
-                          (aiCfg.defaultModel || 'ollama-default')
+                          modelSelection.getSelectedModel()   // RMOOZ-LOCAL-MODEL-SELECTOR-A: shared selection
                       ),
         durationMs:   0,
         parseFailed:  false,

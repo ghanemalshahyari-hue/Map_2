@@ -18,6 +18,7 @@
 var path      = require('path');
 var AI        = require(path.join(__dirname, 'ollama-client.js'));
 var cfg       = require(path.join(__dirname, 'ai-config.js'));
+var MODEL_SELECTION = require(path.join(__dirname, 'model-selection.js')); // RMOOZ-LOCAL-MODEL-SELECTOR-A
 var aiJson    = require(path.join(__dirname, 'ai-json.js'));
 var aiGuards  = require(path.join(__dirname, 'ai-guardrails.js'));
 
@@ -137,7 +138,7 @@ function fill(det, inputs, opts) {
     }
 
     var prompt = buildPrompt(docTexts);
-    var model  = opts.model || cfg.defaultModel;
+    var model  = opts.model || MODEL_SELECTION.getSelectedModel(); // RMOOZ-LOCAL-MODEL-SELECTOR-A
 
     return AI.generate({
         model:    model,

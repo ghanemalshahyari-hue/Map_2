@@ -10,7 +10,7 @@
  *
  * What it does:
  *   1. Starts the real RMOOZ web server with RMOOZ_ALLOW_SIM_RUN=1 + a real
- *      local provider/model (ollama / qwen3-coder by default), on its own port.
+ *      local provider/model (ollama / qwen2.5:7b by default), on its own port.
  *      (Set RMOOZ_VERIFY_BASE_URL to use an already-running server instead.)
  *   2. Verifies preconditions against the live server route health AND the live
  *      provider (ollama /api/tags): LLM enabled, provider+model present/loaded.
@@ -31,8 +31,14 @@
 var path = require('path');
 var http = require('http');
 var cp = require('child_process');
+var fs = require('fs');
 
 var REPO = path.resolve(__dirname, '..');                 // UI_MOdified
+// RMOOZ-LOCAL-MODEL-SELECTOR-A: the model is now chosen via /api/ai/model/select (UI path),
+// not just env. We snapshot the runtime selection file and restore it at the end.
+var SEL_FILE = path.join(REPO, 'runtime', 'ai-model-selection.json');
+var SEL_BACKUP = null, SEL_EXISTED = false;
+var SELECTED_MODEL = null;
 var EXTERNAL = process.env.RMOOZ_VERIFY_BASE_URL || null;
 var PORT = process.env.RMOOZ_VERIFY_PORT || '8099';
 var BASE = EXTERNAL || ('http://localhost:' + PORT);
@@ -42,6 +48,10 @@ var MODEL = process.env.RMOOZ_FREE_FIGHT_MODEL || 'qwen2.5:7b';
 var OLLAMA = (process.env.OLLAMA_HOST || 'http://localhost:11434').replace(/\/$/, '');
 var LLM_TIMEOUT_MS = parseInt(process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS || '180000', 10);
 var ATTEMPTS = parseInt(process.env.RMOOZ_VERIFY_ATTEMPTS || '3', 10); // real LLMs are flaky on strict JSON
+// plan-coas chains TWO LLM calls (capability analyst + COA planner). The per-turn wait must cover
+// both, or the loop gives up while the server is still generating (the old LLM_TIMEOUT_MS+10s only
+// covered ONE call → false "no plan" on slower boxes). Override with RMOOZ_VERIFY_LOOP_WAIT_MS.
+var LOOP_WAIT_MS = parseInt(process.env.RMOOZ_VERIFY_LOOP_WAIT_MS || String(LLM_TIMEOUT_MS * 2 + 30000), 10);
 
 var fails = [];
 function need(cond, msg) { if (cond) { console.log('  ✓ ' + msg); } else { fails.push(msg); console.log('  ✗ ' + msg); } }
@@ -139,7 +149,7 @@ async function driveOneRealTurn(DEMO) {
 
     DEMO._startLoopForTest();                          // press Start → real loop → real fetch → real LLM
     var t0 = Date.now();
-    while (Date.now() - t0 < LLM_TIMEOUT_MS + 10000) {
+    while (Date.now() - t0 < LOOP_WAIT_MS) {
         var p = DEMO._getLastLoopPlanForTest();
         if (p) break;
         await sleep(1000);
@@ -150,6 +160,7 @@ async function driveOneRealTurn(DEMO) {
 }
 
 async function main() {
+    try { SEL_EXISTED = fs.existsSync(SEL_FILE); if (SEL_EXISTED) SEL_BACKUP = fs.readFileSync(SEL_FILE, 'utf8'); } catch (_) {}
     await startServer();
 
     // ── preconditions (hard fail) ──
@@ -176,6 +187,28 @@ async function main() {
     }
     if (fails.length) return finish(); // do not even attempt without a real LLM
 
+    // ── RMOOZ-LOCAL-MODEL-SELECTOR-A: pick the model the way an operator does — via the
+    //    API (GET /api/ai/models → POST /api/ai/model/select), not just env. The runtime
+    //    selection takes precedence app-wide, so the loop below must use exactly this model. ──
+    console.log('\n[1b] Model selector — choose an installed model via /api/ai/model/select');
+    var ml = await httpJson(BASE + '/api/ai/models', { method: 'GET' });
+    need(ml.json && ml.json.ok, 'GET /api/ai/models ok');
+    var installed = (ml.json && Array.isArray(ml.json.models) ? ml.json.models : [])
+        .filter(function (m) { return m && m.available !== false; })
+        .map(function (m) { return m.name; });
+    need(installed.length > 0, 'at least one installed local model is listed by /api/ai/models');
+    SELECTED_MODEL = installed.indexOf(MODEL) !== -1 ? MODEL : installed[0];
+    info('installed models', installed.join(', '));
+    info('selecting', SELECTED_MODEL);
+    var selResp = await httpJson(BASE + '/api/ai/model/select', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: SELECTED_MODEL }),
+    });
+    need(selResp.json && selResp.json.ok, 'POST /api/ai/model/select ok');
+    need(selResp.json && selResp.json.selected_model === SELECTED_MODEL, 'selected_model echoed (' + (selResp.json && selResp.json.selected_model) + ')');
+    need(selResp.json && selResp.json.model_available === true, 'the selected model is installed (model_available=true)');
+    if (fails.length) return finish();
+
     // ── drive the REAL app loop against the REAL server + LLM ──
     console.log('\n[2] Driving the REAL AI Commander Free Fight loop (gate ON, no bypass) — calling the local LLM…');
     var DEMO = mountClientHarness();
@@ -193,7 +226,7 @@ async function main() {
 
     var run = null;
     for (var attempt = 1; attempt <= ATTEMPTS; attempt++) {
-        console.log('  attempt ' + attempt + '/' + ATTEMPTS + ' — waiting for the local model (up to ' + Math.round(LLM_TIMEOUT_MS / 1000) + 's)…');
+        console.log('  attempt ' + attempt + '/' + ATTEMPTS + ' — waiting for the local model (up to ' + Math.round(LOOP_WAIT_MS / 1000) + 's; plan-coas runs 2 LLM calls)…');
         run = await driveOneRealTurn(DEMO);
         var ps = run.plan && run.plan.plan_source;
         console.log('    → plan_source=' + ps + ' llm_called=' + (run.plan && run.plan.llm_called) + ' llm_status=' + (run.plan && run.plan.llm_status) + ' moved=' + run.moved.length);
@@ -209,6 +242,8 @@ async function main() {
     need(plan.llm_status === 'ok', 'llm_status === "ok" (got ' + plan.llm_status + ')');
     need(!!plan.provider_used, 'provider_used present (' + plan.provider_used + ')');
     need(!!plan.model_used, 'model_used present (' + plan.model_used + ')');
+    // RMOOZ-LOCAL-MODEL-SELECTOR-A: the plan must have used the UI-selected model, not env/default.
+    need(plan.model_used === SELECTED_MODEL, 'model_used === the UI-selected model (' + plan.model_used + ' vs ' + SELECTED_MODEL + ')');
     need(!plan.fallback_reason, 'fallback_reason is empty (got ' + (plan.fallback_reason || 'none') + ')');
     need(typeof plan.llm_raw_response === 'string' && plan.llm_raw_response.trim().length > 0, 'raw LLM response was captured');
     need(plan.mcp_prompt && plan.mcp_prompt.system && plan.mcp_prompt.prompt, 'MCP prompt was sent + captured');
@@ -244,6 +279,11 @@ async function main() {
 
 function finish() {
     stopServer();
+    // RMOOZ-LOCAL-MODEL-SELECTOR-A: restore the pre-test runtime selection (don't leave the box pinned).
+    try {
+        if (SEL_EXISTED && SEL_BACKUP != null) fs.writeFileSync(SEL_FILE, SEL_BACKUP, 'utf8');
+        else fs.unlinkSync(SEL_FILE);
+    } catch (_) {}
     if (fails.length === 0) {
         console.log('\n✅ REAL-LLM E2E PASSED — the local model produced the plan and the app moved units with it (verify-ai-free-fight-real-llm-e2e.js)');
         process.exit(0);

@@ -12,9 +12,9 @@
  * Provider resolution (never reads RMOOZ_AI_PROVIDER for this module):
  *   RMOOZ_FREE_FIGHT_PROVIDER || 'ollama'
  *
- * Model resolution:
- *   RMOOZ_FREE_FIGHT_MODEL || RMOOZ_LOCAL_LLM_MODEL || RMOOZ_AI_MODEL ||
- *   'qwen3-coder:latest'
+ * Model resolution (RMOOZ-LOCAL-MODEL-SELECTOR-A): delegated to model-selection.js —
+ *   operator UI selection → RMOOZ_OLLAMA_MODEL → RMOOZ_FREE_FIGHT_MODEL →
+ *   RMOOZ_LOCAL_LLM_MODEL → RMOOZ_AI_MODEL → ai-config default. One shared source.
  *
  * Controlled by RMOOZ_ALLOW_SIM_RUN=1.  When disabled or on any error,
  * returns a deterministic fallback with a fallback_reason string.
@@ -31,7 +31,7 @@
  * ========================================================================== */
 
 const aiProvider = require('./ai-provider');
-const AI_CONFIG  = require('./ai-config'); // RMOOZ-AI-FREE-FIGHT-MODEL-SOT-A: single default-model source
+const MODEL_SELECTION = require('./model-selection'); // RMOOZ-LOCAL-MODEL-SELECTOR-A: single model source
 const ENGINE     = require('./free-fight-action-engine');
 
 // ── Local-only provider enforcement ─────────────────────────────────────────
@@ -44,12 +44,9 @@ function isRemoteProvider(name) {
     return REMOTE_PROVIDERS_BLOCKED.includes(String(name || '').toLowerCase().trim());
 }
 function resolveLocalModel() {
-    // RMOOZ-AI-FREE-FIGHT-MODEL-SOT-A: committed default comes from ai-config.js (single source).
-    return process.env.RMOOZ_FREE_FIGHT_MODEL ||
-           process.env.RMOOZ_LOCAL_LLM_MODEL       ||
-           process.env.RMOOZ_AI_MODEL              ||
-           (AI_CONFIG && AI_CONFIG.defaultModel)   ||
-           'qwen2.5:7b';
+    // RMOOZ-LOCAL-MODEL-SELECTOR-A: one resolver for the whole app (operator UI
+    // selection wins, then the env chain). No more divergent per-module default.
+    return MODEL_SELECTION.getSelectedModel();
 }
 
 const ALLOWED_ACTION_TYPES = ['MOVE_TOWARD_OBJECTIVE', 'DEFEND_BASE', 'HOLD_POSITION', 'PATROL_NEAR_BASE'];

@@ -79,6 +79,9 @@
     // FREEFIGHT-COA-ROUTE-JSON-GUARD-A: planner route health probe result
     var _routeHealth = null;           // { ok, allow_sim_run, ai_execution_enabled, model_available, provider, model, reason_if_blocked } | { ok:false, reason }
     var _routeUnavailableMsg = null;   // set when a plan fetch returns non-JSON / 405
+    // RMOOZ-LOCAL-MODEL-SELECTOR-A: local model picker state (mirrors the global header HUD).
+    var _modelInfo = null;             // last /api/ai/models payload
+    var _pendingModel = null;          // dropdown's current (uncommitted) value
     // FREEFIGHT-MANUAL-MAP-CAMERA-A: the camera stays where the operator left it.
     // AI movement NEVER pans/zooms/fitBounds the map unless mode is 'follow'.
     var _freeFightCameraMode = 'manual'; // 'manual' (default) | 'follow'
@@ -1002,6 +1005,8 @@
             '<option value="deterministic"' + (_plannerMode === 'deterministic' ? ' selected' : '') + '>Deterministic Planner - RMOOZ planner, works offline</option>' +
             '<option value="llm"' + (_plannerMode === 'llm' ? ' selected' : '') + '>LLM Assisted - Qwen/LiteLLM advisory, needs model</option>' +
             '</select></div>';
+        // RMOOZ-LOCAL-MODEL-SELECTOR-A: local model picker (same selection as the global header HUD).
+        html += renderModelSelectorHtml();
         // FREE-FIGHT-CARD-VISIBILITY: the panel always opens; Start is gated on
         // Objective X (+ groups + anchors). No anchors → disabled + note; no
         // objective → disabled + "Place Objective X to start" note.
@@ -1068,6 +1073,15 @@
         if (modeSel && modeSel.addEventListener) modeSel.addEventListener('change', function () { setPlannerMode(modeSel.value); });
         var llmCb = _panel.querySelector('[data-act="toggle-llm"]');
         if (llmCb && llmCb.addEventListener) llmCb.addEventListener('change', function () { _useLlm = !!(llmCb && llmCb.checked); });
+        // RMOOZ-LOCAL-MODEL-SELECTOR-A: model picker controls.
+        bind('model-refresh', _fetchModels);
+        bind('model-use', function () {
+            var s = _panel && _panel.querySelector('[data-act="model-select"]');
+            var v = s ? s.value : _pendingModel;
+            if (v) _selectModel(v);
+        });
+        var modelSel = _panel.querySelector('[data-act="model-select"]');
+        if (modelSel && modelSel.addEventListener) modelSel.addEventListener('change', function () { _pendingModel = modelSel.value; });
     }
     function bind(act, fn) { if (!_panel) return; var b = _panel.querySelector('[data-act="' + act + '"]'); if (b && b.addEventListener) b.addEventListener('click', fn); }
 
@@ -1574,6 +1588,80 @@
         _fetchJsonSafe('/api/wargame-sim/free-fight/plan-coas/health', { method: 'GET' })
             .then(function (h) { _routeHealth = h; updatePanel(); })
             .catch(function (e) { _routeHealth = { ok: false, reason: 'probe_failed', error: (e && e.message) || 'error' }; updatePanel(); });
+    }
+    // RMOOZ-LOCAL-MODEL-SELECTOR-A: list local models + current selection (mirrors the global header HUD).
+    function _fetchModels() {
+        var w = W();
+        if (!w || typeof w.fetch !== 'function') return;
+        _fetchJsonSafe('/api/ai/models', { method: 'GET' })
+            .then(function (m) {
+                _modelInfo = m;
+                if (_pendingModel == null && m && m.selected_model) _pendingModel = m.selected_model;
+                updatePanel();
+            })
+            .catch(function (e) { _modelInfo = { ok: false, error: (e && e.message) || 'error' }; updatePanel(); });
+    }
+    // RMOOZ-LOCAL-MODEL-SELECTOR-A: persist the operator's choice app-wide, then re-probe route health
+    // (model_available may flip) and tell the rest of the app via rmooz:ai-model-changed.
+    function _selectModel(model) {
+        var w = W();
+        if (!model || !w || typeof w.fetch !== 'function') return;
+        _fetchJsonSafe('/api/ai/model/select', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ model: model }),
+        }).then(function (m) {
+            if (m && m.ok) {
+                _modelInfo = m;
+                _pendingModel = m.selected_model || model;
+                try {
+                    document.dispatchEvent(new CustomEvent('rmooz:ai-model-changed',
+                        { detail: { model: _pendingModel, source: 'free_fight_card', model_available: !!m.model_available } }));
+                } catch (_) {}
+            } else {
+                _modelInfo = Object.assign({}, _modelInfo || {}, { ok: false, error: (m && m.error) || 'select_failed' });
+            }
+            _probeRouteHealth();   // refresh model_available / reason_if_blocked
+            updatePanel();
+        }).catch(function (e) {
+            _modelInfo = Object.assign({}, _modelInfo || {}, { ok: false, error: (e && e.message) || 'select_failed' });
+            updatePanel();
+        });
+    }
+    // RMOOZ-LOCAL-MODEL-SELECTOR-A: model-picker block for the Free Fight control panel.
+    function renderModelSelectorHtml() {
+        var info = _modelInfo;
+        var models = (info && Array.isArray(info.models)) ? info.models : [];
+        var selected = (info && info.selected_model) || '';
+        var sel = _pendingModel != null ? _pendingModel : selected;
+        var opts = models.length
+            ? models.map(function (m) {
+                var name = (m && m.name) ? m.name : String(m);
+                var label = name + (m && m.available === false ? '  (not installed)' : '');
+                return '<option value="' + esc(name) + '"' + (name === sel ? ' selected' : '') + '>' + esc(label) + '</option>';
+            }).join('')
+            : '<option value="">' + ((info && info.ok === false) ? '(provider offline)' : '(loading…)') + '</option>';
+        var statusColor = (!info || info.ok === false) ? '#e0a93a'
+            : (info.allow_sim_run !== true ? '#e0c060'
+            : (info.model_available === false ? '#f0a0a0' : '#7fd6a0'));
+        var statusTxt;
+        if (!info || info.ok === false) {
+            statusTxt = 'Models unavailable — تعذّر جلب النماذج' + (info && info.error ? ' (' + esc(info.error) + ')' : '');
+        } else {
+            statusTxt = 'Selected — المختار: ' + esc(info.selected_model || '—') +
+                ' · installed — مُثبّت: ' + (info.model_available === true ? 'yes/نعم' : (info.model_available === false ? 'NO/لا' : '?')) +
+                ' · AI gate (RMOOZ_ALLOW_SIM_RUN): ' + (info.allow_sim_run === true ? 'on/مفعّل' : 'off/معطّل');
+        }
+        return '<div style="margin:2px 0 8px;padding:7px 8px;border:1px solid #2a3f55;border-radius:5px;background:#0c141d;">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#9ec2ec;margin-bottom:4px;">' +
+                '<span>Local AI model — النموذج المحلي</span><span style="color:#6a8fa8;">Provider: Ollama</span></div>' +
+            '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">' +
+                '<select id="rmooz-ff-model-select" data-act="model-select" dir="ltr" style="flex:1 1 150px;min-width:120px;font:inherit;font-size:12px;background:#101b27;color:#e8eaed;border:1px solid #4a5f75;border-radius:4px;padding:5px;">' + opts + '</select>' +
+                '<button data-act="model-refresh" title="Refresh models — تحديث القائمة" style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#172436;color:#9ec2ec;border-radius:4px;padding:5px 8px;">↻</button>' +
+                '<button data-act="model-use" title="Use this model app-wide — استخدم هذا النموذج" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:4px;padding:5px 8px;">Use — استخدم</button>' +
+            '</div>' +
+            '<div style="margin-top:4px;font-size:10px;color:' + statusColor + ';">' + statusTxt + '</div>' +
+        '</div>';
     }
     function _fetchAiDecision() {
         var w = W();
@@ -3083,8 +3171,19 @@
         // FREEFIGHT-COA-ROUTE-JSON-GUARD-A: probe the planner route once on open so the
         // operator sees OK/unavailable + provider/model before starting the loop.
         try { _probeRouteHealth(); } catch (_) {}
+        // RMOOZ-LOCAL-MODEL-SELECTOR-A: populate the card's model dropdown on open.
+        try { _fetchModels(); } catch (_) {}
         return getState();
     }
+
+    // RMOOZ-LOCAL-MODEL-SELECTOR-A: re-sync the card's picker when the model changes
+    // elsewhere (e.g. the global header HUD). Skip our own echo. Registered once.
+    try {
+        document.addEventListener('rmooz:ai-model-changed', function (e) {
+            if (e && e.detail && e.detail.source === 'free_fight_card') return;
+            try { _fetchModels(); } catch (_) {}
+        });
+    } catch (_) {}
 
     var API = {
         mount: mount, init: init, setObjective: setObjective, clearObjective: clearObjective,
@@ -3141,6 +3240,12 @@
         _routeUnavailableTextForTest: function (resp)     { return _routeUnavailableText(resp); },
         _probeRouteHealthForTest:  function ()            { return _probeRouteHealth(); },
         _getRouteHealthForTest:    function ()            { return _routeHealth; },
+        // RMOOZ-LOCAL-MODEL-SELECTOR-A test seams
+        _fetchModelsForTest:       function ()            { return _fetchModels(); },
+        _selectModelForTest:       function (m)           { return _selectModel(m); },
+        _getModelInfoForTest:      function ()            { return _modelInfo; },
+        _setModelInfoForTest:      function (m)           { _modelInfo = m; _pendingModel = (m && m.selected_model) || _pendingModel; updatePanel(); },
+        _renderModelSelectorHtmlForTest: function ()      { return renderModelSelectorHtml(); },
         _getRouteUnavailableMsgForTest: function ()       { return _routeUnavailableMsg; },
         _getCoaPlanForTest:        function ()            { return _coaPlan; },
         _generateCoaPlanForTest2:  function ()            { return _generateCoaPlan(); },

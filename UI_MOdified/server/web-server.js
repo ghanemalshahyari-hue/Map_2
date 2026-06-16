@@ -5,6 +5,11 @@
 const http = require('http');
 const fs   = require('fs');
 const path = require('path');
+
+// Load .env from UI_MOdified/ if present (no dotenv dep — plain built-ins). Existing process.env
+// values win; .env only fills gaps (npm run serve may already have set RMOOZ_ALLOW_SIM_RUN etc.).
+// Extracted to ./load-dotenv.js so the behaviour is unit-testable (RMOOZ-WEB-SERVER-DOTENV-LOADER-A).
+require('./load-dotenv').loadDotEnv(path.join(__dirname, '..', '.env'));
 const crypto = require('crypto');
 let Database;
 try {

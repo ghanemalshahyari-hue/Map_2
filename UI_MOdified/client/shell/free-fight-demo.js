@@ -1835,6 +1835,12 @@
                 return out('cloud_disabled', 'Cloud disabled', AMBER,
                     'OpenRouter key is not loaded in the running server. Add OPENROUTER_API_KEY or gitignored ai-secrets.local.js and restart.', false);
             }
+            // RMOOZ-OPENROUTER-FREE-FIGHT-CONTROL-FIX-I: key present but MALFORMED (not sk-or-…) → it will
+            // 401 at generation. Warn pre-flight instead of showing "Ready" then failing (req #13).
+            if (info && info.key_format_ok === false) {
+                return out('cloud_disabled', 'Cloud disabled', AMBER,
+                    'OpenRouter key looks invalid (it should start with sk-or-). Replace it with a valid key and restart.', false);
+            }
             if (selected && _looksLocalModel(selected)) {       // #9
                 return out('needs_model', 'Needs model', AMBER,
                     'This is a local Ollama model. Choose an OpenRouter model from the OpenRouter list.', false);

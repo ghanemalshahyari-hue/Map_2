@@ -320,6 +320,9 @@ async function buildModelsPayload(providerOverride) {
         return Object.assign(base, {
             provider_blocked: false,             // cloud-ready → openrouter is allowed
             models, available_models_count: names.length, model_available, provider_reachable: reachable,
+            // RMOOZ-OPENROUTER-FREE-FIGHT-CONTROL-FIX-I: format heuristic so the card can warn that a
+            // present-but-malformed key will 401 at generation (boolean only — never the key).
+            key_format_ok: openrouterClient.keyLooksValid(),
             error: reachable ? null : (pingErr || 'OpenRouter not reachable'),
         });
     }

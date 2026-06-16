@@ -35,6 +35,16 @@ function isConfigured() {
     return Boolean(k);
 }
 
+// RMOOZ-OPENROUTER-FREE-FIGHT-CONTROL-FIX-I: a *format* heuristic so the UI can warn pre-flight that a
+// present-but-malformed key will 401 at generation (OpenRouter's /models is public, so key PRESENCE
+// alone — isConfigured() — can't catch a bad key). Real OpenRouter keys are `sk-or-v1-<40+ chars>`.
+// Returns true | false | null(no key). NEVER returns or logs the key itself.
+function keyLooksValid() {
+    const k = (orCfg().apiKey || '').trim();
+    if (!k) return null;
+    return /^sk-or-(v1-)?[A-Za-z0-9_-]{32,}$/.test(k);
+}
+
 function maskedKey() {
     const k = (orCfg().apiKey || '').trim();
     if (!k) return null;
@@ -280,6 +290,7 @@ module.exports = {
     listModels,
     parseModelList,           // exposed for tests (parse without network)
     isConfigured,
+    keyLooksValid,            // RMOOZ-OPENROUTER-FREE-FIGHT-CONTROL-FIX-I: pre-flight key format check (no secret)
     DEFAULT_MODEL: () => orCfg().defaultModel,
     API_STYLE: 'openrouter',
 };

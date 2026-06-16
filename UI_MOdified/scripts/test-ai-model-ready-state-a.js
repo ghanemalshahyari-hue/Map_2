@@ -275,6 +275,21 @@ test('AI Commander blocked (no model) but the Staff-Safe Generate button is pres
     DEMO._setPlanningModeForTest('commander');
 });
 
+console.log('\n15) openrouter + present-but-MALFORMED key → pre-flight "key looks invalid" warning');
+test('cloud ready + key_format_ok=false → "OpenRouter key looks invalid" (not "Ready"); Start disabled', function () {
+    const rh = { ok: true, allow_sim_run: true, model_available: null, configured_provider: 'openrouter', provider: 'openrouter', provider_blocked: false, model: 'qwen/qwen3.5-397b-a17b' };
+    const info = { ok: true, provider: 'openrouter', is_cloud: true, cloud_allowed: true, cloud_enabled: true, key_format_ok: false, selected_model: 'qwen/qwen3.5-397b-a17b', model_available: true, allow_sim_run: true, provider_blocked: false, models: [{ name: 'qwen/qwen3.5-397b-a17b', available: true }] };
+    const s = DEMO._modelFlowStatusForTest(rh, info);
+    assert.strictEqual(s.state, 'cloud_disabled');
+    assert.ok(/OpenRouter key looks invalid \(it should start with sk-or-\)\. Replace it with a valid key and restart\./.test(s.message), 'exact malformed-key message');
+    assert.strictEqual(DEMO._freeFightAiReadyForTest().ok, false, 'Start disabled when key is malformed');
+});
+test('cloud ready + key_format_ok=true → proceeds to Ready (no false malformed warning)', function () {
+    const rh = { ok: true, allow_sim_run: true, model_available: null, configured_provider: 'openrouter', provider: 'openrouter', provider_blocked: false, model: 'qwen/qwen3.5-397b-a17b' };
+    const info = { ok: true, provider: 'openrouter', is_cloud: true, cloud_allowed: true, cloud_enabled: true, key_format_ok: true, selected_model: 'qwen/qwen3.5-397b-a17b', model_available: true, allow_sim_run: true, provider_blocked: false, models: [{ name: 'qwen/qwen3.5-397b-a17b', available: true }] };
+    assert.strictEqual(DEMO._modelFlowStatusForTest(rh, info).state, 'ready');
+});
+
 console.log('\n' + (fail === 0 ? '✅ PASS' : '❌ FAIL') + ' — ' + pass + ' passed, ' + fail + ' failed\n');
 process.exit(fail === 0 ? 0 : 1);
 })();

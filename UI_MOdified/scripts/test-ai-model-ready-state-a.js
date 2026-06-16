@@ -193,6 +193,21 @@ test('our own echo (source=free_fight_card) is ignored by the consumer', functio
     assert.strictEqual(DEMO._freeFightAiReadyForTest().ok, false, 'own echo does not change state');
 });
 
+console.log('\n9) OpenRouter mode + a local-style model → precise mismatch diagnostic (RMOOZ-…-DEMO-H)');
+test('provider=openrouter + local Ollama slug selected → "this is a local Ollama model" message', function () {
+    const rh = { ok: true, allow_sim_run: true, model_available: false, configured_provider: 'openrouter', provider_blocked: false, model: 'gpt-oss:latest' };
+    const info = { ok: true, provider: 'openrouter', is_cloud: true, cloud_enabled: true, selected_model: 'gpt-oss:latest', model_available: false, allow_sim_run: true, models: [{ name: 'qwen/qwen3.5-397b-a17b', available: true }] };
+    const s = DEMO._modelFlowStatusForTest(rh, info);
+    assert.strictEqual(s.state, 'needs_model');
+    assert.strictEqual(s.message, 'This is a local Ollama model. Choose an OpenRouter model from the OpenRouter list.');
+});
+test('provider=openrouter + a real (missing) cloud slug → generic "choose another", NOT the local hint', function () {
+    const rh = { ok: true, allow_sim_run: true, model_available: false, configured_provider: 'openrouter', provider_blocked: false, model: 'qwen/nope' };
+    const info = { ok: true, provider: 'openrouter', is_cloud: true, cloud_enabled: true, selected_model: 'qwen/nope', model_available: false, allow_sim_run: true, models: [{ name: 'qwen/qwen3.5-397b-a17b', available: true }] };
+    const s = DEMO._modelFlowStatusForTest(rh, info);
+    assert.strictEqual(s.message, 'Your saved model is not available. Choose another model.');
+});
+
 console.log('\n' + (fail === 0 ? '✅ PASS' : '❌ FAIL') + ' — ' + pass + ' passed, ' + fail + ' failed\n');
 process.exit(fail === 0 ? 0 : 1);
 })();

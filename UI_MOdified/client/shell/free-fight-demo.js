@@ -1762,6 +1762,13 @@
     // No env-variable names here — those live under Advanced diagnostics. The status is a
     // single plain word (Ready / Needs model / Cloud disabled / …) + one action message.
     // ════════════════════════════════════════════════════════════════════════
+    // RMOOZ-OPENROUTER-SETUP-AND-AI-DEMO-H: an OpenRouter slug is always `vendor/model` (has a `/`);
+    // a local Ollama tag is `name` / `name:tag` and never has a `/`. Used to catch the "local model
+    // selected while in OpenRouter mode" mismatch with a precise operator message.
+    function _looksLocalModel(name) {
+        var s = String(name || '');
+        return s.length > 0 && s.indexOf('/') === -1;
+    }
     // Combine route-health (the execution gate + model availability) and the /api/ai/models
     // payload (the model list + cloud flags) into ONE operator-friendly status. Returns:
     //   { state, label, color, message, selected, providerLabel, isCloud, canStart }
@@ -1789,9 +1796,17 @@
         if (!modelAvail) {
             var models = (info && Array.isArray(info.models)) ? info.models : null;
             var msg;
-            if (models == null) msg = AI_NO_MODEL_MSG;                       // not loaded yet → generic
-            else if (models.length === 0) msg = 'No AI model found. Start Ollama or choose a cloud model.';
-            else {
+            // RMOOZ-OPENROUTER-SETUP-AND-AI-DEMO-H: provider is OpenRouter (cloud) but the selected
+            // model is a local-style Ollama slug (a vendor-less `name:tag`, never the cloud `vendor/model`
+            // form) → it can never be available in the cloud catalog. Say so precisely instead of the
+            // generic "choose another model".
+            if (isCloud && selected && _looksLocalModel(selected)) {
+                msg = 'This is a local Ollama model. Choose an OpenRouter model from the OpenRouter list.';
+            } else if (models == null) {
+                msg = AI_NO_MODEL_MSG;                                       // not loaded yet → generic
+            } else if (models.length === 0) {
+                msg = 'No AI model found. Start Ollama or choose a cloud model.';
+            } else {
                 var availList = models.filter(function (m) { return m && m.available !== false; });
                 msg = availList.length ? 'Your saved model is not available. Choose another model.' : AI_NO_MODEL_MSG;
             }

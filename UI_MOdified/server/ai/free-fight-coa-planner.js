@@ -109,6 +109,17 @@ function _capBucket(p) {
     if (dom === 'air' || dom === 'naval' || dom === 'ground') return 'maneuver';
     return 'support';
 }
+// RMOOZ-AI-COMMANDER-TRACE-VERIFY-B: terrainCtx.provenance is an OBJECT (per-factor tags like
+// {terrain_class:'absent', threat_rings:'inferred_geometric', …}); the planning-trace UI string-coerced
+// it to "[object Object]". Render a readable one-liner instead (display-only — terrain logic untouched).
+function _provenanceStr(pv) {
+    if (typeof pv === 'string' && pv.trim()) return pv;
+    if (pv && typeof pv === 'object') {
+        var vals = Object.keys(pv).map(function (k) { return String(pv[k]); });
+        return vals.some(function (v) { return /gis_dem|\bdem\b/i.test(v); }) ? 'partly GIS DEM' : 'inferred (no DEM)';
+    }
+    return 'inferred (no DEM)';
+}
 function resolveLocalProvider() {
     return (process.env.RMOOZ_FREE_FIGHT_PROVIDER || 'ollama').toLowerCase().trim();
 }
@@ -1329,7 +1340,7 @@ async function _assemblePlan(P, variationSeed, timer, light) {
                 } : null,
                 objectives: arr(objectives).length,
                 terrain_class: terrainCtx ? (terrainCtx.terrain_class || null) : null,
-                terrain_provenance: terrainCtx ? (terrainCtx.provenance || 'inferred (no DEM)') : 'inferred (no DEM)',
+                terrain_provenance: _provenanceStr(terrainCtx && terrainCtx.provenance),
                 enemy_assessment: enemy,
                 alert_state: situation ? (situation.alert_state || null) : null,
                 roe_state: situation ? (situation.roe_state || null) : null,

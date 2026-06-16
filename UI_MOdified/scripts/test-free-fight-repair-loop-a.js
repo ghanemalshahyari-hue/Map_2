@@ -127,6 +127,8 @@ test('trace has real role counts + validation checklist + mode; no readiness/sup
   assert.strictEqual(t.mode, 'ai_commander');
   const iu = t.input_understood;
   assert.ok(iu && iu.role_counts && typeof iu.role_counts.maneuver === 'number', 'role_counts present');
+  // RMOOZ-AI-COMMANDER-TRACE-VERIFY-B: provenance must be a readable string, never an object→"[object Object]".
+  assert.strictEqual(typeof iu.terrain_provenance, 'string', 'terrain_provenance is a string, not an object');
   assert.ok(iu.total_units >= 1, 'total_units counted');
   assert.ok(iu.enemy_assessment && iu.enemy_assessment.total >= 1, 'enemy assessment (BLUE) counted');
   assert.strictEqual(t.validation.repaired, true, 'validation.repaired reflects the repair');

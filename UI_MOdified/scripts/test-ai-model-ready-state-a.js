@@ -32,7 +32,9 @@ async function atest(name, fn) { try { await fn(); console.log('  ✓ ' + name);
 let SELECT_PAYLOAD = {};      // body returned by POST /api/ai/model/select
 let HEALTH_MODE = 'true';     // 'true' | 'false' | 'defer' — GET /plan-coas/health behaviour
 let SELECTED_MODEL = '';      // model echoed back in the health response
+let HEALTH_PROVIDER = 'ollama'; // configured_provider the health endpoint reports (realistic: cloud → null model_available)
 let MODELS_PAYLOAD = null;    // GET /api/ai/models response (for the HUD-event consumer path)
+const fetchCalls = [];        // records {url, opts} for assertions
 function makeResp(obj) { return Promise.resolve({ ok: true, status: 200, statusText: 'OK', text: function () { return Promise.resolve(JSON.stringify(obj)); } }); }
 function installGlobals() {
     const elById = {};
@@ -42,13 +44,16 @@ function installGlobals() {
     global.window = { document: global.document, AppShellEventLog: { append() {} },
         sessionStorage: { getItem: () => null, setItem() {}, removeItem() {} },
         setTimeout: () => 0, clearTimeout() {}, setInterval: () => 0, clearInterval() {},
-        fetch: function (url) {
-            if (/model\/select/.test(url)) return makeResp(SELECT_PAYLOAD);
+        fetch: function (url, opts) {
+            fetchCalls.push({ url: url, opts: opts });
+            if (/model\/(select|reset)/.test(url)) return makeResp(SELECT_PAYLOAD);
             if (/\/api\/ai\/models(\?|$)/.test(url) && MODELS_PAYLOAD) return makeResp(MODELS_PAYLOAD);
             if (/plan-coas\/health/.test(url)) {
                 if (HEALTH_MODE === 'defer') return new Promise(() => {}); // never resolves
+                // Realistic: for the cloud provider the route-health probe can't check the catalog → model_available null.
+                var cloud = HEALTH_PROVIDER === 'openrouter';
                 return makeResp({ ok: true, allow_sim_run: true, ai_execution_enabled: HEALTH_MODE === 'true',
-                    model_available: HEALTH_MODE === 'true', provider: 'ollama', configured_provider: 'ollama',
+                    model_available: cloud ? null : (HEALTH_MODE === 'true'), provider: HEALTH_PROVIDER, configured_provider: HEALTH_PROVIDER,
                     provider_blocked: false, model: SELECTED_MODEL, selected_model: SELECTED_MODEL });
             }
             return makeResp({});
@@ -106,14 +111,14 @@ await atest('with the health probe deferred, the card is Ready right after selec
     HEALTH_MODE = 'true';
 });
 
-console.log('\n3) saved model missing (others installed) → stays Needs model + Start disabled');
-test('Needs model + Start disabled + "choose another model" message', function () {
+console.log('\n3) saved LOCAL model missing (others installed) → Needs model + exact model + count (#6)');
+test('Needs model + Start disabled + "local Ollama model not installed" message with model + count', function () {
     DEMO._setRouteHealthForTest(RH_STALE);
     DEMO._setModelInfoForTest(INFO_STALE);
     const s = DEMO._modelFlowStatusForTest();
     assert.strictEqual(s.state, 'needs_model');
     assert.strictEqual(s.label, 'Needs model');
-    assert.strictEqual(s.message, 'Your saved model is not available. Choose another model.');
+    assert.strictEqual(s.message, 'Local Ollama model "qwen3.6-plus-free" is not installed. Pull this model or choose an installed local model (2 installed locally).');
     assert.strictEqual(DEMO._freeFightAiReadyForTest().ok, false, 'not ready');
     const card = String(DEMO._renderCommanderLoopHtmlForTest());
     assert.ok(/data-act="loop-start" disabled/.test(card), 'Start disabled');
@@ -133,7 +138,7 @@ console.log('\n5) cloud model selected while cloud enabled → Ready, labelled "
 await atest('cloud select → Ready + Cloud label', async function () {
     DEMO._setRouteHealthForTest({ ok: true, allow_sim_run: true, model_available: false, provider: 'ollama', configured_provider: 'ollama', model: 'x' });
     DEMO._setModelInfoForTest({ ok: true, provider: 'ollama', is_cloud: false, selected_model: 'x', model_available: false, allow_sim_run: true, models: [] });
-    SELECTED_MODEL = 'qwen/qwen3.5-397b-a17b'; HEALTH_MODE = 'true';
+    SELECTED_MODEL = 'qwen/qwen3.5-397b-a17b'; HEALTH_MODE = 'true'; HEALTH_PROVIDER = 'openrouter';
     SELECT_PAYLOAD = { ok: true, provider: 'openrouter', is_cloud: true, cloud_allowed: true, cloud_enabled: true,
         selected_model: 'qwen/qwen3.5-397b-a17b', model_available: true, allow_sim_run: true, provider_blocked: false,
         configured_provider: 'openrouter', models: [{ name: 'qwen/qwen3.5-397b-a17b', available: true }] };
@@ -144,6 +149,7 @@ await atest('cloud select → Ready + Cloud label', async function () {
     assert.strictEqual(s.isCloud, true);
     assert.strictEqual(s.providerLabel, 'Cloud model');
     assert.strictEqual(DEMO._freeFightAiReadyForTest().ok, true, 'Start gate ok for cloud-ready');
+    HEALTH_PROVIDER = 'ollama';   // reset so later probes default to local
 });
 
 console.log('\n6) cloud blocked → "Cloud disabled" + Start disabled');
@@ -206,6 +212,67 @@ test('provider=openrouter + a real (missing) cloud slug → generic "choose anot
     const info = { ok: true, provider: 'openrouter', is_cloud: true, cloud_enabled: true, selected_model: 'qwen/nope', model_available: false, allow_sim_run: true, models: [{ name: 'qwen/qwen3.5-397b-a17b', available: true }] };
     const s = DEMO._modelFlowStatusForTest(rh, info);
     assert.strictEqual(s.message, 'Your saved model is not available. Choose another model.');
+});
+
+console.log('\n10) RUNNING server is OpenRouter + slug in catalog → Ready (route-health model_available NULL bug)');
+test('cloud configured + route-health model_available NULL + /api/ai/models true → Ready (not "Choose a model")', function () {
+    // The exact production state: openrouter active, route-health probe returns null for cloud,
+    // but /api/ai/models computed model_available:true (slug in the catalog).
+    const rh = { ok: true, allow_sim_run: true, model_available: null, configured_provider: 'openrouter', provider: 'openrouter', provider_blocked: false, model: 'qwen/qwen3.5-397b-a17b' };
+    const info = { ok: true, provider: 'openrouter', is_cloud: true, cloud_allowed: true, cloud_enabled: true, selected_model: 'qwen/qwen3.5-397b-a17b', model_available: true, allow_sim_run: true, models: [{ name: 'qwen/qwen3.5-397b-a17b', available: true }] };
+    assert.strictEqual(DEMO._modelAvailableEffectiveForTest(rh, info), true, 'effective availability folds in /api/ai/models for cloud');
+    const s = DEMO._modelFlowStatusForTest(rh, info);
+    assert.strictEqual(s.state, 'ready', 'card is Ready (was wrongly "needs_model")');
+    assert.strictEqual(s.providerLabel, 'Cloud model');
+    assert.strictEqual(DEMO._freeFightAiReadyForTest().ok, true, 'Start enabled for cloud-ready');
+});
+
+console.log('\n11) operator intends OpenRouter but the RUNNING server is still ollama (#7)');
+test('cloud listing but configured_provider=ollama → "OpenRouter is not active … restart" message', function () {
+    const rh = { ok: true, allow_sim_run: true, model_available: true, configured_provider: 'ollama', provider: 'ollama', provider_blocked: false, model: 'qwen2.5:7b' };
+    const info = { ok: true, provider: 'openrouter', is_cloud: true, cloud_allowed: true, cloud_enabled: true, selected_model: 'qwen/qwen3.5-397b-a17b', model_available: true, allow_sim_run: true, models: [{ name: 'qwen/qwen3.5-397b-a17b', available: true }] };
+    const s = DEMO._modelFlowStatusForTest(rh, info);
+    assert.strictEqual(s.state, 'cloud_disabled');
+    assert.ok(/OpenRouter is not active in the running server\. Restart with RMOOZ_LLM_PROVIDER=openrouter and RMOOZ_ALLOW_CLOUD_AI=1\./.test(s.message), 'exact #7 restart message');
+    // (The Start button reflects the SERVER's actual readiness — here the server is ollama-ready, so
+    // it can still run locally; the message tells the operator OpenRouter isn't active until restart.)
+});
+
+console.log('\n12) provider=openrouter but key missing in the running server (#8)');
+test('openrouter provider_blocked + cloud_allowed true + cloud_enabled false → "key is not loaded" message', function () {
+    const rh = { ok: true, allow_sim_run: true, model_available: null, configured_provider: 'openrouter', provider: 'ollama', provider_blocked: true, model: 'qwen/qwen3.5-397b-a17b' };
+    const info = { ok: true, provider: 'openrouter', is_cloud: true, cloud_allowed: true, cloud_enabled: false, provider_blocked: true, selected_model: 'qwen/qwen3.5-397b-a17b', model_available: false, allow_sim_run: true, models: [] };
+    const s = DEMO._modelFlowStatusForTest(rh, info);
+    assert.strictEqual(s.state, 'cloud_disabled');
+    assert.ok(/OpenRouter key is not loaded in the running server\. Add OPENROUTER_API_KEY or gitignored ai-secrets\.local\.js and restart\./.test(s.message), 'exact #8 key message');
+    assert.strictEqual(DEMO._freeFightAiReadyForTest().ok, false, 'Start disabled when key missing');
+});
+
+console.log('\n13) Reset AI Selection clears the runtime selection + refreshes (POST /api/ai/model/reset)');
+await atest('Reset posts /api/ai/model/reset and re-renders to the default state', async function () {
+    DEMO._setRouteHealthForTest({ ok: true, allow_sim_run: true, model_available: false, provider: 'ollama', configured_provider: 'ollama', model: 'stale-pick' });
+    DEMO._setModelInfoForTest({ ok: true, provider: 'ollama', is_cloud: false, selected_model: 'stale-pick', model_available: false, allow_sim_run: true, models: [{ name: 'qwen2.5:7b', available: true }] });
+    HEALTH_PROVIDER = 'ollama'; SELECTED_MODEL = 'qwen2.5:7b'; HEALTH_MODE = 'true';
+    // /api/ai/model/reset returns the refreshed default payload (model now available).
+    SELECT_PAYLOAD = { ok: true, reset: true, provider: 'ollama', is_cloud: false, selected_model: 'qwen2.5:7b', model_available: true, allow_sim_run: true, provider_blocked: false, configured_provider: 'ollama', models: [{ name: 'qwen2.5:7b', available: true }] };
+    const beforeFetches = fetchCalls.length;
+    await DEMO._resetModelSelectionForTest();
+    await flush();
+    assert.ok(fetchCalls.some(function (c) { return /\/api\/ai\/model\/reset/.test(c.url) && c.opts && c.opts.method === 'POST'; }), 'POSTed /api/ai/model/reset');
+    assert.ok(fetchCalls.length > beforeFetches, 'made network calls');
+    const s = DEMO._modelFlowStatusForTest();
+    assert.strictEqual(s.state, 'ready', 'card reflects the refreshed default selection');
+});
+
+console.log('\n14) Staff-Safe stays available while AI Commander is blocked (#12)');
+test('AI Commander blocked (no model) but the Staff-Safe Generate button is present + unwarned', function () {
+    DEMO._setRouteHealthForTest({ ok: true, allow_sim_run: true, model_available: false, provider: 'ollama', configured_provider: 'ollama', model: 'qwen3.6-plus-free' });
+    DEMO._setModelInfoForTest({ ok: true, provider: 'ollama', is_cloud: false, selected_model: 'qwen3.6-plus-free', model_available: false, allow_sim_run: true, models: [{ name: 'qwen2.5:7b', available: true }, { name: 'qwen3.6-plus-free', available: false }] });
+    DEMO._setPlanningModeForTest('staff_safe');
+    const html = String(DEMO._renderAiDecisionHtmlForTest());
+    assert.ok(/Generate Staff-Safe Plan \(fast\)/.test(html), 'Staff-Safe Generate available while AI is blocked');
+    assert.ok(!/data-ff-coa="generate-warning"/.test(html), 'Staff-Safe shows no blocked warning');
+    DEMO._setPlanningModeForTest('commander');
 });
 
 console.log('\n' + (fail === 0 ? '✅ PASS' : '❌ FAIL') + ' — ' + pass + ' passed, ' + fail + ' failed\n');

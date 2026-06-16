@@ -1097,6 +1097,7 @@
         if (modelSel && modelSel.addEventListener) modelSel.addEventListener('change', function () { _pendingModel = modelSel.value; });
         // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: the friendly model flow controls.
         bind('ff-open-model-picker', function () { _modelPickerOpen = !_modelPickerOpen; updatePanel(); });
+        bind('ff-reset-model', function () { _resetModelSelection(); });
         bind('ff-load-local', function () { _fetchModels(); });
         bind('ff-load-cloud', function () { _fetchModels('openrouter'); });
         var picks = _panel.querySelectorAll ? _panel.querySelectorAll('[data-ff-model-pick]') : null;
@@ -1720,6 +1721,23 @@
             updatePanel();
         });
     }
+    // RMOOZ-OPENROUTER-FREE-FIGHT-CONTROL-FIX-I: "Reset AI Selection" — clear the runtime selection
+    // (server deletes runtime/ai-model-selection.json) so resolution falls back to the env chain /
+    // default, then refresh the model list + route health so the card re-renders the true state.
+    function _resetModelSelection() {
+        var w = W();
+        if (!w || typeof w.fetch !== 'function') return Promise.resolve();
+        _pendingModel = null; _autoSelectedModel = null;
+        return _fetchJsonSafe('/api/ai/model/reset', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+            .then(function (m) {
+                if (m && m.ok) { _modelInfo = m; _reconcileRouteHealthFromModelInfo(m); }
+                try { document.dispatchEvent(new CustomEvent('rmooz:ai-model-changed',
+                    { detail: { model: (m && m.selected_model) || '', source: 'free_fight_card', reset: true } })); } catch (_) {}
+                updatePanel();
+                return _probeRouteHealth();
+            })
+            .catch(function (e) { _modelInfo = Object.assign({}, _modelInfo || {}, { ok: false, error: (e && e.message) || 'reset_failed' }); updatePanel(); });
+    }
     // RMOOZ-LOCAL-MODEL-SELECTOR-A: model-picker block for the Free Fight control panel.
     function renderModelSelectorHtml() {
         var info = _modelInfo;
@@ -1769,6 +1787,17 @@
         var s = String(name || '');
         return s.length > 0 && s.indexOf('/') === -1;
     }
+    // RMOOZ-OPENROUTER-FREE-FIGHT-CONTROL-FIX-I: route-health is authoritative for LOCAL (ollama) —
+    // it live-probes /api/tags. For CLOUD (openrouter) the route-health probe returns null (no cloud
+    // probe), so fall back to /api/ai/models, which DOES compute cloud availability (slug in catalog).
+    // Returns true | false | null(unknown). This is why the card no longer says "Choose an AI model"
+    // when OpenRouter is configured and the selected slug IS in the catalog.
+    function _modelAvailableEffective() {
+        var rh = _routeHealth, info = _modelInfo;
+        if (rh && rh.model_available != null) return rh.model_available === true;
+        if (info && info.model_available != null) return info.model_available === true;
+        return null;
+    }
     // Combine route-health (the execution gate + model availability) and the /api/ai/models
     // payload (the model list + cloud flags) into ONE operator-friendly status. Returns:
     //   { state, label, color, message, selected, providerLabel, isCloud, canStart }
@@ -1776,7 +1805,10 @@
         var rh = _routeHealth, info = _modelInfo;
         var GREEN = '#7fd6a0', AMBER = '#e0a93a', GREY = '#8fa5b8';
         var selected = (info && info.selected_model) || (rh && rh.model) || '';
-        var isCloud = !!(info && (info.is_cloud === true || info.provider === 'openrouter'));
+        // The RUNNING server's provider (authoritative) drives cloud-vs-local messaging.
+        var cfgProvider = (rh && (rh.configured_provider || rh.provider)) || (info && info.provider) || 'ollama';
+        var serverOpenRouter = cfgProvider === 'openrouter';
+        var isCloud = serverOpenRouter || !!(info && (info.is_cloud === true || info.provider === 'openrouter'));
         var providerLabel = isCloud ? 'Cloud model' : 'Local model';
         function out(state, label, color, message, canStart) {
             return { state: state, label: label, color: color, message: message,
@@ -1784,31 +1816,58 @@
         }
         if (!rh && !info) return out('unknown', 'Checking…', GREY, 'Checking AI status…', false);
         var gateOn = rh ? (rh.allow_sim_run === true) : (info ? info.allow_sim_run === true : false);
-        var modelAvail = rh ? (rh.model_available === true) : (info ? info.model_available === true : false);
-        var cloudDisabled = !!((rh && rh.provider_blocked === true && rh.configured_provider === 'openrouter') ||
-                               (info && info.is_cloud === true && info.cloud_enabled === false));
-        // The single execution gate stays in force (safety) — but the main card says it plainly,
-        // with the env detail tucked under Advanced diagnostics.
+        var avail = _modelAvailableEffective();      // true | false | null(unknown)
+        var providerBlocked = !!((rh && rh.provider_blocked === true) || (info && info.provider_blocked === true));
+        var cloudAllowed = info ? info.cloud_allowed : null;   // RMOOZ_ALLOW_CLOUD_AI in the running server
+        var cloudEnabled = info ? info.cloud_enabled : null;   // gate + key present
+
         if (!gateOn) return out('gate_off', 'Needs setup', AMBER,
             'AI execution is turned off. Open Advanced diagnostics to enable it.', false);
-        if (cloudDisabled) return out('cloud_disabled', 'Cloud disabled', AMBER,
-            'Cloud AI is turned off. Choose a local model, or enable cloud mode in Advanced diagnostics.', false);
-        if (!modelAvail) {
+
+        // ── OpenRouter is the RUNNING provider ───────────────────────────────
+        if (serverOpenRouter) {
+            if (providerBlocked || cloudEnabled === false) {
+                // #8 vs #7: key missing (gate on, no key) vs cloud gate off in the running server.
+                if (cloudAllowed === false) {
+                    return out('cloud_disabled', 'Cloud disabled', AMBER,
+                        'OpenRouter is not active in the running server. Restart with RMOOZ_LLM_PROVIDER=openrouter and RMOOZ_ALLOW_CLOUD_AI=1.', false);
+                }
+                return out('cloud_disabled', 'Cloud disabled', AMBER,
+                    'OpenRouter key is not loaded in the running server. Add OPENROUTER_API_KEY or gitignored ai-secrets.local.js and restart.', false);
+            }
+            if (selected && _looksLocalModel(selected)) {       // #9
+                return out('needs_model', 'Needs model', AMBER,
+                    'This is a local Ollama model. Choose an OpenRouter model from the OpenRouter list.', false);
+            }
+            if (avail === false) return out('needs_model', 'Needs model', AMBER,
+                'Your saved model is not available. Choose another model.', false);
+            if (avail !== true) return out('needs_model', 'Needs model', AMBER, AI_NO_MODEL_MSG, false);
+            if (_aiDepth === 'fast') return out('fast', 'Fast — AI off', AMBER,
+                'Fast depth skips the AI. Switch Depth to Normal or Deep to use the model.', false);
+            return out('ready', 'Ready', GREEN, 'Ready — press Start AI Free Fight.', _freeFightAiReady().ok !== false);
+        }
+
+        // ── Operator selected/viewing cloud but the SERVER is still ollama (#7) ──
+        if (isCloud && !serverOpenRouter) {
+            return out('cloud_disabled', 'Cloud disabled', AMBER,
+                'OpenRouter is not active in the running server. Restart with RMOOZ_LLM_PROVIDER=openrouter and RMOOZ_ALLOW_CLOUD_AI=1.', false);
+        }
+
+        // ── LOCAL (ollama) ───────────────────────────────────────────────────
+        if (avail !== true) {
             var models = (info && Array.isArray(info.models)) ? info.models : null;
             var msg;
-            // RMOOZ-OPENROUTER-SETUP-AND-AI-DEMO-H: provider is OpenRouter (cloud) but the selected
-            // model is a local-style Ollama slug (a vendor-less `name:tag`, never the cloud `vendor/model`
-            // form) → it can never be available in the cloud catalog. Say so precisely instead of the
-            // generic "choose another model".
-            if (isCloud && selected && _looksLocalModel(selected)) {
-                msg = 'This is a local Ollama model. Choose an OpenRouter model from the OpenRouter list.';
-            } else if (models == null) {
-                msg = AI_NO_MODEL_MSG;                                       // not loaded yet → generic
-            } else if (models.length === 0) {
-                msg = 'No AI model found. Start Ollama or choose a cloud model.';
+            if (models == null) {                             // model list not loaded yet → generic
+                msg = AI_NO_MODEL_MSG;
             } else {
-                var availList = models.filter(function (m) { return m && m.available !== false; });
-                msg = availList.length ? 'Your saved model is not available. Choose another model.' : AI_NO_MODEL_MSG;
+                var availCount = models.filter(function (m) { return m && m.available !== false; }).length;
+                if (availCount === 0) {                       // nothing installed / Ollama down
+                    msg = 'No AI model found. Start Ollama or choose a cloud model.';
+                } else if (selected) {                        // #6: exact model + installed count
+                    msg = 'Local Ollama model "' + selected + '" is not installed. Pull this model or choose an installed local model (' + availCount + ' installed locally).';
+                } else {
+                    msg = AI_NO_MODEL_MSG;
+                }
             }
             return out('needs_model', 'Needs model', AMBER, msg, false);
         }
@@ -1882,9 +1941,12 @@
             '<span style="color:#8fa5b8;">Status:</span> ' +
             '<span data-ff-model="status" style="color:' + s.color + ';font-weight:700;">' + esc(s.label) + '</span></div>';
         h += '<div data-ff-model="message" style="font-size:10px;color:' + s.color + ';margin-top:2px;">' + esc(s.message) + '</div>';
-        h += '<div style="margin-top:5px;">' +
+        h += '<div style="margin-top:5px;display:flex;gap:6px;flex-wrap:wrap;">' +
             '<button data-act="ff-open-model-picker" style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#172436;color:#9ec2ec;border-radius:5px;padding:4px 10px;font-size:10.5px;font-weight:600;">' +
-            (_modelPickerOpen ? '▲ Hide models — إخفاء' : '🧠 Select AI Model — اختر النموذج') + '</button></div>';
+            (_modelPickerOpen ? '▲ Hide models — إخفاء' : '🧠 Select AI Model — اختر النموذج') + '</button>' +
+            // RMOOZ-OPENROUTER-FREE-FIGHT-CONTROL-FIX-I: clear a stale/wrong runtime selection in one click.
+            '<button data-act="ff-reset-model" title="Forget the saved model — fall back to the server default" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#22272f;color:#cdd8e4;border-radius:5px;padding:4px 10px;font-size:10.5px;">↺ Reset AI Selection</button>' +
+            '</div>';
         if (_modelPickerOpen) h += _modelPickerHtml();
         h += '</div>';
         return h;
@@ -2958,7 +3020,10 @@
                     reason: reasons.map(function (r) { return r.code; }).join(' + '),
                     msg: reasons.map(function (r) { return r.fix; }).join('  ') };
             }
-            if (rh.allow_sim_run === true && rh.model_available === false) return { ok: false, code: 'no_model', reason: rh.reason_if_blocked || 'no local model available', msg: AI_NO_MODEL_MSG };
+            // RMOOZ-OPENROUTER-FREE-FIGHT-CONTROL-FIX-I: use the EFFECTIVE availability (route-health
+            // for local; /api/ai/models for cloud, where route-health is null) so Start is correctly
+            // disabled for an unavailable cloud slug and ENABLED when the cloud slug is in the catalog.
+            if (rh.allow_sim_run === true && _modelAvailableEffective() === false) return { ok: false, code: 'no_model', reason: rh.reason_if_blocked || 'no model available', msg: AI_NO_MODEL_MSG };
         }
         return { ok: true };
     }
@@ -3081,6 +3146,11 @@
             h += row('LLM status', (plan.llm_status || (plan.llm_called ? 'called' : 'not called')) + (plan.fallback_reason ? ' · ' + plan.fallback_reason : ''), isLlm ? '#90d090' : '#e0a93a');
             h += '<div data-ff-coa="readiness-verdict" style="margin-top:3px;font-size:10px;font-weight:700;color:' + (isLlm ? '#7fd6a0' : '#e0a93a') + ';">' +
                 (isLlm ? '✅ Movement came from the local LLM (plan_source=llm).' : '⚠ Deterministic plan — the LLM did not produce this (not "AI").') + '</div>';
+            // RMOOZ-OPENROUTER-FREE-FIGHT-CONTROL-FIX-I (#16): an auth/401 in the fallback reason means
+            // the cloud key was rejected or not sent — say so plainly with the fix.
+            if (/\b401\b|missing auth|authentication|no auth|unauthor/i.test(String(plan.fallback_reason || '') + ' ' + String(plan.llm_status || ''))) {
+                h += '<div data-ff-coa="readiness-auth-error" style="margin-top:3px;font-size:10px;color:#f0b0b0;">⚠ OpenRouter rejected the request (HTTP 401) — the API key is invalid or was not sent. Rotate/reload the key and restart the server.</div>';
+            }
         } else {
             h += row('Plan source (after generation)', 'not generated yet', '#8fa5b8');
         }
@@ -3837,6 +3907,8 @@
         // RMOOZ-LOCAL-MODEL-SELECTOR-A test seams
         _fetchModelsForTest:       function ()            { return _fetchModels(); },
         _selectModelForTest:       function (m, p)        { return _selectModel(m, p); },
+        _resetModelSelectionForTest: function ()          { return _resetModelSelection(); },
+        _modelAvailableEffectiveForTest: function (rh, info) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; return _modelAvailableEffective(); },
         _onExternalModelChangedForTest: function (e)      { return _onExternalModelChanged(e); },
         _getModelInfoForTest:      function ()            { return _modelInfo; },
         _setModelInfoForTest:      function (m)           { _modelInfo = m; _pendingModel = (m && m.selected_model) || _pendingModel; updatePanel(); },

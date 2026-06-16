@@ -160,11 +160,11 @@ test('cloud listing is never auto-selected (data-leaves consent must be explicit
     assert.strictEqual(DEMO._maybeAutoSelectModelForTest(cloudMissing), false, 'cloud never auto-picked');
 });
 
-console.log('\n4) a missing saved model prompts the operator to choose another');
-test('missing saved model (others installed) → "choose another model"', function () {
+console.log('\n4) a missing saved LOCAL model prompts the operator with the exact model + count');
+test('missing saved local model (others installed) → "local Ollama model not installed" (#6)', function () {
     const s = DEMO._modelFlowStatusForTest(RH_NO_MODEL, INFO_MULTI_MISSING);
     assert.strictEqual(s.state, 'needs_model');
-    assert.strictEqual(s.message, 'Your saved model is not available. Choose another model.');
+    assert.strictEqual(s.message, 'Local Ollama model "qwen3.6-plus-free" is not installed. Pull this model or choose an installed local model (2 installed locally).');
 });
 
 console.log('\n5) Advanced diagnostics are collapsed + carry the env detail');

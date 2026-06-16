@@ -638,6 +638,18 @@ const server = http.createServer((req, res) => {
         }).catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
         return;
     }
+    // RMOOZ-OPENROUTER-FREE-FIGHT-CONTROL-FIX-I: "Reset AI Selection" — forget the runtime model
+    // selection (delete runtime/ai-model-selection.json) so resolution falls back to the env chain /
+    // committed default. Returns the refreshed models payload so the UI can re-render immediately.
+    if (pathname === '/api/ai/model/reset' && req.method === 'POST') {
+        modelSelection.clearSelection();
+        buildModelsPayload()
+            .then(p => sendJson(res, 200, Object.assign(p, { reset: true })))
+            .catch(e => sendJson(res, 200, { ok: false, reset: true, error: e.message || String(e),
+                selected_model: modelSelection.getSelectedModel(),
+                allow_sim_run: process.env.RMOOZ_ALLOW_SIM_RUN === '1' }));
+        return;
+    }
     // COA generator — produces 3-5 candidate Courses of Action for the
     // commander given a scenario, current state, and a short intent.
     // Body: { scenarioName, currentState?, commanderIntent?, constraints?,

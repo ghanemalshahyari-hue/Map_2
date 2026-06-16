@@ -203,10 +203,13 @@ test('app.html mounts the global HUD + includes the script (cache-busted)', func
 });
 
 console.log('\nG) regression — no divergent model default / cloud leak');
-test('the four free-fight modules resolve via model-selection (no qwen3-coder)', function () {
+test('the four free-fight modules resolve the model via the canonical resolver (no qwen3-coder)', function () {
+    // RMOOZ-LLM-RUNTIME-CONFIG-A: the modules now resolve the model through
+    // llm-runtime-config.js (LLM_CFG.getModel), which delegates to model-selection
+    // (operator UI pick) → env default. Same shared single source, one layer up.
     ['free-fight-llm-decision.js', 'free-fight-coa-planner.js', 'free-fight-llm-capability-analyst.js', 'free-fight-llm-plan.js'].forEach(function (f) {
         const src = fs.readFileSync(path.join(SRV, f), 'utf8');
-        assert.ok(/MODEL_SELECTION\.getSelectedModel\(\)/.test(src), f + ' resolves via model-selection');
+        assert.ok(/LLM_CFG\.getModel\(/.test(src), f + ' resolves the model via llm-runtime-config (LLM_CFG.getModel)');
         // Strip comments so a historical note ("the old qwen3-coder default…") is allowed,
         // but an ACTIVE qwen3-coder fallback in code is not.
         const code = src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');

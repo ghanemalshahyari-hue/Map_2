@@ -1,7 +1,7 @@
 'use strict';
 
 const aiProvider = require('./ai-provider');
-const MODEL_SELECTION = require('./model-selection'); // RMOOZ-LOCAL-MODEL-SELECTOR-A: single model source
+const LLM_CFG    = require('./llm-runtime-config'); // RMOOZ-LLM-RUNTIME-CONFIG-A: canonical provider/model/timeout
 
 const ALLOWED_CONFIDENCE = new Set(['low', 'medium', 'high']);
 const ALLOWED_REACTIONS = new Set(['intercept', 'defend_objective', 'screen', 'hold']);
@@ -203,12 +203,13 @@ async function createPlan(body) {
         },
     });
     // RMOOZ-AI-COA-TIMEOUT-RETRY-A: 30s was too tight for a 7B-class model on CPU/modest GPU. 120s default.
-    const timeoutMs = Number.parseInt(process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || process.env.RMOOZ_OLLAMA_TIMEOUT_MS || '120000', 10);
+    // RMOOZ-LLM-RUNTIME-CONFIG-A: timeout/provider/model from the canonical resolver.
+    const timeoutMs = LLM_CFG.getTimeoutMs('plan');
     const result = await aiProvider.generate({
-        // RMOOZ-LOCAL-MODEL-SELECTOR-A: local-only (never 'auto'/cloud — matches the
+        // RMOOZ-LLM-RUNTIME-CONFIG-A: local-only provider (never 'auto'/cloud — matches the
         // free-fight local-only policy) + the one shared operator-selected model.
-        provider: (process.env.RMOOZ_FREE_FIGHT_PROVIDER || 'ollama').toLowerCase().trim(),
-        model: MODEL_SELECTION.getSelectedModel(),
+        provider: LLM_CFG.getProvider(),
+        model: LLM_CFG.getModel('plan'),
         system,
         prompt,
         format: 'json',

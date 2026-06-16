@@ -26,7 +26,7 @@
  * ========================================================================== */
 
 const aiProvider = require('./ai-provider');
-const MODEL_SELECTION = require('./model-selection');          // RMOOZ-LOCAL-MODEL-SELECTOR-A: single model source
+const LLM_CFG    = require('./llm-runtime-config');            // RMOOZ-LLM-RUNTIME-CONFIG-A: canonical provider/model/timeout/repair
 const TRIGGERS   = require('./free-fight-situation-triggers'); // FREEFIGHT-BLUE-WARNING-ROE-A
 const INTEL      = require('./scenario-intel');                // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A
 const BRIEF      = require('./commander-brief');                // RMOZ-COMMANDER-BRIEF-COALITION-A
@@ -121,17 +121,17 @@ function _provenanceStr(pv) {
     return 'inferred (no DEM)';
 }
 function resolveLocalProvider() {
-    return (process.env.RMOOZ_FREE_FIGHT_PROVIDER || 'ollama').toLowerCase().trim();
+    // RMOOZ-LLM-RUNTIME-CONFIG-A: provider from the canonical resolver
+    // (RMOOZ_LLM_PROVIDER → legacy RMOOZ_FREE_FIGHT_PROVIDER → 'ollama').
+    return LLM_CFG.getProvider();
 }
 function isRemoteProvider(name) {
     return REMOTE_PROVIDERS_BLOCKED.indexOf(String(name || '').toLowerCase().trim()) !== -1;
 }
 function resolveLocalModel() {
-    // RMOOZ-LOCAL-MODEL-SELECTOR-A: one resolver for the whole app — the operator's UI
-    // selection wins, then RMOOZ_OLLAMA_MODEL, then the free-fight/local/AI env vars, then
-    // ai-config's committed default. Replaces the old per-module env chain that ignored
-    // RMOOZ_OLLAMA_MODEL and defaulted to an uninstalled 'qwen3-coder:latest'.
-    return MODEL_SELECTION.getSelectedModel();
+    // RMOOZ-LLM-RUNTIME-CONFIG-A: model from the canonical resolver — task-specific
+    // override (RMOOZ_LLM_MODEL_COA_PLANNER) → operator UI selection → env default.
+    return LLM_CFG.getModel('coa_planner');
 }
 // FREEFIGHT-COA-ROUTE-JSON-GUARD-A + RMOOZ-AI-EXECUTION-SINGLE-GATE-A: single source of truth for
 // the route's permission gate (RMOOZ_ALLOW_SIM_RUN) + local-only policy + resolved provider/model.
@@ -164,7 +164,7 @@ function routeHealth() {
         // came from. `model` and `selected_model` are the same value (kept both for
         // back-compat); selection_source tells the UI whether it's a UI pick or env/default.
         selected_model: resolveLocalModel(),
-        selection_source: MODEL_SELECTION.selectionSource(),
+        selection_source: LLM_CFG.modelSource('coa_planner'),
         llm_enabled: aiEnabled,   // back-compat alias (= ai_execution_enabled)
         remote_providers_blocked: REMOTE_PROVIDERS_BLOCKED.slice(),
     };
@@ -889,15 +889,15 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
     var model = resolveLocalModel();
     // RMOOZ-AI-COA-TIMEOUT-RETRY-A: 45s was too tight for a 7B-class model on CPU/modest GPU —
     // the COA prompt asks for up to 2500 tokens of JSON, which routinely needs 40-70s (longer on a
-    // cold model load). The repo's own real-LLM e2e harness already uses 180s. Default to 120s and
-    // keep the env override (RMOOZ_FREE_FIGHT_TIMEOUT_MS) for slower/faster hardware.
-    var timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '120000', 10);
-    if (!Number.isFinite(timeoutMs)) timeoutMs = 120000;
+    // cold model load). The repo's own real-LLM e2e harness already uses 180s. Default to 120s.
+    // RMOOZ-LLM-RUNTIME-CONFIG-A: timeout/attempts now come from the canonical resolver
+    // (RMOOZ_LLM_TIMEOUT_MS[/_COA_PLANNER] → legacy RMOOZ_FREE_FIGHT_TIMEOUT_MS/RMOOZ_AI_TIMEOUT_MS).
+    var timeoutMs = LLM_CFG.getTimeoutMs('coa_planner');
     // RMOOZ-AI-COA-TIMEOUT-RETRY-A: real local models are flaky on strict JSON — a single attempt that
     // returns malformed JSON or <2 valid COAs would silently drop to the deterministic floor. Retry the
     // FAST failure modes (bad JSON / too-few-valid) a couple of times. We do NOT retry timeouts/unavailable
     // (those would stack the full timeout and blow up latency); the higher base timeout covers slowness.
-    var maxAttempts = parseInt(process.env.RMOOZ_FREE_FIGHT_ATTEMPTS || '2', 10);
+    var maxAttempts = LLM_CFG.getDraftAttempts();
     if (!Number.isFinite(maxAttempts) || maxAttempts < 1) maxAttempts = 2;
 
     var allowedIds = arr(opts && opts.allowed_unit_ids).filter(Boolean).map(String);
@@ -1457,7 +1457,9 @@ async function _assemblePlan(P, variationSeed, timer, light) {
 
     if (llmAllowed) {
         llmCalled = true;
-        var repairBudget = parseInt(process.env.RMOOZ_FREE_FIGHT_REPAIR_ATTEMPTS || '1', 10);
+        // RMOOZ-LLM-RUNTIME-CONFIG-A: repair budget from the canonical resolver
+        // (RMOOZ_LLM_REPAIR_ATTEMPTS → legacy RMOOZ_FREE_FIGHT_REPAIR_ATTEMPTS → 1).
+        var repairBudget = LLM_CFG.getRepairAttempts();
         if (!Number.isFinite(repairBudget) || repairBudget < 0) repairBudget = 1;
 
         var llmResult = await timer.async('llm_ms', function () { return _callLlm(allUnits, objectives, llmCtx, opts, opts && opts._providerOverride); });

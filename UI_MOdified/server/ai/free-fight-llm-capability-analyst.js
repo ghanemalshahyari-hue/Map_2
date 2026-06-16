@@ -32,7 +32,7 @@
  * ========================================================================== */
 
 var aiProvider = require('./ai-provider');
-var MODEL_SELECTION = require('./model-selection'); // RMOOZ-LOCAL-MODEL-SELECTOR-A: single model source
+var LLM_CFG = require('./llm-runtime-config'); // RMOOZ-LLM-RUNTIME-CONFIG-A: canonical provider/model/timeout
 var CATALOG    = require('./platform-capability-catalog');
 
 // RMOOZ-UNIT-IDENTITY-CONTRACT-A: ONE identity contract, shared with the client. A
@@ -67,15 +67,16 @@ function cleanDisplayName(u) {
 var REMOTE_PROVIDERS_BLOCKED = ['claude', 'zen', 'openai', 'auto'];
 
 function resolveLocalProvider() {
-    return (process.env.RMOOZ_FREE_FIGHT_PROVIDER || 'ollama').toLowerCase().trim();
+    // RMOOZ-LLM-RUNTIME-CONFIG-A: provider from the canonical resolver.
+    return LLM_CFG.getProvider();
 }
 function isRemoteProvider(name) {
     return REMOTE_PROVIDERS_BLOCKED.indexOf(String(name || '').toLowerCase().trim()) !== -1;
 }
 function resolveLocalModel() {
-    // RMOOZ-LOCAL-MODEL-SELECTOR-A: one resolver for the whole app (operator UI
-    // selection wins, then the env chain). Shared with the rest of the AI surfaces.
-    return MODEL_SELECTION.getSelectedModel();
+    // RMOOZ-LLM-RUNTIME-CONFIG-A: model from the canonical resolver — task override
+    // (RMOOZ_LLM_MODEL_CAPABILITY_ANALYST) → operator UI selection → env default.
+    return LLM_CFG.getModel('capability_analyst');
 }
 
 // ── Allowed enum sets for the profile schema ─────────────────────────────────
@@ -484,8 +485,9 @@ function analyzeUnitCapabilities(units, context, opts, _providerOverride) {
     }
     var model = resolveLocalModel();
     // RMOOZ-AI-COA-TIMEOUT-RETRY-A: 45s was too tight for a 7B-class model on CPU/modest GPU. 120s default.
-    var timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '120000', 10);
-    if (!Number.isFinite(timeoutMs)) timeoutMs = 120000;
+    // RMOOZ-LLM-RUNTIME-CONFIG-A: timeout from the canonical resolver
+    // (RMOOZ_LLM_TIMEOUT_MS[/_CAPABILITY_ANALYST] → legacy RMOOZ_FREE_FIGHT_TIMEOUT_MS/RMOOZ_AI_TIMEOUT_MS).
+    var timeoutMs = LLM_CFG.getTimeoutMs('capability_analyst');
 
     var system = [
         'You are an intelligence analyst for an advisory-only demo.',

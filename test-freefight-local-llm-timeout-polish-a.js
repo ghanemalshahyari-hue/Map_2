@@ -17,47 +17,47 @@ const llmSrc = fs.readFileSync(
     path.join(__dirname, 'UI_MOdified/server/ai/free-fight-llm-decision.js'), 'utf8');
 const clientSrc = fs.readFileSync(
     path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo.js'), 'utf8');
+// RMOOZ-LLM-RUNTIME-CONFIG-A: the per-call timeout was centralized into the canonical
+// resolver; the decision module now delegates to it. Scan/exercise the resolver.
+const cfgSrc  = fs.readFileSync(
+    path.join(__dirname, 'UI_MOdified/server/ai/llm-runtime-config.js'), 'utf8');
+const LLM_CFG = require(path.join(__dirname, 'UI_MOdified/server/ai/llm-runtime-config.js'));
 
-// ── SECTION 1: Default timeout is 45000ms ────────────────────────────────────
-console.log('\n§1  Default unit-decision timeout is 45000ms');
-ok('default timeoutMs string is 45000',
-    /RMOOZ_FREE_FIGHT_TIMEOUT_MS.*45000/.test(llmSrc) ||
-    /\|\|\s*'45000'/.test(llmSrc));
-ok('fallback timeoutMs assignment is 45000',
-    /timeoutMs\s*=\s*45000/.test(llmSrc));
-ok('old 15000 default NOT present',
-    !/\|\|\s*'15000'/.test(llmSrc) && !/timeoutMs\s*=\s*15000/.test(llmSrc));
+// ── SECTION 1: Default timeout is 120000ms, owned by the canonical resolver ───
+// (Default bumped 45s→120s by RMOOZ-AI-COA-TIMEOUT-RETRY-A, then centralized into
+// llm-runtime-config.js by RMOOZ-LLM-RUNTIME-CONFIG-A — the decision module delegates.)
+console.log('\n§1  Default unit-decision timeout is 120000ms (canonical resolver)');
+ok('canonical resolver default timeout constant is 120000',
+    LLM_CFG.DEFAULT_TIMEOUT_MS === 120000);
+ok('decision module delegates the timeout to the resolver (LLM_CFG.getTimeoutMs)',
+    /LLM_CFG\.getTimeoutMs\(/.test(llmSrc));
+ok('old 15000/45000 default NOT present in decision module code',
+    !/timeoutMs\s*=\s*(15000|45000)/.test(llmSrc) && !/\|\|\s*'(15000|45000)'/.test(llmSrc));
 
-// ── SECTION 2: Env override RMOOZ_FREE_FIGHT_TIMEOUT_MS ─────────────────
-console.log('\n§2  Env override RMOOZ_FREE_FIGHT_TIMEOUT_MS still works');
-ok('RMOOZ_FREE_FIGHT_TIMEOUT_MS read first',
-    /RMOOZ_FREE_FIGHT_TIMEOUT_MS/.test(llmSrc));
-ok('RMOOZ_AI_TIMEOUT_MS read as secondary override',
-    /RMOOZ_AI_TIMEOUT_MS/.test(llmSrc));
-ok('parseInt used for parsing',
-    /parseInt.*RMOOZ_FREE_FIGHT_TIMEOUT_MS/.test(llmSrc));
+// ── SECTION 2: Env override + precedence (now owned by the resolver) ──────────
+console.log('\n§2  Timeout env override + precedence (canonical resolver)');
+ok('resolver reads canonical RMOOZ_LLM_TIMEOUT_MS', /RMOOZ_LLM_TIMEOUT_MS/.test(cfgSrc));
+ok('resolver reads legacy RMOOZ_FREE_FIGHT_TIMEOUT_MS', /RMOOZ_FREE_FIGHT_TIMEOUT_MS/.test(cfgSrc));
+ok('resolver reads legacy RMOOZ_AI_TIMEOUT_MS', /RMOOZ_AI_TIMEOUT_MS/.test(cfgSrc));
+ok('resolver parses with parseInt', /parseInt/.test(cfgSrc));
+ok('decision module no longer reads RMOOZ_*_TIMEOUT_MS env directly',
+    !/process\.env\.RMOOZ_[A-Z_]*TIMEOUT_MS/.test(llmSrc));
 
-// Functional check: simulate env override
+// Functional check: the REAL resolver honors the env override
 (function() {
     var saved = process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS;
     process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS = '8000';
-    // Extract the timeout resolution logic from the source via eval
-    var timeoutMs;
-    try {
-        /* jshint evil:true */
-        timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '45000', 10);
-        if (!Number.isFinite(timeoutMs)) timeoutMs = 45000;
-    } catch(e) {}
-    ok('env override 8000 resolves correctly', timeoutMs === 8000);
+    ok('env override 8000 resolves correctly (resolver)', LLM_CFG.getTimeoutMs('decision') === 8000);
     if (saved !== undefined) process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS = saved;
     else delete process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS;
 })();
 
+// Functional check: default 120000 when every timeout knob is unset
 (function() {
-    delete process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS;
-    var timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '45000', 10);
-    if (!Number.isFinite(timeoutMs)) timeoutMs = 45000;
-    ok('default 45000 when env unset', timeoutMs === 45000);
+    var keys = ['RMOOZ_FREE_FIGHT_TIMEOUT_MS', 'RMOOZ_AI_TIMEOUT_MS', 'RMOOZ_LLM_TIMEOUT_MS', 'RMOOZ_OLLAMA_TIMEOUT_MS', 'RMOOZ_LLM_TIMEOUT_MS_DECISION'];
+    var snap = {}; keys.forEach(function (k) { snap[k] = process.env[k]; delete process.env[k]; });
+    ok('default 120000 when env unset (resolver)', LLM_CFG.getTimeoutMs('decision') === 120000);
+    keys.forEach(function (k) { if (snap[k] !== undefined) process.env[k] = snap[k]; });
 })();
 
 // ── SECTION 3: Timeout fallback returns deterministic valid unit ──────────────

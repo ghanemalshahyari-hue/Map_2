@@ -16,12 +16,12 @@
  *     free-fight-llm-capability-analyst.js / free-fight-llm-plan.js
  *
  * RESOLUTION PRECEDENCE (highest → lowest):
- *   1. runtime selection (runtime/ai-model-selection.json) — if valid
- *   2. RMOOZ_OLLAMA_MODEL          (the model the operator runs locally)
- *   3. RMOOZ_FREE_FIGHT_MODEL
- *   4. RMOOZ_LOCAL_LLM_MODEL
- *   5. RMOOZ_AI_MODEL
- *   6. ai-config.js defaultModel   (itself RMOOZ_OLLAMA_MODEL || 'qwen2.5:7b')
+ *   1. runtime selection (runtime/ai-model-selection.json) — if valid (owned HERE)
+ *   2..N. the env default chain + ai-config committed default — DELEGATED to
+ *         llm-runtime-config.js (RMOOZ-LLM-RUNTIME-CONFIG-A): RMOOZ_LLM_MODEL →
+ *         RMOOZ_OLLAMA_MODEL → RMOOZ_FREE_FIGHT_MODEL → RMOOZ_LOCAL_LLM_MODEL →
+ *         RMOOZ_AI_MODEL → ai-config.defaultModel. This module NO LONGER reads
+ *         model/provider env vars directly — it only owns the runtime UI pick.
  *
  * This module does NO network I/O on purpose — it must be safe to require from
  * ollama-client.js without a cycle. Availability (is the model actually pulled
@@ -44,6 +44,7 @@
 const fs   = require('fs');
 const path = require('path');
 const AI_CONFIG = require('./ai-config'); // for the committed default model (single source)
+const LLM_CFG   = require('./llm-runtime-config'); // RMOOZ-LLM-RUNTIME-CONFIG-A: canonical env/default resolver
 
 // UI_MOdified/ (server/ai/ → ../../ ). Persisted selection lives under runtime/.
 const REPO_ROOT = path.join(__dirname, '..', '..');
@@ -55,14 +56,6 @@ let _selected     = null;            // the runtime-file selection (null = none/
 
 function selectionFile() {
     return _fileOverride || process.env.RMOOZ_AI_MODEL_SELECTION_FILE || DEFAULT_FILE;
-}
-
-function firstNonEmpty() {
-    for (let i = 0; i < arguments.length; i++) {
-        const v = arguments[i];
-        if (v != null && String(v).trim() !== '') return String(v).trim();
-    }
-    return '';
 }
 
 // Read the persisted selection. Corrupt/missing file → null (safe fallback to env).
@@ -84,35 +77,28 @@ function load() {
 
 // The local provider name. The app is locked to local Ollama; free-fight may set
 // RMOOZ_FREE_FIGHT_PROVIDER but a remote value is never reported as the provider.
+// RMOOZ-LLM-RUNTIME-CONFIG-A: the raw provider comes from the canonical resolver;
+// model-selection only CLAMPS it for display (the actual remote-block lives in the
+// feature modules).
 function getProvider() {
-    const p = (process.env.RMOOZ_FREE_FIGHT_PROVIDER || AI_CONFIG.aiProvider || 'ollama').toLowerCase().trim();
+    const p = LLM_CFG.getProvider();
     return (p === 'ollama' || p === 'local') ? p : 'ollama';
 }
 
-// The effective model, by precedence. Env vars are read LIVE so a runtime change
-// (or a test) is honoured; the runtime-file selection (if any) wins over them.
+// The effective model, by precedence. The runtime-file selection (operator UI
+// pick) wins; otherwise the env default + ai-config committed default come from
+// the canonical resolver (RMOOZ-LLM-RUNTIME-CONFIG-A — single source for env reads).
 function getSelectedModel() {
     if (!_loaded) load();
     if (_selected) return _selected;
-    return firstNonEmpty(
-        process.env.RMOOZ_OLLAMA_MODEL,
-        process.env.RMOOZ_FREE_FIGHT_MODEL,
-        process.env.RMOOZ_LOCAL_LLM_MODEL,
-        process.env.RMOOZ_AI_MODEL,
-        AI_CONFIG && AI_CONFIG.defaultModel,
-        'qwen2.5:7b'
-    );
+    return LLM_CFG.envDefaultModel();
 }
 
 // Where did the effective model come from? (for diagnostics / route health)
 function selectionSource() {
     if (!_loaded) load();
     if (_selected) return 'runtime_selection';
-    if (firstNonEmpty(process.env.RMOOZ_OLLAMA_MODEL))    return 'env:RMOOZ_OLLAMA_MODEL';
-    if (firstNonEmpty(process.env.RMOOZ_FREE_FIGHT_MODEL)) return 'env:RMOOZ_FREE_FIGHT_MODEL';
-    if (firstNonEmpty(process.env.RMOOZ_LOCAL_LLM_MODEL))  return 'env:RMOOZ_LOCAL_LLM_MODEL';
-    if (firstNonEmpty(process.env.RMOOZ_AI_MODEL))         return 'env:RMOOZ_AI_MODEL';
-    return 'default';
+    return LLM_CFG.envDefaultSource();
 }
 
 // Persist + adopt a new selection. Validates a non-empty string; does NOT require

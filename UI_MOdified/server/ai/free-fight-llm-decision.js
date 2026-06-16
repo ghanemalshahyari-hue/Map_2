@@ -9,12 +9,12 @@
  * back to deterministic_demo_ai with fallback_reason
  * 'remote_provider_not_allowed_for_free_fight'.
  *
- * Provider resolution (never reads RMOOZ_AI_PROVIDER for this module):
- *   RMOOZ_FREE_FIGHT_PROVIDER || 'ollama'
- *
- * Model resolution (RMOOZ-LOCAL-MODEL-SELECTOR-A): delegated to model-selection.js —
- *   operator UI selection → RMOOZ_OLLAMA_MODEL → RMOOZ_FREE_FIGHT_MODEL →
- *   RMOOZ_LOCAL_LLM_MODEL → RMOOZ_AI_MODEL → ai-config default. One shared source.
+ * Provider/model/timeout (RMOOZ-LLM-RUNTIME-CONFIG-A): delegated to the canonical
+ * resolver llm-runtime-config.js — this module reads NO model/provider/timeout env
+ * directly. Provider = RMOOZ_LLM_PROVIDER → legacy RMOOZ_FREE_FIGHT_PROVIDER → 'ollama'
+ * (never RMOOZ_AI_PROVIDER). Model = task override (RMOOZ_LLM_MODEL_DECISION) →
+ * operator UI selection (model-selection.js) → env default. Timeout = RMOOZ_LLM_TIMEOUT_MS
+ * → legacy RMOOZ_FREE_FIGHT_TIMEOUT_MS/RMOOZ_AI_TIMEOUT_MS → 120000.
  *
  * Controlled by RMOOZ_ALLOW_SIM_RUN=1.  When disabled or on any error,
  * returns a deterministic fallback with a fallback_reason string.
@@ -31,22 +31,23 @@
  * ========================================================================== */
 
 const aiProvider = require('./ai-provider');
-const MODEL_SELECTION = require('./model-selection'); // RMOOZ-LOCAL-MODEL-SELECTOR-A: single model source
+const LLM_CFG    = require('./llm-runtime-config'); // RMOOZ-LLM-RUNTIME-CONFIG-A: canonical provider/model/timeout
 const ENGINE     = require('./free-fight-action-engine');
 
 // ── Local-only provider enforcement ─────────────────────────────────────────
 const REMOTE_PROVIDERS_BLOCKED = ['claude', 'zen', 'openai', 'auto'];
 
 function resolveLocalProvider() {
-    return (process.env.RMOOZ_FREE_FIGHT_PROVIDER || 'ollama').toLowerCase().trim();
+    // RMOOZ-LLM-RUNTIME-CONFIG-A: provider from the canonical resolver.
+    return LLM_CFG.getProvider();
 }
 function isRemoteProvider(name) {
     return REMOTE_PROVIDERS_BLOCKED.includes(String(name || '').toLowerCase().trim());
 }
 function resolveLocalModel() {
-    // RMOOZ-LOCAL-MODEL-SELECTOR-A: one resolver for the whole app (operator UI
-    // selection wins, then the env chain). No more divergent per-module default.
-    return MODEL_SELECTION.getSelectedModel();
+    // RMOOZ-LLM-RUNTIME-CONFIG-A: model from the canonical resolver — task override
+    // (RMOOZ_LLM_MODEL_DECISION) → operator UI selection → env default.
+    return LLM_CFG.getModel('decision');
 }
 
 const ALLOWED_ACTION_TYPES = ['MOVE_TOWARD_OBJECTIVE', 'DEFEND_BASE', 'HOLD_POSITION', 'PATROL_NEAR_BASE'];
@@ -141,8 +142,9 @@ async function askLlmForAction(units, objectives, opts, _providerOverride) {
     }
     const model     = resolveLocalModel();
     // RMOOZ-AI-COA-TIMEOUT-RETRY-A: 45s was too tight for a 7B-class model on CPU/modest GPU. 120s default.
-    let   timeoutMs = parseInt(process.env.RMOOZ_FREE_FIGHT_TIMEOUT_MS || process.env.RMOOZ_AI_TIMEOUT_MS || '120000', 10);
-    if (!Number.isFinite(timeoutMs)) timeoutMs = 120000;
+    // RMOOZ-LLM-RUNTIME-CONFIG-A: timeout from the canonical resolver
+    // (RMOOZ_LLM_TIMEOUT_MS[/_DECISION] → legacy RMOOZ_FREE_FIGHT_TIMEOUT_MS/RMOOZ_AI_TIMEOUT_MS).
+    let   timeoutMs = LLM_CFG.getTimeoutMs('decision');
 
     const system = [
         'You are a military wargame AI for an advisory-only demo exercise.',

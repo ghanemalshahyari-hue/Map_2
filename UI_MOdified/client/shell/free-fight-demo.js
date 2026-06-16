@@ -2445,7 +2445,7 @@
         _writeMoveFrame(realMoves, 1);
         var movedNow = _movedRecords(realMoves);
         _coaMovedUnits = movedNow; _coaApplied = true;
-        _logExecutedMoves(realMoves);
+        var _el0 = _nowMs(); _logExecutedMoves(realMoves); var event_log_ms = _nowMs() - _el0;   // RMOOZ-...-LIVE-DELAY-AUDIT-N
         // 3) per-order status + completion
         var anyMovedThisTick = false, allComplete = true;
         moves.forEach(function (m) {
@@ -2470,11 +2470,29 @@
             }
         }
         _coaExec.ticks++; _coaExec.updated_at = _nowISO();
-        _coaExec.last_tick_timing = { coa_tick_execute_ms: _nowMs() - te0, replan_trigger_check_ms: replan_trigger_check_ms, llm_called_this_tick: false };
-        _persistCoaExec();   // RMOOZ-COA-COMMIT-PERSISTENCE-M: phase advance / order status survive refresh
-        if (mapReady()) { _triggerScenarioRedraw(); syncMarkers(); _maybePanToMovedCentroid(); }
-        updatePanel();
+        var coa_tick_execute_ms = _nowMs() - te0;
+        // RMOOZ-COA-COMMIT-LIVE-DELAY-AUDIT-N: instrument the REAL per-tick UI/map/persist costs so the
+        // operator can see (in their browser) exactly where any delay is. coa_tick_execute_ms is the
+        // pure phase work; the rest is rendering/persistence the browser pays each tick.
+        var _sp0 = _nowMs(); _persistCoaExec(); var storage_persist_ms = _nowMs() - _sp0;
+        var _mp0 = _nowMs(); if (mapReady()) { _triggerScenarioRedraw(); syncMarkers(); _maybePanToMovedCentroid(); } var map_paint_ms = _nowMs() - _mp0;
+        var _ui0 = _nowMs(); updatePanel(); var ui_update_ms = _nowMs() - _ui0;
+        _coaExec.last_tick_timing = {
+            coa_tick_execute_ms: coa_tick_execute_ms, replan_trigger_check_ms: replan_trigger_check_ms,
+            event_log_ms: event_log_ms, storage_persist_ms: storage_persist_ms, map_paint_ms: map_paint_ms,
+            ui_update_ms: ui_update_ms, tick_interval_delay_ms: _coaExecIntervalMs, llm_called_this_tick: false,
+        };
         return _coaExec.last_tick_timing;
+    }
+    // RMOOZ-COA-COMMIT-LIVE-DELAY-AUDIT-N: committed-COA execution is DETERMINISTIC (no LLM, no
+    // animation to wait on), so it must NOT inherit the cinematic LLM-loop pacing (x1 = one step every
+    // 6s — the source of the "delay" the operator felt). Tick briskly by default (COA_EXEC_TICK_MS), and
+    // let the fire speeds accelerate further — but never throttle deterministic execution to 6s.
+    var COA_EXEC_TICK_MS = 500;
+    var _coaExecIntervalMs = COA_EXEC_TICK_MS;
+    function _coaExecTickMs() {
+        var cinematic = _ffSpeed().moveAnimMs || COA_EXEC_TICK_MS;
+        return Math.max(120, Math.min(COA_EXEC_TICK_MS, cinematic));   // x1/x5/x15 → 500ms; fire → 450; fire2 → 120
     }
     function _runCommittedCoa() {
         if (!_coaExec || !_coaExec.active) return;
@@ -2482,9 +2500,9 @@
         _coaExec._restored = false;   // resuming → drop the "restored from session" banner
         _coaExec.paused = false; _coaExec.replan_required = false; _coaExec.replan_reason = null; _coaExec.phase_status = 'running';
         _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
+        _coaExecIntervalMs = _coaExecTickMs();   // brisk, deterministic — NOT the 6s cinematic LLM pacing
         _coaExecTick();   // run one immediately
-        var tickMs = Math.max(300, _ffSpeed().moveAnimMs || 600);
-        _coaExecTimer = _setIntervalSafe(_coaExecTick, tickMs);
+        _coaExecTimer = _setIntervalSafe(_coaExecTick, _coaExecIntervalMs);
         updatePanel();
     }
     function _pauseCommittedCoa() {
@@ -2545,7 +2563,10 @@
             if (running) h += '<div data-ff-coa="no-llm-note" style="margin-top:3px;font-size:9.5px;color:#7fd6a0;">✅ AI is NOT being called on normal ticks. Running the committed COA deterministically.</div>';
             // per-tick timing (perf proof)
             var tt = ex.last_tick_timing || {};
-            h += '<div style="margin-top:2px;font-size:9px;color:#6a8fa8;">commit ' + _fmtMs(tt.coa_commit_ms || 0) + ' · tick ' + _fmtMs(tt.coa_tick_execute_ms || 0) + ' · trigger-check ' + _fmtMs(tt.replan_trigger_check_ms || 0) + ' · llm_called_this_tick: <b style="color:' + (tt.llm_called_this_tick ? '#f0a0a0' : '#7fd6a0') + ';">' + String(!!tt.llm_called_this_tick) + '</b></div>';
+            h += '<div style="margin-top:2px;font-size:9px;color:#6a8fa8;">commit ' + _fmtMs(tt.coa_commit_ms || 0) + ' · tick ' + _fmtMs(tt.coa_tick_execute_ms || 0) + ' · trigger-check ' + _fmtMs(tt.replan_trigger_check_ms || 0) +
+                ' · ui ' + _fmtMs(tt.ui_update_ms || 0) + ' · map ' + _fmtMs(tt.map_paint_ms || 0) + ' · log ' + _fmtMs(tt.event_log_ms || 0) + ' · persist ' + _fmtMs(tt.storage_persist_ms || 0) +
+                ' · interval ' + (tt.tick_interval_delay_ms != null ? tt.tick_interval_delay_ms + 'ms' : '—') +
+                ' · llm_called_this_tick: <b style="color:' + (tt.llm_called_this_tick ? '#f0a0a0' : '#7fd6a0') + ';">' + String(!!tt.llm_called_this_tick) + '</b></div>';
         }
         h += '</div>';
         return h;

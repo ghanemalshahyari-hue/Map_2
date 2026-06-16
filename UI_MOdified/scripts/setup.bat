@@ -121,8 +121,8 @@ if not exist "node_modules\sql.js\package.json" (
 :LAUNCH
 echo.
 echo  [4/4] Starting servers...
-set "RMOOZ_ALLOW_SIM_RUN=1"
-set "RMOOZ_SIM_MODEL=qwen2.5:3b"
+set RMOOZ_ALLOW_SIM_RUN="1"
+set RMOOZ_SIM_MODEL=""
 
 for /f "tokens=5" %%P in ('netstat -ano ^| findstr ":8080 " 2^>nul') do taskkill /PID %%P /F >nul 2>&1
 for /f "tokens=5" %%P in ('netstat -ano ^| findstr ":8000 " 2^>nul') do taskkill /PID %%P /F >nul 2>&1

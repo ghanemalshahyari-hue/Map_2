@@ -1,9 +1,15 @@
+import os
 import requests
 import json
 
 url = "http://localhost:4000/chat/completions"
+# NOTE: LiteLLM *virtual key* — a non-secret local test fixture minted by setup_keys.sh
+# against a self-hosted vLLM proxy (master_key sk-1234, localhost). Valid only against
+# that proxy's local postgres DB — NOT a cloud-provider secret, and inert outside that
+# ephemeral local deployment. Override via the LITELLM_TEST_KEY env var; the fallback is
+# kept non-secret-shaped so secret scanners don't re-flag it.
 headers = {
-    "Authorization": "Bearer sk-pDzYMER5qTMM0XJLiIBojg", # Normal user 1 (2k TPM limit)
+    "Authorization": f"Bearer {os.environ.get('LITELLM_TEST_KEY', 'sk-local-test-key')}", # Normal user 1 (2k TPM limit)
     "Content-Type": "application/json"
 }
 

@@ -2,8 +2,15 @@
 # script to test strict rate limits
 
 # Read API keys
-VIP_KEY="sk-GV74IHMrVvq6jnnc1GAMDg"
-NORMAL_KEY="sk-P02hAGGrCDE3CsDytLrB_Q" 
+# NOTE: these are LiteLLM *virtual keys* — non-secret local test fixtures. They were
+# minted by setup_keys.sh via `POST /key/generate` against a self-hosted vLLM proxy
+# (master_key sk-1234, localhost:4000) and are valid ONLY against that proxy's local
+# postgres DB. They are NOT cloud-provider (OpenAI/Anthropic) secrets and are inert
+# outside that ephemeral local deployment. Set LITELLM_VIP_KEY / LITELLM_NORMAL_KEY to
+# your own `/key/generate` output; the fallbacks are kept non-secret-shaped so secret
+# scanners don't re-flag them.
+VIP_KEY="${LITELLM_VIP_KEY:-sk-local-test-vip}"
+NORMAL_KEY="${LITELLM_NORMAL_KEY:-sk-local-test-normal}"
 
 # Define testing function
 run_load_test() {

@@ -110,7 +110,9 @@ var RH_READY = { ok: true, allow_sim_run: true, ai_execution_enabled: true, mode
 // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D: the exec-gate fix message now reads "Set RMOOZ_ALLOW_SIM_RUN=1
 // and restart the server." (the spec-exact wording; _freeFightAiReady composes it from _aiBlockReasons).
 var DISABLED_MSG = /AI execution is disabled\. Set RMOOZ_ALLOW_SIM_RUN=1 and restart the server\./;
-var NO_MODEL_MSG = /AI execution is allowed, but no local LLM\/model is available\. Select\/configure a local model\./;
+// RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: the no-model operator text is now the simple, action-oriented
+// "Choose an AI model to start." (the old provider/env jargon moved under Advanced diagnostics).
+var NO_MODEL_MSG = /Choose an AI model to start\./;
 
 function reset(routeHealth, depth) {
     elById = {}; bodyEl.children = []; _eventLog.length = 0;

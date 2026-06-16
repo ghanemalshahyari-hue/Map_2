@@ -82,6 +82,11 @@
     // RMOOZ-LOCAL-MODEL-SELECTOR-A: local model picker state (mirrors the global header HUD).
     var _modelInfo = null;             // last /api/ai/models payload
     var _pendingModel = null;          // dropdown's current (uncommitted) value
+    // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: the operator-facing simple model flow.
+    // _modelPickerOpen = the "Select AI Model" picker toggle; _autoSelectedModel guards the
+    // auto-select so it fires at most once per available single model (no select→refetch loop).
+    var _modelPickerOpen = false;
+    var _autoSelectedModel = null;
     // FREEFIGHT-MANUAL-MAP-CAMERA-A: the camera stays where the operator left it.
     // AI movement NEVER pans/zooms/fitBounds the map unless mode is 'follow'.
     var _freeFightCameraMode = 'manual'; // 'manual' (default) | 'follow'
@@ -1010,8 +1015,9 @@
             '<option value="deterministic"' + (_plannerMode === 'deterministic' ? ' selected' : '') + '>Deterministic Planner - RMOOZ planner, works offline</option>' +
             '<option value="llm"' + (_plannerMode === 'llm' ? ' selected' : '') + '>LLM Assisted - Qwen/LiteLLM advisory, needs model</option>' +
             '</select></div>';
-        // RMOOZ-LOCAL-MODEL-SELECTOR-A: local model picker (same selection as the global header HUD).
-        html += renderModelSelectorHtml();
+        // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: the model picker no longer clutters the group-demo
+        // header — model selection now lives in the AI Free Fight card (the operator-friendly flow +
+        // the raw dropdown under Advanced diagnostics), so there is ONE place to choose the AI model.
         // FREE-FIGHT-CARD-VISIBILITY: the panel always opens; Start is gated on
         // Objective X (+ groups + anchors). No anchors → disabled + note; no
         // objective → disabled + "Place Objective X to start" note.
@@ -1079,8 +1085,9 @@
         if (modeSel && modeSel.addEventListener) modeSel.addEventListener('change', function () { setPlannerMode(modeSel.value); });
         var llmCb = _panel.querySelector('[data-act="toggle-llm"]');
         if (llmCb && llmCb.addEventListener) llmCb.addEventListener('change', function () { _useLlm = !!(llmCb && llmCb.checked); });
-        // RMOOZ-LOCAL-MODEL-SELECTOR-A: model picker controls.
-        bind('model-refresh', _fetchModels);
+        // RMOOZ-LOCAL-MODEL-SELECTOR-A: model picker controls (raw dropdown, under Advanced).
+        // Refresh keeps the current listing (local vs cloud) instead of receiving the click event.
+        bind('model-refresh', function () { _fetchModels(_modelInfo && _modelInfo.is_cloud ? 'openrouter' : undefined); });
         bind('model-use', function () {
             var s = _panel && _panel.querySelector('[data-act="model-select"]');
             var v = s ? s.value : _pendingModel;
@@ -1088,6 +1095,19 @@
         });
         var modelSel = _panel.querySelector('[data-act="model-select"]');
         if (modelSel && modelSel.addEventListener) modelSel.addEventListener('change', function () { _pendingModel = modelSel.value; });
+        // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: the friendly model flow controls.
+        bind('ff-open-model-picker', function () { _modelPickerOpen = !_modelPickerOpen; updatePanel(); });
+        bind('ff-load-local', function () { _fetchModels(); });
+        bind('ff-load-cloud', function () { _fetchModels('openrouter'); });
+        var picks = _panel.querySelectorAll ? _panel.querySelectorAll('[data-ff-model-pick]') : null;
+        if (picks && picks.forEach) picks.forEach(function (el) {
+            if (!el || !el.addEventListener) return;
+            el.addEventListener('click', function () {
+                var m = el.getAttribute('data-model');
+                var p = el.getAttribute('data-provider');
+                if (m) { _modelPickerOpen = false; _selectModel(m, p || undefined); }
+            });
+        });
     }
     function bind(act, fn) { if (!_panel) return; var b = _panel.querySelector('[data-act="' + act + '"]'); if (b && b.addEventListener) b.addEventListener('click', fn); }
 
@@ -1595,27 +1615,54 @@
             .then(function (h) { _routeHealth = h; updatePanel(); })
             .catch(function (e) { _routeHealth = { ok: false, reason: 'probe_failed', error: (e && e.message) || 'error' }; updatePanel(); });
     }
-    // RMOOZ-LOCAL-MODEL-SELECTOR-A: list local models + current selection (mirrors the global header HUD).
-    function _fetchModels() {
+    // RMOOZ-LOCAL-MODEL-SELECTOR-A: list models + current selection (mirrors the global header HUD).
+    // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: optional provider ('openrouter') previews the cloud
+    // catalog (only meaningful when cloud mode is enabled); default = the current selection's provider.
+    function _fetchModels(provider) {
         var w = W();
         if (!w || typeof w.fetch !== 'function') return;
-        _fetchJsonSafe('/api/ai/models', { method: 'GET' })
+        var url = '/api/ai/models' + (provider ? ('?provider=' + encodeURIComponent(provider)) : '');
+        _fetchJsonSafe(url, { method: 'GET' })
             .then(function (m) {
                 _modelInfo = m;
                 if (_pendingModel == null && m && m.selected_model) _pendingModel = m.selected_model;
+                _maybeAutoSelectModel();   // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A
                 updatePanel();
             })
             .catch(function (e) { _modelInfo = { ok: false, error: (e && e.message) || 'error' }; updatePanel(); });
     }
+    // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: auto-select the best model so the operator rarely has to
+    // pick. Rules (req #4): saved model available → keep it (no-op); exactly ONE installed local model
+    // → select it automatically; multiple installed but the saved one is missing → leave it for the
+    // operator (the status shows "Choose another model"). Cloud is never auto-selected (data-leaves
+    // consent must be explicit). The guard prevents a select→refetch→select loop.
+    function _maybeAutoSelectModel() {
+        var info = _modelInfo;
+        if (!info || info.ok === false) return false;
+        if (info.model_available === true) return false;   // saved model is available → nothing to do
+        if (info.is_cloud === true) return false;          // never auto-pick a cloud model
+        var avail = (Array.isArray(info.models) ? info.models : []).filter(function (m) { return m && m.available !== false; });
+        if (avail.length === 1) {
+            var only = avail[0] && avail[0].name;
+            if (only && only !== info.selected_model && _autoSelectedModel !== only) {
+                _autoSelectedModel = only;
+                _selectModel(only, 'ollama');
+                return true;
+            }
+        }
+        return false;
+    }
     // RMOOZ-LOCAL-MODEL-SELECTOR-A: persist the operator's choice app-wide, then re-probe route health
     // (model_available may flip) and tell the rest of the app via rmooz:ai-model-changed.
-    function _selectModel(model) {
+    // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: provider is optional ('ollama' default | 'openrouter' cloud).
+    function _selectModel(model, provider) {
         var w = W();
         if (!model || !w || typeof w.fetch !== 'function') return;
+        var body = provider ? { model: model, provider: provider } : { model: model };
         _fetchJsonSafe('/api/ai/model/select', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ model: model }),
+            body: JSON.stringify(body),
         }).then(function (m) {
             if (m && m.ok) {
                 _modelInfo = m;
@@ -1668,6 +1715,152 @@
             '</div>' +
             '<div style="margin-top:4px;font-size:10px;color:' + statusColor + ';">' + statusTxt + '</div>' +
         '</div>';
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A — the operator-facing simple AI model flow.
+    // The main AI Free Fight card shows ONLY: AI Model · Status · Select AI Model · Start.
+    // No env-variable names here — those live under Advanced diagnostics. The status is a
+    // single plain word (Ready / Needs model / Cloud disabled / …) + one action message.
+    // ════════════════════════════════════════════════════════════════════════
+    // Combine route-health (the execution gate + model availability) and the /api/ai/models
+    // payload (the model list + cloud flags) into ONE operator-friendly status. Returns:
+    //   { state, label, color, message, selected, providerLabel, isCloud, canStart }
+    function _modelFlowStatus() {
+        var rh = _routeHealth, info = _modelInfo;
+        var GREEN = '#7fd6a0', AMBER = '#e0a93a', GREY = '#8fa5b8';
+        var selected = (info && info.selected_model) || (rh && rh.model) || '';
+        var isCloud = !!(info && (info.is_cloud === true || info.provider === 'openrouter'));
+        var providerLabel = isCloud ? 'Cloud model' : 'Local model';
+        function out(state, label, color, message, canStart) {
+            return { state: state, label: label, color: color, message: message,
+                     selected: selected, providerLabel: providerLabel, isCloud: isCloud, canStart: !!canStart };
+        }
+        if (!rh && !info) return out('unknown', 'Checking…', GREY, 'Checking AI status…', false);
+        var gateOn = rh ? (rh.allow_sim_run === true) : (info ? info.allow_sim_run === true : false);
+        var modelAvail = rh ? (rh.model_available === true) : (info ? info.model_available === true : false);
+        var cloudDisabled = !!((rh && rh.provider_blocked === true && rh.configured_provider === 'openrouter') ||
+                               (info && info.is_cloud === true && info.cloud_enabled === false));
+        // The single execution gate stays in force (safety) — but the main card says it plainly,
+        // with the env detail tucked under Advanced diagnostics.
+        if (!gateOn) return out('gate_off', 'Needs setup', AMBER,
+            'AI execution is turned off. Open Advanced diagnostics to enable it.', false);
+        if (cloudDisabled) return out('cloud_disabled', 'Cloud disabled', AMBER,
+            'Cloud AI is turned off. Choose a local model, or enable cloud mode in Advanced diagnostics.', false);
+        if (!modelAvail) {
+            var models = (info && Array.isArray(info.models)) ? info.models : null;
+            var msg;
+            if (models == null) msg = AI_NO_MODEL_MSG;                       // not loaded yet → generic
+            else if (models.length === 0) msg = 'No AI model found. Start Ollama or choose a cloud model.';
+            else {
+                var availList = models.filter(function (m) { return m && m.available !== false; });
+                msg = availList.length ? 'Your saved model is not available. Choose another model.' : AI_NO_MODEL_MSG;
+            }
+            return out('needs_model', 'Needs model', AMBER, msg, false);
+        }
+        if (_aiDepth === 'fast') return out('fast', 'Fast — AI off', AMBER,
+            'Fast depth skips the AI. Switch Depth to Normal or Deep to use the model.', false);
+        // Gate on + a model is available + depth uses the LLM → Ready. canStart mirrors the single
+        // runtime gate (_freeFightAiReady) so display and behavior never disagree.
+        return out('ready', 'Ready', GREEN, 'Ready — press Start AI Free Fight.', _freeFightAiReady().ok !== false);
+    }
+    // One model row (a clickable one-tap selection) for the friendly picker.
+    function _modelPickRow(name, provider, kindLabel, on) {
+        var accent = (provider === 'openrouter') ? '#e0a060' : '#7fd6a0';
+        return '<button data-ff-model-pick="1" data-model="' + esc(name) + '" data-provider="' + esc(provider) + '"' +
+            ' style="display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;text-align:left;cursor:pointer;' +
+            'border:1px solid ' + (on ? '#2e9d6a' : '#34516a') + ';background:' + (on ? '#0f2a1c' : '#0c1824') + ';' +
+            'color:' + (on ? '#9fe8c0' : '#dbe7f2') + ';border-radius:4px;padding:5px 8px;margin-bottom:3px;font:inherit;font-size:10.5px;">' +
+            '<span>' + (on ? '✓ ' : '') + esc(name) + '</span>' +
+            '<span style="font-size:9px;color:' + accent + ';white-space:nowrap;">' + esc(kindLabel) + (provider === 'openrouter' ? ' ☁' : '') + '</span>' +
+        '</button>';
+    }
+    // The model picker revealed by "Select AI Model": local models first, then cloud (clearly
+    // labelled, with a data-leaves warning) ONLY when cloud mode is enabled. No env names.
+    function _modelPickerHtml() {
+        var info = _modelInfo;
+        var selected = (info && info.selected_model) || '';
+        var isCloudListing = !!(info && info.is_cloud === true);
+        var cloudEnabled = !!(info && info.cloud_enabled === true);
+        var cloudAllowed = !!(info && info.cloud_allowed === true);
+        var models = (info && Array.isArray(info.models)) ? info.models.filter(function (m) { return m && m.available !== false; }) : [];
+        var h = '<div data-ff-model="picker" style="margin-top:5px;padding:6px 8px;border:1px solid #2a4d6a;border-radius:5px;background:#08131e;">';
+        // Source switch — Local first; Cloud only appears when cloud mode is enabled.
+        h += '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:5px;align-items:center;">';
+        h += '<span style="font-size:9.5px;color:#8fa5b8;">Source:</span>';
+        h += '<button data-act="ff-load-local" style="font:inherit;cursor:pointer;border:1px solid ' + (!isCloudListing ? '#5ab0e0' : '#4a5f75') + ';background:' + (!isCloudListing ? '#1a4a6a' : '#101b27') + ';color:' + (!isCloudListing ? '#cfeaff' : '#8fb8e0') + ';border-radius:4px;padding:3px 8px;font-size:9.5px;font-weight:' + (!isCloudListing ? '700' : '400') + ';">🖥 Local</button>';
+        if (cloudEnabled) {
+            h += '<button data-act="ff-load-cloud" style="font:inherit;cursor:pointer;border:1px solid ' + (isCloudListing ? '#e0a060' : '#4a5f75') + ';background:' + (isCloudListing ? '#2a2412' : '#101b27') + ';color:' + (isCloudListing ? '#e8d68a' : '#8fb8e0') + ';border-radius:4px;padding:3px 8px;font-size:9.5px;font-weight:' + (isCloudListing ? '700' : '400') + ';">☁ Cloud</button>';
+        }
+        h += '</div>';
+        if (isCloudListing) {
+            h += '<div style="font-size:10px;font-weight:700;color:#e0a060;margin-bottom:2px;">Cloud models ☁ — النماذج السحابية</div>';
+            h += '<div data-ff-model="cloud-warn" style="font-size:9px;color:#e0a060;margin-bottom:3px;">⚠ Cloud model — data leaves this machine.</div>';
+        } else {
+            h += '<div style="font-size:10px;font-weight:700;color:#7fd6a0;margin-bottom:3px;">Local models — النماذج المحلية</div>';
+        }
+        if (models.length) {
+            var prov = isCloudListing ? 'openrouter' : 'ollama';
+            var kind = isCloudListing ? 'Cloud model' : 'Local model';
+            models.forEach(function (m) { var nm = (m && m.name) ? m.name : String(m); h += _modelPickRow(nm, prov, kind, nm === selected); });
+        } else if (isCloudListing) {
+            h += '<div style="font-size:9.5px;color:#8fa5b8;">No cloud models returned. Check the cloud API key in Advanced diagnostics.</div>';
+        } else {
+            h += '<div data-ff-model="no-local" style="font-size:9.5px;color:#e0a93a;">No AI model found. Start Ollama or choose a cloud model.</div>';
+        }
+        if (!cloudEnabled) {
+            h += '<div style="margin-top:4px;font-size:9px;color:#6a8fa8;">Cloud models are off' + (cloudAllowed ? ' (no API key set)' : '') + '. Local-only is the default.</div>';
+        }
+        h += '<div style="margin-top:5px;"><button data-act="model-refresh" style="font:inherit;cursor:pointer;border:1px solid #4a5f75;background:#101b27;color:#8fb8e0;border-radius:4px;padding:3px 8px;font-size:9.5px;">↻ Refresh</button></div>';
+        h += '</div>';
+        return h;
+    }
+    // The simple operator block for the main AI Free Fight card: AI Model + Status + one action
+    // message + the single "Select AI Model" button (which reveals the picker). NO env names.
+    function _modelFlowHtml() {
+        var s = _modelFlowStatus();
+        var h = '<div data-ff-loop="model-flow" style="margin-top:4px;border-top:1px solid #1a3050;padding-top:5px;">';
+        h += '<div style="font-size:11px;color:#cdd8e4;">' +
+            '<span style="color:#8fa5b8;">AI Model:</span> ' +
+            '<span data-ff-model="selected" style="color:#e8eaed;font-weight:700;">' + esc(s.selected || '—') + '</span> ' +
+            '<span data-ff-model="kind" style="color:' + (s.isCloud ? '#e0a060' : '#7fd6a0') + ';font-size:10px;">· ' + esc(s.providerLabel) + (s.isCloud ? ' ☁' : '') + '</span></div>';
+        h += '<div style="font-size:11px;color:#cdd8e4;margin-top:2px;">' +
+            '<span style="color:#8fa5b8;">Status:</span> ' +
+            '<span data-ff-model="status" style="color:' + s.color + ';font-weight:700;">' + esc(s.label) + '</span></div>';
+        h += '<div data-ff-model="message" style="font-size:10px;color:' + s.color + ';margin-top:2px;">' + esc(s.message) + '</div>';
+        h += '<div style="margin-top:5px;">' +
+            '<button data-act="ff-open-model-picker" style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#172436;color:#9ec2ec;border-radius:5px;padding:4px 10px;font-size:10.5px;font-weight:600;">' +
+            (_modelPickerOpen ? '▲ Hide models — إخفاء' : '🧠 Select AI Model — اختر النموذج') + '</button></div>';
+        if (_modelPickerOpen) h += _modelPickerHtml();
+        h += '</div>';
+        return h;
+    }
+    // Advanced diagnostics (collapsed by default): the technical signals the operator does NOT need
+    // day-to-day — the execution gate (RMOOZ_ALLOW_SIM_RUN), cloud gate (RMOOZ_ALLOW_CLOUD_AI), raw
+    // provider, model_available, plan_source — plus the route probe and the raw model dropdown.
+    function _advancedDiagnosticsHtml() {
+        var rh = _routeHealth, info = _modelInfo;
+        var h = '<details data-ff-loop="advanced-diagnostics" style="margin-top:6px;">';
+        h += '<summary style="cursor:pointer;font-size:10px;color:#8fa5b8;font-weight:600;">⚙ Advanced diagnostics — تفاصيل تقنية</summary>';
+        h += '<div style="margin-top:5px;border-top:1px solid #1a3050;padding-top:5px;">';
+        var rhOk = rh && rh.ok === true;
+        var rhColor = rhOk ? '#7fd6a0' : (rh ? '#e0a93a' : '#8fa5b8');
+        var rhText = rhOk ? 'OK' : (rh ? 'unavailable' : 'unknown — click Check');
+        h += '<div style="font-size:10px;color:#cdd8e4;"><span style="color:#8fa5b8;">Planner route:</span> <span style="color:' + rhColor + ';font-weight:700;">' + esc(rhText) + '</span>';
+        h += ' <button data-act="loop-route-check" style="font:inherit;cursor:pointer;border:1px solid #4a5f75;background:#101b27;color:#8fb8e0;border-radius:4px;padding:1px 6px;font-size:9px;">Check route</button></div>';
+        var gateStatus = _aiGateStatusHtml();
+        if (gateStatus) h += '<div style="margin-top:4px;">' + gateStatus + '</div>';
+        var cloudAllowed = info ? info.cloud_allowed === true : null;
+        var cloudEnabled = info ? info.cloud_enabled === true : null;
+        h += '<div style="margin-top:4px;font-size:9.5px;color:#8fa5b8;">Cloud AI (RMOOZ_ALLOW_CLOUD_AI): ' +
+            (cloudAllowed === true ? 'allowed' : (cloudAllowed === false ? 'off' : 'unknown')) +
+            ' · cloud ready: ' + (cloudEnabled === true ? 'yes' : (cloudEnabled === false ? 'no' : 'unknown')) + '</div>';
+        h += '<div style="margin-top:3px;font-size:9.5px;color:#8fa5b8;">provider: ' + esc((rh && (rh.configured_provider || rh.provider)) || '—') +
+            ' · model_available: ' + (rh ? String(rh.model_available) : '—') +
+            (_coaPlan && _coaPlan.plan_source ? ' · plan_source: ' + esc(_coaPlan.plan_source) : '') + '</div>';
+        h += '<div style="margin-top:5px;">' + renderModelSelectorHtml() + '</div>';
+        h += '</div></details>';
+        return h;
     }
     function _fetchAiDecision() {
         var w = W();
@@ -2245,7 +2438,10 @@
     // (surfaced on the plan as allow_sim_run / on route health as allow_sim_run). These are the only
     // operator-facing messages — the single gate is RMOOZ_ALLOW_SIM_RUN (no separate free-fight flag).
     var AI_EXECUTION_DISABLED_MSG = 'AI execution is disabled. Enable RMOOZ_ALLOW_SIM_RUN=1.';
-    var AI_NO_MODEL_MSG = 'AI execution is allowed, but no local LLM/model is available. Select/configure a local model.';
+    // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: the operator-facing no-model text is now simple and
+    // action-oriented — no provider/env jargon. This replaces the old technical "no local model"
+    // wording. The technical detail (gate, provider, availability) lives only under Advanced diagnostics.
+    var AI_NO_MODEL_MSG = 'Choose an AI model to start.';
     // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: a TIMEOUT means the model IS installed but too slow for the
     // time budget — say so honestly (the old code mislabeled it "no model available").
     var AI_TIMEOUT_MSG = 'The local AI timed out — the selected model is too slow for the current time budget. Pick a faster model (e.g. qwen2.5:3b) in the model selector, raise RMOOZ_FREE_FIGHT_TIMEOUT_MS, or switch to Staff-Safe mode.';
@@ -3176,26 +3372,13 @@
             h += '<div style="font-size:10.5px;color:#cdd8e4;">' +
                  '<span style="color:#8fa5b8;">Last action:</span> <span style="color:#e0e8f0;">' + esc(d.coa_id) + ' ' + esc(d.coa_title) + ' — ' + d.moved + ' units moved</span></div>';
         }
-        // FREEFIGHT-COA-ROUTE-JSON-GUARD-A: planner route health + local-only provider/model
-        h += '<div data-ff-loop="route-health" style="font-size:10px;color:#cdd8e4;margin-top:4px;border-top:1px solid #1a3050;padding-top:4px;">';
-        var rh = _routeHealth;
-        var rhOk = rh && rh.ok === true;
-        var rhColor = rhOk ? '#7fd6a0' : (rh ? '#e0a93a' : '#8fa5b8');
-        var rhText = rhOk ? 'OK' : (rh ? 'unavailable' : 'unknown — click Check');
-        h += '<span style="color:#8fa5b8;">Planner route:</span> <span style="color:' + rhColor + ';font-weight:700;">' + esc(rhText) + '</span>';
-        h += ' <button data-act="loop-route-check" style="font:inherit;cursor:pointer;border:1px solid #4a5f75;background:#101b27;color:#8fb8e0;border-radius:4px;padding:1px 6px;font-size:9px;">Check route</button>';
-        // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D: the structured gate status (4 separate signals — execution
-        // gate, raw provider, model availability, local-only policy — + the EXACT fix per active
-        // block) replaces the old single-line gate/model/reason rendering.
-        var gateStatus = _aiGateStatusHtml();
-        if (gateStatus) {
-            h += '<div style="margin-top:4px;">' + gateStatus + '</div>';
-        } else {
-            h += '<div><span style="color:#8fa5b8;">Provider policy:</span> <span style="color:#7fd6a0;">local only</span>';
-            h += ' · <span style="color:#8fa5b8;">Provider:</span> <span style="color:#9ec2ec;">' + esc((rh && rh.provider) || 'ollama') + '</span>';
-            h += ' · <span style="color:#8fa5b8;">Model:</span> <span style="color:#9ec2ec;">' + esc((rh && rh.model) || 'qwen2.5:7b') + '</span></div>';
-        }
-        h += '</div>';
+        // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: the simple operator surface — AI Model · Status ·
+        // "Select AI Model". The technical signals (execution gate, raw provider, model_available,
+        // plan_source, route probe, raw dropdown) move into the collapsed Advanced diagnostics so the
+        // everyday flow is just "Choose model → Ready → Start AI Free Fight". The single execution
+        // gate (RMOOZ_ALLOW_SIM_RUN) and local-only policy are unchanged — only their presentation.
+        h += _modelFlowHtml();
+        h += _advancedDiagnosticsHtml();
         // Prominent route-unavailable banner — NOT an LLM failure
         if (_routeUnavailableMsg) {
             h += '<div data-ff-loop="route-unavailable" style="margin-top:5px;padding:6px 8px;border:1px solid #7a3030;border-radius:4px;background:#241414;color:#f0b0b0;font-size:10px;line-height:1.4;">⚠ ' + esc(_routeUnavailableMsg) + '</div>';
@@ -3208,7 +3391,14 @@
         // Control buttons
         h += '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;">';
         if (!_loopRunning || _loopPaused) {
-            h += '<button data-act="loop-start" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:5px;padding:5px 9px;font-size:11px;">▶ Start AI Free Fight</button>';
+            // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: Start is disabled until a model is ready (same single
+            // runtime gate as startLoop) so the operator can't press a button that won't run.
+            var _startReady = _freeFightAiReady();
+            if (_startReady.ok !== false) {
+                h += '<button data-act="loop-start" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:5px;padding:5px 9px;font-size:11px;">▶ Start AI Free Fight</button>';
+            } else {
+                h += '<button data-act="loop-start" disabled title="' + esc(_modelFlowStatus().message || 'Select an AI model first') + '" style="font:inherit;cursor:not-allowed;opacity:.55;border:1px solid #3a5040;background:#162018;color:#5f8f74;border-radius:5px;padding:5px 9px;font-size:11px;">▶ Start AI Free Fight</button>';
+            }
         }
         if (_loopRunning && !_loopPaused) {
             h += '<button data-act="loop-pause" style="font:inherit;cursor:pointer;border:1px solid #8a6a20;background:#2a2412;color:#e0c060;border-radius:5px;padding:5px 9px;font-size:11px;">⏸ Pause</button>';
@@ -3614,6 +3804,14 @@
         _getModelInfoForTest:      function ()            { return _modelInfo; },
         _setModelInfoForTest:      function (m)           { _modelInfo = m; _pendingModel = (m && m.selected_model) || _pendingModel; updatePanel(); },
         _renderModelSelectorHtmlForTest: function ()      { return renderModelSelectorHtml(); },
+        // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A test seams. Setting rh/info drives the simple flow.
+        _modelFlowStatusForTest:   function (rh, info)    { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; return _modelFlowStatus(); },
+        _modelFlowHtmlForTest:     function (rh, info, open) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; if (open !== undefined) _modelPickerOpen = !!open; return _modelFlowHtml(); },
+        _advancedDiagnosticsHtmlForTest: function (rh, info) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; return _advancedDiagnosticsHtml(); },
+        _renderCommanderLoopHtmlForTest: function (rh, info) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; return renderCommanderLoopHtml(); },
+        _maybeAutoSelectModelForTest: function (info)     { if (info !== undefined) _modelInfo = info; return _maybeAutoSelectModel(); },
+        _setModelPickerOpenForTest: function (v)          { _modelPickerOpen = !!v; },
+        _resetAutoSelectForTest:   function ()            { _autoSelectedModel = null; },
         _getRouteUnavailableMsgForTest: function ()       { return _routeUnavailableMsg; },
         _getCoaPlanForTest:        function ()            { return _coaPlan; },
         _generateCoaPlanForTest2:  function ()            { return _generateCoaPlan(); },

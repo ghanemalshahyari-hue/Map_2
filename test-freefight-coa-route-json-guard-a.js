@@ -236,14 +236,18 @@ function realPlan(side){ var b=DEMO._buildLoopRequestBodyForTest(); return PLANN
     if (savedProv == null) delete process.env.RMOOZ_FREE_FIGHT_PROVIDER; else process.env.RMOOZ_FREE_FIGHT_PROVIDER = savedProv;
 
     // ── §10 client renders route status + check button + provider/model ──────
-    console.log('\n§10  Client renders Planner route status + Check button + provider/model');
+    // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: the route status / Check button / provider+model now live
+    // under the collapsed "Advanced diagnostics" block (the everyday surface is the simple model flow).
+    console.log('\n§10  Client renders Planner route status + Check button + provider/model (under Advanced)');
     freshMount();
+    DEMO._setRouteHealthForTest({ ok: true, allow_sim_run: true, model_available: true,
+        provider: 'ollama', configured_provider: 'ollama', model: AI_CFG.defaultModel });
     DEMO._repaintForTest();
     var html10 = bodyEl.querySelector('[data-ff="body"]') ? bodyEl.querySelector('[data-ff="body"]').innerHTML : '';
-    ok('§10 route-health block present', /data-ff-loop="route-health"/.test(html10));
+    ok('§10 route diagnostics rendered under Advanced diagnostics', /data-ff-loop="advanced-diagnostics"/.test(html10));
     ok('§10 "Planner route:" label present', /Planner route:/.test(html10));
     ok('§10 "Check route" button present', /data-act="loop-route-check"/.test(html10));
-    ok('§10 "Provider policy: local only" shown', /Provider policy:[\s\S]{0,80}local only/.test(html10));
+    ok('§10 local-only policy shown', /Local-only policy/.test(html10) || /local only/i.test(html10));
     ok('§10 model (ai-config default) shown', html10.indexOf(AI_CFG.defaultModel) !== -1);
     // source-level: all three fetch sites use _fetchJsonSafe
     var src = fs.readFileSync(path.join(__dirname,'UI_MOdified/client/shell/free-fight-demo.js'),'utf8');

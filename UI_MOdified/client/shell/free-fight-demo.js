@@ -1862,12 +1862,20 @@
         _startCoaLoadingTicker();   // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: live elapsed timer while the model thinks
         updatePanel();
         var body = _buildAiRequestBody();
-        // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A: the manual "Generate AI Attack Plan" button FORCES the
-        // AI/MCP commander path — useLlm true, and never fast (fast skips the LLM). If the local LLM
-        // is disabled the server returns no LLM plan and the page says how to enable it (no fallback
-        // presented as AI). commander_mode stays the operator's selection (default high_variation).
-        body.opts.useLlm = true;
-        if (body.opts.ai_depth === 'fast') body.opts.ai_depth = 'normal';
+        // RMOOZ-AI-COMMANDER-DEMO-PACING-C: shape the request by planner mode.
+        if (_planningMode === 'staff_safe') {
+            // Staff-Safe = FAST deterministic. useLlm:false → the capability analyst uses deterministic
+            // (catalog/DB-Lite) summaries instead of the slow LLM; ai_depth:'fast' → no DEM sampling and
+            // the server's llmAllowed gate is off → the COA-generation LLM is skipped too. Honestly
+            // labeled deterministic; the Planning Trace still renders (mode: staff_safe).
+            body.opts.useLlm = false;
+            body.opts.ai_depth = 'fast';
+        } else {
+            // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A: AI Commander FORCES the full local-LLM/MCP path —
+            // useLlm true, never fast (fast skips the LLM). commander_mode stays the operator's choice.
+            body.opts.useLlm = true;
+            if (body.opts.ai_depth === 'fast') body.opts.ai_depth = 'normal';
+        }
         _fetchJsonSafe('/api/wargame-sim/free-fight/plan-coas', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ units: body.units, objectives: body.objectives, context: { commander_mode: body.opts.commander_mode, ai_depth: body.opts.ai_depth }, opts: body.opts }),
@@ -3058,10 +3066,11 @@
             h += '<button data-act="planmode-' + pm[0] + '" style="font:inherit;cursor:pointer;border:1px solid ' + bc + ';background:' + bg + ';color:' + fc + ';border-radius:4px;padding:3px 8px;font-size:10px;font-weight:' + (on ? '700' : '400') + ';">' + esc(pm[1]) + '</button>';
         });
         h += '</div>';
+        // RMOOZ-AI-COMMANDER-DEMO-PACING-C: honest timing labels so the operator knows the pacing.
         h += '<div style="font-size:9px;color:#6a8fa8;margin-top:3px;">' +
             (_planningMode === 'staff_safe'
-                ? 'Staff-Safe: deterministic staff planner builds the COAs (no LLM) — guaranteed, instant.'
-                : 'AI Commander: the local LLM drafts COAs; RMOOZ validates and sends invalid parts back to the AI to repair. Auto-falls to Staff-Safe if the AI cannot produce a valid plan.') + '</div>';
+                ? '<b style="color:#cdb86a;">Fast deterministic planning — AI explanation optional.</b> Staff-Safe builds the COAs from the deterministic staff planner (no LLM) — guaranteed and near-instant.'
+                : '<b style="color:#9fe8c0;">Full local AI planning — may take 2–5 minutes.</b> AI Commander: the local LLM drafts COAs; RMOOZ validates and sends invalid parts back to the AI to repair. Auto-falls to Staff-Safe if the AI cannot produce a valid plan.') + '</div>';
         // RMOOZ-AI-COA-PERFORMANCE-A: AI planning depth (speed vs depth trade-off).
         h += '<div data-ff-loop="ai-depth" style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:6px;">';
         h += '<span style="font-size:10px;color:#8fa5b8;">Depth:</span>';
@@ -3109,7 +3118,7 @@
         // COA Planner buttons
         h += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;">';
         h += '<button data-act="generate-coa" style="font:inherit;cursor:pointer;border:1px solid #2a7a50;background:#131e18;color:#90d0a0;border-radius:5px;padding:5px 10px;font-size:11px;">' +
-             (_coaLoading ? '⏳ Loading…' : '⚡ Generate AI Attack Plan') + '</button>';
+             (_coaLoading ? '⏳ Loading…' : (_planningMode === 'staff_safe' ? '⚡ Generate Staff-Safe Plan (fast)' : '⚡ Generate AI Attack Plan')) + '</button>';
         if (_coaPlan && _coaPlan.ok && !_coaApplied) {
             h += '<button data-act="apply-coa" style="font:inherit;cursor:pointer;border:1px solid #3a7a3a;background:#182818;color:#90d090;border-radius:5px;padding:5px 10px;font-size:11px;">✔ Apply Selected COA — تطبيق</button>';
         }

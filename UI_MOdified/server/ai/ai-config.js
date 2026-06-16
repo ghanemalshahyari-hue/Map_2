@@ -145,6 +145,22 @@ const defaults = {
         maxTokens:        4000,
     },
 
+    // ── OpenRouter (openrouter.ai) — OPTIONAL CLOUD gateway (GATED) ─────
+    // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A. OpenAI-compatible. Used ONLY in
+    // explicit cloud mode: requires RMOOZ_ALLOW_SIM_RUN=1 + RMOOZ_ALLOW_CLOUD_AI=1
+    // + OPENROUTER_API_KEY. Default AI Commander Free Fight stays LOCAL-ONLY.
+    // openrouter-client.js reads cfg.openrouter.*. The key ships BLANK — set it
+    // in the gitignored .env / shell env / ai-secrets.local.js only, NEVER here.
+    openrouter: {
+        url:              'https://openrouter.ai/api/v1',
+        apiKey:           '',
+        // Do NOT hardcode a model — the selector lists /api/v1/models live and the
+        // operator picks the Qwen3.5 slug. RMOOZ_OPENROUTER_MODEL overrides.
+        defaultModel:     '',
+        requestTimeoutMs: 90_000,
+        maxTokens:        4000,
+    },
+
     // ── Default AI provider ────────────────────────────────────────────
     // Which backend the adjudicator uses by default.
     //   'ollama' = always local Ollama (sovereign / air-gap)
@@ -239,6 +255,26 @@ const merged = {
         maxTokens:        asInt(envOverride(
                               (overlay.zen && overlay.zen.maxTokens)        ?? defaults.zen.maxTokens,
                               'RMOOZ_ZEN_MAX_TOKENS'), defaults.zen.maxTokens),
+    },
+
+    // OpenRouter block — env vars: OPENROUTER_API_KEY, OPENROUTER_URL,
+    // RMOOZ_OPENROUTER_MODEL, RMOOZ_OPENROUTER_TIMEOUT_MS, RMOOZ_OPENROUTER_MAX_TOKENS.
+    openrouter: {
+        url:              envOverride(
+                              (overlay.openrouter && overlay.openrouter.url)              ?? defaults.openrouter.url,
+                              'OPENROUTER_URL'),
+        apiKey:           envOverride(
+                              (overlay.openrouter && overlay.openrouter.apiKey)           ?? defaults.openrouter.apiKey,
+                              'OPENROUTER_API_KEY'),
+        defaultModel:     envOverride(
+                              (overlay.openrouter && overlay.openrouter.defaultModel)     ?? defaults.openrouter.defaultModel,
+                              'RMOOZ_OPENROUTER_MODEL'),
+        requestTimeoutMs: asInt(envOverride(
+                              (overlay.openrouter && overlay.openrouter.requestTimeoutMs) ?? defaults.openrouter.requestTimeoutMs,
+                              'RMOOZ_OPENROUTER_TIMEOUT_MS'), defaults.openrouter.requestTimeoutMs),
+        maxTokens:        asInt(envOverride(
+                              (overlay.openrouter && overlay.openrouter.maxTokens)        ?? defaults.openrouter.maxTokens,
+                              'RMOOZ_OPENROUTER_MAX_TOKENS'), defaults.openrouter.maxTokens),
     },
 
     aiProvider:       envOverride(overlay.aiProvider ?? defaults.aiProvider, 'RMOOZ_AI_PROVIDER'),

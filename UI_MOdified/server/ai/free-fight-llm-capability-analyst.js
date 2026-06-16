@@ -71,7 +71,10 @@ function resolveLocalProvider() {
     return LLM_CFG.getProvider();
 }
 function isRemoteProvider(name) {
-    return REMOTE_PROVIDERS_BLOCKED.indexOf(String(name || '').toLowerCase().trim()) !== -1;
+    name = String(name || '').toLowerCase().trim();
+    // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A: openrouter allowed ONLY in explicit cloud mode.
+    if (name === 'openrouter') return !LLM_CFG.openrouterReady();
+    return REMOTE_PROVIDERS_BLOCKED.indexOf(name) !== -1;
 }
 function resolveLocalModel() {
     // RMOOZ-LLM-RUNTIME-CONFIG-A: model from the canonical resolver — task override

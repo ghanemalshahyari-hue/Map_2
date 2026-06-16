@@ -33,7 +33,8 @@
 
     var mountEl = null;
     var info = null;                   // last /api/ai/models payload
-    var pending = null;                // dropdown's current (uncommitted) value
+    var pending = null;                // model dropdown's current (uncommitted) value
+    var pendingProvider = null;        // provider dropdown's current value — RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A
     var busy = false;
 
     function W() { return window; }
@@ -44,15 +45,20 @@
     }
 
     // GET the model list + current selection. Best-effort; never throws.
-    function fetchModels() {
+    // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A: optional providerOverride lists that provider's
+    // catalog (e.g. 'openrouter') so the dropdown previews before a selection is committed.
+    function fetchModels(providerOverride) {
         var w = W();
         if (!w || typeof w.fetch !== 'function') return Promise.resolve(null);
-        return w.fetch('/api/ai/models', { method: 'GET' })
+        var prov = providerOverride || pendingProvider || '';
+        var url = '/api/ai/models' + (prov ? ('?provider=' + encodeURIComponent(prov)) : '');
+        return w.fetch(url, { method: 'GET' })
             .then(function (r) { return r.text(); })
             .then(function (txt) {
                 var parsed = null;
                 try { parsed = txt ? JSON.parse(txt) : null; } catch (_) {}
                 info = (parsed && typeof parsed === 'object') ? parsed : { ok: false, error: 'non_json_response' };
+                if (pendingProvider == null && info && info.provider) pendingProvider = info.provider;
                 if (pending == null && info && info.selected_model) pending = info.selected_model;
                 render();
                 return info;
@@ -65,15 +71,17 @@
     }
 
     // POST the operator's choice. Persists app-wide; fires rmooz:ai-model-changed.
-    function selectModel(model) {
+    function selectModel(model, provider) {
         var w = W();
         if (!model || busy || !w || typeof w.fetch !== 'function') return;
         busy = true;
         render();
+        var reqBody = { model: model };
+        if (provider) reqBody.provider = provider;   // 'ollama' | 'openrouter'
         w.fetch('/api/ai/model/select', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ model: model }),
+            body: JSON.stringify(reqBody),
         })
             .then(function (r) { return r.text().then(function (t) { return { status: r.status, ok: r.ok, text: t }; }); })
             .then(function (res) {
@@ -83,11 +91,12 @@
                 if (res.ok && parsed && parsed.ok) {
                     info = parsed;
                     pending = parsed.selected_model || model;
+                    pendingProvider = parsed.provider || pendingProvider;
                     render();
                     // Tell the rest of the app (Free Fight card, etc.). source guards the echo.
                     try {
                         document.dispatchEvent(new CustomEvent('rmooz:ai-model-changed',
-                            { detail: { model: pending, source: 'global_hud', model_available: !!parsed.model_available } }));
+                            { detail: { model: pending, provider: pendingProvider, source: 'global_hud', model_available: !!parsed.model_available } }));
                     } catch (_) {}
                 } else {
                     info = Object.assign({}, info, { ok: false, error: (parsed && parsed.error) || ('http_' + res.status) });
@@ -118,9 +127,10 @@
         var avail = info.model_available === true ? '✓' : (info.model_available === false ? '✗ not installed' : '?');
         var gate = info.allow_sim_run === true ? 'gate on' : 'gate off';
         var ff = (info.allow_sim_run !== true) ? ' · FF blocked (gate)'
-               : (info.provider_blocked === true) ? ' · FF blocked (remote provider)'
+               : (info.provider_blocked === true) ? ' · FF blocked (' + (info.configured_provider === 'openrouter' ? 'cloud disabled' : 'remote provider') + ')'
                : '';
-        return sel + ' · ' + avail + ' · ' + gate + ff;
+        var cloud = info.is_cloud ? ' · ☁ cloud' : '';
+        return sel + ' · ' + avail + ' · ' + gate + ff + cloud;
     }
     function statusTitle() {
         if (!info) return 'AI model — النموذج المحلي';
@@ -154,14 +164,34 @@
         }).join('');
     }
 
+    // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A: provider dropdown (Ollama / OpenRouter). OpenRouter is
+    // DISABLED in the list until cloud is allowed (RMOOZ_ALLOW_CLOUD_AI=1) so it can't be picked.
+    function providerOptionsHtml() {
+        var cur = pendingProvider || (info && info.provider) || 'ollama';
+        var cloudAllowed = !!(info && info.cloud_allowed === true);
+        var orAttrs = (cur === 'openrouter' ? ' selected' : '') + (cloudAllowed ? '' : ' disabled');
+        return '<option value="ollama"' + (cur !== 'openrouter' ? ' selected' : '') + '>Ollama (local)</option>' +
+               '<option value="openrouter"' + orAttrs + '>OpenRouter (cloud)' + (cloudAllowed ? '' : ' — disabled') + '</option>';
+    }
+    // Cloud egress note — shown ONLY when the OpenRouter provider is selected.
+    function cloudNoteHtml() {
+        var cur = pendingProvider || (info && info.provider) || 'ollama';
+        if (cur !== 'openrouter') return '';
+        if (!(info && info.cloud_allowed)) {
+            return '<span class="ai-model-hud-cloud" style="font-size:10px;color:#e0a93a;margin-left:6px;" title="Set RMOOZ_ALLOW_CLOUD_AI=1 and restart the server">⚠ Cloud AI disabled. Enable RMOOZ_ALLOW_CLOUD_AI=1 to use OpenRouter.</span>';
+        }
+        var enabled = !!(info && info.cloud_enabled);
+        return '<span class="ai-model-hud-cloud" style="font-size:10px;color:' + (enabled ? '#e0a060' : '#e0a93a') + ';margin-left:6px;" title="Cloud egress — requests leave this machine">☁ Cloud provider — data leaves local machine' + (enabled ? '' : ' · set OPENROUTER_API_KEY') + '</span>';
+    }
+
     function render() {
         if (!mountEl) return;
         var disabled = busy ? ' disabled' : '';
         mountEl.innerHTML =
-            '<span class="ai-model-hud-label" title="' + esc(statusTitle()) + '">' +
-                '<span class="ai-model-hud-provider">Ollama</span>' +
-            '</span>' +
-            '<select id="ai-model-hud-select" class="ai-model-hud-select" dir="ltr" aria-label="Local AI model — النموذج المحلي"' + disabled + '>' +
+            '<select id="ai-model-hud-provider" class="ai-model-hud-select" dir="ltr" aria-label="AI provider — المزود"' + disabled + '>' +
+                providerOptionsHtml() +
+            '</select>' +
+            '<select id="ai-model-hud-select" class="ai-model-hud-select" dir="ltr" aria-label="AI model — النموذج"' + disabled + '>' +
                 optionsHtml() +
             '</select>' +
             '<button type="button" data-act="refresh" class="ai-model-hud-btn" title="Refresh models — تحديث القائمة"' + disabled + '>↻</button>' +
@@ -170,16 +200,24 @@
             '</button>' +
             '<span class="wargame-state-pill ai-model-hud-status ' + statusClass() + '" title="' + esc(statusTitle()) + '">' +
                 esc(statusText()) +
-            '</span>';
+            '</span>' +
+            cloudNoteHtml();
 
+        var provEl = mountEl.querySelector('#ai-model-hud-provider');
         var selEl = mountEl.querySelector('#ai-model-hud-select');
+        if (provEl) provEl.addEventListener('change', function () {
+            pendingProvider = provEl.value;
+            pending = null;                 // reset the model so the new provider's list/default applies
+            fetchModels(pendingProvider);   // re-list the chosen provider's catalog
+        });
         if (selEl) selEl.addEventListener('change', function () { pending = selEl.value; });
         var refreshBtn = mountEl.querySelector('[data-act="refresh"]');
-        if (refreshBtn) refreshBtn.addEventListener('click', function () { fetchModels(); });
+        if (refreshBtn) refreshBtn.addEventListener('click', function () { fetchModels(pendingProvider); });
         var useBtn = mountEl.querySelector('[data-act="use"]');
         if (useBtn) useBtn.addEventListener('click', function () {
             var val = selEl ? selEl.value : pending;
-            if (val) selectModel(val);
+            var prov = provEl ? provEl.value : pendingProvider;
+            if (val) selectModel(val, prov);
         });
     }
 

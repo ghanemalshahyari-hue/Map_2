@@ -83,11 +83,34 @@ function _suffix(task) { return TASK_ENV_SUFFIX[task] || ''; }
 // feature modules' isRemoteProvider). We do NOT fall through to RMOOZ_AI_PROVIDER
 // — that is the adjudicator/ai-config provider, a separate concern.
 function getProvider() {
+    // Precedence: explicit env (canonical, then legacy) WINS over the runtime UI selection so an
+    // operator's env config is authoritative and the zen/claude env block-tests stay deterministic;
+    // the UI selection (model-selector runtime file) supplies the provider only when no env is set
+    // (this is how a UI pick of provider=openrouter takes effect).
     return firstNonEmpty(
-        process.env.RMOOZ_LLM_PROVIDER,         // canonical
-        process.env.RMOOZ_FREE_FIGHT_PROVIDER   // legacy alias
+        process.env.RMOOZ_LLM_PROVIDER,         // canonical env
+        process.env.RMOOZ_FREE_FIGHT_PROVIDER,  // legacy env alias
+        _runtimeSelectedProvider()              // operator UI selection (model-selector)
     ).toLowerCase() || 'ollama';
 }
+// The provider the operator picked in the UI (model-selection runtime file), RAW.
+// Lazy-required to avoid a load cycle. '' when none / unavailable.
+function _runtimeSelectedProvider() {
+    try { const MS = require('./model-selection'); if (MS && typeof MS.selectedProviderRaw === 'function') return MS.selectedProviderRaw(); }
+    catch (_) { /* model-selection unavailable */ }
+    return '';
+}
+
+// ── Cloud mode (RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A) ─────────────────────────
+// The app is LOCAL-ONLY by default. Cloud (OpenRouter) runs ONLY in explicit cloud
+// mode. `cloudAllowed()` is the dedicated cloud gate (separate from the execution
+// gate RMOOZ_ALLOW_SIM_RUN); `openrouterReady()` also requires the API key. The
+// feature modules' isRemoteProvider blocks `openrouter` unless openrouterReady().
+function cloudAllowed() { return _s(process.env.RMOOZ_ALLOW_CLOUD_AI) === '1'; }
+function _openrouterKeyPresent() {
+    return !!(AI_CONFIG && AI_CONFIG.openrouter && _s(AI_CONFIG.openrouter.apiKey) !== '');
+}
+function openrouterReady() { return cloudAllowed() && _openrouterKeyPresent(); }
 
 // ── Model ──────────────────────────────────────────────────────────────────
 // env/default model only (NO runtime UI file — that layer is model-selection).
@@ -189,6 +212,8 @@ function forTask(task) {
 module.exports = {
     TASKS,
     getProvider,
+    cloudAllowed,        // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A
+    openrouterReady,     // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A
     getModel,
     modelSource,
     envDefaultModel,

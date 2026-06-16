@@ -126,7 +126,12 @@ function resolveLocalProvider() {
     return LLM_CFG.getProvider();
 }
 function isRemoteProvider(name) {
-    return REMOTE_PROVIDERS_BLOCKED.indexOf(String(name || '').toLowerCase().trim()) !== -1;
+    name = String(name || '').toLowerCase().trim();
+    // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A: openrouter is an EXPLICIT cloud mode — allowed ONLY
+    // when the owner enabled it (RMOOZ_ALLOW_CLOUD_AI=1 + OPENROUTER_API_KEY). Otherwise it is
+    // blocked like any remote provider. zen/claude/openai/auto stay blocked unconditionally.
+    if (name === 'openrouter') return !LLM_CFG.openrouterReady();
+    return REMOTE_PROVIDERS_BLOCKED.indexOf(name) !== -1;
 }
 function resolveLocalModel() {
     // RMOOZ-LLM-RUNTIME-CONFIG-A: model from the canonical resolver — task-specific

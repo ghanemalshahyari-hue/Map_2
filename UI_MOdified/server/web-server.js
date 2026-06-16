@@ -49,6 +49,7 @@ const ollama       = require('./ai/ollama-client');
 const aiProvider   = require('./ai/ai-provider');
 const modelSelection = require('./ai/model-selection'); // RMOOZ-LOCAL-MODEL-SELECTOR-A: single model source
 const llmRuntimeConfig = require('./ai/llm-runtime-config'); // RMOOZ-LLM-RUNTIME-CONFIG-A: raw provider for the gate card
+const openrouterClient = require('./ai/openrouter-client'); // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A: gated cloud model list
 const redTeam      = require('./ai/red-team-agent');
 const adjudicator  = require('./ai/adjudicator-agent');
 const scenarios    = require('./ai/scenario-loader');
@@ -272,44 +273,74 @@ function readJsonBody(req, opts = {}) {
 // (live /api/tags via ollama.ping), the operator's current selection, and whether
 // that selection is actually installed (model_available). Best-effort: an
 // unreachable provider yields an empty list + model_available:false, never throws.
-async function buildModelsPayload() {
-    const provider = modelSelection.getProvider();
-    const selected = modelSelection.getSelectedModel();
-    let names = [];
-    let reachable = false;
-    let pingErr = null;
+async function buildModelsPayload(providerOverride) {
+    const selected           = modelSelection.getSelectedModel();
+    const configured_provider = llmRuntimeConfig.getProvider();   // RAW (may be openrouter even when blocked)
+    const cloud_allowed      = llmRuntimeConfig.cloudAllowed();    // RMOOZ_ALLOW_CLOUD_AI === '1'
+    const cloud_enabled      = llmRuntimeConfig.openrouterReady(); // gate + OPENROUTER_API_KEY present
+    // Effective listing provider: an explicit override (UI dropdown preview) or the clamped selection.
+    let provider = providerOverride ? String(providerOverride).toLowerCase().trim() : modelSelection.getProvider();
+    if (provider !== 'openrouter' && provider !== 'local') provider = 'ollama';
+    const is_cloud = provider === 'openrouter';
+
+    const base = {
+        ok: true,
+        provider,
+        configured_provider,
+        is_cloud,
+        cloud_allowed,
+        cloud_enabled,
+        selected_model: selected,
+        selection_source: modelSelection.selectionSource(),
+        allow_sim_run: process.env.RMOOZ_ALLOW_SIM_RUN === '1',
+    };
+
+    // ── OpenRouter (gated cloud) ──────────────────────────────────────────────
+    if (is_cloud) {
+        if (!cloud_enabled) {
+            // Never reach OpenRouter when cloud is off / no key — return a clear disabled state.
+            return Object.assign(base, {
+                provider_blocked: true,
+                models: [], available_models_count: 0, model_available: false, provider_reachable: false,
+                error: cloud_allowed ? 'OPENROUTER_API_KEY not set' : 'Cloud AI disabled (set RMOOZ_ALLOW_CLOUD_AI=1 to use OpenRouter)',
+            });
+        }
+        let names = [], reachable = false, pingErr = null;
+        try {
+            const p = await openrouterClient.ping();
+            if (p && p.ok && Array.isArray(p.models)) { names = p.models; reachable = true; }
+            else if (p && p.error) { pingErr = p.error; }
+        } catch (e) { pingErr = e && e.message || String(e); }
+        const models = names.map(n => ({ name: n, available: true }));
+        const model_available = !!selected && names.indexOf(selected) !== -1;
+        if (selected && !model_available) models.push({ name: selected, available: false });
+        return Object.assign(base, {
+            provider_blocked: false,             // cloud-ready → openrouter is allowed
+            models, available_models_count: names.length, model_available, provider_reachable: reachable,
+            error: reachable ? null : (pingErr || 'OpenRouter not reachable'),
+        });
+    }
+
+    // ── Ollama (local, default) ───────────────────────────────────────────────
+    let names = [], reachable = false, pingErr = null;
     try {
         const ping = await ollama.ping();
         if (ping && ping.ok && Array.isArray(ping.models)) { names = ping.models; reachable = true; }
         else if (ping && ping.error) { pingErr = ping.error; }
     } catch (e) { pingErr = e && e.message || String(e); }
-
     const models = names.map(n => ({ name: n, available: true }));
     const model_available = names.indexOf(selected) !== -1;
-    // Surface the selection even when it isn't installed, so the dropdown shows it
-    // (available:false) and the operator can see it needs `ollama pull <model>`.
     if (selected && !model_available) models.push({ name: selected, available: false });
-
-    // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D: the RAW configured provider (from llm-runtime-config)
-    // + whether Free Fight's local-only policy blocks it, so the global model HUD never implies
-    // Free Fight can run when the provider gate is blocked. `provider` above stays masked.
-    const configured_provider = llmRuntimeConfig.getProvider();
-    const provider_blocked = configured_provider !== 'ollama' && configured_provider !== 'local';
-
-    return {
-        ok: true,
-        provider,
-        configured_provider,
+    // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D: a non-local configured provider that ISN'T cloud-ready openrouter
+    // is blocked (zen/claude/auto, or openrouter without the cloud gate) — the HUD must not imply FF can run.
+    const provider_blocked = (configured_provider === 'openrouter')
+        ? !cloud_enabled
+        : (configured_provider !== 'ollama' && configured_provider !== 'local');
+    return Object.assign(base, {
         provider_blocked,
-        selected_model: selected,
-        selection_source: modelSelection.selectionSource(),
-        models,
-        available_models_count: names.length,
-        model_available,
-        provider_reachable: reachable,
-        allow_sim_run: process.env.RMOOZ_ALLOW_SIM_RUN === '1',
+        models, available_models_count: names.length, model_available, provider_reachable: reachable,
         error: reachable ? null : (pingErr || 'local provider not reachable'),
-    };
+    });
 }
 
 function ensureUploadsDir() {
@@ -563,7 +594,11 @@ const server = http.createServer((req, res) => {
     // instead of the operator editing env vars. 200 even when the provider is
     // down (models:[], model_available:false) so the HUD can render a clear state.
     if (pathname === '/api/ai/models' && req.method === 'GET') {
-        buildModelsPayload()
+        // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A: optional ?provider= preview (e.g. 'openrouter') so the
+        // UI can list the cloud catalog before committing a selection. Default = current selection.
+        let providerQ = '';
+        try { providerQ = new URL(req.url, 'http://localhost').searchParams.get('provider') || ''; } catch (_) {}
+        buildModelsPayload(providerQ)
             .then(p => sendJson(res, 200, p))
             .catch(e => sendJson(res, 200, {
                 ok: false, error: e.message || String(e),
@@ -581,7 +616,9 @@ const server = http.createServer((req, res) => {
     if (pathname === '/api/ai/model/select' && req.method === 'POST') {
         readJsonBody(req).then(async (body) => {
             const model = body && typeof body.model === 'string' ? body.model.trim() : '';
-            const sel = modelSelection.setSelectedModel(model);
+            // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A: optional provider ('ollama' | 'openrouter').
+            const provider = body && typeof body.provider === 'string' ? body.provider.trim() : '';
+            const sel = modelSelection.setSelectedModel(model, provider);
             if (!sel.ok) {
                 sendJson(res, 400, { ok: false, error: sel.error || 'invalid model',
                     selected_model: sel.selected_model });
@@ -591,7 +628,8 @@ const server = http.createServer((req, res) => {
             sendJson(res, 200, Object.assign(p, {
                 selected: true,
                 persisted: sel.persisted !== false,
-                warning: sel.warning || (p.model_available ? null
+                // The ollama-pull hint only applies to the local provider, not cloud (openrouter).
+                warning: sel.warning || ((p.model_available || p.is_cloud) ? null
                     : 'selected model "' + model + '" is not installed in the local provider — run `ollama pull ' + model + '` before generating'),
             }));
         }).catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));

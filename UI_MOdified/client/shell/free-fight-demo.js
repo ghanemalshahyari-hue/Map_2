@@ -2286,7 +2286,11 @@
         h += '<div data-ff-coa="ai-gate-headline" style="font-weight:700;color:' + (blocked ? '#f4d57a' : GREEN) + ';margin-bottom:3px;">' + (blocked ? '🛑 Free Fight AI is blocked' : '✅ Free Fight AI is ready') + '</div>';
         // FOUR separate signals (req #3)
         h += sig('Execution gate (RMOOZ_ALLOW_SIM_RUN)', gateOk ? 'enabled' : 'DISABLED', gateOk ? GREEN : AMBER);
-        h += sig('Provider (llm-runtime-config)', providerBlocked ? (cfgProvider + ' — REMOTE, blocked') : (cfgProvider + ' — local'), providerBlocked ? AMBER : GREEN);
+        // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A: a cloud-ready openrouter provider is NOT local —
+        // label it ☁ CLOUD so the operator always sees that data leaves the machine.
+        var _provDesc = providerBlocked ? (cfgProvider + ' — REMOTE, blocked')
+            : (cfgProvider === 'openrouter' ? (cfgProvider + ' — ☁ CLOUD (data leaves machine)') : (cfgProvider + ' — local'));
+        h += sig('Provider (llm-runtime-config)', _provDesc, providerBlocked ? AMBER : (cfgProvider === 'openrouter' ? '#e0a060' : GREEN));
         h += sig('Model available', (modelAvail === true ? 'yes' : (modelAvail === false ? 'no' : 'unknown')) + (rh.model ? ' (' + rh.model + ')' : ''), modelAvail === true ? GREEN : (modelAvail === false ? AMBER : GREY));
         h += sig('Local-only policy', 'enforced', GREEN);
         // EXACT fixes — show ALL active blocks (req #4/#5/#6)

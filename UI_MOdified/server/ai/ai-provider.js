@@ -27,8 +27,9 @@ const cfg          = require('./ai-config');
 const ollamaClient = require('./ollama-client');
 const claudeClient = require('./claude-client');
 const zenClient    = require('./zen-client');
+const openrouterClient = require('./openrouter-client'); // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A (gated cloud)
 
-const VALID = new Set(['ollama', 'claude', 'zen', 'auto']);
+const VALID = new Set(['ollama', 'claude', 'zen', 'openrouter', 'auto']);
 
 function envProvider() {
     const v = String(process.env.RMOOZ_AI_PROVIDER || '').trim().toLowerCase();
@@ -66,6 +67,19 @@ function resolveProvider(requested) {
             throw new Error('Provider "zen" requested but OPENCODE_ZEN_API_KEY is not set.');
         }
         return 'zen';
+    }
+    if (name === 'openrouter') {
+        // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A: explicit cloud only + BACKSTOP cloud gate.
+        // The free-fight planner blocks openrouter cleanly when cloud is off (isRemoteProvider),
+        // but this is the single egress chokepoint, so we ALSO fail closed here for any path
+        // (e.g. free-fight-llm-plan) that lacks the upstream guard.
+        if (process.env.RMOOZ_ALLOW_CLOUD_AI !== '1') {
+            throw new Error('Provider "openrouter" requested but cloud AI is disabled (set RMOOZ_ALLOW_CLOUD_AI=1).');
+        }
+        if (!openrouterClient.isConfigured()) {
+            throw new Error('Provider "openrouter" requested but OPENROUTER_API_KEY is not set.');
+        }
+        return 'openrouter';
     }
     if (name === 'ollama') return 'ollama';
     // 'auto' → prefer claude > zen > ollama based on what's configured.
@@ -135,6 +149,13 @@ async function generate(args) {
             };
         }
         return { ...r, providerUsed: 'zen' };
+    }
+
+    if (target === 'openrouter') {
+        // Cloud, explicit-only: no auto-fallback chain (the free-fight planner does its
+        // own deterministic fallback). Just return the result tagged with the provider.
+        const r = await openrouterClient.generate(passthrough);
+        return { ...r, providerUsed: 'openrouter' };
     }
 
     // target === 'ollama'

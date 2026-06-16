@@ -47,6 +47,14 @@
     // "already in position" — not counted as moved (so zero/tiny moves aren't faked).
     var MIN_VISIBLE_MOVE_DEG = 0.003;
     var _coaHeldCount = 0;    // units already in position (move below epsilon)
+    // RMOOZ-COA-COMMIT-EXECUTION-L: "COA Commitment Mode" — the operator commits ONE generated COA and
+    // RMOOZ executes it phase-by-phase, deterministically, with NO LLM call on normal ticks. AI is
+    // re-engaged ONLY when a replan trigger fires or the operator clicks Replan. This is an ADDITIONAL
+    // mode alongside the AI-every-turn loop (which is unchanged).
+    var _coaExec = null;        // active_coa_execution_state (see _commitCoa) | null
+    var _coaExecTimer = null;   // setInterval handle for the committed-COA tick loop
+    var COA_EXEC_STUCK_TICKS = 4;       // phase makes no progress for this many ticks → replan trigger
+    var COA_EXEC_FORCE_LOSS_FRAC = 0.5; // active-side units missing above this fraction → replan trigger
     // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: continuous AI commander loop state
     var _turnNumber = 0;
     var _activeSide = 'RED';
@@ -1063,6 +1071,12 @@
         bind('generate-coa', _generateCoaPlan);
         bind('apply-coa', _applySelectedCoa);
         bind('reset-coa', _resetCoa);
+        // RMOOZ-COA-COMMIT-EXECUTION-L: COA Commitment Mode controls.
+        bind('coa-commit', function () { _commitCoa(_coaSelectedIdx); });
+        bind('coa-run', _runCommittedCoa);
+        bind('coa-pause', _pauseCommittedCoa);
+        bind('coa-replan', _replanCoa);
+        bind('coa-exec-reset', _resetCoaExec);
         bind('select-coa-0', function () { _coaSelectedIdx = 0; updatePanel(); });
         bind('select-coa-1', function () { _coaSelectedIdx = 1; updatePanel(); });
         bind('select-coa-2', function () { _coaSelectedIdx = 2; updatePanel(); });
@@ -2266,6 +2280,232 @@
         _coaMovedUnits = []; _coaApplied = false;
         updatePanel();
     }
+
+    // ════════════════════════════════════════════════════════════════════════
+    // RMOOZ-COA-COMMIT-EXECUTION-L — "COA Commitment Mode": commit ONE COA, then RMOOZ executes it
+    // phase-by-phase deterministically (NO LLM on normal ticks); AI is re-engaged only on a replan
+    // trigger or operator Replan. Reuses the SAME movement step (_stepTowardCapped clamp/teleport
+    // guard), validator, and HOLD handling as the manual apply path — no combat/terrain/validator change.
+    // ════════════════════════════════════════════════════════════════════════
+    function _nowMs() { var d = (typeof Date !== 'undefined' && Date.now) ? Date.now() : 0; return d; }
+    function _nowISO() { try { return new Date().toISOString(); } catch (_) { return ''; } }
+    function _objKey(o) { return (o && Number.isFinite(+o.lat)) ? (Number(o.lat).toFixed(4) + ',' + Number(o.lon).toFixed(4)) : 'none'; }
+    function _coaActiveSide(coa) {
+        var a = arr(coa && coa.phases)[0]; var act = a && arr(a.actions)[0];
+        return String((act && act.side) || (_coaPlan && _coaPlan.active_side) || _activeSide || 'RED').toUpperCase();
+    }
+    function _sideUnitCount(side) {
+        var w = W(); var n = 0; if (!w) return 0;
+        var sc = w.RmoozScenario && w.RmoozScenario.scenario;
+        function cnt(list) { arr(list).forEach(function (u) { if (u && String(u.side || '').toUpperCase() === side) n++; }); }
+        if (sc) { cnt(sc.red_units); cnt(sc.blue_units_initial); }
+        return n;
+    }
+    // Resolve the moves for ONE phase's actions (same guard/HOLD logic as _resolveCoaMoves). Adds
+    // `reached` (unit is within epsilon of the ACTION target → the order is complete).
+    function _resolvePhaseMoves(actions) {
+        var moves = [];
+        arr(actions).forEach(function (act) {
+            if (!act) return;
+            if (act.action_type === 'HOLD_POSITION') {                    // never moves; order is complete
+                moves.push({ uid: act.unit_uid, role: act.role || '', action_type: 'HOLD_POSITION', held: true, hold: true, reached: true, unit: (_findRealUnit(act.unit_uid) || {}).unit || null });
+                return;
+            }
+            if (!act.target || !Number.isFinite(+act.target.lat) || !Number.isFinite(+act.target.lon)) return;
+            var found = _findRealUnit(act.unit_uid);
+            if (!found || !found.unit) return;
+            var u = found.unit;
+            var startLat = u.lat != null ? +u.lat : (Array.isArray(u.coord) ? +u.coord[1] : null);
+            var startLon = u.lon != null ? +u.lon : (Array.isArray(u.coord) ? +u.coord[0] : null);
+            if (!Number.isFinite(startLat) || !Number.isFinite(startLon)) return;
+            var tgt = { lat: +act.target.lat, lon: +act.target.lon };
+            var fin = _stepTowardCapped({ lat: startLat, lon: startLon }, tgt);   // clamp/teleport guard
+            var dLat = round5(fin.lat) - startLat, dLon = round5(fin.lon) - startLon;
+            var stepDist = Math.sqrt(dLat * dLat + dLon * dLon);
+            var dt = round5(fin.lat) - tgt.lat, dn = round5(fin.lon) - tgt.lon;
+            var reached = Math.sqrt(dt * dt + dn * dn) < MIN_VISIBLE_MOVE_DEG;   // at the action target
+            moves.push({ unit: u, uid: act.unit_uid, role: act.role || '', action_type: act.action_type || '',
+                execution_mode: act.execution_mode || '', held: stepDist < MIN_VISIBLE_MOVE_DEG, hold: false, reached: reached,
+                start: { lat: startLat, lon: startLon }, final: { lat: round5(fin.lat), lon: round5(fin.lon) }, target: tgt });
+        });
+        return moves;
+    }
+    // Commit the currently-selected COA as the active execution plan (req #2). Pure state + timing.
+    function _commitCoa(idx) {
+        if (!_coaPlan || !_coaPlan.ok || !Array.isArray(_coaPlan.coas) || !_coaPlan.coas.length) return null;
+        var i = (idx == null) ? _coaSelectedIdx : idx;
+        if (i < 0 || i >= _coaPlan.coas.length) i = 0;
+        var t0 = _nowMs();
+        var coa = _coaPlan.coas[i];
+        var side = _coaActiveSide(coa);
+        _coaExec = {
+            active: true, side: side, selected_coa_id: coa.plan_id || ('COA-' + (i + 1)), selected_coa: coa,
+            objective: getObjective() || null, objective_key: _objKey(getObjective()),
+            current_phase_index: 0, phase_status: 'pending', unit_order_status: {}, completed_orders: [],
+            branch_triggers: arr(coa.branches), replan_required: false, replan_reason: null, paused: false,
+            ticks: 0, stuck_ticks: 0, commit_unit_count: _sideUnitCount(side),
+            last_plan_hash: (_coaPlan.plan_source || '') + ':' + (coa.plan_id || '') + ':' + arr(coa.phases).length,
+            created_at: _nowISO(), updated_at: _nowISO(),
+            last_tick_timing: { coa_commit_ms: _nowMs() - t0, coa_tick_execute_ms: 0, replan_trigger_check_ms: 0, llm_called_this_tick: false },
+        };
+        try { _appendToEventLog('COA committed — ' + esc(_coaExec.selected_coa_id) + ' (' + arr(coa.phases).length + ' phases). RMOOZ will execute it; the AI is NOT called on normal ticks.'); } catch (_) {}
+        updatePanel();
+        return _coaExec;
+    }
+    // Deterministic replan-trigger check (req: branch/replan triggers). Returns { fired, reason, code }.
+    function _checkReplanTriggers() {
+        if (!_coaExec || !_coaExec.selected_coa) return { fired: false };
+        var coa = _coaExec.selected_coa;
+        var phase = arr(coa.phases)[_coaExec.current_phase_index];
+        var actions = arr(phase && phase.actions);
+        // objective changed
+        if (_objKey(getObjective()) !== _coaExec.objective_key) return { fired: true, code: 'objective_changed', reason: 'Objective changed — the committed COA no longer matches.' };
+        for (var k = 0; k < actions.length; k++) {
+            var a = actions[k]; if (!a) continue;
+            // assigned unit missing / destroyed / unavailable
+            var f = _findRealUnit(a.unit_uid);
+            if (!f || !f.unit) return { fired: true, code: 'unit_missing', reason: 'Assigned unit "' + (a.unit_uid || '?') + '" is missing/destroyed/unavailable.' };
+            // selected target invalid
+            if (a.action_type !== 'HOLD_POSITION' && (!a.target || !Number.isFinite(+a.target.lat) || !Number.isFinite(+a.target.lon))) return { fired: true, code: 'invalid_target', reason: 'A selected target is invalid for unit "' + (a.unit_uid || '?') + '".' };
+        }
+        // active-force loss above threshold
+        if (_coaExec.commit_unit_count > 0) {
+            var now = _sideUnitCount(_coaExec.side);
+            if ((_coaExec.commit_unit_count - now) / _coaExec.commit_unit_count > COA_EXEC_FORCE_LOSS_FRAC) return { fired: true, code: 'force_loss', reason: _coaExec.side + ' force loss above ' + Math.round(COA_EXEC_FORCE_LOSS_FRAC * 100) + '% — replan recommended.' };
+        }
+        // phase stuck for N ticks (units cannot make progress / blocked by safety/validator)
+        if (_coaExec.stuck_ticks >= COA_EXEC_STUCK_TICKS) return { fired: true, code: 'phase_stuck', reason: 'Phase "' + ((phase && phase.name) || _coaExec.current_phase_index) + '" stuck for ' + _coaExec.stuck_ticks + ' ticks (units cannot reach their targets).' };
+        return { fired: false };
+    }
+    function _pauseForReplan(reason, code) {
+        _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
+        if (_coaExec) { _coaExec.phase_status = 'blocked'; _coaExec.replan_required = true; _coaExec.replan_reason = reason; _coaExec.replan_code = code; _coaExec.updated_at = _nowISO(); }
+        try { _appendToEventLog('COA execution PAUSED — replan trigger: ' + esc(reason) + ' (choose: Continue / Replan / Staff-Safe).'); } catch (_) {}
+        updatePanel();
+    }
+    // One deterministic execution tick — NO LLM. Executes the current phase, advances phases, checks
+    // triggers. Returns the per-tick timing (incl. llm_called_this_tick:false). Safe to call directly.
+    function _coaExecTick() {
+        if (!_coaExec || !_coaExec.active || _coaExec.paused || _coaExec.replan_required) return null;
+        var coa = _coaExec.selected_coa;
+        var phases = arr(coa && coa.phases);
+        if (_coaExec.current_phase_index >= phases.length) { _coaExec.phase_status = 'complete'; _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null; updatePanel(); return { llm_called_this_tick: false }; }
+        // 1) replan trigger check FIRST
+        var tc0 = _nowMs();
+        var trig = _checkReplanTriggers();
+        var replan_trigger_check_ms = _nowMs() - tc0;
+        if (trig.fired) { _coaExec.last_tick_timing = { coa_tick_execute_ms: 0, replan_trigger_check_ms: replan_trigger_check_ms, llm_called_this_tick: false }; _pauseForReplan(trig.reason, trig.code); return _coaExec.last_tick_timing; }
+        // 2) execute ONLY the current phase (deterministic move; clamp/teleport guard; HOLD never moves)
+        var te0 = _nowMs();
+        _coaExec.phase_status = 'running';
+        var phase = phases[_coaExec.current_phase_index];
+        var actions = arr(phase && phase.actions);
+        var moves = _resolvePhaseMoves(actions);
+        var realMoves = moves.filter(function (m) { return !m.hold; });
+        _writeMoveFrame(realMoves, 1);
+        var movedNow = _movedRecords(realMoves);
+        _coaMovedUnits = movedNow; _coaApplied = true;
+        _logExecutedMoves(realMoves);
+        // 3) per-order status + completion
+        var anyMovedThisTick = false, allComplete = true;
+        moves.forEach(function (m) {
+            var done = m.hold || m.reached;
+            if (done && _coaExec.unit_order_status[m.uid] !== 'complete') { _coaExec.unit_order_status[m.uid] = 'complete'; _coaExec.completed_orders.push({ uid: m.uid, action_type: m.action_type, phase: _coaExec.current_phase_index }); }
+            else if (!done) { _coaExec.unit_order_status[m.uid] = 'moving'; allComplete = false; }
+            if (!m.held && !m.hold) anyMovedThisTick = true;
+        });
+        if (!actions.length) allComplete = true;   // empty phase → immediately complete
+        // 4) stuck detection: a non-complete phase where nothing moved this tick
+        _coaExec.stuck_ticks = (!allComplete && !anyMovedThisTick) ? (_coaExec.stuck_ticks + 1) : 0;
+        // 5) advance phase / finish COA
+        if (allComplete) {
+            _coaExec.stuck_ticks = 0;
+            _coaExec.current_phase_index++;
+            if (_coaExec.current_phase_index >= phases.length) {
+                _coaExec.phase_status = 'complete'; _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
+                try { _appendToEventLog('COA execution COMPLETE — ' + esc(_coaExec.selected_coa_id) + ' (all ' + phases.length + ' phases done). No AI calls were made during execution.'); } catch (_) {}
+            } else {
+                _coaExec.phase_status = 'pending';
+                try { _appendToEventLog('COA phase complete — advancing to phase ' + (_coaExec.current_phase_index + 1) + '/' + phases.length + ' (deterministic, no AI).'); } catch (_) {}
+            }
+        }
+        _coaExec.ticks++; _coaExec.updated_at = _nowISO();
+        _coaExec.last_tick_timing = { coa_tick_execute_ms: _nowMs() - te0, replan_trigger_check_ms: replan_trigger_check_ms, llm_called_this_tick: false };
+        if (mapReady()) { _triggerScenarioRedraw(); syncMarkers(); _maybePanToMovedCentroid(); }
+        updatePanel();
+        return _coaExec.last_tick_timing;
+    }
+    function _runCommittedCoa() {
+        if (!_coaExec || !_coaExec.active) return;
+        if (_coaExec.phase_status === 'complete') return;
+        _coaExec.paused = false; _coaExec.replan_required = false; _coaExec.replan_reason = null; _coaExec.phase_status = 'running';
+        _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
+        _coaExecTick();   // run one immediately
+        var tickMs = Math.max(300, _ffSpeed().moveAnimMs || 600);
+        _coaExecTimer = _setIntervalSafe(_coaExecTick, tickMs);
+        updatePanel();
+    }
+    function _pauseCommittedCoa() {
+        _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
+        if (_coaExec) { _coaExec.paused = true; _coaExec.updated_at = _nowISO(); }
+        try { _appendToEventLog('COA execution paused by operator.'); } catch (_) {}
+        updatePanel();
+    }
+    function _resetCoaExec() {
+        _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
+        _coaExec = null;
+        updatePanel();
+    }
+    // The ONLY operator path that re-engages the AI: stop executing + run a fresh Deep Plan (LLM).
+    function _replanCoa() {
+        _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
+        try { _appendToEventLog('Replan requested — calling the AI Commander for a fresh plan.'); } catch (_) {}
+        _coaExec = null;
+        _generateCoaPlan();   // the single LLM call (Deep Plan)
+    }
+    // The COA Commitment Mode control block (Commit / Run / Pause / Replan + live status).
+    function _coaExecHtml() {
+        function btn(act, label, col) { return '<button data-act="' + act + '" style="font:inherit;cursor:pointer;border:1px solid ' + col + ';background:#101b27;color:#cfe6ff;border-radius:5px;padding:4px 9px;font-size:10.5px;">' + label + '</button>'; }
+        var hasPlan = !!(_coaPlan && _coaPlan.ok && arr(_coaPlan.coas).length);
+        if (!hasPlan && !_coaExec) return '';
+        var ex = _coaExec;
+        var running = !!(ex && ex.active && !ex.paused && !ex.replan_required && ex.phase_status !== 'complete');
+        var h = '<div data-ff-coa="commit-exec" style="margin:4px 0 8px;padding:6px 9px;border:1px solid #2e5d7d;border-radius:5px;background:#0a1420;">';
+        h += '<div style="font-size:10.5px;font-weight:700;color:#9ec2ec;margin-bottom:3px;">🎖 COA Commitment Mode — plan once · commit · RMOOZ executes the cycle</div>';
+        h += '<div style="display:flex;gap:5px;flex-wrap:wrap;">';
+        if (hasPlan) h += btn('coa-commit', '✔ Commit this COA', '#2e7d54');
+        if (ex && ex.active && ex.phase_status !== 'complete') {
+            if (!running) h += btn('coa-run', '▶ Run selected COA', '#2e7d54');
+            if (running)  h += btn('coa-pause', '⏸ Pause COA', '#8a6a20');
+            h += btn('coa-replan', '↻ Replan (AI)', '#4a7bb8');
+        }
+        if (ex) h += btn('coa-exec-reset', '⟲ Clear committed COA', '#5a6270');
+        h += '</div>';
+        if (ex) {
+            var phases = arr(ex.selected_coa && ex.selected_coa.phases);
+            var pIdx = Math.min(ex.current_phase_index, Math.max(0, phases.length - 1));
+            var phase = phases[pIdx] || {};
+            var ordersTotal = arr(phase.actions).length;
+            var ordersDone = arr(ex.completed_orders).filter(function (o) { return o.phase === ex.current_phase_index; }).length;
+            var statusColor = ex.phase_status === 'complete' ? '#7fd6a0' : (ex.replan_required ? '#f0a0a0' : (running ? '#7fd6a0' : '#e0c060'));
+            h += '<div style="margin-top:4px;font-size:10px;color:#cdd8e4;line-height:1.55;">';
+            h += '<div><span style="color:#8fa5b8;">Active COA:</span> <span style="color:#e8eaed;font-weight:700;">' + esc(ex.selected_coa_id) + '</span> <span style="color:#7a9ab8;">· side ' + esc(ex.side) + '</span></div>';
+            h += '<div><span style="color:#8fa5b8;">Current phase:</span> <span style="color:#cfe6ff;">' + (ex.phase_status === 'complete' ? 'all done' : ((ex.current_phase_index + 1) + ' / ' + phases.length + (phase.name ? ' — ' + esc(phase.name) : ''))) + '</span></div>';
+            h += '<div><span style="color:#8fa5b8;">Orders complete:</span> <span style="color:#bfe89a;">' + ordersDone + ' / ' + ordersTotal + '</span> · <span style="color:#8fa5b8;">status</span> <span style="color:' + statusColor + ';font-weight:700;">' + esc(ex.phase_status) + '</span> · <span style="color:#7a9ab8;">tick ' + ex.ticks + '</span></div>';
+            if (ex.replan_required) {
+                h += '<div data-ff-coa="replan-banner" style="margin-top:3px;padding:5px 7px;border:1px solid #6a3030;border-radius:4px;background:#241414;color:#f0b0b0;">⚠ Replan required — ' + esc(ex.replan_reason || '') +
+                    '<div style="color:#cdb86a;margin-top:2px;">Choose: <b>Run selected COA</b> (continue anyway) · <b>Replan (AI)</b> · or switch the Planner to <b>Staff-Safe</b>.</div></div>';
+            }
+            h += '</div>';
+            if (running) h += '<div data-ff-coa="no-llm-note" style="margin-top:3px;font-size:9.5px;color:#7fd6a0;">✅ AI is NOT being called on normal ticks. Running the committed COA deterministically.</div>';
+            // per-tick timing (perf proof)
+            var tt = ex.last_tick_timing || {};
+            h += '<div style="margin-top:2px;font-size:9px;color:#6a8fa8;">commit ' + _fmtMs(tt.coa_commit_ms || 0) + ' · tick ' + _fmtMs(tt.coa_tick_execute_ms || 0) + ' · trigger-check ' + _fmtMs(tt.replan_trigger_check_ms || 0) + ' · llm_called_this_tick: <b style="color:' + (tt.llm_called_this_tick ? '#f0a0a0' : '#7fd6a0') + ';">' + String(!!tt.llm_called_this_tick) + '</b></div>';
+        }
+        h += '</div>';
+        return h;
+    }
+
     function _buildCoaEventLogEntries() {
         if (!_coaPlan || !_coaPlan.ok || !Array.isArray(_coaPlan.coas)) return [];
         var idx = _coaSelectedIdx;
@@ -3653,6 +3893,7 @@
             h += '<button data-act="reset-coa" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:5px;padding:5px 10px;font-size:11px;">⟲ Reset COA</button>';
         }
         h += '</div>';
+        h += _coaExecHtml();   // RMOOZ-COA-COMMIT-EXECUTION-L: commit/run/pause/replan + status
         h += renderCoaPlanHtml();
         h += '<div style="margin-top:10px;border-top:1px solid #2a3f55;padding-top:8px;">';
         h += '<div style="font-size:10px;color:#5a7a60;margin-bottom:5px;">Unit Decision LLM — single-unit step test</div>';
@@ -3976,6 +4217,15 @@
         _generateCoaPlanForTest:   function ()            { return _generateCoaPlan(); },
         _getCoaPlanForTest:        function ()            { return _coaPlan; },
         _setCoaPlanForTest:        function (p)           { _coaPlan = p; },
+        // RMOOZ-COA-COMMIT-EXECUTION-L test seams
+        _commitCoaForTest:         function (idx)         { return _commitCoa(idx); },
+        _getCoaExecForTest:        function ()            { return _coaExec; },
+        _coaExecTickForTest:       function ()            { return _coaExecTick(); },
+        _checkReplanTriggersForTest: function ()          { return _checkReplanTriggers(); },
+        _pauseCommittedCoaForTest: function ()            { return _pauseCommittedCoa(); },
+        _resetCoaExecForTest:      function ()            { return _resetCoaExec(); },
+        _replanCoaForTest:         function ()            { return _replanCoa(); },
+        _coaExecHtmlForTest:       function ()            { return _coaExecHtml(); },
         _setMcpPromptExpandedForTest: function (v)        { _mcpPromptExpanded = !!v; },
         _llmDisabledForTest:       function (p)           { return _llmDisabled(p); },
         _renderCommanderPanelForTest: function (rec)      { _lastCommanderDecision = rec; _loopRunning = true; try { renderCommanderPanel(); } catch (_) {} _loopRunning = false; return _cmdrPanel ? _cmdrPanel.innerHTML : ''; },

@@ -2238,7 +2238,14 @@
     // operator-facing messages — the single gate is RMOOZ_ALLOW_SIM_RUN (no separate free-fight flag).
     var AI_EXECUTION_DISABLED_MSG = 'AI execution is disabled. Enable RMOOZ_ALLOW_SIM_RUN=1.';
     var AI_NO_MODEL_MSG = 'AI execution is allowed, but no local LLM/model is available. Select/configure a local model.';
+    // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: a TIMEOUT means the model IS installed but too slow for the
+    // time budget — say so honestly (the old code mislabeled it "no model available").
+    var AI_TIMEOUT_MSG = 'The local AI timed out — the selected model is too slow for the current time budget. Pick a faster model (e.g. qwen2.5:3b) in the model selector, raise RMOOZ_FREE_FIGHT_TIMEOUT_MS, or switch to Staff-Safe mode.';
     var AI_FREE_FIGHT_REQUIRES_LLM = 'Enable RMOOZ_ALLOW_SIM_RUN=1 and select a local model.';
+    function _isTimeoutPlan(p) {
+        var blob = String((p && p.llm_status) || '').toLowerCase() + ' ' + String((p && p.fallback_reason) || '').toLowerCase();
+        return /timeout|timed.?out/.test(blob);
+    }
     // Is AI execution disabled at the gate (RMOOZ_ALLOW_SIM_RUN not '1')?
     function _llmDisabled(p) { return !!(p && (p.allow_sim_run === false || p.llm_enabled === false)); }
     // Human reason WHY a manual plan is not a real AI result (for the gate message).
@@ -2267,6 +2274,10 @@
         if (disabled) {
             // Rule 1 — gate off.
             h += '<div data-ff-coa="exec-disabled" style="margin-top:2px;">' + esc(AI_EXECUTION_DISABLED_MSG) + '</div>';
+        } else if (_isTimeoutPlan(p)) {
+            // Rule 2a — the model IS installed but timed out (too slow). Honest, actionable message.
+            h += '<div data-ff-coa="llm-timeout" style="margin-top:2px;">' + esc(AI_TIMEOUT_MSG) + '</div>';
+            h += '<div>Reason: ' + esc(_aiOnlyReason(p)) + '</div>';
         } else if (noModel) {
             // Rule 2 — allowed, but the LLM produced nothing usable (no local model / unavailable).
             h += '<div data-ff-coa="no-model" style="margin-top:2px;">' + esc(AI_NO_MODEL_MSG) + '</div>';

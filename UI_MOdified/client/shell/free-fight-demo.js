@@ -1656,6 +1656,12 @@
             .then(function (m) {
                 _modelInfo = m;
                 if (_pendingModel == null && m && m.selected_model) _pendingModel = m.selected_model;
+                // RMOOZ-AI-MODEL-READY-STATE-A: the DEFAULT listing reflects the real current selection
+                // (gate + provider + model_available), so fold it into _routeHealth — the signal
+                // readiness reads — so ANY model-list refresh (mount, header-HUD change, Refresh) flips
+                // the card to Ready, not just the in-card picker. A provider PREVIEW (?provider=…) does
+                // NOT reflect the active selection, so it must not move readiness.
+                if (!provider) _reconcileRouteHealthFromModelInfo(m);
                 _maybeAutoSelectModel();   // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A
                 updatePanel();
             })
@@ -3745,14 +3751,18 @@
         return getState();
     }
 
-    // RMOOZ-LOCAL-MODEL-SELECTOR-A: re-sync the card's picker when the model changes
-    // elsewhere (e.g. the global header HUD). Skip our own echo. Registered once.
-    try {
-        document.addEventListener('rmooz:ai-model-changed', function (e) {
-            if (e && e.detail && e.detail.source === 'free_fight_card') return;
-            try { _fetchModels(); } catch (_) {}
-        });
-    } catch (_) {}
+    // RMOOZ-LOCAL-MODEL-SELECTOR-A: re-sync the card when the model changes elsewhere (e.g. the global
+    // header HUD). Skip our own echo. Registered once.
+    // RMOOZ-AI-MODEL-READY-STATE-A: refresh READINESS too, not just the model list — _fetchModels()
+    // now reconciles _routeHealth from the fresh payload (so the card flips to Ready immediately), and
+    // _probeRouteHealth() re-confirms with the authoritative server health. Without this, selecting a
+    // model in the header HUD updated the list but left the card stuck on "Needs model".
+    function _onExternalModelChanged(e) {
+        if (e && e.detail && e.detail.source === 'free_fight_card') return;  // skip our own echo
+        try { _fetchModels(); } catch (_) {}        // refreshes _modelInfo + reconciles _routeHealth
+        try { _probeRouteHealth(); } catch (_) {}    // authoritative re-confirm
+    }
+    try { document.addEventListener('rmooz:ai-model-changed', _onExternalModelChanged); } catch (_) {}
 
     var API = {
         mount: mount, init: init, setObjective: setObjective, clearObjective: clearObjective,
@@ -3812,6 +3822,7 @@
         // RMOOZ-LOCAL-MODEL-SELECTOR-A test seams
         _fetchModelsForTest:       function ()            { return _fetchModels(); },
         _selectModelForTest:       function (m, p)        { return _selectModel(m, p); },
+        _onExternalModelChangedForTest: function (e)      { return _onExternalModelChanged(e); },
         _getModelInfoForTest:      function ()            { return _modelInfo; },
         _setModelInfoForTest:      function (m)           { _modelInfo = m; _pendingModel = (m && m.selected_model) || _pendingModel; updatePanel(); },
         _renderModelSelectorHtmlForTest: function ()      { return renderModelSelectorHtml(); },

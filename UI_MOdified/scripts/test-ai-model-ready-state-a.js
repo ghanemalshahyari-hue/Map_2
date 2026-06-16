@@ -32,6 +32,7 @@ async function atest(name, fn) { try { await fn(); console.log('  ✓ ' + name);
 let SELECT_PAYLOAD = {};      // body returned by POST /api/ai/model/select
 let HEALTH_MODE = 'true';     // 'true' | 'false' | 'defer' — GET /plan-coas/health behaviour
 let SELECTED_MODEL = '';      // model echoed back in the health response
+let MODELS_PAYLOAD = null;    // GET /api/ai/models response (for the HUD-event consumer path)
 function makeResp(obj) { return Promise.resolve({ ok: true, status: 200, statusText: 'OK', text: function () { return Promise.resolve(JSON.stringify(obj)); } }); }
 function installGlobals() {
     const elById = {};
@@ -43,6 +44,7 @@ function installGlobals() {
         setTimeout: () => 0, clearTimeout() {}, setInterval: () => 0, clearInterval() {},
         fetch: function (url) {
             if (/model\/select/.test(url)) return makeResp(SELECT_PAYLOAD);
+            if (/\/api\/ai\/models(\?|$)/.test(url) && MODELS_PAYLOAD) return makeResp(MODELS_PAYLOAD);
             if (/plan-coas\/health/.test(url)) {
                 if (HEALTH_MODE === 'defer') return new Promise(() => {}); // never resolves
                 return makeResp({ ok: true, allow_sim_run: true, ai_execution_enabled: HEALTH_MODE === 'true',
@@ -163,6 +165,32 @@ test('reconciled Ready card simple block is env-free', function () {
     ['RMOOZ_ALLOW_SIM_RUN', 'RMOOZ_ALLOW_CLOUD_AI', 'model_available', 'plan_source', 'provider_used', 'ollama pull'].forEach(function (t) {
         assert.ok(flowOnly.indexOf(t) === -1, 'no env token "' + t + '" in the simple block');
     });
+});
+
+console.log('\n8) model selected via ANOTHER surface (header HUD) → card flips to Ready');
+await atest('rmooz:ai-model-changed (source!=card) refreshes readiness, not just the list', async function () {
+    // Card is stale/not-ready (e.g. mounted while the saved model was uninstalled).
+    DEMO._setRouteHealthForTest({ ok: true, allow_sim_run: true, model_available: false, provider: 'ollama', configured_provider: 'ollama', model: 'not-installed' });
+    DEMO._setModelInfoForTest({ ok: true, provider: 'ollama', is_cloud: false, selected_model: 'not-installed', model_available: false, allow_sim_run: true, models: [{ name: 'gpt-oss:latest', available: true }, { name: 'not-installed', available: false }] });
+    assert.strictEqual(DEMO._freeFightAiReadyForTest().ok, false, 'precondition: not ready');
+    // The header HUD persisted gpt-oss:latest server-side; now GET /api/ai/models + health report it available.
+    MODELS_PAYLOAD = { ok: true, provider: 'ollama', is_cloud: false, cloud_enabled: false, selected_model: 'gpt-oss:latest',
+        model_available: true, allow_sim_run: true, provider_blocked: false, configured_provider: 'ollama',
+        models: [{ name: 'gpt-oss:latest', available: true }] };
+    SELECTED_MODEL = 'gpt-oss:latest'; HEALTH_MODE = 'true';
+    // Only the event fires (no in-card _selectModel).
+    DEMO._onExternalModelChangedForTest({ detail: { model: 'gpt-oss:latest', source: 'global_hud', model_available: true } });
+    await flush();
+    assert.strictEqual(DEMO._freeFightAiReadyForTest().ok, true, 'readiness refreshed from the HUD-driven change');
+    assert.strictEqual(DEMO._modelFlowStatusForTest().state, 'ready', 'status flips to ready');
+    assert.ok(/data-act="loop-start" style=/.test(String(DEMO._renderCommanderLoopHtmlForTest())), 'Start enabled');
+    MODELS_PAYLOAD = null;
+});
+test('our own echo (source=free_fight_card) is ignored by the consumer', function () {
+    DEMO._setRouteHealthForTest({ ok: true, allow_sim_run: true, model_available: false, provider: 'ollama', configured_provider: 'ollama', model: 'x' });
+    DEMO._setModelInfoForTest({ ok: true, provider: 'ollama', is_cloud: false, selected_model: 'x', model_available: false, allow_sim_run: true, models: [] });
+    DEMO._onExternalModelChangedForTest({ detail: { source: 'free_fight_card' } });   // no-op
+    assert.strictEqual(DEMO._freeFightAiReadyForTest().ok, false, 'own echo does not change state');
 });
 
 console.log('\n' + (fail === 0 ? '✅ PASS' : '❌ FAIL') + ' — ' + pass + ' passed, ' + fail + ' failed\n');

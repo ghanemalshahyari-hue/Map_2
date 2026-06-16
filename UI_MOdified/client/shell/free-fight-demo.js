@@ -2735,6 +2735,17 @@
         // 1) Input understood
         h += '<div style="font-weight:700;font-size:10px;color:#9ec2ec;margin:3px 0 2px;">Input understood — الإدخال مفهوم</div>';
         h += row(true, (iu.total_units || 0) + ' units analyzed');
+        // RMOOZ-AI-FREE-FIGHT-CANDIDATE-PREFILTER-A: how many of the force were sent to the AI.
+        var cand = iu.candidates;
+        if (cand && cand.applied) {
+            h += row(true, 'Candidate units sent to AI: ' + cand.sent + ' / ' + cand.total +
+                '  ·  excluded far/not-relevant: ' + cand.excluded);
+            arr(cand.top_exclusions).forEach(function (x) {
+                h += '<div style="font-size:9px;color:#8a9aa8;margin-left:12px;">— excluded ' + (x.count || 0) + ': ' + esc(x.label || '') + '</div>';
+            });
+        } else if (cand && cand.total) {
+            h += row(true, 'All ' + cand.total + ' units sent to AI (force is below the pre-filter size)');
+        }
         var rcParts = ['maneuver', 'fires', 'air_defense', 'recon', 'support']
             .filter(function (k) { return rc[k]; })
             .map(function (k) { return rc[k] + ' ' + k.replace('_', '-'); });

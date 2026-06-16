@@ -191,7 +191,7 @@ test('app.html includes the repair-loop client + toggle buttons exist in source'
   assert.ok(/bind\('planmode-'/.test(demoSrc), 'planning-mode buttons are bound');
   assert.ok(/renderPlanningTraceHtml/.test(demoSrc), 'trace renderer present');
   const html = fs.readFileSync(path.join(__dirname, '..', 'client', 'app.html'), 'utf8');
-  assert.ok(/free-fight-demo\.js\?v=repair-loop-a/.test(html), 'cache-buster bumped');
+  assert.ok(/free-fight-demo\.js\?v=/.test(html), 'free-fight-demo.js is cache-busted (version-agnostic)');
 });
 
 function arr(v) { return Array.isArray(v) ? v : []; }

@@ -34,6 +34,7 @@ const ANALYST    = require('./free-fight-llm-capability-analyst'); // FREEFIGHT-
 const CONTRACT   = require('./rmooz-ai-tool-contract');            // RMOZ-AI-TOOL-CONTRACT-A
 const TACTICS    = require('./tactical-action-library');           // RMOOZ-AI-COMMANDER-FREEDOM-A
 const TERRAIN_CTX = require('./tactical-terrain-context');         // GIS terrain-aware tactics
+const PREFILTER  = require('./candidate-prefilter');               // RMOOZ-AI-FREE-FIGHT-CANDIDATE-PREFILTER-A
 // Optional REAL elevation (DEM). Lazy + guarded: returns null off-coverage (e.g. Libya-only
 // dataset) so high-ground / route-cost gracefully fall back to inferred geometry.
 var _demFn = null;
@@ -838,15 +839,26 @@ function enrichCoasWithNarrative(coas, obj, context, planSource) {
 // ── LLM planner ───────────────────────────────────────────────────────────────
 // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A: the terrain/zone/contact context block the commander reasons
 // from. Shared by the legacy _callLlm prompt AND the MCP composer so both carry the same GIS data.
-function _buildTerrainZoneContext(intel, tctx) {
+function _buildTerrainZoneContext(intel, tctx, compact) {
     if (!intel && !tctx) return null;
+    var contact = (intel && intel.contact_picture) || null;
+    var coalition = (intel && intel.coalition_posture) || null;
+    // RMOOZ-AI-FREE-FIGHT-CANDIDATE-PREFILTER-A: when the force is pre-filtered to candidates, keep
+    // these situational layers as SUMMARIES (not full per-unit lists) — otherwise contact_picture /
+    // coalition_posture re-introduce the whole (300+) force into the prompt and bloat it for a small model.
+    if (compact) {
+        contact = contact ? { detected_contacts_count: arr(contact.detected_contacts).length,
+                              suspected_count: arr(contact.suspected_contacts).length,
+                              note: 'contacts summarized (candidate pre-filter active)' } : null;
+        coalition = coalition ? { note: 'coalition posture summarized (candidate pre-filter active)' } : null;
+    }
     return {
         terrain: (intel && intel.terrain) || null,
         sovereign_zone: (tctx && tctx.sovereign_zone) || (intel && intel.zone_state) || null,
-        contact_picture: (intel && intel.contact_picture) || null,
+        contact_picture: contact,
         roe_state: (intel && intel.roe_state) || null,
         alert_state: (intel && intel.alert_state) || null,
-        coalition: (intel && intel.coalition_posture) || null,
+        coalition: coalition,
         gis: tctx ? {
             terrain_class: tctx.terrain_class, owner_country: tctx.owner_country,
             threat_rings: tctx.threat_rings, movement_corridor: tctx.corridor,
@@ -1143,6 +1155,21 @@ async function _buildPlanningContext(units, objectives, context, opts, depth, ti
         mission_score_key: threatDomain === 'air' || threatDomain === 'air_defense' ? 'intercept'
             : (threatDomain === 'naval' ? 'naval_screen' : 'ground_hold') };
 
+    // RMOOZ-AI-FREE-FIGHT-CANDIDATE-PREFILTER-A: reduce the LLM problem size BEFORE the prompt — from
+    // the full active-side force keep only the 10–25 most relevant units for THIS objective (distance /
+    // objective country-zone / capability / per-domain reachability / threat proximity; readiness/
+    // supply/already-tasked only when present). allowed_unit_ids is then restricted to the candidates,
+    // so a small model gets a small problem and the validator rejects any non-candidate it invents.
+    var candidatePrefilter = PREFILTER.selectCandidates(allUnits, obj, {
+        capByUid: capByUid,
+        objCountry: (terrainCtx && terrainCtx.owner_country) || null,
+        threatRef: (activeSide === 'BLUE' && situation && situation.nearest_red &&
+                    Number.isFinite(+situation.nearest_red.lat)) ? situation.nearest_red : null,
+        tasked_set: (context && context.tasked_set) || null,
+        maxCandidates: opts && opts.max_candidates,
+        send_all_units: !!(opts && opts.send_all_units),
+    });
+
     // RMOZ-AI-TOOL-CONTRACT-A: build the versioned tool pack. Reuse the capability profiles
     // we just built (_precomputed_profiles → getCapabilityIntelTool does NOT re-run the
     // analyst), and thread a timing hook so the capability-tool span is captured.
@@ -1161,6 +1188,12 @@ async function _buildPlanningContext(units, objectives, context, opts, depth, ti
         var tc = (toolPack && toolPack.data) || {};
         allowedFamilies = arr(tc.allowed_coa_families);
         allowedUnitIds = arr(tc.allowed_unit_ids);
+        // RMOOZ-AI-FREE-FIGHT-CANDIDATE-PREFILTER-A: restrict the allowed set to the candidates. This
+        // drives BOTH normalizeCoa (via the prompt's allowed_unit_ids) AND validateCommanderCoaTool —
+        // the model can only use candidate units; anything else is rejected (no deterministic move).
+        if (candidatePrefilter && candidatePrefilter.applied && candidatePrefilter.candidate_ids.length) {
+            allowedUnitIds = candidatePrefilter.candidate_ids.slice();
+        }
         var cfoTool = tc.tools_context && tc.tools_context.coa_family_options;
         coaFamilyOpts = (cfoTool && cfoTool.data) || null;
     } catch (_) { toolPack = null; }
@@ -1172,6 +1205,7 @@ async function _buildPlanningContext(units, objectives, context, opts, depth, ti
         situation: situation, blueIntent: blueIntent, intel: intel, terrainCtx: terrainCtx,
         capProfiles: capProfiles, capSummary: capSummary, capByUid: capByUid, capContext: capContext,
         toolPack: toolPack, coaFamilyOpts: coaFamilyOpts, allowedFamilies: allowedFamilies, allowedUnitIds: allowedUnitIds,
+        candidatePrefilter: candidatePrefilter,   // RMOOZ-AI-FREE-FIGHT-CANDIDATE-PREFILTER-A
     };
 }
 
@@ -1185,6 +1219,7 @@ async function _assemblePlan(P, variationSeed, timer, light) {
     var situation = P.situation, blueIntent = P.blueIntent, intel = P.intel, terrainCtx = P.terrainCtx;
     var capProfiles = P.capProfiles, capSummary = P.capSummary, capContext = P.capContext;
     var allowedFamilies = P.allowedFamilies, allowedUnitIds = P.allowedUnitIds, coaFamilyOpts = P.coaFamilyOpts, toolPack = P.toolPack;
+    var candidatePrefilter = P.candidatePrefilter;   // RMOOZ-AI-FREE-FIGHT-CANDIDATE-PREFILTER-A
 
     function _terrainSummary() {
         if (!terrainCtx) return null;
@@ -1239,12 +1274,16 @@ async function _assemblePlan(P, variationSeed, timer, light) {
         try {
             mcpPrompt = CONTRACT.composeCommanderPrompt(toolPack, {
                 objective: obj,
-                terrain_zone_context: _buildTerrainZoneContext(intel, terrainCtx),
+                terrain_zone_context: _buildTerrainZoneContext(intel, terrainCtx, !!(candidatePrefilter && candidatePrefilter.applied)),
                 commander_mode: commanderMode,
                 active_side: activeSide,
                 allowed_tactical_actions: diverseMode ? TACTICS.TACTICAL_ACTIONS.slice() : undefined,
                 coa_archetypes: diverseMode ? TACTICS.COA_ARCHETYPES.map(function (a) { return { key: a.key, label: a.label }; }) : undefined,
                 previous_coa_families: arr(context.previous_coa_families),
+                // RMOOZ-AI-FREE-FIGHT-CANDIDATE-PREFILTER-A: restrict the prompt's force pool to the
+                // pre-filtered candidates + tell the model "choose ONLY from selected_candidates".
+                candidate_unit_ids: (candidatePrefilter && candidatePrefilter.applied) ? candidatePrefilter.candidate_ids : undefined,
+                non_candidate_summary: candidatePrefilter && candidatePrefilter.non_candidate_summary,
             });
         } catch (_) { mcpPrompt = null; }
     }
@@ -1278,6 +1317,16 @@ async function _assemblePlan(P, variationSeed, timer, light) {
                 total_units: arr(capProfiles).length || arr(allUnits).length,
                 active_side: activeSide,
                 role_counts: roleCounts,
+                // RMOOZ-AI-FREE-FIGHT-CANDIDATE-PREFILTER-A: how many of the force were sent to the AI.
+                candidates: candidatePrefilter ? {
+                    applied: !!candidatePrefilter.applied,
+                    sent: candidatePrefilter.sent,
+                    total: candidatePrefilter.total,
+                    excluded: candidatePrefilter.excluded,
+                    objective_country: candidatePrefilter.objective_country || null,
+                    top_exclusions: arr(candidatePrefilter.non_candidate_summary).slice(0, 3)
+                        .map(function (x) { return { label: x.label, count: x.count }; }),
+                } : null,
                 objectives: arr(objectives).length,
                 terrain_class: terrainCtx ? (terrainCtx.terrain_class || null) : null,
                 terrain_provenance: terrainCtx ? (terrainCtx.provenance || 'inferred (no DEM)') : 'inferred (no DEM)',
@@ -1329,6 +1378,7 @@ async function _assemblePlan(P, variationSeed, timer, light) {
             tool_contract: _toolContract(planSource, validation, fallbackUsed, repaired),
             commander_assessment: assess,
             recommended_plan_id: _recommendedPlanId(coas),
+            candidate_prefilter: candidatePrefilter || null,   // RMOOZ-AI-FREE-FIGHT-CANDIDATE-PREFILTER-A
             llm_called: llmCalled,
             llm_status: llmStatus,
             fallback_reason: fallbackReason,

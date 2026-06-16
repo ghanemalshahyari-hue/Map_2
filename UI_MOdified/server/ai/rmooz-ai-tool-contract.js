@@ -995,6 +995,29 @@ function composeCommanderPrompt(packEnvelope, extras) {
         return { unit_uid: u.unit_uid, side: u.side, country: u.country, domain: u.domain, class: u.class,
             lat: u.lat, lon: u.lon, platform_name: u.platform_name, display_name: u.display_name };
     });
+    // RMOOZ-AI-FREE-FIGHT-CANDIDATE-PREFILTER-A: when the planner supplies a pre-filtered candidate set,
+    // restrict the force pool + allowed_unit_ids to it — the model only ever sees the relevant 10–25
+    // units (a small problem for a small model) and must choose ONLY from selected_candidates.
+    var candidateIds = arr(extras.candidate_unit_ids).map(String);
+    var prefiltered = candidateIds.length > 0;
+    var nonCandidateSummary = arr(extras.non_candidate_summary);
+    var candSet = {};
+    candidateIds.forEach(function (id) { candSet[id] = true; });
+    if (prefiltered) {
+        units = units.filter(function (u) { return candSet[String(u.unit_uid)]; });
+        allowedUnitIds = candidateIds.slice();
+    }
+    // Keep the WHOLE prompt within the candidate set — otherwise capability_intel's per-mission
+    // best/not-recommended lists re-introduce the full (300+) force into the prompt and defeat the
+    // problem-size reduction. Filters each mission's unit list to the candidates when pre-filtered.
+    function _candCap(byMission) {
+        if (!prefiltered || !byMission || typeof byMission !== 'object') return byMission;
+        var out = {};
+        Object.keys(byMission).forEach(function (m) {
+            out[m] = arr(byMission[m]).filter(function (e) { return e && candSet[String(e.unit_uid)]; });
+        });
+        return out;
+    }
     var promptObject = {
         mission: 'Produce a commander course-of-action decision. Think like a commander, not a script.',
         coa_requirement: 'Return 2-3 genuinely different courses of action in "coas" (e.g. a cautious/recon option, a maneuver/flank/deception option, and a direct option). Within EACH COA select ONLY the relevant units — do not move all units.',
@@ -1004,7 +1027,11 @@ function composeCommanderPrompt(packEnvelope, extras) {
         objective_country_zone: zone ? { nearest_red_zone: zone.nearest_red_zone, zones_count: arr(zone.zones).length } : null,
         force_pool: units,
         allowed_unit_ids: allowedUnitIds,
-        capability_intel: capability ? { best: capability.best, not_recommended_for: capability.not_recommended_for } : null,
+        // RMOOZ-AI-FREE-FIGHT-CANDIDATE-PREFILTER-A: the pre-screened relevant units (detailed) + a
+        // grouped summary of why the rest of the force was excluded. Present only when pre-filtered.
+        selected_candidates: prefiltered ? units : undefined,
+        non_candidate_summary: prefiltered ? nonCandidateSummary : undefined,
+        capability_intel: capability ? { best: _candCap(capability.best), not_recommended_for: _candCap(capability.not_recommended_for) } : null,
         terrain_zone_context: extras.terrain_zone_context || null,
         contact_picture: contacts ? { detected_contacts: arr(contacts.detected_contacts).length } : null,
         roe_state: roe ? { alert_state: roe.alert_state, roe_state: roe.roe_state } : null,
@@ -1012,7 +1039,9 @@ function composeCommanderPrompt(packEnvelope, extras) {
         allowed_tactical_actions: extras.allowed_tactical_actions || null,
         coa_archetypes: extras.coa_archetypes || null,
         previous_coa_families: arr(extras.previous_coa_families),
-        commander_selection_rules: MCP_COMMANDER_INSTRUCTIONS,
+        commander_selection_rules: prefiltered
+            ? ['Choose ONLY from selected_candidates / allowed_unit_ids — these are the pre-screened relevant units for this objective; the rest of the force was excluded (see non_candidate_summary) and must NOT be moved.'].concat(MCP_COMMANDER_INSTRUCTIONS)
+            : MCP_COMMANDER_INSTRUCTIONS,
         required_output_schema: {
             coas: [{
                 plan_id: 'COA-1', title: 'string',
@@ -1032,7 +1061,9 @@ function composeCommanderPrompt(packEnvelope, extras) {
                 risks: ['string'], assumptions: ['string'],
             }],
         },
-        constraints: 'Return 2-3 COAs (not just one). unit_uid MUST be exactly one of allowed_unit_ids; coordinates inside the map; no teleport; no invented units; NEVER engage/destroy/open-fire; return ONLY JSON.',
+        constraints: 'Return 2-3 COAs (not just one). unit_uid MUST be exactly one of allowed_unit_ids'
+            + (prefiltered ? ' (the pre-screened selected_candidates — do NOT use or move any other unit)' : '')
+            + '; coordinates inside the map; no teleport; no invented units; NEVER engage/destroy/open-fire; return ONLY JSON.',
     };
     return {
         version: version,

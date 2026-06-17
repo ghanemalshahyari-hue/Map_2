@@ -1343,7 +1343,10 @@ function handle(req, res, ctx) {
     // FREEFIGHT-COA-ROUTE-JSON-GUARD-A + RMOOZ-AI-EXECUTION-SINGLE-GATE-A: cheap GET health probe so
     // the client can tell "route present" from "stub/old server", AND learn the single gate state
     // (allow_sim_run / ai_execution_enabled / model_available / reason_if_blocked).
-    if (pathname === '/api/wargame-sim/free-fight/plan-coas/health' && (method === 'GET' || method === 'POST')) {
+    // RMOOZ-AI-MODEL-READY-LIVE-A: `route-health` is an alias for the existing plan-coas/health probe
+    // (identical payload) so the spec-named endpoint resolves for live verification; the client may
+    // probe either path.
+    if ((pathname === '/api/wargame-sim/free-fight/plan-coas/health' || pathname === '/api/wargame-sim/free-fight/route-health') && (method === 'GET' || method === 'POST')) {
         var hh = COA_PLANNER.routeHealth();
         // Only probe the provider for model availability when execution is actually allowed.
         var probe = hh.ai_execution_enabled

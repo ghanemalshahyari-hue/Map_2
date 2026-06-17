@@ -1735,6 +1735,12 @@
                 _modelInfo = Object.assign({}, _modelInfo || {}, { ok: false, error: (m && m.error) || 'select_failed' });
             }
             updatePanel();                 // immediate: shows Ready from the reconciled state
+            // RMOOZ-AI-MODEL-READY-LIVE-A: after the selection persists, force a full refresh of BOTH
+            // authoritative signals — /api/ai/models (list + availability) and route-health (the gate +
+            // live /api/tags probe) — then re-render. No page reload needed; the card flips to Ready the
+            // moment the selected model is available. _fetchModels() also reconciles _routeHealth and
+            // calls updatePanel(); the model is now available so it never re-enters the auto-select path.
+            try { _fetchModels(); } catch (_) {}
             return _probeRouteHealth();    // re-confirm with the authoritative server health (idempotent)
         }).catch(function (e) {
             _modelInfo = Object.assign({}, _modelInfo || {}, { ok: false, error: (e && e.message) || 'select_failed' });
@@ -1882,6 +1888,11 @@
         // ── LOCAL (ollama) ───────────────────────────────────────────────────
         if (avail !== true) {
             var models = (info && Array.isArray(info.models)) ? info.models : null;
+            // RMOOZ-AI-MODEL-READY-LIVE-A (req #4): a SAVED runtime selection (runtime/ai-model-selection.json)
+            // that is no longer installed gets a simple, action-oriented message; the picker stays open so
+            // the operator can choose another model. (The env/default-model case keeps the #6 detail below.)
+            var savedSelection = !!((info && info.selection_source === 'runtime_selection') ||
+                                    (rh && rh.selection_source === 'runtime_selection'));
             var msg;
             if (models == null) {                             // model list not loaded yet → generic
                 msg = AI_NO_MODEL_MSG;
@@ -1889,6 +1900,8 @@
                 var availCount = models.filter(function (m) { return m && m.available !== false; }).length;
                 if (availCount === 0) {                       // nothing installed / Ollama down
                     msg = 'No AI model found. Start Ollama or choose a cloud model.';
+                } else if (selected && savedSelection) {      // req #4: saved model missing, others available
+                    msg = 'Your saved model is not available. Choose another model.';
                 } else if (selected) {                        // #6: exact model + installed count
                     msg = 'Local Ollama model "' + selected + '" is not installed. Pull this model or choose an installed local model (' + availCount + ' installed locally).';
                 } else {

@@ -1077,6 +1077,12 @@
         bind('coa-pause', _pauseCommittedCoa);
         bind('coa-replan', _replanCoa);
         bind('coa-exec-reset', _resetCoaExec);
+        // RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O: primary-strip controls (wire to existing functions only).
+        // Generate / Use Recommended / Use Selected are the only primary commit actions; COA reselection
+        // happens via the COA cards (select-coa-*), and Staff-Safe / Replan / Clear live under Advanced.
+        bind('generate-ai-plan', function () { setPlanningMode('commander'); _generateCoaPlan(); });
+        bind('coa-use-recommended', function () { _coaSelectedIdx = _pickRecommendedIdx(_coaPlan); _commitCoa(_coaSelectedIdx); });
+        bind('coa-use-selected', function () { _commitCoa(_coaSelectedIdx); });
         bind('select-coa-0', function () { _coaSelectedIdx = 0; updatePanel(); });
         bind('select-coa-1', function () { _coaSelectedIdx = 1; updatePanel(); });
         bind('select-coa-2', function () { _coaSelectedIdx = 2; updatePanel(); });
@@ -2219,6 +2225,9 @@
                 // presents real LLM results ONLY — never deterministic/fallback dressed as AI).
                 _coaPlan._requestedVia = 'manual_generate';
             }
+            // RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O: auto-select the recommended COA so the simple flow
+            // can offer "Use Recommended Plan" by default.
+            if (_coaPlan && _coaPlan.ok && arr(_coaPlan.coas).length) { try { _coaSelectedIdx = _pickRecommendedIdx(_coaPlan); } catch (_) {} }
             _coaLoading = false; _coaApplied = false; _stopCoaLoadingTicker();
             updatePanel();
         }).catch(function (e) {
@@ -3659,11 +3668,14 @@
         // / timeout / unavailable / fast mode / deterministic fallback / provider missing), render
         // NOTHING but the honest message + diagnostics — no cards, no score numbers, no stale
         // values, no fallback dressed as AI. (The loop / Generate-5 are separate flows, untouched.)
-        // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: Staff-Safe (explicit OR auto-fallback) is a legitimate,
-        // clearly-badged mode — SHOW its deterministic COAs (not dressed as AI). Only a true no-plan
-        // failure (no coas at all) still hits the AI-only honesty gate. The planning-trace below carries
-        // the honest "Staff-Safe / why the AI didn't run" labeling.
-        if (_coaPlan._requestedVia === 'manual_generate' && !_isRealLlmPlan(_coaPlan) && !arr(_coaPlan.coas).length) {
+        // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: the ONE exception is an EXPLICITLY-chosen Staff-Safe plan
+        // (planning_mode='staff_safe', echoed by the server) — a deliberate, clearly-badged
+        // deterministic mode whose COAs ARE shown (honestly labeled, not "AI"). A Commander-mode
+        // deterministic/auto-fallback is NOT exempt: it still hits the AI-only honesty gate even when
+        // it carries COAs. (Gating on "no coas at all" let Commander-mode fallbacks through dressed as
+        // a plan and broke the AI-only spec — RMOOZ-AI-ATTACK-PLAN-AI-ONLY-A.)
+        var _explicitStaffSafe = String(_coaPlan.planning_mode || '').toLowerCase() === 'staff_safe';
+        if (_coaPlan._requestedVia === 'manual_generate' && !_isRealLlmPlan(_coaPlan) && !_explicitStaffSafe) {
             h += _aiOnlyGateHtml(_coaPlan);
             return h;
         }
@@ -3926,6 +3938,64 @@
         return h;
     }
 
+    // RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O: the SIMPLE primary operator flow — ONE primary action per
+    // state: Generate AI Plan (slow) → Use Recommended Plan → Run Plan (fast) → Pause, state-driven
+    // (no plan → plan → committed → running → blocked → complete). It wires to the EXISTING functions
+    // only (no logic change). "Start AI Free Fight" / Commit / Replan / Clear / Staff-Safe / model
+    // controls / diagnostics all live under "Advanced controls" (collapsed). The blocked state points
+    // the operator into Advanced (Replan stays there, per owner ruling) rather than surfacing it. The
+    // committed-COA Run path keeps the no-LLM guarantee from -L (deterministic ticks,
+    // llm_called_this_tick=false, no /plan-coas fetch).
+    function _operatorStatusLine(ex) {
+        var phases = arr(ex.selected_coa && ex.selected_coa.phases);
+        var word = ex.phase_status === 'complete' ? 'Complete' : (ex.replan_required ? 'Blocked' : (ex.paused ? 'Paused' : (ex.phase_status === 'running' ? 'Running' : 'Ready')));
+        return '<div data-ff-op="status" style="margin-top:5px;font-size:10px;color:#cdd8e4;line-height:1.5;">' +
+            '<div><span style="color:#8fa5b8;">Active Plan:</span> <b style="color:#e8eaed;">' + esc(ex.selected_coa_id) + '</b></div>' +
+            '<div><span style="color:#8fa5b8;">Phase:</span> ' + (ex.phase_status === 'complete' ? 'all done' : ((ex.current_phase_index + 1) + ' / ' + phases.length)) +
+            ' · <span style="color:#8fa5b8;">Status:</span> <b style="color:#cfe6ff;">' + word + '</b></div>' +
+            '<div><span style="color:#8fa5b8;">AI calls on normal ticks:</span> <b style="color:#7fd6a0;">OFF</b></div></div>';
+    }
+    function _operatorStripHtml() {
+        function pri(act, label, dis) { return '<button data-ff-primary="1" data-act="' + act + '"' + (dis ? ' disabled' : '') + ' style="font:inherit;cursor:' + (dis ? 'not-allowed' : 'pointer') + ';border:1px solid #2e7d54;background:#15301f;color:#9fe8c0;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;' + (dis ? 'opacity:.55;' : '') + '">' + label + '</button>'; }
+        function note(txt, col) { return '<div style="margin-top:4px;font-size:10px;color:' + (col || '#9fb8c8') + ';">' + txt + '</div>'; }
+        var coas = arr(_coaPlan && _coaPlan.coas);
+        var hasPlan = !!(_coaPlan && _coaPlan.ok && coas.length);
+        var ex = _coaExec;
+        var execRunning = !!(ex && ex.active && !ex.paused && !ex.replan_required && ex.phase_status === 'running');
+        var blocked = !!(ex && ex.replan_required);
+        var complete = !!(ex && ex.phase_status === 'complete');
+        var btns = '', body = '';
+        if (complete) {                                   // F. plan finished → Generate again
+            btns = pri('generate-ai-plan', '⚡ Generate AI Plan');
+            body = note('✅ Plan complete — all phases executed with no AI calls. Generate a new plan to continue.', '#7fd6a0');
+        } else if (blocked) {                             // E. blocked — Replan stays STRICTLY in Advanced
+            btns = '';
+            body = note('⚠ ' + esc(ex.replan_reason || 'Replan required — execution paused.'), '#f0b0b0') +
+                   note('Open ⚙ Advanced controls below to Replan with AI (slow, calls AI), Continue anyway, or switch to Staff-Safe.', '#cdb86a');
+        } else if (ex && ex.active) {                     // C committed / D running
+            if (execRunning) { btns = pri('coa-pause', '⏸ Pause'); body = note('Running the plan. Fast — the AI is NOT called on normal ticks.', '#7fd6a0'); }
+            else { btns = pri('coa-run', '▶ Run Plan'); body = note('Run executes the committed COA deterministically — fast, no AI call on normal ticks.', '#9fb8c8'); }
+            body += _operatorStatusLine(ex);
+        } else if (hasPlan) {                             // B. plan generated, not committed
+            var recIdx = _pickRecommendedIdx(_coaPlan);
+            if (_coaSelectedIdx === recIdx) {
+                var recId = (coas[recIdx] && coas[recIdx].plan_id) || ('COA-' + (recIdx + 1));
+                btns = pri('coa-use-recommended', '✅ Use Recommended Plan (' + esc(recId) + ')');
+                body = note('AI produced ' + coas.length + ' COAs — the recommended one is pre-selected. Use it, or pick another from the cards below.', '#9fb8c8');
+            } else {
+                var selId = (coas[_coaSelectedIdx] && coas[_coaSelectedIdx].plan_id) || ('COA-' + (_coaSelectedIdx + 1));
+                btns = pri('coa-use-selected', '▶ Use Selected Plan (' + esc(selId) + ')');
+                body = note('Using your selected COA ' + esc(selId) + ' — pick a different one from the cards below if needed.', '#9fb8c8');
+            }
+        } else {                                          // A. no plan → Generate (slow, calls AI)
+            btns = pri('generate-ai-plan', '⚡ Generate AI Plan');
+            body = _coaLoading ? note('AI is building the plan. This may take 30–90 seconds depending on the model.', '#e0c060')
+                               : note('Generate an AI plan — slow, calls the AI model. (Instant Staff-Safe planning lives under Advanced controls.)', '#9fb8c8');
+        }
+        return '<div data-ff-op="strip" style="margin:6px 0;padding:8px 10px;border:1px solid #2e5d7d;border-radius:6px;background:#0a1726;">' +
+            '<div style="font-size:11px;font-weight:700;color:#9ec2ec;margin-bottom:5px;">AI Commander — Generate (slow) → Use a plan → Run (fast)</div>' +
+            '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">' + btns + '</div>' + body + '</div>';
+    }
     function renderAiDecisionHtml() {
         var h = '<div style="margin-top:8px;border-top:1px solid #2a3f55;padding-top:8px;">';
         h += '<div style="margin-bottom:6px;padding:5px 8px;border:1px solid #1a4030;border-radius:4px;background:#091810;">' +
@@ -3935,7 +4005,13 @@
              '</div>' +
              '<div style="font-size:10px;color:#5a9a70;margin-top:2px;">Real unit-level AI decision — هذا هو الاختبار الفعلي للذكاء الاصطناعي على مستوى الوحدات</div>' +
              '</div>';
-        // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: continuous loop controls on top
+        // RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O: the simple primary flow + the COA cards, then EVERYTHING
+        // else (continuous loop / manual planner / commit-exec detail / model+diagnostics / unit-decision)
+        // collapsed under "Advanced controls".
+        h += _operatorStripHtml();
+        h += renderCoaPlanHtml();   // COA cards — choose / view the recommended plan
+        h += '<details data-ff-op="advanced" style="margin-top:8px;"><summary style="cursor:pointer;font-size:10.5px;color:#8fa5b8;font-weight:600;">⚙ Advanced controls — تحكّم متقدّم</summary><div style="margin-top:6px;">';
+        // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: continuous loop controls (advanced/legacy).
         h += renderCommanderLoopHtml();
         h += '<div style="font-size:10px;color:#5a7a60;margin:2px 0 6px;border-top:1px solid #2a3f55;padding-top:6px;">Manual COA planner (single turn) — تخطيط يدوي</div>';
         // COA Planner buttons
@@ -3959,8 +4035,7 @@
             h += '<button data-act="reset-coa" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:5px;padding:5px 10px;font-size:11px;">⟲ Reset COA</button>';
         }
         h += '</div>';
-        h += _coaExecHtml();   // RMOOZ-COA-COMMIT-EXECUTION-L: commit/run/pause/replan + status
-        h += renderCoaPlanHtml();
+        h += _coaExecHtml();   // RMOOZ-COA-COMMIT-EXECUTION-L: commit/run/pause/replan + status (advanced detail)
         h += '<div style="margin-top:10px;border-top:1px solid #2a3f55;padding-top:8px;">';
         h += '<div style="font-size:10px;color:#5a7a60;margin-bottom:5px;">Unit Decision LLM — single-unit step test</div>';
         // LLM toggle + test button
@@ -4115,6 +4190,7 @@
             }
         }
         h += '</div>';  // close unit decision inner section
+        h += '</div></details>';  // close Advanced controls (RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O)
         h += '</div>';  // close renderAiDecisionHtml outer
         return h;
     }
@@ -4296,6 +4372,7 @@
         _resetCoaExecForTest:      function ()            { return _resetCoaExec(); },
         _replanCoaForTest:         function ()            { return _replanCoa(); },
         _coaExecHtmlForTest:       function ()            { return _coaExecHtml(); },
+        _operatorStripHtmlForTest: function ()            { return _operatorStripHtml(); },   // RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O
         // RMOOZ-COA-COMMIT-PERSISTENCE-M test seams
         _restoreCoaExecForTest:    function ()            { return _restoreCoaExec(); },
         _peekPersistedCoaExecForTest: function ()         { return _peekPersistedCoaExec(); },

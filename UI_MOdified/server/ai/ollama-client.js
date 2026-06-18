@@ -206,15 +206,49 @@ function shouldGenerateViaChat(model) {
     return /^gpt-oss(?::|$)/i.test(String(model || ''));
 }
 
+// RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P: lazy resolver so EVERY Ollama call honors the runtime
+// keep_alive (RMOOZ_LLM_KEEP_ALIVE) and the optional context cap (RMOOZ_OLLAMA_NUM_CTX) without
+// each call site threading them. Lazy-required to avoid a load-order cycle (llm-runtime-config
+// does not require this module).
+function _llmCfg() { try { return require('./llm-runtime-config'); } catch (_) { return null; } }
 function applyOllamaOptions(body, options) {
     const opts = { ...DEFAULT_OPTIONS, ...(options || {}) };
-    const keepAlive = opts.keep_alive || opts.keepAlive || cfg.keepAlive;
+    const lc = _llmCfg();
+    // keep_alive: explicit option → RMOOZ_LLM_KEEP_ALIVE → ai-config default. Keeping the model
+    // resident avoids the cold-reload penalty (Ollama unloads after 5m by default).
+    const keepAlive = opts.keep_alive || opts.keepAlive || (lc && lc.getKeepAlive && lc.getKeepAlive()) || cfg.keepAlive;
     if (opts.numPredict != null && opts.num_predict == null) opts.num_predict = opts.numPredict;
+    // num_ctx: explicit option wins; otherwise the opt-in RMOOZ_OLLAMA_NUM_CTX (smaller ctx = less
+    // prefill + memory). Unset → leave the model default so we never force-truncate the COA prompt.
+    if (opts.num_ctx == null) { const nc = lc && lc.getNumCtx && lc.getNumCtx(); if (nc) opts.num_ctx = nc; }
     delete opts.keep_alive;
     delete opts.keepAlive;
     delete opts.numPredict;
     if (keepAlive) body.keep_alive = keepAlive;
     if (Object.keys(opts).length) body.options = opts;
+}
+
+// RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P: pull Ollama's timing stats out of a raw response. Ollama
+// reports durations in NANOSECONDS → convert to ms + tokens/sec. Returns null fields for an
+// OpenAI-dialect response (which doesn't carry these). load_duration is large on a cold load and
+// ~0 when the model is already resident — a reliable cold/warm signal without unloading.
+function extractTimings(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    const ns2ms = (v) => (Number.isFinite(v) ? Math.round(v / 1e6) : null);
+    const tps = (count, durNs) => (Number.isFinite(count) && Number.isFinite(durNs) && durNs > 0)
+        ? Math.round((count / (durNs / 1e9)) * 10) / 10 : null;
+    const loadMs = ns2ms(raw.load_duration);
+    return {
+        total_ms:              ns2ms(raw.total_duration),
+        load_ms:               loadMs,
+        prompt_eval_ms:        ns2ms(raw.prompt_eval_duration),
+        eval_ms:               ns2ms(raw.eval_duration),
+        prompt_tokens:         Number.isFinite(raw.prompt_eval_count) ? raw.prompt_eval_count : null,
+        eval_tokens:           Number.isFinite(raw.eval_count) ? raw.eval_count : null,
+        eval_tokens_per_sec:   tps(raw.eval_count, raw.eval_duration),
+        prompt_tokens_per_sec: tps(raw.prompt_eval_count, raw.prompt_eval_duration),
+        was_loaded:            loadMs != null ? (loadMs < 200) : null,
+    };
 }
 
 async function ollamaGenerateViaChat({ model, prompt, system, format, options, timeoutMs }) {
@@ -370,7 +404,54 @@ async function chat(args) {
     }
 }
 
-module.exports = { ping, generate, chat, DEFAULT_URL, API_STYLE };
+// RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P: preload the model into memory (Ollama loads on an
+// empty-messages /api/chat) and pin it resident via keep_alive. Remote (OpenAI dialect) has
+// nothing to preload, so it returns an honest no-op shape.
+async function warmup(args) {
+    args = args || {};
+    const model = args.model || defaultModel();
+    if (API_STYLE === 'openai') {
+        return { ok: true, model, provider: 'openai', loaded: null, note: 'remote provider — no local preload' };
+    }
+    const lc = _llmCfg();
+    const keepAlive = args.keepAlive || args.keep_alive || (lc && lc.getKeepAlive && lc.getKeepAlive()) || cfg.keepAlive;
+    try {
+        const t0 = Date.now();
+        const raw = await postJson('/api/chat', { model, messages: [], stream: false, keep_alive: keepAlive }, args.timeoutMs);
+        // Ollama's empty-messages "load" reply often omits the duration fields, so the wall-clock IS
+        // the preload cost: high on a cold load, ~0 when already resident.
+        const wall_ms = Date.now() - t0;
+        const t = extractTimings(raw);
+        const loadMs = (t && t.load_ms != null) ? t.load_ms : wall_ms;
+        return { ok: true, model, provider: 'ollama', keep_alive: keepAlive, loaded: true,
+                 wall_ms, load_ms: loadMs, was_loaded: loadMs < 200, timings: t };
+    } catch (e) {
+        return { ok: false, model, provider: 'ollama', error: e.message || String(e) };
+    }
+}
+
+// RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P: run ONE timed generation and report Ollama's timing stats
+// + tokens/sec + a wall-clock total. load_ms in the result IS the cold/warm signal (warmup() first
+// for a warm number). Short output by design — benchmarks prefill+decode, not a long answer.
+async function benchmark(args) {
+    args = args || {};
+    const model = args.model || defaultModel();
+    const prompt = args.prompt || 'Reply with exactly: OK';
+    const options = { num_predict: Number.isFinite(args.numPredict) ? args.numPredict : 16, temperature: 0, ...(args.options || {}) };
+    const t0 = Date.now();
+    const r = await generate({ model, prompt, options, timeoutMs: args.timeoutMs });
+    const wall_ms = Date.now() - t0;
+    if (!r.ok) return { ok: false, model, error: r.error };
+    const lc = _llmCfg();
+    return { ok: true, model, provider: API_STYLE === 'openai' ? 'openai' : 'ollama',
+             num_ctx: (lc && lc.getNumCtx && lc.getNumCtx()) || null, num_predict: options.num_predict,
+             wall_ms, timings: extractTimings(r.raw), response_sample: String(r.response || '').slice(0, 80) };
+}
+
+// test hook — return the request body after option resolution (keep_alive + num_ctx), no network.
+function _ollamaBodyForTest(options) { const body = {}; applyOllamaOptions(body, options); return body; }
+
+module.exports = { ping, generate, chat, warmup, benchmark, extractTimings, DEFAULT_URL, API_STYLE, _ollamaBodyForTest };
 // DEFAULT_MODEL stays on the public surface but is now a live getter (the
 // operator-selected model), so any consumer reading ollama.DEFAULT_MODEL keeps
 // working and always sees the current selection.

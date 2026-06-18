@@ -653,6 +653,41 @@ const server = http.createServer((req, res) => {
                 allow_sim_run: process.env.RMOOZ_ALLOW_SIM_RUN === '1' }));
         return;
     }
+    // RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P: warm up (preload) the local model so the first real
+    // request doesn't pay the cold-load penalty, and pin it resident via keep_alive. Gated by the
+    // single execution gate (RMOOZ_ALLOW_SIM_RUN). Body: { model? }.
+    if (pathname === '/api/ai/warmup' && (req.method === 'POST' || req.method === 'GET')) {
+        if (process.env.RMOOZ_ALLOW_SIM_RUN !== '1') {
+            sendJson(res, 200, { ok: false, reason: 'ai_execution_disabled', message: 'AI execution is disabled. Set RMOOZ_ALLOW_SIM_RUN=1 and restart the server.' });
+            return;
+        }
+        (req.method === 'POST' ? readJsonBody(req) : Promise.resolve({})).then(async (body) => {
+            const model = (body && typeof body.model === 'string' && body.model.trim()) || undefined;
+            const r = await ollama.warmup({ model, keepAlive: llmRuntimeConfig.getKeepAlive() });
+            sendJson(res, 200, r);
+        }).catch(e => sendJson(res, 200, { ok: false, error: e.message || String(e) }));
+        return;
+    }
+    // RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P: local inference benchmark — one short timed generation,
+    // returning Ollama timing stats (load/prompt-eval/eval ms), tokens/sec, num_ctx, keep_alive and
+    // wall-clock. Gated by the single execution gate. Body: { model?, prompt?, numPredict? }.
+    if (pathname === '/api/ai/benchmark' && (req.method === 'POST' || req.method === 'GET')) {
+        if (process.env.RMOOZ_ALLOW_SIM_RUN !== '1') {
+            sendJson(res, 200, { ok: false, reason: 'ai_execution_disabled', message: 'AI execution is disabled. Set RMOOZ_ALLOW_SIM_RUN=1 and restart the server.' });
+            return;
+        }
+        (req.method === 'POST' ? readJsonBody(req) : Promise.resolve({})).then(async (body) => {
+            body = body || {};
+            const r = await ollama.benchmark({
+                model: (typeof body.model === 'string' && body.model.trim()) || undefined,
+                prompt: typeof body.prompt === 'string' ? body.prompt : undefined,
+                numPredict: Number.isFinite(body.numPredict) ? body.numPredict : undefined,
+                timeoutMs: 60000,
+            });
+            sendJson(res, 200, Object.assign({ keep_alive: llmRuntimeConfig.getKeepAlive(), num_ctx_env: llmRuntimeConfig.getNumCtx() }, r));
+        }).catch(e => sendJson(res, 200, { ok: false, error: e.message || String(e) }));
+        return;
+    }
     // COA generator — produces 3-5 candidate Courses of Action for the
     // commander given a scenario, current state, and a short intent.
     // Body: { scenarioName, currentState?, commanderIntent?, constraints?,

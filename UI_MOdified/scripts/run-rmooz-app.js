@@ -43,6 +43,11 @@ function applyRunDefaults(env) {
     // Free Fight sim defaults (carried over from the previous run scripts).
     setDefault('RMOOZ_SIM_MODEL', 'qwen2.5:7b');
     setDefault('RMOOZ_FREE_FIGHT_TIMEOUT_MS', '300000');
+    // RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P: keep the local model resident so the operator doesn't pay
+    // a cold reload between turns (Ollama unloads after 5m by default). Override with RMOOZ_LLM_KEEP_ALIVE.
+    // (num_ctx is intentionally NOT defaulted — forcing a small context would truncate the COA prompt;
+    //  set RMOOZ_OLLAMA_NUM_CTX explicitly to opt in.)
+    setDefault('RMOOZ_LLM_KEEP_ALIVE', '8h');
     // TestingAI dir — resolved RELATIVE to this repo (replaces the foreign
     // C:\Users\ADMIN\...\TestingAI absolute path).
     setDefault('RMOOZ_TESTINGAI_DIR', path.join(APP_DIR, 'TestingAI'));

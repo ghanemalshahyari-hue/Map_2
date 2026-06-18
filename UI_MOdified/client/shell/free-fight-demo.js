@@ -89,6 +89,9 @@
     var _routeUnavailableMsg = null;   // set when a plan fetch returns non-JSON / 405
     // RMOOZ-LOCAL-MODEL-SELECTOR-A: local model picker state (mirrors the global header HUD).
     var _modelInfo = null;             // last /api/ai/models payload
+    var _benchBusy = false;            // RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P: warmup/benchmark in flight
+    var _benchResult = null;           // last /api/ai/benchmark payload
+    var _warmupResult = null;          // last /api/ai/warmup payload
     var _pendingModel = null;          // dropdown's current (uncommitted) value
     // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: the operator-facing simple model flow.
     // _modelPickerOpen = the "Select AI Model" picker toggle; _autoSelectedModel guards the
@@ -1120,6 +1123,9 @@
         bind('ff-reset-model', function () { _resetModelSelection(); });
         bind('ff-load-local', function () { _fetchModels(); });
         bind('ff-load-cloud', function () { _fetchModels('openrouter'); });
+        // RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P: local-inference warmup + benchmark (Advanced diagnostics).
+        bind('bench-warmup', _warmupModel);
+        bind('bench-run', _runBenchmark);
         var picks = _panel.querySelectorAll ? _panel.querySelectorAll('[data-ff-model-pick]') : null;
         if (picks && picks.forEach) picks.forEach(function (el) {
             if (!el || !el.addEventListener) return;
@@ -1990,6 +1996,53 @@
         h += '</div>';
         return h;
     }
+    // RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P: warm up (preload) the local model so the first real request
+    // doesn't pay the cold-load penalty, and pin it resident via keep_alive (server-side default 8h).
+    function _warmupModel() {
+        var w = W(); if (!w || typeof w.fetch !== 'function') return;
+        _benchBusy = true; _warmupResult = null; updatePanel();
+        _fetchJsonSafe('/api/ai/warmup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+            .then(function (r) { _warmupResult = r; })
+            .catch(function (e) { _warmupResult = { ok: false, error: (e && e.message) || 'warmup_failed' }; })
+            .then(function () { _benchBusy = false; updatePanel(); });
+    }
+    // RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P: one short timed generation → load/eval ms + tokens/sec.
+    function _runBenchmark() {
+        var w = W(); if (!w || typeof w.fetch !== 'function') return;
+        _benchBusy = true; _benchResult = null; updatePanel();
+        _fetchJsonSafe('/api/ai/benchmark', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ numPredict: 16 }) })
+            .then(function (r) { _benchResult = r; })
+            .catch(function (e) { _benchResult = { ok: false, error: (e && e.message) || 'benchmark_failed' }; })
+            .then(function () { _benchBusy = false; updatePanel(); });
+    }
+    // RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P: the local-inference panel (warmup + benchmark) — lives under
+    // Advanced diagnostics. Shows cold/warm load, generation tok/s, num_ctx and keep_alive.
+    function _benchHtml() {
+        var busy = _benchBusy;
+        function btn(act, label) { return '<button data-act="' + act + '"' + (busy ? ' disabled' : '') + ' style="font:inherit;cursor:' + (busy ? 'not-allowed' : 'pointer') + ';border:1px solid #4a5f75;background:#101b27;color:#8fb8e0;border-radius:4px;padding:3px 8px;font-size:10px;' + (busy ? 'opacity:.55;' : '') + '">' + (busy ? '⏳ …' : label) + '</button>'; }
+        var h = '<div data-ff-bench="block" style="margin-top:6px;border-top:1px solid #1a3050;padding-top:5px;">';
+        h += '<div style="font-size:10px;color:#8fa5b8;font-weight:600;margin-bottom:3px;">Local inference — keep-alive · warmup · benchmark</div>';
+        h += '<div style="display:flex;gap:6px;flex-wrap:wrap;">' + btn('bench-warmup', '🔥 Warm up model') + btn('bench-run', '⏱ Run benchmark') + '</div>';
+        if (_warmupResult) {
+            var wr = _warmupResult;
+            h += '<div data-ff-bench="warmup" style="margin-top:4px;font-size:9.5px;color:' + (wr.ok ? '#7fd6a0' : '#e0a93a') + ';">' +
+                 (wr.ok ? ('Warmup: ' + esc(wr.model || '') + ' · ' + (wr.was_loaded ? 'already loaded' : 'loaded') + (wr.wall_ms != null ? ' · ' + wr.wall_ms + 'ms' : '') + ' · keep_alive ' + esc(String(wr.keep_alive || '—')))
+                        : ('Warmup: ' + esc(wr.message || wr.error || 'failed'))) + '</div>';
+        }
+        if (_benchResult) {
+            var br = _benchResult, t = br.timings || {};
+            if (br.ok) {
+                h += '<div data-ff-bench="result" style="margin-top:4px;font-size:9.5px;color:#cdd8e4;line-height:1.5;">' +
+                     '<div><span style="color:#8fa5b8;">model:</span> ' + esc(br.model || '') + ' · <span style="color:#8fa5b8;">num_ctx:</span> ' + (br.num_ctx || 'default') + ' · <span style="color:#8fa5b8;">keep_alive:</span> ' + esc(String(br.keep_alive || '—')) + '</div>' +
+                     '<div><span style="color:#8fa5b8;">load:</span> <b style="color:' + (t.was_loaded ? '#7fd6a0' : '#e0a93a') + ';">' + (t.load_ms != null ? t.load_ms + 'ms' : '—') + '</b> (' + (t.was_loaded ? 'warm' : 'cold') + ') · <span style="color:#8fa5b8;">wall:</span> ' + (br.wall_ms != null ? br.wall_ms + 'ms' : '—') + '</div>' +
+                     '<div><span style="color:#8fa5b8;">gen:</span> <b style="color:#9fe8c0;">' + (t.eval_tokens_per_sec != null ? t.eval_tokens_per_sec + ' tok/s' : '—') + '</b> · <span style="color:#8fa5b8;">prompt:</span> ' + (t.prompt_tokens_per_sec != null ? t.prompt_tokens_per_sec + ' tok/s' : '—') + '</div></div>';
+            } else {
+                h += '<div data-ff-bench="result" style="margin-top:4px;font-size:9.5px;color:#e0a93a;">Benchmark: ' + esc(br.message || br.error || 'failed') + '</div>';
+            }
+        }
+        h += '</div>';
+        return h;
+    }
     // Advanced diagnostics (collapsed by default): the technical signals the operator does NOT need
     // day-to-day — the execution gate (RMOOZ_ALLOW_SIM_RUN), cloud gate (RMOOZ_ALLOW_CLOUD_AI), raw
     // provider, model_available, plan_source — plus the route probe and the raw model dropdown.
@@ -2014,6 +2067,7 @@
             ' · model_available: ' + (rh ? String(rh.model_available) : '—') +
             (_coaPlan && _coaPlan.plan_source ? ' · plan_source: ' + esc(_coaPlan.plan_source) : '') + '</div>';
         h += '<div style="margin-top:5px;">' + renderModelSelectorHtml() + '</div>';
+        h += _benchHtml();   // RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P: warmup + benchmark
         h += '</div></details>';
         return h;
     }
@@ -4341,6 +4395,7 @@
         _modelFlowStatusForTest:   function (rh, info)    { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; return _modelFlowStatus(); },
         _modelFlowHtmlForTest:     function (rh, info, open) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; if (open !== undefined) _modelPickerOpen = !!open; return _modelFlowHtml(); },
         _advancedDiagnosticsHtmlForTest: function (rh, info) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; return _advancedDiagnosticsHtml(); },
+        _benchHtmlForTest:         function (warmup, bench) { if (warmup !== undefined) _warmupResult = warmup; if (bench !== undefined) _benchResult = bench; return _benchHtml(); },   // RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P
         _renderCommanderLoopHtmlForTest: function (rh, info) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; return renderCommanderLoopHtml(); },
         _maybeAutoSelectModelForTest: function (info)     { if (info !== undefined) _modelInfo = info; return _maybeAutoSelectModel(); },
         _setModelPickerOpenForTest: function (v)          { _modelPickerOpen = !!v; },

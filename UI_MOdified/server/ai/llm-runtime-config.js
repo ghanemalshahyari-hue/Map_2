@@ -195,6 +195,16 @@ function getKeepAlive() {
     return firstNonEmpty(process.env.RMOOZ_LLM_KEEP_ALIVE) || (AI_CONFIG && AI_CONFIG.keepAlive) || null;
 }
 
+// ── num_ctx (Ollama context window) ───────────────────────────────────────────
+// RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P: a smaller context window means less prefill
+// work + less memory pressure for local inference. Opt-in only (RMOOZ_OLLAMA_NUM_CTX);
+// when unset we return null so the model's own default is used (forcing a too-small
+// ctx would truncate the COA prompt). Returns a positive integer or null.
+function getNumCtx() {
+    var n = parseInt(_s(process.env.RMOOZ_OLLAMA_NUM_CTX), 10);
+    return (Number.isFinite(n) && n > 0) ? n : null;
+}
+
 // ── One-shot bundle for a task ────────────────────────────────────────────────
 function forTask(task) {
     return {
@@ -223,6 +233,7 @@ module.exports = {
     getRepairAttempts,
     getDraftAttempts,
     getKeepAlive,
+    getNumCtx,            // RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P
     forTask,
     // exposed for tests / diagnostics
     DEFAULT_TIMEOUT_MS,

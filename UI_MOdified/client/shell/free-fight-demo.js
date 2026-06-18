@@ -2467,6 +2467,36 @@
         return moves;
     }
     // Commit the currently-selected COA as the active execution plan (req #2). Pure state + timing.
+    // RMOOZ-ADVISORY-COMMIT-JOURNAL-V: snapshot the advisory/ranking decision context at commit time so the
+    // brief / event log / commit journal can explain WHY a plan was recommended and whether the operator
+    // overrode it. Pure — no LLM, no fetch, no behaviour change. Degrades honestly to considered:false.
+    function _buildCommitAdvisoryContext(committedIdx) {
+        var coas = arr(_coaPlan && _coaPlan.coas);
+        var selCoa = coas[committedIdx] || {};
+        var selId = selCoa.plan_id || ('COA-' + (committedIdx + 1));
+        var hasRanking = !!(_coaPlan && typeof _coaPlan._ranking_recommended_idx === 'number');
+        var hasGreen = !!(_coaPlan && _coaPlan._green_advisory);
+        if (!coas.length || (!hasRanking && !hasGreen)) {
+            return { considered: false, reason: 'no advisory context available', selected_coa_id: selId, recorded_at: _nowISO() };
+        }
+        var recIdx = hasRanking ? _coaPlan._ranking_recommended_idx : _pickRecommendedIdx(_coaPlan);
+        var recCoa = coas[recIdx] || {};
+        var recId = recCoa.plan_id || ('COA-' + (recIdx + 1));
+        var wasRec = (committedIdx === recIdx);
+        var gw = _greenWorld, wa = _whiteAdvisory(gw);
+        return {
+            considered: true,
+            selected_coa_id: selId, recommended_coa_id: recId,
+            was_recommended_selected: wasRec, operator_override: !wasRec,
+            selected_coa_ranking: selCoa._ranking || null, recommended_coa_ranking: recCoa._ranking || null,
+            green_advisory: (_coaPlan && _coaPlan._green_advisory) || _greenAdvisoryScoring(gw),
+            green_world_summary: gw ? { collateral_risk_band: _greenBand(gw), neutral_reaction_score: gw.neutral_reaction_score,
+                road_status: (gw.road_status && gw.road_status.status) || null, host_nation: gw.host_nation || null } : null,
+            white_advisory_summary: wa ? { advisory_level: wa.advisory_level, note: wa.note } : null,
+            decision_log_snapshot: _decisionLog.slice(-10),
+            recorded_at: _nowISO(),
+        };
+    }
     function _commitCoa(idx) {
         if (!_coaPlan || !_coaPlan.ok || !Array.isArray(_coaPlan.coas) || !_coaPlan.coas.length) return null;
         var i = (idx == null) ? _coaSelectedIdx : idx;
@@ -2484,8 +2514,18 @@
             created_at: _nowISO(), updated_at: _nowISO(),
             last_tick_timing: { coa_commit_ms: _nowMs() - t0, coa_tick_execute_ms: 0, replan_trigger_check_ms: 0, llm_called_this_tick: false },
         };
+        // RMOOZ-ADVISORY-COMMIT-JOURNAL-V: persist the advisory/ranking decision context with the commit.
+        var _ctx = _buildCommitAdvisoryContext(i);
+        _coaExec.commit_advisory_context = _ctx;
         try { _appendToEventLog('COA committed — ' + esc(_coaExec.selected_coa_id) + ' (' + arr(coa.phases).length + ' phases). RMOOZ will execute it; the AI is NOT called on normal ticks.'); } catch (_) {}
-        _persistCoaExec();   // RMOOZ-COA-COMMIT-PERSISTENCE-M
+        try {
+            if (_ctx.considered && _ctx.was_recommended_selected) _appendToEventLog('Committed recommended ' + esc(_ctx.selected_coa_id) + '; advisory context recorded.');
+            else if (_ctx.considered) _appendToEventLog('Operator override: committed ' + esc(_ctx.selected_coa_id) + ' instead of recommended ' + esc(_ctx.recommended_coa_id) + '; advisory context recorded.');
+        } catch (_) {}
+        try { _recordDecision({ role: 'white', action: 'commit_advisory_context_recorded', called_llm: false, source: 'commit-journal',
+            reason: _ctx.considered ? (_ctx.operator_override ? 'operator override' : 'recommended committed') : 'no advisory context available',
+            result_summary: _ctx.considered ? ('sel ' + _ctx.selected_coa_id + ' · rec ' + _ctx.recommended_coa_id + ' · override ' + _ctx.operator_override) : 'considered=false' }); } catch (_) {}
+        _persistCoaExec();   // RMOOZ-COA-COMMIT-PERSISTENCE-M (now also persists commit_advisory_context)
         updatePanel();
         _whiteAdvisoryLevel = null;   // RMOOZ-WHITE-GREEN-ANNOTATION-T: fresh committed decision → re-advise
         try { _refreshGreenWorld('after_commit'); } catch (_) {}   // RMOOZ-GREEN-WORLD-UI-R (deterministic, no LLM)
@@ -2668,6 +2708,25 @@
                     '<div style="color:#cdb86a;margin-top:2px;">Choose: <b>Run selected COA</b> (continue anyway) · <b>Replan (AI)</b> · or switch the Planner to <b>Staff-Safe</b>.</div></div>';
             }
             h += '</div>';
+            // RMOOZ-ADVISORY-COMMIT-JOURNAL-V: the advisory/ranking context recorded at commit time.
+            var cac = ex.commit_advisory_context;
+            if (cac) {
+                h += '<div data-ff-coa="commit-advisory" style="margin-top:4px;padding:5px 7px;border:1px solid #2a4d6a;border-radius:4px;background:#08131e;font-size:9.5px;color:#cdd8e4;">';
+                h += '<div style="color:#9ec2ec;font-weight:700;margin-bottom:2px;">Committed COA advisory context</div>';
+                if (!cac.considered) {
+                    h += '<div style="color:#8fa5b8;">' + esc(cac.reason || 'no advisory context available') + '</div>';
+                } else {
+                    h += '<div>Recommended: <b style="color:#7fd6a0;">' + esc(cac.recommended_coa_id) + '</b> · Selected: <b style="color:#cfe6ff;">' + esc(cac.selected_coa_id) + '</b></div>';
+                    h += '<div>Operator override: <b style="color:' + (cac.operator_override ? '#e0a93a' : '#7fd6a0') + ';">' + (cac.operator_override ? 'yes' : 'no') + '</b>';
+                    var _sd = cac.selected_coa_ranking && cac.selected_coa_ranking.green_advisory_delta;
+                    if (_sd != null) h += ' · Green/White Δ on selected: <b style="color:#e0a93a;">' + _sd + '</b>';
+                    h += '</div>';
+                    var _ga = cac.green_advisory || {};
+                    if (arr(_ga.warnings).length) h += '<div style="color:#e0a93a;">⚠ ' + arr(_ga.warnings).map(function (x) { return esc(x); }).join(' · ') + '</div>';
+                    if (arr(_ga.recommendations).length) h += '<div style="color:#9fd6b0;">↪ ' + arr(_ga.recommendations).map(function (x) { return esc(x); }).join(' · ') + '</div>';
+                }
+                h += '</div>';
+            }
             if (running) h += '<div data-ff-coa="no-llm-note" style="margin-top:3px;font-size:9.5px;color:#7fd6a0;">✅ AI is NOT being called on normal ticks. Running the committed COA deterministically.</div>';
             // per-tick timing (perf proof)
             var tt = ex.last_tick_timing || {};
@@ -4819,6 +4878,8 @@
         _pickRecommendedIdxForTest: function (plan)         { return _pickRecommendedIdx(plan || _coaPlan); },
         _getCoaSelectedIdxForTest: function ()              { return _coaSelectedIdx; },
         _setCoaSelectedIdxForTest: function (i)             { _coaSelectedIdx = i; updatePanel(); return _coaSelectedIdx; },
+        // RMOOZ-ADVISORY-COMMIT-JOURNAL-V test seam
+        _buildCommitAdvisoryContextForTest: function (idx)  { return _buildCommitAdvisoryContext(idx); },
         _renderCommanderLoopHtmlForTest: function (rh, info) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; return renderCommanderLoopHtml(); },
         _maybeAutoSelectModelForTest: function (info)     { if (info !== undefined) _modelInfo = info; return _maybeAutoSelectModel(); },
         _setModelPickerOpenForTest: function (v)          { _modelPickerOpen = !!v; },

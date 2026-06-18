@@ -92,6 +92,10 @@
     var _benchBusy = false;            // RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P: warmup/benchmark in flight
     var _benchResult = null;           // last /api/ai/benchmark payload
     var _warmupResult = null;          // last /api/ai/warmup payload
+    var _greenWorld = null;            // RMOOZ-GREEN-WORLD-UI-R: last /neutral-world assessment
+    var _greenBusy = false;            // a Green refresh is in flight (debounce)
+    var _greenOverlayOn = false;       // map risk-ring overlay toggle (default OFF)
+    var _greenLayer = null;            // Leaflet layer group for the Green risk ring (review-only)
     var _pendingModel = null;          // dropdown's current (uncommitted) value
     // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: the operator-facing simple model flow.
     // _modelPickerOpen = the "Select AI Model" picker toggle; _autoSelectedModel guards the
@@ -1126,6 +1130,10 @@
         // RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P: local-inference warmup + benchmark (Advanced diagnostics).
         bind('bench-warmup', _warmupModel);
         bind('bench-run', _runBenchmark);
+        // RMOOZ-GREEN-WORLD-UI-R: manual Green refresh + the optional map-ring toggle.
+        bind('green-refresh', function () { _refreshGreenWorld('manual'); });
+        var greenCb = _panel.querySelector('[data-act="green-overlay-toggle"]');
+        if (greenCb && greenCb.addEventListener) greenCb.addEventListener('change', function () { _greenOverlayOn = !!greenCb.checked; _greenOverlayApply(); });
         var picks = _panel.querySelectorAll ? _panel.querySelectorAll('[data-ff-model-pick]') : null;
         if (picks && picks.forEach) picks.forEach(function (el) {
             if (!el || !el.addEventListener) return;
@@ -2297,6 +2305,8 @@
             if (_coaPlan && _coaPlan.ok && arr(_coaPlan.coas).length) { try { _coaSelectedIdx = _pickRecommendedIdx(_coaPlan); } catch (_) {} }
             _coaLoading = false; _coaApplied = false; _stopCoaLoadingTicker();
             updatePanel();
+            // RMOOZ-GREEN-WORLD-UI-R: refresh the neutral-world read-out after a real plan (deterministic, no /plan-coas).
+            if (_coaPlan && _coaPlan.ok) { try { _refreshGreenWorld('after_deep_plan'); } catch (_) {} }
         }).catch(function (e) {
             _coaPlan = { ok: false, _error: (e && e.message) || 'fetch failed', _requestedVia: 'manual_generate' };
             _coaLoading = false; _stopCoaLoadingTicker(); updatePanel();
@@ -2465,6 +2475,7 @@
         try { _appendToEventLog('COA committed — ' + esc(_coaExec.selected_coa_id) + ' (' + arr(coa.phases).length + ' phases). RMOOZ will execute it; the AI is NOT called on normal ticks.'); } catch (_) {}
         _persistCoaExec();   // RMOOZ-COA-COMMIT-PERSISTENCE-M
         updatePanel();
+        try { _refreshGreenWorld('after_commit'); } catch (_) {}   // RMOOZ-GREEN-WORLD-UI-R (deterministic, no LLM)
         return _coaExec;
     }
     // Deterministic replan-trigger check (req: branch/replan triggers). Returns { fired, reason, code }.
@@ -2498,6 +2509,7 @@
         try { _appendToEventLog('COA execution PAUSED — replan trigger: ' + esc(reason) + ' (choose: Continue / Replan / Staff-Safe).'); } catch (_) {}
         _persistCoaExec();   // RMOOZ-COA-COMMIT-PERSISTENCE-M: blocked/replan state survives refresh
         updatePanel();
+        try { _refreshGreenWorld('replan_trigger'); } catch (_) {}   // RMOOZ-GREEN-WORLD-UI-R (deterministic, no LLM)
     }
     // One deterministic execution tick — NO LLM. Executes the current phase, advances phases, checks
     // triggers. Returns the per-tick timing (incl. llm_called_this_tick:false). Safe to call directly.
@@ -2544,6 +2556,9 @@
                 _coaExec.phase_status = 'pending';
                 try { _appendToEventLog('COA phase complete — advancing to phase ' + (_coaExec.current_phase_index + 1) + '/' + phases.length + ' (deterministic, no AI).'); } catch (_) {}
             }
+            // RMOOZ-GREEN-WORLD-UI-R: a phase boundary changed the situation → refresh Green
+            // (deterministic /neutral-world only; NO /plan-coas, NO LLM — the tick stays llm_called_this_tick:false).
+            try { _refreshGreenWorld('phase_advance'); } catch (_) {}
         }
         _coaExec.ticks++; _coaExec.updated_at = _nowISO();
         var coa_tick_execute_ms = _nowMs() - te0;
@@ -4005,6 +4020,115 @@
         return h;
     }
 
+    // ── RMOOZ-GREEN-WORLD-UI-R: GREEN neutral-world surface (read-only, deterministic) ──────────────
+    // Calls ONLY the deterministic /neutral-world endpoint — NEVER /plan-coas, NEVER the LLM. The
+    // optional summarizer (green-summarizer.js) is server-side + gated; this UI shows the deterministic
+    // note only (req #9). Auto-refreshes after deep plan / commit / phase advance / replan trigger, and
+    // on demand — none of which moves units, changes combat/adjudication, or affects llm_called_this_tick.
+    function _greenUnits() {
+        var w = W(); var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        if (!sc) return [];
+        var raw = (Array.isArray(sc.red_units) ? sc.red_units : []).concat(Array.isArray(sc.blue_units_initial) ? sc.blue_units_initial : []);
+        return raw.map(function (u) {
+            var la = (u && u.lat != null) ? u.lat : (u && Array.isArray(u.coord) ? u.coord[1] : null);
+            var lo = (u && u.lon != null) ? u.lon : (u && Array.isArray(u.coord) ? u.coord[0] : null);
+            if (!Number.isFinite(Number(la)) || !Number.isFinite(Number(lo))) return null;
+            return { id: (u.id || u.uid || u.unit_uid), side: u.side, lat: Number(la), lon: Number(lo) };
+        }).filter(Boolean);
+    }
+    // Best-effort terrain hint from the last plan intel — Green degrades to low/unknown when absent.
+    // We never fabricate route data (roads stay "unknown" unless real route_cost is present).
+    function _greenTerrainHint() {
+        var intel = _lastIntel || (_coaPlan && _coaPlan.intel) || null;
+        if (!intel) return null;
+        var tc = intel.terrain_class || (intel.terrain && (intel.terrain.terrain_class || intel.terrain.class)) || null;
+        var zs = intel.zone_state || intel.zone || null;
+        var oc = (zs && zs.owner_country) || intel.owner_country || null;
+        var hint = {};
+        if (tc) hint.terrain_class = tc;
+        if (oc && oc !== 'unknown') hint.owner_country = oc;
+        return Object.keys(hint).length ? hint : null;
+    }
+    function _greenBand(a) { return (a && a.collateral_risk && a.collateral_risk.band) || 'low'; }
+    function _greenColor(band) { return band === 'high' ? '#f0707a' : (band === 'medium' ? '#e0a93a' : '#5bd6a0'); }
+    function _logGreenChanges(prev, a) {
+        try {
+            var cb = _greenBand(a), rs = (a.road_status && a.road_status.status) || 'unknown', nr = a.neutral_reaction_score;
+            _appendToEventLog('Green World assessed — collateral ' + esc(cb) + ' (' + (a.collateral_risk && a.collateral_risk.score) + '/100) · roads ' + esc(rs) + ' · reaction ' + esc(nr) + '/100. Deterministic, no AI.');
+            if (prev) {
+                if (_greenBand(prev) !== cb) _appendToEventLog('Green World — collateral risk changed: ' + esc(_greenBand(prev)) + ' → ' + esc(cb) + '.');
+                var prs = (prev.road_status && prev.road_status.status) || 'unknown';
+                if (prs !== rs) _appendToEventLog('Green World — road status changed: ' + esc(prs) + ' → ' + esc(rs) + '.');
+                var pin = (prev.infra_status && prev.infra_status.note) || '', nin = (a.infra_status && a.infra_status.note) || '';
+                if (pin !== nin) _appendToEventLog('Green World — infrastructure status changed.');
+            }
+        } catch (_) {}
+    }
+    // Refresh the Green assessment. Hits ONLY /neutral-world (deterministic, ungated). Debounced; bails
+    // quietly when there is nothing to assess. Returns a promise resolving to the assessment.
+    function _refreshGreenWorld(reason) {
+        var w = W();
+        if (!w || typeof w.fetch !== 'function') return Promise.resolve(_greenWorld);
+        if (_greenBusy) return Promise.resolve(_greenWorld);
+        var units = _greenUnits();
+        var objective = getObjective();
+        if (!objective || !units.length) return Promise.resolve(_greenWorld);  // nothing to assess yet
+        _greenBusy = true;
+        var prev = _greenWorld;
+        var body = { units: units, objective: { lat: objective.lat, lon: objective.lon }, terrain: _greenTerrainHint() };
+        return _fetchJsonSafe('/api/wargame-sim/free-fight/neutral-world', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+        }).then(function (a) {
+            if (a && a.ok && a.collateral_risk) { a._reason = reason || 'manual'; _logGreenChanges(prev, a); _greenWorld = a; if (_greenOverlayOn) _greenOverlayApply(); }
+            _greenBusy = false; updatePanel();
+            return _greenWorld;
+        }).catch(function () { _greenBusy = false; updatePanel(); return _greenWorld; });
+    }
+    // Map overlay: a risk ring around the objective coloured by collateral band. Optional/toggleable,
+    // review-only — its OWN layer group; it never touches scenario / combat / marker layers.
+    function _greenOverlayApply() {
+        var w = W();
+        if (!mapReady()) return;
+        try {
+            if (_greenLayer) { if (w.map.hasLayer(_greenLayer)) w.map.removeLayer(_greenLayer); _greenLayer = null; }
+            if (!_greenOverlayOn || !_greenWorld) return;
+            var obj = getObjective(); if (!obj) return;
+            var col = _greenColor(_greenBand(_greenWorld));
+            _greenLayer = w.L.layerGroup();
+            if (typeof w.L.circle === 'function') {
+                _greenLayer.addLayer(w.L.circle([obj.lat, obj.lon], { radius: 8000, color: col, weight: 1.5, opacity: 0.85, fillColor: col, fillOpacity: 0.12, dashArray: '4 4', interactive: false }));
+            }
+            _greenLayer.addTo(w.map);
+        } catch (_) {}
+    }
+    function _greenWorldHtml() {
+        var a = _greenWorld;
+        var h = '<div data-ff-green="panel" style="margin-top:8px;border:1px solid #1a4030;border-radius:6px;background:#091810;padding:7px 9px;">';
+        h += '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:space-between;">';
+        h += '<span style="font-size:10.5px;font-weight:700;color:#7fd6a0;">🌍 Green World — neutral environment (deterministic)</span>';
+        h += '<span style="display:flex;gap:8px;align-items:center;">';
+        h += '<label style="font-size:9.5px;color:#9ec2ec;display:flex;gap:4px;align-items:center;cursor:pointer;"><input type="checkbox" data-act="green-overlay-toggle"' + (_greenOverlayOn ? ' checked' : '') + ' style="accent-color:#5bd6a0;cursor:pointer;"> map ring</label>';
+        h += '<button data-act="green-refresh"' + (_greenBusy ? ' disabled' : '') + ' style="font:inherit;cursor:' + (_greenBusy ? 'not-allowed' : 'pointer') + ';border:1px solid #2a7a50;background:#131e18;color:#90d0a0;border-radius:4px;padding:3px 8px;font-size:10px;' + (_greenBusy ? 'opacity:.55;' : '') + '">' + (_greenBusy ? '⏳ …' : '↻ Refresh Green World') + '</button>';
+        h += '</span></div>';
+        if (!a) {
+            h += '<div style="margin-top:4px;font-size:9.5px;color:#8fa5b8;">No assessment yet — generate a plan, commit a COA, or press Refresh. Deterministic, no AI call.</div></div>';
+            return h;
+        }
+        var band = _greenBand(a), col = _greenColor(band);
+        function row(label, val, c) { return '<div style="font-size:9.5px;color:#cdd8e4;"><span style="color:#8fa5b8;">' + label + ':</span> <span style="color:' + (c || '#e0e8f0') + ';">' + val + '</span></div>'; }
+        h += '<div style="margin-top:5px;">';
+        h += row('Civilian / collateral risk', esc(band) + ' (' + (a.collateral_risk && a.collateral_risk.score) + '/100)', col);
+        h += row('Road status', esc((a.road_status && a.road_status.status) || 'unknown') + ' — ' + esc((a.road_status && a.road_status.basis) || ''));
+        h += row('Infrastructure', esc((a.infra_status && a.infra_status.note) || '—'));
+        h += row('Host-nation pressure', a.host_nation ? esc(a.host_nation) : 'none identified');
+        h += row('Neutral reaction score', (a.neutral_reaction_score != null ? a.neutral_reaction_score + '/100' : '—'), col);
+        h += '</div>';
+        h += '<div data-ff-green="note" style="margin-top:5px;padding:4px 6px;border-radius:4px;background:#0c1f14;border:1px solid #1a4030;color:#9fd6b0;font-size:9.5px;">' + esc(arr(a.notes).join(' ')) + ' <span style="color:#5a7a60;">(deterministic note · summarizer off)</span></div>';
+        h += '<div style="margin-top:3px;font-size:9px;color:#5a7a60;">provenance: ' + esc(JSON.stringify(a.provenance || {})) + (a._reason ? ' · trigger: ' + esc(a._reason) : '') + '</div>';
+        h += '<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:9px;color:#5a7a9a;">Green JSON</summary><pre style="font-size:8.5px;color:#9ab0c0;white-space:pre-wrap;word-break:break-word;max-height:160px;overflow:auto;margin:3px 0 0;">' + esc(JSON.stringify(a, null, 2)) + '</pre></details>';
+        h += '</div>';
+        return h;
+    }
     // RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O: the SIMPLE primary operator flow — ONE primary action per
     // state: Generate AI Plan (slow) → Use Recommended Plan → Run Plan (fast) → Pause, state-driven
     // (no plan → plan → committed → running → blocked → complete). It wires to the EXISTING functions
@@ -4078,6 +4202,8 @@
         h += _operatorStripHtml();
         h += renderCoaPlanHtml();   // COA cards — choose / view the recommended plan
         h += '<details data-ff-op="advanced" style="margin-top:8px;"><summary style="cursor:pointer;font-size:10.5px;color:#8fa5b8;font-weight:600;">⚙ Advanced controls — تحكّم متقدّم</summary><div style="margin-top:6px;">';
+        // RMOOZ-GREEN-WORLD-UI-R: neutral-world panel (deterministic, read-only) at the top of Advanced.
+        h += _greenWorldHtml();
         // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: continuous loop controls (advanced/legacy).
         h += renderCommanderLoopHtml();
         h += '<div style="font-size:10px;color:#5a7a60;margin:2px 0 6px;border-top:1px solid #2a3f55;padding-top:6px;">Manual COA planner (single turn) — تخطيط يدوي</div>';
@@ -4396,6 +4522,14 @@
         _modelFlowHtmlForTest:     function (rh, info, open) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; if (open !== undefined) _modelPickerOpen = !!open; return _modelFlowHtml(); },
         _advancedDiagnosticsHtmlForTest: function (rh, info) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; return _advancedDiagnosticsHtml(); },
         _benchHtmlForTest:         function (warmup, bench) { if (warmup !== undefined) _warmupResult = warmup; if (bench !== undefined) _benchResult = bench; return _benchHtml(); },   // RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P
+        // RMOOZ-GREEN-WORLD-UI-R test seams
+        _greenWorldHtmlForTest:    function (a)             { if (a !== undefined) _greenWorld = a; return _greenWorldHtml(); },
+        _refreshGreenWorldForTest: function (reason)        { return _refreshGreenWorld(reason); },
+        _getGreenWorldForTest:     function ()              { return _greenWorld; },
+        _setGreenWorldForTest:     function (a)             { _greenWorld = a; },
+        _toggleGreenOverlayForTest: function ()             { _greenOverlayOn = !_greenOverlayOn; _greenOverlayApply(); return _greenOverlayOn; },
+        _getGreenOverlayOnForTest: function ()              { return _greenOverlayOn; },
+        _getGreenLayerForTest:     function ()              { return _greenLayer; },
         _renderCommanderLoopHtmlForTest: function (rh, info) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; return renderCommanderLoopHtml(); },
         _maybeAutoSelectModelForTest: function (info)     { if (info !== undefined) _modelInfo = info; return _maybeAutoSelectModel(); },
         _setModelPickerOpenForTest: function (v)          { _modelPickerOpen = !!v; },

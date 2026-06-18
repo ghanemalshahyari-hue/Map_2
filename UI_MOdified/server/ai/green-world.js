@@ -90,16 +90,18 @@ function assessNeutralWorld(opts) {
     if (nearObjective > 0) drivers.push(nearObjective + ' unit(s) within ' + NEAR_KM + 'km of the objective');
     if (!drivers.length) drivers.push('low population + dispersed forces');
 
-    // ── road / movement constraint (terrain class + choke; no road network) ──
+    // ── road / movement constraint (real route data only; honest "unknown" otherwise) ──
+    // We have no road network, so "open" is asserted ONLY when a real route_cost is supplied; a
+    // terrain class alone is NOT enough to claim roads are open.
     var roadStatus, roadBasis;
     var routeCost = num(terrain.route_cost);
-    if (routeCost == null && !terrain.choke && !terrain.terrain_class) {
-        roadStatus = 'unknown'; roadBasis = 'no terrain context supplied';
-    } else if ((routeCost != null && routeCost > 0.3) || terrain.choke) {
+    if ((routeCost != null && routeCost > 0.3) || terrain.choke) {
         roadStatus = 'constrained';
         roadBasis = terrain.choke ? 'choke point on the approach axis' : 'high terrain route cost';
-    } else {
+    } else if (routeCost != null) {
         roadStatus = 'open'; roadBasis = 'low terrain route cost';
+    } else {
+        roadStatus = 'unknown'; roadBasis = 'no route data (no road network layer)';
     }
 
     // ── infrastructure (no infrastructure layer → honest inference only) ──

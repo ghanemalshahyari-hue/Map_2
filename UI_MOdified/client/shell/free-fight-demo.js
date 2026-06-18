@@ -2315,7 +2315,7 @@
             updatePanel();
             // RMOOZ-GREEN-WORLD-UI-R + RMOOZ-GREEN-WHITE-SCORING-T: refresh Green, then score it onto the
             // White review (deterministic; no /plan-coas, no LLM; advisory-only — never invalidates the COA).
-            if (_coaPlan && _coaPlan.ok) { _greenScoringKey = null; try { _refreshGreenWorld('after_deep_plan').then(function () { try { _applyGreenAdvisoryScoring('plan_review'); } catch (_) {} }); } catch (_) {} }
+            if (_coaPlan && _coaPlan.ok) { _greenScoringKey = null; try { _refreshGreenWorld('after_deep_plan').then(function () { try { _applyGreenAdvisoryScoring('plan_review'); _applyCoaRanking(); } catch (_) {} }); } catch (_) {} }
             // RMOOZ-AI-SCHEDULER-DECISION-LOG-S: record commander/performance/validation decisions (record-only, no new calls).
             try { _recordPlanDecision(_coaPlan, _nowMs() - _genT0); } catch (_) {}
         }).catch(function (e) {
@@ -2771,6 +2771,10 @@
     // Auto-pick the recommended COA index (falls back to 0).
     function _pickRecommendedIdx(plan) {
         if (!plan || !Array.isArray(plan.coas)) return 0;
+        // RMOOZ-COA-RANKING-WITH-ADVISORY-U: a computed ranking (which folds in the Green/White advisory)
+        // wins when present; otherwise fall back to the planner's recommendation. Ranking is advisory —
+        // it changes the DEFAULT recommendation only, never validity or executability.
+        if (typeof plan._ranking_recommended_idx === 'number' && plan._ranking_recommended_idx >= 0 && plan._ranking_recommended_idx < plan.coas.length) return plan._ranking_recommended_idx;
         if (plan.recommended_plan_id) {
             for (var i = 0; i < plan.coas.length; i++) {
                 if (plan.coas[i] && plan.coas[i].plan_id === plan.recommended_plan_id) return i;
@@ -2780,6 +2784,80 @@
             if (plan.coas[j] && plan.coas[j].recommended) return j;
         }
         return 0;
+    }
+    // ── RMOOZ-COA-RANKING-WITH-ADVISORY-U: deterministic COA ranking with the Green/White advisory as an
+    // INPUT. Pure, no LLM, no fetch. The advisory delta affects ranking/recommendation ONLY — it NEVER
+    // changes validation.ok and NEVER blocks Run Plan. Per-COA green penalty scales by the COA's approach
+    // intensity (how much it commits force toward the high-collateral objective), so a lower-tactical,
+    // lower-exposure COA can out-rank a high-exposure one when Green risk is high.
+    function _kmBetween(a, b) {
+        if (!a || !b) return Infinity;
+        var R = 6371, toR = Math.PI / 180;
+        var dLat = (b.lat - a.lat) * toR, dLon = (b.lon - a.lon) * toR, la1 = a.lat * toR, la2 = b.lat * toR;
+        var h = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(la1) * Math.cos(la2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
+    }
+    function _coaApproachIntensity(coa, obj) {
+        if (!obj) return 0.65;   // no objective placed → neutral exposure (uniform, can't differentiate)
+        var move = 0, near = 0;
+        arr(coa && coa.phases).forEach(function (ph) {
+            arr(ph.actions).forEach(function (act) {
+                if (!act || act.action_type === 'HOLD_POSITION') return;
+                var t = act.target; if (!t || !Number.isFinite(+t.lat) || !Number.isFinite(+t.lon)) return;
+                move++; if (_kmBetween({ lat: +t.lat, lon: +t.lon }, obj) <= 8) near++;
+            });
+        });
+        if (!move) return 0;            // all HOLD / standoff → minimal exposure
+        return near / move;             // 0..1
+    }
+    function _num(v, d) { return (typeof v === 'number' && isFinite(v)) ? v : d; }
+    function _rankCoas(plan, green) {
+        var coas = arr(plan && plan.coas);
+        if (!coas.length) return { ranked: [], recommended_idx: 0, plan_green_delta: 0 };
+        var obj = getObjective();
+        var ga = _greenAdvisoryScoring(green);          // green==null → delta 0, low-confidence
+        var planDelta = ga.advisory_score_delta || 0;   // <= 0
+        var best = -Infinity, bestIdx = 0;
+        coas.forEach(function (coa, i) {
+            var isPlannerRec = (plan.recommended_plan_id && coa.plan_id === plan.recommended_plan_id) || coa.recommended === true;
+            var base = _num(coa.base_score, _num(coa.score, 50));
+            var tactical = _num(coa.tactical_score, isPlannerRec ? 20 : 10);
+            var readiness = _num(coa.readiness_score, 0);   // no per-COA readiness layer → 0 (honest)
+            var terrain = _num(coa.terrain_score, 0);
+            var exposure = 0.3 + 0.7 * _coaApproachIntensity(coa, obj);   // standoff 0.3 … full commit 1.0
+            var greenDelta = Math.round(planDelta * exposure);            // <= 0, advisory only
+            var final = base + tactical + readiness + terrain + greenDelta;
+            coa._ranking = { base_score: base, tactical_score: tactical, readiness_score: readiness, terrain_score: terrain,
+                green_advisory_delta: greenDelta, final_score: final, recommended: false, ranking_reason: '',
+                ranking_components: { base: base, tactical: tactical, readiness: readiness, terrain: terrain, green_advisory: greenDelta } };
+            if (final > best) { best = final; bestIdx = i; }
+        });
+        coas.forEach(function (coa, i) {
+            var rk = coa._ranking;
+            rk.recommended = (i === bestIdx);
+            rk.ranking_reason = (i === bestIdx)
+                ? ('highest final score ' + rk.final_score + (rk.green_advisory_delta < 0 ? ' — lower Green/White risk vs alternatives (advisory ' + rk.green_advisory_delta + ')' : ''))
+                : ('final score ' + rk.final_score + (rk.green_advisory_delta < 0 ? ' (Green/White advisory ' + rk.green_advisory_delta + ')' : ''));
+        });
+        return { ranked: coas.map(function (c) { return c._ranking; }), recommended_idx: bestIdx, plan_green_delta: planDelta, green_band: ga.collateral_risk_band };
+    }
+    // Compute + attach ranking to the current plan, re-select the ranking recommendation, and record it.
+    function _applyCoaRanking() {
+        if (!_coaPlan || !arr(_coaPlan.coas).length) return null;
+        var r = _rankCoas(_coaPlan, _greenWorld);
+        _coaPlan._ranking = r;
+        _coaPlan._ranking_recommended_idx = r.recommended_idx;
+        _coaSelectedIdx = r.recommended_idx;   // default selection follows the ranking (operator may still pick any)
+        var recCoa = arr(_coaPlan.coas)[r.recommended_idx] || {};
+        var recDelta = recCoa._ranking ? recCoa._ranking.green_advisory_delta : 0;
+        try { _recordDecision({ role: 'performance', action: 'coa_ranking_with_green_advisory', called_llm: false, source: 'green-world→white',
+            reason: 'green risk considered in ranking', result_summary: 'recommended ' + (recCoa.plan_id || ('COA-' + (r.recommended_idx + 1))) + ' · green Δ ' + recDelta + ' · final ' + (recCoa._ranking ? recCoa._ranking.final_score : '?') }); } catch (_) {}
+        // event log — the COA most penalised by the advisory (non-zero only)
+        var worst = { id: null, d: 0 };
+        arr(_coaPlan.coas).forEach(function (c) { var d = c._ranking ? c._ranking.green_advisory_delta : 0; if (d < worst.d) worst = { id: c.plan_id || '', d: d }; });
+        if (worst.id && worst.d < 0) { try { _appendToEventLog('COA ranking updated: Green/White advisory adjusted ' + esc(worst.id) + ' by ' + worst.d + '.'); } catch (_) {} }
+        updatePanel();
+        return r;
     }
 
     // Resolve the non-HOLD moves in a COA into {unit, start, final, role} records.
@@ -3838,12 +3916,24 @@
             h += '<div data-act="select-coa-' + ci + '" style="margin-bottom:6px;padding:7px 9px;border:1px solid ' + selBorder + ';border-radius:5px;background:' + selBg + ';cursor:pointer;">';
             h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">';
             h += '<span style="font-weight:700;font-size:11px;color:#e8eaed;">' + esc(coa.plan_id) + ' — ' + esc(coa.title) + '</span>';
-            if (coa.recommended) h += '<span style="background:#1a5030;color:#7fd6a0;border-radius:3px;padding:1px 5px;font-size:9px;">Recommended</span>';
+            // RMOOZ-COA-RANKING-WITH-ADVISORY-U: the badge follows the RANKING recommendation when present
+            // (so the badge, "Recommended because", and the default selection all agree); else the planner flag.
+            var _isRankRec = (typeof _coaPlan._ranking_recommended_idx === 'number') ? (ci === _coaPlan._ranking_recommended_idx) : !!coa.recommended;
+            if (_isRankRec) h += '<span style="background:#1a5030;color:#7fd6a0;border-radius:3px;padding:1px 5px;font-size:9px;">Recommended</span>';
             h += '</div>';
             h += '<div style="font-size:10px;margin-bottom:3px;">' +
                  '<span style="color:#8fa5b8;">Risk:</span> <span style="color:' + riskColor + ';">' + esc(coa.risk) + '</span> · ' +
                  '<span style="color:#8fa5b8;">Confidence:</span> <span style="color:#9ec2ec;">' + esc(coa.confidence) + '</span> · ' +
                  '<span style="color:#8fa5b8;">Units:</span> <span style="color:#e0e8f0;">' + (coa.units_selected_count || 0) + '/' + (coa.units_total_considered || 0) + '</span></div>';
+            // RMOOZ-COA-RANKING-WITH-ADVISORY-U: per-COA score breakdown + advisory note + recommendation reason.
+            if (coa._ranking) {
+                var rk = coa._ranking;
+                h += '<div data-ff-coa="ranking" style="font-size:9.5px;color:#9ab0c0;margin-bottom:2px;">Score: <b style="color:#cfe6ff;">' + rk.final_score + '</b> = base ' + rk.base_score + ' + tac ' + rk.tactical_score +
+                     (rk.readiness_score ? ' + rdy ' + rk.readiness_score : '') + (rk.terrain_score ? ' + terr ' + rk.terrain_score : '') +
+                     (rk.green_advisory_delta ? ' <span style="color:#e0a93a;">' + (rk.green_advisory_delta < 0 ? '' : '+') + rk.green_advisory_delta + ' green</span>' : '') + '</div>';
+                if (rk.green_advisory_delta < 0) h += '<div data-ff-coa="ranking-advisory" style="font-size:9px;color:#e0a93a;margin-bottom:2px;">⚖ Green/White advisory affected ranking (' + rk.green_advisory_delta + ')</div>';
+                if (ci === _coaPlan._ranking_recommended_idx) h += '<div data-ff-coa="ranking-reason" style="font-size:9px;color:#7fd6a0;margin-bottom:2px;">Recommended because: ' + esc(rk.ranking_reason) + '</div>';
+            }
             if (coa.summary) h += '<div style="font-size:10px;color:#cdd8e4;margin-bottom:3px;font-style:italic;">' + esc(coa.summary) + '</div>';
             // Role breakdown one-liner (server-provided role_breakdown)
             var rl = roleLine(coa);
@@ -4723,6 +4813,12 @@
         _greenAdvisoryScoringForTest: function (green)      { return _greenAdvisoryScoring(green); },
         _applyGreenAdvisoryScoringForTest: function (reason) { return _applyGreenAdvisoryScoring(reason); },
         _whiteReviewForTest:       function ()              { return { validation: (_coaPlan && _coaPlan.validation) || null, green_advisory: (_coaPlan && _coaPlan._green_advisory) || null }; },
+        // RMOOZ-COA-RANKING-WITH-ADVISORY-U test seams
+        _rankCoasForTest:          function (plan, green)   { return _rankCoas(plan, green); },
+        _applyCoaRankingForTest:   function ()              { return _applyCoaRanking(); },
+        _pickRecommendedIdxForTest: function (plan)         { return _pickRecommendedIdx(plan || _coaPlan); },
+        _getCoaSelectedIdxForTest: function ()              { return _coaSelectedIdx; },
+        _setCoaSelectedIdxForTest: function (i)             { _coaSelectedIdx = i; updatePanel(); return _coaSelectedIdx; },
         _renderCommanderLoopHtmlForTest: function (rh, info) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; return renderCommanderLoopHtml(); },
         _maybeAutoSelectModelForTest: function (info)     { if (info !== undefined) _modelInfo = info; return _maybeAutoSelectModel(); },
         _setModelPickerOpenForTest: function (v)          { _modelPickerOpen = !!v; },

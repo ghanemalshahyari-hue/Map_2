@@ -98,6 +98,7 @@
     var _greenLayer = null;            // Leaflet layer group for the Green risk ring (review-only)
     var _decisionLog = [];             // RMOOZ-AI-SCHEDULER-DECISION-LOG-S: in-memory audit buffer (record-only)
     var DECISION_LOG_CAP = 200;
+    var _whiteAdvisoryLevel = null;    // RMOOZ-WHITE-GREEN-ANNOTATION-T: last recorded White advisory level (dedup)
     var _pendingModel = null;          // dropdown's current (uncommitted) value
     // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: the operator-facing simple model flow.
     // _modelPickerOpen = the "Select AI Model" picker toggle; _autoSelectedModel guards the
@@ -2484,6 +2485,7 @@
         try { _appendToEventLog('COA committed — ' + esc(_coaExec.selected_coa_id) + ' (' + arr(coa.phases).length + ' phases). RMOOZ will execute it; the AI is NOT called on normal ticks.'); } catch (_) {}
         _persistCoaExec();   // RMOOZ-COA-COMMIT-PERSISTENCE-M
         updatePanel();
+        _whiteAdvisoryLevel = null;   // RMOOZ-WHITE-GREEN-ANNOTATION-T: fresh committed decision → re-advise
         try { _refreshGreenWorld('after_commit'); } catch (_) {}   // RMOOZ-GREEN-WORLD-UI-R (deterministic, no LLM)
         return _coaExec;
     }
@@ -4064,6 +4066,41 @@
     }
     function _greenBand(a) { return (a && a.collateral_risk && a.collateral_risk.band) || 'low'; }
     function _greenColor(band) { return band === 'high' ? '#f0707a' : (band === 'medium' ? '#e0a93a' : '#5bd6a0'); }
+    // ── RMOOZ-WHITE-GREEN-ANNOTATION-T: White (referee) reads Green and produces a DETERMINISTIC,
+    // ADVISORY adjudication annotation — never a gate. The validator stays structure/physics-only
+    // ([[feedback_validator_structure_physics_only]]); this advisory never blocks/rejects/pauses
+    // execution and never calls the LLM. It is surfaced + recorded as a White decision only.
+    function _whiteAdvisory(green) {
+        if (!green || !green.collateral_risk) return null;
+        var c = green.collateral_risk.band || 'low';                 // low|medium|high
+        var nr = (typeof green.neutral_reaction_score === 'number') ? green.neutral_reaction_score : 0;
+        var rBand = nr >= 67 ? 'high' : (nr >= 34 ? 'medium' : 'low');
+        var order = { low: 0, medium: 1, high: 2 };
+        var worst = (order[c] >= order[rBand]) ? c : rBand;          // worst of collateral + neutral reaction
+        var level = worst === 'high' ? 'restricted' : (worst === 'medium' ? 'caution' : 'clear');
+        return {
+            advisory_level: level, collateral_band: c, neutral_reaction_score: nr,
+            gate: false,   // ALWAYS advisory — White never blocks on Green; execution is unaffected
+            note: level === 'restricted' ? 'Collateral/neutral-reaction high — ROE & political review advised before execution.'
+                : level === 'caution' ? 'Elevated collateral/neutral-reaction — weigh proportionality.'
+                : 'Collateral and neutral reaction low — no advisory.',
+            source: 'green-world', engine: 'deterministic', review_only: true,
+        };
+    }
+    function _whiteAdvisoryColor(level) { return level === 'restricted' ? '#f0707a' : (level === 'caution' ? '#e0a93a' : '#7fd6a0'); }
+    // Record the advisory as a White decision — ONLY for a committed decision, and ONLY when the level
+    // changes (dedup), so it annotates the committed COA without flooding the log. No gate, no LLM.
+    function _recordWhiteAdvisory(green) {
+        var adv = _whiteAdvisory(green);
+        if (!adv) return;
+        if (!(_coaExec && _coaExec.active)) return;                  // advisory annotates a COMMITTED decision
+        if (adv.advisory_level === _whiteAdvisoryLevel) return;      // dedup: record only on change
+        _whiteAdvisoryLevel = adv.advisory_level;
+        try { _recordDecision({ role: 'white', action: 'adjudication_advisory', called_llm: false, source: 'green-world→white',
+            reason: 'collateral ' + adv.collateral_band + ' · reaction ' + adv.neutral_reaction_score,
+            result_summary: adv.advisory_level + ' (advisory · not a block)' }); } catch (_) {}
+        try { _appendToEventLog('White (referee) advisory on committed COA: ' + esc(adv.advisory_level) + ' — ' + esc(adv.note) + ' (advisory only; validator/execution unchanged).'); } catch (_) {}
+    }
     function _logGreenChanges(prev, a) {
         try {
             var cb = _greenBand(a), rs = (a.road_status && a.road_status.status) || 'unknown', nr = a.neutral_reaction_score;
@@ -4094,7 +4131,8 @@
             method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
         }).then(function (a) {
             if (a && a.ok && a.collateral_risk) { a._reason = reason || 'manual'; _logGreenChanges(prev, a); _greenWorld = a; if (_greenOverlayOn) _greenOverlayApply();
-                try { _recordDecision({ role: 'green', action: 'neutral_world_refresh', called_llm: false, duration_ms: _nowMs() - _gT0, reason: reason || 'manual', source: 'green-world', result_summary: 'collateral ' + _greenBand(a) + ' (' + (a.collateral_risk && a.collateral_risk.score) + ')' }); } catch (_) {} }
+                try { _recordDecision({ role: 'green', action: 'neutral_world_refresh', called_llm: false, duration_ms: _nowMs() - _gT0, reason: reason || 'manual', source: 'green-world', result_summary: 'collateral ' + _greenBand(a) + ' (' + (a.collateral_risk && a.collateral_risk.score) + ')' }); } catch (_) {}
+                try { _recordWhiteAdvisory(a); } catch (_) {} }   // RMOOZ-WHITE-GREEN-ANNOTATION-T: deterministic White advisory (no gate, no LLM)
             _greenBusy = false; updatePanel();
             return _greenWorld;
         }).catch(function () { _greenBusy = false; updatePanel(); return _greenWorld; });
@@ -4138,6 +4176,13 @@
         h += row('Host-nation pressure', a.host_nation ? esc(a.host_nation) : 'none identified');
         h += row('Neutral reaction score', (a.neutral_reaction_score != null ? a.neutral_reaction_score + '/100' : '—'), col);
         h += '</div>';
+        // RMOOZ-WHITE-GREEN-ANNOTATION-T: White (referee) advisory derived from Green — advisory only.
+        var _adv = _whiteAdvisory(a);
+        if (_adv) {
+            h += '<div data-ff-green="white-advisory" style="margin-top:5px;padding:4px 6px;border-radius:4px;background:#0a1622;border:1px solid #24435f;color:#cdd8e4;font-size:9.5px;">' +
+                 '⚖ <b style="color:' + _whiteAdvisoryColor(_adv.advisory_level) + ';">White advisory: ' + esc(_adv.advisory_level) + '</b> — ' + esc(_adv.note) +
+                 ' <span style="color:#5a7a8a;">Advisory only — not a block; validator unchanged (structure/physics).</span></div>';
+        }
         h += '<div data-ff-green="note" style="margin-top:5px;padding:4px 6px;border-radius:4px;background:#0c1f14;border:1px solid #1a4030;color:#9fd6b0;font-size:9.5px;">' + esc(arr(a.notes).join(' ')) + ' <span style="color:#5a7a60;">(deterministic note · summarizer off)</span></div>';
         h += '<div style="margin-top:3px;font-size:9px;color:#5a7a60;">provenance: ' + esc(JSON.stringify(a.provenance || {})) + (a._reason ? ' · trigger: ' + esc(a._reason) : '') + '</div>';
         h += '<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:9px;color:#5a7a9a;">Green JSON</summary><pre style="font-size:8.5px;color:#9ab0c0;white-space:pre-wrap;word-break:break-word;max-height:160px;overflow:auto;margin:3px 0 0;">' + esc(JSON.stringify(a, null, 2)) + '</pre></details>';
@@ -4622,6 +4667,8 @@
         _getDecisionLogForTest:    function ()              { return _decisionLog.slice(); },
         _clearDecisionLogForTest:  function ()              { return _clearDecisionLog(); },
         _decisionLogHtmlForTest:   function ()              { return _decisionLogHtml(); },
+        // RMOOZ-WHITE-GREEN-ANNOTATION-T test seam
+        _whiteAdvisoryForTest:     function (green)         { return _whiteAdvisory(green); },
         _renderCommanderLoopHtmlForTest: function (rh, info) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; return renderCommanderLoopHtml(); },
         _maybeAutoSelectModelForTest: function (info)     { if (info !== undefined) _modelInfo = info; return _maybeAutoSelectModel(); },
         _setModelPickerOpenForTest: function (v)          { _modelPickerOpen = !!v; },

@@ -99,6 +99,7 @@
     var _decisionLog = [];             // RMOOZ-AI-SCHEDULER-DECISION-LOG-S: in-memory audit buffer (record-only)
     var DECISION_LOG_CAP = 200;
     var _whiteAdvisoryLevel = null;    // RMOOZ-WHITE-GREEN-ANNOTATION-T: last recorded White advisory level (dedup)
+    var _greenScoringKey = null;       // RMOOZ-GREEN-WHITE-SCORING-T: last recorded green-advisory scoring key (dedup)
     var _pendingModel = null;          // dropdown's current (uncommitted) value
     // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: the operator-facing simple model flow.
     // _modelPickerOpen = the "Select AI Model" picker toggle; _autoSelectedModel guards the
@@ -2312,8 +2313,9 @@
             if (_coaPlan && _coaPlan.ok && arr(_coaPlan.coas).length) { try { _coaSelectedIdx = _pickRecommendedIdx(_coaPlan); } catch (_) {} }
             _coaLoading = false; _coaApplied = false; _stopCoaLoadingTicker();
             updatePanel();
-            // RMOOZ-GREEN-WORLD-UI-R: refresh the neutral-world read-out after a real plan (deterministic, no /plan-coas).
-            if (_coaPlan && _coaPlan.ok) { try { _refreshGreenWorld('after_deep_plan'); } catch (_) {} }
+            // RMOOZ-GREEN-WORLD-UI-R + RMOOZ-GREEN-WHITE-SCORING-T: refresh Green, then score it onto the
+            // White review (deterministic; no /plan-coas, no LLM; advisory-only — never invalidates the COA).
+            if (_coaPlan && _coaPlan.ok) { _greenScoringKey = null; try { _refreshGreenWorld('after_deep_plan').then(function () { try { _applyGreenAdvisoryScoring('plan_review'); } catch (_) {} }); } catch (_) {} }
             // RMOOZ-AI-SCHEDULER-DECISION-LOG-S: record commander/performance/validation decisions (record-only, no new calls).
             try { _recordPlanDecision(_coaPlan, _nowMs() - _genT0); } catch (_) {}
         }).catch(function (e) {
@@ -4101,6 +4103,44 @@
             result_summary: adv.advisory_level + ' (advisory · not a block)' }); } catch (_) {}
         try { _appendToEventLog('White (referee) advisory on committed COA: ' + esc(adv.advisory_level) + ' — ' + esc(adv.note) + ' (advisory only; validator/execution unchanged).'); } catch (_) {}
     }
+    // ── RMOOZ-GREEN-WHITE-SCORING-T: White reads Green during plan validation/COA review and produces a
+    // structured ADVISORY scoring object. Pure + deterministic, NO LLM, NO fetch. The score delta is
+    // ADVISORY ONLY — it NEVER invalidates a COA, never gates execution, and never touches the
+    // structure/physics validator. low→0, medium→-5, high→-15; absent/inferred provenance → low-confidence.
+    function _greenAdvisoryScoring(green) {
+        if (!green || !green.collateral_risk) {
+            return { considered: true, collateral_risk_band: 'unknown', neutral_reaction_score: null, advisory_score_delta: 0,
+                warnings: ['No neutral-world assessment available — low confidence / inferred.'],
+                recommendations: ['Refresh Green World for a collateral read.'], provenance: 'absent' };
+        }
+        var band = green.collateral_risk.band || 'low';
+        var nr = (typeof green.neutral_reaction_score === 'number') ? green.neutral_reaction_score : null;
+        var adv = _whiteAdvisory(green);                          // worst-of collateral + neutral reaction
+        var level = adv ? adv.advisory_level : 'clear';
+        var delta = level === 'restricted' ? -15 : (level === 'caution' ? -5 : 0);
+        var warnings = [], recs = [];
+        if (level === 'restricted') { warnings.push('High collateral / neutral-reaction risk near the objective.'); recs.push('ROE & political review advised; consider a lower-collateral COA or phasing.'); }
+        else if (level === 'caution') { warnings.push('Elevated collateral / neutral-reaction risk.'); recs.push('Weigh proportionality; minimise dwell in populated areas.'); }
+        var prov = (green.provenance && typeof green.provenance === 'object') ? green.provenance : { engine: 'deterministic' };
+        var lowConf = !!(green.provenance && (green.provenance.population === 'absent' || green.provenance.collateral === 'absent' || green.provenance.roads === 'absent'));
+        if (lowConf) warnings.push('Low confidence — some factors inferred (no census / road / infrastructure layer).');
+        return { considered: true, collateral_risk_band: band, neutral_reaction_score: nr, advisory_score_delta: delta,
+            warnings: warnings, recommendations: recs, provenance: prov };
+    }
+    // Attach the green_advisory to the CLIENT White review (never the server validator) + record it.
+    function _applyGreenAdvisoryScoring(reason) {
+        var ga = _greenAdvisoryScoring(_greenWorld);
+        if (_coaPlan) _coaPlan._green_advisory = ga;              // composed onto the White review, advisory-only
+        var key = ga.collateral_risk_band + ':' + ga.advisory_score_delta;
+        if (key !== _greenScoringKey) {
+            _greenScoringKey = key;
+            try { _recordDecision({ role: 'white', action: 'green_advisory_scoring', called_llm: false, source: 'green-world→white',
+                reason: 'green risk considered', result_summary: ga.collateral_risk_band + ' · Δ' + ga.advisory_score_delta + ' (advisory)' }); } catch (_) {}
+            try { _appendToEventLog('White advisory: Green collateral risk ' + esc(ga.collateral_risk_band) + '; score adjusted ' + ga.advisory_score_delta + '.'); } catch (_) {}
+        }
+        updatePanel();
+        return ga;
+    }
     function _logGreenChanges(prev, a) {
         try {
             var cb = _greenBand(a), rs = (a.road_status && a.road_status.status) || 'unknown', nr = a.neutral_reaction_score;
@@ -4176,9 +4216,19 @@
         h += row('Host-nation pressure', a.host_nation ? esc(a.host_nation) : 'none identified');
         h += row('Neutral reaction score', (a.neutral_reaction_score != null ? a.neutral_reaction_score + '/100' : '—'), col);
         h += '</div>';
-        // RMOOZ-WHITE-GREEN-ANNOTATION-T: White (referee) advisory derived from Green — advisory only.
+        // RMOOZ-WHITE-GREEN-ANNOTATION-T / RMOOZ-GREEN-WHITE-SCORING-T: White (referee) advisory from Green.
+        // When a plan has been scored, show the structured scoring (band + score delta + recommendation +
+        // warnings); otherwise the simpler execution-time advisory line. Both are advisory only.
         var _adv = _whiteAdvisory(a);
-        if (_adv) {
+        var _ga = _coaPlan && _coaPlan._green_advisory;
+        if (_ga) {
+            var _gc = _whiteAdvisoryColor(_adv ? _adv.advisory_level : 'clear');
+            h += '<div data-ff-green="white-scoring" style="margin-top:5px;padding:4px 6px;border-radius:4px;background:#0a1622;border:1px solid #24435f;color:#cdd8e4;font-size:9.5px;">' +
+                 '⚖ <b style="color:' + _gc + ';">White considered Green risk: ' + esc(_ga.collateral_risk_band) + '</b> · score &Delta; ' + _ga.advisory_score_delta +
+                 (arr(_ga.recommendations).length ? ' · ' + esc(_ga.recommendations[0]) : '') +
+                 '<br><span style="color:#5a7a8a;">Advisory only — not a block; validator unchanged (structure/physics).</span>' +
+                 (arr(_ga.warnings).length ? '<br><span style="color:#e0a93a;">⚠ ' + _ga.warnings.map(function (x) { return esc(x); }).join(' · ') + '</span>' : '') + '</div>';
+        } else if (_adv) {
             h += '<div data-ff-green="white-advisory" style="margin-top:5px;padding:4px 6px;border-radius:4px;background:#0a1622;border:1px solid #24435f;color:#cdd8e4;font-size:9.5px;">' +
                  '⚖ <b style="color:' + _whiteAdvisoryColor(_adv.advisory_level) + ';">White advisory: ' + esc(_adv.advisory_level) + '</b> — ' + esc(_adv.note) +
                  ' <span style="color:#5a7a8a;">Advisory only — not a block; validator unchanged (structure/physics).</span></div>';
@@ -4669,6 +4719,10 @@
         _decisionLogHtmlForTest:   function ()              { return _decisionLogHtml(); },
         // RMOOZ-WHITE-GREEN-ANNOTATION-T test seam
         _whiteAdvisoryForTest:     function (green)         { return _whiteAdvisory(green); },
+        // RMOOZ-GREEN-WHITE-SCORING-T test seams
+        _greenAdvisoryScoringForTest: function (green)      { return _greenAdvisoryScoring(green); },
+        _applyGreenAdvisoryScoringForTest: function (reason) { return _applyGreenAdvisoryScoring(reason); },
+        _whiteReviewForTest:       function ()              { return { validation: (_coaPlan && _coaPlan.validation) || null, green_advisory: (_coaPlan && _coaPlan._green_advisory) || null }; },
         _renderCommanderLoopHtmlForTest: function (rh, info) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; return renderCommanderLoopHtml(); },
         _maybeAutoSelectModelForTest: function (info)     { if (info !== undefined) _modelInfo = info; return _maybeAutoSelectModel(); },
         _setModelPickerOpenForTest: function (v)          { _modelPickerOpen = !!v; },

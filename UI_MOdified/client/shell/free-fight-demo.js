@@ -96,6 +96,8 @@
     var _greenBusy = false;            // a Green refresh is in flight (debounce)
     var _greenOverlayOn = false;       // map risk-ring overlay toggle (default OFF)
     var _greenLayer = null;            // Leaflet layer group for the Green risk ring (review-only)
+    var _decisionLog = [];             // RMOOZ-AI-SCHEDULER-DECISION-LOG-S: in-memory audit buffer (record-only)
+    var DECISION_LOG_CAP = 200;
     var _pendingModel = null;          // dropdown's current (uncommitted) value
     // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: the operator-facing simple model flow.
     // _modelPickerOpen = the "Select AI Model" picker toggle; _autoSelectedModel guards the
@@ -1134,6 +1136,8 @@
         bind('green-refresh', function () { _refreshGreenWorld('manual'); });
         var greenCb = _panel.querySelector('[data-act="green-overlay-toggle"]');
         if (greenCb && greenCb.addEventListener) greenCb.addEventListener('change', function () { _greenOverlayOn = !!greenCb.checked; _greenOverlayApply(); });
+        // RMOOZ-AI-SCHEDULER-DECISION-LOG-S: clear the audit buffer (record-only feature).
+        bind('decision-log-clear', _clearDecisionLog);
         var picks = _panel.querySelectorAll ? _panel.querySelectorAll('[data-ff-model-pick]') : null;
         if (picks && picks.forEach) picks.forEach(function (el) {
             if (!el || !el.addEventListener) return;
@@ -2076,6 +2080,7 @@
             (_coaPlan && _coaPlan.plan_source ? ' · plan_source: ' + esc(_coaPlan.plan_source) : '') + '</div>';
         h += '<div style="margin-top:5px;">' + renderModelSelectorHtml() + '</div>';
         h += _benchHtml();   // RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P: warmup + benchmark
+        h += _decisionLogHtml();   // RMOOZ-AI-SCHEDULER-DECISION-LOG-S: Blue/Red/Green/White audit trail
         h += '</div></details>';
         return h;
     }
@@ -2286,6 +2291,7 @@
             body.opts.useLlm = true;
             if (body.opts.ai_depth === 'fast') body.opts.ai_depth = 'normal';
         }
+        var _genT0 = _nowMs();   // RMOOZ-AI-SCHEDULER-DECISION-LOG-S: measure the commander call duration
         _fetchJsonSafe('/api/wargame-sim/free-fight/plan-coas', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ units: body.units, objectives: body.objectives, context: { commander_mode: body.opts.commander_mode, ai_depth: body.opts.ai_depth }, opts: body.opts }),
@@ -2307,9 +2313,12 @@
             updatePanel();
             // RMOOZ-GREEN-WORLD-UI-R: refresh the neutral-world read-out after a real plan (deterministic, no /plan-coas).
             if (_coaPlan && _coaPlan.ok) { try { _refreshGreenWorld('after_deep_plan'); } catch (_) {} }
+            // RMOOZ-AI-SCHEDULER-DECISION-LOG-S: record commander/performance/validation decisions (record-only, no new calls).
+            try { _recordPlanDecision(_coaPlan, _nowMs() - _genT0); } catch (_) {}
         }).catch(function (e) {
             _coaPlan = { ok: false, _error: (e && e.message) || 'fetch failed', _requestedVia: 'manual_generate' };
             _coaLoading = false; _stopCoaLoadingTicker(); updatePanel();
+            try { _recordPlanDecision(_coaPlan, _nowMs() - _genT0); } catch (_) {}
         });
     }
     // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: tick the in-flight "AI Planning Trace" elapsed timer (~1s)
@@ -2509,6 +2518,8 @@
         try { _appendToEventLog('COA execution PAUSED — replan trigger: ' + esc(reason) + ' (choose: Continue / Replan / Staff-Safe).'); } catch (_) {}
         _persistCoaExec();   // RMOOZ-COA-COMMIT-PERSISTENCE-M: blocked/replan state survives refresh
         updatePanel();
+        // RMOOZ-AI-SCHEDULER-DECISION-LOG-S: White is the deterministic referee — record the trigger (no LLM).
+        try { _recordDecision({ role: 'white', action: 'replan_trigger', called_llm: false, source: 'deterministic_triggers', reason: reason || 'replan required', result_summary: code || '' }); } catch (_) {}
         try { _refreshGreenWorld('replan_trigger'); } catch (_) {}   // RMOOZ-GREEN-WORLD-UI-R (deterministic, no LLM)
     }
     // One deterministic execution tick — NO LLM. Executes the current phase, advances phases, checks
@@ -2573,6 +2584,8 @@
             event_log_ms: event_log_ms, storage_persist_ms: storage_persist_ms, map_paint_ms: map_paint_ms,
             ui_update_ms: ui_update_ms, tick_interval_delay_ms: _coaExecIntervalMs, llm_called_this_tick: false,
         };
+        // RMOOZ-AI-SCHEDULER-DECISION-LOG-S: the committed-COA executor is a deterministic unit-controller — no LLM.
+        try { _recordDecision({ role: 'unit-controller', action: 'execute_phase_tick', called_llm: false, duration_ms: coa_tick_execute_ms, source: 'coa_commitment', result_summary: 'phase ' + (_coaExec.current_phase_index + 1) + ' · moved ' + movedNow.length }); } catch (_) {}
         return _coaExec.last_tick_timing;
     }
     // RMOOZ-COA-COMMIT-LIVE-DELAY-AUDIT-N: committed-COA execution is DETERMINISTIC (no LLM, no
@@ -4076,10 +4089,12 @@
         _greenBusy = true;
         var prev = _greenWorld;
         var body = { units: units, objective: { lat: objective.lat, lon: objective.lon }, terrain: _greenTerrainHint() };
+        var _gT0 = _nowMs();   // RMOOZ-AI-SCHEDULER-DECISION-LOG-S
         return _fetchJsonSafe('/api/wargame-sim/free-fight/neutral-world', {
             method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
         }).then(function (a) {
-            if (a && a.ok && a.collateral_risk) { a._reason = reason || 'manual'; _logGreenChanges(prev, a); _greenWorld = a; if (_greenOverlayOn) _greenOverlayApply(); }
+            if (a && a.ok && a.collateral_risk) { a._reason = reason || 'manual'; _logGreenChanges(prev, a); _greenWorld = a; if (_greenOverlayOn) _greenOverlayApply();
+                try { _recordDecision({ role: 'green', action: 'neutral_world_refresh', called_llm: false, duration_ms: _nowMs() - _gT0, reason: reason || 'manual', source: 'green-world', result_summary: 'collateral ' + _greenBand(a) + ' (' + (a.collateral_risk && a.collateral_risk.score) + ')' }); } catch (_) {} }
             _greenBusy = false; updatePanel();
             return _greenWorld;
         }).catch(function () { _greenBusy = false; updatePanel(); return _greenWorld; });
@@ -4127,6 +4142,77 @@
         h += '<div style="margin-top:3px;font-size:9px;color:#5a7a60;">provenance: ' + esc(JSON.stringify(a.provenance || {})) + (a._reason ? ' · trigger: ' + esc(a._reason) : '') + '</div>';
         h += '<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:9px;color:#5a7a9a;">Green JSON</summary><pre style="font-size:8.5px;color:#9ab0c0;white-space:pre-wrap;word-break:break-word;max-height:160px;overflow:auto;margin:3px 0 0;">' + esc(JSON.stringify(a, null, 2)) + '</pre></details>';
         h += '</div>';
+        return h;
+    }
+    // ── RMOOZ-AI-SCHEDULER-DECISION-LOG-S: Blue/Red/Green/White audit trail (RECORD-ONLY) ──────────
+    // A transparency layer: which role acted/skipped, did it call the LLM, how long, and why. It does
+    // NOT change scheduler behaviour, never calls the LLM, and adds no model/network calls — every
+    // record is a synchronous in-memory push. Bounded buffer; the UI shows the latest 10.
+    function _recordDecision(rec) {
+        try {
+            var r = rec || {};
+            var entry = {
+                ts: _nowISO(), tick: (_coaExec && _coaExec.ticks) || 0,
+                role: r.role || 'unit-controller', action: r.action || '',
+                called_llm: r.called_llm === true,
+                provider: r.provider || null, model: r.model || null,
+                duration_ms: (typeof r.duration_ms === 'number' && isFinite(r.duration_ms)) ? Math.round(r.duration_ms) : null,
+                reason: r.reason || null, skipped_reason: r.skipped_reason || null,
+                source: r.source || null, result_summary: r.result_summary || null,
+            };
+            _decisionLog.push(entry);
+            if (_decisionLog.length > DECISION_LOG_CAP) _decisionLog.splice(0, _decisionLog.length - DECISION_LOG_CAP);
+            return entry;
+        } catch (_) { return null; }
+    }
+    function _clearDecisionLog() { _decisionLog = []; updatePanel(); }
+    // Record a Blue/Red commander plan + the performance-governor depth choice + White validation, from a
+    // plan response. Pure recording — derives everything from the already-returned plan (no new calls).
+    function _recordPlanDecision(plan, durMs) {
+        plan = plan || {};
+        var side = String(plan.active_side || (arr(plan.coas)[0] && arr(plan.coas)[0].side) || _activeSide || 'RED').toUpperCase();
+        var role = side === 'BLUE' ? 'blue' : 'red';
+        var calledLlm = !!(plan.llm_called && plan.plan_source === 'llm' && (!plan.llm_status || /ok|success/i.test(String(plan.llm_status))));
+        // performance governor — which depth/mode it allowed (deterministic decision, no LLM).
+        _recordDecision({ role: 'performance', action: 'select_depth', called_llm: false, source: 'performance_governor',
+            reason: 'ai_depth=' + (_aiDepth || 'normal') + (_planningMode === 'staff_safe' ? ' · staff_safe' : '') });
+        // Blue/Red commander plan.
+        _recordDecision({ role: role, action: (plan._requestedVia === 'manual_generate' ? 'deep_plan' : 'plan'),
+            called_llm: calledLlm, provider: plan.provider_used || null, model: plan.model_used || null, duration_ms: durMs,
+            reason: calledLlm ? 'AI commander plan' : (plan.fallback_reason || plan.plan_source || (plan.ok ? 'deterministic plan' : 'plan failed')),
+            source: plan.plan_source || null,
+            result_summary: plan.ok ? (arr(plan.coas).length + ' COA(s) · ' + (plan.plan_source || 'unknown')) : ('failed: ' + (plan._error || 'error')) });
+        // White validation (deterministic referee), when the plan carried a validation verdict.
+        if (plan.validation) {
+            _recordDecision({ role: 'white', action: 'validate_coa', called_llm: false, source: 'deterministic_validator',
+                reason: plan.validation.ok ? 'COA valid' : (plan.validation.reason || 'rejected'),
+                result_summary: plan.validation.ok ? 'ok' : ('errors: ' + arr(plan.validation.errors).length) });
+        }
+    }
+    var DECISION_ROLE_COLORS = { blue: '#7bb8e8', red: '#f0707a', green: '#5bd6a0', white: '#cdd8e4', performance: '#e0a93a', 'unit-controller': '#9ec2ec' };
+    function _decisionLogHtml() {
+        var n = _decisionLog.length;
+        var h = '<div data-ff-sched="panel" style="margin-top:6px;border-top:1px solid #1a3050;padding-top:5px;">';
+        h += '<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;">';
+        h += '<span style="font-size:10px;color:#8fa5b8;font-weight:600;">Scheduler decision log — Blue/Red/Green/White audit (' + n + ')</span>';
+        h += '<button data-act="decision-log-clear" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#22272f;color:#cdd8e4;border-radius:4px;padding:2px 7px;font-size:9px;">Clear decision log</button>';
+        h += '</div>';
+        if (!n) { h += '<div style="margin-top:4px;font-size:9px;color:#5a7a60;">No decisions recorded yet — generate a plan, commit/run a COA, or refresh Green.</div></div>'; return h; }
+        h += '<div data-ff-sched="rows" style="margin-top:4px;display:flex;flex-direction:column;gap:2px;">';
+        _decisionLog.slice(-10).reverse().forEach(function (d) {
+            var col = DECISION_ROLE_COLORS[d.role] || '#9ec2ec';
+            var llm = d.called_llm ? '<span style="color:#f0c060;">LLM</span>' : '<span style="color:#7fd6a0;">no-LLM</span>';
+            var dur = (d.duration_ms != null) ? (d.duration_ms + 'ms') : '—';
+            var why = d.skipped_reason ? ('skipped: ' + d.skipped_reason) : (d.reason || d.result_summary || '');
+            h += '<div style="font-size:9px;color:#cdd8e4;display:flex;gap:6px;align-items:baseline;">' +
+                 '<span style="background:' + col + ';color:#06101c;border-radius:3px;padding:0 5px;font-weight:700;min-width:80px;text-align:center;">' + esc(d.role) + '</span>' +
+                 '<span style="color:#9ec2ec;min-width:118px;">' + esc(d.action) + '</span>' +
+                 '<span style="min-width:46px;">' + llm + '</span>' +
+                 '<span style="color:#8fa5b8;min-width:48px;">' + dur + '</span>' +
+                 '<span style="color:#9ab0c0;flex:1;">' + esc(String(why).slice(0, 64)) + '</span>' +
+                 '</div>';
+        });
+        h += '</div></div>';
         return h;
     }
     // RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O: the SIMPLE primary operator flow — ONE primary action per
@@ -4530,6 +4616,12 @@
         _toggleGreenOverlayForTest: function ()             { _greenOverlayOn = !_greenOverlayOn; _greenOverlayApply(); return _greenOverlayOn; },
         _getGreenOverlayOnForTest: function ()              { return _greenOverlayOn; },
         _getGreenLayerForTest:     function ()              { return _greenLayer; },
+        // RMOOZ-AI-SCHEDULER-DECISION-LOG-S test seams
+        _recordDecisionForTest:    function (rec)          { return _recordDecision(rec); },
+        _recordPlanDecisionForTest: function (plan, dur)   { return _recordPlanDecision(plan, dur); },
+        _getDecisionLogForTest:    function ()              { return _decisionLog.slice(); },
+        _clearDecisionLogForTest:  function ()              { return _clearDecisionLog(); },
+        _decisionLogHtmlForTest:   function ()              { return _decisionLogHtml(); },
         _renderCommanderLoopHtmlForTest: function (rh, info) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; return renderCommanderLoopHtml(); },
         _maybeAutoSelectModelForTest: function (info)     { if (info !== undefined) _modelInfo = info; return _maybeAutoSelectModel(); },
         _setModelPickerOpenForTest: function (v)          { _modelPickerOpen = !!v; },

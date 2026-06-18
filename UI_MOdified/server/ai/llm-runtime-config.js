@@ -56,12 +56,16 @@ const TASK_ENV_SUFFIX = {
     capability_analyst: 'CAPABILITY_ANALYST',
     decision:           'DECISION',
     plan:               'PLAN',
+    // RMOOZ-BLUE-RED-GREEN-WHITE-A: the Green/ops SUMMARIZER role — a SMALL model for short notes only
+    // (never planning). RMOOZ_LLM_MODEL_SUMMARIZER overrides it (e.g. llama3.2:3b / gemma3:4b).
+    summarizer:         'SUMMARIZER',
 };
 const TASKS = Object.freeze({
     COA_PLANNER:        'coa_planner',
     CAPABILITY_ANALYST: 'capability_analyst',
     DECISION:           'decision',
     PLAN:               'plan',
+    SUMMARIZER:         'summarizer',
 });
 
 const DEFAULT_TIMEOUT_MS    = 120000; // matches the prior per-module default

@@ -55,6 +55,7 @@ const FREE_FIGHT_LLM          = require(path.join(__dirname, 'ai', 'free-fight-l
 const FREE_FIGHT_ENGINE       = require(path.join(__dirname, 'ai', 'free-fight-action-engine.js'));
 const FREE_FIGHT_LLM_DECISION = require(path.join(__dirname, 'ai', 'free-fight-llm-decision.js'));
 const COA_PLANNER             = require(path.join(__dirname, 'ai', 'free-fight-coa-planner.js'));
+const GREEN_WORLD             = require(path.join(__dirname, 'ai', 'green-world.js'));   // RMOOZ-BLUE-RED-GREEN-WHITE-A
 const STEP1_LLM_FILL = require(path.join(__dirname, 'ai', 'step1-llm-fill.js'));
 
 // Collect a request body and parse it. cb(obj) on success; cb(null) when the
@@ -1364,6 +1365,23 @@ function handle(req, res, ctx) {
         return true;
     }
 
+    // RMOOZ-BLUE-RED-GREEN-WHITE-A: GREEN neutral-world assessment — DETERMINISTIC, no LLM, read-only
+    // (collateral risk, road status, population band, host-nation friction). No execution gate: it
+    // mutates nothing and calls no model. Body: { units?, objective?|objectives?, terrain? }.
+    if (pathname === '/api/wargame-sim/free-fight/neutral-world' && (method === 'GET' || method === 'POST')) {
+        if (method === 'GET') { sendJson(res, 200, Object.assign({ ok: true }, GREEN_WORLD.assessNeutralWorld({}))); return true; }
+        readJsonBody(req, function (body) {
+            var b = body || {};
+            var objective = b.objective || (Array.isArray(b.objectives) ? b.objectives[0] : null);
+            sendJson(res, 200, Object.assign({ ok: true }, GREEN_WORLD.assessNeutralWorld({
+                units: Array.isArray(b.units) ? b.units : [],
+                objective: objective,
+                terrain: (b.terrain && typeof b.terrain === 'object') ? b.terrain : null,
+                coa: b.coa || null,
+            })));
+        });
+        return true;
+    }
     // FREEFIGHT-AI-COA-PLANNER-A: multi-COA attack planner
     if (pathname === '/api/wargame-sim/free-fight/plan-coas' && method === 'POST') {
         readJsonBody(req, function (body) {

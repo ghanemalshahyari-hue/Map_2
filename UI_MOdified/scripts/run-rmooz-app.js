@@ -48,6 +48,12 @@ function applyRunDefaults(env) {
     // (num_ctx is intentionally NOT defaulted — forcing a small context would truncate the COA prompt;
     //  set RMOOZ_OLLAMA_NUM_CTX explicitly to opt in.)
     setDefault('RMOOZ_LLM_KEEP_ALIVE', '8h');
+    // RMOOZ-BLUE-RED-GREEN-WHITE-A: ONE main local planner model for Blue/Red commander work. The prior
+    // fallback default (ai-config qwen2.5:7b) isn't installed on the target box, so the card showed
+    // "needs model" until a manual pick. qwen3-coder:latest is the proven local COA model → make it the
+    // app-wide default so the card is Ready out of the box. App-wide (also the adjudicator/MC default);
+    // override with RMOOZ_LLM_MODEL, or pick another model in the card (that selection persists).
+    setDefault('RMOOZ_LLM_MODEL', 'qwen3-coder:latest');
     // TestingAI dir — resolved RELATIVE to this repo (replaces the foreign
     // C:\Users\ADMIN\...\TestingAI absolute path).
     setDefault('RMOOZ_TESTINGAI_DIR', path.join(APP_DIR, 'TestingAI'));

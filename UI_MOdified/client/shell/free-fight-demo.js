@@ -101,6 +101,7 @@
     var _whiteAdvisoryLevel = null;    // RMOOZ-WHITE-GREEN-ANNOTATION-T: last recorded White advisory level (dedup)
     var _greenScoringKey = null;       // RMOOZ-GREEN-WHITE-SCORING-T: last recorded green-advisory scoring key (dedup)
     var _ffTab = 'operator';           // RMOOZ-FREE-FIGHT-CONTROL-WINDOW-REBUILD-W: active tab (operator|coa_plans|green|white|diagnostics)
+    var _ffLegacyOpen = false;         // RMOOZ-FREE-FIGHT-CONTROL-HARD-RESET-X: "Diagnostics / Legacy" drawer (closed by default; body renders ONLY when open)
     var _pendingModel = null;          // dropdown's current (uncommitted) value
     // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: the operator-facing simple model flow.
     // _modelPickerOpen = the "Select AI Model" picker toggle; _autoSelectedModel guards the
@@ -1074,9 +1075,19 @@
             '⚠ AI-assisted demo only — not final tasking — requires commander approval<br>' +
             'عرض تجريبي بمساعدة الذكاء الاصطناعي — ليس إسناد واجب نهائي — يحتاج اعتماد القائد</div>';
         html += renderAiDecisionHtml();
-        bodyDiv.innerHTML = html;
+        // RMOOZ-FREE-FIGHT-CONTROL-HARD-RESET-X: the operator-facing path is now the clean V2 control
+        // window (renderFreeFightControlV2) — it renders ONLY the active state's view with unique v2-*
+        // data-act ids, so no hidden duplicate buttons compete for clicks. The entire old crowded UI
+        // (objective placement + group-movement demo + the full diagnostics card, built into `html`
+        // above) is PRESERVED but inserted into the DOM ONLY when the closed "Diagnostics / Legacy"
+        // drawer is opened. Engine unchanged — this is cockpit-only.
+        bodyDiv.innerHTML = renderFreeFightControlV2() + _freeFightLegacyDrawerHtml(html);
         bind('start', start); bind('replan', replan); bind('pause', pause); bind('reset', reset); bind('clear-obj', clearObjective);
         bind('place-obj', armPlaceObjective);
+        // RMOOZ-FREE-FIGHT-CONTROL-HARD-RESET-X: V2 control-window binds. Unique v2-* ids, scoped to the
+        // new window — no collision with the legacy data-act ids (which only exist in the DOM when the
+        // Diagnostics/Legacy drawer is open). Every visible v2 button maps to an EXISTING engine fn.
+        bindFreeFightControlV2();
         bind('preview-ai', _fetchAiDecision); bind('apply-ai', _applyAiDecision); bind('reset-ai', _resetAiDecision);
         bind('test-llm', _testLlm);
         // FREEFIGHT-AI-COA-PLANNER-A: COA planner bindings
@@ -4479,6 +4490,191 @@
             ' · <span style="color:#8fa5b8;">Status:</span> <b style="color:#cfe6ff;">' + word + '</b></div>' +
             '<div><span style="color:#8fa5b8;">AI calls on normal ticks:</span> <b style="color:#7fd6a0;">OFF</b></div></div>';
     }
+    // ── RMOOZ-FREE-FIGHT-CONTROL-HARD-RESET-X: the NEW Free Fight control window (the "cockpit") ───────
+    // A clean, single-flow, state-driven UI built from scratch. It REUSES the existing engine (planner,
+    // COA execution, deterministic ticks, validation, Green/White advisory, ranking) — it changes NO
+    // backend logic. Design rules: render ONLY the active state's view; unique `v2-*` data-act ids (no
+    // hidden duplicates); ≤2 primary actions visible at once; no raw JSON / benchmark / decision log in
+    // the main flow (those live behind the closed Diagnostics/Legacy drawer). Every visible button maps
+    // to an existing engine function and updates the visible state immediately on click.
+    function _freeFightControlStateV2() {
+        var coas = arr(_coaPlan && _coaPlan.coas);
+        var hasPlan = !!(_coaPlan && _coaPlan.ok && coas.length);
+        var ex = _coaExec;
+        if (_coaLoading) return 'planning';
+        if (ex && ex.replan_required) return 'blocked';
+        if (ex && ex.phase_status === 'complete') return 'complete';
+        if (ex && ex.active) {
+            if (!ex.paused && ex.phase_status === 'running') return 'running';
+            if (ex.paused) return 'paused';
+            return 'committed';   // active + pending (committed, not yet run)
+        }
+        return hasPlan ? 'ready' : 'empty';
+    }
+    function _v2StateLabel(s) { return ({ empty: 'No plan', planning: 'Planning…', ready: 'Plan ready', committed: 'Committed', running: 'Running', paused: 'Paused', blocked: 'Blocked', complete: 'Complete' })[s] || s; }
+    function _v2StateColor(s) { return ({ planning: '#e0c060', running: '#7fd6a0', paused: '#cdb86a', blocked: '#f0707a', complete: '#7fd6a0', committed: '#9ec2ec', ready: '#9ec2ec', empty: '#8fa5b8' })[s] || '#9ec2ec'; }
+    function _v2CoaId(coas, i) { return (coas[i] && coas[i].plan_id) || ('COA-' + (i + 1)); }
+    function _v2Pri(act, label, title) { return '<button data-ff-v2-primary="1" data-act="' + act + '"' + (title ? ' title="' + esc(title) + '"' : '') + ' style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#15301f;color:#9fe8c0;border-radius:6px;padding:8px 16px;font-size:12.5px;font-weight:700;">' + label + '</button>'; }
+    function _v2Sec(act, label, title) { return '<button data-act="' + act + '"' + (title ? ' title="' + esc(title) + '"' : '') + ' style="font:inherit;cursor:pointer;border:1px solid #4a5f75;background:#101b27;color:#9fb8c8;border-radius:6px;padding:7px 12px;font-size:11px;">' + label + '</button>'; }
+    function _v2Adv(act, label, title) { return '<button data-act="' + act + '"' + (title ? ' title="' + esc(title) + '"' : '') + ' style="font:inherit;cursor:pointer;border:1px dashed #5a6270;background:#171b21;color:#8fa5b8;border-radius:5px;padding:4px 9px;font-size:10px;">' + label + '</button>'; }
+    function _v2Note(t, c) { return '<div style="margin-top:6px;font-size:10.5px;color:' + (c || '#9fb8c8') + ';line-height:1.5;">' + t + '</div>'; }
+    function _v2ModelReadinessHtml() {
+        var s = null; try { s = _modelFlowStatus(); } catch (_) {}
+        var label = (s && s.label) ? s.label : 'Checking AI…';
+        var col = (s && s.color) ? s.color : '#8fa5b8';
+        var sel = (s && s.selected) ? (' · ' + esc(s.selected)) : '';
+        return '<div data-ff-v2="model-readiness" style="margin-top:6px;font-size:9.5px;color:' + col + ';">● ' + esc(label) + sel + '</div>';
+    }
+    // Clickable COA cards — recommended is visually first-class; the selected card is clearly highlighted.
+    function _v2CoaCardsHtml(coas, recIdx) {
+        var h = '<div data-ff-v2="coa-cards" style="margin-top:8px;display:flex;flex-direction:column;gap:6px;">';
+        coas.forEach(function (coa, i) {
+            var sel = (i === _coaSelectedIdx);
+            var isRec = (i === recIdx);
+            var id = _v2CoaId(coas, i);
+            var border = sel ? '#4a9ed6' : (isRec ? '#2e7d54' : '#2a3f55');
+            var bg = sel ? '#0a1c33' : '#0c141d';
+            var risk = coa.risk || '—';
+            var riskCol = risk === 'high' ? '#f08080' : (risk === 'medium' ? '#e0c060' : '#90d090');
+            var score = (coa._ranking && coa._ranking.final_score != null) ? coa._ranking.final_score : null;
+            h += '<div data-act="v2-coa-' + i + '" data-ff-v2-coa="' + i + '"' + (sel ? ' data-ff-v2-selected="1"' : '') + ' style="cursor:pointer;border:' + (sel ? '2px' : '1px') + ' solid ' + border + ';border-radius:6px;background:' + bg + ';padding:' + (isRec ? '9px 11px' : '7px 10px') + ';">';
+            h += '<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;">';
+            h += '<span style="font-weight:700;font-size:' + (isRec ? '12px' : '11px') + ';color:#e8eaed;">' + (sel ? '▶ ' : '') + esc(id) + ' — ' + esc(coa.title || '') + '</span>';
+            h += '<span style="display:flex;gap:4px;align-items:center;flex-shrink:0;">';
+            if (isRec) h += '<span style="background:#1a5030;color:#7fd6a0;border-radius:3px;padding:1px 6px;font-size:9px;font-weight:700;">★ Recommended</span>';
+            if (sel) h += '<span data-ff-v2="selected-badge" style="background:#13344f;color:#cfe6ff;border-radius:3px;padding:1px 6px;font-size:9px;font-weight:700;">Selected</span>';
+            h += '</span></div>';
+            h += '<div style="margin-top:3px;font-size:10px;color:#9ab0c0;">Risk <span style="color:' + riskCol + ';">' + esc(risk) + '</span> · Confidence <span style="color:#9ec2ec;">' + esc(coa.confidence || '—') + '</span>' + (score != null ? ' · Score <b style="color:#cfe6ff;">' + score + '</b>' : '') + '</div>';
+            if (isRec && coa._ranking && coa._ranking.ranking_reason) h += '<div style="margin-top:2px;font-size:9px;color:#7fd6a0;">Recommended because: ' + esc(coa._ranking.ranking_reason) + '</div>';
+            if (coa.summary) h += '<div style="margin-top:2px;font-size:9.5px;color:#cdd8e4;font-style:italic;">' + esc(coa.summary) + '</div>';
+            h += '</div>';
+        });
+        h += '</div>';
+        return h;
+    }
+    function _v2OverrideNoteHtml(coas, recIdx) {
+        if (_coaSelectedIdx === recIdx) return '';
+        return '<div data-ff-v2="override" style="margin-top:6px;font-size:10px;color:#e0a93a;">⚠ Operator override: selected ' + esc(_v2CoaId(coas, _coaSelectedIdx)) + ' instead of recommended ' + esc(_v2CoaId(coas, recIdx)) + '.</div>';
+    }
+    // Committed/blocked/complete summary: selected + recommended + override + Green/White advisory (advisory only).
+    function _v2CommittedSummaryHtml() {
+        var ex = _coaExec;
+        if (!ex) return '';
+        var cac = ex.commit_advisory_context || {};
+        var h = '<div data-ff-v2="committed-summary" style="margin-top:8px;padding:7px 9px;border:1px solid #2a4d6a;border-radius:6px;background:#08131e;font-size:10px;color:#cdd8e4;">';
+        h += '<div><span style="color:#8fa5b8;">Committed plan:</span> <b style="color:#e8eaed;">' + esc(ex.selected_coa_id) + '</b></div>';
+        if (cac.considered) {
+            h += '<div><span style="color:#8fa5b8;">Recommended:</span> <b style="color:#7fd6a0;">' + esc(cac.recommended_coa_id) + '</b> · <span style="color:#8fa5b8;">Operator override:</span> <b style="color:' + (cac.operator_override ? '#e0a93a' : '#7fd6a0') + ';">' + (cac.operator_override ? 'yes' : 'no') + '</b></div>';
+        }
+        var adv = _whiteAdvisory(_greenWorld);
+        var ga = cac.green_advisory || _greenAdvisoryScoring(_greenWorld);
+        h += '<div data-ff-v2="advisory" style="margin-top:4px;padding-top:4px;border-top:1px solid #163048;">';
+        h += '<div>⚖ <span style="color:#8fa5b8;">Green/White advisory:</span> ' + (adv
+            ? '<b style="color:' + _whiteAdvisoryColor(adv.advisory_level) + ';">' + esc(adv.advisory_level) + '</b> — ' + esc(adv.note)
+            : '<span style="color:#8fa5b8;">no Green assessment yet (refresh Green in Diagnostics).</span>') + '</div>';
+        if (ga && ga.considered) h += '<div style="color:#9ab0c0;">Green collateral: ' + esc(ga.collateral_risk_band) + ' · advisory Δ ' + ga.advisory_score_delta + (ga.neutral_reaction_score != null ? ' · reaction ' + ga.neutral_reaction_score : '') + '</div>';
+        h += '<div style="margin-top:2px;font-size:9px;color:#5a7a8a;">Advisory only — not a block. The structure/physics validator is the only gate.</div>';
+        h += '</div></div>';
+        return h;
+    }
+    function _v2RunProgressHtml() {
+        var ex = _coaExec;
+        if (!ex) return '';
+        var phases = arr(ex.selected_coa && ex.selected_coa.phases);
+        var pIdx = Math.min(ex.current_phase_index, Math.max(0, phases.length - 1));
+        var phase = phases[pIdx] || {};
+        var pct = phases.length ? Math.round((Math.min(ex.current_phase_index, phases.length) / phases.length) * 100) : 0;
+        var h = '<div data-ff-v2="progress" style="margin-top:8px;font-size:10.5px;color:#cdd8e4;">';
+        h += '<div><span style="color:#8fa5b8;">Plan:</span> <b style="color:#e8eaed;">' + esc(ex.selected_coa_id) + '</b> · <span style="color:#8fa5b8;">tick</span> ' + ex.ticks + '</div>';
+        h += '<div><span style="color:#8fa5b8;">Current phase:</span> <b style="color:#cfe6ff;">' + (ex.phase_status === 'complete' ? 'all done' : ((ex.current_phase_index + 1) + ' / ' + phases.length + (phase.name ? ' — ' + esc(phase.name) : ''))) + '</b></div>';
+        h += '<div data-ff-v2="tickstatus" style="font-size:9.5px;color:#7fd6a0;">Tick status: deterministic · llm_called_this_tick: <b>false</b></div>';
+        h += '<div style="margin-top:4px;height:6px;background:#0c1622;border:1px solid #24435f;border-radius:4px;overflow:hidden;"><div style="width:' + pct + '%;height:100%;background:#2e7d54;"></div></div>';
+        h += '</div>';
+        return h;
+    }
+    function _v2PlanningElapsed() { try { return _coaLoadingStart ? Math.max(0, Math.round((Date.now() - _coaLoadingStart) / 1000)) : 0; } catch (_) { return 0; } }
+    function renderFreeFightControlV2() {
+        var state = _freeFightControlStateV2();
+        var coas = arr(_coaPlan && _coaPlan.coas);
+        var recIdx = _pickRecommendedIdx(_coaPlan);
+        var actions = '', body = '';
+        if (state === 'empty') {
+            actions = _v2Pri('v2-generate', '⚡ Generate AI Plan', 'Calls the local AI model — can be slow') + _v2Sec('v2-staff-safe', '🛡 Use Staff-Safe Plan', 'Instant deterministic plan — no AI');
+            body = _v2Note('<b>Generate AI Plan</b> is slow because it calls the AI. <b>Staff-Safe</b> is an instant deterministic plan (no AI).') + _v2ModelReadinessHtml();
+        } else if (state === 'planning') {
+            actions = '';   // no fake cancel — the existing generator has no cancel
+            body = '<div data-ff-v2="planning" style="margin-top:6px;display:flex;align-items:center;gap:8px;font-size:12px;color:#e0c060;font-weight:700;">' +
+                '<span style="display:inline-block;width:12px;height:12px;border:2px solid #e0c060;border-top-color:transparent;border-radius:50%;"></span>' +
+                'AI is building COAs… <span style="color:#7fd6a0;">' + _v2PlanningElapsed() + 's</span></div>' +
+                _v2Note('The local model can take 30–90s. This window updates automatically when the plan is ready.', '#8fa5b8');
+        } else if (state === 'ready') {
+            var selId = _v2CoaId(coas, _coaSelectedIdx);
+            actions = _v2Pri('v2-commit', '✅ Commit Selected Plan (' + esc(selId) + ')', 'Locks the selected COA for execution');
+            body = _v2CoaCardsHtml(coas, recIdx) + _v2OverrideNoteHtml(coas, recIdx) +
+                '<div style="margin-top:8px;display:flex;align-items:center;gap:6px;"><span style="font-size:9.5px;color:#8fa5b8;">Advanced:</span> ' + _v2Adv('v2-regenerate', '↻ Regenerate Plan (AI · slow)', 'Calls the AI again') + '</div>';
+        } else if (state === 'committed') {
+            actions = _v2Pri('v2-run', '▶ Run Plan', 'Fast deterministic execution — no AI on normal ticks') + _v2Sec('v2-clear', 'Clear Plan');
+            body = _v2CommittedSummaryHtml() + _v2Note('<b>Run Plan</b> executes the committed plan deterministically — fast, no AI on normal ticks.', '#7fd6a0');
+        } else if (state === 'running') {
+            actions = _v2Pri('v2-pause', '⏸ Pause', 'Stop movement');
+            body = _v2RunProgressHtml() + _v2Note('Running — <b>the AI is NOT called on normal ticks</b>.', '#7fd6a0');
+        } else if (state === 'paused') {
+            actions = _v2Pri('v2-resume', '▶ Resume', 'Continue deterministic execution') + _v2Sec('v2-clear', 'Clear Plan');
+            body = _v2RunProgressHtml() + _v2Note('Paused. Resume continues deterministic execution; Clear discards the committed plan.', '#cdb86a');
+        } else if (state === 'blocked') {
+            actions = _v2Sec('v2-continue', '▶ Continue anyway', 'Resume the committed COA despite the trigger') + _v2Sec('v2-clear', 'Clear Plan');
+            body = _v2Note('⚠ Blocked — ' + esc((_coaExec && _coaExec.replan_reason) || 'Replan required; execution paused.'), '#f0b0b0') +
+                _v2CommittedSummaryHtml() +
+                '<div style="margin-top:8px;display:flex;align-items:center;gap:6px;"><span style="font-size:9.5px;color:#8fa5b8;">Advanced action:</span> ' + _v2Adv('v2-replan', '↻ Replan with AI (slow)', 'Stop and call the AI for a fresh plan') + '</div>';
+        } else if (state === 'complete') {
+            actions = _v2Pri('v2-generate', '⚡ Generate AI Plan', 'Start a new plan (calls AI)') + _v2Sec('v2-clear', 'Clear Plan');
+            body = _v2Note('✅ Plan complete — all phases executed with no AI calls.', '#7fd6a0') + _v2CommittedSummaryHtml();
+        }
+        var head = '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">' +
+            '<span style="font-size:12.5px;font-weight:700;color:#9ec2ec;">🎖 AI Commander — Free Fight</span>' +
+            '<span data-ff-v2="state" data-ff-v2-state="' + state + '" style="font-size:9.5px;font-weight:700;color:' + _v2StateColor(state) + ';background:#0c1622;border:1px solid #24435f;border-radius:10px;padding:2px 9px;">' + _v2StateLabel(state) + '</span>' +
+            '</div>';
+        return '<div data-ff-v2="window" style="margin:6px 0;padding:11px 13px;border:1px solid #2e5d7d;border-radius:8px;background:#0a1726;">' +
+            head +
+            '<div data-ff-v2="actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">' + actions + '</div>' +
+            body + '</div>';
+    }
+    // The closed "Diagnostics / Legacy" drawer. Its body (the full old crowded UI — objective placement,
+    // group-movement demo, model status, warmup/benchmark, scheduler decision log, raw JSON, manual
+    // planner, commit-exec detail, unit-decision, Staff-Safe internals) is inserted into the DOM ONLY
+    // when opened. Closed by default → none of those controls render, so there are no hidden duplicate
+    // data-act buttons in the operator-facing path.
+    function _freeFightLegacyDrawerHtml(legacyHtml) {
+        var open = !!_ffLegacyOpen;
+        var h = '<div data-ff-v2="legacy" style="margin-top:12px;border-top:1px solid #2a3f55;padding-top:7px;">';
+        h += '<button data-act="v2-legacy-toggle" data-ff-v2-legacy-open="' + (open ? '1' : '0') + '" style="font:inherit;cursor:pointer;border:1px solid #3a4658;background:#0c141d;color:#8fa5b8;border-radius:5px;padding:5px 10px;font-size:10.5px;font-weight:600;">' + (open ? '▾' : '▸') + ' Diagnostics / Legacy</button>';
+        h += '<div style="margin-top:3px;font-size:9px;color:#5a7a8a;line-height:1.5;">' +
+            (open ? 'Technical &amp; legacy controls — model status, warmup, benchmark, scheduler decision log, raw JSON, manual planner, group-movement demo, Staff-Safe internals. Not part of the normal flow.'
+                  : 'Hidden — model status · warmup · benchmark · scheduler decision log · raw JSON · manual planner · group-movement demo · Staff-Safe internals. Click to open.') + '</div>';
+        if (open) h += '<div data-ff-v2="legacy-body" style="margin-top:8px;opacity:.97;">' + (legacyHtml || '') + '</div>';
+        return h + '</div>';
+    }
+    // Bind the V2 control-window actions. All ids are unique to V2; when the legacy drawer is closed its
+    // controls are absent from the DOM, so these binds never collide. Every handler updates visible state.
+    function bindFreeFightControlV2() {
+        bind('v2-generate', function () { setPlanningMode('commander'); _generateCoaPlan(); });
+        bind('v2-regenerate', function () { setPlanningMode('commander'); _generateCoaPlan(); });
+        bind('v2-staff-safe', function () { setPlanningMode('staff_safe'); _generateCoaPlan(); });
+        bind('v2-commit', function () { _commitCoa(_coaSelectedIdx); });
+        bind('v2-run', _runCommittedCoa);
+        bind('v2-resume', _runCommittedCoa);
+        bind('v2-continue', _runCommittedCoa);
+        bind('v2-pause', _pauseCommittedCoa);
+        bind('v2-clear', _resetCoaExec);
+        bind('v2-replan', _replanCoa);
+        bind('v2-legacy-toggle', function () { _ffLegacyOpen = !_ffLegacyOpen; updatePanel(); });
+        // COA card selection — clicking a card sets the selection and repaints immediately so the
+        // highlight + selected summary + Commit label update on the spot. Bind a generous range (plans
+        // carry 2–3 COAs); bind() no-ops on absent ids.
+        for (var i = 0; i < 8; i++) {
+            (function (idx) { bind('v2-coa-' + idx, function () { _coaSelectedIdx = idx; updatePanel(); }); })(i);
+        }
+    }
     function _operatorStripHtml() {
         function pri(act, label, dis) { return '<button data-ff-primary="1" data-act="' + act + '"' + (dis ? ' disabled' : '') + ' style="font:inherit;cursor:' + (dis ? 'not-allowed' : 'pointer') + ';border:1px solid #2e7d54;background:#15301f;color:#9fe8c0;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;' + (dis ? 'opacity:.55;' : '') + '">' + label + '</button>'; }
         function note(txt, col) { return '<div style="margin-top:4px;font-size:10px;color:' + (col || '#9fb8c8') + ';">' + txt + '</div>'; }
@@ -4950,6 +5146,14 @@
         _setCoaSelectedIdxForTest: function (i)             { _coaSelectedIdx = i; updatePanel(); return _coaSelectedIdx; },
         // RMOOZ-ADVISORY-COMMIT-JOURNAL-V test seam
         _buildCommitAdvisoryContextForTest: function (idx)  { return _buildCommitAdvisoryContext(idx); },
+        // RMOOZ-FREE-FIGHT-CONTROL-HARD-RESET-X test seams (the V2 cockpit)
+        _renderFreeFightControlV2HtmlForTest: function ()   { return renderFreeFightControlV2(); },
+        _freeFightControlStateV2ForTest: function ()        { return _freeFightControlStateV2(); },
+        _freeFightLegacyDrawerHtmlForTest: function (legacy) { return _freeFightLegacyDrawerHtml(legacy != null ? legacy : renderAiDecisionHtml()); },
+        _setFfLegacyOpenForTest:   function (v)             { _ffLegacyOpen = !!v; return _ffLegacyOpen; },
+        _getFfLegacyOpenForTest:   function ()              { return _ffLegacyOpen; },
+        _v2SelectCoaForTest:       function (i)             { _coaSelectedIdx = i; updatePanel(); return _coaSelectedIdx; },   // simulates a v2-coa-<i> card click
+        _bodyHtmlForTest:          function ()              { updatePanel(); var b = _panel && _panel.querySelector('[data-ff="body"]'); return b ? b.innerHTML : ''; },
         // RMOOZ-FREE-FIGHT-CONTROL-WINDOW-REBUILD-W test seams
         _setFfTabForTest:          function (t)             { _ffTab = t; return _ffTab; },
         _getFfTabForTest:          function ()              { return _ffTab; },

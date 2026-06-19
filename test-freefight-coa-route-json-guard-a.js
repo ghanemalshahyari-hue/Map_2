@@ -99,6 +99,10 @@ var PLANNER = require(path.join(__dirname, 'UI_MOdified/server/ai/free-fight-coa
 require(path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo-ai-panel.js'));
 require(path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo.js'));
 var DEMO = global.window.RmoozFreeFightDemo;
+// RMOOZ-FREE-FIGHT-CONTROL-HARD-RESET-X: the route-unavailable banner (§3) + Advanced-diagnostics
+// route panel (§10) now render under the closed "Diagnostics / Legacy" drawer of the new V2 control
+// window. The legacy render fns are UNCHANGED — open the drawer so these body checks still exercise them.
+DEMO._setFfLegacyOpenForTest(true);
 // RMOOZ-AI-FREE-FIGHT-AI-ONLY-A: this suite tests the route-JSON guard with the deterministic loop
 // (the sanctioned "deterministic planner for tests" case). Relax the live AI-only gate so the loop
 // runs on deterministic plans here; AI-only enforcement is covered by test-ai-free-fight-ai-only-a.js.

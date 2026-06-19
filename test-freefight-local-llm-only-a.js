@@ -108,6 +108,10 @@ global.window = {
 require(path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo-ai-panel.js'));
 require(path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo.js'));
 var DEMO = global.window.RmoozFreeFightDemo;
+// RMOOZ-FREE-FIGHT-CONTROL-HARD-RESET-X: the LLM-mode / provider / model panel (§7) now renders under
+// the closed "Diagnostics / Legacy" drawer of the new V2 control window. The legacy render fns are
+// UNCHANGED — open the drawer so these local-only checks still exercise them.
+DEMO._setFfLegacyOpenForTest(true);
 
 // ── Fixtures ──────────────────────────────────────────────────────────────────
 var UNITS = [

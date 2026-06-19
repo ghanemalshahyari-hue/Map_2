@@ -124,6 +124,10 @@ require(path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo-ai-panel.
 require(path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo.js'));
 var DEMO  = global.window.RmoozFreeFightDemo;
 var PANEL = global.window.RmoozFreeFightAiPanel;
+// RMOOZ-FREE-FIGHT-CONTROL-HARD-RESET-X: the unit-decision panel (§7) + group start button (§9) now
+// render under the closed "Diagnostics / Legacy" drawer of the new V2 control window. The legacy render
+// fns are UNCHANGED — open the drawer so these body checks still exercise them.
+DEMO._setFfLegacyOpenForTest(true);
 
 var passed = 0, failed = 0;
 function ok(label, cond) {

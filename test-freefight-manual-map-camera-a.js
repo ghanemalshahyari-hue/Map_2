@@ -100,6 +100,10 @@ var PLANNER = require(path.join(__dirname, 'UI_MOdified/server/ai/free-fight-coa
 require(path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo-ai-panel.js'));
 require(path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo.js'));
 var DEMO = global.window.RmoozFreeFightDemo;
+// RMOOZ-FREE-FIGHT-CONTROL-HARD-RESET-X: the Camera control (Manual / Follow AI, §11) lives in the
+// commander-loop panel, which now renders under the closed "Diagnostics / Legacy" drawer of the new V2
+// control window. The legacy render fns are UNCHANGED — open the drawer to exercise it.
+DEMO._setFfLegacyOpenForTest(true);
 
 var PAYLOAD = { brief:{ operational_brief:{ proposed_units:[], objectives:[{label:'Objective X',lat:34.9,lon:48.9}], placement_candidates:[{type:'base',lat:34.5,lon:48.5,name:'AB'}] } } };
 function mkUnits(n, side){ var u=[]; for(var i=0;i<n;i++){var lat=34.5+i*0.012,lon=48.5+i*0.012;u.push({uid:side[0]+'-'+String(i+1).padStart(3,'0'),side:side,lat:lat,lon:lon,coord:[lon,lat]});} return u; }

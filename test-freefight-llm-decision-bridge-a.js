@@ -106,6 +106,10 @@ global.window = {
 require(path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo-ai-panel.js'));
 require(path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo.js'));
 var DEMO = global.window.RmoozFreeFightDemo;
+// RMOOZ-FREE-FIGHT-CONTROL-HARD-RESET-X: the unit-decision LLM panel (§7 decision source · Use LLM
+// checkbox · Test LLM · fallback) now renders under the closed "Diagnostics / Legacy" drawer of the
+// new V2 control window. The legacy render fns are UNCHANGED — open the drawer to exercise them.
+DEMO._setFfLegacyOpenForTest(true);
 
 // ── Fixtures ──────────────────────────────────────────────────────────────────
 var UNITS = [
@@ -260,11 +264,13 @@ function mockFail(errMsg) {
     DEMO._setAiDecisionForTest(llmDec8, true);
     DEMO.mount(PAYLOAD);
     ok('§8 getAiDecision() returns decision', !!DEMO.getAiDecision());
-    var aiM8 = _layers.filter(function (l) { return l._radius === 10; });
-    ok('§8 AI circleMarker added', aiM8.length === 1);
+    // FREEFIGHT-AI-REAL-MAP-MOVE-A: the applied-AI marker is now a pulse (r=14) + inner dot (r=5),
+    // not a bare r=10 circle (see test-freefight-demo-ai-integrate-a.js §16/§17).
+    var aiM8 = _layers.filter(function (l) { return l._radius === 14 || l._radius === 5; });
+    ok('§8 AI circleMarker added', aiM8.length >= 1);
     DEMO.reset();
     ok('§8 getAiDecision() null after reset', DEMO.getAiDecision() === null);
-    var aiM8r = _layers.filter(function (l) { return l._radius === 10; });
+    var aiM8r = _layers.filter(function (l) { return l._radius === 14 || l._radius === 5; });
     ok('§8 AI circleMarker removed', aiM8r.length === 0);
     var s8 = DEMO.getState();
     ok('§8 progress=0 after reset', s8.progress === 0);

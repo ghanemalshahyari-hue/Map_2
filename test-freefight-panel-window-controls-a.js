@@ -128,6 +128,10 @@ global.window.fetch = null;
 require(path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo-ai-panel.js'));
 require(path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo.js'));
 var DEMO = global.window.RmoozFreeFightDemo;
+// RMOOZ-FREE-FIGHT-CONTROL-HARD-RESET-X: the §10 legacy body content (MAIN AI TEST · preview-ai ·
+// group start/reset · Place Objective) now renders under the closed "Diagnostics / Legacy" drawer of
+// the new V2 control window. The legacy render fns are UNCHANGED — open the drawer to exercise them.
+DEMO._setFfLegacyOpenForTest(true);
 
 var CLIENT_SRC = fs.readFileSync(
     path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo.js'), 'utf8');

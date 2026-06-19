@@ -178,7 +178,8 @@ try {
     DEMO._v2SelectCoaForTest(1);            // COA-2 (recommended is COA-1)
     var sOv = v2();
     assert(/data-ff-v2="override"/.test(sOv), 'override note element present');
-    assert(/Operator override: selected COA-2 instead of recommended COA-1/.test(sOv), 'override text names selected + recommended');
+    // RMOOZ-FREE-FIGHT-V2-OPERATOR-WALKTHROUGH-Y refined the copy to "you selected …".
+    assert(/Operator override: you selected COA-2 instead of recommended COA-1/.test(sOv), 'override text names selected + recommended');
     // and NOT shown when the recommended one is selected
     DEMO._v2SelectCoaForTest(0);
     assert(!/data-ff-v2="override"/.test(v2()), 'no override note when the recommended COA is selected');

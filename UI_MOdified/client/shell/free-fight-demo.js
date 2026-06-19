@@ -4552,9 +4552,65 @@
         h += '</div>';
         return h;
     }
-    function _v2OverrideNoteHtml(coas, recIdx) {
-        if (_coaSelectedIdx === recIdx) return '';
-        return '<div data-ff-v2="override" style="margin-top:6px;font-size:10px;color:#e0a93a;">⚠ Operator override: selected ' + esc(_v2CoaId(coas, _coaSelectedIdx)) + ' instead of recommended ' + esc(_v2CoaId(coas, recIdx)) + '.</div>';
+    // ── RMOOZ-FREE-FIGHT-V2-OPERATOR-WALKTHROUGH-Y: a compact "What to do now" stepper + microcopy +
+    // a richer selected-COA summary. UI guidance only — NO new actions, NO backend touch. ──────────────
+    var _V2_STEPS = [[1, 'Generate'], [2, 'Select COA'], [3, 'Commit'], [4, 'Run'], [5, 'Pause/Resume']];
+    // current step(s) per state — a small set so 'ready' can highlight both Select + Commit.
+    function _v2StepperCurrentSet(state) {
+        return ({ empty: [1], planning: [1], ready: [2, 3], committed: [4], running: [4], paused: [5], blocked: [4], complete: [5] })[state] || [1];
+    }
+    function _v2StepStatus(state, n) {
+        var cur = _v2StepperCurrentSet(state);
+        if (cur.indexOf(n) !== -1) return (state === 'blocked' && n === 4) ? 'blocked' : 'current';
+        return n < Math.min.apply(null, cur) ? 'done' : 'todo';
+    }
+    function _v2StepperHtml(state) {
+        var h = '<div data-ff-v2="stepper" data-ff-v2-stepper-state="' + state + '" style="margin:8px 0 2px;padding:6px 8px;border:1px solid #1d3a52;border-radius:6px;background:#0a1320;">';
+        h += '<div style="font-size:9px;color:#8fa5b8;font-weight:700;margin-bottom:4px;letter-spacing:.4px;">WHAT TO DO NOW</div>';
+        h += '<div style="display:flex;gap:3px;flex-wrap:wrap;align-items:center;">';
+        _V2_STEPS.forEach(function (s, i) {
+            var st = _v2StepStatus(state, s[0]);
+            var col = st === 'blocked' ? '#f0707a' : (st === 'current' ? '#cfe6ff' : (st === 'done' ? '#5a9a70' : '#5a6f80'));
+            var bg = st === 'current' ? '#13314f' : (st === 'blocked' ? '#2a1416' : 'transparent');
+            var bd = st === 'current' ? '#3a6fa0' : (st === 'blocked' ? '#7a3030' : '#243443');
+            var mark = st === 'done' ? '✓' : s[0];
+            h += '<span data-ff-v2-step="' + s[0] + '" data-ff-v2-step-status="' + st + '" style="display:inline-flex;align-items:center;gap:3px;font-size:9px;color:' + col + ';border:1px solid ' + bd + ';background:' + bg + ';border-radius:10px;padding:2px 7px;' + ((st === 'current' || st === 'blocked') ? 'font-weight:700;' : '') + '"><b>' + mark + '</b> ' + s[1] + '</span>';
+            if (i < _V2_STEPS.length - 1) h += '<span style="color:#3a4a59;font-size:9px;">→</span>';
+        });
+        h += '</div></div>';
+        return h;
+    }
+    // Terse microcopy printed under the primary action(s), per state (the exact owner-specified phrases).
+    function _v2MicrocopyHtml(state) {
+        var items = [];
+        if (state === 'empty' || state === 'planning' || state === 'complete') items.push(['⚡ Generate AI Plan', 'slow — calls AI']);
+        if (state === 'ready') items.push(['✅ Commit Selected Plan', 'locks the selected COA']);
+        if (state === 'committed' || state === 'running' || state === 'paused') items.push(['▶ Run Plan', 'fast — no AI on normal ticks']);
+        if (state === 'blocked') { items.push(['▶ Run Plan', 'fast — no AI on normal ticks']); items.push(['↻ Replan with AI', 'advanced — calls AI again']); }
+        if (!items.length) return '';
+        var h = '<div data-ff-v2="microcopy" style="margin-top:5px;display:flex;flex-direction:column;gap:1px;">';
+        items.forEach(function (it) { h += '<div style="font-size:9px;color:#7a93a6;"><b style="color:#9fb8c8;">' + it[0] + '</b> — ' + it[1] + '</div>'; });
+        h += '</div>';
+        return h;
+    }
+    // Richer selected-COA summary for the READY state: Selected · Recommended · Operator override · Final
+    // score (when ranked). When nothing is selected, guides the operator to pick a card first.
+    function _v2SelectedSummaryHtml(coas, recIdx) {
+        var hasSel = (_coaSelectedIdx >= 0 && _coaSelectedIdx < coas.length);
+        var h = '<div data-ff-v2="selected-summary" style="margin-top:8px;padding:6px 9px;border:1px solid #2a4d6a;border-radius:6px;background:#08131e;font-size:10px;color:#cdd8e4;">';
+        if (!hasSel) {
+            h += '<div data-ff-v2="no-selection" style="color:#e0a93a;">⚠ Select a COA card first.</div></div>';
+            return h;
+        }
+        var selId = _v2CoaId(coas, _coaSelectedIdx), recId = _v2CoaId(coas, recIdx);
+        var override = (_coaSelectedIdx !== recIdx);
+        var sel = coas[_coaSelectedIdx] || {};
+        var score = (sel._ranking && sel._ranking.final_score != null) ? sel._ranking.final_score : null;
+        h += '<div><span style="color:#8fa5b8;">Selected COA:</span> <b style="color:#cfe6ff;">' + esc(selId) + '</b> · <span style="color:#8fa5b8;">Recommended:</span> <b style="color:#7fd6a0;">' + esc(recId) + '</b></div>';
+        h += '<div><span style="color:#8fa5b8;">Operator override:</span> <b style="color:' + (override ? '#e0a93a' : '#7fd6a0') + ';">' + (override ? 'yes' : 'no') + '</b>' + (score != null ? ' · <span style="color:#8fa5b8;">Final score:</span> <b style="color:#cfe6ff;">' + score + '</b>' : '') + '</div>';
+        if (override) h += '<div data-ff-v2="override" style="margin-top:3px;color:#e0a93a;">⚠ Operator override: you selected ' + esc(selId) + ' instead of recommended ' + esc(recId) + '.</div>';
+        h += '</div>';
+        return h;
     }
     // Committed/blocked/complete summary: selected + recommended + override + Green/White advisory (advisory only).
     function _v2CommittedSummaryHtml() {
@@ -4610,7 +4666,7 @@
         } else if (state === 'ready') {
             var selId = _v2CoaId(coas, _coaSelectedIdx);
             actions = _v2Pri('v2-commit', '✅ Commit Selected Plan (' + esc(selId) + ')', 'Locks the selected COA for execution');
-            body = _v2CoaCardsHtml(coas, recIdx) + _v2OverrideNoteHtml(coas, recIdx) +
+            body = _v2CoaCardsHtml(coas, recIdx) + _v2SelectedSummaryHtml(coas, recIdx) +
                 '<div style="margin-top:8px;display:flex;align-items:center;gap:6px;"><span style="font-size:9.5px;color:#8fa5b8;">Advanced:</span> ' + _v2Adv('v2-regenerate', '↻ Regenerate Plan (AI · slow)', 'Calls the AI again') + '</div>';
         } else if (state === 'committed') {
             actions = _v2Pri('v2-run', '▶ Run Plan', 'Fast deterministic execution — no AI on normal ticks') + _v2Sec('v2-clear', 'Clear Plan');
@@ -4636,7 +4692,9 @@
             '</div>';
         return '<div data-ff-v2="window" style="margin:6px 0;padding:11px 13px;border:1px solid #2e5d7d;border-radius:8px;background:#0a1726;">' +
             head +
-            '<div data-ff-v2="actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">' + actions + '</div>' +
+            _v2StepperHtml(state) +
+            '<div data-ff-v2="actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;">' + actions + '</div>' +
+            _v2MicrocopyHtml(state) +
             body + '</div>';
     }
     // The closed "Diagnostics / Legacy" drawer. Its body (the full old crowded UI — objective placement,
@@ -5153,6 +5211,11 @@
         _setFfLegacyOpenForTest:   function (v)             { _ffLegacyOpen = !!v; return _ffLegacyOpen; },
         _getFfLegacyOpenForTest:   function ()              { return _ffLegacyOpen; },
         _v2SelectCoaForTest:       function (i)             { _coaSelectedIdx = i; updatePanel(); return _coaSelectedIdx; },   // simulates a v2-coa-<i> card click
+        // RMOOZ-FREE-FIGHT-V2-OPERATOR-WALKTHROUGH-Y test seams
+        _v2StepperHtmlForTest:     function (state)         { return _v2StepperHtml(state || _freeFightControlStateV2()); },
+        _v2StepStatusForTest:      function (state, n)      { return _v2StepStatus(state, n); },
+        _v2MicrocopyHtmlForTest:   function (state)         { return _v2MicrocopyHtml(state || _freeFightControlStateV2()); },
+        _v2SelectedSummaryHtmlForTest: function ()          { return _v2SelectedSummaryHtml(arr(_coaPlan && _coaPlan.coas), _pickRecommendedIdx(_coaPlan)); },
         _bodyHtmlForTest:          function ()              { updatePanel(); var b = _panel && _panel.querySelector('[data-ff="body"]'); return b ? b.innerHTML : ''; },
         // RMOOZ-FREE-FIGHT-CONTROL-WINDOW-REBUILD-W test seams
         _setFfTabForTest:          function (t)             { _ffTab = t; return _ffTab; },

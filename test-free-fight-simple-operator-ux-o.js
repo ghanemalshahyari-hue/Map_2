@@ -152,23 +152,21 @@ try {
     ok('F complete → primary Generate AI Plan, no inline Clear');
 } catch (e) { bad('F complete', e); }
 
-// G — card ordering + the moved controls live inside Advanced.
+// G — tabbed control window (RMOOZ-FREE-FIGHT-CONTROL-WINDOW-REBUILD-W): the default Operator tab shows
+// the simple flow only; the moved controls live under the Diagnostics tab.
 try {
     freshNoExec(mkPlan());
-    DEMO._commitCoaForTest(0);   // active exec → Advanced _coaExecHtml emits Run / Replan / Clear
+    DEMO._commitCoaForTest(0);
+    DEMO._setFfTabForTest('operator');
     var card = DEMO._renderAiDecisionHtmlForTest();
-    var stripIdx = card.indexOf('data-ff-op="strip"');
-    var advIdx = card.indexOf('data-ff-op="advanced"');
-    assert(stripIdx >= 0, 'operator strip present');
-    assert(advIdx >= 0, 'Advanced controls present');
-    assert(stripIdx < advIdx, 'operator strip renders BEFORE Advanced controls');
-    var adv = card.slice(advIdx);
-    assert(/data-act="coa-commit"/.test(adv), 'Commit this COA lives under Advanced');
-    assert(/data-act="coa-replan"/.test(adv), 'Replan lives under Advanced');
-    assert(/data-act="coa-exec-reset"/.test(adv), 'Clear committed COA lives under Advanced');
-    assert(/Reset AI Selection/.test(adv), 'Reset AI Selection lives under Advanced');
-    ok('G operator strip before Advanced; Commit/Replan/Clear/Reset AI all under Advanced');
-} catch (e) { bad('G card ordering + Advanced contents', e); }
+    // All panels live in the DOM; the Operator PANEL must stay simple. Slice it out.
+    var opPanel = card.slice(card.indexOf('data-ff-tabpanel="operator"'), card.indexOf('data-ff-tabpanel="coa_plans"'));
+    assert(/data-ff-op="strip"/.test(opPanel), 'operator strip in the Operator panel');
+    assert(/data-act="ff-tab-diagnostics"/.test(card), 'tab bar present (Diagnostics tab button)');
+    assert(!/data-act="coa-commit"/.test(opPanel) && !/Reset AI Selection/.test(opPanel), 'Operator panel does NOT contain advanced/diagnostics controls');
+    assert(/data-act="coa-commit"/.test(card) && /data-act="coa-replan"/.test(card) && /data-act="coa-exec-reset"/.test(card) && /Reset AI Selection/.test(card), 'Commit/Replan/Clear/Reset AI live under Diagnostics');
+    ok('G tabbed window — Operator panel simple-only; Commit/Replan/Clear/Reset AI under Diagnostics');
+} catch (e) { bad('G tabbed control window', e); }
 
 console.log('\n' + (fail === 0 ? '✅ ' : '❌ ') + pass + ' passed, ' + fail + ' failed (test-free-fight-simple-operator-ux-o.js)');
 process.exit(fail === 0 ? 0 : 1);

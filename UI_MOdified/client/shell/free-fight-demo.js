@@ -100,6 +100,7 @@
     var DECISION_LOG_CAP = 200;
     var _whiteAdvisoryLevel = null;    // RMOOZ-WHITE-GREEN-ANNOTATION-T: last recorded White advisory level (dedup)
     var _greenScoringKey = null;       // RMOOZ-GREEN-WHITE-SCORING-T: last recorded green-advisory scoring key (dedup)
+    var _ffTab = 'operator';           // RMOOZ-FREE-FIGHT-CONTROL-WINDOW-REBUILD-W: active tab (operator|coa_plans|green|white|diagnostics)
     var _pendingModel = null;          // dropdown's current (uncommitted) value
     // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: the operator-facing simple model flow.
     // _modelPickerOpen = the "Select AI Model" picker toggle; _autoSelectedModel guards the
@@ -1140,6 +1141,8 @@
         if (greenCb && greenCb.addEventListener) greenCb.addEventListener('change', function () { _greenOverlayOn = !!greenCb.checked; _greenOverlayApply(); });
         // RMOOZ-AI-SCHEDULER-DECISION-LOG-S: clear the audit buffer (record-only feature).
         bind('decision-log-clear', _clearDecisionLog);
+        // RMOOZ-FREE-FIGHT-CONTROL-WINDOW-REBUILD-W: tab switching (view-only).
+        ['operator', 'coa_plans', 'green', 'white', 'diagnostics'].forEach(function (t) { bind('ff-tab-' + t, function () { _ffTab = t; updatePanel(); }); });
         var picks = _panel.querySelectorAll ? _panel.querySelectorAll('[data-ff-model-pick]') : null;
         if (picks && picks.forEach) picks.forEach(function (el) {
             if (!el || !el.addEventListener) return;
@@ -4517,6 +4520,64 @@
             '<div style="font-size:11px;font-weight:700;color:#9ec2ec;margin-bottom:5px;">AI Commander — Generate (slow) → Use a plan → Run (fast)</div>' +
             '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">' + btns + '</div>' + body + '</div>';
     }
+    // ── RMOOZ-FREE-FIGHT-CONTROL-WINDOW-REBUILD-W: tabbed control-window shell (UI-only) ────────────────
+    // A "System layers" summary so the operator understands what each AI lane does.
+    function _systemLayersHtml() {
+        return '<details data-ff-w="system-layers" style="margin-bottom:6px;"><summary style="cursor:pointer;font-size:10px;color:#8fa5b8;font-weight:600;">ℹ System layers — Blue / Red / Green / White</summary>' +
+            '<div style="margin-top:4px;font-size:9.5px;color:#cdd8e4;line-height:1.6;padding:5px 7px;border:1px solid #24435f;border-radius:5px;background:#0a1726;">' +
+            '<div><b style="color:#7bb8e8;">Blue AI</b> — creates friendly COAs / plans</div>' +
+            '<div><b style="color:#f0707a;">Red AI</b> — enemy / counter planning</div>' +
+            '<div><b style="color:#5bd6a0;">Green AI</b> — neutral-world risk (deterministic)</div>' +
+            '<div><b style="color:#cdd8e4;">White AI</b> — referee / validation / advisory</div>' +
+            '<div><b style="color:#9ec2ec;">Unit Controller</b> — executes the committed plan, no LLM on normal ticks</div>' +
+            '</div></details>';
+    }
+    function _ffTabBarHtml() {
+        var tabs = [['operator', 'Operator'], ['coa_plans', 'COA Plans'], ['green', 'Green'], ['white', 'White'], ['diagnostics', 'Diagnostics']];
+        var cur = _ffTab || 'operator';
+        var h = '<div data-ff-w="tabbar" style="display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid #2a3f55;padding-bottom:4px;">';
+        tabs.forEach(function (t) {
+            var on = (t[0] === cur);
+            h += '<button data-act="ff-tab-' + t[0] + '" style="font:inherit;cursor:pointer;border:1px solid ' + (on ? '#4a9ed6' : '#2a3f55') + ';background:' + (on ? '#0a1830' : '#0c141d') + ';color:' + (on ? '#cfe6ff' : '#8fa5b8') + ';border-radius:5px 5px 0 0;padding:4px 10px;font-size:10.5px;font-weight:' + (on ? '700' : '400') + ';">' + t[1] + '</button>';
+        });
+        h += '</div>';
+        return h;
+    }
+    // Operator tab: a compact selected/recommended summary under the simple flow strip (detail in COA Plans).
+    function _operatorSummaryHtml() {
+        var coas = arr(_coaPlan && _coaPlan.coas);
+        if (!_coaPlan || !_coaPlan.ok || !coas.length) return '';
+        var recIdx = _pickRecommendedIdx(_coaPlan);
+        var selId = (coas[_coaSelectedIdx] && coas[_coaSelectedIdx].plan_id) || ('COA-' + (_coaSelectedIdx + 1));
+        var recId = (coas[recIdx] && coas[recIdx].plan_id) || ('COA-' + (recIdx + 1));
+        var h = '<div data-ff-w="op-summary" style="margin-top:5px;font-size:10px;color:#cdd8e4;">' +
+            '<span style="color:#8fa5b8;">Recommended:</span> <b style="color:#7fd6a0;">' + esc(recId) + '</b> · ' +
+            '<span style="color:#8fa5b8;">Selected:</span> <b style="color:#cfe6ff;">' + esc(selId) + '</b>';
+        if (_coaSelectedIdx !== recIdx) h += ' <span style="color:#e0a93a;">· operator override</span>';
+        h += ' <span style="color:#5a7a8a;">(compare in COA Plans tab)</span></div>';
+        return h;
+    }
+    // White tab: validation verdict (unchanged) + the Green-derived advisory + scoring + "advisory only".
+    function _whiteTabHtml() {
+        var h = '<div data-ff-w="white" style="border:1px solid #24435f;border-radius:6px;background:#0a1622;padding:8px 10px;">';
+        h += '<div style="font-size:11px;font-weight:700;color:#cdd8e4;margin-bottom:5px;">⚖ White — referee / validation / advisory</div>';
+        var val = _coaPlan && _coaPlan.validation;
+        if (val) h += '<div style="font-size:10px;"><span style="color:#8fa5b8;">Validation (structure/physics):</span> <b style="color:' + (val.ok ? '#7fd6a0' : '#e0a93a') + ';">' + (val.ok ? 'OK' : 'rejected') + '</b>' + (!val.ok && val.reason ? ' — ' + esc(val.reason) : '') + '</div>';
+        else h += '<div style="font-size:10px;color:#8fa5b8;">Validation: generate a plan to see the referee verdict.</div>';
+        var adv = _whiteAdvisory(_greenWorld);
+        if (adv) h += '<div style="margin-top:5px;font-size:10px;">⚖ <b style="color:' + _whiteAdvisoryColor(adv.advisory_level) + ';">White advisory: ' + esc(adv.advisory_level) + '</b> — ' + esc(adv.note) + '</div>';
+        var ga = (_coaPlan && _coaPlan._green_advisory) || _greenAdvisoryScoring(_greenWorld);
+        if (ga && ga.considered) {
+            h += '<div style="margin-top:4px;font-size:10px;color:#cdd8e4;">Green/White advisory score Δ: <b style="color:#e0a93a;">' + ga.advisory_score_delta + '</b> · collateral ' + esc(ga.collateral_risk_band) + (ga.neutral_reaction_score != null ? ' · reaction ' + ga.neutral_reaction_score : '') + '</div>';
+            if (arr(ga.warnings).length) h += '<div style="margin-top:3px;font-size:9.5px;color:#e0a93a;">⚠ ' + arr(ga.warnings).map(function (x) { return esc(x); }).join(' · ') + '</div>';
+            if (arr(ga.recommendations).length) h += '<div style="margin-top:2px;font-size:9.5px;color:#9fd6b0;">↪ ' + arr(ga.recommendations).map(function (x) { return esc(x); }).join(' · ') + '</div>';
+        } else {
+            h += '<div style="margin-top:4px;font-size:10px;color:#8fa5b8;">No Green/White advisory yet — refresh Green or generate a plan.</div>';
+        }
+        h += '<div data-ff-w="white-disclaimer" style="margin-top:6px;font-size:9px;color:#5a7a8a;border-top:1px solid #1a3050;padding-top:4px;">Advisory only — not a block. The structure/physics validator is the only gate; Green/White risk never invalidates a COA or blocks Run.</div>';
+        h += '</div>';
+        return h;
+    }
     function renderAiDecisionHtml() {
         var h = '<div style="margin-top:8px;border-top:1px solid #2a3f55;padding-top:8px;">';
         h += '<div style="margin-bottom:6px;padding:5px 8px;border:1px solid #1a4030;border-radius:4px;background:#091810;">' +
@@ -4526,15 +4587,24 @@
              '</div>' +
              '<div style="font-size:10px;color:#5a9a70;margin-top:2px;">Real unit-level AI decision — هذا هو الاختبار الفعلي للذكاء الاصطناعي على مستوى الوحدات</div>' +
              '</div>';
-        // RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O: the simple primary flow + the COA cards, then EVERYTHING
-        // else (continuous loop / manual planner / commit-exec detail / model+diagnostics / unit-decision)
-        // collapsed under "Advanced controls".
-        h += _operatorStripHtml();
-        h += renderCoaPlanHtml();   // COA cards — choose / view the recommended plan
-        h += '<details data-ff-op="advanced" style="margin-top:8px;"><summary style="cursor:pointer;font-size:10.5px;color:#8fa5b8;font-weight:600;">⚙ Advanced controls — تحكّم متقدّم</summary><div style="margin-top:6px;">';
-        // RMOOZ-GREEN-WORLD-UI-R: neutral-world panel (deterministic, read-only) at the top of Advanced.
-        h += _greenWorldHtml();
-        // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: continuous loop controls (advanced/legacy).
+        // RMOOZ-FREE-FIGHT-CONTROL-WINDOW-REBUILD-W: tabbed control window. Each tab reuses the EXISTING
+        // render functions — no AI/COA/Green/White/scheduling/execution change. The default Operator tab
+        // shows only the simple flow (≤1 primary action per state); technical items live under Diagnostics.
+        h += _systemLayersHtml();
+        h += _ffTabBarHtml();
+        var _tab = _ffTab || 'operator';
+        // Standard tabbed UI: ALL panels are rendered into the DOM; only the active one is shown
+        // (display:none on the rest). This keeps every feature one click away, preserves the full
+        // inspectable card, and changes no logic — each panel just reuses an existing render function.
+        function _ffPanel(name, body) { return '<div data-ff-tabpanel="' + name + '" style="margin-top:8px;' + (name === _tab ? '' : 'display:none;') + '">' + body + '</div>'; }
+        h += _ffPanel('operator', _operatorStripHtml() + _operatorSummaryHtml());
+        h += _ffPanel('coa_plans', renderCoaPlanHtml());
+        h += _ffPanel('green', _greenWorldHtml());
+        h += _ffPanel('white', _whiteTabHtml());
+        // ── Diagnostics panel — all technical/advanced items (model status · warmup/benchmark · decision
+        // log · manual planner · commit-exec detail · unit-decision · Staff-Safe). Built inline below. ──
+        h += '<div data-ff-tabpanel="diagnostics" style="margin-top:8px;' + (_tab === 'diagnostics' ? '' : 'display:none;') + '">';
+        // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: continuous loop controls + model flow + Advanced diagnostics.
         h += renderCommanderLoopHtml();
         h += '<div style="font-size:10px;color:#5a7a60;margin:2px 0 6px;border-top:1px solid #2a3f55;padding-top:6px;">Manual COA planner (single turn) — تخطيط يدوي</div>';
         // COA Planner buttons
@@ -4713,7 +4783,7 @@
             }
         }
         h += '</div>';  // close unit decision inner section
-        h += '</div></details>';  // close Advanced controls (RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O)
+        h += '</div>';  // close diagnostics tabpanel (RMOOZ-FREE-FIGHT-CONTROL-WINDOW-REBUILD-W)
         h += '</div>';  // close renderAiDecisionHtml outer
         return h;
     }
@@ -4880,6 +4950,12 @@
         _setCoaSelectedIdxForTest: function (i)             { _coaSelectedIdx = i; updatePanel(); return _coaSelectedIdx; },
         // RMOOZ-ADVISORY-COMMIT-JOURNAL-V test seam
         _buildCommitAdvisoryContextForTest: function (idx)  { return _buildCommitAdvisoryContext(idx); },
+        // RMOOZ-FREE-FIGHT-CONTROL-WINDOW-REBUILD-W test seams
+        _setFfTabForTest:          function (t)             { _ffTab = t; return _ffTab; },
+        _getFfTabForTest:          function ()              { return _ffTab; },
+        _ffTabBarHtmlForTest:      function ()              { return _ffTabBarHtml(); },
+        _systemLayersHtmlForTest:  function ()              { return _systemLayersHtml(); },
+        _whiteTabHtmlForTest:      function ()              { return _whiteTabHtml(); },
         _renderCommanderLoopHtmlForTest: function (rh, info) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; return renderCommanderLoopHtml(); },
         _maybeAutoSelectModelForTest: function (info)     { if (info !== undefined) _modelInfo = info; return _maybeAutoSelectModel(); },
         _setModelPickerOpenForTest: function (v)          { _modelPickerOpen = !!v; },

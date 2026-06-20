@@ -2330,6 +2330,9 @@
         }
         // (3) support/recon/screen elements targeting the center
         if (moves.some(function (m) { return /support|recon|screen/.test(_normRole(m.role)) && _atObjCenter(m.target, obj); })) pen(20, 'support/recon/screen elements target the objective center');
+        // (3b) RMOOZ-COA-QUALITY-HARD-ENFORCEMENT-AE: move targets CONVERGE on one point (no role separation),
+        // even if not exactly the objective center — the real "all units to the objective" failure mode.
+        if (nMove >= 3 && _coaMaxPairwiseKm(moves) < 1.2) pen(30, 'move targets converge on one point (no spatial role separation)');
         // (4) role diversity (scaled to force size)
         var roleSet = {}; acts.forEach(function (a) { roleSet[_normRole(a.role)] = 1; });
         var distinctRoles = Object.keys(roleSet).length;
@@ -2347,6 +2350,60 @@
         if (!coa.risk_mitigation) pen(6, 'no risk mitigation');
         score = Math.max(0, score);
         return { score: score, pass: score >= COA_QUALITY_PASS, reasons: reasons, move_count: nMove, unit_count: nUnits, distinct_roles: distinctRoles };
+    }
+    function _coaMaxPairwiseKm(moves) {
+        var mx = 0;
+        for (var a = 0; a < moves.length; a++) for (var b = a + 1; b < moves.length; b++) {
+            var d = _kmBetween({ lat: +moves[a].target.lat, lon: +moves[a].target.lon }, { lat: +moves[b].target.lat, lon: +moves[b].target.lon });
+            if (d > mx) mx = d;
+        }
+        return mx;
+    }
+    // RMOOZ-COA-QUALITY-HARD-ENFORCEMENT-AE: a HARD, executable-path check (independent of the scored gate)
+    // — returns a blocking reason if the COA's MOVE actions would send units onto one point / the objective
+    // center / a single shared target with no role spread. Used to gate Commit and Run.
+    function _coaHardBlockReason(coa) {
+        var obj = getObjective();
+        var moves = _coaAllActions(coa).filter(function (a) { return a.action_type !== 'HOLD_POSITION' && a.target && Number.isFinite(+a.target.lat); });
+        if (moves.length < 2) return null;   // 0-1 mover can't "all converge"
+        var f = moves[0].target;
+        if (moves.every(function (m) { return Math.abs(+m.target.lat - +f.lat) < 1e-4 && Math.abs(+m.target.lon - +f.lon) < 1e-4; })) return 'all move actions share one target';
+        if (obj) { var cc = moves.filter(function (m) { return _atObjCenter(m.target, obj); }).length; if (cc / moves.length > 0.5) return Math.round(100 * cc / moves.length) + '% of moves target the exact objective center'; }
+        if (moves.length >= 3 && _coaMaxPairwiseKm(moves) < 1.0) return 'all move targets converge on one point (no role separation)';
+        var roles = {}; _coaAllActions(coa).forEach(function (a) { roles[_normRole(a.role)] = 1; });
+        if (_coaAllActions(coa).length >= 3 && Object.keys(roles).length < 2) return 'no role diversity (every unit the same role)';
+        return null;
+    }
+    // A compact role→(km-from-objective) target summary — the movement-proof line (selected==committed==executed).
+    function _coaTargetSummary(coa) {
+        var obj = getObjective();
+        return _coaAllActions(coa).map(function (a) {
+            var r = _normRole(a.role);
+            if (a.action_type === 'HOLD_POSITION' || !a.target || !Number.isFinite(+a.target.lat)) return r + ':hold';
+            var km = obj ? _kmBetween({ lat: +a.target.lat, lon: +a.target.lon }, { lat: obj.lat, lon: obj.lon }) : 0;
+            return r + ':' + (Math.round(km * 10) / 10) + 'km';
+        }).join(' · ');
+    }
+    // HARD enforcement before commit: if the selected COA is not executable-quality, replace it with the
+    // deterministic Staff-Safe commander template (clearly labelled) so the EXECUTED COA is role-separated.
+    function _enforceExecutableCoaQuality(coa) {
+        var reason = _coaHardBlockReason(coa);
+        if (!reason) return { coa: coa, replaced: false };
+        // The template must command the SAME units the rejected COA commanded — derive units (and side)
+        // from the COA's OWN actions first (resolved to real positions), not a guessed active side. (The
+        // earlier bug: _coaActiveSide returned RED for a BLUE COA, so the template moved the wrong unit.)
+        var side = String(coa.side || _coaActiveSide(coa) || _activeSide || 'BLUE').toUpperCase();
+        var seen = {}, units = [];
+        _coaAllActions(coa).forEach(function (a) {
+            if (!a.unit_uid || seen[a.unit_uid]) return;
+            var ff = _findRealUnit(a.unit_uid);
+            if (ff && ff.unit) { seen[a.unit_uid] = 1; units.push({ id: a.unit_uid, uid: a.unit_uid, lat: ff.unit.lat, lon: ff.unit.lon, side: String(ff.unit.side || side).toUpperCase() }); }
+        });
+        if (!units.length) units = _scenarioSideUnits(side);   // fallback: the side's units
+        var tmpl = _staffSafeCommanderCoa(side, units, getObjective(), 'SS-CMD-1');
+        if (!tmpl) return { coa: coa, replaced: false, reason: reason, blocked: true };   // no template possible → caller blocks
+        tmpl._quality = _coaQualityGate(tmpl);
+        return { coa: tmpl, replaced: true, reason: reason };
     }
     // A deterministic, role-separated, multi-phase commander COA (no exact-center stacking). Used as the
     // quality-gate fallback AND as the auto-director's Blue order so scenario COAs are commander-quality.
@@ -2715,6 +2772,19 @@
         if (i < 0 || i >= _coaPlan.coas.length) i = 0;
         var t0 = _nowMs();
         var coa = _coaPlan.coas[i];
+        // RMOOZ-COA-QUALITY-HARD-ENFORCEMENT-AE: the COMMITTED/EXECUTED COA must be role-separated. If the
+        // selected COA is not executable-quality, replace it IN THE PLAN with the Staff-Safe commander
+        // template (clearly labelled) so commit + run + map all use the repaired, role-separated actions.
+        var enf = _enforceExecutableCoaQuality(coa);
+        if (enf.replaced) {
+            _coaPlan.coas[i] = enf.coa;
+            _coaPlan.plan_source = 'staff_safe_commander_template';
+            _coaPlan.llm_status = 'blocked_low_quality_selected_coa';
+            _coaPlan._coa_quality = { verdict: 'fallback', score: (enf.coa._quality && enf.coa._quality.score) || 100, reasons: [enf.reason] };
+            coa = enf.coa;
+            try { _recordDecision({ role: 'performance', action: 'coa_quality_gate', called_llm: false, source: 'commit-enforcement', reason: 'blocked low-quality selected COA', result_summary: 'fallback (commit) · ' + enf.reason }); } catch (_) {}
+            try { _appendToEventLog('Commit quality gate: selected COA was not commander-quality (' + esc(enf.reason) + ') — committing the Staff-Safe commander template instead.'); } catch (_) {}
+        }
         var side = _coaActiveSide(coa);
         _coaExec = {
             active: true, side: side, selected_coa_id: coa.plan_id || ('COA-' + (i + 1)), selected_coa: coa,
@@ -2858,6 +2928,16 @@
     function _runCommittedCoa() {
         if (!_coaExec || !_coaExec.active) return;
         if (_coaExec.phase_status === 'complete') return;
+        // RMOOZ-COA-QUALITY-HARD-ENFORCEMENT-AE: a low-quality committed COA (e.g. a stale restored one from
+        // before the gate) must NOT execute. Block the run and require a repaired/template recommit.
+        var _block = _coaHardBlockReason(_coaExec.selected_coa);
+        if (_block) {
+            _coaExec.run_blocked_reason = 'Blocked: selected COA is not commander-quality (' + _block + '). Recommit a repaired/template COA.';
+            try { _appendToEventLog('Run blocked — committed COA is not commander-quality (' + esc(_block) + '). Recommit a repaired/template COA.'); } catch (_) {}
+            try { _recordDecision({ role: 'performance', action: 'coa_quality_gate', called_llm: false, source: 'run-enforcement', reason: 'blocked low-quality committed COA', result_summary: 'run blocked · ' + _block }); } catch (_) {}
+            updatePanel(); return;
+        }
+        _coaExec.run_blocked_reason = null;
         _coaExec._restored = false;   // resuming → drop the "restored from session" banner
         _coaExec.paused = false; _coaExec.replan_required = false; _coaExec.replan_reason = null; _coaExec.phase_status = 'running';
         _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
@@ -5017,6 +5097,18 @@
     }
     function _runScenario() {
         if (!_coaExec || !_coaExec.active) return null;
+        // RMOOZ-COA-QUALITY-HARD-ENFORCEMENT-AE: refuse to run a non-commander-quality committed COA
+        // (e.g. a stale restored center-stacking exec) — require a repaired/template recommit first.
+        if (_coaExec.phase_status !== 'complete') {
+            var _b = _coaHardBlockReason(_coaExec.selected_coa);
+            if (_b) {
+                _coaExec.run_blocked_reason = 'Blocked: selected COA is not commander-quality (' + _b + '). Recommit a repaired/template COA.';
+                try { _appendToEventLog('Run Scenario blocked — committed COA is not commander-quality (' + esc(_b) + '). Recommit a repaired/template COA.'); } catch (_) {}
+                try { _recordDecision({ role: 'performance', action: 'coa_quality_gate', called_llm: false, source: 'run-enforcement', reason: 'blocked low-quality committed COA', result_summary: 'scenario run blocked · ' + _b }); } catch (_) {}
+                updatePanel(); return _scenario || null;
+            }
+            _coaExec.run_blocked_reason = null;
+        }
         if (!_scenarioActive()) {
             _scenario = _newScenario();
             try { _appendToEventLog('Run Scenario — continuous fight started. Deterministic ticks; the AI is NOT called on normal ticks.'); } catch (_) {}
@@ -5212,8 +5304,18 @@
         if (!ex) return '';
         var cac = ex.commit_advisory_context || {};
         var h = _v2PlanQualityBannerHtml();   // AD: commander-quality verdict of the committed plan
+        if (ex.run_blocked_reason) h += '<div data-ff-v2="run-blocked" style="margin-top:6px;padding:6px 9px;border:1px solid #7a3030;border-radius:6px;background:#241414;color:#f0b0b0;font-size:10px;">⛔ ' + esc(ex.run_blocked_reason) + '</div>';
         h += '<div data-ff-v2="committed-summary" style="margin-top:8px;padding:7px 9px;border:1px solid #2a4d6a;border-radius:6px;background:#08131e;font-size:10px;color:#cdd8e4;">';
         h += '<div><span style="color:#8fa5b8;">Committed plan:</span> <b style="color:#e8eaed;">' + esc(ex.selected_coa_id) + '</b></div>';
+        // AE: movement proof — selected COA targets must match the committed/executed COA targets.
+        (function () {
+            var committedSum = _coaTargetSummary(ex.selected_coa);
+            var cs = arr(_coaPlan && _coaPlan.coas);
+            var selCoa = cs[_coaSelectedIdx] || cs[0];
+            var selSum = selCoa ? _coaTargetSummary(selCoa) : committedSum;
+            h += '<div data-ff-v2="committed-targets" style="margin-top:3px;font-size:9px;color:#7a93a6;"><span style="color:#8fa5b8;">Committed/executed targets:</span> ' + esc(committedSum) + '</div>';
+            h += '<div data-ff-v2="selected-targets" style="font-size:9px;color:#7a93a6;"><span style="color:#8fa5b8;">Selected targets:</span> ' + esc(selSum) + (committedSum === selSum ? ' <span style="color:#7fd6a0;">(match)</span>' : ' <span style="color:#e0a93a;">(≠ committed — recommit)</span>') + '</div>';
+        })();
         if (cac.considered) {
             h += '<div><span style="color:#8fa5b8;">Recommended:</span> <b style="color:#7fd6a0;">' + esc(cac.recommended_coa_id) + '</b> · <span style="color:#8fa5b8;">Operator override:</span> <b style="color:' + (cac.operator_override ? '#e0a93a' : '#7fd6a0') + ';">' + (cac.operator_override ? 'yes' : 'no') + '</b></div>';
         }
@@ -5989,6 +6091,11 @@
         _staffSafeCommanderCoaForTest: function (side, units, obj) { return _staffSafeCommanderCoa(side || 'BLUE', units, obj || getObjective(), 'SS-CMD-1'); },
         _gradeCoaPlanQualityForTest: function ()            { if (!_coaPlan || !_coaPlan.ok || !arr(_coaPlan.coas).length) return null; var q = _gradeCoaPlan(_coaPlan); if (q.pass) { _coaPlan._coa_quality = { verdict: 'pass', score: q.score, reasons: q.reasons }; _recordQualityGate('pass', q.score, q.reasons); } else { _coaFallbackToTemplate(_coaPlan, q); } return _coaPlan._coa_quality; },
         _getCoaPlanQualityForTest: function ()              { return _coaPlan && _coaPlan._coa_quality; },
+        // RMOOZ-COA-QUALITY-HARD-ENFORCEMENT-AE test seams
+        _coaHardBlockReasonForTest: function (coa)          { return _coaHardBlockReason(coa); },
+        _enforceExecutableCoaQualityForTest: function (coa) { return _enforceExecutableCoaQuality(coa); },
+        _coaTargetSummaryForTest:  function (coa)           { return _coaTargetSummary(coa); },
+        _getRunBlockedReasonForTest: function ()            { return _coaExec && _coaExec.run_blocked_reason; },
         // RMOOZ-FREE-FIGHT-V2-COA-TO-SCENARIO-BUGFIX-AB1 test seams
         _coaCommitIsStaleForTest:  function ()              { return _coaCommitIsStale(); },
         _getCommittedPlanObjMatchesForTest: function ()     { return _committedPlanObj === _coaPlan; },

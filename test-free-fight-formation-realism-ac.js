@@ -200,7 +200,10 @@ function fresh(auto) {
         fresh(true);
         DEMO._commitCoaForTest(0);
         DEMO._runScenarioForTest();
-        for (var z = 0; z < 4; z++) DEMO._scenarioTickForTest();
+        // NOTE (RMOOZ-COA-QUALITY-HARD-ENFORCEMENT-AE): bluePlan() is an all-to-objective-center COA, so
+        // commit now replaces it with the role-separated commander template (which takes a few ticks to run
+        // before the first auto-director turn). Drive until the auto-director has issued an order.
+        for (var z = 0; z < 20 && !DEMO._getScenarioForTest().last_formation_order; z++) DEMO._scenarioTickForTest();
         var sc = DEMO._getScenarioForTest();
         assert(['blue', 'red', 'contested', 'uncontrolled'].indexOf(sc.objective_control) !== -1, 'scenario.objective_control set (' + sc.objective_control + ')');
         assert(typeof sc.blue_presence === 'number' && typeof sc.red_contest === 'number', 'presence/contest counts on state');

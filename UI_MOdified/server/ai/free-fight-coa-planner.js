@@ -239,6 +239,15 @@ function buildDeterministicCoas(redUnits, obj) {
     var objName = (obj && (obj.name || obj.label)) || 'Objective X';
     var objLat = obj ? obj.lat : 0;
     var objLon = obj ? obj.lon : 0;
+    // RMOOZ-COA-QUALITY-HARD-ENFORCEMENT-AE: deterministic COAs must NOT send units to the exact objective
+    // center. Place each role on a ring (assault ~2km / support ~5km / screen ~3km / recon ~7km), with a
+    // per-unit angular offset so units never stack. (Degrees: 1° lat ≈ 111km.)
+    function _ringPt(km, idx, baseDeg) {
+        var rDeg = km / 111;
+        var ang = (baseDeg + (idx || 0) * 25) * Math.PI / 180;
+        var cosLat = Math.cos((objLat || 0) * Math.PI / 180) || 1;
+        return { lat: objLat + rDeg * Math.cos(ang), lon: objLon + (rDeg * Math.sin(ang)) / cosLat, type: 'coord' };
+    }
 
     // Unit counts per COA
     var directCount  = Math.min(Math.max(3, Math.round(total * 0.25)), 12);
@@ -256,8 +265,8 @@ function buildDeterministicCoas(redUnits, obj) {
                 side: String(u.side || 'RED').toUpperCase(),
                 role: 'assault',
                 action_type: 'MOVE_TOWARD_OBJECTIVE',
-                target: { lat: objLat, lon: objLon, type: 'objective' },
-                reason: 'Direct assault on ' + objName + ' — nearest unit assigned assault.',
+                target: _ringPt(2, i, 210),   // AE: assault ring (~2km), not the exact center
+                reason: 'Direct assault on ' + objName + ' — close to the assault position (assault ring).',
             });
         } else {
             coa1Actions.push({
@@ -283,8 +292,8 @@ function buildDeterministicCoas(redUnits, obj) {
                 side: String(u2.side || 'RED').toUpperCase(),
                 role: 'assault',
                 action_type: 'MOVE_TOWARD_OBJECTIVE',
-                target: { lat: objLat, lon: objLon, type: 'objective' },
-                reason: 'Flank assault — lead element closes with ' + objName + '.',
+                target: _ringPt(2, j, 210),   // AE: assault ring (~2km), not the exact center
+                reason: 'Flank assault — lead element closes onto the assault position.',
             });
         } else if (j < flankAssault + flankSupport) {
             coa2Actions.push({
@@ -292,8 +301,8 @@ function buildDeterministicCoas(redUnits, obj) {
                 side: String(u2.side || 'RED').toUpperCase(),
                 role: 'support',
                 action_type: 'SUPPORT_BY_FIRE',
-                target: { lat: supportLat, lon: supportLon, type: 'coord' },
-                reason: 'Support by fire from perpendicular position — fix enemy at ' + objName + '.',
+                target: _ringPt(5, j, 30),   // AE: support-by-fire ring (~5km, standoff on a flank)
+                reason: 'Support by fire from a standoff flank position — fix the enemy at ' + objName + '.',
             });
         } else {
             coa2Actions.push({
@@ -317,8 +326,8 @@ function buildDeterministicCoas(redUnits, obj) {
                 side: String(u3.side || 'RED').toUpperCase(),
                 role: 'recon',
                 action_type: 'RECON_OBJECTIVE',
-                target: { lat: objLat, lon: objLon, type: 'objective' },
-                reason: 'Probe / recon — gather intelligence on ' + objName + ' before committing force.',
+                target: _ringPt(7, k, 300),   // AE: observation point on a flank (~7km), not the exact center
+                reason: 'Probe / recon from an observation point — gather intel on ' + objName + ' before committing force.',
             });
         } else {
             coa3Actions.push({
@@ -419,6 +428,13 @@ function buildBlueCoas(blueUnits, obj, situation, capContext) {
     var objName = (obj && (obj.name || obj.label)) || 'Objective X';
     var objLat = obj ? obj.lat : 0;
     var objLon = obj ? obj.lon : 0;
+    // RMOOZ-COA-QUALITY-HARD-ENFORCEMENT-AE: ring placement so reinforcing units do not stack on the exact center.
+    function _ringPt(km, idx, baseDeg) {
+        var rDeg = km / 111;
+        var ang = (baseDeg + (idx || 0) * 25) * Math.PI / 180;
+        var cosLat = Math.cos((objLat || 0) * Math.PI / 180) || 1;
+        return { lat: objLat + rDeg * Math.cos(ang), lon: objLon + (rDeg * Math.sin(ang)) / cosLat, type: 'coord' };
+    }
 
     var interceptCount = Math.min(Math.max(3, Math.round(total * 0.25)), 12);
     var reinforceCount = Math.min(Math.max(3, Math.round(total * 0.25)), 12);
@@ -471,8 +487,8 @@ function buildBlueCoas(blueUnits, obj, situation, capContext) {
         var u2 = units[j];
         if (j < reinforceCount) {
             a2.push({ unit_uid: uid(u2), side: side(u2), role: 'reinforce', action_type: 'MOVE_TOWARD_OBJECTIVE',
-                      target: { lat: objLat, lon: objLon, type: 'objective' },
-                      reason: 'Forward defense — reinforce ' + objName + ' to blunt the attack.' });
+                      target: _ringPt(3, j, 90),   // AE: depth-defense ring (~3km), not the exact center
+                      reason: 'Forward defense — reinforce ' + objName + ' from a depth position to blunt the attack.' });
         } else {
             a2.push({ unit_uid: uid(u2), side: side(u2), role: 'reserve', action_type: 'HOLD_POSITION',
                       target: { lat: u2.lat, lon: u2.lon, type: 'coord' },
@@ -1308,6 +1324,35 @@ async function _buildPlanningContext(units, objectives, context, opts, depth, ti
 // seed. LLM is consulted only in normal/deep depth when enabled; fast depth and the
 // Generate-5 non-deep path go straight to the deterministic (diverse/doctrine) builder.
 // light=true trims the heavy echo fields (intel / profiles / brief) for multi-variant payloads.
+// RMOOZ-COA-QUALITY-HARD-ENFORCEMENT-AE: the planner response must not return shallow center-stacking
+// COAs as accepted output. For any COA whose MOVE actions converge on the exact objective center (or all
+// share one target), re-spread them by role onto rings (assault 2 / support 5 / screen 3 / recon 7 /
+// reserve 8 / reinforce 3 km). A COA already spread is left untouched. Deterministic AND LLM coas pass here.
+function _spreadCenterClusteredCoas(coas, obj) {
+    if (!obj || !Number.isFinite(Number(obj.lat)) || !Array.isArray(coas)) return coas;
+    var objLat = Number(obj.lat), objLon = Number(obj.lon);
+    function ringPt(km, idx, baseDeg) { var rDeg = km / 111, ang = (baseDeg + (idx || 0) * 25) * Math.PI / 180, cosLat = Math.cos(objLat * Math.PI / 180) || 1; return { lat: objLat + rDeg * Math.cos(ang), lon: objLon + (rDeg * Math.sin(ang)) / cosLat, type: 'coord' }; }
+    function km(a, b) { var R = 6371, tr = Math.PI / 180, dLat = (b.lat - a.lat) * tr, dLon = (b.lon - a.lon) * tr, la1 = a.lat * tr, la2 = b.lat * tr, h = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(la1) * Math.cos(la2) * Math.sin(dLon / 2) * Math.sin(dLon / 2); return 2 * R * Math.asin(Math.min(1, Math.sqrt(h))); }
+    var RING = { assault: 2, support: 5, screen: 3, recon: 7, reserve: 8, reinforce: 3 }, BASE = { assault: 210, support: 30, screen: 120, recon: 300, reserve: 0, reinforce: 90 };
+    (coas || []).forEach(function (coa) {
+        var phases = Array.isArray(coa.phases) ? coa.phases : [{ actions: coa.actions || [] }];
+        var moves = [];
+        phases.forEach(function (ph) { (ph && ph.actions || []).forEach(function (a) { if (a && a.action_type !== 'HOLD_POSITION' && a.target && Number.isFinite(Number(a.target.lat))) moves.push(a); }); });
+        if (moves.length < 2) return;
+        var centerCnt = moves.filter(function (m) { return km({ lat: Number(m.target.lat), lon: Number(m.target.lon) }, { lat: objLat, lon: objLon }) < 0.6; }).length;
+        var f = moves[0].target, allSame = moves.every(function (m) { return Math.abs(Number(m.target.lat) - Number(f.lat)) < 1e-4 && Math.abs(Number(m.target.lon) - Number(f.lon)) < 1e-4; });
+        if (centerCnt / moves.length <= 0.5 && !allSame) return;   // already role-separated → leave it
+        var roleIdx = {};
+        moves.forEach(function (a) {
+            var r = String(a.role || 'assault').toLowerCase();
+            var key = /support|fire/.test(r) ? 'support' : /screen|flank|block|security/.test(r) ? 'screen' : /recon|observe|scout/.test(r) ? 'recon' : /reserve|follow/.test(r) ? 'reserve' : /reinforc/.test(r) ? 'reinforce' : 'assault';
+            roleIdx[key] = roleIdx[key] || 0;
+            a.target = ringPt(RING[key] || 2, roleIdx[key]++, BASE[key] != null ? BASE[key] : 210);
+        });
+        coa._server_respread_to_rings = true;
+    });
+    return coas;
+}
 async function _assemblePlan(P, variationSeed, timer, light) {
     var obj = P.obj, activeSide = P.activeSide, commanderMode = P.commanderMode, diverseMode = P.diverseMode;
     var allUnits = P.allUnits, units = P.units, objectives = P.objectives, context = P.context, opts = P.opts, depth = P.depth;
@@ -1459,12 +1504,16 @@ async function _assemblePlan(P, variationSeed, timer, light) {
             commander_mode: commanderMode,
             variation_seed: variationSeed,
             ai_depth: depth,
+            // RMOOZ-AI-ATTACK-PLAN-AI-ONLY-A: echo the planner mode so the manual page can tell an
+            // EXPLICITLY-chosen Staff-Safe plan (shown, honestly badged deterministic) apart from a
+            // Commander-mode deterministic/auto-fallback (gated — never dressed as AI).
+            planning_mode: (String((opts && opts.planning_mode) || 'commander').toLowerCase() === 'staff_safe') ? 'staff_safe' : 'commander',
             allow_sim_run: llmEnabled,   // RMOOZ-AI-EXECUTION-SINGLE-GATE-A (= RMOOZ_ALLOW_SIM_RUN === '1')
             llm_enabled: llmEnabled,     // back-compat alias
             mcp_prompt: light ? null : mcpPrompt,
             mcp_prompt_version: mcpPrompt ? mcpPrompt.version : ((toolPack && toolPack.version) || null),
             terrain_context: _terrainSummary(),
-            coas: coas,
+            coas: _spreadCenterClusteredCoas(coas, obj),   // AE: never return center-stacking COAs as accepted output
             situation_state: situation,
             blue_reaction_intent: blueIntent,
             intel: light ? null : intel,
@@ -1911,6 +1960,7 @@ function makeCoaEventLogEntries(plan, applyResult) {
 // ── Module exports ────────────────────────────────────────────────────────────
 module.exports = {
     planCoas:               planCoas,
+    _spreadCenterClusteredCoasForTest: _spreadCenterClusteredCoas,   // RMOOZ-COA-QUALITY-HARD-ENFORCEMENT-AE
     planCoaVariations:      planCoaVariations,        // RMOOZ-AI-COA-PERFORMANCE-A (Generate-N, shared context)
     validateCoaPlan:        validateCoaPlan,
     applyCoaPlan:           applyCoaPlan,

@@ -42,6 +42,7 @@
     var _useLlm = false, _llmTestStatus = null;
     // FREEFIGHT-AI-COA-PLANNER-A: multi-unit COA state
     var _coaPlan = null, _coaLoading = false, _coaApplied = false, _coaSelectedIdx = 0;
+    var _coaRepairAttempted = false;   // RMOOZ-REAL-COA-COMMANDER-QUALITY-AD: one LLM repair attempt per manual generate
     var _coaMovedUnits = [];  // [{unit, oldPos}, ...] — only units that VISIBLY moved
     // FREEFIGHT-BLUE-THREAT-AWARE-MOVEMENT-A: a unit whose move is below this is
     // "already in position" — not counted as moved (so zero/tiny moves aren't faked).
@@ -2290,9 +2291,198 @@
             .catch(function (e) { _llmTestStatus = { ok: false, error: e && e.message || 'fetch failed' }; updatePanel(); });
     }
     // FREEFIGHT-AI-COA-PLANNER-A ───────────────────────────────────────────────
+    // ══ RMOOZ-REAL-COA-COMMANDER-QUALITY-AD: COA Quality Gate + Staff-Safe commander template ═════════
+    // A deterministic tactical-credibility gate (NO LLM, NO fetch). A COA must look like a real commander
+    // plan — role-separated positions, support/security/reserve, multi-phase, commander intent + Red
+    // assumption + risk mitigation — before the cockpit presents it as an AI commander COA. A failing COA
+    // is repaired (one LLM prompt) or replaced by a clearly-labelled deterministic Staff-Safe commander
+    // template. Engine FROZEN (movement physics / teleport guard / Green / White scoring / ranking / V2
+    // state machine / Run flow unchanged).
+    var COA_QUALITY_PASS = 70;
+    function _normRole(r) {
+        r = String(r || '').toLowerCase();
+        if (/assault|attack|direct|advance|main/.test(r)) return 'assault';
+        if (/support|fire|sbf|overwatch/.test(r)) return 'support';
+        if (/screen|security|flank|block/.test(r)) return 'screen';
+        if (/recon|observe|scout|isr/.test(r)) return 'recon';
+        if (/reserve|follow|consolidat|reinforc/.test(r)) return 'reserve';
+        return r || 'unknown';
+    }
+    function _coaAllActions(coa) { var out = []; arr(coa && coa.phases).forEach(function (ph) { arr(ph.actions).forEach(function (a) { if (a) out.push(a); }); }); return out; }
+    function _atObjCenter(t, obj) { return !!(obj && t && Number.isFinite(+t.lat) && _kmBetween({ lat: +t.lat, lon: +t.lon }, { lat: obj.lat, lon: obj.lon }) < 0.6); }
+    function _coaQualityGate(coa) {
+        var obj = getObjective();
+        var acts = _coaAllActions(coa);
+        var phases = arr(coa && coa.phases);
+        var moves = acts.filter(function (a) { return a.action_type !== 'HOLD_POSITION' && a.target && Number.isFinite(+a.target.lat); });
+        var nMove = moves.length, nUnits = acts.length;
+        var reasons = [], score = 100;
+        function pen(p, why) { score -= p; reasons.push(why); }
+        // (1) all move actions share one target
+        if (nMove >= 2) {
+            var f = moves[0].target;
+            if (moves.every(function (m) { return Math.abs(+m.target.lat - +f.lat) < 1e-4 && Math.abs(+m.target.lon - +f.lon) < 1e-4; })) pen(40, 'all move actions share one target');
+        }
+        // (2) too many move actions at the exact objective center
+        if (obj && nMove) {
+            var cc = moves.filter(function (m) { return _atObjCenter(m.target, obj); }).length;
+            if (cc / nMove > 0.6) pen(30, Math.round(100 * cc / nMove) + '% of moves target the objective center');
+        }
+        // (3) support/recon/screen elements targeting the center
+        if (moves.some(function (m) { return /support|recon|screen/.test(_normRole(m.role)) && _atObjCenter(m.target, obj); })) pen(20, 'support/recon/screen elements target the objective center');
+        // (4) role diversity (scaled to force size)
+        var roleSet = {}; acts.forEach(function (a) { roleSet[_normRole(a.role)] = 1; });
+        var distinctRoles = Object.keys(roleSet).length;
+        if (nUnits >= 3 && distinctRoles < 2) pen(15, 'no role diversity (all units the same role)');
+        // (5) a support / security / reserve element exists
+        var hasSec = acts.some(function (a) { return /support|screen|reserve|recon/.test(_normRole(a.role)); });
+        if (nUnits >= 3 && !hasSec) pen(15, 'no support / security / reserve element');
+        // (6) single-phase "all move to objective"
+        if (phases.length <= 1 && nMove && moves.filter(function (m) { return _atObjCenter(m.target, obj); }).length === nMove) pen(25, 'single-phase "all move to objective"');
+        // (7) commander structure
+        if (!coa.commander_intent) pen(8, 'no commander intent');
+        if (!coa.main_effort) pen(8, 'no main effort');
+        if (!coa.supporting_effort) pen(6, 'no supporting effort');
+        if (!coa.red_assumption && !(arr(coa.expected_enemy_reaction).length)) pen(6, 'no Red reaction assumption');
+        if (!coa.risk_mitigation) pen(6, 'no risk mitigation');
+        score = Math.max(0, score);
+        return { score: score, pass: score >= COA_QUALITY_PASS, reasons: reasons, move_count: nMove, unit_count: nUnits, distinct_roles: distinctRoles };
+    }
+    // A deterministic, role-separated, multi-phase commander COA (no exact-center stacking). Used as the
+    // quality-gate fallback AND as the auto-director's Blue order so scenario COAs are commander-quality.
+    function _reconPoint(obj, i, baseDeg) { return _ringPos(obj, 7, i, (baseDeg || BLUE_BASE_DEG) - 90); }
+    function _staffSafeCommanderCoa(side, units, obj, tag) {
+        side = String(side || 'BLUE').toUpperCase();
+        var u = arr(units).filter(function (x) { return x && (x.id || x.uid || x.unit_uid); });
+        if (!u.length || !obj) return null;
+        var baseDeg = side === 'RED' ? RED_BASE_DEG : BLUE_BASE_DEG;
+        var assigns = u.map(function (unit, i) {
+            var role, n = u.length;
+            if (n >= 5) role = (i === 0 ? 'recon' : i === 1 ? 'support' : i === 2 ? 'screen' : (i === n - 1 ? 'reserve' : 'assault'));
+            else if (n === 4) role = (i === 0 ? 'support' : i === 1 ? 'screen' : i === 2 ? 'assault' : 'reserve');
+            else if (n === 3) role = (i === 0 ? 'support' : i === 1 ? 'screen' : 'assault');
+            else if (n === 2) role = (i === 0 ? 'support' : 'assault');
+            else role = 'assault';
+            return { uid: String(unit.id || unit.uid || unit.unit_uid), role: role, i: i };
+        });
+        function tgt(role, i) {
+            if (role === 'support') return _supportRing(obj, i);
+            if (role === 'screen') return _ringPos(obj, RING_KM.screen, i, baseDeg + 90);
+            if (role === 'recon') return _reconPoint(obj, i, baseDeg);
+            if (role === 'reserve') return _reserveRing(obj, i);
+            return _assaultRing(obj, i);   // assault
+        }
+        function phaseActs(movers) {
+            return assigns.map(function (a) {
+                return (movers.indexOf(a.role) !== -1)
+                    ? { unit_uid: a.uid, action_type: 'MOVE', role: a.role, target: tgt(a.role, a.i) }
+                    : { unit_uid: a.uid, action_type: 'HOLD_POSITION', role: a.role };
+            });
+        }
+        var ids = function (rx) { return assigns.filter(function (a) { return rx.test(a.role); }).map(function (a) { return a.uid; }); };
+        var assaultIds = ids(/assault/), supIds = ids(/support|screen|recon/), resIds = ids(/reserve/), scrIds = ids(/screen/);
+        return {
+            plan_id: tag || 'SS-CMD-1', title: 'Staff-Safe commander template', side: side, recommended: true, risk: 'low', confidence: 'medium',
+            source_type: 'staff_safe_commander_template',
+            commander_intent: 'Seize and hold the objective with a supported, phased assault; keep a reserve and screen the flank.',
+            main_effort: 'Assault element (' + (assaultIds.join(', ') || '—') + ') onto the assault position.',
+            supporting_effort: 'Support-by-fire / recon (' + (supIds.join(', ') || '—') + ') overwatch the assault.',
+            reserve_or_follow_on: resIds.join(', ') || 'none (small force)',
+            security_or_screen: scrIds.join(', ') || 'none',
+            red_assumption: 'Red defends/contests the objective and may counterattack from the flank.',
+            risk_mitigation: 'Support-by-fire overwatch + a screened flank; the reserve covers a Red counterattack.',
+            control_measures: { assault_position: true, support_by_fire: true, screen_line: true, objective_radius_km: OBJ_CONTROL_KM },
+            success_criteria: 'Blue holds the objective radius; Red is unable to contest.',
+            expected_enemy_reaction: ['Red counters toward the objective', 'Red blocks consolidation'],
+            rationale: ['Role-separated commander template — supported assault, screened flank, reserve held; no unit sent to the exact objective center.'],
+            phases: [
+                { name: 'Phase 1 — Recon / establish support & screen', actions: phaseActs(['recon', 'support', 'screen']) },
+                { name: 'Phase 2 — Assault', actions: phaseActs(['assault']) },
+                { name: 'Phase 3 — Consolidate & secure', actions: phaseActs(['reserve']) },
+            ],
+        };
+    }
+    function _planFallbackUnits(plan) {
+        var side = String((arr(plan && plan.coas)[0] && arr(plan.coas)[0].side) || _activeSide || 'BLUE').toUpperCase();
+        var u = _scenarioSideUnits(side);
+        if (u.length) return u;
+        // derive from the plan's own action uids (resolve real units)
+        var seen = {}, out = [];
+        _coaAllActions(arr(plan && plan.coas)[0]).forEach(function (a) {
+            var f = a && a.unit_uid ? _findRealUnit(a.unit_uid) : null;
+            if (f && f.unit && !seen[a.unit_uid]) { seen[a.unit_uid] = 1; out.push({ id: a.unit_uid, lat: f.unit.lat, lon: f.unit.lon, side: side }); }
+        });
+        return out;
+    }
+    function _recordQualityGate(verdict, score, reasons) {
+        try { _recordDecision({ role: 'performance', action: 'coa_quality_gate', called_llm: false, source: 'coa-quality-gate',
+            reason: verdict, result_summary: verdict + ' · score ' + score + (arr(reasons).length ? ' · ' + reasons.slice(0, 3).join('; ') : '') }); } catch (_) {}
+        try { _appendToEventLog('COA quality gate: ' + esc(verdict) + ' (score ' + score + ')' + (verdict === 'fallback' ? ' — using Staff-Safe commander template' : '') + '.'); } catch (_) {}
+    }
+    // Evaluate a plan's COAs, attach _quality to each, set plan._coa_quality. Deterministic; no repair here.
+    function _gradeCoaPlan(plan) {
+        var coas = arr(plan && plan.coas);
+        if (!coas.length) return { verdict: 'failed', score: 0, reasons: ['no COAs'] };
+        coas.forEach(function (c) { c._quality = _coaQualityGate(c); });
+        var best = coas[_pickRecommendedIdx(plan)] || coas[0];
+        return best._quality;
+    }
+    // Replace a low-quality plan with the deterministic Staff-Safe commander template (clearly labelled).
+    function _coaFallbackToTemplate(plan, q) {
+        var units = _planFallbackUnits(plan);
+        var side = String((arr(plan.coas)[0] && arr(plan.coas)[0].side) || _activeSide || 'BLUE').toUpperCase();
+        var tmpl = _staffSafeCommanderCoa(side, units, getObjective(), 'SS-CMD-1');
+        if (!tmpl) { plan._coa_quality = { verdict: 'failed', score: q.score, reasons: q.reasons }; _recordQualityGate('failed', q.score, q.reasons); return plan._coa_quality; }
+        tmpl._quality = _coaQualityGate(tmpl);
+        plan.coas = [tmpl];
+        plan.plan_source = 'staff_safe_commander_template';
+        plan.llm_status = 'llm_failed_quality_gate';
+        plan._ranking_recommended_idx = 0; _coaSelectedIdx = 0;
+        plan._coa_quality = { verdict: 'fallback', score: tmpl._quality.score, reasons: q.reasons };
+        _recordQualityGate('fallback', tmpl._quality.score, q.reasons);
+        return plan._coa_quality;
+    }
+    // Manual-generate gate flow: grade → pass | (one LLM repair) | deterministic fallback.
+    function _runCoaQualityGateFlow(genT0) {
+        if (!_coaPlan || !_coaPlan.ok || !arr(_coaPlan.coas).length) return;
+        var q = _gradeCoaPlan(_coaPlan);
+        if (q.pass) {
+            _coaPlan._coa_quality = { verdict: _coaRepairAttempted ? 'repaired' : 'pass', score: q.score, reasons: q.reasons };
+            _recordQualityGate(_coaPlan._coa_quality.verdict, q.score, q.reasons);
+            updatePanel(); return;
+        }
+        var labelledStaffSafe = String(_coaPlan.planning_mode || '').toLowerCase() === 'staff_safe' || (_coaPlan.source && /staff_safe/.test(String(_coaPlan.source.type || '')));
+        var canRepair = _isRealLlmPlan(_coaPlan) && !_coaRepairAttempted && !labelledStaffSafe;
+        var ready = false; try { ready = _freeFightAiReady().ok; } catch (_) {}
+        if (canRepair && ready) { _coaRepairAttempted = true; _repairCoaPlanOnce(q.reasons, genT0); }
+        else { _coaFallbackToTemplate(_coaPlan, q); updatePanel(); }
+    }
+    // One LLM repair attempt: re-request the planner with an explicit repair instruction, then re-grade.
+    function _repairCoaPlanOnce(reasons, genT0) {
+        var w = W(); if (!w || typeof w.fetch !== 'function') { _coaFallbackToTemplate(_coaPlan, _gradeCoaPlan(_coaPlan)); updatePanel(); return; }
+        try { _recordDecision({ role: 'blue', action: 'coa_repair_prompt', called_llm: true, source: 'coa-quality-gate',
+            provider: (_routeHealth && _routeHealth.provider) || 'ollama', model: (_routeHealth && _routeHealth.model) || null,
+            reason: 'COA rejected by quality gate', result_summary: 'repair requested: ' + arr(reasons).slice(0, 3).join('; ') }); } catch (_) {}
+        try { _appendToEventLog('COA repair prompt sent to the AI (rejected: ' + esc(arr(reasons).slice(0, 2).join('; ')) + ').'); } catch (_) {}
+        var body = _buildAiRequestBody();
+        body.opts.useLlm = true; if (body.opts.ai_depth === 'fast') body.opts.ai_depth = 'normal';
+        body.opts.repair = true; body.opts.repair_reasons = arr(reasons);
+        body.opts.repair_hint = 'Your COA was rejected because: ' + arr(reasons).join('; ') + '. Return a commander-quality COA with role-separated positions (assault / support-by-fire / screen / reserve / recon), a main and supporting effort, a Red reaction assumption, and risk mitigation. Do not send all units to the exact objective center.';
+        _coaLoading = true; updatePanel();
+        _fetchJsonSafe('/api/wargame-sim/free-fight/plan-coas', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ units: body.units, objectives: body.objectives, context: { commander_mode: body.opts.commander_mode, ai_depth: body.opts.ai_depth, repair: true }, opts: body.opts }),
+        }).then(function (plan) {
+            if (plan && plan.ok && arr(plan.coas).length && !_isRouteUnavailable(plan)) { _coaPlan = plan; _coaPlan._requestedVia = 'manual_generate'; try { _coaSelectedIdx = _pickRecommendedIdx(_coaPlan); } catch (_) {} }
+            _coaLoading = false; updatePanel();
+            try { _recordPlanDecision(_coaPlan, _nowMs() - genT0); } catch (_) {}
+            _runCoaQualityGateFlow(genT0);   // _coaRepairAttempted is set → no second repair → pass or fallback
+        }).catch(function () { _coaLoading = false; _coaFallbackToTemplate(_coaPlan, _gradeCoaPlan(_coaPlan)); updatePanel(); });
+    }
     function _generateCoaPlan() {
         var w = W();
         if (!w || typeof w.fetch !== 'function') return;
+        _coaRepairAttempted = false;   // AD: fresh generate → repair budget reset
         _coaLoading = true; _coaPlan = null; _coaApplied = false; _coaMovedUnits = []; _mcpPromptExpanded = false;
         _routeUnavailableMsg = null;
         _coaLoadingStart = (function () { try { return Date.now(); } catch (_) { return 0; } })();
@@ -2338,6 +2528,8 @@
             if (_coaPlan && _coaPlan.ok) { _greenScoringKey = null; try { _refreshGreenWorld('after_deep_plan').then(function () { try { _applyGreenAdvisoryScoring('plan_review'); _applyCoaRanking(); } catch (_) {} }); } catch (_) {} }
             // RMOOZ-AI-SCHEDULER-DECISION-LOG-S: record commander/performance/validation decisions (record-only, no new calls).
             try { _recordPlanDecision(_coaPlan, _nowMs() - _genT0); } catch (_) {}
+            // RMOOZ-REAL-COA-COMMANDER-QUALITY-AD: gate the COA — pass / one LLM repair / Staff-Safe fallback.
+            try { _runCoaQualityGateFlow(_genT0); } catch (_) {}
         }).catch(function (e) {
             _coaPlan = { ok: false, _error: (e && e.message) || 'fetch failed', _requestedVia: 'manual_generate' };
             _coaLoading = false; _stopCoaLoadingTicker(); updatePanel();
@@ -4646,16 +4838,29 @@
             rings.push(isSupport ? 'support' : 'assault');
             return { unit_uid: u.id, action_type: 'MOVE', role: (isSupport ? 'support' : 'assault'), target: tgt };   // capped + teleport-guarded at execution
         });
+        // RMOOZ-REAL-COA-COMMANDER-QUALITY-AD: carry the commander structure so the auto order is
+        // commander-quality (passes the quality gate), not a shallow move-to-objective order.
+        var assaultIds = blue.filter(function (u, i) { return !(posture !== 'consolidate' && blue.length > 1 && i === blue.length - 1); }).map(function (u) { return u.id; });
+        var supIds = (posture !== 'consolidate' && blue.length > 1) ? [blue[blue.length - 1].id] : [];
         return { plan_id: 'AUTO-T' + (_scenario ? _scenario.scenario_turn : 1), title: title, side: 'BLUE',
             recommended: true, risk: 'low', confidence: 'medium', source_type: 'staff_safe_auto_director', posture: posture,
+            commander_intent: (posture === 'advance' ? 'Advance to and seize the objective with a supported assault.' : posture === 'secure' ? 'Secure the contested objective; screen against Red.' : posture === 'hold_screen' ? 'Hold the objective and screen the flank against a Red counterattack.' : 'Consolidate and preserve the force.'),
+            main_effort: 'Assault element (' + (assaultIds.join(', ') || '—') + ').',
+            supporting_effort: supIds.length ? ('Support-by-fire (' + supIds.join(', ') + ').') : 'Force consolidates (small element).',
+            red_assumption: 'Red contests/counters the objective from the flank.',
+            risk_mitigation: 'Support-by-fire overwatch + screened flank; deterministic capped movement.',
+            expected_enemy_reaction: ['Red counters toward the objective'],
             formation_rings: rings, phases: [{ name: title, actions: actions }] };
     }
     function _autoDirectorNextBlueOrder(outcome) {
         var coa = _autoDirectorBuildCoa(outcome);
         if (!coa || !arr(coa.phases[0].actions).length) return { ok: false, reason: 'No safe deterministic Blue order available — operator decision needed.' };
+        coa._quality = _coaQualityGate(coa);   // AD: grade the auto order (role-separated → passes)
         // a deterministic, honestly-labelled Staff-Safe plan (NOT an LLM plan, never hits /plan-coas)
         _coaPlan = { ok: true, plan_source: 'deterministic', planning_mode: 'staff_safe', recommended_plan_id: coa.plan_id,
             source: { type: 'staff_safe_auto_director' }, _requestedVia: 'auto_director', coas: [coa] };
+        _coaPlan._coa_quality = { verdict: coa._quality.pass ? 'pass' : 'fallback', score: coa._quality.score, reasons: coa._quality.reasons };
+        try { _recordQualityGate(_coaPlan._coa_quality.verdict, _coaPlan._coa_quality.score, _coaPlan._coa_quality.reasons); } catch (_) {}
         _coaSelectedIdx = 0;
         var ex = _commitCoa(0);   // builds _coaExec (pending) — deterministic, no LLM, no /plan-coas
         if (!ex) return { ok: false, reason: 'Auto-director order could not be committed — operator decision needed.' };
@@ -4892,6 +5097,25 @@
         return '<div data-ff-v2="model-readiness" style="margin-top:6px;font-size:9.5px;color:' + col + ';">● ' + esc(label) + sel + '</div>';
     }
     // Clickable COA cards — recommended is visually first-class; the selected card is clearly highlighted.
+    // AD: plan-level commander-quality banner — verdict + intent + main/supporting effort + fallback warning.
+    function _v2PlanQualityBannerHtml() {
+        var q = _coaPlan && _coaPlan._coa_quality;
+        if (!q) return '';
+        var coas = arr(_coaPlan.coas);
+        var best = coas[_pickRecommendedIdx(_coaPlan)] || coas[0] || {};
+        var V = { pass: '#7fd6a0', repaired: '#7fd6a0', fallback: '#e0a93a', failed: '#f0707a' };
+        var col = V[q.verdict] || '#9fb8c8';
+        var label = { pass: 'Commander quality: PASS', repaired: 'Commander quality: REPAIRED (AI re-prompted)', fallback: 'Staff-Safe commander template (AI COA failed the quality gate)', failed: 'COA FAILED the quality gate' }[q.verdict] || q.verdict;
+        var h = '<div data-ff-v2="plan-quality" data-ff-v2-coa-quality="' + esc(q.verdict) + '" style="margin-top:6px;padding:6px 9px;border:1px solid ' + col + ';border-radius:6px;background:#0a1622;font-size:10px;color:#cdd8e4;">';
+        h += '<div><b style="color:' + col + ';">⚖ ' + esc(label) + '</b> · score ' + q.score + '</div>';
+        if (best.commander_intent) h += '<div style="margin-top:2px;"><span style="color:#8fa5b8;">Intent:</span> ' + esc(best.commander_intent) + '</div>';
+        if (best.main_effort) h += '<div><span style="color:#8fa5b8;">Main effort:</span> ' + esc(best.main_effort) + '</div>';
+        if (best.supporting_effort) h += '<div><span style="color:#8fa5b8;">Supporting:</span> ' + esc(best.supporting_effort) + '</div>';
+        if ((q.verdict === 'fallback' || q.verdict === 'failed') && arr(q.reasons).length) h += '<div style="margin-top:2px;color:#e0a93a;">Rejected: ' + esc(q.reasons.slice(0, 3).join('; ')) + '</div>';
+        if (q.verdict === 'fallback') h += '<div data-ff-v2="fallback-warning" style="margin-top:2px;color:#e0a93a;">⚠ Deterministic Staff-Safe template — NOT AI commander output.</div>';
+        h += '</div>';
+        return h;
+    }
     function _v2CoaCardsHtml(coas, recIdx) {
         var h = '<div data-ff-v2="coa-cards" style="margin-top:8px;display:flex;flex-direction:column;gap:6px;">';
         coas.forEach(function (coa, i) {
@@ -4912,6 +5136,10 @@
             h += '</span></div>';
             h += '<div style="margin-top:3px;font-size:10px;color:#9ab0c0;">Risk <span style="color:' + riskCol + ';">' + esc(risk) + '</span> · Confidence <span style="color:#9ec2ec;">' + esc(coa.confidence || '—') + '</span>' + (score != null ? ' · Score <b style="color:#cfe6ff;">' + score + '</b>' : '') + '</div>';
             if (isRec && coa._ranking && coa._ranking.ranking_reason) h += '<div style="margin-top:2px;font-size:9px;color:#7fd6a0;">Recommended because: ' + esc(coa._ranking.ranking_reason) + '</div>';
+            if (coa._quality) {   // AD: commander-quality verdict per COA
+                var qp = coa._quality.pass, qcol = qp ? '#7fd6a0' : '#f0707a';
+                h += '<div data-ff-v2="coa-quality" data-ff-v2-quality="' + (qp ? 'pass' : 'low') + '" style="margin-top:2px;font-size:9px;color:' + qcol + ';">Commander quality: ' + (qp ? 'pass' : 'low') + ' (' + coa._quality.score + ')' + (!qp && arr(coa._quality.reasons).length ? ' — ' + esc(coa._quality.reasons.slice(0, 2).join('; ')) : '') + '</div>';
+            }
             if (coa.summary) h += '<div style="margin-top:2px;font-size:9.5px;color:#cdd8e4;font-style:italic;">' + esc(coa.summary) + '</div>';
             h += '</div>';
         });
@@ -4983,7 +5211,8 @@
         var ex = _coaExec;
         if (!ex) return '';
         var cac = ex.commit_advisory_context || {};
-        var h = '<div data-ff-v2="committed-summary" style="margin-top:8px;padding:7px 9px;border:1px solid #2a4d6a;border-radius:6px;background:#08131e;font-size:10px;color:#cdd8e4;">';
+        var h = _v2PlanQualityBannerHtml();   // AD: commander-quality verdict of the committed plan
+        h += '<div data-ff-v2="committed-summary" style="margin-top:8px;padding:7px 9px;border:1px solid #2a4d6a;border-radius:6px;background:#08131e;font-size:10px;color:#cdd8e4;">';
         h += '<div><span style="color:#8fa5b8;">Committed plan:</span> <b style="color:#e8eaed;">' + esc(ex.selected_coa_id) + '</b></div>';
         if (cac.considered) {
             h += '<div><span style="color:#8fa5b8;">Recommended:</span> <b style="color:#7fd6a0;">' + esc(cac.recommended_coa_id) + '</b> · <span style="color:#8fa5b8;">Operator override:</span> <b style="color:' + (cac.operator_override ? '#e0a93a' : '#7fd6a0') + ';">' + (cac.operator_override ? 'yes' : 'no') + '</b></div>';
@@ -5166,6 +5395,7 @@
             var staleExec = !!(_coaExec && _coaExec.active);   // AB1: a fresh plan / changed selection pushed us back to ready
             actions = _v2Pri('v2-commit', '✅ Commit Selected Plan (' + esc(selId) + ')', 'Locks the selected COA for execution') + (staleExec ? _v2Sec('v2-clear', 'Clear Plan') : '');
             body = (staleExec ? '<div data-ff-v2="recommit-needed" style="margin-bottom:6px;padding:6px 9px;border:1px solid #6a5520;border-radius:6px;background:#1c1708;color:#e8d68a;font-size:10px;">⚠ Selection changed — commit selected plan before running scenario. (A new plan or a different COA replaced the previously committed one — Run / Run Scenario stay hidden until you commit.)</div>' : '') +
+                _v2PlanQualityBannerHtml() +
                 _v2CoaCardsHtml(coas, recIdx) + _v2SelectedSummaryHtml(coas, recIdx) +
                 '<div style="margin-top:8px;display:flex;align-items:center;gap:6px;"><span style="font-size:9.5px;color:#8fa5b8;">Advanced:</span> ' + _v2Adv('v2-regenerate', '↻ Regenerate Plan (AI · slow)', 'Calls the AI again') + '</div>';
         } else if (state === 'committed') {
@@ -5754,6 +5984,11 @@
         _objFormationForTest:      function (obj)           { return _objFormation(obj || getObjective()); },
         _ringPosForTest:           function (obj, ring, i)  { var o = obj || getObjective(); return { assault: _assaultRing(o, i), support: _supportRing(o, i), screen: _screenRing(o, i), blocking: _blockingRing(o, i), reserve: _reserveRing(o, i) }[ring]; },
         _autoDirectorBuildCoaForTest: function (o)          { return _autoDirectorBuildCoa(o || _whiteScenarioOutcome()); },
+        // RMOOZ-REAL-COA-COMMANDER-QUALITY-AD test seams
+        _coaQualityGateForTest:    function (coa)           { return _coaQualityGate(coa); },
+        _staffSafeCommanderCoaForTest: function (side, units, obj) { return _staffSafeCommanderCoa(side || 'BLUE', units, obj || getObjective(), 'SS-CMD-1'); },
+        _gradeCoaPlanQualityForTest: function ()            { if (!_coaPlan || !_coaPlan.ok || !arr(_coaPlan.coas).length) return null; var q = _gradeCoaPlan(_coaPlan); if (q.pass) { _coaPlan._coa_quality = { verdict: 'pass', score: q.score, reasons: q.reasons }; _recordQualityGate('pass', q.score, q.reasons); } else { _coaFallbackToTemplate(_coaPlan, q); } return _coaPlan._coa_quality; },
+        _getCoaPlanQualityForTest: function ()              { return _coaPlan && _coaPlan._coa_quality; },
         // RMOOZ-FREE-FIGHT-V2-COA-TO-SCENARIO-BUGFIX-AB1 test seams
         _coaCommitIsStaleForTest:  function ()              { return _coaCommitIsStale(); },
         _getCommittedPlanObjMatchesForTest: function ()     { return _committedPlanObj === _coaPlan; },

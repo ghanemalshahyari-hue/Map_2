@@ -55,6 +55,10 @@
     var _coaExecTimer = null;   // setInterval handle for the committed-COA tick loop
     var COA_EXEC_STUCK_TICKS = 4;       // phase makes no progress for this many ticks → replan trigger
     var COA_EXEC_FORCE_LOSS_FRAC = 0.5; // active-side units missing above this fraction → replan trigger
+    // RMOOZ-FREE-FIGHT-CONTINUOUS-SCENARIO-AA: continuous scenario runtime (orchestrates committed-COA
+    // execution + deterministic White adjudication + deterministic Red reaction + Green updates). null = idle.
+    var _scenario = null;
+    var _scenarioTimer = null;          // setInterval handle for the scenario loop
     // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: continuous AI commander loop state
     var _turnNumber = 0;
     var _activeSide = 'RED';
@@ -4490,6 +4494,150 @@
             ' · <span style="color:#8fa5b8;">Status:</span> <b style="color:#cfe6ff;">' + word + '</b></div>' +
             '<div><span style="color:#8fa5b8;">AI calls on normal ticks:</span> <b style="color:#7fd6a0;">OFF</b></div></div>';
     }
+    // ══ RMOOZ-FREE-FIGHT-CONTINUOUS-SCENARIO-AA: continuous scenario orchestration ════════════════════
+    // A deterministic layer ON TOP of committed-COA execution. Run Plan executes the committed COA ONCE
+    // (existing). Run Scenario keeps the fight alive: it reuses the EXISTING deterministic tick
+    // (_coaExecTick — no LLM, no /plan-coas), the EXISTING Green refresh (/neutral-world only), and the
+    // EXISTING decision log, and adds a deterministic White outcome check + a simple deterministic Red
+    // reaction + turn/end-condition bookkeeping. NORMAL TICKS NEVER CALL THE LLM. The LLM is reached
+    // ONLY when the operator explicitly Replans (the existing _replanCoa → /plan-coas path). Frozen:
+    // movement physics / teleport guard / validation / Green logic / White advisory scoring / ranking /
+    // Staff-Safe / LLM config / DB-Lite·terrain·readiness·supply — all UNCHANGED.
+    var SCENARIO_MAX_TURNS = 12;
+    var SCENARIO_OBJ_NEAR_KM = 8;          // a unit within this range of the objective counts as "at" it
+    function _scenarioActive() { return !!(_scenario && _scenario.scenario_active); }
+    function _newScenario() {
+        return { scenario_active: true, scenario_status: 'running', scenario_turn: 1, blue_cycle: 0, red_cycle: 0,
+            current_actor: 'unit-controller', end_condition: null, last_outcome: null, pending_replan_reason: null,
+            max_turns: SCENARIO_MAX_TURNS, started_at: _nowISO(), updated_at: _nowISO() };
+    }
+    function _scenarioSideNearObj(side, obj) {
+        if (!obj) return 0;
+        var n = 0;
+        _greenUnits().forEach(function (u) {
+            if (String(u.side || '').toUpperCase() !== side) return;
+            if (_kmBetween({ lat: u.lat, lon: u.lon }, { lat: obj.lat, lon: obj.lon }) <= SCENARIO_OBJ_NEAR_KM) n++;
+        });
+        return n;
+    }
+    // White deterministic adjudication of the current battlefield (NO LLM, NO fetch).
+    function _whiteScenarioOutcome() {
+        var obj = getObjective();
+        var blueTotal = _sideUnitCount('BLUE'), redTotal = _sideUnitCount('RED');
+        var blueNear = _scenarioSideNearObj('BLUE', obj), redNear = _scenarioSideNearObj('RED', obj);
+        var committed = (_coaExec && _coaExec.commit_unit_count) || 0;
+        var activeSide = (_coaExec && _coaExec.side) || 'RED';
+        var unitsMissing = committed > 0 ? Math.max(0, committed - _sideUnitCount(activeSide)) : 0;
+        var objectiveReached = obj ? (blueNear > 0) : false;
+        var objectiveContested = obj ? (redNear > 0) : (redTotal > 0);
+        var blueSuccess = objectiveReached && !objectiveContested && blueTotal > 0;
+        var redActive = redTotal > 0;
+        var blueUnable = blueTotal === 0;
+        var redUnable = redTotal === 0;
+        var shouldContinue = !(blueSuccess || blueUnable || redUnable);
+        var replanRequired = shouldContinue && (objectiveContested || !objectiveReached);
+        var summary = objectiveReached
+            ? (objectiveContested ? 'Objective reached but contested — Red still active near the objective.' : 'Objective reached and uncontested.')
+            : (obj ? 'Objective not yet reached.' : 'No objective placed — adjudicating force status only.');
+        return { objective: obj || null, objective_reached: objectiveReached, objective_contested: objectiveContested,
+            blue_success: blueSuccess, red_active: redActive, blue_total: blueTotal, red_total: redTotal,
+            blue_near_obj: blueNear, red_near_obj: redNear, units_missing: unitsMissing,
+            blue_unable: blueUnable, red_unable: redUnable, should_continue: shouldContinue,
+            replan_required: replanRequired,
+            replan_reason: replanRequired ? (objectiveContested ? 'Objective contested by Red — Blue needs new orders.' : 'Objective not secured — Blue needs new orders.') : null,
+            reason: summary, summary: summary };
+    }
+    // Simple deterministic Red reaction posture (v1 — NO Red LLM yet; decision recorded only).
+    function _redReaction(outcome) {
+        var posture, reason;
+        if (outcome.blue_success) { posture = 'withdraw'; reason = 'Blue secured the objective — Red withdraws to preserve force.'; }
+        else if (outcome.objective_contested && outcome.objective_reached) { posture = 'counter'; reason = 'Objective contested — Red counters to retake it.'; }
+        else if (outcome.objective_reached) { posture = 'block'; reason = 'Blue at the objective — Red blocks consolidation.'; }
+        else if (!outcome.red_active) { posture = 'none'; reason = 'Red has no active units to react.'; }
+        else { posture = 'hold'; reason = 'Objective not yet reached — Red holds a defensive posture.'; }
+        return { posture: posture, reason: reason, summary: 'Red ' + posture + ' (deterministic, no LLM)' };
+    }
+    function _scenarioEndCondition(outcome) {
+        if (outcome.blue_success) return { code: 'objective_secured', summary: 'Objective secured by Blue — scenario complete.' };
+        if (outcome.blue_unable) return { code: 'blue_unable_to_continue', summary: 'Blue has no units able to continue — scenario complete.' };
+        if (outcome.red_unable) return { code: 'red_unable_to_contest', summary: 'Red has no units able to contest — scenario complete.' };
+        if (_scenario && _scenario.scenario_turn >= (_scenario.max_turns || SCENARIO_MAX_TURNS)) return { code: 'max_turns_reached', summary: 'Maximum scenario turns reached — scenario complete.' };
+        return null;
+    }
+    function _startScenarioTimer() { _clearIntervalSafe(_scenarioTimer); _scenarioTimer = _setIntervalSafe(_scenarioTick, _coaExecTickMs()); }
+    function _stopScenarioTimer() { _clearIntervalSafe(_scenarioTimer); _scenarioTimer = null; }
+    // One scenario tick: drive the deterministic Blue execution, OR — when phases finish/block — run the
+    // White→Green→Red turn transition. NEVER calls the LLM; NEVER hits /plan-coas.
+    function _scenarioTick() {
+        if (!_scenarioActive() || _scenario.scenario_status !== 'running') return null;
+        var ex = _coaExec;
+        if (ex && ex.active && !ex.replan_required && ex.phase_status !== 'complete') {
+            _scenario.current_actor = 'unit-controller';
+            return _coaExecTick();   // deterministic; llm_called_this_tick:false; no /plan-coas
+        }
+        return _scenarioTransition();
+    }
+    // White → Green → Red turn transition (all deterministic, no LLM, no /plan-coas).
+    function _scenarioTransition() {
+        if (!_scenarioActive()) return null;
+        _scenario.current_actor = 'white';
+        var outcome = _whiteScenarioOutcome();
+        _scenario.last_outcome = outcome.summary;
+        try { _recordDecision({ role: 'white', action: 'scenario_outcome_check', called_llm: false, source: 'scenario',
+            reason: outcome.reason, result_summary: 'turn ' + _scenario.scenario_turn + ' · ' + outcome.summary + ' · contested ' + outcome.objective_contested }); } catch (_) {}
+        try { _appendToEventLog('White scenario adjudication (turn ' + _scenario.scenario_turn + '): ' + esc(outcome.summary) + ' (deterministic, no AI).'); } catch (_) {}
+        _scenario.current_actor = 'green';
+        try { _refreshGreenWorld('scenario_turn'); } catch (_) {}   // /neutral-world only; fire-and-forget; no LLM
+        _scenario.current_actor = 'red';
+        var red = _redReaction(outcome);
+        try { _recordDecision({ role: 'red', action: 'red_reaction', called_llm: false, source: 'scenario', reason: red.reason, result_summary: red.summary }); } catch (_) {}
+        try { _appendToEventLog('Red reaction (turn ' + _scenario.scenario_turn + '): ' + esc(red.summary) + '.'); } catch (_) {}
+        _scenario.blue_cycle++; _scenario.red_cycle++;
+        var end = _scenarioEndCondition(outcome);
+        if (end) {
+            _scenario.scenario_status = 'complete'; _scenario.end_condition = end.code; _scenario.last_outcome = end.summary;
+            _scenario.current_actor = 'white'; _scenario.pending_replan_reason = null; _scenario.updated_at = _nowISO();
+            _stopScenarioTimer();
+            try { _appendToEventLog('Scenario complete — ' + esc(end.code) + ': ' + esc(end.summary)); } catch (_) {}
+        } else {
+            _scenario.scenario_turn++;
+            _scenario.scenario_status = 'paused';   // the fight continues, but Blue needs new orders (no LLM on ticks)
+            _scenario.pending_replan_reason = outcome.replan_reason || 'Scenario continues — Blue needs new orders for the next turn.';
+            _scenario.current_actor = 'blue'; _scenario.updated_at = _nowISO();
+            _stopScenarioTimer();
+            try { _appendToEventLog('Scenario needs new Blue orders (turn ' + _scenario.scenario_turn + '): ' + esc(_scenario.pending_replan_reason)); } catch (_) {}
+        }
+        updatePanel();
+        return _scenario;
+    }
+    function _runScenario() {
+        if (!_coaExec || !_coaExec.active) return null;
+        if (!_scenarioActive()) {
+            _scenario = _newScenario();
+            try { _appendToEventLog('Run Scenario — continuous fight started. Deterministic ticks; the AI is NOT called on normal ticks.'); } catch (_) {}
+        } else { _scenario.scenario_status = 'running'; _scenario.pending_replan_reason = null; }
+        if (_coaExec.phase_status !== 'complete') { _coaExec.paused = false; _coaExec.replan_required = false; }
+        _startScenarioTimer();
+        _scenarioTick();   // run one immediately so the operator sees the fight move
+        updatePanel();
+        return _scenario;
+    }
+    function _pauseScenario() {
+        if (!_scenarioActive()) return;
+        _scenario.scenario_status = 'paused'; _scenario.updated_at = _nowISO();
+        _stopScenarioTimer(); _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
+        try { _appendToEventLog('Scenario paused by operator.'); } catch (_) {}
+        updatePanel();
+    }
+    function _stopScenario() {
+        if (!_scenario) return;
+        _stopScenarioTimer(); _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
+        _scenario.scenario_status = 'complete'; _scenario.end_condition = 'operator_stopped';
+        _scenario.last_outcome = 'Operator stopped the scenario.'; _scenario.pending_replan_reason = null; _scenario.updated_at = _nowISO();
+        try { _appendToEventLog('Scenario stopped by operator.'); } catch (_) {}
+        updatePanel();
+    }
+    function _resetScenario() { _stopScenarioTimer(); _scenario = null; }
     // ── RMOOZ-FREE-FIGHT-CONTROL-HARD-RESET-X: the NEW Free Fight control window (the "cockpit") ───────
     // A clean, single-flow, state-driven UI built from scratch. It REUSES the existing engine (planner,
     // COA execution, deterministic ticks, validation, Green/White advisory, ranking) — it changes NO
@@ -4676,7 +4824,71 @@
         return h;
     }
     function _v2PlanningElapsed() { try { return _coaLoadingStart ? Math.max(0, Math.round((Date.now() - _coaLoadingStart) / 1000)) : 0; } catch (_) { return 0; } }
+    // Distinct blue primary for the scenario action (visually separates Run Scenario from Run Plan).
+    function _v2ScenarioPri(act, label, title) { return '<button data-ff-v2-primary="1" data-act="' + act + '"' + (title ? ' title="' + esc(title) + '"' : '') + ' style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#13243a;color:#9ec2ec;border-radius:6px;padding:8px 16px;font-size:12.5px;font-weight:700;">' + label + '</button>'; }
+    // What the operator must do next, in plain language (drives the "Next required action" line).
+    function _scenarioNextActionText() {
+        var s = _scenario; if (!s) return '';
+        if (s.scenario_status === 'running') return 'Fight running — ' + (s.current_actor || 'unit-controller') + ' acting.';
+        if (s.scenario_status === 'complete') return 'Scenario over (' + (s.end_condition || 'ended') + ').';
+        if (_coaLoading) return 'AI is generating the next Blue order…';
+        if (_coaExec && _coaExec.active && _coaExec.phase_status !== 'complete') return 'Press Continue Scenario to run the next turn.';
+        if (_coaPlan && _coaPlan.ok && arr(_coaPlan.coas).length) return 'Commit the next order, then Continue Scenario.';
+        return 'Blue needs new orders — Replan with AI or use a Staff-Safe order.';
+    }
+    // The continuous-scenario console: Plan status · Scenario status · Turn · Actor · Last outcome · Next action.
+    function _renderScenarioCockpitV2() {
+        var s = _scenario;
+        var status = s.scenario_status;
+        var COL = { running: '#7fd6a0', paused: '#cdb86a', complete: '#7fd6a0', blocked: '#f0707a' };
+        var LBL = { running: 'Scenario running', paused: 'Scenario paused', complete: 'Scenario complete', blocked: 'Scenario blocked' };
+        var phases = arr(_coaExec && _coaExec.selected_coa && _coaExec.selected_coa.phases);
+        var planStatus = _coaExec
+            ? (_coaExec.phase_status === 'complete' ? (esc(_coaExec.selected_coa_id) + ' complete') : (esc(_coaExec.selected_coa_id) + ' · phase ' + (Math.min(_coaExec.current_phase_index, phases.length) + (_coaExec.phase_status === 'complete' ? 0 : 1)) + '/' + phases.length))
+            : (_coaLoading ? 'generating new orders…' : (_coaPlan && _coaPlan.ok ? 'new plan ready — commit to continue' : 'no committed COA'));
+        var head = '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">' +
+            '<span style="font-size:12.5px;font-weight:700;color:#9ec2ec;">🎬 Free Fight — Continuous Scenario</span>' +
+            '<span data-ff-v2="scenario-state" data-ff-v2-scenario-status="' + status + '" style="font-size:9.5px;font-weight:700;color:' + (COL[status] || '#9ec2ec') + ';background:#0c1622;border:1px solid #24435f;border-radius:10px;padding:2px 9px;">' + (LBL[status] || status) + '</span></div>';
+        var cons = '<div data-ff-v2="scenario-status" style="margin-top:2px;padding:7px 9px;border:1px solid #2a4d6a;border-radius:6px;background:#08131e;font-size:10px;color:#cdd8e4;line-height:1.6;">' +
+            '<div><span style="color:#8fa5b8;">Plan status:</span> <b style="color:#cfe6ff;">' + planStatus + '</b></div>' +
+            '<div><span style="color:#8fa5b8;">Scenario:</span> <b style="color:' + (COL[status] || '#cfe6ff') + ';">' + esc(status) + '</b> · <span style="color:#8fa5b8;">Turn:</span> <b style="color:#cfe6ff;">' + s.scenario_turn + '</b> · <span style="color:#8fa5b8;">Actor:</span> <b style="color:#cfe6ff;">' + esc(s.current_actor) + '</b></div>' +
+            '<div data-ff-v2="scenario-outcome"><span style="color:#8fa5b8;">Last outcome:</span> ' + esc(s.last_outcome || '—') + '</div>' +
+            '<div data-ff-v2="scenario-next"><span style="color:#8fa5b8;">Next required action:</span> <b style="color:#e0c060;">' + esc(_scenarioNextActionText()) + '</b></div>' +
+            '<div style="margin-top:2px;font-size:9px;color:#7fd6a0;">Deterministic ticks · AI not called on normal ticks · /plan-coas only on explicit Replan.</div></div>';
+        var hasRunnable = !!(_coaExec && _coaExec.active && _coaExec.phase_status !== 'complete');
+        var hasNewPlan = !!(_coaPlan && _coaPlan.ok && arr(_coaPlan.coas).length);
+        var actions = '', body = '';
+        if (status === 'running') {
+            actions = _v2Pri('v2-scenario-pause', '⏸ Pause Scenario', 'Pause the continuous fight') + _v2Sec('v2-scenario-stop', '⏹ Stop Scenario');
+            body = _v2RunProgressHtml();
+        } else if (status === 'complete') {
+            actions = _v2ScenarioPri('v2-run-scenario', '🎬 Run Another Turn', 'Continue the fight from here') + _v2Sec('v2-generate', '⚡ New AI Plan') + _v2Sec('v2-clear', 'Clear / Exit Scenario');
+            body = '<div data-ff-v2="scenario-complete" style="margin-top:8px;padding:6px 9px;border:1px solid #1a4030;border-radius:6px;background:#0c1f14;color:#9fd6b0;font-size:10px;">✅ Scenario complete — ' + esc(s.end_condition || 'ended') + (s.last_outcome ? ': ' + esc(s.last_outcome) : '') + '</div>';
+        } else {   // paused / blocked — the fight continues; Blue needs the next order
+            body += '<div data-ff-v2="scenario-needs-orders" style="margin-top:8px;padding:6px 9px;border:1px solid #6a5520;border-radius:6px;background:#1c1708;color:#e8d68a;font-size:10px;">⚠ Scenario needs new Blue orders — ' + esc(s.pending_replan_reason || 'choose the next order to continue the fight.') + '</div>';
+            if (_coaLoading) {
+                actions = '';
+                body += _v2Note('AI is generating the next Blue order…', '#e0c060');
+            } else if (hasRunnable) {
+                actions = _v2ScenarioPri('v2-scenario-continue', '▶ Continue Scenario', 'Run the next turn with the committed COA') + _v2Sec('v2-scenario-stop', '⏹ Stop Scenario');
+            } else if (hasNewPlan) {
+                var coas = arr(_coaPlan.coas), recIdx = _pickRecommendedIdx(_coaPlan);
+                actions = _v2Pri('v2-commit', '✅ Commit Next Order (' + esc(_v2CoaId(coas, _coaSelectedIdx)) + ')', 'Lock the next COA, then Continue Scenario') + _v2Sec('v2-scenario-stop', '⏹ Stop Scenario');
+                body += _v2CoaCardsHtml(coas, recIdx) + _v2SelectedSummaryHtml(coas, recIdx);
+            } else {
+                actions = _v2Sec('v2-staff-safe', '🛡 Staff-Safe Next Order') + _v2Sec('v2-scenario-stop', '⏹ Stop Scenario');
+                body += '<div style="margin-top:6px;display:flex;align-items:center;gap:6px;"><span style="font-size:9.5px;color:#8fa5b8;">Advanced action:</span> ' + _v2Adv('v2-replan', '↻ Replan with AI (slow)', 'Call the AI for a fresh Blue plan') + '</div>';
+            }
+        }
+        return '<div data-ff-v2="window" data-ff-v2-mode="scenario" style="margin:6px 0;padding:11px 13px;border:1px solid #2e5d7d;border-radius:8px;background:#0a1726;">' +
+            head + cons +
+            '<div data-ff-v2="actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;">' + actions + '</div>' +
+            body + '</div>';
+    }
     function renderFreeFightControlV2() {
+        // RMOOZ-FREE-FIGHT-CONTINUOUS-SCENARIO-AA: when a continuous scenario is active, the cockpit body
+        // is the scenario console (Plan status · Scenario status · Turn · Actor · Last outcome · Next action).
+        if (_scenarioActive()) return _renderScenarioCockpitV2();
         var state = _freeFightControlStateV2();
         var coas = arr(_coaPlan && _coaPlan.coas);
         var recIdx = _pickRecommendedIdx(_coaPlan);
@@ -4696,8 +4908,11 @@
             body = _v2CoaCardsHtml(coas, recIdx) + _v2SelectedSummaryHtml(coas, recIdx) +
                 '<div style="margin-top:8px;display:flex;align-items:center;gap:6px;"><span style="font-size:9.5px;color:#8fa5b8;">Advanced:</span> ' + _v2Adv('v2-regenerate', '↻ Regenerate Plan (AI · slow)', 'Calls the AI again') + '</div>';
         } else if (state === 'committed') {
-            actions = _v2Pri('v2-run', '▶ Run Plan', 'Fast deterministic execution — no AI on normal ticks') + _v2Sec('v2-clear', 'Clear Plan');
-            body = _v2CommittedSummaryHtml() + _v2Note('<b>Run Plan</b> executes the committed plan deterministically — fast, no AI on normal ticks.', '#7fd6a0');
+            actions = _v2Pri('v2-run', '▶ Run Plan', 'Execute the committed COA ONCE — fast, no AI on normal ticks') +
+                _v2ScenarioPri('v2-run-scenario', '🎬 Run Scenario', 'Continuously run the fight — Red reaction, White adjudication, Green updates — until an end condition') +
+                _v2Sec('v2-clear', 'Clear Plan');
+            body = _v2CommittedSummaryHtml() +
+                _v2Note('<b>Run Plan</b> = execute the COA once (can end with "Plan complete"). <b>Run Scenario</b> = keep the fight going: White adjudicates, Green updates, Red reacts, until an end condition. Both are deterministic — no AI on normal ticks.', '#9fb8c8');
         } else if (state === 'running') {
             actions = _v2Pri('v2-pause', '⏸ Pause', 'Stop movement');
             body = _v2RunProgressHtml() + _v2Note('Running — <b>the AI is NOT called on normal ticks</b>.', '#7fd6a0');
@@ -4710,8 +4925,9 @@
                 _v2CommittedSummaryHtml() +
                 '<div style="margin-top:8px;display:flex;align-items:center;gap:6px;"><span style="font-size:9.5px;color:#8fa5b8;">Advanced action:</span> ' + _v2Adv('v2-replan', '↻ Replan with AI (slow)', 'Stop and call the AI for a fresh plan') + '</div>';
         } else if (state === 'complete') {
-            actions = _v2Pri('v2-generate', '⚡ Generate AI Plan', 'Start a new plan (calls AI)') + _v2Sec('v2-clear', 'Clear Plan');
-            body = _v2Note('✅ Plan complete — all phases executed with no AI calls.', '#7fd6a0') + _v2CommittedSummaryHtml();
+            actions = _v2ScenarioPri('v2-run-scenario', '🎬 Run Scenario', 'Continue the fight from here — Red reaction, White adjudication, Green updates, until an end condition') +
+                _v2Sec('v2-generate', '⚡ New AI Plan') + _v2Sec('v2-clear', 'Clear Plan');
+            body = _v2Note('✅ <b>Plan complete</b> — all phases executed with no AI calls. This is a single COA playback. <b>Run Scenario</b> to keep the fight going (White / Green / Red), or start a new plan.', '#7fd6a0') + _v2CommittedSummaryHtml();
         }
         var head = '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">' +
             '<span style="font-size:12.5px;font-weight:700;color:#9ec2ec;">🎖 AI Commander — Free Fight</span>' +
@@ -4742,7 +4958,9 @@
     // Bind the V2 control-window actions. All ids are unique to V2; when the legacy drawer is closed its
     // controls are absent from the DOM, so these binds never collide. Every handler updates visible state.
     function bindFreeFightControlV2() {
-        bind('v2-generate', function () { setPlanningMode('commander'); _generateCoaPlan(); });
+        // v2-generate / v2-clear leave any active scenario (start fresh); the in-scenario "next order"
+        // paths (v2-staff-safe / v2-replan) keep the scenario alive on purpose.
+        bind('v2-generate', function () { _resetScenario(); setPlanningMode('commander'); _generateCoaPlan(); });
         bind('v2-regenerate', function () { setPlanningMode('commander'); _generateCoaPlan(); });
         bind('v2-staff-safe', function () { setPlanningMode('staff_safe'); _generateCoaPlan(); });
         bind('v2-commit', function () { _commitCoa(_coaSelectedIdx); });
@@ -4750,8 +4968,13 @@
         bind('v2-resume', _runCommittedCoa);
         bind('v2-continue', _runCommittedCoa);
         bind('v2-pause', _pauseCommittedCoa);
-        bind('v2-clear', _resetCoaExec);
+        bind('v2-clear', function () { _resetScenario(); _resetCoaExec(); });
         bind('v2-replan', _replanCoa);
+        // RMOOZ-FREE-FIGHT-CONTINUOUS-SCENARIO-AA: continuous-scenario controls (deterministic; no LLM on ticks).
+        bind('v2-run-scenario', _runScenario);
+        bind('v2-scenario-continue', _runScenario);
+        bind('v2-scenario-pause', _pauseScenario);
+        bind('v2-scenario-stop', _stopScenario);
         bind('v2-legacy-toggle', function () { _ffLegacyOpen = !_ffLegacyOpen; updatePanel(); });
         // COA card selection — clicking a card sets the selection and repaints immediately so the
         // highlight + selected summary + Commit label update on the spot. Bind a generous range (plans
@@ -5245,6 +5468,18 @@
         _v2SelectedSummaryHtmlForTest: function ()          { return _v2SelectedSummaryHtml(arr(_coaPlan && _coaPlan.coas), _pickRecommendedIdx(_coaPlan)); },
         // RMOOZ-FREE-FIGHT-V2-REAL-OPERATOR-ACCEPTANCE-Z test seam
         _v2MovementSummaryHtmlForTest: function ()          { return _v2MovementSummaryHtml(); },
+        // RMOOZ-FREE-FIGHT-CONTINUOUS-SCENARIO-AA test seams
+        _runScenarioForTest:       function ()              { return _runScenario(); },
+        _scenarioTickForTest:      function ()              { return _scenarioTick(); },
+        _scenarioTransitionForTest: function ()             { return _scenarioTransition(); },
+        _getScenarioForTest:       function ()              { return _scenario ? Object.assign({}, _scenario) : null; },
+        _whiteScenarioOutcomeForTest: function ()           { return _whiteScenarioOutcome(); },
+        _redReactionForTest:       function (o)             { return _redReaction(o || _whiteScenarioOutcome()); },
+        _scenarioEndConditionForTest: function (o)          { return _scenarioEndCondition(o || _whiteScenarioOutcome()); },
+        _pauseScenarioForTest:     function ()              { return _pauseScenario(); },
+        _stopScenarioForTest:      function ()              { return _stopScenario(); },
+        _resetScenarioForTest:     function ()              { return _resetScenario(); },
+        _renderScenarioCockpitV2ForTest: function ()        { return _scenarioActive() ? _renderScenarioCockpitV2() : ''; },
         _bodyHtmlForTest:          function ()              { updatePanel(); var b = _panel && _panel.querySelector('[data-ff="body"]'); return b ? b.innerHTML : ''; },
         // RMOOZ-FREE-FIGHT-CONTROL-WINDOW-REBUILD-W test seams
         _setFfTabForTest:          function (t)             { _ffTab = t; return _ffTab; },

@@ -4631,7 +4631,7 @@
         if (ga && ga.considered) h += '<div style="color:#9ab0c0;">Green collateral: ' + esc(ga.collateral_risk_band) + ' · advisory Δ ' + ga.advisory_score_delta + (ga.neutral_reaction_score != null ? ' · reaction ' + ga.neutral_reaction_score : '') + '</div>';
         h += '<div style="margin-top:2px;font-size:9px;color:#5a7a8a;">Advisory only — not a block. The structure/physics validator is the only gate.</div>';
         h += '</div></div>';
-        return h;
+        return h + _v2MovementSummaryHtml();
     }
     function _v2RunProgressHtml() {
         var ex = _coaExec;
@@ -4646,6 +4646,33 @@
         h += '<div data-ff-v2="tickstatus" style="font-size:9.5px;color:#7fd6a0;">Tick status: deterministic · llm_called_this_tick: <b>false</b></div>';
         h += '<div style="margin-top:4px;height:6px;background:#0c1622;border:1px solid #24435f;border-radius:4px;overflow:hidden;"><div style="width:' + pct + '%;height:100%;background:#2e7d54;"></div></div>';
         h += '</div>';
+        return h + _v2MovementSummaryHtml();
+    }
+    // ── RMOOZ-FREE-FIGHT-V2-REAL-OPERATOR-ACCEPTANCE-Z: movement feedback. A committed COA that holds
+    // position (or whose units are already at their objective) runs to "complete" with ZERO map movement
+    // — without this line the operator reads that as "Run doesn't work". Render-time only; reads the
+    // committed COA's own orders + the exec's completed_orders. No engine/movement/physics change.
+    function _v2CoaActionCounts(coa) {
+        var move = 0, hold = 0;
+        arr(coa && coa.phases).forEach(function (ph) {
+            arr(ph.actions).forEach(function (a) { if (!a) return; if (a.action_type === 'HOLD_POSITION') hold++; else move++; });
+        });
+        return { move: move, hold: hold };
+    }
+    function _v2MovementSummaryHtml() {
+        var ex = _coaExec;
+        if (!ex || !ex.selected_coa) return '';
+        var c = _v2CoaActionCounts(ex.selected_coa);
+        var doneMoves = arr(ex.completed_orders).filter(function (o) { return o && o.action_type && o.action_type !== 'HOLD_POSITION'; }).length;
+        var complete = ex.phase_status === 'complete';
+        var h = '<div data-ff-v2="movement" style="margin-top:6px;font-size:9.5px;color:#9ab0c0;border-top:1px solid #163048;padding-top:4px;">';
+        h += 'Movement: this plan orders <b style="color:#cfe6ff;">' + c.move + '</b> move · <b style="color:#cfe6ff;">' + c.hold + '</b> hold' + (c.move > 0 ? ' · executed <b style="color:#cfe6ff;">' + doneMoves + '</b>' : '');
+        h += '</div>';
+        if (c.move === 0) {
+            h += '<div data-ff-v2="no-movement" style="margin-top:3px;font-size:9.5px;color:#e0a93a;">ⓘ This COA holds position — no unit movement is expected on the map. Generate or select a maneuver COA (one with MOVE orders) to see units move.</div>';
+        } else if (complete && doneMoves === 0) {
+            h += '<div data-ff-v2="no-movement" style="margin-top:3px;font-size:9.5px;color:#e0a93a;">ⓘ The plan completed but no maneuver orders executed — units may already be at their objective. Open Diagnostics → COA to review the committed orders.</div>';
+        }
         return h;
     }
     function _v2PlanningElapsed() { try { return _coaLoadingStart ? Math.max(0, Math.round((Date.now() - _coaLoadingStart) / 1000)) : 0; } catch (_) { return 0; } }
@@ -5216,6 +5243,8 @@
         _v2StepStatusForTest:      function (state, n)      { return _v2StepStatus(state, n); },
         _v2MicrocopyHtmlForTest:   function (state)         { return _v2MicrocopyHtml(state || _freeFightControlStateV2()); },
         _v2SelectedSummaryHtmlForTest: function ()          { return _v2SelectedSummaryHtml(arr(_coaPlan && _coaPlan.coas), _pickRecommendedIdx(_coaPlan)); },
+        // RMOOZ-FREE-FIGHT-V2-REAL-OPERATOR-ACCEPTANCE-Z test seam
+        _v2MovementSummaryHtmlForTest: function ()          { return _v2MovementSummaryHtml(); },
         _bodyHtmlForTest:          function ()              { updatePanel(); var b = _panel && _panel.querySelector('[data-ff="body"]'); return b ? b.innerHTML : ''; },
         // RMOOZ-FREE-FIGHT-CONTROL-WINDOW-REBUILD-W test seams
         _setFfTabForTest:          function (t)             { _ffTab = t; return _ffTab; },

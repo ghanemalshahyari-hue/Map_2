@@ -52,6 +52,7 @@
     // re-engaged ONLY when a replan trigger fires or the operator clicks Replan. This is an ADDITIONAL
     // mode alongside the AI-every-turn loop (which is unchanged).
     var _coaExec = null;        // active_coa_execution_state (see _commitCoa) | null
+    var _committedPlanObj = null;   // RMOOZ-FREE-FIGHT-V2-COA-TO-SCENARIO-BUGFIX-AB1: the _coaPlan object _coaExec was committed from (identity check → a fresh plan / changed selection supersedes a stale commit)
     var _coaExecTimer = null;   // setInterval handle for the committed-COA tick loop
     var COA_EXEC_STUCK_TICKS = 4;       // phase makes no progress for this many ticks → replan trigger
     var COA_EXEC_FORCE_LOSS_FRAC = 0.5; // active-side units missing above this fraction → replan trigger
@@ -2533,6 +2534,7 @@
             created_at: _nowISO(), updated_at: _nowISO(),
             last_tick_timing: { coa_commit_ms: _nowMs() - t0, coa_tick_execute_ms: 0, replan_trigger_check_ms: 0, llm_called_this_tick: false },
         };
+        _committedPlanObj = _coaPlan;   // AB1: remember WHICH plan object this commit came from (identity)
         // RMOOZ-ADVISORY-COMMIT-JOURNAL-V: persist the advisory/ranking decision context with the commit.
         var _ctx = _buildCommitAdvisoryContext(i);
         _coaExec.commit_advisory_context = _ctx;
@@ -2682,6 +2684,7 @@
     function _resetCoaExec() {
         _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
         _coaExec = null;
+        _committedPlanObj = null;   // AB1: drop the committed-plan identity so a later plan starts clean
         _persistCoaExec();   // RMOOZ-COA-COMMIT-PERSISTENCE-M: !_coaExec → removes the persisted key (safe clear, req #8)
         updatePanel();
     }
@@ -4842,11 +4845,29 @@
     // hidden duplicates); ≤2 primary actions visible at once; no raw JSON / benchmark / decision log in
     // the main flow (those live behind the closed Diagnostics/Legacy drawer). Every visible button maps
     // to an existing engine function and updates the visible state immediately on click.
+    // RMOOZ-FREE-FIGHT-V2-COA-TO-SCENARIO-BUGFIX-AB1: is the committed COA STALE relative to what the
+    // operator is now looking at? True when (a) a DIFFERENT (newer) plan object is loaded than the one we
+    // committed from — e.g. a fresh Generate or a leftover/restored commit — or (b) the selected COA has
+    // moved off the committed one. A restored commit with NO current plan is NOT stale (operator resumes it).
+    function _coaCommitIsStale() {
+        if (!_coaExec || !_coaExec.active) return false;
+        if (!(_coaPlan && _coaPlan.ok && Array.isArray(_coaPlan.coas) && _coaPlan.coas.length)) return false;
+        if (_committedPlanObj !== _coaPlan) return true;                       // a newer plan supersedes the commit
+        var coas = _coaPlan.coas;
+        if (_coaSelectedIdx >= 0 && _coaSelectedIdx < coas.length) {
+            var selId = (coas[_coaSelectedIdx] && coas[_coaSelectedIdx].plan_id) || ('COA-' + (_coaSelectedIdx + 1));
+            if (_coaExec.selected_coa_id !== selId) return true;              // selection moved off the committed COA
+        }
+        return false;
+    }
     function _freeFightControlStateV2() {
         var coas = arr(_coaPlan && _coaPlan.coas);
         var hasPlan = !!(_coaPlan && _coaPlan.ok && coas.length);
         var ex = _coaExec;
         if (_coaLoading) return 'planning';
+        // AB1: a fresh plan / changed selection must supersede a stale commit → back to 'ready' to (re)commit
+        // the CURRENT plan, so Run/Run-Scenario can never fire on an out-of-date committed COA.
+        if (ex && ex.active && _coaCommitIsStale()) return 'ready';
         if (ex && ex.replan_required) return 'blocked';
         if (ex && ex.phase_status === 'complete') return 'complete';
         if (ex && ex.active) {
@@ -5023,6 +5044,21 @@
     function _v2PlanningElapsed() { try { return _coaLoadingStart ? Math.max(0, Math.round((Date.now() - _coaLoadingStart) / 1000)) : 0; } catch (_) { return 0; } }
     // Distinct blue primary for the scenario action (visually separates Run Scenario from Run Plan).
     function _v2ScenarioPri(act, label, title) { return '<button data-ff-v2-primary="1" data-act="' + act + '"' + (title ? ' title="' + esc(title) + '"' : '') + ' style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#13243a;color:#9ec2ec;border-radius:6px;padding:8px 16px;font-size:12.5px;font-weight:700;">' + label + '</button>'; }
+    // RMOOZ-FREE-FIGHT-V2-COA-TO-SCENARIO-BUGFIX-AB1: an explicit one-line flow status so the operator
+    // always knows where they are: selected-not-committed → committed-ready-to-run → running.
+    function _v2FlowStatusHtml(state) {
+        var coas = arr(_coaPlan && _coaPlan.coas);
+        var selId = coas.length ? _v2CoaId(coas, _coaSelectedIdx) : '—';
+        var txt, col, stale = !!(_coaExec && _coaExec.active && state === 'ready');
+        if (state === 'ready') { txt = stale ? ('Selection changed — commit ' + selId + ' before running scenario') : ('Selected ' + selId + ' — not committed yet'); col = stale ? '#e0a93a' : '#cdb86a'; }
+        else if (state === 'committed') { txt = 'Committed ' + ((_coaExec && _coaExec.selected_coa_id) || selId) + ' — ready to Run Plan or Run Scenario'; col = '#7fd6a0'; }
+        else if (state === 'running') { txt = 'Running — deterministic ticks, no AI'; col = '#7fd6a0'; }
+        else if (state === 'paused') { txt = 'Paused — Resume or Clear'; col = '#cdb86a'; }
+        else if (state === 'blocked') { txt = 'Blocked — operator decision needed'; col = '#f0707a'; }
+        else if (state === 'complete') { txt = 'Plan complete'; col = '#7fd6a0'; }
+        else { return ''; }
+        return '<div data-ff-v2="flow-status" data-ff-v2-flow="' + state + (stale ? '-stale' : '') + '" style="margin-top:4px;font-size:9.5px;color:' + col + ';">● ' + esc(txt) + '</div>';
+    }
     // What the operator must do next, in plain language (drives the "Next required action" line).
     function _scenarioNextActionText() {
         var s = _scenario; if (!s) return '';
@@ -5127,8 +5163,10 @@
                 _v2Note('The local model can take 30–90s. This window updates automatically when the plan is ready.', '#8fa5b8');
         } else if (state === 'ready') {
             var selId = _v2CoaId(coas, _coaSelectedIdx);
-            actions = _v2Pri('v2-commit', '✅ Commit Selected Plan (' + esc(selId) + ')', 'Locks the selected COA for execution');
-            body = _v2CoaCardsHtml(coas, recIdx) + _v2SelectedSummaryHtml(coas, recIdx) +
+            var staleExec = !!(_coaExec && _coaExec.active);   // AB1: a fresh plan / changed selection pushed us back to ready
+            actions = _v2Pri('v2-commit', '✅ Commit Selected Plan (' + esc(selId) + ')', 'Locks the selected COA for execution') + (staleExec ? _v2Sec('v2-clear', 'Clear Plan') : '');
+            body = (staleExec ? '<div data-ff-v2="recommit-needed" style="margin-bottom:6px;padding:6px 9px;border:1px solid #6a5520;border-radius:6px;background:#1c1708;color:#e8d68a;font-size:10px;">⚠ Selection changed — commit selected plan before running scenario. (A new plan or a different COA replaced the previously committed one — Run / Run Scenario stay hidden until you commit.)</div>' : '') +
+                _v2CoaCardsHtml(coas, recIdx) + _v2SelectedSummaryHtml(coas, recIdx) +
                 '<div style="margin-top:8px;display:flex;align-items:center;gap:6px;"><span style="font-size:9.5px;color:#8fa5b8;">Advanced:</span> ' + _v2Adv('v2-regenerate', '↻ Regenerate Plan (AI · slow)', 'Calls the AI again') + '</div>';
         } else if (state === 'committed') {
             actions = _v2Pri('v2-run', '▶ Run Plan', 'Execute the committed COA ONCE — fast, no AI on normal ticks') +
@@ -5160,6 +5198,7 @@
         return '<div data-ff-v2="window" style="margin:6px 0;padding:11px 13px;border:1px solid #2e5d7d;border-radius:8px;background:#0a1726;">' +
             head +
             _v2StepperHtml(state) +
+            _v2FlowStatusHtml(state) +
             '<div data-ff-v2="actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;">' + actions + '</div>' +
             _v2MicrocopyHtml(state) +
             body + '</div>';
@@ -5715,6 +5754,9 @@
         _objFormationForTest:      function (obj)           { return _objFormation(obj || getObjective()); },
         _ringPosForTest:           function (obj, ring, i)  { var o = obj || getObjective(); return { assault: _assaultRing(o, i), support: _supportRing(o, i), screen: _screenRing(o, i), blocking: _blockingRing(o, i), reserve: _reserveRing(o, i) }[ring]; },
         _autoDirectorBuildCoaForTest: function (o)          { return _autoDirectorBuildCoa(o || _whiteScenarioOutcome()); },
+        // RMOOZ-FREE-FIGHT-V2-COA-TO-SCENARIO-BUGFIX-AB1 test seams
+        _coaCommitIsStaleForTest:  function ()              { return _coaCommitIsStale(); },
+        _getCommittedPlanObjMatchesForTest: function ()     { return _committedPlanObj === _coaPlan; },
         _bodyHtmlForTest:          function ()              { updatePanel(); var b = _panel && _panel.querySelector('[data-ff="body"]'); return b ? b.innerHTML : ''; },
         // RMOOZ-FREE-FIGHT-CONTROL-WINDOW-REBUILD-W test seams
         _setFfTabForTest:          function (t)             { _ffTab = t; return _ffTab; },

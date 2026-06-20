@@ -4507,6 +4507,32 @@
     var SCENARIO_MAX_TURNS = 12;
     var SCENARIO_MAX_AUTO_TURNS = 8;       // RMOOZ-...-AB: auto-director hard cap (forces a human decision)
     var SCENARIO_OBJ_NEAR_KM = 8;          // a unit within this range of the objective counts as "at" it
+    // ── RMOOZ-AUTO-SCENARIO-FORMATION-REALISM-AC: deterministic tactical spacing around the objective ──
+    var OBJ_CONTROL_KM = 5;                // a side "controls/holds" the objective with a unit inside this radius
+    var OBJ_CONTEST_KM = 8;                // a side "contests" the objective with a unit inside this radius
+    var RING_KM = { assault: 2, support: 5, screen: 3, blocking: 4, reserve: 8 };
+    var BLUE_BASE_DEG = 210;               // Blue approaches/holds from the SW sector
+    var RED_BASE_DEG = 30;                 // Red defends from the NE sector (opposite Blue → no stacking)
+    // A deterministic ring position: radius (km) + a per-unit angular offset (idx * 25°) so units never
+    // share a coordinate. Movement is still capped + teleport-guarded at execution time (_resolveCoaMoves).
+    function _ringPos(obj, radiusKm, idx, baseDeg) {
+        if (!obj) return null;
+        var rDeg = radiusKm / 111;
+        var ang = (baseDeg + (idx || 0) * 25) * Math.PI / 180;
+        var cosLat = Math.cos((obj.lat || 0) * Math.PI / 180) || 1;
+        return { lat: round5(obj.lat + rDeg * Math.cos(ang)), lon: round5(obj.lon + (rDeg * Math.sin(ang)) / cosLat) };
+    }
+    function _assaultRing(obj, i)  { return _ringPos(obj, RING_KM.assault, i, BLUE_BASE_DEG); }
+    function _supportRing(obj, i)  { return _ringPos(obj, RING_KM.support, i, BLUE_BASE_DEG); }
+    function _screenRing(obj, i)   { return _ringPos(obj, RING_KM.screen, i, RED_BASE_DEG); }
+    function _blockingRing(obj, i) { return _ringPos(obj, RING_KM.blocking, i, RED_BASE_DEG); }
+    function _reserveRing(obj, i)  { return _ringPos(obj, RING_KM.reserve, i, BLUE_BASE_DEG + 180); }
+    function _objFormation(obj) {
+        return { objective_center: obj ? { lat: obj.lat, lon: obj.lon } : null,
+            assault_ring: function (i) { return _assaultRing(obj, i); }, support_ring: function (i) { return _supportRing(obj, i); },
+            screen_ring: function (i) { return _screenRing(obj, i); }, blocking_ring: function (i) { return _blockingRing(obj, i); },
+            reserve_ring: function (i) { return _reserveRing(obj, i); } };
+    }
     function _scenarioActive() { return !!(_scenario && _scenario.scenario_active); }
     function _newScenario() {
         return { scenario_active: true, scenario_status: 'running', scenario_turn: 1, blue_cycle: 0, red_cycle: 0,
@@ -4514,42 +4540,68 @@
             max_turns: SCENARIO_MAX_TURNS, started_at: _nowISO(), updated_at: _nowISO(),
             // RMOOZ-FREE-FIGHT-AUTO-SCENARIO-DIRECTOR-AB: auto-director settings
             auto_continue: _scenarioAutoContinue, auto_director_enabled: true, max_auto_turns: SCENARIO_MAX_AUTO_TURNS,
-            last_auto_order_source: null, last_red_maneuver: null };
+            last_auto_order_source: null, last_red_maneuver: null,
+            // RMOOZ-AUTO-SCENARIO-FORMATION-REALISM-AC: objective-control + formation state
+            objective_control: 'uncontrolled', blue_presence: 0, red_contest: 0, last_formation_order: null };
     }
-    function _scenarioSideNearObj(side, obj) {
+    // Count units of a side within `km` of the objective (area-based presence/contest).
+    function _scenarioSideWithin(side, obj, km) {
         if (!obj) return 0;
         var n = 0;
         _greenUnits().forEach(function (u) {
             if (String(u.side || '').toUpperCase() !== side) return;
-            if (_kmBetween({ lat: u.lat, lon: u.lon }, { lat: obj.lat, lon: obj.lon }) <= SCENARIO_OBJ_NEAR_KM) n++;
+            if (_kmBetween({ lat: u.lat, lon: u.lon }, { lat: obj.lat, lon: obj.lon }) <= km) n++;
         });
         return n;
     }
+    function _scenarioSideNearObj(side, obj) { return _scenarioSideWithin(side, obj, SCENARIO_OBJ_NEAR_KM); }
     // White deterministic adjudication of the current battlefield (NO LLM, NO fetch).
+    // RMOOZ-AUTO-SCENARIO-FORMATION-REALISM-AC: AREA-based objective control (radius, not exact center):
+    // Blue controls if Blue is inside the objective radius and Red cannot contest; Red controls the mirror;
+    // contested when both have units inside the radii; uncontrolled otherwise.
     function _whiteScenarioOutcome() {
         var obj = getObjective();
         var blueTotal = _sideUnitCount('BLUE'), redTotal = _sideUnitCount('RED');
-        var blueNear = _scenarioSideNearObj('BLUE', obj), redNear = _scenarioSideNearObj('RED', obj);
+        var bluePresence = _scenarioSideWithin('BLUE', obj, OBJ_CONTROL_KM);   // Blue inside the control radius
+        var redControl = _scenarioSideWithin('RED', obj, OBJ_CONTROL_KM);       // Red inside the control radius
+        var redContest = _scenarioSideWithin('RED', obj, OBJ_CONTEST_KM);       // Red inside the (wider) contest radius
+        var blueContest = _scenarioSideWithin('BLUE', obj, OBJ_CONTEST_KM);
         var committed = (_coaExec && _coaExec.commit_unit_count) || 0;
         var activeSide = (_coaExec && _coaExec.side) || 'RED';
         var unitsMissing = committed > 0 ? Math.max(0, committed - _sideUnitCount(activeSide)) : 0;
-        var objectiveReached = obj ? (blueNear > 0) : false;
-        var objectiveContested = obj ? (redNear > 0) : (redTotal > 0);
-        var blueSuccess = objectiveReached && !objectiveContested && blueTotal > 0;
-        var redActive = redTotal > 0;
+        var redAbilityToContest = redTotal > 0;
+        var blueAbilityToContinue = blueTotal > 0;
+        var control;
+        if (!obj) control = (redTotal > 0 && blueTotal > 0) ? 'contested' : (blueTotal > 0 ? 'blue' : (redTotal > 0 ? 'red' : 'uncontrolled'));
+        else if (bluePresence > 0 && redContest === 0) control = 'blue';
+        else if (redControl > 0 && blueContest === 0) control = 'red';
+        else if ((bluePresence > 0 || blueContest > 0) && (redControl > 0 || redContest > 0)) control = 'contested';
+        else control = 'uncontrolled';
+        // backward-compatible fields (AA/AB consumers + _redReaction + end conditions read these)
+        var objectiveReached = obj ? (bluePresence > 0) : (blueTotal > 0);
+        var objectiveContested = (control === 'contested');
+        var blueSuccess = (control === 'blue') && blueTotal > 0;
+        var redActive = redAbilityToContest;
         var blueUnable = blueTotal === 0;
         var redUnable = redTotal === 0;
         var shouldContinue = !(blueSuccess || blueUnable || redUnable);
-        var replanRequired = shouldContinue && (objectiveContested || !objectiveReached);
-        var summary = objectiveReached
-            ? (objectiveContested ? 'Objective reached but contested — Red still active near the objective.' : 'Objective reached and uncontested.')
-            : (obj ? 'Objective not yet reached.' : 'No objective placed — adjudicating force status only.');
-        return { objective: obj || null, objective_reached: objectiveReached, objective_contested: objectiveContested,
+        var replanRequired = shouldContinue && (control === 'contested' || !objectiveReached);
+        var summary = control === 'blue' ? 'Objective controlled by Blue — Red cannot contest.'
+            : control === 'red' ? 'Objective controlled by Red.'
+            : control === 'contested' ? ('Objective contested — ' + bluePresence + ' Blue inside / ' + redContest + ' Red contesting.')
+            : (obj ? 'Objective uncontrolled — no side inside the objective radius.' : 'No objective placed — adjudicating force status only.');
+        return { objective: obj || null,
+            // AC area-based control
+            objective_control: control, blue_presence: bluePresence, red_contest: redContest, red_control: redControl, blue_contest: blueContest,
+            red_ability_to_contest: redAbilityToContest, blue_ability_to_continue: blueAbilityToContinue,
+            objective_radius_km: OBJ_CONTROL_KM, contest_radius_km: OBJ_CONTEST_KM,
+            // backward-compatible
+            objective_reached: objectiveReached, objective_contested: objectiveContested,
             blue_success: blueSuccess, red_active: redActive, blue_total: blueTotal, red_total: redTotal,
-            blue_near_obj: blueNear, red_near_obj: redNear, units_missing: unitsMissing,
+            blue_near_obj: bluePresence, red_near_obj: redContest, units_missing: unitsMissing,
             blue_unable: blueUnable, red_unable: redUnable, should_continue: shouldContinue,
             replan_required: replanRequired,
-            replan_reason: replanRequired ? (objectiveContested ? 'Objective contested by Red — Blue needs new orders.' : 'Objective not secured — Blue needs new orders.') : null,
+            replan_reason: replanRequired ? (control === 'contested' ? 'Objective contested by Red — Blue needs new orders.' : 'Objective not secured — Blue needs new orders.') : null,
             reason: summary, summary: summary };
     }
     // Simple deterministic Red reaction posture (v1 — NO Red LLM yet; decision recorded only).
@@ -4575,20 +4627,25 @@
         if (!obj) { posture = 'consolidate'; title = 'Consolidate (no objective)'; }
         else if (outcome.blue_total > 0 && outcome.blue_total < outcome.units_missing) { posture = 'consolidate'; title = 'Consolidate / hold (Blue weak)'; }
         else if (outcome.objective_contested && outcome.objective_reached) { posture = 'hold_screen'; title = 'Hold & screen the objective'; }
-        else if (outcome.objective_contested) { posture = 'secure'; title = 'Secure / screen the objective'; }
+        else if (outcome.objective_contested) { posture = 'secure'; title = 'Secure the objective'; }
         else if (!outcome.objective_reached) { posture = 'advance'; title = 'Continue the advance'; }
         else { posture = 'consolidate'; title = 'Consolidate on the objective'; }
-        var actions = blue.map(function (u) {
-            if (posture === 'consolidate' || posture === 'hold_screen') {
-                // hold in place (or a screen) — no relocation needed for v1's deterministic order
-                return { unit_uid: u.id, action_type: 'HOLD_POSITION', role: (posture === 'hold_screen' ? 'screen' : 'reserve') };
-            }
-            // secure / advance → move toward the objective (capped + teleport-guarded at execution time)
-            return { unit_uid: u.id, action_type: 'MOVE', role: (posture === 'secure' ? 'assault' : 'advance'), target: { lat: obj.lat, lon: obj.lon } };
+        // RMOOZ-AUTO-SCENARIO-FORMATION-REALISM-AC: assign DETERMINISTIC ring positions (per unit index)
+        // instead of the exact objective coordinate, so units never stack. Last unit holds back as support;
+        // hold_screen spreads onto the support ring; consolidate/weak holds in place.
+        var rings = [];
+        // assault element holds the inner (control) ring; the trailing unit screens from the support ring —
+        // so a held objective keeps Blue INSIDE the control radius (no retreat to the support ring).
+        var actions = blue.map(function (u, i) {
+            if (posture === 'consolidate') { rings.push('hold'); return { unit_uid: u.id, action_type: 'HOLD_POSITION', role: 'reserve' }; }
+            var isSupport = (blue.length > 1 && i === blue.length - 1);
+            var tgt = isSupport ? _supportRing(obj, i) : _assaultRing(obj, i);
+            rings.push(isSupport ? 'support' : 'assault');
+            return { unit_uid: u.id, action_type: 'MOVE', role: (isSupport ? 'support' : 'assault'), target: tgt };   // capped + teleport-guarded at execution
         });
         return { plan_id: 'AUTO-T' + (_scenario ? _scenario.scenario_turn : 1), title: title, side: 'BLUE',
             recommended: true, risk: 'low', confidence: 'medium', source_type: 'staff_safe_auto_director', posture: posture,
-            phases: [{ name: title, actions: actions }] };
+            formation_rings: rings, phases: [{ name: title, actions: actions }] };
     }
     function _autoDirectorNextBlueOrder(outcome) {
         var coa = _autoDirectorBuildCoa(outcome);
@@ -4599,7 +4656,12 @@
         _coaSelectedIdx = 0;
         var ex = _commitCoa(0);   // builds _coaExec (pending) — deterministic, no LLM, no /plan-coas
         if (!ex) return { ok: false, reason: 'Auto-director order could not be committed — operator decision needed.' };
-        return { ok: true, coa_id: coa.plan_id, posture: coa.posture, source: 'staff_safe_auto_director' };
+        var ringsLabel = (function () { var seen = {}, out = []; arr(coa.formation_rings).forEach(function (r) { if (!seen[r]) { seen[r] = 1; out.push(r); } }); return out.join('/') || coa.posture; })();
+        if (_scenario) _scenario.last_formation_order = 'Blue ' + coa.posture + ' → ' + ringsLabel + (ringsLabel === 'hold' ? '' : ' ring');
+        try { _recordDecision({ role: 'performance', action: 'formation_assignment', called_llm: false, source: 'staff_safe_auto_director',
+            reason: 'Blue ' + coa.posture + ' formation', result_summary: 'Blue → ' + ringsLabel + ' positions (' + arr(coa.phases[0].actions).length + ' units)' }); } catch (_) {}
+        try { _appendToEventLog('Formation: Blue assigned ' + esc(ringsLabel) + ' positions (turn ' + (_scenario ? _scenario.scenario_turn : '?') + ').'); } catch (_) {}
+        return { ok: true, coa_id: coa.plan_id, posture: coa.posture, rings: ringsLabel, source: 'staff_safe_auto_director' };
     }
     // Deterministic Red maneuver — actually MOVES Red units through the SAME safe/teleport-guarded path
     // as Blue (_resolveCoaMoves → _writeMoveFrame). NO LLM. Returns {posture, moved, summary}.
@@ -4607,19 +4669,21 @@
         var posture = _redReaction(outcome).posture;
         var obj = getObjective();
         var red = _scenarioSideUnits('RED');
-        var actions = [];
+        // RMOOZ-AUTO-SCENARIO-FORMATION-REALISM-AC: Red moves to a RING (blocking/screen), never the exact
+        // objective center. counter/block → blocking ring; withdraw → away; hold/none → keep current posture.
+        var actions = [], ring = null;
         if ((posture === 'counter' || posture === 'block') && obj) {
-            // move toward the objective to contest / block
-            red.forEach(function (u) { actions.push({ unit_uid: u.id, action_type: 'MOVE', role: posture, target: { lat: obj.lat, lon: obj.lon } }); });
+            ring = 'blocking';
+            red.forEach(function (u, i) { actions.push({ unit_uid: u.id, action_type: 'MOVE', role: posture, target: _blockingRing(obj, i) }); });
         } else if (posture === 'withdraw' && obj) {
-            // move away from the objective (reflect the obj→unit vector outward)
+            ring = 'reserve';
             red.forEach(function (u) {
                 var dLat = (u.lat - obj.lat), dLon = (u.lon - obj.lon);
                 var mag = Math.sqrt(dLat * dLat + dLon * dLon) || 1;
                 actions.push({ unit_uid: u.id, action_type: 'MOVE', role: 'withdraw', target: { lat: u.lat + (dLat / mag) * 0.2, lon: u.lon + (dLon / mag) * 0.2 } });
             });
-        } // hold / none → no movement orders
-        var moved = 0;
+        } // hold / none → keep current defensive posture (no move)
+        var moved = 0, firstTarget = actions.length ? actions[0].target : null;
         if (actions.length) {
             var redCoa = { plan_id: 'RED-AUTO-T' + (_scenario ? _scenario.scenario_turn : 1), side: 'RED', phases: [{ name: posture, actions: actions }] };
             var moves = _resolveCoaMoves(redCoa).filter(function (m) { return !m.hold; });   // capped + teleport-guarded
@@ -4627,7 +4691,9 @@
             moved = moves.length;
             if (moved && mapReady()) { try { _triggerScenarioRedraw(); syncMarkers(); } catch (_) {} }
         }
-        return { posture: posture, moved: moved, summary: 'Red ' + posture + (moved ? ' — moved ' + moved + ' unit(s)' : ' — held') + ' (deterministic, no LLM)' };
+        var ringTxt = ring ? (' → ' + ring + ' ring') : '';
+        return { posture: posture, moved: moved, ring: ring, target: firstTarget,
+            summary: 'Red ' + posture + ringTxt + (moved ? ' — moved ' + moved + ' unit(s)' : ' — held') + ' (deterministic, no LLM)' };
     }
     function _scenarioEndCondition(outcome) {
         if (outcome.blue_success) return { code: 'objective_secured', summary: 'Objective secured by Blue — scenario complete.' };
@@ -4665,13 +4731,19 @@
             updatePanel();
             return _scenario;
         }
-        // 1) White adjudication (deterministic)
+        // 1) White adjudication (deterministic) — AREA-based objective control (AC)
         _scenario.current_actor = 'white';
         var outcome = _whiteScenarioOutcome();
         _scenario.last_outcome = outcome.summary;
+        _scenario.objective_control = outcome.objective_control;   // AC: Blue / Red / Contested / Uncontrolled
+        _scenario.blue_presence = outcome.blue_presence;
+        _scenario.red_contest = outcome.red_contest;
         try { _recordDecision({ role: 'white', action: 'scenario_outcome_check', called_llm: false, source: 'scenario',
             reason: outcome.reason, result_summary: 'turn ' + _scenario.scenario_turn + ' · ' + outcome.summary + ' · contested ' + outcome.objective_contested }); } catch (_) {}
-        try { _appendToEventLog('White: ' + (outcome.blue_success ? 'objective secured' : (outcome.objective_contested ? 'objective contested — scenario continues' : 'scenario continues')) + ' (turn ' + _scenario.scenario_turn + ', deterministic, no AI).'); } catch (_) {}
+        try { _recordDecision({ role: 'white', action: 'objective_control_check', called_llm: false, source: 'scenario',
+            reason: 'area-based control (obj ' + outcome.objective_radius_km + 'km / contest ' + outcome.contest_radius_km + 'km)',
+            result_summary: 'control ' + outcome.objective_control + ' · blue ' + outcome.blue_presence + ' inside · red ' + outcome.red_contest + ' contesting' }); } catch (_) {}
+        try { _appendToEventLog('White: objective ' + esc(outcome.objective_control) + (outcome.objective_control === 'contested' ? ' by ' + outcome.red_contest + ' Red unit(s)' : '') + ' (turn ' + _scenario.scenario_turn + ', deterministic, no AI).'); } catch (_) {}
         // 2) Green refresh (deterministic; /neutral-world only; fire-and-forget; no LLM)
         _scenario.current_actor = 'green';
         try { _refreshGreenWorld('scenario_turn'); } catch (_) {}
@@ -4694,8 +4766,10 @@
         try { _recordDecision({ role: 'red', action: 'red_reaction', called_llm: false, source: 'scenario', reason: red.reason, result_summary: red.summary }); } catch (_) {}
         var maneuver = _redManeuverOrder(outcome);
         _scenario.last_red_maneuver = maneuver.summary;
-        try { _recordDecision({ role: 'red', action: 'red_maneuver_order', called_llm: false, source: 'scenario', reason: red.reason, result_summary: maneuver.summary }); } catch (_) {}
-        try { _appendToEventLog('Red maneuver (turn ' + _scenario.scenario_turn + '): ' + esc(maneuver.posture) + (maneuver.moved ? ' — moved ' + maneuver.moved + ' unit(s)' : ' — held') + '.'); } catch (_) {}
+        // AC: record the Red maneuver WITH its formation target (ring), not just a log line.
+        try { _recordDecision({ role: 'red', action: 'red_maneuver_order', called_llm: false, source: 'scenario', reason: red.reason,
+            result_summary: maneuver.summary + (maneuver.ring ? ' · target ' + maneuver.ring + ' ring' : '') }); } catch (_) {}
+        try { _appendToEventLog('Red maneuver (turn ' + _scenario.scenario_turn + '): ' + (maneuver.ring ? esc(maneuver.ring) + ' ring around objective' : esc(maneuver.posture)) + (maneuver.moved ? ' — moved ' + maneuver.moved + ' unit(s)' : ' — held') + '.'); } catch (_) {}
         _scenario.blue_cycle++; _scenario.red_cycle++;
         _scenario.scenario_turn++;
         // 4) next Blue order
@@ -4988,7 +5062,9 @@
             '<div><span style="color:#8fa5b8;">Scenario mode:</span> <b data-ff-v2-scenario-mode="' + (auto ? 'auto' : 'manual') + '" style="color:' + (auto ? '#7fd6a0' : '#cdb86a') + ';">' + (auto ? 'Auto Continue' : 'Manual') + '</b></div>' +
             '<div><span style="color:#8fa5b8;">Plan status:</span> <b style="color:#cfe6ff;">' + planStatus + '</b></div>' +
             '<div><span style="color:#8fa5b8;">Scenario:</span> <b style="color:' + (COL[status] || '#cfe6ff') + ';">' + esc(status) + '</b> · <span style="color:#8fa5b8;">Turn:</span> <b style="color:#cfe6ff;">' + s.scenario_turn + '</b> · <span style="color:#8fa5b8;">Actor:</span> <b style="color:#cfe6ff;">' + esc(s.current_actor) + '</b></div>' +
+            '<div data-ff-v2="objective-control"><span style="color:#8fa5b8;">Objective control:</span> <b data-ff-v2-control="' + esc(s.objective_control || 'uncontrolled') + '" style="color:' + ({ blue: '#7bb8e8', red: '#f0707a', contested: '#e0c060', uncontrolled: '#8fa5b8' }[s.objective_control] || '#8fa5b8') + ';">' + esc((s.objective_control || 'uncontrolled').charAt(0).toUpperCase() + (s.objective_control || 'uncontrolled').slice(1)) + '</b> · <span style="color:#8fa5b8;">Blue inside:</span> <b style="color:#7bb8e8;">' + (s.blue_presence || 0) + '</b> · <span style="color:#8fa5b8;">Red contesting:</span> <b style="color:#f0707a;">' + (s.red_contest || 0) + '</b></div>' +
             '<div data-ff-v2="scenario-outcome"><span style="color:#8fa5b8;">Last White outcome:</span> ' + esc(s.last_outcome || '—') + '</div>' +
+            (s.last_formation_order ? '<div data-ff-v2="scenario-formation"><span style="color:#8fa5b8;">Last formation order:</span> <b style="color:#7bb8e8;">' + esc(s.last_formation_order) + '</b></div>' : '') +
             (s.last_auto_order_source ? '<div data-ff-v2="scenario-blue-src"><span style="color:#8fa5b8;">Blue auto order source:</span> <b style="color:#7bb8e8;">' + esc(s.last_auto_order_source) + '</b></div>' : '') +
             (s.last_red_maneuver ? '<div data-ff-v2="scenario-red"><span style="color:#8fa5b8;">Red last maneuver:</span> <b style="color:#f0707a;">' + esc(s.last_red_maneuver) + '</b></div>' : '') +
             '<div data-ff-v2="scenario-next"><span style="color:#8fa5b8;">Next required action:</span> <b style="color:#e0c060;">' + esc(_scenarioNextActionText()) + '</b></div>' +
@@ -5635,6 +5711,10 @@
         _getScenarioAutoContinueForTest: function ()        { return _scenarioAutoContinue; },
         _autoDirectorNextBlueOrderForTest: function (o)     { return _autoDirectorNextBlueOrder(o || _whiteScenarioOutcome()); },
         _redManeuverOrderForTest:  function (o)             { return _redManeuverOrder(o || _whiteScenarioOutcome()); },
+        // RMOOZ-AUTO-SCENARIO-FORMATION-REALISM-AC test seams
+        _objFormationForTest:      function (obj)           { return _objFormation(obj || getObjective()); },
+        _ringPosForTest:           function (obj, ring, i)  { var o = obj || getObjective(); return { assault: _assaultRing(o, i), support: _supportRing(o, i), screen: _screenRing(o, i), blocking: _blockingRing(o, i), reserve: _reserveRing(o, i) }[ring]; },
+        _autoDirectorBuildCoaForTest: function (o)          { return _autoDirectorBuildCoa(o || _whiteScenarioOutcome()); },
         _bodyHtmlForTest:          function ()              { updatePanel(); var b = _panel && _panel.querySelector('[data-ff="body"]'); return b ? b.innerHTML : ''; },
         // RMOOZ-FREE-FIGHT-CONTROL-WINDOW-REBUILD-W test seams
         _setFfTabForTest:          function (t)             { _ffTab = t; return _ffTab; },

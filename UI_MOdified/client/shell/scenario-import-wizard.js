@@ -66,9 +66,10 @@
             '<div class="sw-src-subcard-hdr">' +
               '<span class="sw-src-subcard-title" style="color:#7fd6a0;font-size:14px;">Import Scenario</span>' +
               '<span class="sw-src-subcard-sub" style="display:block;font-size:11px;color:#9aa3ad;margin-top:2px;">' +
-                'Upload the red &amp; blue team documents, then Start. RMOOZ generates the wargame, ' +
-                'tracks progress, and opens the scenario automatically. You don\'t need to deal with GeoJSON, ' +
-                'publishing, or folders.</span>' +
+                'Import one scenario package (JSON). RMOOZ extracts RED/BLUE units, objectives, and ' +
+                'locations, resolves missing coordinates for your review, then you choose Scenario without AI ' +
+                'or Scenario with AI. — استورد حزمة سيناريو واحدة (JSON): يستخرج RMOOZ وحدات الأحمر/الأزرق ' +
+                'والأهداف والمواقع، ويحل الإحداثيات الناقصة للمراجعة، ثم تختار سيناريو بدون أو مع الذكاء الاصطناعي.</span>' +
             '</div>' +
             '<div class="wg-wz-body">' +
               '<div class="wg-wz-doc-grid">' +
@@ -316,8 +317,8 @@
             jsonRow.id = 'wg-wz-json-row';
             jsonRow.style.cssText = 'margin:10px 0 4px;padding:8px;border:1px dashed #2e7d54;border-radius:6px;background:#101b16;';
             jsonRow.innerHTML =
-                '<div style="font-size:12px;color:#7fd6a0;margin-bottom:4px;" dir="auto">Step 1 / operational JSON for Review AI Understanding — JSON الخطوة 1 / العملياتي لمراجعة فهم الذكاء الاصطناعي <span style="color:#6a7a8a;">(optional)</span></div>' +
-                '<div style="font-size:11px;color:#9aa3ad;margin-bottom:6px;" dir="auto">Use this for multi-country Step 1, operational_brief, or scenario-understanding JSON. It does not require steps[]. — للخطوة 1 متعددة الدول أو operational_brief أو JSON فهم السيناريو؛ لا يتطلب steps[].</div>' +
+                '<div style="font-size:13px;font-weight:700;color:#7fd6a0;margin-bottom:4px;" dir="auto">① Import scenario package (JSON) — استيراد حزمة السيناريو (JSON)</div>' +
+                '<div style="font-size:11px;color:#9aa3ad;margin-bottom:6px;" dir="auto">RMOOZ extracts RED/BLUE units, objectives, and locations and resolves missing coordinates for review. Works for multi-country Step 1, operational_brief, or scenario-understanding JSON. It does not require steps[]. After staging, click “Review AI Understanding” to resolve coordinates and choose Scenario without AI / with AI. — يستخرج RMOOZ الوحدات والأهداف والمواقع ويحل الإحداثيات الناقصة للمراجعة؛ لا يتطلب steps[].</div>' +
                 '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
                   '<label class="wg-wz-file-btn" for="wg-wz-json" style="margin:0;">' +
                     '<span>Choose Step 1 JSON</span>' +
@@ -1375,6 +1376,29 @@
                      (sim.status === 'cancelled' && (sim.phases_done || 0) > 0)) && stoppedBelongsToSetup(sim)) { showStopped(b); }
             else { hideStopped(); }
         }).catch(function () { /* server may be down; wizard still renders */ });
+
+        // RMOOZ-AI-FREE-FIGHT-OPERATING-1 (Slice 1): make the JSON scenario-package
+        // import the PRIMARY operator path and demote the legacy Red/Blue DOCX inputs
+        // into a collapsed "Advanced" disclosure. DOCX generation stays fully available
+        // (Start Scenario Generation still works once both .docx are staged) — it is
+        // just off the main path, per "hide DOCX red/blue from the operator path".
+        (function reframeAsJsonFirst() {
+            try {
+                var grid = card.querySelector('.wg-wz-doc-grid');
+                if (grid && !(grid.parentNode && grid.parentNode.className === 'wg-wz-docx-advanced')) {
+                    var adv = document.createElement('details');
+                    adv.className = 'wg-wz-docx-advanced';
+                    adv.style.cssText = 'margin:8px 0;border:1px solid #2a3f37;border-radius:6px;padding:6px 10px;background:#0e1411;';
+                    adv.innerHTML = '<summary style="cursor:pointer;font-size:11.5px;color:#8fa5b8;">Advanced — generate from Red/Blue DOCX · متقدّم: التوليد من وثائق DOCX</summary>' +
+                        '<div style="font-size:10.5px;color:#7f8893;margin:6px 0 2px;">Legacy WarGamingGEN path — stage Red &amp; Blue .docx, then Start Scenario Generation. Not required for the JSON package import above.</div>';
+                    grid.parentNode.insertBefore(adv, grid);
+                    adv.appendChild(grid);
+                }
+                var body = card.querySelector('.wg-wz-body');
+                var jsonRow = card.querySelector('#wg-wz-json-row');
+                if (body && jsonRow && body.firstChild !== jsonRow) body.insertBefore(jsonRow, body.firstChild);
+            } catch (_) {}
+        })();
 
         window.AppScenarioImportWizard = {
             refresh: function () { return api('GET', STATUS); },

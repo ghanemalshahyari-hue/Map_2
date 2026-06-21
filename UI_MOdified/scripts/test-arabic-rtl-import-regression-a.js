@@ -118,7 +118,10 @@ var AR_ORPHAN_BASE = 'قاعدة مجهولة';
     var bsp = read(path.join(CLIENT, 'shell/base-status-panel.js'));
     var wsp = read(path.join(CLIENT, 'shell/scenario-workspace.js'));
     ok('wizard Step1-JSON filename span has dir="auto"', /id="wg-wz-json-name" dir="auto"/.test(wiz));
-    ok('wizard Step1-JSON title/helper divs are bilingual + dir="auto"', /dir="auto">Step 1 \/ operational JSON/.test(wiz) && /JSON الخطوة 1 \/ العملياتي/.test(wiz));
+    // RMOOZ-AI-FREE-FIGHT-OPERATING-1 (Slice 1): the JSON import is now the PRIMARY
+    // scenario-package path; the title was reworded from "Step 1 / operational JSON"
+    // to "Import scenario package (JSON)" (still bilingual + dir="auto").
+    ok('wizard JSON-package title/helper divs are bilingual + dir="auto"', /dir="auto">① Import scenario package \(JSON\)/.test(wiz) && /استيراد حزمة السيناريو \(JSON\)/.test(wiz));
     ok('base-status Unassigned header is bilingual', /غير مُسندة \/ تحتاج مراجعة قاعدة/.test(bsp));
     ok('scenario-workspace legacy summary is bilingual + summaryEl dir="auto"',
         /يتوقّع هذا المُحمِّل سيناريو RMOOZ/.test(wsp) && /summaryEl\.setAttribute\('dir', 'auto'\)/.test(wsp));

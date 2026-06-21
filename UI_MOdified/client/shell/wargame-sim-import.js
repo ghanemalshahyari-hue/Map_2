@@ -248,8 +248,9 @@
         card.style.cssText = 'border:1px solid #4a7bb8;border-radius:6px;padding:10px;margin-top:8px;background:#1c1f24;';
         card.innerHTML =
             '<div class="sw-src-subcard-hdr">' +
-              '<span class="sw-src-subcard-title" style="color:#7fb0e0;">WarGamingGEN DOCX Simulation Import</span>' +
+              '<span class="sw-src-subcard-title" style="color:#7fb0e0;">WarGamingGEN DOCX Simulation Import <span style="color:#8a7a4a;font-size:11px;">(legacy / advanced)</span></span>' +
               '<span class="sw-src-subcard-sub" style="display:block;font-size:11px;color:#9aa3ad;margin-top:2px;">' +
+                '⚠ Deprecated for the main operator path — prefer the JSON scenario-package import above. — مهمَل للمسار الرئيسي؛ يُفضّل استيراد حزمة JSON أعلاه. ' +
                 'Flow: <b>1.</b> upload red/blue .docx → <b>2.</b> Run / Stage → <b>3.</b> Publish latest run → ' +
                 '<b>4.</b> Check outputs → <b>5.</b> Import + load. ' +
                 'RMOOZ imports the <b>published dated export</b> (not runs/latest), via the existing porter — ' +

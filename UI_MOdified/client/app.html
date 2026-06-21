@@ -4715,9 +4715,13 @@
          layer — never touches RmoozScenario.stepIndex, proposed_units, or any
          live scenario state. Loaded after placement-candidates-panel.js. -->
     <script src="shell/demo-scenario-preview.js?v=1"></script>
+    <!-- RMOOZ-AI-FREE-FIGHT-OPERATING-1 (Slice 1): canonical resolved-scenario contract.
+         Loaded BEFORE doc-understanding-review.js, which uses window.RmoozScenarioPackage
+         to render the honest import summary in the Scenario-mode fork. -->
+    <script src="shell/scenario-package-contract.js?v=ai-free-fight-slice1"></script>
     <!-- DOC-UNDERSTANDING-1 / Phase E: shared AI-Understanding review renderer (used by the wizard + verify page). -->
-    <script src="shell/doc-understanding-review.js?v=ff-card-fix"></script>
-    <script src="shell/scenario-import-wizard.js?v=1"></script>
+    <script src="shell/doc-understanding-review.js?v=ai-free-fight-slice1"></script>
+    <script src="shell/scenario-import-wizard.js?v=ai-free-fight-slice1"></script>
     <!-- FAST-DOC-1: DOCX Force Upload → WarGamingGEN → GeoJSON import bridge.
          Uploads red/blue .docx to a staging folder, runs/stages the existing
          WarGamingGEN generation, then imports the generated all_phases.geojson

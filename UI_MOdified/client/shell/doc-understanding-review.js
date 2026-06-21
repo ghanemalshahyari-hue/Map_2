@@ -901,6 +901,25 @@
         var _ffOb = opBrief(p);
         var _ffBaseCount = arr(_ffOb.enemy_bases).length + arr(_ffOb.friendly_trial_bases).length + arr(_ffOb.country_bases).length;
         var _ffCardVisible = canShowFreeFight(p), _ffHasObj = ffHasObjective(p);
+        // RMOOZ-AI-FREE-FIGHT-OPERATING-1 (Slice 1): the explicit operator fork.
+        // After reviewing the resolved scenario, the operator chooses to run it
+        // WITHOUT AI (deterministic load — delegates to Generate) or WITH AI (the
+        // RED/BLUE/WHITE/GREEN Free Fight engine — delegates to free-fight mount).
+        // The legacy/demo buttons move under a collapsed "More actions" below so the
+        // operator path is clean; every existing data-act id is preserved.
+        var _aiReady = !!(_ffCardVisible && _ffHasObj);
+        html += '<div data-el="scenario-mode" style="margin:12px 0 4px;padding:11px 12px;border:1px solid #2e5d7d;border-radius:8px;background:#0b1622;">' +
+            '<div style="font-size:12.5px;font-weight:700;color:#9ec2ec;">Scenario mode — وضع السيناريو</div>' +
+            '<div style="font-size:11px;color:#9aa3ad;margin:2px 0 8px;line-height:1.5;">Use the reviewed scenario without AI, or run the agent-based Free Fight. — استخدم السيناريو بعد المراجعة بدون ذكاء اصطناعي، أو شغّل القتال الحر القائم على الوكلاء.</div>' +
+            '<div data-el="resolver-summary" style="font-size:11px;color:#cdd8e4;margin-bottom:9px;font-family:Consolas,monospace;direction:ltr;text-align:left;"></div>' +
+            '<div style="display:flex;gap:10px;flex-wrap:wrap;">' +
+              '<button type="button" data-act="mode-noai" style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#16263a;color:#cfe6ff;border-radius:7px;padding:9px 15px;font-weight:600;text-align:left;line-height:1.3;">📋 Scenario without AI<br><span style="font-size:10px;font-weight:400;color:#9bb6cf;">Load the reviewed scenario — no Free Fight · بدون ذكاء اصطناعي</span></button>' +
+              (_aiReady
+                ? '<button type="button" data-act="mode-ai" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#15301f;color:#7fd6a0;border-radius:7px;padding:9px 15px;font-weight:700;text-align:left;line-height:1.3;">🤖 Scenario with AI — Free Fight<br><span style="font-size:10px;font-weight:400;color:#8fc6a6;">RED · BLUE · WHITE · GREEN agents · بالذكاء الاصطناعي</span></button>'
+                : '<button type="button" data-act="mode-ai-disabled" disabled title="Needs proposed units and an objective to run Free Fight" style="font:inherit;cursor:not-allowed;border:1px solid #3a5040;background:#162018;color:#5f8f74;border-radius:7px;padding:9px 15px;opacity:.6;text-align:left;line-height:1.3;">🤖 Scenario with AI<br><span style="font-size:10px;font-weight:400;">Needs units + objective · يتطلب وحدات وهدفاً</span></button>') +
+            '</div></div>';
+        // Legacy + demo actions, collapsed off the main operator path.
+        html += '<details data-el="more-actions" style="margin-top:6px;"><summary style="cursor:pointer;font-size:11.5px;color:#8fa5b8;">More actions — إجراءات إضافية</summary>';
         html += '<div data-el="free-fight-debug" style="margin:8px 0;padding:5px 7px;border:1px dashed #4a5a6a;border-radius:4px;background:#0c1118;color:#8fb8e0;font-size:11px;font-family:Consolas,monospace;direction:ltr;text-align:left;">' +
             'free-fight debug · kind=' + esc(p.kind || (u && u.set_label_en) || 'unknown') +
             ' · has_coalition=' + (!!coalitionRollup(p)) +
@@ -922,7 +941,8 @@
             '</div>' +
             '<details data-el="editbox" style="margin-top:8px;"><summary style="cursor:pointer;font-size:12px;color:#8fa5b8;">Operational Brief JSON — مسودة الموجز</summary>' +
             '<textarea data-el="json" spellcheck="false" style="width:100%;height:160px;margin-top:6px;background:#0a0e12;color:#c0c6cd;border:1px solid #2a2f37;border-radius:4px;font-size:11px;font-family:monospace;box-sizing:border-box;"></textarea>' +
-            '<div style="font-size:11px;color:#9aa3ad;margin-top:4px;">Structured editing is applied on the deployment network; this view is for review/transparency.</div></details>';
+            '<div style="font-size:11px;color:#9aa3ad;margin-top:4px;">Structured editing is applied on the deployment network; this view is for review/transparency.</div></details>' +
+            '</details>';
         container.innerHTML = html;
         container.style.display = 'block';
 
@@ -941,6 +961,24 @@
                 placeMount.innerHTML = '<div style="color:#e0a93a;font-size:11px;">Placement panel failed to render: ' + esc(ePl && ePl.message) + '</div>';
             }
         }
+
+        // RMOOZ-AI-FREE-FIGHT-OPERATING-1 (Slice 1): honest canonical import summary
+        // in the Scenario-mode fork — counts + resolver state from the canonical
+        // resolved object (per-candidate provenance/confidence is in the placement
+        // panel above). Read-only; never blocks the review if the module is absent.
+        try {
+            var sumEl = container.querySelector('[data-el="resolver-summary"]');
+            if (sumEl && window.RmoozScenarioPackage) {
+                var _resolved = window.RmoozScenarioPackage.build(p);
+                var _s = window.RmoozScenarioPackage.summarize(_resolved);
+                sumEl.innerHTML =
+                    'RED ' + _s.red.total + ' · BLUE ' + _s.blue.total + (_s.neutral.total ? ' · NEUTRAL ' + _s.neutral.total : '') +
+                    ' · objectives ' + _s.objectives.total +
+                    ' &nbsp;|&nbsp; taskable ' + _s.taskable_units + '/' + _s.total_units +
+                    (_s.candidates_proposed ? ' · <span style="color:#e0c060;">' + _s.candidates_proposed + ' resolver candidate' + (_s.candidates_proposed > 1 ? 's' : '') + '</span>' : '') +
+                    (_s.unresolved ? ' · <span style="color:#f0a0a0;">' + _s.unresolved + ' unresolved (review)</span>' : ' · <span style="color:#7fd6a0;">all coords resolved</span>');
+            }
+        } catch (_) {}
 
         function bind(act, fn) {
             var b = container.querySelector('[data-act="' + act + '"]');
@@ -1016,6 +1054,19 @@
             } else {
                 alert('Free Fight demo module not loaded (shell/free-fight-demo.js)');
             }
+        });
+        // RMOOZ-AI-FREE-FIGHT-OPERATING-1 (Slice 1): the explicit AI/non-AI fork.
+        // Both delegate to the existing, tested handlers so behaviour is unchanged —
+        // "without AI" runs the deterministic Generate→load; "with AI" mounts the
+        // Free Fight (RED/BLUE/WHITE/GREEN) engine.
+        bind('mode-noai', function () {
+            var g = container.querySelector('[data-act="generate"]');
+            if (g) g.click();
+        });
+        bind('mode-ai', function () {
+            var ff = container.querySelector('[data-act="free-fight"]');
+            if (ff) { ff.click(); return; }
+            if (window.RmoozFreeFightDemo && typeof window.RmoozFreeFightDemo.mount === 'function') window.RmoozFreeFightDemo.mount(p);
         });
     }
 

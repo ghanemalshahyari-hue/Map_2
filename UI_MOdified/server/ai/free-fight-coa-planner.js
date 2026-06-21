@@ -204,6 +204,36 @@ function parseJsonSafe(text) {
     var m = s.match(/\{[\s\S]*\}/);
     try { return JSON.parse(m ? m[0] : s); } catch (e) { return null; }
 }
+// RMOOZ-SCC-COA-COMMANDER-QUALITY-AI: hardened LLM-output extraction. Strips markdown code fences, parses a
+// clean object directly, else extracts balanced top-level {...} objects (string-safe brace matching) and
+// picks the unambiguous one carrying a `coas` array. Returns { obj, status, reason } — status is null on
+// success, 'json_extraction_failed' when the choice is ambiguous, 'invalid_json' when nothing parses.
+function _balancedJsonObjects(s) {
+    var out = [], depth = 0, start = -1, inStr = false, esc = false;
+    for (var i = 0; i < s.length; i++) {
+        var ch = s[i];
+        if (inStr) { if (esc) esc = false; else if (ch === '\\') esc = true; else if (ch === '"') inStr = false; continue; }
+        if (ch === '"') { inStr = true; continue; }
+        if (ch === '{') { if (depth === 0) start = i; depth++; }
+        else if (ch === '}') { depth--; if (depth === 0 && start >= 0) { out.push(s.slice(start, i + 1)); start = -1; } else if (depth < 0) depth = 0; }
+    }
+    return out;
+}
+function extractCoaJson(text) {
+    var s = str(text).trim();
+    if (!s) return { obj: null, status: 'invalid_json', reason: 'empty model response' };
+    var fence = s.match(/```(?:json)?\s*([\s\S]*?)```/i);   // strip ```json … ``` / ``` … ``` fences
+    if (fence && fence[1] && fence[1].trim()) s = fence[1].trim();
+    try { var d = JSON.parse(s); if (d && typeof d === 'object') return { obj: d, status: null, reason: null }; } catch (_) {}
+    var parsed = [];
+    _balancedJsonObjects(s).forEach(function (chunk) { try { var p = JSON.parse(chunk); if (p && typeof p === 'object') parsed.push(p); } catch (_) {} });
+    var withCoas = parsed.filter(function (o) { return Array.isArray(o.coas); });
+    if (withCoas.length === 1) return { obj: withCoas[0], status: null, reason: null };
+    if (withCoas.length > 1) return { obj: null, status: 'json_extraction_failed', reason: 'multiple JSON objects with a coas array — extraction ambiguous' };
+    if (parsed.length === 1) return { obj: parsed[0], status: null, reason: null };
+    if (parsed.length > 1) return { obj: null, status: 'json_extraction_failed', reason: 'multiple candidate JSON objects — extraction ambiguous' };
+    return { obj: null, status: 'invalid_json', reason: 'no parseable JSON object in model output (truncated or malformed)' };
+}
 function bestObjective(objectives) {
     var list = arr(objectives);
     for (var i = 0; i < list.length; i++) {
@@ -700,18 +730,33 @@ function normalizeCoa(raw, allowedUnitIds) {
     var phases = arr(raw.phases).map(function (ph) {
         return {
             phase_id: str(ph.phase_id || 'phase-1', 40),
-            name: str(ph.name || 'Move', 80),
+            name: str(ph.name || ph.title || 'Move', 80),
+            // RMOOZ-SCC-COA-COMMANDER-QUALITY-AI: carry the phase title + purpose the model now produces.
+            title: str(ph.title || ph.name || '', 80),
+            purpose: str(ph.purpose || '', 240),
             actions: arr(ph.actions).map(function (a) { return normalizeCoaAction(a, allowedUnitIds); }).filter(Boolean),
         };
     });
     var totalActions = phases.reduce(function (s, ph) { return s + ph.actions.length; }, 0);
     if (totalActions === 0) return null;
+    // RMOOZ-SCC-COA-COMMANDER-QUALITY-AI: carry the commander-structure fields the grammar-constrained model
+    // now produces (previously stripped here → SCC saw 0/8). Preserved verbatim (bounded length).
+    function cstr(v, n) { return str(v || '', n || 600); }
     return {
         plan_id:               str(raw.plan_id || 'COA-?', 20),
         title:                 str(raw.title   || 'Unknown COA', 120),
         objective_id:          str(raw.objective_id || 'Objective X', 80),
         summary:               str(raw.summary || '', 500),
         recommended:           !!raw.recommended,
+        commander_intent:      cstr(raw.commander_intent),
+        main_effort:           cstr(raw.main_effort),
+        supporting_effort:     cstr(raw.supporting_effort),
+        reserve_or_follow_on:  cstr(raw.reserve_or_follow_on),
+        security_or_screen:    cstr(raw.security_or_screen),
+        red_assumption:        cstr(raw.red_assumption),
+        risk_mitigation:       cstr(raw.risk_mitigation),
+        success_criteria:      cstr(raw.success_criteria),
+        control_measures:      Array.isArray(raw.control_measures) ? raw.control_measures.slice(0, 12).map(function (c) { return str(c, 160); }) : (raw.control_measures && typeof raw.control_measures === 'object' ? raw.control_measures : []),
         risk:                  ALLOWED_RISK.indexOf(str(raw.risk).toLowerCase())        !== -1 ? str(raw.risk).toLowerCase()       : 'medium',
         confidence:            ALLOWED_CONFIDENCE.indexOf(str(raw.confidence).toLowerCase()) !== -1 ? str(raw.confidence).toLowerCase() : 'medium',
         units_total_considered: Number.isFinite(Number(raw.units_total_considered)) ? Number(raw.units_total_considered) : 0,
@@ -1032,7 +1077,11 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
     // RMOOZ-AI-SPEED-ARCHITECTURE-J Phase 4: strict JSON schema for the COA output (OpenRouter only,
     // env-gated default OFF until validated against a live valid key). The openrouter-client self-heals
     // to json_object if the model rejects the schema; ollama ignores `schema` (uses json_object).
-    var _coaSchema = (process.env.RMOOZ_OPENROUTER_COA_SCHEMA === '1') ? _coaOutputSchema() : null;
+    // RMOOZ-SCC-COA-COMMANDER-QUALITY-AI: structured-output schema ON by default (env to disable). For local
+    // Ollama it is passed as `format` (grammar-constrained → forces the commander fields); for other providers
+    // it is passed as `schema` (openrouter self-heals to json_object if the model rejects it).
+    var _coaSchema = (process.env.RMOOZ_COA_SCHEMA_OFF === '1') ? null : _coaOutputSchema();
+    var _schemaAsFormat = _coaSchema && /ollama|local/i.test(String(providerName || ''));
     // RMOOZ-AI-COA-TIMEOUT-RETRY-A: retry the fast failure modes (bad JSON / <2 valid COAs); return
     // immediately on timeout/unavailable/transport error so we never stack full-length timeouts.
     var lastFail = null;
@@ -1044,8 +1093,8 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
                 model:     model,
                 system:    system,
                 prompt:    prompt,
-                format:    'json',
-                schema:    _coaSchema || undefined,
+                format:    _schemaAsFormat ? _coaSchema : 'json',   // Ollama: grammar-constrain to the commander schema
+                schema:    (!_schemaAsFormat && _coaSchema) ? _coaSchema : undefined,
                 schemaName:'rmooz_coa_set',
                 options:   { temperature: temperature, numPredict: maxOut },
                 timeoutMs: timeoutMs,
@@ -1060,9 +1109,12 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
             return { ok: false, llm_status: isTimeout ? 'timeout' : 'unavailable', fallback_reason: 'local_llm_unavailable: ' + errStr };
         }
 
-        var parsed = parseJsonSafe(result.response || '');
+        var ext = extractCoaJson(result.response || '');   // RMOOZ-SCC-COA-COMMANDER-QUALITY-AI: hardened extraction
+        var parsed = ext.obj;
         if (!parsed || !Array.isArray(parsed.coas)) {
-            lastFail = { ok: false, llm_status: 'invalid_json', fallback_reason: 'llm_invalid_json_or_no_coas_array (attempt ' + attempt + '/' + maxAttempts + ')' };
+            lastFail = { ok: false, llm_status: ext.status || 'invalid_json',
+                fallback_reason: (ext.reason || 'llm_invalid_json_or_no_coas_array') + ' (attempt ' + attempt + '/' + maxAttempts + ')',
+                raw_response: str(result.response || '', 8000) };   // AI: carry the failing raw output for SCC Evidence
             continue; // retryable: model responded but output was not parseable
         }
 
@@ -1073,7 +1125,8 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
         // The model's tactical CHOICE (unit / action / direction) is preserved; only the step is capped.
         _clampLlmTargets(normalized, units);
         if (normalized.length < 2) {
-            lastFail = { ok: false, llm_status: 'invalid_schema', fallback_reason: 'llm_returned_fewer_than_2_valid_coas (' + normalized.length + ', attempt ' + attempt + '/' + maxAttempts + ')', partial: normalized };
+            lastFail = { ok: false, llm_status: 'invalid_schema', fallback_reason: 'llm_returned_fewer_than_2_valid_coas (' + normalized.length + ', attempt ' + attempt + '/' + maxAttempts + ')', partial: normalized,
+                raw_response: str(result.response || '', 8000) };   // AI: carry the failing raw output for SCC Evidence
             continue; // retryable: model invented IDs / produced too few usable COAs
         }
 
@@ -1172,14 +1225,28 @@ function _capCacheGet(key, compute) {
 function _clearPerfCacheForTest() { _capCache.clear(); _capCacheStats = { hits: 0, misses: 0 }; }
 // Permissive JSON Schema for the COA set (Phase 4, opt-in via RMOOZ_OPENROUTER_COA_SCHEMA). Not strict
 // (the openrouter-client self-heals to json_object if the model/provider rejects it).
+// RMOOZ-SCC-COA-COMMANDER-QUALITY-AI: the structured-output schema (passed to Ollama `format`) that GRAMMAR-
+// CONSTRAINS the model to emit a real commander COA — the prompt alone left the commander fields empty (0/8).
+// Requiring them forces the model to produce commander_intent / main_effort / … + per-action reason/role.
 function _coaOutputSchema() {
-    return { type: 'object', properties: { coas: { type: 'array', items: { type: 'object',
-        properties: {
-            plan_id: { type: 'string' }, title: { type: 'string' }, summary: { type: 'string' },
-            phases: { type: 'array', items: { type: 'object', properties: { actions: { type: 'array', items: { type: 'object',
-                properties: { unit_uid: { type: 'string' }, action_type: { type: 'string' }, target: { type: 'object' }, reason: { type: 'string' } },
-                required: ['unit_uid', 'action_type'] } } } } } },
-        required: ['phases'] } } }, required: ['coas'] };
+    var lohi = { type: 'string', enum: ['low', 'medium', 'high'] };
+    var action = { type: 'object', properties: {
+        unit_uid: { type: 'string' }, role: { type: 'string' }, action_type: { type: 'string' },
+        target: { type: 'object', properties: { type: { type: 'string' }, lat: { type: 'number' }, lon: { type: 'number' } } },
+        reason: { type: 'string' }, roe_status: { type: 'string' }, taskable: { type: 'boolean' } },
+        required: ['unit_uid', 'role', 'action_type', 'reason'] };
+    var phase = { type: 'object', properties: {
+        phase_id: { type: 'string' }, title: { type: 'string' }, purpose: { type: 'string' },
+        actions: { type: 'array', items: action } }, required: ['title', 'actions'] };
+    var coa = { type: 'object', properties: {
+        plan_id: { type: 'string' }, title: { type: 'string' },
+        commander_intent: { type: 'string' }, main_effort: { type: 'string' }, supporting_effort: { type: 'string' },
+        reserve_or_follow_on: { type: 'string' }, security_or_screen: { type: 'string' },
+        red_assumption: { type: 'string' }, risk_mitigation: { type: 'string' }, success_criteria: { type: 'string' },
+        risk: lohi, confidence: lohi, phases: { type: 'array', items: phase } },
+        required: ['plan_id', 'title', 'commander_intent', 'main_effort', 'supporting_effort', 'phases'] };
+    return { type: 'object', properties: { commander_assessment: { type: 'string' }, recommended_plan_id: { type: 'string' },
+        coas: { type: 'array', items: coa } }, required: ['coas'] };
 }
 
 // ── Planning context (RMOOZ-AI-COA-PERFORMANCE-A) ───────────────────────────────
@@ -1624,16 +1691,22 @@ async function _assemblePlan(P, variationSeed, timer, light) {
                     : 'Local AI unavailable — used Staff-Safe planner.';
                 break;
             }
-            // invalid_json / invalid_schema (<2 valid COAs): repairable — tell the model the allowed IDs.
+            // invalid_json / invalid_schema / json_extraction_failed: repairable — tell the model the allowed IDs.
             if (!origViolations) origViolations = [{ code: llmStatus, unit_uid: null, text: llmResult.fallback_reason || 'invalid' }];
+            if (llmResult.raw_response) llmRawResponse = llmResult.raw_response;   // AI: keep the failing raw output for Evidence
             if (repairsDone >= repairBudget) {
                 fallbackReason = llmResult.fallback_reason || 'llm_failed';
                 fallbackMessage = 'Local AI returned an unusable plan after repair — used Staff-Safe planner.';
+                // RMOOZ-SCC-COA-COMMANDER-QUALITY-AI: honest *_fallback status — the AI WAS called, but the
+                // output failed JSON/schema, so a deterministic plan is used. Never dressed as an AI plan.
+                if (/invalid_json|json_extraction_failed/.test(String(llmStatus || ''))) llmStatus = 'invalid_json_fallback';
+                else if (/invalid_schema/.test(String(llmStatus || ''))) llmStatus = 'schema_invalid_fallback';
                 break;
             }
             repairsDone++;
             llmResult = await timer.async('llm_repair_ms', (function (pr) { return function () { return _repairCall(pr, null, arr(pr.partial)); }; })(llmResult));
             llmStatus = llmResult.llm_status || llmStatus;
+            if (llmResult.raw_response) llmRawResponse = llmResult.raw_response;
         }
 
         if (acceptedCoas) {
@@ -1960,6 +2033,7 @@ function makeCoaEventLogEntries(plan, applyResult) {
 // ── Module exports ────────────────────────────────────────────────────────────
 module.exports = {
     planCoas:               planCoas,
+    _extractCoaJsonForTest: extractCoaJson,   // RMOOZ-SCC-COA-COMMANDER-QUALITY-AI: hardened LLM-output extraction
     _spreadCenterClusteredCoasForTest: _spreadCenterClusteredCoas,   // RMOOZ-COA-QUALITY-HARD-ENFORCEMENT-AE
     planCoaVariations:      planCoaVariations,        // RMOOZ-AI-COA-PERFORMANCE-A (Generate-N, shared context)
     validateCoaPlan:        validateCoaPlan,

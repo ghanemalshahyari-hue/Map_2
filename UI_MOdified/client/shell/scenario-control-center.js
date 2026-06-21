@@ -342,6 +342,19 @@
             '<div data-scc="sel-summary">selected&nbsp;&nbsp;: ' + esc(selSum || '(none)') + '</div>' +
             '<div data-scc="com-summary">committed&nbsp;: ' + esc(comSum || '(not committed)') + (comSum ? (eqSelCom ? ' <span style="color:' + C.good + ';">✓ == selected</span>' : ' <span style="color:' + C.warn + ';">⚠ enforcement replaced the selected COA</span>') : '') + '</div>' +
             '<div data-scc="exe-summary">executed&nbsp;&nbsp;: ' + esc(exeSum || '(not run)') + '</div></div>';
+        // RMOOZ-SCC-COA-COMMANDER-QUALITY-AI: AI honesty block — parse/schema/repair/fallback status. A
+        // fallback is NEVER dressed as an AI plan; when the AI was called but fell back, say so plainly.
+        var le = (function () { try { return eng.llmEvidence ? eng.llmEvidence() : null; } catch (_) { return null; } })();
+        if (le) {
+            var fbCol = le.fallback_used ? C.warn : (le.is_real_llm ? C.good : C.dim);
+            inner += '<div data-scc="ai-honesty" style="margin-top:6px;padding:6px 8px;border:1px solid ' + fbCol + ';border-radius:5px;background:#0a1422;font-size:9px;color:#bcd;">' +
+                '<div style="color:' + C.dim + ';font-weight:700;">AI commander honesty</div>' +
+                '<div>plan_source: <b style="color:#cfe6ff;">' + esc(le.plan_source || '—') + '</b> · llm_called: <b>' + (le.llm_called ? 'true' : 'false') + '</b> · llm_status: <b style="color:' + fbCol + ';">' + esc(le.llm_status || '—') + '</b></div>' +
+                '<div>repair_attempted: <b>' + (le.repair_attempted ? 'true' : 'false') + '</b> · real_llm_plan: <b style="color:' + (le.is_real_llm ? C.good : C.dim) + ';">' + (le.is_real_llm ? 'yes' : 'no') + '</b></div>' +
+                (le.fallback_used ? '<div data-scc="ai-fallback" style="color:' + C.warn + ';margin-top:2px;">⚠ AI was called, but a fallback plan was used because the JSON/schema failed' + (le.fallback_reason ? (' (' + esc(le.fallback_reason) + ')') : '') + '.</div>' : '') +
+                '</div>';
+            if (le.raw_llm_output) inner += jsonBlock('Raw LLM output (preview)', String(le.raw_llm_output).slice(0, 1800));
+        }
         // readiness report + raw JSON
         inner += jsonBlock('Readiness report', eng.readiness());
         inner += jsonBlock('Last generated COA plan (raw planner response)', eng.rawJson('generated'));

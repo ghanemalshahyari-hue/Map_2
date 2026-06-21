@@ -2517,6 +2517,9 @@
             // useLlm true, never fast (fast skips the LLM). commander_mode stays the operator's choice.
             body.opts.useLlm = true;
             if (body.opts.ai_depth === 'fast') body.opts.ai_depth = 'normal';
+            // RMOOZ-SCC-COA-COMMANDER-QUALITY-AI: capture the raw LLM output so the SCC Evidence panel can
+            // show parse/schema/repair/fallback honesty (incl. the failing raw output on invalid_json).
+            body.opts.capture_raw_llm = true;
         }
         var _genT0 = _nowMs();   // RMOOZ-AI-SCHEDULER-DECISION-LOG-S: measure the commander call duration
         _fetchJsonSafe('/api/wargame-sim/free-fight/plan-coas', {
@@ -4823,6 +4826,24 @@
             return _coaPlan;   // 'generated' / default
         },
         objectiveControlKm: function () { return { control: OBJ_CONTROL_KM, contest: OBJ_CONTEST_KM }; },
+        // RMOOZ-SCC-COA-COMMANDER-QUALITY-AI: LLM honesty/evidence — the SCC Evidence panel reads these to
+        // show parse/schema/repair/fallback status truthfully (a fallback is NEVER dressed as an AI plan).
+        llmEvidence: function () {
+            var p = _coaPlan || {};
+            var st = String(p.llm_status || '');
+            var isFallback = /_fallback$/.test(st) || (!!p.fallback_reason && p.plan_source !== 'llm');
+            return {
+                plan_source: p.plan_source || null,
+                llm_called: !!p.llm_called,
+                llm_status: p.llm_status || null,
+                repair_attempted: !!(p.tool_contract && p.tool_contract.repaired) || /repair/.test(String(p.fallback_reason || '')),
+                fallback_used: isFallback || /deterministic|staff_safe/.test(String(p.plan_source || '')) && !!p.llm_called,
+                fallback_reason: p.fallback_reason || null,
+                fallback_message: p.fallback_message || null,
+                raw_llm_output: p.llm_raw_response || null,
+                is_real_llm: (function () { try { return _isRealLlmPlan(p); } catch (_) { return false; } })(),
+            };
+        },
     };
 
     var API = {

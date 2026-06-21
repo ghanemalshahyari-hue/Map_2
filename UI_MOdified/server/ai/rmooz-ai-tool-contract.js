@@ -955,6 +955,14 @@ var MCP_COMMANDER_INSTRUCTIONS = [
     'For every SELECTED unit, explain why_unit it was chosen.',
     'For units you do NOT move, explain why in non_selected_units.',
     'Return ONLY valid JSON.',
+    // RMOOZ-SCC-COA-COMMANDER-QUALITY-AI: strict JSON-only output + commander structure (the model must
+    // produce a real commander COA, not a loose recon sketch). These make the LLM path reliable + rich.
+    'Output EXACTLY ONE JSON object: no markdown, no ``` code fences, no prose before or after the JSON, no trailing commentary.',
+    'Each COA MUST include these fields: commander_intent, main_effort, supporting_effort, reserve_or_follow_on, security_or_screen, red_assumption, risk_mitigation, success_criteria, risk (low|medium|high), confidence (low|medium|high), and a non-empty "phases" array.',
+    'Each phase MUST include: phase_id, title (or name), purpose, and a non-empty "actions" array.',
+    'Each action MUST include: unit_uid (ONLY from allowed_unit_ids — never invent a unit), role, action_type, a "reason", roe_status (allowed|restricted|blocked), taskable (true|false); for any movement action the target MUST have numeric lat AND lon (NEVER null).',
+    'Give role-separated targets: do NOT send all units to the objective center, and do NOT give all units the same target.',
+    'For units restricted by ROE or not taskable, use action_type HOLD with no movement target.',
 ];
 // RMOOZ-AI-COMMANDER-FREEDOM-B kept the structure/physics rules + freedom (no doctrine bias);
 // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A folds in the commander-realism / unit-selection rules.
@@ -967,7 +975,8 @@ var SYSTEM_CONTRACT = [
     'You may freely choose any tactical action (recon/hold/delay/flank/defend/withdraw/deceive/probe/support/reserve/attack); do not force intercept/defend/attack and do NOT force a full attack.',
     'Do NOT move units from all countries unless there is a clear military reason.',
     'Explain why each selected unit is used and why the others are not moved.',
-    'Return ONLY JSON matching allowed_output_schema.',
+    'Return ONLY JSON matching allowed_output_schema — output EXACTLY ONE JSON object, with no markdown, no code fences, and no text before or after the JSON.',
+    'Each COA must carry commander structure: commander_intent, main_effort, supporting_effort, reserve_or_follow_on, security_or_screen, red_assumption, risk_mitigation, success_criteria, risk, confidence, and non-empty phases; each action must carry a reason, roe_status, taskable, and (for movement) a numeric lat+lon target — never null and never all on the objective center.',
     'Every unit_uid MUST be in allowed_unit_ids; use only coordinates inside the map; do not invent units; do not teleport (no impossible movement).',
     'NEVER output engage/destroy/kill — movement/positioning only. review_required:true.',
 ].join(' ');
@@ -1113,6 +1122,9 @@ function composeRepairPrompt(extras) {
         'Use ONLY unit IDs from allowed_unit_ids and ONLY the allowed actions.',
         'Targets must be inside the map and a small step from the unit (no teleport).',
         'NEVER output engage/destroy/kill — movement/positioning only.',
+        // RMOOZ-SCC-COA-COMMANDER-QUALITY-AI: strict JSON-only on repair.
+        'Output EXACTLY ONE JSON object — no markdown, no ``` code fences, no prose before or after the JSON.',
+        'Each action needs a reason, roe_status, taskable, and (for movement) a numeric lat+lon target (never null, never all on the objective center).',
         'Return ONLY valid JSON with a "coas" array (2-3 COAs), same shape as before.',
     ].join(' ');
     var promptObject = {

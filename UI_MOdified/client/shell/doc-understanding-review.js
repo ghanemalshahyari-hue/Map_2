@@ -907,7 +907,12 @@
         // RED/BLUE/WHITE/GREEN Free Fight engine — delegates to free-fight mount).
         // The legacy/demo buttons move under a collapsed "More actions" below so the
         // operator path is clean; every existing data-act id is preserved.
-        var _aiReady = !!(_ffCardVisible && _ffHasObj);
+        // RMOOZ-AI-ACCESS-UNLOCK (Commander ruling 2026-06-21): the fork enables "Scenario with AI"
+        // when the scenario has UNITS / coalition data (canShowFreeFight). The OBJECTIVE and the
+        // training-simulation approval are set INSIDE the Scenario Control Center (which owns those
+        // tools + the Step-1 gate) — NOT as a fork precondition. Otherwise an imported Step-1 file
+        // with no objective (e.g. the GCC-vs-Iran ORBAT) dead-ends on a disabled button.
+        var _aiReady = !!_ffCardVisible;
         html += '<div data-el="scenario-mode" style="margin:12px 0 4px;padding:11px 12px;border:1px solid #2e5d7d;border-radius:8px;background:#0b1622;">' +
             '<div style="font-size:12.5px;font-weight:700;color:#9ec2ec;">Scenario mode — وضع السيناريو</div>' +
             '<div style="font-size:11px;color:#9aa3ad;margin:2px 0 8px;line-height:1.5;">Use the reviewed scenario without AI, or run the agent-based Free Fight. — استخدم السيناريو بعد المراجعة بدون ذكاء اصطناعي، أو شغّل القتال الحر القائم على الوكلاء.</div>' +
@@ -915,8 +920,8 @@
             '<div style="display:flex;gap:10px;flex-wrap:wrap;">' +
               '<button type="button" data-act="mode-noai" style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#16263a;color:#cfe6ff;border-radius:7px;padding:9px 15px;font-weight:600;text-align:left;line-height:1.3;">📋 Scenario without AI<br><span style="font-size:10px;font-weight:400;color:#9bb6cf;">Load the reviewed scenario — no Free Fight · بدون ذكاء اصطناعي</span></button>' +
               (_aiReady
-                ? '<button type="button" data-act="mode-ai" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#15301f;color:#7fd6a0;border-radius:7px;padding:9px 15px;font-weight:700;text-align:left;line-height:1.3;">🤖 Scenario with AI — Free Fight<br><span style="font-size:10px;font-weight:400;color:#8fc6a6;">RED · BLUE · WHITE · GREEN agents · بالذكاء الاصطناعي</span></button>'
-                : '<button type="button" data-act="mode-ai-disabled" disabled title="Needs proposed units and an objective to run Free Fight" style="font:inherit;cursor:not-allowed;border:1px solid #3a5040;background:#162018;color:#5f8f74;border-radius:7px;padding:9px 15px;opacity:.6;text-align:left;line-height:1.3;">🤖 Scenario with AI<br><span style="font-size:10px;font-weight:400;">Needs units + objective · يتطلب وحدات وهدفاً</span></button>') +
+                ? '<button type="button" data-act="mode-ai" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#15301f;color:#7fd6a0;border-radius:7px;padding:9px 15px;font-weight:700;text-align:left;line-height:1.3;">🤖 Scenario with AI — Free Fight<br><span style="font-size:10px;font-weight:400;color:#8fc6a6;">' + (_ffHasObj ? 'RED · BLUE · WHITE · GREEN agents · بالذكاء الاصطناعي' : 'Opens the Control Center — set objective &amp; approve units inside · افتح مركز التحكم') + '</span></button>'
+                : '<button type="button" data-act="mode-ai-disabled" disabled title="Needs proposed units to run Free Fight (the objective is set inside the Control Center)" style="font:inherit;cursor:not-allowed;border:1px solid #3a5040;background:#162018;color:#5f8f74;border-radius:7px;padding:9px 15px;opacity:.6;text-align:left;line-height:1.3;">🤖 Scenario with AI<br><span style="font-size:10px;font-weight:400;">Needs proposed units · يتطلب وحدات</span></button>') +
             '</div></div>';
         // Legacy + demo actions, collapsed off the main operator path.
         html += '<details data-el="more-actions" style="margin-top:6px;"><summary style="cursor:pointer;font-size:11.5px;color:#8fa5b8;">More actions — إجراءات إضافية</summary>';
@@ -928,7 +933,7 @@
             ' · placement_candidates_count=' + placementCandidates(p).length +
             ' · base_count=' + _ffBaseCount +
             ' · free_fight_card_visible=' + (!!_ffCardVisible) +
-            ' · start_enabled=' + (!!(_ffCardVisible && _ffHasObj)) + '</div>';
+            ' · start_enabled=' + _aiReady + ' · objective_set_in_scc=' + (!_ffHasObj) + '</div>';
         html += '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
             '<button type="button" data-act="generate" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:6px;padding:7px 14px;font-weight:600;">Generate Scenario — توليد السيناريو</button>' +
             '<button type="button" data-act="edit" style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#22303f;color:#cfe6ff;border-radius:6px;padding:7px 14px;">Edit Understanding — تعديل الفهم</button>' +
@@ -975,8 +980,8 @@
                     'RED ' + _s.red.total + ' · BLUE ' + _s.blue.total + (_s.neutral.total ? ' · NEUTRAL ' + _s.neutral.total : '') +
                     ' · objectives ' + _s.objectives.total +
                     ' &nbsp;|&nbsp; taskable ' + _s.taskable_units + '/' + _s.total_units +
-                    (_s.candidates_proposed ? ' · <span style="color:#e0c060;">' + _s.candidates_proposed + ' resolver candidate' + (_s.candidates_proposed > 1 ? 's' : '') + '</span>' : '') +
-                    (_s.unresolved ? ' · <span style="color:#f0a0a0;">' + _s.unresolved + ' unresolved (review)</span>' : ' · <span style="color:#7fd6a0;">all coords resolved</span>');
+                    (_s.candidates_proposed ? ' · <span style="color:#e0c060;">' + _s.candidates_proposed + ' resolver candidate' + (_s.candidates_proposed > 1 ? 's' : '') + ' (review)</span>' : '') +
+                    (_s.unresolved ? ' · <span style="color:#f0a0a0;">' + _s.unresolved + ' unresolved</span>' : (!_s.review_required ? ' · <span style="color:#7fd6a0;">all coords resolved</span>' : ''));
             }
         } catch (_) {}
 

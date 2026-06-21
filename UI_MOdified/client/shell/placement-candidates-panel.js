@@ -163,10 +163,14 @@
         suspected:           'Suspected — مشتبه',
         unknown_named:       'Unknown place — مكان مجهول',
         ambiguous:           'Ambiguous — غامض',
+        fuzzy_match:         'Fuzzy match — تطابق تقريبي',
+        mgrs_converted:      'MGRS converted — تحويل MGRS',
+        llm_candidate:       'AI-resolved candidate — مرشّح حلّه الذكاء',
     };
     var TYPE_TONE = {
         known_base: '#3a96d2', known_location: '#3a96d2', exact_unit_position: '#7fd6a0',
         approximate: '#e0c060', suspected: '#e0a93a', unknown_named: '#c98', ambiguous: '#d28',
+        fuzzy_match: '#b48ead', mgrs_converted: '#8fb8e0', llm_candidate: '#b48ead',
     };
     var AO_LABEL = { inside: 'in AO — داخل', outside_warn: 'outside AO — خارج', unknown: 'AO unknown — غير محدد' };
     var WARN_LABEL = {
@@ -182,6 +186,12 @@
         llm_only_source: 'AI suggestion only',
         mgrs_not_converted: 'MGRS not converted',
         coordinate_latlon_order_assumed: 'lat/lon order assumed',
+        llm_generated_coordinate: 'AI-generated coordinate — needs review',
+        requires_review: 'requires review',
+        not_source_verified: 'not source-verified',
+        fuzzy_gazetteer_match: 'fuzzy gazetteer match',
+        mgrs_converted: 'MGRS converted to lat/lon',
+        llm_could_not_resolve: 'AI could not resolve',
     };
 
     function chip(text, color, bg) {
@@ -255,6 +265,25 @@
         h += '<div style="font-size:10px;color:#7f93a6;margin-top:2px;">exact unit position: <b style="color:' +
              (c.exact_unit_position ? '#7fd6a0' : '#e0a93a') + ';">' + (c.exact_unit_position ? 'yes' : 'no') + '</b>' +
              ' &nbsp;·&nbsp; source: ' + esc(c.source && c.source.type || '—') + '</div>';
+        // RMOOZ-RESOLVER-LLM-FALLBACK-A: when a coordinate was produced by the LLM rung,
+        // surface its provenance explicitly so the operator sees it is an AI candidate
+        // (never auto-accepted): source local_llm|gated_cloud_llm, coord_status, model.
+        var _origin = c.source && c.source.origin;
+        if (_origin === 'local_llm' || _origin === 'gated_cloud_llm' || c.llm_provenance) {
+            var _prov = c.llm_provenance || {};
+            h += '<div style="font-size:10px;margin-top:4px;border-top:1px dashed #3a2e4a;padding-top:5px;color:#b48ead;">' +
+                '🤖 AI-resolved location — موقع حلّه الذكاء ' +
+                chip('source: ' + esc(_origin || 'llm'), '#b48ead', '#1c1426') +
+                (c.coord_status ? chip('coord_status: ' + esc(c.coord_status), '#b48ead', '#1c1426') : '') +
+                chip('needs_review: ' + (c.needs_review ? 'true' : 'false'), '#e0c060', '#2a2412') +
+                chip('exact: ' + (c.exact_unit_position ? 'true' : 'false'), c.exact_unit_position ? '#7fd6a0' : '#e0a93a') +
+                (_prov.model ? chip('model: ' + esc(_prov.model), '#8fb8e0') : '') +
+                (_prov.provider ? chip(esc(_prov.provider), '#8fb8e0') : '') +
+                '</div>';
+            if (_prov.reasoning) {
+                h += '<div style="font-size:10px;color:#7f93a6;margin-top:2px;">reasoning: ' + esc(String(_prov.reasoning).slice(0, 160)) + '</div>';
+            }
+        }
         // incident status
         if (c.incident_status) {
             var inc = c.incident_status;

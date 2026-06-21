@@ -4702,7 +4702,10 @@
     <script src="shell/free-fight-ai.js?v=ff-card-fix"></script>
     <!-- DOMAIN-AWARE-MOVEMENT-A: review-only domain route shapes (naval→coast, support→hold). -->
     <script src="shell/domain-movement.js?v=domain-aware-movement-a"></script>
-    <script src="shell/free-fight-demo.js?v=coa-quality-hard-enforcement-ae"></script>
+    <!-- RMOOZ-STEP1-COA-PREPARATION-GATE-AE: pure unit-taskability resolver (Step-1 review-only units are
+         not taskable for movement). Loaded BEFORE free-fight-demo.js so window.RmoozTaskability is present. -->
+    <script src="shell/unit-taskability.js?v=step1-coa-preparation-gate-ae"></script>
+    <script src="shell/free-fight-demo.js?v=step1-coa-preparation-gate-ae"></script>
     <script src="shell/free-fight-demo-ai-panel.js?v=1"></script>
     <!-- DEMO-ACTUAL-1: AI Decision-Making Scenario Preview. Isolated preview
          layer — never touches RmoozScenario.stepIndex, proposed_units, or any

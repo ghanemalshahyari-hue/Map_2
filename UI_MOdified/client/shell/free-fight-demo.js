@@ -2384,6 +2384,122 @@
             return r + ':' + (Math.round(km * 10) / 10) + 'km';
         }).join(' · ');
     }
+    // ════════════════════════════════════════════════════════════════════════
+    // RMOOZ-STEP1-COA-PREPARATION-GATE-AE — unit taskability + Step-1 COA preparation gate.
+    // A Step-1 ORBAT (source_required / needs_review / exact_unit_position:false / null coords / doctrine /
+    // commander-review pending) is REVIEW-ONLY: such units must NEVER receive a movement/combat task. The
+    // canonical resolver lives in the pure module window.RmoozTaskability (reused by the Scenario Control
+    // Center rebuild). A strict built-in fallback guarantees the gate still blocks if that module failed to
+    // load — a placeholder unit must NEVER move. This stays inside the locked AI/sim boundary (classify-only;
+    // movement suppression + commit/run refusal are enforced here, never a journal write).
+    // ════════════════════════════════════════════════════════════════════════
+    var _BUILTIN_TASKABILITY = (function () {
+        function fin(n) { return n != null && isFinite(Number(n)); }
+        function classifyUnit(u, ctx) {
+            ctx = ctx || {};
+            var lat = u && u.lat, lon = u && u.lon;
+            if ((lat == null || lon == null) && u && Array.isArray(u.coord) && u.coord.length >= 2) { lon = u.coord[0]; lat = u.coord[1]; }
+            var noCoords = !(fin(lat) && fin(lon));
+            var src = !!(u && (u.source_required === true || u.exact_unit_position === false || u.needs_review === true || u.review_only === true));
+            var doc = (!!(u && u.doctrine_upload_required === true) || ctx.doctrine_required === true) && ctx.doctrine_ok !== true;
+            var cmd = (!!(u && (u.commander_review_required === true || u.requires_commander_approval === true)) || ctx.commander_review_required === true) && ctx.commander_approved !== true;
+            var taskable = !noCoords && !src && !doc && !cmd;
+            return { id: (u && (u.id || u.uid || u.unit_uid)) ? String(u.id || u.uid || u.unit_uid) : null,
+                taskable: taskable, reason: taskable ? 'taskable' : 'review required',
+                review_status: taskable ? 'OK' : ((noCoords || src) ? 'SOURCE_REQUIRED' : doc ? 'DOCTRINE_REQUIRED' : 'COMMANDER_REVIEW_REQUIRED'),
+                allowed_actions: taskable ? ['HOLD_POSITION'] : ['HOLD_POSITION', 'REVIEW_REQUIRED'],
+                blocked_actions: taskable ? [] : ['MOVE', 'ATTACK'],
+                blockers: { coords: noCoords, source: src, doctrine: doc, commander_review: cmd } };
+        }
+        return { classifyUnit: classifyUnit };
+    })();
+    function _taskabilityLib() {
+        var w = W();
+        if (w && w.RmoozTaskability && typeof w.RmoozTaskability.classifyUnit === 'function') return w.RmoozTaskability;
+        return _BUILTIN_TASKABILITY;
+    }
+    // Brief/scenario-level doctrine + commander-review posture (best-effort). If a Step-1 brief declares
+    // doctrine/commander review required and it is not satisfied, those flags propagate to every unit.
+    function _taskabilityCtx() {
+        var ob = (_payload && _payload.brief && _payload.brief.operational_brief) || (_payload && _payload.operational_brief) || {};
+        var ta = ob.task_assembly || {};
+        var doctrineOk = ta.doctrine_upload_required === false || !!ta.doctrine_application_policy || (Array.isArray(ta.doctrine_sources) && ta.doctrine_sources.length > 0);
+        var cmdrOk = ta.commander_review_required === false || ta.commander_approved === true || ta.commander_review_complete === true;
+        return { doctrine_required: ta.doctrine_upload_required === true, doctrine_ok: doctrineOk,
+            commander_review_required: ta.commander_review_required === true, commander_approved: cmdrOk };
+    }
+    function _classifyUnit(u) { return _taskabilityLib().classifyUnit(u, _taskabilityCtx()); }
+    // ALL raw loaded units (red+blue), carrying their Step-1 flags — used for classification + the report.
+    function _rawScenarioUnits() {
+        var w = W(); var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        if (!sc) return [];
+        return (Array.isArray(sc.red_units) ? sc.red_units : []).concat(Array.isArray(sc.blue_units_initial) ? sc.blue_units_initial : []);
+    }
+    function _rawUnitByUid(uid) {
+        if (!uid) return null; uid = String(uid);
+        var hit = _rawScenarioUnits().filter(function (u) { return u && String(u.id || u.uid || u.unit_uid || '') === uid; })[0];
+        if (hit) return hit;
+        var f = _findRealUnit(uid); return f ? f.unit : null;
+    }
+    function _isUnitTaskable(uid) {
+        var u = _rawUnitByUid(uid);
+        if (!u) return true;   // unknown unit → don't over-block; the move resolver already drops missing units
+        return !!_classifyUnit(u).taskable;
+    }
+    function _taskableSideUnits(side) {
+        side = String(side || 'BLUE').toUpperCase();
+        return _scenarioSideUnits(side).filter(function (u) { return _isUnitTaskable(u.id); });
+    }
+    // The Step-1 COA Preparation Report — built locally from the single-source _classifyUnit so it reflects
+    // the exact taskability the rest of the gate enforces (matches RmoozTaskability.prepareReport in shape).
+    function _step1PreparationReport() {
+        var raw = _rawScenarioUnits();
+        var taskable_units = [], blocked_units = [], cnt = { s: 0, c: 0, d: 0, m: 0 };
+        raw.forEach(function (u) {
+            var t = _classifyUnit(u);
+            var id = (u && (u.id || u.uid || u.unit_uid)) || null, side = (u && u.side) || null;
+            if (t.taskable) { taskable_units.push({ id: id, side: side }); return; }
+            blocked_units.push({ id: id, side: side, reason: t.reason, review_status: t.review_status, allowed_actions: t.allowed_actions });
+            if (t.blockers.source) cnt.s++;
+            if (t.blockers.coords) cnt.c++;
+            if (t.blockers.doctrine) cnt.d++;
+            if (t.blockers.commander_review) cnt.m++;
+        });
+        var taskable = taskable_units.length, blocked = blocked_units.length, loaded = raw.length;
+        var executable = taskable >= 1;
+        var message = !loaded ? 'No units loaded.'
+            : !executable ? 'COA unavailable — Step 1 data requires source/doctrine/commander review.'
+            : blocked > 0 ? (taskable + ' taskable, ' + blocked + ' blocked pending source/doctrine review.')
+            : null;
+        return { units_loaded: loaded, taskable: taskable, blocked: blocked,
+            blocked_by_missing_source: cnt.s, blocked_by_missing_coordinates: cnt.c,
+            blocked_by_missing_doctrine: cnt.d, blocked_by_commander_review: cnt.m,
+            taskable_units: taskable_units, blocked_units: blocked_units, executable: executable, message: message };
+    }
+    var _lastStep1Report = null;
+    // Run the gate, cache the report, and record White + event-log entries (only when something is blocked —
+    // a fully-taskable operational scenario stays silent). Called on Generate / Commit / Run entry, NOT per tick.
+    function _step1Gate(phaseTag) {
+        var r = _step1PreparationReport();
+        _lastStep1Report = r;
+        if (r.blocked > 0 || !r.executable) {
+            try { _recordDecision({ role: 'white', action: 'step1_coa_preparation_gate', called_llm: false, source: 'step1-gate' + (phaseTag ? (':' + phaseTag) : ''),
+                reason: r.executable ? 'partial taskability — some Step-1 units blocked' : 'no taskable units — Step-1 review required',
+                result_summary: r.taskable + ' taskable, ' + r.blocked + ' blocked (source ' + r.blocked_by_missing_source + ' / coords ' + r.blocked_by_missing_coordinates + ' / doctrine ' + r.blocked_by_missing_doctrine + ' / commander ' + r.blocked_by_commander_review + ')' }); } catch (_) {}
+            try { _appendToEventLog('Step 1 Gate: ' + r.taskable + ' taskable, ' + r.blocked + ' blocked pending source/doctrine review.'); } catch (_) {}
+        }
+        return r;
+    }
+    // A COA tasks a non-taskable (Step-1 review-only) unit with movement/combat → returns that uid, else null.
+    function _coaTasksBlockedUnit(coa) {
+        var hit = null;
+        _coaAllActions(coa).forEach(function (a) {
+            if (hit || !a || a.action_type === 'HOLD_POSITION') return;   // HOLD is allowed for blocked units
+            if (a.unit_uid && !_isUnitTaskable(a.unit_uid)) hit = String(a.unit_uid);
+        });
+        return hit;
+    }
+    var _coaCommitBlockedReason = null;
     // HARD enforcement before commit: if the selected COA is not executable-quality, replace it with the
     // deterministic Staff-Safe commander template (clearly labelled) so the EXECUTED COA is role-separated.
     function _enforceExecutableCoaQuality(coa) {
@@ -2399,7 +2515,7 @@
             var ff = _findRealUnit(a.unit_uid);
             if (ff && ff.unit) { seen[a.unit_uid] = 1; units.push({ id: a.unit_uid, uid: a.unit_uid, lat: ff.unit.lat, lon: ff.unit.lon, side: String(ff.unit.side || side).toUpperCase() }); }
         });
-        if (!units.length) units = _scenarioSideUnits(side);   // fallback: the side's units
+        if (!units.length) units = _taskableSideUnits(side);   // fallback: the side's TASKABLE units (AE)
         var tmpl = _staffSafeCommanderCoa(side, units, getObjective(), 'SS-CMD-1');
         if (!tmpl) return { coa: coa, replaced: false, reason: reason, blocked: true };   // no template possible → caller blocks
         tmpl._quality = _coaQualityGate(tmpl);
@@ -2461,7 +2577,7 @@
     }
     function _planFallbackUnits(plan) {
         var side = String((arr(plan && plan.coas)[0] && arr(plan.coas)[0].side) || _activeSide || 'BLUE').toUpperCase();
-        var u = _scenarioSideUnits(side);
+        var u = _taskableSideUnits(side);   // AE: template fills from taskable units only
         if (u.length) return u;
         // derive from the plan's own action uids (resolve real units)
         var seen = {}, out = [];
@@ -2542,10 +2658,23 @@
         _coaRepairAttempted = false;   // AD: fresh generate → repair budget reset
         _coaLoading = true; _coaPlan = null; _coaApplied = false; _coaMovedUnits = []; _mcpPromptExpanded = false;
         _routeUnavailableMsg = null;
+        _step1HeldUids = {};           // AE: fresh generate → re-log any suppressed Step-1 units
+        // RMOOZ-STEP1-COA-PREPARATION-GATE-AE: classify units BEFORE any AI/deterministic COA generation. If
+        // NO unit is taskable (all are Step-1 placeholders), produce NO movement COA — an honest "review
+        // required" block, no /plan-coas call, no fake all-to-objective order.
+        var _s1 = _step1Gate('generate');
+        if (!_s1.executable) {
+            _coaPlan = { ok: false, _step1_blocked: true, _step1_report: _s1, _error: _s1.message, _requestedVia: 'manual_generate' };
+            _coaLoading = false; _stopCoaLoadingTicker(); updatePanel();
+            return;
+        }
         _coaLoadingStart = (function () { try { return Date.now(); } catch (_) { return 0; } })();
         _startCoaLoadingTicker();   // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: live elapsed timer while the model thinks
         updatePanel();
         var body = _buildAiRequestBody();
+        // RMOOZ-STEP1-COA-PREPARATION-GATE-AE: only TASKABLE units are sent to the planner — blocked Step-1
+        // placeholders are held back so the AI/deterministic builder cannot task them with movement.
+        body.units = arr(body.units).filter(function (u) { return _isUnitTaskable(u.id); });
         // RMOOZ-AI-COMMANDER-DEMO-PACING-C: shape the request by planner mode.
         if (_planningMode === 'staff_safe') {
             // Staff-Safe = FAST deterministic. useLlm:false → the capability analyst uses deterministic
@@ -2574,6 +2703,8 @@
                 // Plan" output, so the render applies the strict AI-only display gate (this page
                 // presents real LLM results ONLY — never deterministic/fallback dressed as AI).
                 _coaPlan._requestedVia = 'manual_generate';
+                // RMOOZ-STEP1-...-AE: carry the prep report so the review panel can list units held for review.
+                if (_coaPlan && typeof _coaPlan === 'object') _coaPlan._step1_report = _lastStep1Report;
             }
             // RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O: auto-select the recommended COA so the simple flow
             // can offer "Use Recommended Plan" by default.
@@ -2785,6 +2916,17 @@
             try { _recordDecision({ role: 'performance', action: 'coa_quality_gate', called_llm: false, source: 'commit-enforcement', reason: 'blocked low-quality selected COA', result_summary: 'fallback (commit) · ' + enf.reason }); } catch (_) {}
             try { _appendToEventLog('Commit quality gate: selected COA was not commander-quality (' + esc(enf.reason) + ') — committing the Staff-Safe commander template instead.'); } catch (_) {}
         }
+        // RMOOZ-STEP1-COA-PREPARATION-GATE-AE: refuse to commit a COA that tasks a non-taskable Step-1
+        // (review-only) unit with movement/combat — it can only HOLD/REVIEW until source/doctrine/commander
+        // review is complete. (Builders already exclude blocked units; this is the commit-time backstop.)
+        var _blkUid = _coaTasksBlockedUnit(coa);
+        if (_blkUid) {
+            _coaCommitBlockedReason = 'Commit refused — COA tasks Step-1 review-only unit ' + _blkUid + ' with movement/combat. It can only HOLD/REVIEW until source/doctrine/commander review is complete.';
+            try { _appendToEventLog('Commit refused: COA tasks non-taskable Step-1 unit ' + esc(_blkUid) + ' with movement — review required.'); } catch (_) {}
+            try { _recordDecision({ role: 'white', action: 'step1_coa_preparation_gate', called_llm: false, source: 'commit-gate', reason: 'non-taskable unit tasked with movement', result_summary: 'commit refused · ' + _blkUid }); } catch (_) {}
+            updatePanel(); return null;
+        }
+        _coaCommitBlockedReason = null;
         var side = _coaActiveSide(coa);
         _coaExec = {
             active: true, side: side, selected_coa_id: coa.plan_id || ('COA-' + (i + 1)), selected_coa: coa,
@@ -2928,6 +3070,16 @@
     function _runCommittedCoa() {
         if (!_coaExec || !_coaExec.active) return;
         if (_coaExec.phase_status === 'complete') return;
+        // RMOOZ-STEP1-COA-PREPARATION-GATE-AE: refuse to run a committed COA that tasks a non-taskable Step-1
+        // (review-only) unit with movement. (The movement chokepoint also suppresses it, but Run gives a
+        // clear, actionable block rather than silently holding.)
+        var _s1blk = _coaTasksBlockedUnit(_coaExec.selected_coa);
+        if (_s1blk) {
+            _coaExec.run_blocked_reason = 'Blocked: committed COA tasks Step-1 review-only unit ' + _s1blk + ' (not taskable). Complete source/doctrine/commander review, or recommit without it.';
+            try { _appendToEventLog('Run blocked — committed COA tasks non-taskable Step-1 unit ' + esc(_s1blk) + '. Review required.'); } catch (_) {}
+            try { _recordDecision({ role: 'white', action: 'step1_coa_preparation_gate', called_llm: false, source: 'run-gate', reason: 'non-taskable unit tasked', result_summary: 'run blocked · ' + _s1blk }); } catch (_) {}
+            updatePanel(); return;
+        }
         // RMOOZ-COA-QUALITY-HARD-ENFORCEMENT-AE: a low-quality committed COA (e.g. a stale restored one from
         // before the gate) must NOT execute. Block the run and require a repaired/template recommit.
         var _block = _coaHardBlockReason(_coaExec.selected_coa);
@@ -2956,6 +3108,7 @@
     function _resetCoaExec() {
         _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
         _coaExec = null;
+        _step1HeldUids = {}; _coaCommitBlockedReason = null;   // AE: fresh start → re-log suppressed units, clear commit block
         _committedPlanObj = null;   // AB1: drop the committed-plan identity so a later plan starts clean
         _persistCoaExec();   // RMOOZ-COA-COMMIT-PERSISTENCE-M: !_coaExec → removes the persisted key (safe clear, req #8)
         updatePanel();
@@ -3214,12 +3367,21 @@
     }
 
     // Resolve the non-HOLD moves in a COA into {unit, start, final, role} records.
+    var _step1HeldUids = {};   // RMOOZ-STEP1-...-AE: units suppressed by the taskability guard (logged once each)
     function _resolveCoaMoves(coa) {
         var moves = [];
         arr(coa && coa.phases).forEach(function (ph) {
             arr(ph.actions).forEach(function (act) {
                 if (!act || act.action_type === 'HOLD_POSITION') return;
                 if (!act.target || !Number.isFinite(+act.target.lat) || !Number.isFinite(+act.target.lon)) return;
+                // RMOOZ-STEP1-COA-PREPARATION-GATE-AE: the single movement chokepoint — a non-taskable
+                // (Step-1 review-only) unit must NEVER physically move, on ANY path (manual apply, committed
+                // tick, scenario, Red maneuver, loop). Suppress the move and log it once per unit.
+                if (act.unit_uid && !_isUnitTaskable(act.unit_uid)) {
+                    var _hk = String(act.unit_uid);
+                    if (!_step1HeldUids[_hk]) { _step1HeldUids[_hk] = 1; try { _appendToEventLog('HELD: ' + esc(_hk) + ' is Step-1 review-only (not taskable) — movement suppressed pending source/doctrine review.'); } catch (_) {} }
+                    return;
+                }
                 var found = _findRealUnit(act.unit_uid);
                 if (!found || !found.unit) return;
                 var u = found.unit;
@@ -4896,8 +5058,8 @@
     function _scenarioSideUnits(side) { return _greenUnits().filter(function (u) { return String(u.side || '').toUpperCase() === side; }); }
     function _autoDirectorBuildCoa(outcome) {
         var obj = getObjective();
-        var blue = _scenarioSideUnits('BLUE');
-        if (!blue.length) return null;                          // nothing to order
+        var blue = _taskableSideUnits('BLUE');   // AE: only taskable units receive movement orders
+        if (!blue.length) return null;                          // nothing to order (all blocked / none present)
         var posture, title;
         if (!obj) { posture = 'consolidate'; title = 'Consolidate (no objective)'; }
         else if (outcome.blue_total > 0 && outcome.blue_total < outcome.units_missing) { posture = 'consolidate'; title = 'Consolidate / hold (Blue weak)'; }
@@ -5097,6 +5259,17 @@
     }
     function _runScenario() {
         if (!_coaExec || !_coaExec.active) return null;
+        // RMOOZ-STEP1-COA-PREPARATION-GATE-AE: refuse to start a scenario whose committed COA tasks a
+        // non-taskable Step-1 (review-only) unit with movement.
+        if (_coaExec.phase_status !== 'complete') {
+            var _s1b = _coaTasksBlockedUnit(_coaExec.selected_coa);
+            if (_s1b) {
+                _coaExec.run_blocked_reason = 'Blocked: committed COA tasks Step-1 review-only unit ' + _s1b + ' (not taskable). Complete source/doctrine/commander review, or recommit without it.';
+                try { _appendToEventLog('Run Scenario blocked — committed COA tasks non-taskable Step-1 unit ' + esc(_s1b) + '. Review required.'); } catch (_) {}
+                try { _recordDecision({ role: 'white', action: 'step1_coa_preparation_gate', called_llm: false, source: 'run-gate', reason: 'non-taskable unit tasked', result_summary: 'scenario run blocked · ' + _s1b }); } catch (_) {}
+                updatePanel(); return _scenario || null;
+            }
+        }
         // RMOOZ-COA-QUALITY-HARD-ENFORCEMENT-AE: refuse to run a non-commander-quality committed COA
         // (e.g. a stale restored center-stacking exec) — require a repaired/template recommit first.
         if (_coaExec.phase_status !== 'complete') {
@@ -5134,7 +5307,7 @@
         try { _appendToEventLog('Scenario stopped by operator.'); } catch (_) {}
         updatePanel();
     }
-    function _resetScenario() { _stopScenarioTimer(); _scenario = null; }
+    function _resetScenario() { _stopScenarioTimer(); _scenario = null; _step1HeldUids = {}; }
     // ── RMOOZ-FREE-FIGHT-CONTROL-HARD-RESET-X: the NEW Free Fight control window (the "cockpit") ───────
     // A clean, single-flow, state-driven UI built from scratch. It REUSES the existing engine (planner,
     // COA execution, deterministic ticks, validation, Green/White advisory, ranking) — it changes NO
@@ -5207,6 +5380,27 @@
         if (q.verdict === 'fallback') h += '<div data-ff-v2="fallback-warning" style="margin-top:2px;color:#e0a93a;">⚠ Deterministic Staff-Safe template — NOT AI commander output.</div>';
         h += '</div>';
         return h;
+    }
+    // RMOOZ-STEP1-COA-PREPARATION-GATE-AE: Step-1 readiness banner — taskable/blocked counts, why blocked,
+    // and "No executable COA until review complete" when nothing is taskable. Silent for a fully-taskable
+    // operational scenario. (This minimal banner migrates to the Scenario Control Center Panel 1 in AF.)
+    function _v2Step1DetailHtml(r) {
+        if (!r) return '';
+        var execOk = r.executable, col = execOk ? '#e0a93a' : '#f0707a';
+        var h = '<div data-ff-v2="step1-readiness" data-ff-v2-step1-executable="' + (execOk ? '1' : '0') + '" data-ff-v2-step1-taskable="' + r.taskable + '" data-ff-v2-step1-blocked="' + r.blocked + '" style="margin:6px 0;padding:7px 10px;border:1px solid ' + col + ';border-radius:6px;background:#1a1207;font-size:10px;color:#e8d8c0;">';
+        h += '<div style="font-weight:700;color:' + col + ';">⚠ Step 1 Readiness — ' + r.taskable + ' taskable · ' + r.blocked + ' blocked</div>';
+        h += '<div style="margin-top:2px;color:#cdb89a;">Blocked by: source ' + r.blocked_by_missing_source + ' · coords ' + r.blocked_by_missing_coordinates + ' · doctrine ' + r.blocked_by_missing_doctrine + ' · commander ' + r.blocked_by_commander_review + '</div>';
+        if (!execOk) h += '<div data-ff-v2="step1-noexec" style="margin-top:3px;color:' + col + ';font-weight:700;">No executable COA until review complete.</div>';
+        if (arr(r.blocked_units).length) {
+            h += '<div style="margin-top:3px;color:#9fb8c8;">Held (review-only): ' + r.blocked_units.slice(0, 5).map(function (b) { return esc(String(b.id)) + ' (' + esc(b.review_status) + ')'; }).join(' · ') + (r.blocked_units.length > 5 ? ' …' : '') + '</div>';
+        }
+        h += '</div>';
+        return h;
+    }
+    function _v2Step1BannerHtml() {
+        var r = _step1PreparationReport();   // always reflect the CURRENT loaded units (cheap, deterministic)
+        if (!r || r.units_loaded === 0 || r.blocked === 0) return '';   // nothing blocked → no banner
+        return _v2Step1DetailHtml(r);
     }
     function _v2CoaCardsHtml(coas, recIdx) {
         var h = '<div data-ff-v2="coa-cards" style="margin-top:8px;display:flex;flex-direction:column;gap:6px;">';
@@ -5483,7 +5677,13 @@
         var coas = arr(_coaPlan && _coaPlan.coas);
         var recIdx = _pickRecommendedIdx(_coaPlan);
         var actions = '', body = '';
-        if (state === 'empty') {
+        if (state === 'empty' && _coaPlan && _coaPlan._step1_blocked) {
+            // RMOOZ-STEP1-COA-PREPARATION-GATE-AE: Generate produced NO movement COA — Step-1 data is review-only.
+            actions = _v2Sec('v2-generate', '↻ Re-check readiness', 'Re-run the Step 1 gate after source / doctrine / commander review');
+            body = '<div data-ff-v2="step1-blocked" style="margin-top:6px;padding:8px 10px;border:1px solid #f0707a;border-radius:6px;background:#1f0d0d;color:#f0b0b0;font-size:11px;font-weight:700;">' +
+                esc((_coaPlan._step1_report && _coaPlan._step1_report.message) || 'COA unavailable — Step 1 data requires source/doctrine/commander review.') + '</div>' +
+                _v2Step1DetailHtml(_coaPlan._step1_report || _lastStep1Report);
+        } else if (state === 'empty') {
             actions = _v2Pri('v2-generate', '⚡ Generate AI Plan', 'Calls the local AI model — can be slow') + _v2Sec('v2-staff-safe', '🛡 Use Staff-Safe Plan', 'Instant deterministic plan — no AI');
             body = _v2Note('<b>Generate AI Plan</b> is slow because it calls the AI. <b>Staff-Safe</b> is an instant deterministic plan (no AI).') + _v2ModelReadinessHtml();
         } else if (state === 'planning') {
@@ -5496,7 +5696,8 @@
             var selId = _v2CoaId(coas, _coaSelectedIdx);
             var staleExec = !!(_coaExec && _coaExec.active);   // AB1: a fresh plan / changed selection pushed us back to ready
             actions = _v2Pri('v2-commit', '✅ Commit Selected Plan (' + esc(selId) + ')', 'Locks the selected COA for execution') + (staleExec ? _v2Sec('v2-clear', 'Clear Plan') : '');
-            body = (staleExec ? '<div data-ff-v2="recommit-needed" style="margin-bottom:6px;padding:6px 9px;border:1px solid #6a5520;border-radius:6px;background:#1c1708;color:#e8d68a;font-size:10px;">⚠ Selection changed — commit selected plan before running scenario. (A new plan or a different COA replaced the previously committed one — Run / Run Scenario stay hidden until you commit.)</div>' : '') +
+            body = (_coaCommitBlockedReason ? '<div data-ff-v2="commit-blocked" style="margin-bottom:6px;padding:6px 9px;border:1px solid #f0707a;border-radius:6px;background:#1f0d0d;color:#f0b0b0;font-size:10px;font-weight:700;">⛔ ' + esc(_coaCommitBlockedReason) + '</div>' : '') +
+                (staleExec ? '<div data-ff-v2="recommit-needed" style="margin-bottom:6px;padding:6px 9px;border:1px solid #6a5520;border-radius:6px;background:#1c1708;color:#e8d68a;font-size:10px;">⚠ Selection changed — commit selected plan before running scenario. (A new plan or a different COA replaced the previously committed one — Run / Run Scenario stay hidden until you commit.)</div>' : '') +
                 _v2PlanQualityBannerHtml() +
                 _v2CoaCardsHtml(coas, recIdx) + _v2SelectedSummaryHtml(coas, recIdx) +
                 '<div style="margin-top:8px;display:flex;align-items:center;gap:6px;"><span style="font-size:9.5px;color:#8fa5b8;">Advanced:</span> ' + _v2Adv('v2-regenerate', '↻ Regenerate Plan (AI · slow)', 'Calls the AI again') + '</div>';
@@ -5529,6 +5730,7 @@
             '</div>';
         return '<div data-ff-v2="window" style="margin:6px 0;padding:11px 13px;border:1px solid #2e5d7d;border-radius:8px;background:#0a1726;">' +
             head +
+            _v2Step1BannerHtml() +
             _v2StepperHtml(state) +
             _v2FlowStatusHtml(state) +
             '<div data-ff-v2="actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;">' + actions + '</div>' +
@@ -6096,6 +6298,18 @@
         _enforceExecutableCoaQualityForTest: function (coa) { return _enforceExecutableCoaQuality(coa); },
         _coaTargetSummaryForTest:  function (coa)           { return _coaTargetSummary(coa); },
         _getRunBlockedReasonForTest: function ()            { return _coaExec && _coaExec.run_blocked_reason; },
+        // RMOOZ-STEP1-COA-PREPARATION-GATE-AE test seams
+        _classifyUnitForTest:          function (u)         { return _classifyUnit(u); },
+        _step1PreparationReportForTest: function ()         { return _step1PreparationReport(); },
+        _step1GateForTest:             function (tag)       { return _step1Gate(tag || 'test'); },
+        _isUnitTaskableForTest:        function (uid)       { return _isUnitTaskable(uid); },
+        _taskableSideUnitsForTest:     function (side)      { return _taskableSideUnits(side); },
+        _coaTasksBlockedUnitForTest:   function (coa)       { return _coaTasksBlockedUnit(coa); },
+        _resolveCoaMovesForTest:       function (coa)       { return _resolveCoaMoves(coa); },
+        _getCommitBlockedReasonForTest: function ()         { return _coaCommitBlockedReason; },
+        _getLastStep1ReportForTest:    function ()          { return _lastStep1Report; },
+        _v2Step1BannerHtmlForTest:     function ()          { return _v2Step1BannerHtml(); },
+        _getDecisionLogForTest:        function ()          { return _decisionLog.slice(); },
         // RMOOZ-FREE-FIGHT-V2-COA-TO-SCENARIO-BUGFIX-AB1 test seams
         _coaCommitIsStaleForTest:  function ()              { return _coaCommitIsStale(); },
         _getCommittedPlanObjMatchesForTest: function ()     { return _committedPlanObj === _coaPlan; },

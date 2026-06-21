@@ -200,5 +200,41 @@ try {
     ok('13 Clear resets committed COA + scenario runtime + committed-plan identity');
 } catch (e) { bad('13 clear resets', e); }
 
+// 14 — every old operator surface is gone or unreachable from the operator path (source proof).
+try {
+    var fs = require('fs');
+    var SRC = fs.readFileSync(path.join(Cl, 'free-fight-demo.js'), 'utf8');
+    // entry-point caller count: occurrences of `fn(` that are NOT the definition and NOT a *ForTest seam.
+    function callers(fn) {
+        var n = 0;
+        SRC.split('\n').forEach(function (ln) { if (new RegExp(fn + '\\(').test(ln) && !/function\s/.test(ln) && !/ForTest/.test(ln) && !/^\s*\/\//.test(ln)) n++; });
+        return n;
+    }
+    function fnBody(fn) { var i = SRC.indexOf('function ' + fn + '('); if (i < 0) return ''; var j = SRC.indexOf('\n    function ', i + 1); return SRC.slice(i, j < 0 ? i + 4000 : j); }
+    // the old V2 cockpit renderers are physically DELETED
+    assert(!/function renderFreeFightControlV2\b/.test(SRC) && !/function bindFreeFightControlV2\b/.test(SRC), 'V2 cockpit renderers deleted');
+    assert(!/function _freeFightControlStateV2\b/.test(SRC) && !/function _renderScenarioCockpitV2\b/.test(SRC), 'V2 state machine + scenario cockpit deleted');
+    // the tabbed COA-card surface entry point (renderAiDecisionHtml) has NO live caller → renderCoaPlanHtml
+    // + renderCommanderLoopHtml (called only inside it) are transitively unreachable from the operator path.
+    assert(callers('renderAiDecisionHtml') === 0, 'renderAiDecisionHtml (tabbed COA-card entry) has 0 live callers → unreachable');
+    // and the OPERATOR entry (updatePanel) calls none of the old renderers — it renders only the SCC.
+    var up = fnBody('updatePanel');
+    assert(/RmoozScenarioControlCenter/.test(up) && /\.render\(\)/.test(up), 'updatePanel renders RmoozScenarioControlCenter.render()');
+    assert(!/renderCoaPlanHtml\(|renderAiDecisionHtml\(|renderCommanderLoopHtml\(|renderFreeFightControlV2\(|bindFreeFightControlV2\(|_ffTabBarHtml\(/.test(up), 'updatePanel calls NONE of the old renderers');
+    // the old right-side reasoning panel (renderAiPanel) is a disconnected no-op (builder removed)
+    assert(!/AI Attack Plan Reasoning/.test(fnBody('renderAiPanel')), 'renderAiPanel reasoning-HTML builder removed (no-op)');
+    ok('14 old operator surfaces gone/unreachable: V2 deleted · tabbed COA-card entry 0 live callers · updatePanel calls no old renderer · reasoning panel no-op');
+} catch (e) { bad('14 old surfaces gone', e); }
+
+// 15 — DOM: across the full flow no old surface is present (uses the host DOM registry via getElementById).
+try {
+    reset(); DEMO._setCoaPlanForTest(llmPlan([execCoa()])); E.selectCoa(0); E.commit(0); E.runScenario();
+    assert(!global.document.getElementById('rmooz-free-fight-ai-panel'), 'no _aiPanel element in the operator DOM');
+    assert(!global.document.getElementById('rmooz-free-fight-commander-panel'), 'no _cmdrPanel element in the operator DOM');
+    var scc = DEMO._sccRenderForTest();
+    assert(!/data-act="select-coa-/.test(scc) && !/Generate AI Attack Plan/.test(scc) && !/data-ff-tabpanel/.test(scc) && !/data-ff-v2/.test(scc), 'operator render has no old COA-card / tab / v2 markers');
+    ok('15 DOM: no old _aiPanel / _cmdrPanel / select-coa / Generate-AI-Attack-Plan / tab / v2 in the operator path');
+} catch (e) { bad('15 DOM old surfaces absent', e); }
+
 console.log('\n' + (fail === 0 ? 'PASS' : 'FAIL') + ' — ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail === 0 ? 0 : 1);

@@ -107,10 +107,11 @@ ok('§11 trail color role-based (assault)', /assault.*#ff9060|#ff9060.*assault/.
 ok('§11 trail color role-based (support)', /support.*#60b0ff|#60b0ff.*support/.test(CLIENT_SRC));
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// §12  "AI Attack Plan Reasoning" string in source (right-side panel)
+// §12  RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: the old "AI Attack Plan Reasoning" right-side panel
+// (renderAiPanel/_aiPanel) was an old operator surface — DISCONNECTED to a no-op. Assert it is GONE.
 // ═══════════════════════════════════════════════════════════════════════════════
-console.log('\n§12  "AI Attack Plan Reasoning" string in source');
-ok('§12 AI Attack Plan Reasoning present', /AI Attack Plan Reasoning/.test(CLIENT_SRC));
+console.log('\n§12  Old "AI Attack Plan Reasoning" panel disconnected');
+ok('§12 old reasoning-panel HTML builder removed (renderAiPanel is a no-op)', !/h \+= '<div style="font-weight:700;color:#9ec2ec;font-size:13px;margin-bottom:4px;">AI Attack Plan Reasoning/.test(CLIENT_SRC));
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // §13  "Preview Unit AI Decision" is preserved but is not the main COA button

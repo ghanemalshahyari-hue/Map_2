@@ -2249,13 +2249,43 @@
     }
     // Brief/scenario-level doctrine + commander-review posture (best-effort). If a Step-1 brief declares
     // doctrine/commander review required and it is not satisfied, those flags propagate to every unit.
+    // RMOOZ-SCC-STEP1-TRAINING-APPROVAL-AK: operator "Approve Draft for Training Simulation" flag. When true,
+    // review-only units (source/doctrine/commander pending — NOT coords) become taskable in SIMULATION ONLY.
+    // The Step-1 gate logic is UNCHANGED; it just honors this explicit, Evidence-recorded operator override.
+    var _trainingApproved = false;
     function _taskabilityCtx() {
         var ob = (_payload && _payload.brief && _payload.brief.operational_brief) || (_payload && _payload.operational_brief) || {};
         var ta = ob.task_assembly || {};
         var doctrineOk = ta.doctrine_upload_required === false || !!ta.doctrine_application_policy || (Array.isArray(ta.doctrine_sources) && ta.doctrine_sources.length > 0);
         var cmdrOk = ta.commander_review_required === false || ta.commander_approved === true || ta.commander_review_complete === true;
         return { doctrine_required: ta.doctrine_upload_required === true, doctrine_ok: doctrineOk,
-            commander_review_required: ta.commander_review_required === true, commander_approved: cmdrOk };
+            commander_review_required: ta.commander_review_required === true, commander_approved: cmdrOk,
+            training_approved: _trainingApproved === true };
+    }
+    function _isSimulationOnly() { return _trainingApproved === true && _step1PreparationReport().simulation_taskable > 0; }
+    // Operator approves the loaded review-only draft for TRAINING SIMULATION (not source verification). Loud +
+    // recorded: decision log (white) + event log; unit source flags are NOT mutated (Evidence still shows them).
+    function _approveTrainingSimulation() {
+        if (_trainingApproved) return;
+        var rep = _step1PreparationReport();
+        if (!rep.training_eligible) {
+            try { _appendToEventLog('Training approval not applicable — no review-only units are training-eligible (remaining blocks need coordinates).'); } catch (_) {}
+            return;
+        }
+        _trainingApproved = true;
+        var after = _step1PreparationReport();
+        try { _recordDecision({ role: 'white', action: 'step1_training_approval', called_llm: false, source: 'operator-training-approval',
+            reason: 'operator approved review-only draft for TRAINING SIMULATION (source/commander overridden, NOT source-verified)',
+            result_summary: 'SIMULATION ONLY · ' + after.simulation_taskable + ' review-only unit(s) now taskable in simulation; source flags unchanged (Evidence retains them)' }); } catch (_) {}
+        try { _appendToEventLog('⚠ SIMULATION ONLY: operator approved ' + after.simulation_taskable + ' review-only unit(s) for TRAINING — not source-verified; source/commander flags remain recorded in Evidence.'); } catch (_) {}
+        updatePanel();
+    }
+    function _clearTrainingApproval() {
+        if (!_trainingApproved) return;
+        _trainingApproved = false;
+        try { _recordDecision({ role: 'white', action: 'step1_training_approval_cleared', called_llm: false, source: 'operator-training-approval', reason: 'operator cleared training-simulation approval', result_summary: 'review-only units are blocked again (back to Step-1 review)' }); } catch (_) {}
+        try { _appendToEventLog('Training-simulation approval cleared — review-only units are blocked again (Step-1 review).'); } catch (_) {}
+        updatePanel();
     }
     function _classifyUnit(u) { return _taskabilityLib().classifyUnit(u, _taskabilityCtx()); }
     // ALL raw loaded units (red+blue), carrying their Step-1 flags — used for classification + the report.
@@ -2284,10 +2314,15 @@
     function _step1PreparationReport() {
         var raw = _rawScenarioUnits();
         var taskable_units = [], blocked_units = [], cnt = { s: 0, c: 0, d: 0, m: 0 };
+        // RMOOZ-SCC-STEP1-TRAINING-APPROVAL-AK: simCount = taskable units that are simulation-only (training
+        // approved, not source-verified); training_eligible = blocked units that would become taskable in
+        // simulation (blocked by source/doctrine/commander, NOT by missing coordinates).
+        var simCount = 0, training_eligible = 0;
         raw.forEach(function (u) {
             var t = _classifyUnit(u);
             var id = (u && (u.id || u.uid || u.unit_uid)) || null, side = (u && u.side) || null;
-            if (t.taskable) { taskable_units.push({ id: id, side: side }); return; }
+            if (t.taskable) { taskable_units.push({ id: id, side: side, simulation_only: !!t.simulation_only }); if (t.simulation_only) simCount++; return; }
+            if (!t.blockers.coords) training_eligible++;
             blocked_units.push({ id: id, side: side, reason: t.reason, review_status: t.review_status, allowed_actions: t.allowed_actions });
             if (t.blockers.source) cnt.s++;
             if (t.blockers.coords) cnt.c++;
@@ -2296,14 +2331,20 @@
         });
         var taskable = taskable_units.length, blocked = blocked_units.length, loaded = raw.length;
         var executable = taskable >= 1;
+        var trainingApproved = _trainingApproved === true;
         var message = !loaded ? 'No units loaded.'
-            : !executable ? 'COA unavailable — Step 1 data requires source/doctrine/commander review.'
-            : blocked > 0 ? (taskable + ' taskable, ' + blocked + ' blocked pending source/doctrine review.')
-            : null;
+            : !executable ? (training_eligible > 0
+                ? 'COA unavailable — Step 1 data is review-only. Approve for Training Simulation to task ' + training_eligible + ' review-only unit(s) (SIMULATION ONLY — not source-verified), or complete source/commander review.'
+                : 'COA unavailable — Step 1 data requires source/doctrine/commander review.')
+            : (simCount > 0 ? (taskable + ' taskable (' + simCount + ' SIMULATION-ONLY, not source-verified)' + (blocked ? ', ' + blocked + ' still blocked' : '') + '.')
+                : (blocked > 0 ? (taskable + ' taskable, ' + blocked + ' blocked pending source/doctrine review.') : null));
         return { units_loaded: loaded, taskable: taskable, blocked: blocked,
             blocked_by_missing_source: cnt.s, blocked_by_missing_coordinates: cnt.c,
             blocked_by_missing_doctrine: cnt.d, blocked_by_commander_review: cnt.m,
-            taskable_units: taskable_units, blocked_units: blocked_units, executable: executable, message: message };
+            taskable_units: taskable_units, blocked_units: blocked_units, executable: executable, message: message,
+            // AK training-simulation fields
+            training_approved: trainingApproved, training_eligible: training_eligible,
+            simulation_taskable: simCount, simulation_only: trainingApproved && simCount > 0 };
     }
     var _lastStep1Report = null;
     // Run the gate, cache the report, and record White + event-log entries (only when something is blocked —
@@ -2537,6 +2578,8 @@
                 _coaPlan._requestedVia = 'manual_generate';
                 // RMOOZ-STEP1-...-AE: carry the prep report so the review panel can list units held for review.
                 if (_coaPlan && typeof _coaPlan === 'object') _coaPlan._step1_report = _lastStep1Report;
+                // RMOOZ-SCC-STEP1-TRAINING-APPROVAL-AK: mark a plan built on training-approved review-only units.
+                if (_coaPlan && typeof _coaPlan === 'object') _coaPlan._simulation_only = _isSimulationOnly();
             }
             // RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O: auto-select the recommended COA so the simple flow
             // can offer "Use Recommended Plan" by default.
@@ -4781,8 +4824,18 @@
                 doctrine_status: ctx.doctrine_required ? (ctx.doctrine_ok ? 'applied' : 'upload required') : 'not required',
                 commander_review_status: ctx.commander_review_required ? (ctx.commander_approved ? 'approved' : 'pending') : 'not required',
                 data_reliability: !rep.units_loaded ? 'none' : (rep.blocked > 0 ? (rep.executable ? 'partial' : 'review-only') : 'operational'),
+                // RMOOZ-SCC-STEP1-TRAINING-APPROVAL-AK: training-simulation posture for Panel 1.
+                training_approved: rep.training_approved === true,
+                training_eligible: rep.training_eligible || 0,
+                simulation_taskable: rep.simulation_taskable || 0,
+                simulation_only: rep.simulation_only === true,
             };
         },
+        // ── RMOOZ-SCC-STEP1-TRAINING-APPROVAL-AK: explicit operator training-simulation approval ──
+        trainingApproved: function () { return _trainingApproved === true; },
+        simulationOnly: function () { try { return _isSimulationOnly(); } catch (_) { return false; } },
+        approveTrainingSimulation: function () { _approveTrainingSimulation(); },
+        clearTrainingApproval: function () { _clearTrainingApproval(); },
         // ── COA preparation (Panel 2) — Step-1 + taskability + quality requirements then generate ──
         prepareCoa: function () { setPlanningMode('commander'); _resetScenario(); _generateCoaPlan(); },
         prepareStaffSafe: function () { setPlanningMode('staff_safe'); _resetScenario(); _generateCoaPlan(); },

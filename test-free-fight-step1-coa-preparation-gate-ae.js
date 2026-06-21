@@ -57,7 +57,10 @@ try {
     assert.strictEqual(rep.executable, true, 'executable (1 taskable exists)');
     var none = T.prepareReport([{ id: 'X', source_required: true, lat: 24.3, lon: 54.2 }]);
     assert.strictEqual(none.executable, false, 'no taskable → not executable');
-    assert(/Step 1 data requires source\/doctrine\/commander review/.test(none.message), 'no-taskable message');
+    // AK: a review-only unit WITH coords is training-eligible, so the honest block now offers training simulation.
+    assert(/Step 1 data (requires source\/doctrine\/commander review|is review-only)/.test(none.message), 'no-taskable honest block message');
+    var noneNoCoord = T.prepareReport([{ id: 'Y', source_required: true, lat: null, lon: null }]);
+    assert(/requires source\/doctrine\/commander review/.test(noneNoCoord.message), 'coords-less set is NOT training-eligible → plain review message');
     ok('MODULE A pure classifyUnit/prepareReport verdicts + non-exclusive counts + executable + message');
 } catch (e) { bad('MODULE A pure resolver', e); }
 
@@ -157,7 +160,8 @@ try {
     DEMO._generateCoaPlanForTest();
     var plan = DEMO._getCoaPlanForTest();
     assert(plan && plan.ok === false && plan._step1_blocked === true, 'plan is Step-1-blocked, ok:false');
-    assert(/Step 1 data requires source\/doctrine\/commander review/.test(plan._error || ''), 'honest block message');
+    // AK: Z-1/Z-2 are review-only WITH coords → training-eligible, so the honest block now offers training simulation.
+    assert(/Step 1 data (requires source\/doctrine\/commander review|is review-only)/.test(plan._error || ''), 'honest block message (training-eligible variant ok)');
     var planFetches = FETCHES.filter(function (u) { return /plan-coas/.test(u); });
     assert.strictEqual(planFetches.length, 0, 'NO /plan-coas call when nothing is taskable');
     ok('AE 5 Generate produces NO movement COA + NO /plan-coas call when no units are taskable');

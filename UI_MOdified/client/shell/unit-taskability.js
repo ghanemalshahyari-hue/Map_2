@@ -74,8 +74,21 @@
         var taskable = !blockers.coords && !blockers.source && !blockers.doctrine && !blockers.commander_review;
 
         if (taskable) {
-            return { id: id, taskable: true, reason: 'taskable', review_status: 'OK',
+            return { id: id, taskable: true, simulation_only: false, source_verified: true, reason: 'taskable', review_status: 'OK',
                 allowed_actions: COMBAT_ACTIONS.concat(['HOLD_POSITION']), blocked_actions: [], blockers: blockers };
+        }
+        // RMOOZ-SCC-STEP1-TRAINING-APPROVAL-AK: an explicit operator "Approve Draft for Training Simulation"
+        // makes review-only units taskable ONLY in simulation mode. It overrides the source / doctrine /
+        // commander-review blockers (the operator has reviewed and accepted them for TRAINING) but NEVER the
+        // coords blocker — a unit with no verified position still cannot move. The unit's source flags are NOT
+        // mutated (Evidence still shows them); this is a runtime override, and every such unit is flagged
+        // simulation_only + source_verified:false so nothing is ever mistaken for a source-verified order.
+        if (!taskable && !blockers.coords && ctx.training_approved === true) {
+            return { id: id, taskable: true, simulation_only: true, source_verified: false,
+                reason: 'training-approved (SIMULATION ONLY — overrides: ' + (why.join(', ') || 'review-only') + ')',
+                review_status: 'TRAINING_APPROVED',
+                allowed_actions: COMBAT_ACTIONS.concat(['HOLD_POSITION']), blocked_actions: [], blockers: blockers,
+                overridden: { source: blockers.source, doctrine: blockers.doctrine, commander_review: blockers.commander_review } };
         }
         // Primary review status — coords/source first (most common Step-1 case), then doctrine, then commander.
         var review_status = (blockers.coords || blockers.source) ? 'SOURCE_REQUIRED'
@@ -94,12 +107,17 @@
      * count of blocked units. executable === at least one taskable unit exists.
      */
     function prepareReport(units, ctx) {
+        ctx = ctx || {};
         units = Array.isArray(units) ? units : [];
         var taskable_units = [], blocked_units = [];
-        var cnt = { source: 0, coords: 0, doctrine: 0, commander: 0 };
+        var cnt = { source: 0, coords: 0, doctrine: 0, commander: 0 }, simCount = 0;
+        // RMOOZ-SCC-STEP1-TRAINING-APPROVAL-AK: how many units are review-only but training-eligible (would
+        // become taskable in simulation mode) — i.e. blocked ONLY by source/doctrine/commander, not coords.
+        var training_eligible = 0;
         units.forEach(function (u) {
             var t = classifyUnit(u, ctx);
-            if (t.taskable) { taskable_units.push({ id: t.id, side: (u && u.side) || null }); return; }
+            if (t.taskable) { taskable_units.push({ id: t.id, side: (u && u.side) || null, simulation_only: !!t.simulation_only }); if (t.simulation_only) simCount++; return; }
+            if (!t.blockers.coords) training_eligible++;
             blocked_units.push({ id: t.id, side: (u && u.side) || null, reason: t.reason,
                 review_status: t.review_status, allowed_actions: t.allowed_actions });
             if (t.blockers.source) cnt.source++;
@@ -109,10 +127,13 @@
         });
         var taskable = taskable_units.length, blocked = blocked_units.length, loaded = units.length;
         var executable = taskable >= 1;
+        var trainingApproved = ctx.training_approved === true;
         var message = !loaded ? 'No units loaded.'
-            : !executable ? 'COA unavailable — Step 1 data requires source/doctrine/commander review.'
-            : blocked > 0 ? (taskable + ' taskable, ' + blocked + ' blocked pending source/doctrine review.')
-            : null;
+            : !executable ? (training_eligible > 0
+                ? 'COA unavailable — Step 1 data is review-only. Approve for Training Simulation to task ' + training_eligible + ' review-only unit(s) (SIMULATION ONLY — not source-verified), or complete source/commander review.'
+                : 'COA unavailable — Step 1 data requires source/doctrine/commander review.')
+            : (simCount > 0 ? (taskable + ' taskable (' + simCount + ' SIMULATION-ONLY, not source-verified)' + (blocked ? ', ' + blocked + ' still blocked' : '') + '.')
+                : (blocked > 0 ? (taskable + ' taskable, ' + blocked + ' blocked pending source/doctrine review.') : null));
         return {
             units_loaded: loaded, taskable: taskable, blocked: blocked,
             blocked_by_missing_source: cnt.source,
@@ -121,6 +142,9 @@
             blocked_by_commander_review: cnt.commander,
             taskable_units: taskable_units, blocked_units: blocked_units,
             executable: executable, message: message,
+            // AK: training-simulation fields
+            training_approved: trainingApproved, training_eligible: training_eligible, simulation_taskable: simCount,
+            simulation_only: trainingApproved && simCount > 0,
         };
     }
 

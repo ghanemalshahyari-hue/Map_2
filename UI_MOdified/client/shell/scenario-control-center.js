@@ -132,6 +132,20 @@
         }
         if (!r.executable && r.units_loaded) inner += '<div data-scc="no-exec" style="margin-top:6px;padding:6px 9px;border:1px solid ' + C.bad + ';border-radius:5px;background:#1f0d0d;color:' + C.bad + ';font-size:11px;font-weight:700;">No executable COA. Step 1 review required.</div>';
         if (!r.units_loaded) inner += note('No units loaded — load a scenario / Step-1 ORBAT to begin.', C.dim);
+        // RMOOZ-SCC-STEP1-TRAINING-APPROVAL-AK — explicit operator training-simulation approval (Panel 1).
+        // Offered ONLY when units are review-only but training-eligible (blocked by source/doctrine/commander,
+        // NOT by missing coordinates). It does NOT lower the gate: it tasks review-only units in SIMULATION
+        // mode only, loudly labelled "not source-verified", and the override is recorded in Evidence.
+        if (r.training_approved && r.simulation_taskable > 0) {
+            inner += '<div data-scc="sim-only-label" style="margin-top:7px;padding:7px 10px;border:1.5px solid #d98a2b;border-radius:6px;background:#241704;color:#f1b84c;font-size:11px;font-weight:800;letter-spacing:.2px;">⚠ SIMULATION ONLY — not source-verified</div>' +
+                '<div style="margin-top:3px;font-size:9.5px;color:#d6b483;">' + r.simulation_taskable + ' review-only unit(s) approved for training; source / commander flags remain recorded in Evidence. This is NOT an approved operational order.</div>' +
+                '<div style="margin-top:6px;">' + btnWarn('scc-clear-training', '↩ Clear training approval', 'Revert — review-only units are blocked again') + '</div>';
+        } else if (!r.executable && r.units_loaded && r.training_eligible > 0) {
+            inner += '<div data-scc="training-offer" style="margin-top:7px;padding:7px 10px;border:1px dashed #b07d2a;border-radius:6px;background:#1c1608;">' +
+                '<div style="font-size:10.5px;color:#e8d28a;font-weight:700;">Training simulation</div>' +
+                '<div style="margin-top:2px;font-size:9.5px;color:#c9b483;">' + r.training_eligible + ' unit(s) are review-only (source / doctrine / commander pending) but have a verified position. Approve them for a <b>training simulation</b> to run a COA now — clearly marked <b>SIMULATION ONLY — not source-verified</b>. Units missing coordinates stay blocked.</div>' +
+                '<div style="margin-top:6px;">' + btnPri('scc-approve-training', '✅ Approve Draft for Training Simulation', 'Tasks review-only units in SIMULATION mode only — recorded in Evidence; does not source-verify them') + '</div></div>';
+        }
         // objective placement (the loaded scenario usually carries one; offer placement when it does not)
         inner += '<div style="margin-top:7px;display:flex;gap:6px;align-items:center;">' +
             (r.objective_set
@@ -355,8 +369,20 @@
                 '</div>';
             if (le.raw_llm_output) inner += jsonBlock('Raw LLM output (preview)', String(le.raw_llm_output).slice(0, 1800));
         }
+        // RMOOZ-SCC-STEP1-TRAINING-APPROVAL-AK: training-simulation override block — records that review-only
+        // units were tasked under an explicit operator training approval, NOT a source verification. The
+        // readiness JSON below still carries each unit's original source/commander flags (never mutated).
+        var rdy = eng.readiness();
+        if (rdy.training_approved || rdy.training_eligible > 0) {
+            var taCol = rdy.training_approved ? C.warn : C.dim;
+            inner += '<div data-scc="training-evidence" style="margin-top:6px;padding:6px 8px;border:1px solid ' + taCol + ';border-radius:5px;background:#1c1608;font-size:9px;color:#d6c79a;">' +
+                '<div style="color:' + C.dim + ';font-weight:700;">Step-1 training-simulation approval</div>' +
+                '<div>training_approved: <b style="color:' + taCol + ';">' + (rdy.training_approved ? 'true' : 'false') + '</b> · training_eligible: <b>' + rdy.training_eligible + '</b> · simulation_taskable: <b>' + rdy.simulation_taskable + '</b></div>' +
+                (rdy.training_approved ? '<div style="color:' + C.warn + ';margin-top:2px;">⚠ ' + rdy.simulation_taskable + ' review-only unit(s) tasked under SIMULATION-ONLY approval — overrides source / doctrine / commander review, NOT source-verified. Original flags retained in the readiness report below.</div>' : '') +
+                '</div>';
+        }
         // readiness report + raw JSON
-        inner += jsonBlock('Readiness report', eng.readiness());
+        inner += jsonBlock('Readiness report', rdy);
         inner += jsonBlock('Last generated COA plan (raw planner response)', eng.rawJson('generated'));
         inner += jsonBlock('Selected COA', eng.rawJson('selected'));
         inner += jsonBlock('Committed COA', eng.rawJson('committed'));
@@ -368,7 +394,11 @@
         var eng = engine();
         if (!eng) return '<div style="padding:10px;color:#f0707a;font-size:11px;">Scenario Control Center: engine facade unavailable.</div>';
         var state = sccState(eng);
-        var body = headerHtml(state) + flowHtml(state) + panel1Readiness(eng);
+        var simOnly = false; try { simOnly = !!eng.simulationOnly(); } catch (_) {}
+        // RMOOZ-SCC-STEP1-TRAINING-APPROVAL-AK: a persistent top banner so SIMULATION ONLY is unmissable in
+        // every downstream state (COA Review, Commit, Run) — not just Panel 1.
+        var simBanner = simOnly ? '<div data-scc="sim-only-banner" style="margin:0 0 8px;padding:7px 11px;border:1.5px solid #d98a2b;border-radius:7px;background:#241704;color:#f1b84c;font-size:11.5px;font-weight:800;text-align:center;letter-spacing:.3px;">⚠ TRAINING SIMULATION ONLY — units are NOT source-verified</div>' : '';
+        var body = headerHtml(state) + simBanner + flowHtml(state) + panel1Readiness(eng);
         if (state === 'no_scenario') {
             body += panel('2', 'Prepare COA', '<div style="font-size:10.5px;color:' + C.dim + ';">Load a scenario and place the objective to begin.</div>', C.edgeSoft);
         } else if (state === 'step1_review_required') {
@@ -397,6 +427,9 @@
         bindFn('scc-prepare', function () { eng.prepareCoa(); });
         bindFn('scc-prepare-staffsafe', function () { eng.prepareStaffSafe(); });
         bindFn('scc-recheck', function () { eng.clearAll(); });
+        // RMOOZ-SCC-STEP1-TRAINING-APPROVAL-AK
+        bindFn('scc-approve-training', function () { (eng.approveTrainingSimulation || function () {})(); });
+        bindFn('scc-clear-training', function () { (eng.clearTrainingApproval || function () {})(); });
         bindFn('scc-place-obj', function () { eng.placeObjective(); });
         bindFn('scc-clear-obj', function () { eng.clearObjectiveX(); (eng.repaint || function () {})(); });
         bindFn('scc-commit', function () { eng.commit(eng.selectedIdx()); });

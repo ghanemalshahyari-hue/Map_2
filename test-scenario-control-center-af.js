@@ -200,31 +200,37 @@ try {
     ok('13 Clear resets committed COA + scenario runtime + committed-plan identity');
 } catch (e) { bad('13 clear resets', e); }
 
-// 14 — every old operator surface is gone or unreachable from the operator path (source proof).
+// 14 — RMOOZ-...-AG: every old operator UI renderer is PHYSICALLY DELETED from free-fight-demo.js (not
+// merely unreachable). The exact AG grep proof must be zero (excluding inventory/history docs).
 try {
     var fs = require('fs');
     var SRC = fs.readFileSync(path.join(Cl, 'free-fight-demo.js'), 'utf8');
-    // entry-point caller count: occurrences of `fn(` that are NOT the definition and NOT a *ForTest seam.
-    function callers(fn) {
-        var n = 0;
-        SRC.split('\n').forEach(function (ln) { if (new RegExp(fn + '\\(').test(ln) && !/function\s/.test(ln) && !/ForTest/.test(ln) && !/^\s*\/\//.test(ln)) n++; });
-        return n;
-    }
     function fnBody(fn) { var i = SRC.indexOf('function ' + fn + '('); if (i < 0) return ''; var j = SRC.indexOf('\n    function ', i + 1); return SRC.slice(i, j < 0 ? i + 4000 : j); }
-    // the old V2 cockpit renderers are physically DELETED
-    assert(!/function renderFreeFightControlV2\b/.test(SRC) && !/function bindFreeFightControlV2\b/.test(SRC), 'V2 cockpit renderers deleted');
-    assert(!/function _freeFightControlStateV2\b/.test(SRC) && !/function _renderScenarioCockpitV2\b/.test(SRC), 'V2 state machine + scenario cockpit deleted');
-    // the tabbed COA-card surface entry point (renderAiDecisionHtml) has NO live caller → renderCoaPlanHtml
-    // + renderCommanderLoopHtml (called only inside it) are transitively unreachable from the operator path.
-    assert(callers('renderAiDecisionHtml') === 0, 'renderAiDecisionHtml (tabbed COA-card entry) has 0 live callers → unreachable');
-    // and the OPERATOR entry (updatePanel) calls none of the old renderers — it renders only the SCC.
+    // (a) the old card/tab/reasoning render FUNCTIONS no longer exist
+    ['renderCoaPlanHtml', 'renderAiDecisionHtml', 'renderCommanderLoopHtml', '_ffTabBarHtml', '_operatorStripHtml',
+     '_operatorSummaryHtml', '_whiteTabHtml', '_systemLayersHtml', '_greenWorldHtml', '_coaExecHtml',
+     'renderPlanningTraceHtml', 'renderFreeFightControlV2', 'bindFreeFightControlV2', '_freeFightControlStateV2',
+     '_renderScenarioCockpitV2', '_freeFightLegacyDrawerHtml'].forEach(function (fn) {
+        assert(!new RegExp('function ' + fn + '\\b').test(SRC), 'function ' + fn + ' is physically deleted');
+    });
+    // (b) their test seams are gone
+    ['_renderCoaPlanHtmlForTest', '_renderAiDecisionHtmlForTest', '_renderCommanderLoopHtmlForTest',
+     '_greenWorldHtmlForTest', '_operatorStripHtmlForTest', '_systemLayersHtmlForTest', '_ffTabBarHtmlForTest',
+     '_whiteTabHtmlForTest', '_coaExecHtmlForTest', '_renderPlanningTraceHtmlForTest'].forEach(function (s) {
+        assert(SRC.indexOf(s + ':') === -1, 'seam ' + s + ' removed');
+    });
+    // (c) the exact AG-banned token list is ZERO in the client module
+    ['renderCoaPlanHtml', '_renderCoaPlanHtmlForTest', 'renderAiDecisionHtml', 'Generate AI Attack Plan',
+     'Typical plans', 'select-coa-', 'AI Attack Plan Reasoning', 'data-ff-v2', 'renderFreeFightControlV2',
+     'bindFreeFightControlV2'].forEach(function (tok) {
+        assert(SRC.indexOf(tok) === -1, 'AG-banned token absent: "' + tok + '"');
+    });
+    // (d) updatePanel renders ONLY the SCC; renderAiPanel is a no-op
     var up = fnBody('updatePanel');
     assert(/RmoozScenarioControlCenter/.test(up) && /\.render\(\)/.test(up), 'updatePanel renders RmoozScenarioControlCenter.render()');
-    assert(!/renderCoaPlanHtml\(|renderAiDecisionHtml\(|renderCommanderLoopHtml\(|renderFreeFightControlV2\(|bindFreeFightControlV2\(|_ffTabBarHtml\(/.test(up), 'updatePanel calls NONE of the old renderers');
-    // the old right-side reasoning panel (renderAiPanel) is a disconnected no-op (builder removed)
     assert(!/AI Attack Plan Reasoning/.test(fnBody('renderAiPanel')), 'renderAiPanel reasoning-HTML builder removed (no-op)');
-    ok('14 old operator surfaces gone/unreachable: V2 deleted · tabbed COA-card entry 0 live callers · updatePanel calls no old renderer · reasoning panel no-op');
-} catch (e) { bad('14 old surfaces gone', e); }
+    ok('14 old operator UI PHYSICALLY DELETED: 16 fns + 10 seams removed · AG-banned tokens zero · updatePanel = SCC only');
+} catch (e) { bad('14 physical deletion', e); }
 
 // 15 — DOM: across the full flow no old surface is present (uses the host DOM registry via getElementById).
 try {

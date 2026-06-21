@@ -3,8 +3,8 @@
  *
  * The Scenario Control Center is a HARD REPLACEMENT for the old Free Fight control window. It is built
  * from scratch: a clean, explicit, panel-based operator flow with its OWN small state machine and its own
- * `scc-*` action ids. It does NOT reuse renderFreeFightControlV2 / bindFreeFightControlV2 / the legacy
- * drawer / the old COA-card UI / the old Generate-Commit-Run layout / any old data-act id.
+ * `scc-*` action ids. It does NOT reuse any of the old window's renderers, binders, diagnostics drawer,
+ * COA-card UI, Generate-Commit-Run layout, or any old data-act id (all physically deleted in RMOOZ-...-AG).
  *
  * It owns ONLY the operator UI/flow. It drives the (unchanged) engine — Step-1 taskability gate, COA
  * quality gate, /plan-coas generation, COA commit/execution, continuous scenario, Green/White adjudication,

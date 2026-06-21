@@ -82,16 +82,11 @@ ok('provider_policy: local_only in all return paths',
 
 // ── SECTION 5: UI warming label and timeout hint ─────────────────────────────
 console.log('\n§5  UI warming label and timeout hint in client');
-ok('Test button shows Warming LLM while testing',
-    /Warming LLM/.test(clientSrc));
-ok('Test button has tooltip about warming',
+// RMOOZ-...-AG: the "Warming LLM" Test-button label + the timeout warm-model hint + the isTimeout source-scan
+// lived in the deleted loop UI (renderCommanderLoopHtml / the old Test-LLM button). The timeout ENGINE
+// (deterministic fallback on timeout, asserted in §1-4) is unchanged. [[retired-by-AG]]
+ok('warm-model tooltip text still present in source (model-flow advanced diagnostics)',
     /warms.*Ollama|Warms.*local|warm.*model/i.test(clientSrc));
-ok('Timeout fallback_reason shows warm-model hint',
-    /timeout.*Test Local LLM|warm model.*retry/i.test(clientSrc) ||
-    /click Test Local LLM to warm model/.test(clientSrc));
-ok('isTimeout check detects timed.out in fallback_reason',
-    /isTimeout.*timed.out|timeout.*isTimeout/i.test(clientSrc) ||
-    /timed\.out/.test(clientSrc));
 
 // ── SECTION 6: Existing local-only policy checks (spot check) ────────────────
 console.log('\n§6  Existing local-only policy spot checks');

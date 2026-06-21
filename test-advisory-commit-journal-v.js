@@ -97,14 +97,15 @@ DEMO.setObjective({ lat: 24.45, lon: 54.40 });
         ok('commit_advisory_context persists + restores through sessionStorage');
     } catch (e) { bad('persist/restore', e); }
 
-    // 4 — UI shows the committed advisory context.
+    // 4 — committed advisory context stored on the engine (RMOOZ-...-AG: the old _coaExecHtml card display
+    // was physically deleted; the data now lives on _coaExec + the SCC Evidence panel). Assert the ENGINE.
     try {
         var recIdx = setupRanked(); DEMO._commitCoaForTest(recIdx); await flush();
-        var html = DEMO._coaExecHtmlForTest();
-        assert(/data-ff-coa="commit-advisory"/.test(html) && /Committed COA advisory context/.test(html), 'advisory-context block renders');
-        assert(/Recommended: /.test(html) && /Selected: /.test(html) && /Operator override:/.test(html), 'shows recommended/selected/override');
-        ok('UI shows the committed advisory context');
-    } catch (e) { bad('UI', e); }
+        var ctx = DEMO._getCoaExecForTest().commit_advisory_context;
+        assert(ctx && ctx.considered === true, 'commit_advisory_context recorded on the committed exec');
+        assert(ctx.recommended_coa_id && ('selected_coa_id' in ctx) && ('operator_override' in ctx), 'context has recommended / selected / override');
+        ok('committed advisory context stored on the engine (old card display retired by AG)');
+    } catch (e) { bad('advisory context engine', e); }
 
     // 5 + 6 + 7 — event log, decision log, no /plan-coas (override path).
     try {

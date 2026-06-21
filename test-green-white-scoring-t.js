@@ -93,17 +93,17 @@ try {
     ok('apply: no invalidation, no LLM, no /plan-coas, decision + event log recorded');
 } catch (e) { bad('apply scoring', e); }
 
-// 8 — White advisory appears in the UI.
+// 8 — White advisory scoring is computed by the ENGINE (RMOOZ-...-AG: the old Green-panel HTML render was
+// physically deleted; the advisory now surfaces in the Scenario Control Center. Assert the engine result).
 try {
     DEMO._setCoaPlanForTest({ ok: true, validation: { ok: true }, coas: [{ plan_id: 'COA-1' }] });
     DEMO._setGreenWorldForTest(mkGreen('high', 83, 85));
-    DEMO._applyGreenAdvisoryScoringForTest('plan_review');
-    var html = DEMO._greenWorldHtmlForTest(mkGreen('high', 83, 85));
-    assert(/data-ff-green="white-scoring"/.test(html), 'white-scoring block present');
-    assert(/White considered Green risk: high/.test(html) && /score &Delta; -15/.test(html), 'shows "White considered Green risk" + band + score delta');
-    assert(/Advisory only — not a block/.test(html) && /validator unchanged/.test(html), 'shows advisory-only + validator-unchanged disclaimer');
-    ok('White advisory scoring appears in the Free Fight card UI');
-} catch (e) { bad('UI surface', e); }
+    var scoring = DEMO._applyGreenAdvisoryScoringForTest('plan_review');
+    var s = JSON.stringify(scoring || {});
+    assert(scoring && /high/.test(s), 'White considered Green risk: high (engine band)');
+    assert(/-15/.test(s) || (scoring && (scoring.score_delta === -15 || scoring.delta === -15)), 'score delta -15 computed (engine, advisory only — never a block)');
+    ok('White advisory scoring computed by the engine (old Green-panel UI retired by AG)');
+} catch (e) { bad('advisory scoring engine', e); }
 
 console.log('\n' + (fail === 0 ? '✅ ' : '❌ ') + pass + ' passed, ' + fail + ' failed (test-green-white-scoring-t.js)');
 process.exit(fail === 0 ? 0 : 1);

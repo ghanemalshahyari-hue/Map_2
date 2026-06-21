@@ -1023,12 +1023,11 @@
         if (!_panel) return;
         var bodyDiv = _panel.querySelector('[data-ff="body"]');
         if (!bodyDiv) return;
-        // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: the operator card is the NEW Scenario Control Center —
-        // a HARD REPLACEMENT. The old Free Fight control window (renderFreeFightControlV2 / bindFreeFightControlV2 /
-        // legacy drawer / group-movement demo / old COA-card UI / every old data-act id) is no longer rendered
-        // or bound in the operator path. The SCC owns the entire operator flow and drives the UNCHANGED engine
-        // through the engine facade (window.RmoozFreeFightDemo.engine). No legacy / v2 data-act id exists in the
-        // operator DOM, so there are no hidden duplicate buttons competing for clicks.
+        // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF/AG: the operator card is the NEW Scenario Control Center,
+        // a HARD REPLACEMENT. The old Free Fight control window (its cockpit, diagnostics drawer, group-movement
+        // demo, COA-card UI, and every old action id) has been physically deleted (AG) and is no longer
+        // rendered or bound. The SCC owns the entire operator flow and drives the UNCHANGED engine through the
+        // facade (window.RmoozFreeFightDemo.engine). No old action id exists in the operator DOM.
         var scc = W() && W().RmoozScenarioControlCenter;
         bodyDiv.innerHTML = scc ? scc.render()
             : '<div style="padding:12px;color:#f0707a;font-size:12px;">Scenario Control Center module failed to load (scenario-control-center.js).</div>';
@@ -1247,9 +1246,10 @@
 
     // FREE-FIGHT-AI-LITE-A: the "AI Free Fight Reasoning" panel (why RED/BLUE
     // were chosen, terrain used, missing info, confidence, warnings). Read-only.
-    // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: the old "AI Attack Plan Reasoning" floating panel (_aiPanel)
-    // was an old operator surface. DISCONNECTED — the Scenario Control Center (the _panel body) is the ONLY
-    // operator window. This is a permanent no-op that guarantees _aiPanel is never present in the operator DOM.
+    // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF/AG: the old right-side reasoning floating panel (_aiPanel)
+    // was an old operator surface. Its HTML builder was deleted; this is a permanent no-op that guarantees
+    // _aiPanel is never present in the operator DOM. The Scenario Control Center (_panel body) is the ONLY
+    // operator window.
     function renderAiPanel() {
         if (_aiPanel && _aiPanel.parentNode) { try { _aiPanel.parentNode.removeChild(_aiPanel); } catch (_) {} }
         _aiPanel = null;
@@ -2950,70 +2950,6 @@
         _generateCoaPlan();   // the single LLM call (Deep Plan)
     }
     // The COA Commitment Mode control block (Commit / Run / Pause / Replan + live status).
-    function _coaExecHtml() {
-        function btn(act, label, col) { return '<button data-act="' + act + '" style="font:inherit;cursor:pointer;border:1px solid ' + col + ';background:#101b27;color:#cfe6ff;border-radius:5px;padding:4px 9px;font-size:10.5px;">' + label + '</button>'; }
-        var hasPlan = !!(_coaPlan && _coaPlan.ok && arr(_coaPlan.coas).length);
-        if (!hasPlan && !_coaExec) return '';
-        var ex = _coaExec;
-        var running = !!(ex && ex.active && !ex.paused && !ex.replan_required && ex.phase_status !== 'complete');
-        var h = '<div data-ff-coa="commit-exec" style="margin:4px 0 8px;padding:6px 9px;border:1px solid #2e5d7d;border-radius:5px;background:#0a1420;">';
-        h += '<div style="font-size:10.5px;font-weight:700;color:#9ec2ec;margin-bottom:3px;">🎖 COA Commitment Mode — plan once · commit · RMOOZ executes the cycle</div>';
-        h += '<div style="display:flex;gap:5px;flex-wrap:wrap;">';
-        if (hasPlan) h += btn('coa-commit', '✔ Commit this COA', '#2e7d54');
-        if (ex && ex.active && ex.phase_status !== 'complete') {
-            if (!running) h += btn('coa-run', '▶ Run selected COA', '#2e7d54');
-            if (running)  h += btn('coa-pause', '⏸ Pause COA', '#8a6a20');
-            h += btn('coa-replan', '↻ Replan (AI)', '#4a7bb8');
-        }
-        if (ex) h += btn('coa-exec-reset', '⟲ Clear committed COA', '#5a6270');
-        h += '</div>';
-        if (ex) {
-            var phases = arr(ex.selected_coa && ex.selected_coa.phases);
-            var pIdx = Math.min(ex.current_phase_index, Math.max(0, phases.length - 1));
-            var phase = phases[pIdx] || {};
-            var ordersTotal = arr(phase.actions).length;
-            var ordersDone = arr(ex.completed_orders).filter(function (o) { return o.phase === ex.current_phase_index; }).length;
-            var statusColor = ex.phase_status === 'complete' ? '#7fd6a0' : (ex.replan_required ? '#f0a0a0' : (running ? '#7fd6a0' : '#e0c060'));
-            h += '<div style="margin-top:4px;font-size:10px;color:#cdd8e4;line-height:1.55;">';
-            if (ex._restored) h += '<div data-ff-coa="restored-note" style="color:#9fe8c0;font-weight:700;margin-bottom:2px;">↺ Restored committed COA from session. Press Run to resume.</div>';
-            h += '<div><span style="color:#8fa5b8;">Active COA:</span> <span style="color:#e8eaed;font-weight:700;">' + esc(ex.selected_coa_id) + '</span> <span style="color:#7a9ab8;">· side ' + esc(ex.side) + '</span></div>';
-            h += '<div><span style="color:#8fa5b8;">Current phase:</span> <span style="color:#cfe6ff;">' + (ex.phase_status === 'complete' ? 'all done' : ((ex.current_phase_index + 1) + ' / ' + phases.length + (phase.name ? ' — ' + esc(phase.name) : ''))) + '</span></div>';
-            h += '<div><span style="color:#8fa5b8;">Orders complete:</span> <span style="color:#bfe89a;">' + ordersDone + ' / ' + ordersTotal + '</span> · <span style="color:#8fa5b8;">status</span> <span style="color:' + statusColor + ';font-weight:700;">' + esc(ex.phase_status) + '</span> · <span style="color:#7a9ab8;">tick ' + ex.ticks + '</span></div>';
-            if (ex.replan_required) {
-                h += '<div data-ff-coa="replan-banner" style="margin-top:3px;padding:5px 7px;border:1px solid #6a3030;border-radius:4px;background:#241414;color:#f0b0b0;">⚠ Replan required — ' + esc(ex.replan_reason || '') +
-                    '<div style="color:#cdb86a;margin-top:2px;">Choose: <b>Run selected COA</b> (continue anyway) · <b>Replan (AI)</b> · or switch the Planner to <b>Staff-Safe</b>.</div></div>';
-            }
-            h += '</div>';
-            // RMOOZ-ADVISORY-COMMIT-JOURNAL-V: the advisory/ranking context recorded at commit time.
-            var cac = ex.commit_advisory_context;
-            if (cac) {
-                h += '<div data-ff-coa="commit-advisory" style="margin-top:4px;padding:5px 7px;border:1px solid #2a4d6a;border-radius:4px;background:#08131e;font-size:9.5px;color:#cdd8e4;">';
-                h += '<div style="color:#9ec2ec;font-weight:700;margin-bottom:2px;">Committed COA advisory context</div>';
-                if (!cac.considered) {
-                    h += '<div style="color:#8fa5b8;">' + esc(cac.reason || 'no advisory context available') + '</div>';
-                } else {
-                    h += '<div>Recommended: <b style="color:#7fd6a0;">' + esc(cac.recommended_coa_id) + '</b> · Selected: <b style="color:#cfe6ff;">' + esc(cac.selected_coa_id) + '</b></div>';
-                    h += '<div>Operator override: <b style="color:' + (cac.operator_override ? '#e0a93a' : '#7fd6a0') + ';">' + (cac.operator_override ? 'yes' : 'no') + '</b>';
-                    var _sd = cac.selected_coa_ranking && cac.selected_coa_ranking.green_advisory_delta;
-                    if (_sd != null) h += ' · Green/White Δ on selected: <b style="color:#e0a93a;">' + _sd + '</b>';
-                    h += '</div>';
-                    var _ga = cac.green_advisory || {};
-                    if (arr(_ga.warnings).length) h += '<div style="color:#e0a93a;">⚠ ' + arr(_ga.warnings).map(function (x) { return esc(x); }).join(' · ') + '</div>';
-                    if (arr(_ga.recommendations).length) h += '<div style="color:#9fd6b0;">↪ ' + arr(_ga.recommendations).map(function (x) { return esc(x); }).join(' · ') + '</div>';
-                }
-                h += '</div>';
-            }
-            if (running) h += '<div data-ff-coa="no-llm-note" style="margin-top:3px;font-size:9.5px;color:#7fd6a0;">✅ AI is NOT being called on normal ticks. Running the committed COA deterministically.</div>';
-            // per-tick timing (perf proof)
-            var tt = ex.last_tick_timing || {};
-            h += '<div style="margin-top:2px;font-size:9px;color:#6a8fa8;">commit ' + _fmtMs(tt.coa_commit_ms || 0) + ' · tick ' + _fmtMs(tt.coa_tick_execute_ms || 0) + ' · trigger-check ' + _fmtMs(tt.replan_trigger_check_ms || 0) +
-                ' · ui ' + _fmtMs(tt.ui_update_ms || 0) + ' · map ' + _fmtMs(tt.map_paint_ms || 0) + ' · log ' + _fmtMs(tt.event_log_ms || 0) + ' · persist ' + _fmtMs(tt.storage_persist_ms || 0) +
-                ' · interval ' + (tt.tick_interval_delay_ms != null ? tt.tick_interval_delay_ms + 'ms' : '—') +
-                ' · llm_called_this_tick: <b style="color:' + (tt.llm_called_this_tick ? '#f0a0a0' : '#7fd6a0') + ';">' + String(!!tt.llm_called_this_tick) + '</b></div>';
-        }
-        h += '</div>';
-        return h;
-    }
 
     function _buildCoaEventLogEntries() {
         if (!_coaPlan || !_coaPlan.ok || !Array.isArray(_coaPlan.coas)) return [];
@@ -4067,409 +4003,9 @@
         return h;
     }
 
-    function renderPlanningTraceHtml(plan) {
-        var t = plan && plan.planning_trace;
-        if (!t) return '';
-        function row(ok, label) {
-            return '<div style="font-size:10px;color:' + (ok ? '#90d090' : '#e0a93a') + ';margin-bottom:1px;">' + (ok ? '✓' : '•') + ' ' + esc(label) + '</div>';
-        }
-        var iu = t.input_understood || {}, rc = iu.role_counts || {}, en = iu.enemy_assessment || {}, v = t.validation || {};
-        var isCmd = t.mode === 'ai_commander';
-        var modeColor = isCmd ? '#7fd6a0' : '#e0c060';
-        var modeBorder = isCmd ? '#2e7d54' : '#6a5a20';
-        var modeBg = isCmd ? '#0f2418' : '#241f08';
-        var modeLabel = isCmd ? 'AI Commander Mode — وضع القائد بالذكاء الاصطناعي'
-                              : 'Staff-Safe Mode — الوضع الآمن (تخطيط حتمي)';
-        var h = '<div data-ff-coa="planning-trace" data-ff-mode="' + (isCmd ? 'ai_commander' : 'staff_safe') + '" style="margin:2px 0 7px;padding:7px 9px;border:1px solid ' + modeBorder + ';border-radius:5px;background:' + modeBg + ';">';
-        h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;gap:6px;">' +
-            '<span style="font-weight:700;font-size:11px;color:' + modeColor + ';">' + (isCmd ? '🧠 ' : '🛡 ') + esc(modeLabel) + '</span>' +
-            (t.model_used ? '<span style="font-size:9px;color:#7a9ab8;white-space:nowrap;">' + esc(t.provider_used || '') + ' · ' + esc(t.model_used) + '</span>' : '') +
-            '</div>';
-        // 1) Input understood
-        h += '<div style="font-weight:700;font-size:10px;color:#9ec2ec;margin:3px 0 2px;">Input understood — الإدخال مفهوم</div>';
-        h += row(true, (iu.total_units || 0) + ' units analyzed');
-        // RMOOZ-AI-FREE-FIGHT-CANDIDATE-PREFILTER-A: how many of the force were sent to the AI.
-        var cand = iu.candidates;
-        if (cand && cand.applied) {
-            h += row(true, 'Candidate units sent to AI: ' + cand.sent + ' / ' + cand.total +
-                '  ·  excluded far/not-relevant: ' + cand.excluded);
-            arr(cand.top_exclusions).forEach(function (x) {
-                h += '<div style="font-size:9px;color:#8a9aa8;margin-left:12px;">— excluded ' + (x.count || 0) + ': ' + esc(x.label || '') + '</div>';
-            });
-        } else if (cand && cand.total) {
-            h += row(true, 'All ' + cand.total + ' units sent to AI (force is below the pre-filter size)');
-        }
-        var rcParts = ['maneuver', 'fires', 'air_defense', 'recon', 'support']
-            .filter(function (k) { return rc[k]; })
-            .map(function (k) { return rc[k] + ' ' + k.replace('_', '-'); });
-        if (rcParts.length) h += row(true, 'Force (' + esc(iu.active_side || '') + '): ' + rcParts.join(' · '));
-        if (en && en.total) h += row(true, 'Enemy (' + esc(en.side || '') + '): ' + (en.air_defense || 0) + ' air-defense · ' + (en.armor || 0) + ' armor · ' + (en.recon || 0) + ' recon');
-        h += row(true, (iu.objectives || 0) + ' objective(s) prioritized');
-        if (iu.terrain_class) h += row(true, 'Terrain: ' + esc(iu.terrain_class) + ' (' + esc(iu.terrain_provenance || 'inferred') + ')');
-        if (iu.alert_state || iu.roe_state) h += row(true, 'Posture: alert ' + esc(iu.alert_state || '—') + ' · ROE ' + esc(iu.roe_state || '—'));
-        // 2) AI reasoning
-        var rs = arr(t.reasoning);
-        if (rs.length) {
-            h += '<div style="font-weight:700;font-size:10px;color:#9ec2ec;margin:5px 0 2px;">AI reasoning — تفسير الذكاء الاصطناعي</div>';
-            rs.forEach(function (c) {
-                h += '<div style="font-size:10px;color:#cdd8e4;margin-bottom:1px;">' + (c.recommended ? '★ ' : '• ') + esc(c.plan_id || '') + (c.title ? ' (' + esc(c.title) + ')' : '') + (c.why ? ': ' + esc(c.why) : '') + '</div>';
-                arr(c.rejected_units).slice(0, 3).forEach(function (ru) {
-                    h += '<div style="font-size:9px;color:#8a9aa8;margin-left:12px;">— not used: ' + esc(ru.unit_uid || '') + (ru.reason ? ' (' + esc(ru.reason) + ')' : '') + '</div>';
-                });
-            });
-        }
-        // 3) Validation
-        h += '<div style="font-weight:700;font-size:10px;color:#9ec2ec;margin:5px 0 2px;">Validation — التحقق</div>';
-        h += row(v.unit_ids_valid !== false, 'All unit IDs valid');
-        h += row(v.actions_matched !== false, 'All actions matched to real units');
-        h += row(v.kill_actions_blocked !== false, 'Kill/engage actions blocked');
-        h += row(v.within_bounds !== false, 'Targets within map bounds (no teleport)');
-        if (v.repaired) h += row(true, 'Repaired ' + (v.repaired_count || 1) + ' invalid reference(s) — AI revised after staff validation');
-        h += row((v.valid_coa_count || 0) > 0, (v.valid_coa_count || 0) + ' valid COA(s) generated');
-        if (!isCmd && (plan.fallback_message || plan.fallback_reason)) {
-            h += '<div style="font-size:9px;color:#cdb86a;margin-top:4px;">' + esc(plan.fallback_message || ('AI did not run: ' + plan.fallback_reason)) + '</div>';
-        }
-        h += '</div>';
-        return h;
-    }
-    function renderCoaPlanHtml() {
-        var h = '';
-        // FREEFIGHT-COA-COMMANDER-NARRATIVE-A: render a bullet list
-        function bullets(list, color) {
-            var a = arr(list);
-            if (!a.length) return '';
-            return '<ul style="margin:2px 0 0;padding-left:16px;">' +
-                a.map(function (b) { return '<li style="color:' + (color || '#cdd8e4') + ';margin-bottom:1px;">' + esc(b) + '</li>'; }).join('') +
-                '</ul>';
-        }
-        // Role breakdown one-liner from a COA's role_breakdown map (server-provided)
-        function roleLine(coa) {
-            var rb = coa && coa.role_breakdown;
-            if (!rb) return '';
-            var parts = _orderedRoleKeys(rb)
-                .map(function (r) { return '<span style="color:#e0e8f0;">' + rb[r] + '</span> ' + r; });
-            return parts.length ? parts.join(' · ') : '';
-        }
-        if (_coaLoading) {
-            // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: a live "AI Planning Trace" while the local model thinks.
-            // Honest in-progress (no fake token streaming); the elapsed timer ticks via _coaLoadingTimer.
-            var _elapsed = _coaLoadingStart ? Math.max(0, Math.round((Date.now() - _coaLoadingStart) / 1000)) : 0;
-            var _hdr = (_planningMode === 'staff_safe') ? '🛡 Staff-Safe planner working…' : '🧠 AI Commander reasoning…';
-            h += '<div data-ff-coa="planning-inflight" style="padding:8px 9px;border:1px solid #2e5d7d;border-radius:5px;background:#0a1622;">';
-            h += '<div style="font-weight:700;font-size:11px;color:#9ec2ec;">' + _hdr + ' <span style="color:#7fd6a0;">' + _elapsed + 's</span></div>';
-            h += '<div style="font-size:9px;color:#6a8fa8;margin:2px 0 5px;">' + esc(FF_AI_DEPTHS[_aiDepth] ? FF_AI_DEPTHS[_aiDepth].label : _aiDepth) + ' · ' + esc(FF_COMMANDER_MODES[_commanderMode] ? FF_COMMANDER_MODES[_commanderMode].label : _commanderMode) + ' · local model</div>';
-            ['Reading OOB, capability & terrain', 'Drafting courses of action', 'Validating against real units', 'Repairing invalid references'].forEach(function (s, i) {
-                h += '<div style="font-size:10px;color:#8a9aa8;margin-bottom:1px;">' + (i === 0 ? '◐' : '○') + ' ' + esc(s) + '</div>';
-            });
-            h += '<div style="font-size:9px;color:#5a7a90;margin-top:4px;">Local LLM on this hardware can take 1–3 minutes — the commander is thinking. التخطيط جارٍ</div>';
-            h += '</div>';
-            return h;
-        }
-        if (!_coaPlan) {
-            // RMOOZ-AI-FREE-FIGHT-UX-PROOF-A: show Readiness + the Candidate-Filter explainer BEFORE
-            // generation so the operator knows the gate state and that the AI sees a filtered subset.
-            h += _aiReadinessHtml(null);
-            h += _aiCandidateFilterHtml(null);
-            // COA cards shown after generation — typical COAs: Direct Assault, Flank / Fix, Probe / Recon
-            h += '<div style="color:#7a9ab8;font-size:11px;padding:4px 0;">Click "Generate AI Attack Plan" to generate COAs for all RED units.<br>' +
-                 '<span style="color:#5a7a60;font-size:10px;">Typical plans: Direct Assault · Flank / Fix · Probe / Recon</span></div>';
-            return h;
-        }
-        if (_coaPlan._route_unavailable) {
-            // Route problem — explicitly NOT an LLM failure.
-            h += '<div data-ff-coa="route-unavailable" style="color:#f0b0b0;font-size:11px;padding:6px 8px;border:1px solid #7a3030;border-radius:4px;background:#241414;line-height:1.4;">⚠ ' + esc(_coaPlan._error || _routeUnavailableText(_coaPlan)) + '</div>';
-            return h;
-        }
-        if (_coaPlan._error || !_coaPlan.ok) {
-            h += '<div style="color:#e0a93a;font-size:11px;padding:4px;">Error: ' + esc(_coaPlan._error || _coaPlan.reason || 'unknown error') + '</div>';
-            return h;
-        }
-        // RMOOZ-AI-ATTACK-PLAN-AI-ONLY-A: the manual "Generate AI Attack Plan" page presents ONLY
-        // real LLM results. If this plan came from that button and is not a real LLM plan (LLM off
-        // / timeout / unavailable / fast mode / deterministic fallback / provider missing), render
-        // NOTHING but the honest message + diagnostics — no cards, no score numbers, no stale
-        // values, no fallback dressed as AI. (The loop / Generate-5 are separate flows, untouched.)
-        // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: the ONE exception is an EXPLICITLY-chosen Staff-Safe plan
-        // (planning_mode='staff_safe', echoed by the server) — a deliberate, clearly-badged
-        // deterministic mode whose COAs ARE shown (honestly labeled, not "AI"). A Commander-mode
-        // deterministic/auto-fallback is NOT exempt: it still hits the AI-only honesty gate even when
-        // it carries COAs. (Gating on "no coas at all" let Commander-mode fallbacks through dressed as
-        // a plan and broke the AI-only spec — RMOOZ-AI-ATTACK-PLAN-AI-ONLY-A.)
-        var _explicitStaffSafe = String(_coaPlan.planning_mode || '').toLowerCase() === 'staff_safe';
-        if (_coaPlan._requestedVia === 'manual_generate' && !_isRealLlmPlan(_coaPlan) && !_explicitStaffSafe) {
-            h += _aiOnlyGateHtml(_coaPlan);
-            return h;
-        }
-        var coas = _coaPlan.coas || [];
-        // Plan source banner
-        var srcColor = _coaPlan.plan_source === 'llm' ? '#90d090' : '#9ab0c0';
-        h += '<div style="margin-bottom:5px;font-size:10px;">' +
-             '<span style="color:#7a9ab8;">Plan source:</span> <span style="color:' + srcColor + ';">' + esc(_coaPlan.plan_source || 'deterministic_coa_fallback') + '</span>';
-        if (_coaPlan.fallback_reason) h += ' <span style="color:#e0a93a;font-size:9px;">(' + esc(_coaPlan.fallback_reason) + ')</span>';
-        if (_coaPlan.ai_depth) h += ' <span style="color:#7a9ab8;font-size:9px;">· depth ' + esc(_coaPlan.ai_depth) + '</span>';
-        h += '</div>';
-        // RMOOZ-AI-FREE-FIGHT-UX-PROOF-A: lead with the operator-facing proof blocks (Readiness →
-        // Candidate Filter → Non-Selected), then the existing detail (trace/cards/debug).
-        // RMOOZ-SELECTED-UNITS-REMOVE: the per-unit "AI Selected Units (N)" roster was removed at
-        // owner request — a long "AI moved N units" list is noise, not commander insight. The COA
-        // cards + AI Planning Trace + the map already show what the AI did.
-        h += _aiReadinessHtml(_coaPlan);
-        h += _aiCandidateFilterHtml(_coaPlan);
-        h += _aiNonSelectedUnitsHtml(_coaPlan);
-        // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: the demo-facing "AI Planning Trace" (Input understood →
-        // AI reasoning → Validation) + the AI Commander / Staff-Safe mode badge.
-        h += renderPlanningTraceHtml(_coaPlan);
-        // RMOOZ-AI-COA-PERFORMANCE-A: honest message when the LLM was slow/unavailable.
-        if (_coaPlan.fallback_message) {
-            h += '<div data-ff-coa="fallback-msg" style="margin-bottom:5px;font-size:10px;color:#e0c060;padding:4px 7px;border:1px solid #6a5a20;border-radius:4px;background:#1f1a08;">⏱ ' + esc(_coaPlan.fallback_message) + '</div>';
-        }
-        // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A: state plainly whether the LLM actually ran.
-        h += _planSourceNoteHtml(_coaPlan);
-        // RMOOZ-AI-COA-PERFORMANCE-A: stage timings (AI total / LLM / capability / terrain / COA build).
-        h += _coaTimingHtml(_coaPlan.debug_timing, _coaPlan);
-        // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A: per-COA movement-execution debug overlay.
-        h += _coaDebugHtml();
-        // RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A: "View MCP Prompt" on the real-LLM render too.
-        h += _mcpPromptHtml(_coaPlan);
-        // FREEFIGHT-COA-COMMANDER-NARRATIVE-A: Commander assessment banner. Honest labeling —
-        // only an LLM plan is "AI"; a deterministic plan is the tactical planner (LLM not used).
-        if (_coaPlan.commander_assessment || _coaPlan.recommended_plan_id) {
-            var _isLlmPlan = _coaPlan.plan_source === 'llm';
-            var _assessTitle = _isLlmPlan ? 'Commander AI Assessment — تقدير القائد' : 'Tactical Planner Assessment — تقدير المخطط (deterministic — LLM not used)';
-            h += '<div data-ff-coa="assessment" style="margin-bottom:6px;padding:6px 9px;border:1px solid ' + (_isLlmPlan ? '#2e5d7d' : '#5a4f20') + ';border-radius:5px;background:' + (_isLlmPlan ? '#0a1622' : '#1a1708') + ';">';
-            h += '<div style="font-weight:700;font-size:11px;color:' + (_isLlmPlan ? '#9ec2ec' : '#cdb86a') + ';margin-bottom:3px;">' + _assessTitle + '</div>';
-            if (_coaPlan.commander_assessment) {
-                h += '<div style="font-size:10px;color:#cdd8e4;line-height:1.4;">' + esc(_coaPlan.commander_assessment) + '</div>';
-            }
-            if (_coaPlan.recommended_plan_id) {
-                h += '<div style="margin-top:3px;font-size:10.5px;"><span style="color:#7a9ab8;">Recommended:</span> <span style="color:#7fd6a0;font-weight:700;">' + esc(_coaPlan.recommended_plan_id) + '</span></div>';
-            }
-            h += '</div>';
-        }
-        // FREEFIGHT-BLUE-WARNING-ROE-A: BLUE Warning / ROE block on the COA card when BLUE is acting
-        if (_coaPlan.active_side === 'BLUE' && _coaPlan.situation_state) {
-            var roeActs = (_coaPlan.blue_reaction_intent && _coaPlan.blue_reaction_intent.warning_actions) || [];
-            h += _blueWarningRoeHtml(_coaPlan.situation_state, roeActs);
-        }
-        // COA cards
-        coas.forEach(function (coa, ci) {
-            var isSelected = (ci === _coaSelectedIdx);
-            var riskColor = coa.risk === 'high' ? '#f08080' : (coa.risk === 'medium' ? '#e0c060' : '#90d090');
-            var selBorder = isSelected ? '#4a9ed6' : '#2a3f55';
-            var selBg     = isSelected ? '#0a1830' : '#0c141d';
-            h += '<div data-act="select-coa-' + ci + '" style="margin-bottom:6px;padding:7px 9px;border:1px solid ' + selBorder + ';border-radius:5px;background:' + selBg + ';cursor:pointer;">';
-            h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">';
-            h += '<span style="font-weight:700;font-size:11px;color:#e8eaed;">' + esc(coa.plan_id) + ' — ' + esc(coa.title) + '</span>';
-            // RMOOZ-COA-RANKING-WITH-ADVISORY-U: the badge follows the RANKING recommendation when present
-            // (so the badge, "Recommended because", and the default selection all agree); else the planner flag.
-            var _isRankRec = (typeof _coaPlan._ranking_recommended_idx === 'number') ? (ci === _coaPlan._ranking_recommended_idx) : !!coa.recommended;
-            if (_isRankRec) h += '<span style="background:#1a5030;color:#7fd6a0;border-radius:3px;padding:1px 5px;font-size:9px;">Recommended</span>';
-            h += '</div>';
-            h += '<div style="font-size:10px;margin-bottom:3px;">' +
-                 '<span style="color:#8fa5b8;">Risk:</span> <span style="color:' + riskColor + ';">' + esc(coa.risk) + '</span> · ' +
-                 '<span style="color:#8fa5b8;">Confidence:</span> <span style="color:#9ec2ec;">' + esc(coa.confidence) + '</span> · ' +
-                 '<span style="color:#8fa5b8;">Units:</span> <span style="color:#e0e8f0;">' + (coa.units_selected_count || 0) + '/' + (coa.units_total_considered || 0) + '</span></div>';
-            // RMOOZ-COA-RANKING-WITH-ADVISORY-U: per-COA score breakdown + advisory note + recommendation reason.
-            if (coa._ranking) {
-                var rk = coa._ranking;
-                h += '<div data-ff-coa="ranking" style="font-size:9.5px;color:#9ab0c0;margin-bottom:2px;">Score: <b style="color:#cfe6ff;">' + rk.final_score + '</b> = base ' + rk.base_score + ' + tac ' + rk.tactical_score +
-                     (rk.readiness_score ? ' + rdy ' + rk.readiness_score : '') + (rk.terrain_score ? ' + terr ' + rk.terrain_score : '') +
-                     (rk.green_advisory_delta ? ' <span style="color:#e0a93a;">' + (rk.green_advisory_delta < 0 ? '' : '+') + rk.green_advisory_delta + ' green</span>' : '') + '</div>';
-                if (rk.green_advisory_delta < 0) h += '<div data-ff-coa="ranking-advisory" style="font-size:9px;color:#e0a93a;margin-bottom:2px;">⚖ Green/White advisory affected ranking (' + rk.green_advisory_delta + ')</div>';
-                if (ci === _coaPlan._ranking_recommended_idx) h += '<div data-ff-coa="ranking-reason" style="font-size:9px;color:#7fd6a0;margin-bottom:2px;">Recommended because: ' + esc(rk.ranking_reason) + '</div>';
-            }
-            if (coa.summary) h += '<div style="font-size:10px;color:#cdd8e4;margin-bottom:3px;font-style:italic;">' + esc(coa.summary) + '</div>';
-            // Role breakdown one-liner (server-provided role_breakdown)
-            var rl = roleLine(coa);
-            if (rl) h += '<div style="font-size:10px;color:#9ab0c0;margin-bottom:2px;">Force: ' + rl + '</div>';
-            // Phase actions summary
-            (coa.phases || []).forEach(function (ph) {
-                var roleCounts = {};
-                (ph.actions || []).forEach(function (act) { var r = act.role || 'unknown'; roleCounts[r] = (roleCounts[r] || 0) + 1; });
-                var roleStr = Object.keys(roleCounts).map(function (r) { return roleCounts[r] + ' ' + r; }).join(', ');
-                if (roleStr) h += '<div style="font-size:10px;color:#9ab0c0;">Phase: ' + esc(ph.name || ph.phase_id) + ' — ' + roleStr + '</div>';
-            });
-            if (isSelected) h += '<div style="margin-top:3px;font-size:10px;color:#4a9ed6;font-weight:700;">▶ Selected</div>';
-            h += '</div>';
-        });
-        // FREEFIGHT-COA-COMMANDER-NARRATIVE-A: detailed commander decision for the SELECTED COA
-        var selCoa = coas[_coaSelectedIdx] || coas[0];
-        if (selCoa) {
-            var srb = selCoa.role_breakdown || {};
-            h += '<div data-ff-coa="commander-decision" style="margin-top:4px;margin-bottom:4px;padding:7px 9px;border:1px solid #2a4d6a;border-radius:5px;background:#08131e;">';
-            h += '<div style="font-weight:700;font-size:11px;color:#9ec2ec;margin-bottom:3px;">' +
-                 esc(selCoa.plan_id || '') + ' — Commander Decision</div>';
-            // Why
-            h += '<div style="font-size:10px;color:#7a9ab8;font-weight:600;margin-top:2px;">Why:</div>';
-            h += bullets(selCoa.rationale, '#cdd8e4');
-            // Units (RED attack + BLUE defense roles)
-            var unitLines = _orderedRoleKeys(srb)
-                .map(function (r) { return r.charAt(0).toUpperCase() + r.slice(1) + ': ' + srb[r]; });
-            h += '<div style="font-size:10px;color:#7a9ab8;font-weight:600;margin-top:3px;">Units:</div>';
-            h += bullets(unitLines, '#e0e8f0');
-            // Expected enemy reaction (PREVIEW — not simulated)
-            h += '<div style="font-size:10px;color:#7a9ab8;font-weight:600;margin-top:3px;">Likely enemy reaction <span style="color:#8a6a3a;font-weight:400;">(preview — not yet simulated)</span>:</div>';
-            h += bullets(selCoa.expected_enemy_reaction, '#d8c08a');
-            h += '</div>';
-        }
-        // Applied status
-        if (_coaApplied) {
-            h += '<div style="margin-top:5px;border:1px solid #1a4050;border-radius:4px;padding:6px 8px;background:#070e14;font-size:10px;" data-ff-truth="coa-status">';
-            h += '<div style="color:#5a8aa8;font-weight:600;margin-bottom:3px;">Map Movement Truth</div>';
-            function flag(val) { return val ? '<span style="color:#90d090;font-weight:700;">yes</span>' : '<span style="color:#e0a93a;font-weight:700;">no</span>'; }
-            h += '<div>Real units updated: ' + flag(_coaMovedUnits.length > 0) + '</div>';
-            h += '<div>Units moved: <span style="color:#e0e8f0;">' + _coaMovedUnits.length + '</span></div>';
-            var visibleOverlay = mapReady() && _coaMovedUnits.length > 0;
-            h += '<div>Visible movement layer: ' + flag(visibleOverlay) + '</div>';
-            h += '</div>';
-        }
-        return h;
-    }
     // ── end FREEFIGHT-AI-COA-PLANNER-A ────────────────────────────────────────
 
     // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: the continuous AI commander control block.
-    function renderCommanderLoopHtml() {
-        var h = '';
-        h += '<div data-ff-loop="panel" style="margin-bottom:8px;padding:7px 9px;border:1px solid #2e5d7d;border-radius:5px;background:#0a1420;">';
-        h += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">' +
-             '<span style="font-size:10px;font-weight:700;color:#04121e;background:#5ab0e0;border-radius:3px;padding:1px 6px;letter-spacing:.5px;">AI COMMANDER</span>' +
-             '<span style="font-size:11px;font-weight:700;color:#9ec2ec;">AI Commander Free Fight — القتال الحر بقيادة الذكاء الاصطناعي</span></div>';
-        var runState = _loopRunning ? (_loopPaused ? 'Paused' : 'Running') : 'Stopped';
-        var runColor = _loopRunning ? (_loopPaused ? '#e0c060' : '#7fd6a0') : '#9ab0c0';
-        var sideColor = _activeSide === 'BLUE' ? '#7fb0ff' : '#f0a0a0';
-        h += '<div style="font-size:10.5px;color:#cdd8e4;line-height:1.5;">';
-        h += '<span style="color:#8fa5b8;">Status:</span> <span style="color:' + runColor + ';font-weight:700;">' + esc(runState) + '</span>';
-        h += ' · <span style="color:#8fa5b8;">Turn:</span> <span style="color:#e0e8f0;font-weight:700;">' + _turnNumber + '</span>';
-        h += ' · <span style="color:#8fa5b8;">Active side:</span> <span style="color:' + sideColor + ';font-weight:700;">' + esc(_activeSide) + '</span>';
-        h += '</div>';
-        if (_lastCommanderDecision) {
-            var d = _lastCommanderDecision;
-            var dSrcColor = d.source === 'llm' ? '#90d090' : '#9ab0c0';
-            h += '<div style="font-size:10.5px;color:#cdd8e4;margin-top:2px;">' +
-                 '<span style="color:#8fa5b8;">Last decision source:</span> <span style="color:' + dSrcColor + ';">' + esc(d.source) + '</span></div>';
-            h += '<div style="font-size:10.5px;color:#cdd8e4;">' +
-                 '<span style="color:#8fa5b8;">Last action:</span> <span style="color:#e0e8f0;">' + esc(d.coa_id) + ' ' + esc(d.coa_title) + ' — ' + d.moved + ' units moved</span></div>';
-        }
-        // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: the simple operator surface — AI Model · Status ·
-        // "Select AI Model". The technical signals (execution gate, raw provider, model_available,
-        // plan_source, route probe, raw dropdown) move into the collapsed Advanced diagnostics so the
-        // everyday flow is just "Choose model → Ready → Start AI Free Fight". The single execution
-        // gate (RMOOZ_ALLOW_SIM_RUN) and local-only policy are unchanged — only their presentation.
-        h += _modelFlowHtml();
-        h += _advancedDiagnosticsHtml();
-        // Prominent route-unavailable banner — NOT an LLM failure
-        if (_routeUnavailableMsg) {
-            h += '<div data-ff-loop="route-unavailable" style="margin-top:5px;padding:6px 8px;border:1px solid #7a3030;border-radius:4px;background:#241414;color:#f0b0b0;font-size:10px;line-height:1.4;">⚠ ' + esc(_routeUnavailableMsg) + '</div>';
-        }
-        // RMOOZ-AI-FREE-FIGHT-AI-ONLY-A: AI-required banner — this card moves units ONLY via a real
-        // local LLM. Shown when the loop was blocked / paused because the LLM was not used.
-        if (_aiUnavailableMsg) {
-            h += '<div data-ff-loop="ai-required" style="margin-top:5px;padding:6px 8px;border:1px solid #6a5520;border-radius:4px;background:#1c1708;color:#f0c060;font-size:10px;line-height:1.45;font-weight:600;">🛑 ' + esc(_aiUnavailableMsg) + '</div>';
-        }
-        // Control buttons
-        h += '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;">';
-        if (!_loopRunning || _loopPaused) {
-            // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: Start is disabled until a model is ready (same single
-            // runtime gate as startLoop) so the operator can't press a button that won't run.
-            var _startReady = _freeFightAiReady();
-            if (_startReady.ok !== false) {
-                h += '<button data-act="loop-start" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:5px;padding:5px 9px;font-size:11px;">▶ Start AI Free Fight</button>';
-            } else {
-                h += '<button data-act="loop-start" disabled title="' + esc(_modelFlowStatus().message || 'Select an AI model first') + '" style="font:inherit;cursor:not-allowed;opacity:.55;border:1px solid #3a5040;background:#162018;color:#5f8f74;border-radius:5px;padding:5px 9px;font-size:11px;">▶ Start AI Free Fight</button>';
-            }
-        }
-        if (_loopRunning && !_loopPaused) {
-            h += '<button data-act="loop-pause" style="font:inherit;cursor:pointer;border:1px solid #8a6a20;background:#2a2412;color:#e0c060;border-radius:5px;padding:5px 9px;font-size:11px;">⏸ Pause</button>';
-        }
-        h += '<button data-act="loop-step" style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#172436;color:#9ec2ec;border-radius:5px;padding:5px 9px;font-size:11px;">⏭ Step Once</button>';
-        h += '<button data-act="loop-reset" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:5px;padding:5px 9px;font-size:11px;">⟲ Reset</button>';
-        h += '</div>';
-        // Speed control
-        h += '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;align-items:center;">';
-        h += '<span style="font-size:10px;color:#8fa5b8;">Speed:</span>';
-        FF_SPEED_ORDER.forEach(function (sp) {
-            var active = (_freeFightSpeed === sp);
-            var bg = active ? '#1a4a6a' : '#101b27';
-            var bc = active ? '#5ab0e0' : '#4a5f75';
-            var fc = active ? '#cfeaff' : '#8fb8e0';
-            h += '<button data-act="loop-speed-' + sp + '" title="' + esc(sp) + '" style="font:inherit;cursor:pointer;border:1px solid ' + bc + ';background:' + bg + ';color:' + fc + ';border-radius:4px;padding:3px 7px;font-size:10px;font-weight:' + (active ? '700' : '400') + ';">' + esc(FF_SPEEDS[sp].label) + '</button>';
-        });
-        h += '</div>';
-        h += '<div style="font-size:9.5px;color:#6a8fa8;margin-top:4px;">x1 = cinematic (slow, visible). 🔥🔥 = super fast. AI auto-picks the recommended COA each turn; no manual side selection.</div>';
-        // FREEFIGHT-MANUAL-MAP-CAMERA-A: camera policy toggle — Manual is the default;
-        // the map never moves on AI movement unless the operator chooses Follow AI.
-        h += '<div data-ff-loop="camera" style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:6px;">';
-        h += '<span style="font-size:10px;color:#8fa5b8;">Camera:</span>';
-        [['manual', 'Manual'], ['follow', 'Follow AI']].forEach(function (m) {
-            var on = (_freeFightCameraMode === m[0]);
-            var bg = on ? '#1a4a6a' : '#101b27', bc = on ? '#5ab0e0' : '#4a5f75', fc = on ? '#cfeaff' : '#8fb8e0';
-            h += '<button data-act="camera-' + m[0] + '" style="font:inherit;cursor:pointer;border:1px solid ' + bc + ';background:' + bg + ';color:' + fc + ';border-radius:4px;padding:3px 8px;font-size:10px;font-weight:' + (on ? '700' : '400') + ';">' + m[1] + '</button>';
-        });
-        h += '<span style="font-size:9px;color:#6a8fa8;">' + (_freeFightCameraMode === 'follow' ? 'map pans to follow AI moves' : 'map stays where you left it') + '</span>';
-        h += '</div>';
-        // RMOOZ-AI-COMMANDER-FREEDOM-A/B: AI Commander Mode + a visible current-mode indicator.
-        h += '<div data-ff-ai-mode="indicator" style="margin-top:7px;font-size:10.5px;font-weight:700;color:#d8ccff;">Current AI Mode: <span style="color:#b89aff;">' + esc(FF_COMMANDER_MODES[_commanderMode].label) + '</span></div>';
-        h += '<div data-ff-loop="commander-mode" style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:3px;">';
-        h += '<span style="font-size:10px;color:#8fa5b8;">Set mode:</span>';
-        ['controlled', 'free', 'high_variation'].forEach(function (m) {
-            var on = (_commanderMode === m);
-            var bg = on ? '#2a1a4a' : '#101b27', bc = on ? '#9a7be0' : '#4a5f75', fc = on ? '#d8ccff' : '#9fb8e0';
-            h += '<button data-act="mode-' + m + '" style="font:inherit;cursor:pointer;border:1px solid ' + bc + ';background:' + bg + ';color:' + fc + ';border-radius:4px;padding:3px 8px;font-size:10px;font-weight:' + (on ? '700' : '400') + ';">' + esc(FF_COMMANDER_MODES[m].label) + '</button>';
-        });
-        h += '</div>';
-        h += '<div style="font-size:9px;color:#6a8fa8;margin-top:3px;">' +
-            (_commanderMode === 'controlled' ? 'Doctrine-guided: intercept / defend.' :
-             _commanderMode === 'high_variation' ? 'Creative: rotates recon / flank / deceive / delay / attack each cycle.' :
-             'Free tactical reasoning: AI may choose recon, delay, flank, deceive, withdraw, defend, probe, or attack — operator reviews.') + '</div>';
-        // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: planning mode — AI Commander (LLM drafts + RMOOZ
-        // validates/repairs) vs Staff-Safe (deterministic staff planner). Commander is the default.
-        h += '<div data-ff-loop="planning-mode" style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:6px;">';
-        h += '<span style="font-size:10px;color:#8fa5b8;">Planner:</span>';
-        [['commander', 'AI Commander'], ['staff_safe', 'Staff-Safe']].forEach(function (pm) {
-            var on = (_planningMode === pm[0]);
-            var isCmd = pm[0] === 'commander';
-            var bg = on ? (isCmd ? '#0f2a1c' : '#241f08') : '#101b27';
-            var bc = on ? (isCmd ? '#2e9d6a' : '#a08a30') : '#4a5f75';
-            var fc = on ? (isCmd ? '#9fe8c0' : '#e8d68a') : '#9fb8e0';
-            h += '<button data-act="planmode-' + pm[0] + '" style="font:inherit;cursor:pointer;border:1px solid ' + bc + ';background:' + bg + ';color:' + fc + ';border-radius:4px;padding:3px 8px;font-size:10px;font-weight:' + (on ? '700' : '400') + ';">' + esc(pm[1]) + '</button>';
-        });
-        h += '</div>';
-        // RMOOZ-AI-COMMANDER-DEMO-PACING-C: honest timing labels so the operator knows the pacing.
-        h += '<div style="font-size:9px;color:#6a8fa8;margin-top:3px;">' +
-            (_planningMode === 'staff_safe'
-                ? '<b style="color:#cdb86a;">Fast deterministic planning — AI explanation optional.</b> Staff-Safe builds the COAs from the deterministic staff planner (no LLM) — guaranteed and near-instant.'
-                : '<b style="color:#9fe8c0;">Full local AI planning — may take 2–5 minutes.</b> AI Commander: the local LLM drafts COAs; RMOOZ validates and sends invalid parts back to the AI to repair. Auto-falls to Staff-Safe if the AI cannot produce a valid plan.') + '</div>';
-        // RMOOZ-AI-COA-PERFORMANCE-A: AI planning depth (speed vs depth trade-off).
-        h += '<div data-ff-loop="ai-depth" style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:6px;">';
-        h += '<span style="font-size:10px;color:#8fa5b8;">Depth:</span>';
-        ['fast', 'normal', 'deep'].forEach(function (d) {
-            var on = (_aiDepth === d);
-            var bg = on ? '#143a30' : '#101b27', bc = on ? '#4ab090' : '#4a5f75', fc = on ? '#aef0d0' : '#9fb8e0';
-            h += '<button data-act="depth-' + d + '" style="font:inherit;cursor:pointer;border:1px solid ' + bc + ';background:' + bg + ';color:' + fc + ';border-radius:4px;padding:3px 8px;font-size:10px;font-weight:' + (on ? '700' : '400') + ';">' + esc(FF_AI_DEPTHS[d].label) + '</button>';
-        });
-        h += '</div>';
-        h += '<div style="font-size:9px;color:#6a8fa8;margin-top:3px;">' +
-            (_aiDepth === 'fast' ? 'Fast: heuristic capability, no LLM, terrain summary only — quickest.' :
-             _aiDepth === 'deep' ? 'Deep: full LLM + full terrain/provenance (Generate-5 re-runs the LLM per seed).' :
-             'Normal: LLM analyst/commander when enabled, real terrain.') + '</div>';
-        // RMOOZ-AI-COMMANDER-FREEDOM-B: quick variation test — run 5 cycles with seeds 0-4.
-        h += '<div style="margin-top:6px;">';
-        h += '<button data-act="gen5-coas" style="font:inherit;cursor:pointer;border:1px solid #6a9a4a;background:#16240f;color:#bfe89a;border-radius:5px;padding:4px 9px;font-size:10.5px;font-weight:600;">⚙ Generate 5 different COAs</button>';
-        h += '<div data-ff-gen5="result" style="margin-top:5px;font-size:10px;color:#aec0d8;"></div>';
-        h += '</div>';
-        // Turn log (most recent first, capped)
-        if (_turnLog.length) {
-            h += '<div data-ff-loop="turnlog" style="margin-top:6px;border-top:1px solid #1a3050;padding-top:4px;">';
-            h += '<div style="font-size:10px;color:#7a9ab8;font-weight:600;margin-bottom:2px;">Turn log (' + _turnLog.length + '):</div>';
-            _turnLog.slice(-8).reverse().forEach(function (t) {
-                var sc = t.side === 'BLUE' ? '#7fb0ff' : '#f0a0a0';
-                h += '<div style="font-size:9.5px;color:#9ab0c0;">T' + t.turn + ' <span style="color:' + sc + ';">' + esc(t.side) + '</span> · ' + esc(t.coa_id) + ' ' + esc(t.coa_title) + ' · ' + t.moved + ' moved · ' + esc(t.source === 'llm' ? 'llm' : 'det') + '</div>';
-            });
-            h += '</div>';
-        }
-        h += '</div>';
-        return h;
-    }
 
     // ── RMOOZ-GREEN-WORLD-UI-R: GREEN neutral-world surface (read-only, deterministic) ──────────────
     // Calls ONLY the deterministic /neutral-world endpoint — NEVER /plan-coas, NEVER the LLM. The
@@ -4627,51 +4163,6 @@
             }
             _greenLayer.addTo(w.map);
         } catch (_) {}
-    }
-    function _greenWorldHtml() {
-        var a = _greenWorld;
-        var h = '<div data-ff-green="panel" style="margin-top:8px;border:1px solid #1a4030;border-radius:6px;background:#091810;padding:7px 9px;">';
-        h += '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:space-between;">';
-        h += '<span style="font-size:10.5px;font-weight:700;color:#7fd6a0;">🌍 Green World — neutral environment (deterministic)</span>';
-        h += '<span style="display:flex;gap:8px;align-items:center;">';
-        h += '<label style="font-size:9.5px;color:#9ec2ec;display:flex;gap:4px;align-items:center;cursor:pointer;"><input type="checkbox" data-act="green-overlay-toggle"' + (_greenOverlayOn ? ' checked' : '') + ' style="accent-color:#5bd6a0;cursor:pointer;"> map ring</label>';
-        h += '<button data-act="green-refresh"' + (_greenBusy ? ' disabled' : '') + ' style="font:inherit;cursor:' + (_greenBusy ? 'not-allowed' : 'pointer') + ';border:1px solid #2a7a50;background:#131e18;color:#90d0a0;border-radius:4px;padding:3px 8px;font-size:10px;' + (_greenBusy ? 'opacity:.55;' : '') + '">' + (_greenBusy ? '⏳ …' : '↻ Refresh Green World') + '</button>';
-        h += '</span></div>';
-        if (!a) {
-            h += '<div style="margin-top:4px;font-size:9.5px;color:#8fa5b8;">No assessment yet — generate a plan, commit a COA, or press Refresh. Deterministic, no AI call.</div></div>';
-            return h;
-        }
-        var band = _greenBand(a), col = _greenColor(band);
-        function row(label, val, c) { return '<div style="font-size:9.5px;color:#cdd8e4;"><span style="color:#8fa5b8;">' + label + ':</span> <span style="color:' + (c || '#e0e8f0') + ';">' + val + '</span></div>'; }
-        h += '<div style="margin-top:5px;">';
-        h += row('Civilian / collateral risk', esc(band) + ' (' + (a.collateral_risk && a.collateral_risk.score) + '/100)', col);
-        h += row('Road status', esc((a.road_status && a.road_status.status) || 'unknown') + ' — ' + esc((a.road_status && a.road_status.basis) || ''));
-        h += row('Infrastructure', esc((a.infra_status && a.infra_status.note) || '—'));
-        h += row('Host-nation pressure', a.host_nation ? esc(a.host_nation) : 'none identified');
-        h += row('Neutral reaction score', (a.neutral_reaction_score != null ? a.neutral_reaction_score + '/100' : '—'), col);
-        h += '</div>';
-        // RMOOZ-WHITE-GREEN-ANNOTATION-T / RMOOZ-GREEN-WHITE-SCORING-T: White (referee) advisory from Green.
-        // When a plan has been scored, show the structured scoring (band + score delta + recommendation +
-        // warnings); otherwise the simpler execution-time advisory line. Both are advisory only.
-        var _adv = _whiteAdvisory(a);
-        var _ga = _coaPlan && _coaPlan._green_advisory;
-        if (_ga) {
-            var _gc = _whiteAdvisoryColor(_adv ? _adv.advisory_level : 'clear');
-            h += '<div data-ff-green="white-scoring" style="margin-top:5px;padding:4px 6px;border-radius:4px;background:#0a1622;border:1px solid #24435f;color:#cdd8e4;font-size:9.5px;">' +
-                 '⚖ <b style="color:' + _gc + ';">White considered Green risk: ' + esc(_ga.collateral_risk_band) + '</b> · score &Delta; ' + _ga.advisory_score_delta +
-                 (arr(_ga.recommendations).length ? ' · ' + esc(_ga.recommendations[0]) : '') +
-                 '<br><span style="color:#5a7a8a;">Advisory only — not a block; validator unchanged (structure/physics).</span>' +
-                 (arr(_ga.warnings).length ? '<br><span style="color:#e0a93a;">⚠ ' + _ga.warnings.map(function (x) { return esc(x); }).join(' · ') + '</span>' : '') + '</div>';
-        } else if (_adv) {
-            h += '<div data-ff-green="white-advisory" style="margin-top:5px;padding:4px 6px;border-radius:4px;background:#0a1622;border:1px solid #24435f;color:#cdd8e4;font-size:9.5px;">' +
-                 '⚖ <b style="color:' + _whiteAdvisoryColor(_adv.advisory_level) + ';">White advisory: ' + esc(_adv.advisory_level) + '</b> — ' + esc(_adv.note) +
-                 ' <span style="color:#5a7a8a;">Advisory only — not a block; validator unchanged (structure/physics).</span></div>';
-        }
-        h += '<div data-ff-green="note" style="margin-top:5px;padding:4px 6px;border-radius:4px;background:#0c1f14;border:1px solid #1a4030;color:#9fd6b0;font-size:9.5px;">' + esc(arr(a.notes).join(' ')) + ' <span style="color:#5a7a60;">(deterministic note · summarizer off)</span></div>';
-        h += '<div style="margin-top:3px;font-size:9px;color:#5a7a60;">provenance: ' + esc(JSON.stringify(a.provenance || {})) + (a._reason ? ' · trigger: ' + esc(a._reason) : '') + '</div>';
-        h += '<details style="margin-top:4px;"><summary style="cursor:pointer;font-size:9px;color:#5a7a9a;">Green JSON</summary><pre style="font-size:8.5px;color:#9ab0c0;white-space:pre-wrap;word-break:break-word;max-height:160px;overflow:auto;margin:3px 0 0;">' + esc(JSON.stringify(a, null, 2)) + '</pre></details>';
-        h += '</div>';
-        return h;
     }
     // ── RMOOZ-AI-SCHEDULER-DECISION-LOG-S: Blue/Red/Green/White audit trail (RECORD-ONLY) ──────────
     // A transparency layer: which role acted/skipped, did it call the LLM, how long, and why. It does
@@ -5137,13 +4628,7 @@
         updatePanel();
     }
     function _resetScenario() { _stopScenarioTimer(); _scenario = null; _step1HeldUids = {}; }
-    // ── RMOOZ-FREE-FIGHT-CONTROL-HARD-RESET-X: the NEW Free Fight control window (the "cockpit") ───────
-    // A clean, single-flow, state-driven UI built from scratch. It REUSES the existing engine (planner,
-    // COA execution, deterministic ticks, validation, Green/White advisory, ranking) — it changes NO
-    // backend logic. Design rules: render ONLY the active state's view; unique `v2-*` data-act ids (no
-    // hidden duplicates); ≤2 primary actions visible at once; no raw JSON / benchmark / decision log in
-    // the main flow (those live behind the closed Diagnostics/Legacy drawer). Every visible button maps
-    // to an existing engine function and updates the visible state immediately on click.
+    // ── operator-card stale-commit guard (consumed by the Scenario Control Center engine facade) ────────
     // RMOOZ-FREE-FIGHT-V2-COA-TO-SCENARIO-BUGFIX-AB1: is the committed COA STALE relative to what the
     // operator is now looking at? True when (a) a DIFFERENT (newer) plan object is loaded than the one we
     // committed from — e.g. a fresh Generate or a leftover/restored commit — or (b) the selected COA has
@@ -5159,319 +4644,11 @@
         }
         return false;
     }
-    // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: the old Free Fight control window (the V2 cockpit —
-    // _freeFightControlStateV2 / all _v2* render helpers / _renderScenarioCockpitV2 /
-    // renderFreeFightControlV2 / _freeFightLegacyDrawerHtml / bindFreeFightControlV2) was DELETED here.
-    // The operator card is now client/shell/scenario-control-center.js (window.RmoozScenarioControlCenter).
-    function _operatorStripHtml() {
-        function pri(act, label, dis) { return '<button data-ff-primary="1" data-act="' + act + '"' + (dis ? ' disabled' : '') + ' style="font:inherit;cursor:' + (dis ? 'not-allowed' : 'pointer') + ';border:1px solid #2e7d54;background:#15301f;color:#9fe8c0;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;' + (dis ? 'opacity:.55;' : '') + '">' + label + '</button>'; }
-        function note(txt, col) { return '<div style="margin-top:4px;font-size:10px;color:' + (col || '#9fb8c8') + ';">' + txt + '</div>'; }
-        var coas = arr(_coaPlan && _coaPlan.coas);
-        var hasPlan = !!(_coaPlan && _coaPlan.ok && coas.length);
-        var ex = _coaExec;
-        var execRunning = !!(ex && ex.active && !ex.paused && !ex.replan_required && ex.phase_status === 'running');
-        var blocked = !!(ex && ex.replan_required);
-        var complete = !!(ex && ex.phase_status === 'complete');
-        var btns = '', body = '';
-        if (complete) {                                   // F. plan finished → Generate again
-            btns = pri('generate-ai-plan', '⚡ Generate AI Plan');
-            body = note('✅ Plan complete — all phases executed with no AI calls. Generate a new plan to continue.', '#7fd6a0');
-        } else if (blocked) {                             // E. blocked — Replan stays STRICTLY in Advanced
-            btns = '';
-            body = note('⚠ ' + esc(ex.replan_reason || 'Replan required — execution paused.'), '#f0b0b0') +
-                   note('Open ⚙ Advanced controls below to Replan with AI (slow, calls AI), Continue anyway, or switch to Staff-Safe.', '#cdb86a');
-        } else if (ex && ex.active) {                     // C committed / D running
-            if (execRunning) { btns = pri('coa-pause', '⏸ Pause'); body = note('Running the plan. Fast — the AI is NOT called on normal ticks.', '#7fd6a0'); }
-            else { btns = pri('coa-run', '▶ Run Plan'); body = note('Run executes the committed COA deterministically — fast, no AI call on normal ticks.', '#9fb8c8'); }
-            body += _operatorStatusLine(ex);
-        } else if (hasPlan) {                             // B. plan generated, not committed
-            var recIdx = _pickRecommendedIdx(_coaPlan);
-            if (_coaSelectedIdx === recIdx) {
-                var recId = (coas[recIdx] && coas[recIdx].plan_id) || ('COA-' + (recIdx + 1));
-                btns = pri('coa-use-recommended', '✅ Use Recommended Plan (' + esc(recId) + ')');
-                body = note('AI produced ' + coas.length + ' COAs — the recommended one is pre-selected. Use it, or pick another from the cards below.', '#9fb8c8');
-            } else {
-                var selId = (coas[_coaSelectedIdx] && coas[_coaSelectedIdx].plan_id) || ('COA-' + (_coaSelectedIdx + 1));
-                btns = pri('coa-use-selected', '▶ Use Selected Plan (' + esc(selId) + ')');
-                body = note('Using your selected COA ' + esc(selId) + ' — pick a different one from the cards below if needed.', '#9fb8c8');
-            }
-        } else {                                          // A. no plan → Generate (slow, calls AI)
-            btns = pri('generate-ai-plan', '⚡ Generate AI Plan');
-            body = _coaLoading ? note('AI is building the plan. This may take 30–90 seconds depending on the model.', '#e0c060')
-                               : note('Generate an AI plan — slow, calls the AI model. (Instant Staff-Safe planning lives under Advanced controls.)', '#9fb8c8');
-        }
-        return '<div data-ff-op="strip" style="margin:6px 0;padding:8px 10px;border:1px solid #2e5d7d;border-radius:6px;background:#0a1726;">' +
-            '<div style="font-size:11px;font-weight:700;color:#9ec2ec;margin-bottom:5px;">AI Commander — Generate (slow) → Use a plan → Run (fast)</div>' +
-            '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">' + btns + '</div>' + body + '</div>';
-    }
-    // ── RMOOZ-FREE-FIGHT-CONTROL-WINDOW-REBUILD-W: tabbed control-window shell (UI-only) ────────────────
-    // A "System layers" summary so the operator understands what each AI lane does.
-    function _systemLayersHtml() {
-        return '<details data-ff-w="system-layers" style="margin-bottom:6px;"><summary style="cursor:pointer;font-size:10px;color:#8fa5b8;font-weight:600;">ℹ System layers — Blue / Red / Green / White</summary>' +
-            '<div style="margin-top:4px;font-size:9.5px;color:#cdd8e4;line-height:1.6;padding:5px 7px;border:1px solid #24435f;border-radius:5px;background:#0a1726;">' +
-            '<div><b style="color:#7bb8e8;">Blue AI</b> — creates friendly COAs / plans</div>' +
-            '<div><b style="color:#f0707a;">Red AI</b> — enemy / counter planning</div>' +
-            '<div><b style="color:#5bd6a0;">Green AI</b> — neutral-world risk (deterministic)</div>' +
-            '<div><b style="color:#cdd8e4;">White AI</b> — referee / validation / advisory</div>' +
-            '<div><b style="color:#9ec2ec;">Unit Controller</b> — executes the committed plan, no LLM on normal ticks</div>' +
-            '</div></details>';
-    }
-    function _ffTabBarHtml() {
-        var tabs = [['operator', 'Operator'], ['coa_plans', 'COA Plans'], ['green', 'Green'], ['white', 'White'], ['diagnostics', 'Diagnostics']];
-        var cur = _ffTab || 'operator';
-        var h = '<div data-ff-w="tabbar" style="display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid #2a3f55;padding-bottom:4px;">';
-        tabs.forEach(function (t) {
-            var on = (t[0] === cur);
-            h += '<button data-act="ff-tab-' + t[0] + '" style="font:inherit;cursor:pointer;border:1px solid ' + (on ? '#4a9ed6' : '#2a3f55') + ';background:' + (on ? '#0a1830' : '#0c141d') + ';color:' + (on ? '#cfe6ff' : '#8fa5b8') + ';border-radius:5px 5px 0 0;padding:4px 10px;font-size:10.5px;font-weight:' + (on ? '700' : '400') + ';">' + t[1] + '</button>';
-        });
-        h += '</div>';
-        return h;
-    }
-    // Operator tab: a compact selected/recommended summary under the simple flow strip (detail in COA Plans).
-    function _operatorSummaryHtml() {
-        var coas = arr(_coaPlan && _coaPlan.coas);
-        if (!_coaPlan || !_coaPlan.ok || !coas.length) return '';
-        var recIdx = _pickRecommendedIdx(_coaPlan);
-        var selId = (coas[_coaSelectedIdx] && coas[_coaSelectedIdx].plan_id) || ('COA-' + (_coaSelectedIdx + 1));
-        var recId = (coas[recIdx] && coas[recIdx].plan_id) || ('COA-' + (recIdx + 1));
-        var h = '<div data-ff-w="op-summary" style="margin-top:5px;font-size:10px;color:#cdd8e4;">' +
-            '<span style="color:#8fa5b8;">Recommended:</span> <b style="color:#7fd6a0;">' + esc(recId) + '</b> · ' +
-            '<span style="color:#8fa5b8;">Selected:</span> <b style="color:#cfe6ff;">' + esc(selId) + '</b>';
-        if (_coaSelectedIdx !== recIdx) h += ' <span style="color:#e0a93a;">· operator override</span>';
-        h += ' <span style="color:#5a7a8a;">(compare in COA Plans tab)</span></div>';
-        return h;
-    }
-    // White tab: validation verdict (unchanged) + the Green-derived advisory + scoring + "advisory only".
-    function _whiteTabHtml() {
-        var h = '<div data-ff-w="white" style="border:1px solid #24435f;border-radius:6px;background:#0a1622;padding:8px 10px;">';
-        h += '<div style="font-size:11px;font-weight:700;color:#cdd8e4;margin-bottom:5px;">⚖ White — referee / validation / advisory</div>';
-        var val = _coaPlan && _coaPlan.validation;
-        if (val) h += '<div style="font-size:10px;"><span style="color:#8fa5b8;">Validation (structure/physics):</span> <b style="color:' + (val.ok ? '#7fd6a0' : '#e0a93a') + ';">' + (val.ok ? 'OK' : 'rejected') + '</b>' + (!val.ok && val.reason ? ' — ' + esc(val.reason) : '') + '</div>';
-        else h += '<div style="font-size:10px;color:#8fa5b8;">Validation: generate a plan to see the referee verdict.</div>';
-        var adv = _whiteAdvisory(_greenWorld);
-        if (adv) h += '<div style="margin-top:5px;font-size:10px;">⚖ <b style="color:' + _whiteAdvisoryColor(adv.advisory_level) + ';">White advisory: ' + esc(adv.advisory_level) + '</b> — ' + esc(adv.note) + '</div>';
-        var ga = (_coaPlan && _coaPlan._green_advisory) || _greenAdvisoryScoring(_greenWorld);
-        if (ga && ga.considered) {
-            h += '<div style="margin-top:4px;font-size:10px;color:#cdd8e4;">Green/White advisory score Δ: <b style="color:#e0a93a;">' + ga.advisory_score_delta + '</b> · collateral ' + esc(ga.collateral_risk_band) + (ga.neutral_reaction_score != null ? ' · reaction ' + ga.neutral_reaction_score : '') + '</div>';
-            if (arr(ga.warnings).length) h += '<div style="margin-top:3px;font-size:9.5px;color:#e0a93a;">⚠ ' + arr(ga.warnings).map(function (x) { return esc(x); }).join(' · ') + '</div>';
-            if (arr(ga.recommendations).length) h += '<div style="margin-top:2px;font-size:9.5px;color:#9fd6b0;">↪ ' + arr(ga.recommendations).map(function (x) { return esc(x); }).join(' · ') + '</div>';
-        } else {
-            h += '<div style="margin-top:4px;font-size:10px;color:#8fa5b8;">No Green/White advisory yet — refresh Green or generate a plan.</div>';
-        }
-        h += '<div data-ff-w="white-disclaimer" style="margin-top:6px;font-size:9px;color:#5a7a8a;border-top:1px solid #1a3050;padding-top:4px;">Advisory only — not a block. The structure/physics validator is the only gate; Green/White risk never invalidates a COA or blocks Run.</div>';
-        h += '</div>';
-        return h;
-    }
-    function renderAiDecisionHtml() {
-        var h = '<div style="margin-top:8px;border-top:1px solid #2a3f55;padding-top:8px;">';
-        h += '<div style="margin-bottom:6px;padding:5px 8px;border:1px solid #1a4030;border-radius:4px;background:#091810;">' +
-             '<div style="display:flex;align-items:center;gap:6px;">' +
-             '<span style="font-size:10px;font-weight:700;color:#fff;background:#1a7040;border-radius:3px;padding:1px 6px;letter-spacing:.5px;">MAIN AI TEST</span>' +
-             '<span style="font-size:11px;font-weight:700;color:#7fd6a0;">MAIN AI TEST — Attack Plan / COA Planner</span>' +
-             '</div>' +
-             '<div style="font-size:10px;color:#5a9a70;margin-top:2px;">Real unit-level AI decision — هذا هو الاختبار الفعلي للذكاء الاصطناعي على مستوى الوحدات</div>' +
-             '</div>';
-        // RMOOZ-FREE-FIGHT-CONTROL-WINDOW-REBUILD-W: tabbed control window. Each tab reuses the EXISTING
-        // render functions — no AI/COA/Green/White/scheduling/execution change. The default Operator tab
-        // shows only the simple flow (≤1 primary action per state); technical items live under Diagnostics.
-        h += _systemLayersHtml();
-        h += _ffTabBarHtml();
-        var _tab = _ffTab || 'operator';
-        // Standard tabbed UI: ALL panels are rendered into the DOM; only the active one is shown
-        // (display:none on the rest). This keeps every feature one click away, preserves the full
-        // inspectable card, and changes no logic — each panel just reuses an existing render function.
-        function _ffPanel(name, body) { return '<div data-ff-tabpanel="' + name + '" style="margin-top:8px;' + (name === _tab ? '' : 'display:none;') + '">' + body + '</div>'; }
-        h += _ffPanel('operator', _operatorStripHtml() + _operatorSummaryHtml());
-        h += _ffPanel('coa_plans', renderCoaPlanHtml());
-        h += _ffPanel('green', _greenWorldHtml());
-        h += _ffPanel('white', _whiteTabHtml());
-        // ── Diagnostics panel — all technical/advanced items (model status · warmup/benchmark · decision
-        // log · manual planner · commit-exec detail · unit-decision · Staff-Safe). Built inline below. ──
-        h += '<div data-ff-tabpanel="diagnostics" style="margin-top:8px;' + (_tab === 'diagnostics' ? '' : 'display:none;') + '">';
-        // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: continuous loop controls + model flow + Advanced diagnostics.
-        h += renderCommanderLoopHtml();
-        h += '<div style="font-size:10px;color:#5a7a60;margin:2px 0 6px;border-top:1px solid #2a3f55;padding-top:6px;">Manual COA planner (single turn) — تخطيط يدوي</div>';
-        // COA Planner buttons
-        // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D: when the planner is AI Commander but Free Fight is blocked
-        // (exec gate and/or remote provider), warn CLEARLY + point to the fix and to Staff-Safe (which
-        // stays available — req #8/#9). Staff-Safe mode is deterministic and never blocked.
-        var _cmdReady = _freeFightAiReady();
-        var _cmdBlocked = (_planningMode !== 'staff_safe') && !_cmdReady.ok && _cmdReady.code !== 'fast';
-        if (_cmdBlocked) {
-            h += '<div data-ff-coa="generate-warning" style="margin-bottom:6px;padding:6px 9px;border:1px solid #6a5520;border-radius:5px;background:#1c1708;color:#f0c060;font-size:10px;line-height:1.45;">' +
-                 '⚠ <b>AI Commander cannot run right now.</b> ' + esc(_cmdReady.msg || '') +
-                 '<br><span style="color:#cdb86a;">Tip: switch the Planner to <b>Staff-Safe</b> for a guaranteed deterministic plan (no LLM).</span></div>';
-        }
-        h += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;">';
-        h += '<button data-act="generate-coa" title="' + (_cmdBlocked ? esc(_cmdReady.msg || '') : '') + '" style="font:inherit;cursor:pointer;border:1px solid ' + (_cmdBlocked ? '#8a6a20' : '#2a7a50') + ';background:' + (_cmdBlocked ? '#241f08' : '#131e18') + ';color:' + (_cmdBlocked ? '#e8d68a' : '#90d0a0') + ';border-radius:5px;padding:5px 10px;font-size:11px;">' +
-             (_coaLoading ? '⏳ Loading…' : (_planningMode === 'staff_safe' ? '⚡ Generate Staff-Safe Plan (fast)' : (_cmdBlocked ? '⚠ Generate AI Attack Plan (blocked)' : '⚡ Generate AI Attack Plan'))) + '</button>';
-        if (_coaPlan && _coaPlan.ok && !_coaApplied) {
-            h += '<button data-act="apply-coa" style="font:inherit;cursor:pointer;border:1px solid #3a7a3a;background:#182818;color:#90d090;border-radius:5px;padding:5px 10px;font-size:11px;">✔ Apply Selected COA — تطبيق</button>';
-        }
-        if (_coaPlan) {
-            h += '<button data-act="reset-coa" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:5px;padding:5px 10px;font-size:11px;">⟲ Reset COA</button>';
-        }
-        h += '</div>';
-        h += _coaExecHtml();   // RMOOZ-COA-COMMIT-EXECUTION-L: commit/run/pause/replan + status (advanced detail)
-        h += '<div style="margin-top:10px;border-top:1px solid #2a3f55;padding-top:8px;">';
-        h += '<div style="font-size:10px;color:#5a7a60;margin-bottom:5px;">Unit Decision LLM — single-unit step test</div>';
-        // LLM toggle + test button
-        h += '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;font-size:11px;">';
-        h += '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;color:#9ec2ec;" title="Uses the local model only — requires RMOOZ_ALLOW_SIM_RUN=1 on the server">';
-        h += '<input type="checkbox" data-act="toggle-llm"' + (_useLlm ? ' checked' : '') + ' style="accent-color:#4a9ed6;cursor:pointer;">';
-        h += 'Use Local LLM — استخدام LLM المحلي</label>';
-        h += '<button data-act="test-llm" title="Tests and warms the local Ollama model — run this before Preview Unit AI Decision for best results" style="font:inherit;cursor:pointer;border:1px solid #4a5f75;background:#101b27;color:#8fb8e0;border-radius:4px;padding:3px 8px;font-size:10px;">' +
-             (_llmTestStatus && _llmTestStatus.testing ? '⏳ Warming LLM…' : '⚡ Test Local LLM') + '</button>';
-        if (_llmTestStatus && !_llmTestStatus.testing) {
-            var lts = _llmTestStatus;
-            var ltColor = lts.ok ? '#90d090' : '#e0a93a';
-            h += '<span style="color:' + ltColor + ';font-size:10px;">';
-            if (lts.ok) {
-                h += 'LLM: connected · <span style="color:#7fd6a0;">Local only</span> · ' + esc(lts.provider || 'ollama');
-                if (lts.model) h += ' · ' + esc(lts.model);
-                if (lts.latency_ms) h += ' · ' + lts.latency_ms + 'ms';
-            } else {
-                h += 'LLM: ' + esc(lts.reason || lts.error || 'unavailable');
-                if (lts.local_only) h += ' · <span style="color:#7fd6a0;">Local only</span>';
-            }
-            h += '</span>';
-        }
-        h += '</div>';
-        h += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;">';
-        var _previewLabel;
-        if (_aiLoading) {
-            _previewLabel = '⏳ Loading…';
-        } else if (_aiDecision && !_aiApplied && _useLlm && _aiDecision.llm_status && /timeout|unavailable|error/i.test(_aiDecision.llm_status)) {
-            _previewLabel = '🔄 Try LLM Again';
-        } else {
-            _previewLabel = '🔍 Preview Unit AI Decision';
-        }
-        h += '<button data-act="preview-ai" style="font:inherit;cursor:pointer;border:1px solid #2a7a50;background:#131e18;color:#90d0a0;border-radius:5px;padding:5px 10px;font-size:11px;">' + _previewLabel + '</button>';
-        if (_aiDecision && _aiDecision.ok && !_aiApplied) {
-            h += '<button data-act="apply-ai" style="font:inherit;cursor:pointer;border:1px solid #3a7a3a;background:#182818;color:#90d090;border-radius:5px;padding:5px 10px;font-size:11px;">✔ Apply Unit AI Action — تطبيق</button>';
-        }
-        if (_aiDecision) {
-            h += '<button data-act="reset-ai" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:5px;padding:5px 10px;font-size:11px;">⟲ Reset Unit Decision</button>';
-        }
-        h += '</div>';
-        if (_aiLoading) {
-            h += '<div style="color:#9ab0c0;font-size:11px;padding:6px;">Loading AI decision… جاري التحميل</div>';
-        } else if (_aiDecision) {
-            var aiAct = _aiDecision.action || {};
-            var aiAr  = _aiDecision.apply_result || {};
-            if (_aiDecision.ok && aiAct.action_type) {
-                h += '<div style="background:#0c141d;border:1px solid #2a3f55;border-radius:5px;padding:8px;font-size:11px;">';
-                h += '<div><span style="color:#8fa5b8;">Action:</span> <span style="color:#e0e8f0;">' + esc(aiAct.action_type) + '</span></div>';
-                h += '<div><span style="color:#8fa5b8;">Unit:</span> <span style="color:#e0e8f0;">' + esc(aiAct.unit_uid) + '</span></div>';
-                h += '<div><span style="color:#8fa5b8;">Side:</span> <span style="color:#e0e8f0;">' + esc(aiAct.side) + '</span></div>';
-                h += '<div><span style="color:#8fa5b8;">Reason:</span> <span style="color:#d0e0d0;font-style:italic;">' + esc(aiAct.reason) + '</span></div>';
-                h += '<div><span style="color:#8fa5b8;">Confidence:</span> <span style="color:#e0e8f0;">' + esc(aiAct.confidence) + '</span></div>';
-                if (aiAct.risk) h += '<div><span style="color:#8fa5b8;">Risk:</span> <span style="color:#e0e8f0;">' + esc(aiAct.risk) + '</span></div>';
-                if (aiAct.source) h += '<div><span style="color:#8fa5b8;">Source:</span> <span style="color:#e0e8f0;">' + esc(aiAct.source) + '</span></div>';
-                if (_aiDecision.validation) h += '<div><span style="color:#8fa5b8;">Validator:</span> <span style="color:#' + (_aiDecision.validation.ok ? '90d090' : 'e0a93a') + ';">' + esc(_aiDecision.validation.ok ? 'OK' : (_aiDecision.validation.reason || 'rejected')) + '</span></div>';
-                // FREEFIGHT-LOCAL-LLM-ONLY-A: local-only policy display
-                if (_aiDecision.local_only) {
-                    h += '<div><span style="color:#8fa5b8;">LLM mode:</span> <span style="color:#7fd6a0;">Local only</span></div>';
-                }
-                if (_aiDecision.provider_used || _aiDecision.local_only) {
-                    h += '<div><span style="color:#8fa5b8;">Provider:</span> <span style="color:#9ec2ec;">' + esc(_aiDecision.provider_used || 'ollama') + '</span></div>';
-                }
-                if (_aiDecision.model_used) {
-                    h += '<div><span style="color:#8fa5b8;">Model:</span> <span style="color:#9ec2ec;">' + esc(_aiDecision.model_used) + '</span></div>';
-                }
-                // FREEFIGHT-LLM-DECISION-BRIDGE-A: decision_source + fallback_reason
-                var dsrc = _aiDecision.decision_source || aiAct.source || 'deterministic_demo_ai';
-                var dsrcColor = dsrc === 'llm' ? '#90d090' : '#9ab0c0';
-                h += '<div><span style="color:#8fa5b8;">Decision source:</span> <span style="color:' + dsrcColor + ';">' + esc(dsrc) + '</span></div>';
-                if (_aiDecision.fallback_reason) {
-                    var fr = _aiDecision.fallback_reason;
-                    var isTimeout = /timeout|timed.out/i.test(fr);
-                    h += '<div><span style="color:#8fa5b8;">Fallback reason:</span> <span style="color:#e0a93a;font-size:10px;">' + esc(fr) + '</span>';
-                    if (isTimeout) h += ' <span style="color:#6a9ab8;font-size:10px;">(click Test Local LLM to warm model, then retry)</span>';
-                    h += '</div>';
-                }
-                if (aiAr.ok && aiAr.new_pos) h += '<div><span style="color:#8fa5b8;">New Position:</span> <span style="color:#a0e0a0;">' + esc(aiAr.new_pos.lat) + ', ' + esc(aiAr.new_pos.lon) + '</span></div>';
-                if (_aiDecision.event_log_entry) h += '<div style="margin-top:4px;padding:4px 6px;background:#0e1218;border-radius:3px;color:#9ab0c0;font-family:monospace;">' + esc(_aiDecision.event_log_entry) + '</div>';
-                // FREEFIGHT-LLM-DECISION-TRACE-A: full decision trace block
-                (function() {
-                    var dec = _aiDecision;
-                    var llmCalled = dec.llm_called === true;
-                    var llmStatus = dec.llm_status || (llmCalled ? 'unknown' : 'not_called');
-                    var llmStatusColor = llmStatus === 'success' ? '#90d090' : (llmStatus === 'timeout' || llmStatus === 'error' ? '#e0a93a' : '#8fa5b8');
-                    var fds = dec.final_decision_source || dec.decision_source || (dec.action && dec.action.source) || 'deterministic_demo_ai';
-                    var fdsIsLlm = fds === 'llm';
-                    var fdsColor = fdsIsLlm ? '#90d090' : '#e0a93a';
-                    h += '<div style="margin-top:6px;border:1px solid #1a3050;border-radius:4px;padding:6px 8px;background:#080e16;font-size:10px;">';
-                    h += '<div style="color:#5a7a9a;font-weight:600;margin-bottom:4px;font-size:10.5px;">Decision Trace</div>';
-                    h += '<div><span style="color:#7a9ab8;">LLM called:</span> <span style="color:#e0e8f0;">' + (llmCalled ? 'yes' : 'no') + '</span></div>';
-                    if (llmCalled || dec.provider_used) {
-                        h += '<div><span style="color:#7a9ab8;">LLM provider:</span> <span style="color:#9ec2ec;">' + esc(dec.provider_used || 'ollama') + '</span></div>';
-                        h += '<div><span style="color:#7a9ab8;">LLM model:</span> <span style="color:#9ec2ec;">' + esc(dec.model_used || 'qwen2.5:7b') + '</span></div>';
-                    }
-                    h += '<div><span style="color:#7a9ab8;">LLM result:</span> <span style="color:' + llmStatusColor + ';">' + esc(llmStatus) + '</span></div>';
-                    if (dec.llm_validation) {
-                        var lv = dec.llm_validation;
-                        h += '<div><span style="color:#7a9ab8;">RMOOZ validator:</span> <span style="color:' + (lv.ok ? '#90d090' : '#e0a93a') + ';">' + (lv.ok ? 'OK' : ('rejected: ' + esc(lv.reason || ''))) + '</span></div>';
-                    }
-                    h += '<div style="margin-top:3px;padding-top:3px;border-top:1px solid #1a3050;">' +
-                         '<span style="color:#7a9ab8;">Final decision source:</span> ' +
-                         '<span style="color:' + fdsColor + ';font-weight:700;font-size:11px;">' + esc(fds) + '</span>' +
-                         (fdsIsLlm ? ' <span style="color:#6a8fa8;font-size:9px;">← LLM answer accepted ✓</span>' : ' <span style="color:#8a6a3a;font-size:9px;">← deterministic fallback</span>') +
-                         '</div>';
-                    if (dec.fallback_reason) {
-                        h += '<div style="margin-top:2px;"><span style="color:#7a9ab8;">Fallback reason:</span> <span style="color:#e0a93a;">' + esc(dec.fallback_reason) + '</span></div>';
-                        if (fds === 'deterministic_demo_ai') {
-                            h += '<div style="color:#6a8fa8;margin-top:2px;">Fallback decision generated by RMOOZ deterministic safety brain.</div>';
-                        }
-                    }
-                    h += '</div>';
-                })();
-                if (_aiApplied) {
-                    if (_aiDecision.real_unit_moved) {
-                        h += '<div style="color:#90d090;font-weight:600;margin-top:4px;">✔ Applied — real unit marker moved on map — تم تحريك الوحدة الحقيقية</div>';
-                    } else {
-                        h += '<div style="color:#e0a93a;font-weight:600;margin-top:4px;">⚠ AI action applied to preview marker only — real scenario unit not found.</div>';
-                    }
-                    // FREEFIGHT-AI-VISIBLE-MARKER-TRUTH-A: movement truth status panel
-                    (function() {
-                        var ruu  = _aiDecision.real_unit_updated;
-                        var mrc  = _aiDecision.map_redraw_called;
-                        var voc  = _aiDecision.visible_overlay_created;
-                        var bridges = _aiDecision.map_redraw_bridges || [];
-                        function flag(val) {
-                            return val ? '<span style="color:#90d090;font-weight:700;">yes</span>'
-                                       : '<span style="color:#e0a93a;font-weight:700;">no</span>';
-                        }
-                        h += '<div style="margin-top:5px;border:1px solid #1a4050;border-radius:4px;padding:6px 8px;background:#070e14;font-size:10px;" data-ff-truth="status">';
-                        h += '<div style="color:#5a8aa8;font-weight:600;margin-bottom:3px;">Map Movement Truth</div>';
-                        h += '<div>Real unit object updated: ' + flag(ruu) + '</div>';
-                        h += '<div>Map redraw called: ' + flag(mrc);
-                        if (mrc && bridges.length) h += ' <span style="color:#6a8fa8;">(' + esc(bridges.join(', ')) + ')</span>';
-                        h += '</div>';
-                        h += '<div>Visible movement layer: ' + flag(voc) + '</div>';
-                        h += '</div>';
-                    })();
-                }
-                h += '</div>';
-            } else if (_aiDecision._error) {
-                h += '<div style="color:#e0a93a;font-size:11px;padding:4px;">Error: ' + esc(_aiDecision._error) + '</div>';
-            } else {
-                h += '<div style="color:#e0a93a;font-size:11px;padding:4px;">No movable units found. Generate scenario or assign unit base/coordinates first.</div>';
-                if (_aiDiagnostics) {
-                    h += '<div style="color:#8fa5b8;font-size:10px;padding:2px 4px;">source: ' + esc(_aiDiagnostics.source_used) +
-                         ' · total: ' + (_aiDiagnostics.units_total || 0) +
-                         ' · with_id: ' + (_aiDiagnostics.units_with_id || 0) +
-                         ' · with_coords: ' + (_aiDiagnostics.units_with_coords || 0) +
-                         ' · movable: ' + (_aiDiagnostics.units_movable || 0) + '</div>';
-                }
-            }
-        }
-        h += '</div>';  // close unit decision inner section
-        h += '</div>';  // close diagnostics tabpanel (RMOOZ-FREE-FIGHT-CONTROL-WINDOW-REBUILD-W)
-        h += '</div>';  // close renderAiDecisionHtml outer
-        return h;
-    }
-    // ── end FREEFIGHT-DEMO-AI-INTEGRATE-A ─────────────────────────────────────
+    // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF/AG: the old Free Fight control window — its cockpit, state
+    // machine, tab shell, COA-card / planning-trace / commit-exec / operator-strip / Green-tab / White-tab
+    // renderers, and the right-side reasoning panel builder — was PHYSICALLY DELETED (AG). The operator card
+    // is now client/shell/scenario-control-center.js (window.RmoozScenarioControlCenter). The engine helpers
+    // (taskability, COA quality, commit/exec, continuous scenario, Green/White, decision log) are unchanged.
 
     function clear() {
         pause();
@@ -5709,7 +4886,6 @@
         _advancedDiagnosticsHtmlForTest: function (rh, info) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; return _advancedDiagnosticsHtml(); },
         _benchHtmlForTest:         function (warmup, bench) { if (warmup !== undefined) _warmupResult = warmup; if (bench !== undefined) _benchResult = bench; return _benchHtml(); },   // RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P
         // RMOOZ-GREEN-WORLD-UI-R test seams
-        _greenWorldHtmlForTest:    function (a)             { if (a !== undefined) _greenWorld = a; return _greenWorldHtml(); },
         _refreshGreenWorldForTest: function (reason)        { return _refreshGreenWorld(reason); },
         _getGreenWorldForTest:     function ()              { return _greenWorld; },
         _setGreenWorldForTest:     function (a)             { _greenWorld = a; },
@@ -5739,7 +4915,7 @@
         // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: the old Free Fight control window (V2 cockpit) and its
         // render/walkthrough/movement-summary seams were DELETED. The seams below are engine-level only:
         // selecting a COA, reading the new SCC state, and a no-op legacy-open flag (no drawer exists now).
-        _setFfLegacyOpenForTest:   function (v)             { _ffLegacyOpen = !!v; return _ffLegacyOpen; },   // no-op: legacy drawer removed
+        _setFfLegacyOpenForTest:   function (v)             { _ffLegacyOpen = !!v; return _ffLegacyOpen; },   // no-op: old diagnostics drawer removed
         _getFfLegacyOpenForTest:   function ()              { return _ffLegacyOpen; },
         _selectCoaForTest:         function (i)             { _coaSelectedIdx = i; updatePanel(); return _coaSelectedIdx; },
         _v2SelectCoaForTest:       function (i)             { _coaSelectedIdx = i; updatePanel(); return _coaSelectedIdx; },   // alias kept for surviving tests
@@ -5794,10 +4970,6 @@
         // RMOOZ-FREE-FIGHT-CONTROL-WINDOW-REBUILD-W test seams
         _setFfTabForTest:          function (t)             { _ffTab = t; return _ffTab; },
         _getFfTabForTest:          function ()              { return _ffTab; },
-        _ffTabBarHtmlForTest:      function ()              { return _ffTabBarHtml(); },
-        _systemLayersHtmlForTest:  function ()              { return _systemLayersHtml(); },
-        _whiteTabHtmlForTest:      function ()              { return _whiteTabHtml(); },
-        _renderCommanderLoopHtmlForTest: function (rh, info) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; return renderCommanderLoopHtml(); },
         _maybeAutoSelectModelForTest: function (info)     { if (info !== undefined) _modelInfo = info; return _maybeAutoSelectModel(); },
         _setModelPickerOpenForTest: function (v)          { _modelPickerOpen = !!v; },
         _resetAutoSelectForTest:   function ()            { _autoSelectedModel = null; },
@@ -5822,9 +4994,7 @@
         _coaTimingHtmlForTest:     function (t, plan)     { return _coaTimingHtml(t, plan); },
         // RMOOZ-AI-ATTACK-PLAN-AI-ONLY-A test seams
         _isRealLlmPlanForTest:     function (p)           { return _isRealLlmPlan(p); },
-        _renderCoaPlanHtmlForTest: function (p)           { _coaPlan = p; _coaLoading = false; _coaApplied = false; return renderCoaPlanHtml(); },
         // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A test seams
-        _renderPlanningTraceHtmlForTest: function (p)     { return renderPlanningTraceHtml(p); },
         _setPlanningModeForTest:   function (m)           { return setPlanningMode(m); },
         _getPlanningModeForTest:   function ()            { return _planningMode; },
         _buildAiRequestBodyForTest2: function ()          { return _buildAiRequestBody(); },
@@ -5840,8 +5010,6 @@
         _pauseCommittedCoaForTest: function ()            { return _pauseCommittedCoa(); },
         _resetCoaExecForTest:      function ()            { return _resetCoaExec(); },
         _replanCoaForTest:         function ()            { return _replanCoa(); },
-        _coaExecHtmlForTest:       function ()            { return _coaExecHtml(); },
-        _operatorStripHtmlForTest: function ()            { return _operatorStripHtml(); },   // RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O
         // RMOOZ-COA-COMMIT-PERSISTENCE-M test seams
         _restoreCoaExecForTest:    function ()            { return _restoreCoaExec(); },
         _peekPersistedCoaExecForTest: function ()         { return _peekPersistedCoaExec(); },
@@ -5858,7 +5026,6 @@
         // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D test seams
         _aiGateStatusHtmlForTest:  function (h)           { if (h !== undefined) _routeHealth = h; return _aiGateStatusHtml(); },
         _aiBlockReasonsForTest:    function (h)           { return _aiBlockReasons(h); },
-        _renderAiDecisionHtmlForTest: function ()         { return renderAiDecisionHtml(); },
         // RMOOZ-AI-FREE-FIGHT-UX-PROOF-A test seams
         _aiReadinessHtmlForTest:   function (rh, plan)    { if (rh !== undefined) _routeHealth = rh; return _aiReadinessHtml(plan); },
         _aiCandidateFilterHtmlForTest: function (plan)    { return _aiCandidateFilterHtml(plan); },

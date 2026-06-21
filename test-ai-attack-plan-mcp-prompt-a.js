@@ -38,7 +38,9 @@ require(path.join(CLIENT, 'world-state-db.js'));
 require(path.join(CLIENT, 'symbol-db.js'));
 require(path.join(CLIENT, 'symbol-registry.js'));
 require(path.join(CLIENT, 'free-fight-demo.js'));
+require(path.join(CLIENT, 'scenario-control-center.js'));   // RMOOZ-...-AG: MCP-prompt evidence now in the SCC
 var FF = global.window.RmoozFreeFightDemo;
+var SCC = global.window.RmoozScenarioControlCenter;
 
 var P = require(path.join(AI, 'free-fight-coa-planner.js'));
 var C = require(path.join(AI, 'rmooz-ai-tool-contract.js'));
@@ -154,66 +156,28 @@ async function main() {
         ok('C1 manual Generate forces opts.useLlm=true and ai_depth normal (never fast)');
     } catch (e) { bad('C1 manual Generate forces useLlm=true and not fast', e); }
 
-    // C2 — AI execution disabled → no cards + the enable-instructions message (single gate).
+    // C2-C5 (RMOOZ-SCENARIO-CONTROL-CENTER-DEAD-UI-CLEANUP-AG): the old manual "Generate AI Attack Plan" card
+    // — its gate-diagnostics display, "View MCP Prompt" toggle, and select-coa cards (renderCoaPlanHtml) — was
+    // PHYSICALLY DELETED. The MCP-routing PROOF now lives on the plan object (S3 attaches mcp_prompt) and is
+    // surfaced by the Scenario Control Center Evidence panel (the engine facade's rawJson('generated')). COA
+    // Review shows plan_source/llm_called honestly (full coverage in test-ai-attack-plan-ai-only-a.js).
     try {
-        var disabledPlan = { ok: true, plan_source: 'deterministic_diverse_coa', llm_called: false, llm_status: null,
-            fallback_reason: null, provider_used: null, model_used: null, ai_depth: 'normal', commander_mode: 'high_variation',
-            allow_sim_run: false, llm_enabled: false, mcp_prompt_version: C.TOOL_CONTRACT_VERSION, coas: [{ plan_id: 'COA-1', title: 'x', phases: [{ actions: [{ unit_uid: 'R-1', action_type: 'recon' }] }] }],
-            _requestedVia: 'manual_generate' };
-        var html = FF._renderCoaPlanHtmlForTest(disabledPlan);
-        assert(/AI execution is disabled\. Enable RMOOZ_ALLOW_SIM_RUN=1\./.test(html), 'shows the enable-RMOOZ_ALLOW_SIM_RUN instructions');
-        assert(!/data-act="select-coa-/.test(html) && !/data-act="apply-coa"/.test(html), 'no COA cards');
-        assert(/No AI result generated\./.test(html), 'shows "No AI result generated."');
-        assert(html.indexOf('RMOOZ_FREE_FIGHT' + '_LLM') === -1, 'no mention of the old (deprecated) free-fight flag');
-        ok('C2 AI execution disabled → no cards + "AI execution is disabled. Enable RMOOZ_ALLOW_SIM_RUN=1."');
-    } catch (e) { bad('C2 AI execution disabled → no cards + enable instructions', e); }
-
-    // C3 — gate diagnostics include the single gate (RMOOZ_ALLOW_SIM_RUN) + MCP prompt pack version.
-    try {
-        var diagPlan = { ok: true, plan_source: 'deterministic_diverse_coa', llm_called: true, llm_status: 'unavailable',
-            fallback_reason: 'llm_failed', provider_used: null, model_used: null, ai_depth: 'normal', commander_mode: 'high_variation',
-            allow_sim_run: true, llm_enabled: true, mcp_prompt_version: 'rmooz-ai-tool-contract/1.0', coas: [{ plan_id: 'COA-1', phases: [{ actions: [{ unit_uid: 'R-1', action_type: 'recon' }] }] }],
-            _requestedVia: 'manual_generate' };
-        var html3 = FF._renderCoaPlanHtmlForTest(diagPlan);
-        ['AI execution (RMOOZ_ALLOW_SIM_RUN)', 'provider_used', 'model_used', 'plan_source', 'llm_called', 'llm_status', 'fallback_reason', 'MCP prompt pack', 'commander_mode', 'ai_depth'].forEach(function (k) {
-            assert(html3.indexOf(k) !== -1, 'diagnostic present: ' + k);
-        });
-        assert(/rmooz-ai-tool-contract\/1\.0/.test(html3), 'MCP prompt pack version shown');
-        ok('C3 gate diagnostics include AI execution (RMOOZ_ALLOW_SIM_RUN) + MCP prompt pack version');
-    } catch (e) { bad('C3 gate diagnostics include AI execution + MCP prompt pack version', e); }
-
-    // C4 — "View MCP Prompt" renders the system + prompt + commander instructions.
-    try {
-        var planWithPrompt = { ok: true, plan_source: 'deterministic_diverse_coa', llm_called: false, llm_enabled: false,
-            ai_depth: 'normal', commander_mode: 'high_variation', mcp_prompt_version: C.TOOL_CONTRACT_VERSION,
-            mcp_prompt: composed, coas: [{ plan_id: 'COA-1', phases: [{ actions: [{ unit_uid: 'R-1', action_type: 'recon' }] }] }],
-            _requestedVia: 'manual_generate' };
-        var collapsed = FF._renderCoaPlanHtmlForTest(planWithPrompt);
-        assert(/data-act="view-mcp-prompt"/.test(collapsed), 'View MCP Prompt button present');
-        FF._setMcpPromptExpandedForTest(true);
-        var expanded = FF._renderCoaPlanHtmlForTest(planWithPrompt);
-        assert(/data-ff-coa="mcp-prompt"/.test(expanded), 'expanded MCP prompt block present');
-        assert(/commander instructions/i.test(expanded) && /Think like a commander/.test(expanded), 'shows commander instructions');
-        assert(/system \(commander instruction\)/i.test(expanded) && /force_pool/.test(expanded), 'shows system + the user prompt');
-        FF._setMcpPromptExpandedForTest(false);
-        ok('C4 "View MCP Prompt" renders the system + prompt + commander instructions (proof of MCP routing)');
-    } catch (e) { bad('C4 "View MCP Prompt" renders the MCP prompt', e); }
-
-    // C5 — real LLM plan renders cards (no gate) + exposes View MCP Prompt.
-    try {
-        var realPlan = { ok: true, plan_source: 'llm', llm_called: true, llm_status: 'ok', fallback_reason: null,
+        var planWithPrompt = { ok: true, plan_source: 'llm', llm_called: true, llm_status: 'ok', fallback_reason: null,
             provider_used: 'ollama', model_used: 'qwen3-coder:latest', ai_depth: 'normal', commander_mode: 'high_variation',
-            llm_enabled: true, variation_seed: 1, mcp_prompt_version: C.TOOL_CONTRACT_VERSION, mcp_prompt: composed,
-            recommended_plan_id: 'COA-1', coas: [{ plan_id: 'COA-1', title: 'Recon', coa_family: 'cautious_recon', recommended: true,
-                risk: 'low', confidence: 'high', units_total_considered: 4, units_selected_count: 2, role_breakdown: { recon: 2 },
-                phases: [{ phase_id: 'p1', name: 'Move', actions: [{ unit_uid: 'R-2', side: 'RED', role: 'recon', action_type: 'recon', execution_mode: 'recon_standoff_target', target: { lat: 25.2, lon: 51.3 } }] }] }],
+            llm_enabled: true, mcp_prompt_version: C.TOOL_CONTRACT_VERSION, mcp_prompt: composed, recommended_plan_id: 'COA-1',
+            coas: [{ plan_id: 'COA-1', title: 'Recon', recommended: true,
+                phases: [{ name: 'Move', actions: [{ unit_uid: 'R-2', action_type: 'recon', role: 'recon', target: { lat: 25.2, lon: 51.3 } }] }] }],
             _requestedVia: 'manual_generate' };
-        var htmlR = FF._renderCoaPlanHtmlForTest(realPlan);
-        assert(/data-act="select-coa-0"/.test(htmlR), 'real LLM → cards render');
-        assert(!/No AI result generated/.test(htmlR), 'real LLM → no gate message');
-        assert(/data-act="view-mcp-prompt"/.test(htmlR), 'real LLM → View MCP Prompt available');
-        ok('C5 real LLM plan renders cards (no gate) + exposes View MCP Prompt + diagnostics');
-    } catch (e) { bad('C5 real LLM plan renders cards + exposes View MCP Prompt', e); }
+        try { FF._resetScenarioForTest(); FF._forgetCoaExecInMemoryForTest(); FF._resetCoaExecForTest(); } catch (_) {}
+        FF._setCoaPlanForTest(planWithPrompt); FF._setCoaSelectedIdxForTest(0);
+        var gen = FF.engine.rawJson('generated');
+        assert(gen && gen.mcp_prompt && gen.mcp_prompt.system && gen.mcp_prompt.prompt, 'SCC Evidence exposes the generated-plan mcp_prompt (system + prompt) — proof of MCP routing');
+        assert(gen.mcp_prompt_version === C.TOOL_CONTRACT_VERSION, 'SCC Evidence exposes the MCP prompt pack version');
+        // honesty: the SCC COA Review reads plan_source + llm_called straight from the engine facade (no hiding).
+        assert(gen.plan_source === 'llm' && gen.llm_called === true, 'SCC reads plan_source=llm + llm_called=true honestly from the engine facade');
+        assert(typeof SCC.render === 'function' && SCC.render().indexOf('Scenario Control Center') !== -1, 'SCC is the only operator renderer');
+        ok('C2-C5 → SCC Evidence exposes the MCP prompt + version; engine facade shows source/llm_called honestly (old card display retired by AG)');
+    } catch (e) { bad('SCC MCP-prompt evidence', e); }
 
     console.log('\n' + (fail === 0 ? '✅ ' : '❌ ') + pass + ' passed, ' + fail + ' failed (test-ai-attack-plan-mcp-prompt-a.js)');
     process.exit(fail === 0 ? 0 : 1);

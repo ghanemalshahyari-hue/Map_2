@@ -72,13 +72,14 @@ function moveFarPlan() { return { ok: true, plan_source: 'llm', recommended_plan
         ok('advisory = worst of collateral band and neutral-reaction band');
     } catch (e) { bad('worst-of', e); }
 
-    // 3 — Green panel shows the advisory line + disclaimers.
+    // 3 — White advisory computed by the ENGINE (RMOOZ-...-AG: the old Green-panel HTML render was physically
+    // deleted; the advisory now surfaces in the Scenario Control Center. Assert the engine advisory + gate).
     try {
-        var html = DEMO._greenWorldHtmlForTest(mkGreen('high', 83, 85));
-        assert(/data-ff-green="white-advisory"/.test(html) && /White advisory: restricted/.test(html), 'panel shows White advisory line');
-        assert(/Advisory only — not a block/.test(html) && /validator unchanged/.test(html), 'panel shows advisory-only + validator-unchanged disclaimer');
-        ok('Green panel shows the White advisory line + disclaimers');
-    } catch (e) { bad('panel advisory', e); }
+        var adv = DEMO._whiteAdvisoryForTest(mkGreen('high', 83, 85));
+        assert(adv && adv.advisory_level === 'restricted', 'engine advisory_level = restricted for high risk');
+        assert(adv.gate === false, 'advisory only — never a block (gate=false, validator unchanged)');
+        ok('White advisory computed by the engine, advisory-only (old Green panel UI retired by AG)');
+    } catch (e) { bad('white advisory engine', e); }
 
     // 4 + 6 — committed COA refresh records a White advisory (no LLM) and never gates.
     try {

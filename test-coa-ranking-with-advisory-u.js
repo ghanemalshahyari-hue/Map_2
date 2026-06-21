@@ -97,16 +97,18 @@ try {
     ok('operator can still choose a non-recommended COA');
 } catch (e) { bad('operator choice', e); }
 
-// 5 — score breakdown renders in COA cards.
+// 5 — score breakdown computed on the engine (RMOOZ-...-AG: the old COA-card render was physically deleted;
+// the ranking now drives the SCC COA Review. Assert the ENGINE `_ranking` data the display reads from).
 try {
     DEMO._setCoaPlanForTest(flipPlan()); DEMO._setGreenWorldForTest(mkGreen('high', 83, 85));
     DEMO._applyCoaRankingForTest();
-    var html = DEMO._renderCoaPlanHtmlForTest(DEMO._getCoaPlanForTest());
-    assert(/data-ff-coa="ranking"/.test(html) && /Score: /.test(html) && /base /.test(html), 'score breakdown line renders');
-    assert(/Green\/White advisory affected ranking/.test(html), 'advisory-affected-ranking note renders');
-    assert(/Recommended because:/.test(html), '"Recommended because" renders');
-    ok('score breakdown + advisory note + recommendation reason render in COA cards');
-} catch (e) { bad('UI breakdown', e); }
+    var coas = DEMO._getCoaPlanForTest().coas;
+    var ranked = coas.filter(function (c) { return c._ranking && c._ranking.final_score != null; });
+    assert(ranked.length === coas.length, 'every COA has a _ranking.final_score (base + advisory delta)');
+    assert(ranked.some(function (c) { return /base/.test(JSON.stringify(c._ranking)); }), 'ranking carries the base/advisory breakdown');
+    assert(ranked.some(function (c) { return c._ranking.ranking_reason; }), 'ranking carries a "recommended because" reason');
+    ok('score breakdown + advisory delta + recommendation reason computed on the engine (old card retired by AG)');
+} catch (e) { bad('ranking engine', e); }
 
 // 6 + 7 + 8 — decision log, event log, no fetch.
 try {

@@ -69,12 +69,11 @@ ok('_aiDiagnostics assigned source_used + counts',
 
 // ── SECTION 7: client — UI labels ───────────────────────────────────────────
 console.log('\n§7  UI label changes');
-ok('Section header says Unit Decision LLM',
-    /Unit Decision LLM/.test(clientSrc));
+// RMOOZ-...-AG: the "Unit Decision LLM" section header + "No movable units found" no-unit message were old
+// COA-card labels (renderCoaPlanHtml), physically deleted. The unit-feed ENGINE (diagnostics counts below,
+// + the real-scenario unit feed sections above) is unchanged. [[retired-by-AG]]
 ok('Group planner fallback message prefixed with Group Planner LLM',
     /Group Planner LLM/.test(clientSrc));
-ok('No-unit message updated',
-    /No movable units found/.test(clientSrc));
 ok('Diagnostic counts rendered in no-unit path',
     /units_total|units_with_id|units_with_coords|units_movable|with_id|with_coords/.test(clientSrc));
 

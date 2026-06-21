@@ -85,14 +85,15 @@ function moveFarPlan() { return { ok: true, plan_source: 'llm', recommended_plan
     DEMO.mount({ brief: { operational_brief: { proposed_units: [], objectives: [{ label: 'Objective X', lat: 24.45, lon: 54.40 }] } } });
     DEMO.setObjective({ lat: 24.45, lon: 54.40 });
 
-    // 1 — panel renders deterministic output.
+    // 1 — Green assessment engine stores deterministic output (RMOOZ-...-AG: the old Green-panel HTML render
+    // was physically deleted; the green status now surfaces in the Scenario Control Center. Assert ENGINE).
     try {
-        var html = DEMO._greenWorldHtmlForTest(greenAssessment());
-        ['Civilian / collateral risk', 'Road status', 'Infrastructure', 'Host-nation pressure', 'Neutral reaction score', 'provenance', '83/100', 'Atropia'].forEach(function (s) { assert.ok(html.indexOf(s) !== -1, 'panel shows "' + s + '"'); });
-        assert.ok(/deterministic note · summarizer off/.test(html), 'shows deterministic-note / summarizer-off label (req #9)');
-        assert.ok(/data-act="green-refresh"/.test(html) && /data-act="green-overlay-toggle"/.test(html), 'has Refresh + overlay toggle controls');
-        ok('Green panel renders deterministic output + provenance + summarizer-off note');
-    } catch (e) { bad('panel render', e); }
+        DEMO._setGreenWorldForTest(greenAssessment());
+        var g = DEMO._getGreenWorldForTest();
+        assert.ok(g && g.collateral_risk && g.neutral_reaction_score != null, 'green assessment stored (collateral risk + neutral reaction score)');
+        assert.ok(g.provenance && g.provenance.engine === 'deterministic', 'deterministic provenance (no LLM)');
+        ok('Green assessment engine stores deterministic output + provenance (old Green panel UI retired by AG)');
+    } catch (e) { bad('green assessment engine', e); }
 
     // 2 — manual refresh → /neutral-world, never /plan-coas.
     try {

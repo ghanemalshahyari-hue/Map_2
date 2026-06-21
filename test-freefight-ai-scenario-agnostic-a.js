@@ -109,8 +109,8 @@ function allUidsIn(plan) {
     ok('§8 FF_ROLE_DISPLAY_ORDER includes reinforce', /FF_ROLE_DISPLAY_ORDER[\s\S]{0,160}reinforce/.test(clientSrc));
     ok('§8 FF_ROLE_DISPLAY_ORDER includes intercept', /FF_ROLE_DISPLAY_ORDER[\s\S]{0,160}intercept/.test(clientSrc));
     ok('§8 FF_ROLE_DISPLAY_ORDER includes defend', /FF_ROLE_DISPLAY_ORDER[\s\S]{0,160}defend/.test(clientSrc));
-    ok('§8 roleLine uses _orderedRoleKeys (not a fixed 6-role array)', /roleLine[\s\S]{0,160}_orderedRoleKeys/.test(clientSrc));
-    ok('§8 Units block uses _orderedRoleKeys', /Units[\s\S]{0,200}_orderedRoleKeys/.test(clientSrc));
+    // RMOOZ-...-AG: the roleLine / Units-block "uses _orderedRoleKeys" assertions referenced the deleted old
+    // COA-card renderer; the role-ORDER engine (FF_ROLE_DISPLAY_ORDER) is asserted above. [[retired-by-AG]]
 
     // ── §9 trail colours cover defensive roles ───────────────────────────────
     console.log('\n§9  Trail colour map covers reinforce / intercept / defend');

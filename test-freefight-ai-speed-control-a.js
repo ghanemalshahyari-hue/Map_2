@@ -183,12 +183,9 @@ function planForCurrentSide() { var b = DEMO._buildLoopRequestBodyForTest(); ret
 
     // ── §10–§14 source checks ────────────────────────────────────────────────
     var src = fs.readFileSync(path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo.js'), 'utf8');
-    console.log('\n§10  Source generates all speed buttons (dynamic)');
-    ok('§10 dynamic loop-speed button generated', /data-act="loop-speed-' \+ sp/.test(src));
-    // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: the loop-speed buttons were BOUND in the old Free Fight
-    // control window's updatePanel binds, which were removed. The speed ENGINE (FF_SPEED_ORDER + every
-    // preset's timing config) is intact and asserted here; the old UI-binding assertion is retired.
-    // [[retired-by-AF]]
+    console.log('\n§10  Speed presets engine (RMOOZ-...-AG: the loop-speed BUTTONS lived in the deleted loop UI;');
+    console.log('      the speed ENGINE — FF_SPEED_ORDER + every preset config — is intact and asserted here.)');
+    // [[retired-by-AG]] dynamic loop-speed button source-scan removed (loop UI physically deleted).
     ok('§10 FF_SPEED_ORDER lists all 5 presets',
         /FF_SPEED_ORDER\s*=\s*\['x1',\s*'x5',\s*'x15',\s*'fire',\s*'fire2'\]/.test(src));
     // Runtime proof: every preset resolves to a real config object
@@ -196,11 +193,9 @@ function planForCurrentSide() { var b = DEMO._buildLoopRequestBodyForTest(); ret
         ok('§10 ' + sp + ' resolves to a config', !!DEMO._getSpeedConfigForTest(sp));
     });
 
-    console.log('\n§11  Source has Start/Pause/Step/Reset loop buttons');
-    ok('§11 loop-start present', /data-act="loop-start"/.test(src));
-    ok('§11 loop-pause present', /data-act="loop-pause"/.test(src));
-    ok('§11 loop-step present',  /data-act="loop-step"/.test(src));
-    ok('§11 loop-reset present', /data-act="loop-reset"/.test(src));
+    // §11 [[retired-by-AG]]: the loop-start/pause/step/reset BUTTONS were rendered by the deleted loop UI
+    // (renderCommanderLoopHtml). The loop ENGINE (startLoop/pauseLoop/stepOnce/runNextTurn) is unchanged and
+    // covered by test-freefight-ai-continuous-commander-loop-a.js; the SCC is the operator card now.
 
     console.log('\n§12  Source renders speed control + labels');
     ok('§12 "Speed:" control label present', /Speed:/.test(src));
@@ -211,8 +206,8 @@ function planForCurrentSide() { var b = DEMO._buildLoopRequestBodyForTest(); ret
     ok('§13 heading present', /AI Commander Free Fight/.test(src));
     ok('§13 Start AI Free Fight button label present', /Start AI Free Fight/.test(src));
 
-    console.log('\n§14  Cinematic note present');
-    ok('§14 "x1 = cinematic" note present', /x1 = cinematic/.test(src));
+    // §14 [[retired-by-AG]]: the "x1 = cinematic" operator note lived in the deleted loop UI; the cinematic
+    // timing is asserted via the per-preset config above (§10).
 
     console.log('\n' + '─'.repeat(52));
     console.log('PASS: ' + PASS + '  FAIL: ' + FAIL + '  TOTAL: ' + (PASS + FAIL));

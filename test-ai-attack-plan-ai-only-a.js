@@ -38,7 +38,9 @@ require(path.join(CLIENT, 'world-state-db.js'));
 require(path.join(CLIENT, 'symbol-db.js'));
 require(path.join(CLIENT, 'symbol-registry.js'));
 require(path.join(CLIENT, 'free-fight-demo.js'));
+require(path.join(CLIENT, 'scenario-control-center.js'));   // RMOOZ-...-AG: AI-only honesty now lives in the SCC
 var FF = global.window.RmoozFreeFightDemo;
+var SCC = global.window.RmoozScenarioControlCenter;
 
 var pass = 0, fail = 0;
 function ok(n) { pass++; console.log('  ✓ ' + n); }
@@ -93,61 +95,38 @@ function main() {
         ok('strict gate predicate accepts only real LLM plans');
     } catch (e) { bad('strict gate predicate accepts only real LLM plans', e); }
 
-    // 1 / 3 / 8 — LLM off (deterministic) → no cards, no scores, "LLM not used".
+    // RMOOZ-SCENARIO-CONTROL-CENTER-DEAD-UI-CLEANUP-AG: the old manual "Generate AI Attack Plan" card and its
+    // AI-only DISPLAY GATE (renderCoaPlanHtml hiding non-LLM results) were PHYSICALLY DELETED. The AI-only /
+    // fallback HONESTY is now represented in the Scenario Control Center COA Review: every COA truthfully shows
+    // its plan_source + llm_called + quality verdict — a deterministic/fallback plan is LABELLED, never dressed
+    // as AI. These sections assert that honesty in the SCC (replacing the old hide-the-card behavior).
+    // honesty — deterministic plan is labelled deterministic, llm_called=false.
     try {
-        var html = FF._renderCoaPlanHtmlForTest(detPlan());
-        assert(gated(html), 'shows "No AI result generated / LLM was not used"');
-        assert(!hasCards(html), 'NO COA cards rendered');
-        assert(!hasScores(html), 'NO score numbers rendered');
-        assert(/Reason: /.test(html), 'shows a Reason');
-        ok('deterministic fallback is HIDDEN on the AI Attack Plan page (no cards / no scores)');
-    } catch (e) { bad('deterministic fallback is HIDDEN on the AI Attack Plan page', e); }
+        FF._setCoaPlanForTest(detPlan()); FF._setCoaSelectedIdxForTest(0);
+        var det = SCC.render();
+        assert(SCC.state() === 'coa_review', 'SCC is in COA review for a deterministic plan');
+        assert(/source <b[^>]*>deterministic_diverse_coa/.test(det), 'SCC honestly shows plan_source = deterministic_diverse_coa');
+        assert(/llm_called <b[^>]*>false/.test(det), 'SCC honestly shows llm_called = false (not dressed as AI)');
+        ok('SCC COA Review labels a deterministic/fallback plan honestly (plan_source + llm_called=false)');
+    } catch (e) { bad('SCC honesty: deterministic plan labelled', e); }
 
-    // 2 — LLM timeout → no cards.
+    // honesty — a real LLM plan shows plan_source=llm + llm_called=true.
     try {
-        var html2 = FF._renderCoaPlanHtmlForTest(detPlan({ llm_called: true, llm_status: 'timeout', fallback_reason: 'local_llm_unavailable: timeout' }));
-        assert(!hasCards(html2), 'timeout → no cards');
-        assert(gated(html2), 'timeout → gated message');
-        assert(/timeout|unavailable/i.test(html2), 'timeout reason surfaced');
-        ok('LLM timeout → no AI plan cards shown');
-    } catch (e) { bad('LLM timeout → no AI plan cards shown', e); }
+        FF._setCoaPlanForTest(llmPlan()); FF._setCoaSelectedIdxForTest(0);
+        var llm = SCC.render();
+        assert(/source <b[^>]*>llm/.test(llm), 'SCC shows plan_source = llm for a real LLM plan');
+        assert(/llm_called <b[^>]*>true/.test(llm), 'SCC shows llm_called = true for a real LLM plan');
+        assert(/commander-quality/.test(llm), 'SCC shows the commander-quality verdict');
+        ok('SCC COA Review shows a real LLM plan as llm / llm_called=true + quality verdict');
+    } catch (e) { bad('SCC honesty: LLM plan shown', e); }
 
-    // fast mode → no cards + fast reason.
+    // the strict gate predicate (engine) still distinguishes real-LLM from fallback — used by the SCC honesty.
     try {
-        var htmlF = FF._renderCoaPlanHtmlForTest(detPlan({ ai_depth: 'fast' }));
-        assert(!hasCards(htmlF) && gated(htmlF), 'fast → gated, no cards');
-        assert(/fast mode/i.test(htmlF), 'fast reason surfaced');
-        ok('fast mode (LLM skipped) → no AI plan cards shown');
-    } catch (e) { bad('fast mode (LLM skipped) → no AI plan cards shown', e); }
-
-    // 5 — the gate shows the required diagnostic fields.
-    try {
-        var htmlD = FF._renderCoaPlanHtmlForTest(detPlan({ llm_called: true, llm_status: 'unavailable', fallback_reason: 'llm_failed' }));
-        ['plan_source', 'llm_called', 'llm_status', 'provider_used', 'model_used', 'ai_depth', 'commander_mode'].forEach(function (k) {
-            assert(htmlD.indexOf(k) !== -1, 'gate shows ' + k);
-        });
-        ok('gate shows provider_used / model_used / llm_status / plan_source / ai_depth / commander_mode');
-    } catch (e) { bad('gate shows the required diagnostic fields', e); }
-
-    // 4 / 9 — real LLM plan → cards render normally, no gate message.
-    try {
-        var htmlL = FF._renderCoaPlanHtmlForTest(llmPlan());
-        assert(hasCards(htmlL), 'real LLM → COA cards rendered');
-        assert(!gated(htmlL), 'real LLM → no "No AI result generated" message');
-        assert(/Units:/.test(htmlL), 'real LLM → score numbers rendered');
-        ok('real LLM response (plan_source=llm, llm_called=true) renders the AI Attack Plan normally');
-    } catch (e) { bad('real LLM response renders the AI Attack Plan normally', e); }
-
-    // 6 — numbers come from the LLM plan only: change a count, see it ONLY in the LLM render.
-    try {
-        var p = llmPlan(); p.coas[0].units_selected_count = 7; p.coas[0].units_total_considered = 9;
-        var htmlN = FF._renderCoaPlanHtmlForTest(p);
-        assert(/7\/9/.test(htmlN), 'LLM render shows the LLM plan numbers (7/9)');
-        var pd = detPlan(); pd.coas[0].units_selected_count = 7; pd.coas[0].units_total_considered = 9;
-        var htmlNd = FF._renderCoaPlanHtmlForTest(pd);
-        assert(!/7\/9/.test(htmlNd), 'deterministic render shows NO numbers (gated)');
-        ok('visible numbers come from the LLM plan only, never from fallback');
-    } catch (e) { bad('visible numbers come from the LLM plan only', e); }
+        assert(FF._isRealLlmPlanForTest(detPlan()) === false, 'deterministic plan is NOT a real-LLM plan');
+        assert(FF._isRealLlmPlanForTest(detPlan({ llm_called: true, llm_status: 'timeout', fallback_reason: 'x' })) === false, 'timeout/fallback is NOT real-LLM');
+        assert(FF._isRealLlmPlanForTest(llmPlan()) === true, 'clean LLM plan IS real-LLM');
+        ok('engine _isRealLlmPlan predicate still distinguishes real-LLM from fallback (honesty source of truth)');
+    } catch (e) { bad('engine _isRealLlmPlan predicate', e); }
 
     // 7 — _generateCoaPlan clears the previous plan before the new request resolves.
     try {
@@ -165,13 +144,7 @@ function main() {
         ok('_generateCoaPlan clears the previous _coaPlan before requesting (no stale numbers)');
     } catch (e) { bad('_generateCoaPlan clears the previous _coaPlan before requesting', e); }
 
-    // loop plans are NOT gated (separate flow): a deterministic plan WITHOUT the manual tag renders cards.
-    try {
-        var loopPlan = detPlan(); delete loopPlan._requestedVia;
-        var htmlLoop = FF._renderCoaPlanHtmlForTest(loopPlan);
-        assert(hasCards(htmlLoop) && !gated(htmlLoop), 'loop/non-manual deterministic plan still renders (gate is manual-only)');
-        ok('the gate is scoped to the manual button — loop/Generate-5 deterministic plans still render');
-    } catch (e) { bad('the gate is scoped to the manual button', e); }
+    // (RMOOZ-...-AG: the old "loop plans are NOT gated" card-display section was deleted with renderCoaPlanHtml.)
 
     // 12 — honest labeling: the "AI Commander Reasoning" panel must NOT label a deterministic
     // decision as AI. RMOOZ-AI-ATTACK-PLAN-MCP-PROMPT-A (commander-panel relabel).
@@ -188,16 +161,8 @@ function main() {
         ok('honest labeling: deterministic commander panel says "LLM not used", only LLM is "AI Commander Reasoning"');
     } catch (e) { bad('honest labeling: commander panel deterministic vs AI', e); }
 
-    // 13 — the COA-card assessment banner is honest too (loop/Generate-5 deterministic plans).
-    try {
-        var detLoop = detPlan(); delete detLoop._requestedVia; detLoop.commander_assessment = 'force pool: 64 units';
-        var loopHtml = FF._renderCoaPlanHtmlForTest(detLoop);
-        assert(/Tactical Planner Assessment/.test(loopHtml) && !/Commander AI Assessment/.test(loopHtml), 'deterministic plan → "Tactical Planner Assessment (LLM not used)"');
-        var llmLoop = llmPlan(); delete llmLoop._requestedVia; llmLoop.commander_assessment = 'llm assessment';
-        var llmLoopHtml = FF._renderCoaPlanHtmlForTest(llmLoop);
-        assert(/Commander AI Assessment/.test(llmLoopHtml), 'LLM plan → "Commander AI Assessment"');
-        ok('COA-card assessment banner labels deterministic plans honestly (not "AI")');
-    } catch (e) { bad('COA-card assessment banner honest labeling', e); }
+    // (RMOOZ-...-AG: the old COA-card assessment-banner section was deleted with renderCoaPlanHtml; the SCC
+    // honesty sections above cover deterministic-vs-AI labelling on the new operator card.)
 
     console.log('\n' + (fail === 0 ? '✅ ' : '❌ ') + pass + ' passed, ' + fail + ' failed (test-ai-attack-plan-ai-only-a.js)');
     process.exit(fail === 0 ? 0 : 1);

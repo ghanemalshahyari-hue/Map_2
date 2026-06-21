@@ -58,6 +58,7 @@ require(path.join(C, 'world-state-db.js'));
 require(path.join(C, 'symbol-db.js'));
 require(path.join(C, 'symbol-registry.js'));
 require(path.join(C, 'free-fight-demo.js'));
+require(path.join(C, 'scenario-control-center.js'));   // RMOOZ-...-AF: new operator UI (Scenario Control Center)
 var DEMO = global.window.RmoozFreeFightDemo;
 
 var pass = 0, fail = 0;
@@ -86,8 +87,8 @@ function driveToTransition() { for (var i = 0; i < 6; i++) { DEMO._scenarioTickF
         DEMO._runCommittedCoaForTest();
         assert(DEMO._getCoaExecForTest().phase_status === 'complete', 'COA completes on Run Plan');
         assert(DEMO._getScenarioForTest() === null, 'no scenario started by Run Plan');
-        assert(/Plan complete/.test(DEMO._renderFreeFightControlV2HtmlForTest()), 'shows "Plan complete"');
-        ok('1 Run Plan executes once and shows "Plan complete"');
+        assert(DEMO._sccStateForTest() === 'scenario_complete', 'SCC shows complete after Run Plan once');
+        ok('1 Run Plan executes once and SCC shows complete');
     } catch (e) { bad('1 run plan once', e); }
 
     // 2 — Run Scenario does not stop at first COA completion when no end condition met (contested).
@@ -163,10 +164,10 @@ function driveToTransition() { for (var i = 0; i < 6; i++) { DEMO._scenarioTickF
         driveToTransition();
         var sc7 = DEMO._getScenarioForTest();
         assert(sc7.scenario_status === 'paused' && sc7.pending_replan_reason, 'paused with a pending replan reason');
-        var html = DEMO._renderScenarioCockpitV2ForTest();
-        assert(/needs new Blue orders/i.test(html), 'cockpit shows "needs new Blue orders"');
+        var html = DEMO._sccRenderForTest();
+        assert(/Blue needs new orders/i.test(html), 'SCC surfaces the "Blue needs new orders" pending-replan reason');
         assert(!/Plan complete — all phases executed/.test(html), 'does NOT show the misleading "Plan complete" line');
-        ok('7 scenario pauses with "needs new orders", not a misleading Plan complete');
+        ok('7 scenario pauses with "needs new orders" surfaced in the SCC');
     } catch (e) { bad('7 needs new orders', e); }
 
     // 8 + 9 — no /plan-coas during normal ticks; normal ticks keep llm_called_this_tick=false.
@@ -183,15 +184,15 @@ function driveToTransition() { for (var i = 0; i < 6; i++) { DEMO._scenarioTickF
         ok('8+9 no /plan-coas on normal ticks; every tick llm_called_this_tick=false');
     } catch (e) { bad('8+9 no-LLM ticks', e); }
 
-    // 10 — V2 cockpit clearly separates Run Plan vs Run Scenario.
+    // 10 — the Scenario Control Center (AF) separates Run Scenario vs Run Plan once.
     try {
         fresh(bluePlan());
         DEMO._commitCoaForTest(0);
-        var committedHtml = DEMO._renderFreeFightControlV2HtmlForTest();
-        assert(/data-act="v2-run"/.test(committedHtml), 'Run Plan button present');
-        assert(/data-act="v2-run-scenario"/.test(committedHtml), 'Run Scenario button present');
-        assert(/Run Plan/.test(committedHtml) && /Run Scenario/.test(committedHtml), 'both labels present');
-        ok('10 cockpit separates Run Plan vs Run Scenario (two distinct buttons)');
+        var committedHtml = DEMO._sccRenderForTest();
+        assert(/data-act="scc-run"/.test(committedHtml), 'Run Scenario button present');
+        assert(/data-act="scc-run-once"/.test(committedHtml), 'Run Plan once button present');
+        assert(/Run Scenario/.test(committedHtml) && /Run Plan once/.test(committedHtml), 'both labels present');
+        ok('10 SCC separates Run Scenario vs Run Plan once (two distinct buttons)');
     } catch (e) { bad('10 two buttons', e); }
 
     // 11 — end condition fires: remove Red → red_unable_to_contest (or objective_secured) → complete.

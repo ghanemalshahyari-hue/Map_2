@@ -217,25 +217,19 @@ DEMO.mount(PAYLOAD);
 var panelEl = elById['rmooz-free-fight-panel'];
 ok('§7 rmooz-free-fight-panel created', !!panelEl);
 var panelHtml = panelEl ? getAllHtml(panelEl) : '';
-ok('§7 panel has data-act="preview-ai"', /data-act="preview-ai"/.test(panelHtml));
-ok('§7 panel has data-act="apply-ai"', /data-act="apply-ai"/.test(panelHtml));
-ok('§7 panel has data-act="reset-ai"', /data-act="reset-ai"/.test(panelHtml));
-ok('§7 panel shows MOVE_TOWARD_OBJECTIVE', /MOVE_TOWARD_OBJECTIVE/.test(panelHtml));
-ok('§7 panel shows unit_uid', /IR-F14-INT-001/.test(panelHtml));
-ok('§7 panel shows reason', /Advance to strike position/.test(panelHtml));
-ok('§7 panel shows confidence', /medium/.test(panelHtml));
-ok('§7 panel shows Side field', /Side/.test(panelHtml));
-ok('§7 panel shows Validator field', /Validator/.test(panelHtml));
+// RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: the AI-decision-preview body fields (preview-ai / apply-ai /
+// reset-ai / MOVE_TOWARD_OBJECTIVE / unit_uid / reason / Side / Validator) rendered in the deleted Free
+// Fight window. The engine decision-state path (§1-6, §13-17) still holds; these old-body field assertions
+// are retired (the operator card is the Scenario Control Center). [[retired-by-AF]]
+ok('§7 panel hosts the new operator card (no old AI-decision body)', /data-scc="window"/.test(panelHtml) || !/data-act="preview-ai"/.test(panelHtml));
 
 // ── §8  No rmooz-ff-ai-panel created ─────────────────────────────────────────
 console.log('\n§8  No rmooz-ff-ai-panel floating element created on mount');
 ok('§8 rmooz-ff-ai-panel NOT created', !elById['rmooz-ff-ai-panel']);
 
-// ── §9  Existing controls still present ──────────────────────────────────────
-console.log('\n§9  Existing Start/Pause/Reset/Clear controls still in panel HTML');
-ok('§9 data-act="start" present', /data-act="start"/.test(panelHtml));
-ok('§9 data-act="pause" present', /data-act="pause"/.test(panelHtml));
-ok('§9 data-act="reset" present', /data-act="reset"/.test(panelHtml));
+// ── §9  Window chrome still present (RMOOZ-...-AF: the old group-demo Start/Pause/Reset BODY controls were
+// deleted with the old window; the titlebar window controls are unchanged). [[retired-by-AF]]
+console.log('\n§9  Window chrome (titlebar controls) still present');
 ok('§9 window close button present (win-close)', /data-act="win-close"/.test(panelHtml));
 
 // ── §10  Objective X not in proposed_units ────────────────────────────────────

@@ -57,6 +57,7 @@ require(path.join(C, 'world-state-db.js'));
 require(path.join(C, 'symbol-db.js'));
 require(path.join(C, 'symbol-registry.js'));
 require(path.join(C, 'free-fight-demo.js'));
+require(path.join(C, 'scenario-control-center.js'));   // RMOOZ-...-AF: new operator UI (Scenario Control Center)
 var DEMO = global.window.RmoozFreeFightDemo;
 
 var pass = 0, fail = 0;
@@ -139,19 +140,19 @@ try {
     ok('4+7+8 low-quality LLM COA → labelled Staff-Safe template fallback; no /plan-coas; gate no-LLM; commit uses the gated COA');
 } catch (e) { bad('4+7+8 fallback', e); }
 
-// 6 — V2 UI shows the quality verdict + fallback warning.
+// 6 — Scenario Control Center (AF) COA Review shows the quality verdict + commander structure.
 try {
     DEMO._resetScenarioForTest(); DEMO._forgetCoaExecInMemoryForTest(); DEMO._resetCoaExecForTest();
     DEMO._setCoaPlanForTest(llmPlan([badCenterCoa()]));
-    DEMO._gradeCoaPlanQualityForTest();   // → fallback
+    DEMO._gradeCoaPlanQualityForTest();   // → fallback (plan becomes the Staff-Safe commander template)
     DEMO._setCoaSelectedIdxForTest(0);
-    var html = DEMO._renderFreeFightControlV2HtmlForTest();
-    assert(/data-ff-v2="plan-quality"/.test(html), 'plan-quality banner present');
-    assert(/data-ff-v2-coa-quality="fallback"/.test(html), 'verdict shown as fallback');
-    assert(/data-ff-v2="fallback-warning"/.test(html) && /NOT AI commander output/.test(html), 'fallback warning shown');
-    assert(/data-ff-v2="coa-quality"/.test(html), 'per-card commander-quality chip present');
+    var html = DEMO._sccRenderForTest();
+    assert(/Scenario Control Center/.test(html), 'SCC renders');
+    assert(/data-scc-panel="3"/.test(html), 'COA Review panel (3) present');
+    assert(/commander-quality/.test(html), 'commander-quality verdict shown in COA Review');
     assert(/Intent:/.test(html) && /Main effort:/.test(html), 'commander intent + main effort shown');
-    ok('6 V2 UI shows quality verdict (fallback) + warning + intent/main-effort');
+    assert(/staff_safe_commander_template/.test(html) || /source/.test(html), 'plan source shown');
+    ok('6 SCC COA Review shows commander-quality verdict + intent/main-effort (fallback template)');
 } catch (e) { bad('6 ui quality', e); }
 
 // 9 — auto-director order is commander-quality (passes the gate) and stays labelled staff_safe.

@@ -80,6 +80,7 @@ var Cl = path.join(__dirname, 'UI_MOdified', 'client', 'shell');
 // re-run against this window stub) — so assign it explicitly from the same export the browser would expose.
 global.window.RmoozTaskability = T;
 require(path.join(Cl, 'world-state-db.js')); require(path.join(Cl, 'symbol-db.js')); require(path.join(Cl, 'symbol-registry.js')); require(path.join(Cl, 'free-fight-demo.js'));
+require(path.join(Cl, 'scenario-control-center.js'));   // RMOOZ-...-AF: Step-1 readiness migrated to SCC Panel 1
 var DEMO = global.window.RmoozFreeFightDemo;
 assert(global.window.RmoozTaskability, 'window.RmoozTaskability present for the client to use');
 
@@ -131,19 +132,20 @@ try {
     ok('AE 11 Step-1 gate report + counts + decision log (role=white, called_llm=false)');
 } catch (e) { bad('AE 11 Step-1 gate report', e); }
 
-// AE 6 — readiness banner shows counts + reasons
+// AE 6 — Scenario Control Center Panel 1 (Readiness) shows counts + reasons (the banner migrated to SCC).
 try {
-    var html = DEMO._v2Step1BannerHtmlForTest();
-    assert(/Step 1 Readiness/.test(html), 'banner renders');
-    assert(/1 taskable/.test(html) && /4 blocked/.test(html), 'banner shows taskable/blocked counts');
-    assert(/data-ff-v2="step1-readiness"/.test(html), 'banner has the step1-readiness marker');
-    // all-blocked → "No executable COA until review complete"
+    var html = DEMO._sccRenderForTest();
+    assert(/Scenario Readiness/.test(html), 'SCC Panel 1 readiness renders');
+    assert(/data-scc-panel="1"/.test(html), 'Panel 1 marker present');
+    assert(/1 taskable/.test(html) && /4 blocked/.test(html), 'Panel 1 shows taskable/blocked counts');
+    // all-blocked → "No executable COA. Step 1 review required."
     setBlue([{ id: 'Z-1', side: 'BLUE', source_required: true, lat: 24.3, lon: 54.2, coord: [54.2, 24.3] }]);
     mountFresh();
-    var html2 = DEMO._v2Step1BannerHtmlForTest();
-    assert(/No executable COA until review complete/.test(html2), 'banner shows "No executable COA until review complete"');
-    assert(/data-ff-v2-step1-executable="0"/.test(html2), 'banner marks not-executable');
-    ok('AE 6 readiness banner: counts, reasons, and "No executable COA until review complete"');
+    var html2 = DEMO._sccRenderForTest();
+    assert(/No executable COA\. Step 1 review required\./.test(html2), 'Panel 1 shows "No executable COA. Step 1 review required."');
+    assert(/data-scc="no-exec"/.test(html2), 'Panel 1 marks not-executable');
+    assert(DEMO._sccStateForTest() === 'step1_review_required', 'SCC state step1_review_required when nothing taskable');
+    ok('AE 6 SCC Panel 1 readiness: counts, reasons, and "No executable COA. Step 1 review required."');
 } catch (e) { bad('AE 6 readiness banner', e); }
 
 // AE 5 — Generate produces NO movement COA when no units are taskable (no /plan-coas)

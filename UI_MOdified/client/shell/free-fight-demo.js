@@ -104,6 +104,7 @@
     var _greenOverlayOn = false;       // map risk-ring overlay toggle (default OFF)
     var _greenLayer = null;            // Leaflet layer group for the Green risk ring (review-only)
     var _decisionLog = [];             // RMOOZ-AI-SCHEDULER-DECISION-LOG-S: in-memory audit buffer (record-only)
+    var _netLog = [];                  // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: recent COA/AI network calls (Evidence panel)
     var DECISION_LOG_CAP = 200;
     var _whiteAdvisoryLevel = null;    // RMOOZ-WHITE-GREEN-ANNOTATION-T: last recorded White advisory level (dedup)
     var _greenScoringKey = null;       // RMOOZ-GREEN-WHITE-SCORING-T: last recorded green-advisory scoring key (dedup)
@@ -1022,154 +1023,16 @@
         if (!_panel) return;
         var bodyDiv = _panel.querySelector('[data-ff="body"]');
         if (!bodyDiv) return;
-        var st = getState();
-        var objLine = st.objective_set
-            ? ('Objective X set · RED attack ' + st.red_groups + ' / BLUE react ' + st.blue_groups + ' · progress ' + Math.round(st.progress * 100) + '%' + (st.running ? ' · running' : (st.paused ? ' · paused' : '')))
-            : 'No Objective X — place it on the map to begin.';
-        var html = '';
-        if (!st.objective_set) {
-            html += '<button data-act="place-obj" style="font:inherit;cursor:pointer;border:1px solid #b8860b;background:#2a2412;color:#e0c060;border-radius:5px;padding:6px 10px;margin-bottom:8px;">＋ Place Objective X — ضع الهدف X</button>';
-        } else {
-            if (st.objective_source === 'reused_previous') html += '<div style="margin-bottom:4px;font-size:11px;color:#7fd6a0;">↻ Reusing previous Objective X — إعادة استخدام الهدف السابق</div>';
-            html += '<button data-act="place-obj" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#22303f;color:#cfe6ff;border-radius:5px;padding:6px 10px;margin-bottom:8px;">↻ Place new Objective X — ضع هدفاً جديداً</button>';
-        }
-        html += '<div style="margin:0 0 6px;padding:5px 8px;border:1px solid #1a3050;border-radius:4px;background:#0a1220;">' +
-            '<div style="font-size:11px;font-weight:700;color:#9ec2ec;letter-spacing:.5px;">GROUP MOVEMENT DEMO</div>' +
-            '<div style="font-size:10px;color:#6a8fa8;margin-top:1px;">Animated group planner — لا علاقة له بالوحدات الحقيقية</div>' +
-            '</div>';
-        html += '<div style="margin:2px 0 8px;padding:7px 8px;border:1px solid #2a3f55;border-radius:5px;background:#0c141d;">' +
-            '<label for="rmooz-ff-planner-mode" style="display:block;font-size:11px;color:#9ec2ec;margin-bottom:4px;">Group demo mode:</label>' +
-            '<select id="rmooz-ff-planner-mode" data-act="planner-mode" style="width:100%;font:inherit;font-size:12px;background:#101b27;color:#e8eaed;border:1px solid #4a5f75;border-radius:4px;padding:5px;">' +
-            '<option value="deterministic"' + (_plannerMode === 'deterministic' ? ' selected' : '') + '>Deterministic Planner - RMOOZ planner, works offline</option>' +
-            '<option value="llm"' + (_plannerMode === 'llm' ? ' selected' : '') + '>LLM Assisted - Qwen/LiteLLM advisory, needs model</option>' +
-            '</select></div>';
-        // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: the model picker no longer clutters the group-demo
-        // header — model selection now lives in the AI Free Fight card (the operator-friendly flow +
-        // the raw dropdown under Advanced diagnostics), so there is ONE place to choose the AI model.
-        // FREE-FIGHT-CARD-VISIBILITY: the panel always opens; Start is gated on
-        // Objective X (+ groups + anchors). No anchors → disabled + note; no
-        // objective → disabled + "Place Objective X to start" note.
-        var startBtn, startNote = '';
-        if (!st.has_anchors) {
-            startBtn = '<button data-act="start" disabled style="font:inherit;cursor:not-allowed;border:1px solid #3a5040;background:#162018;color:#5f8f74;border-radius:5px;padding:5px 10px;opacity:.55;">▶ Start Group Movement Demo</button>';
-            startNote = '<div style="margin:2px 0 6px;font-size:11px;color:#e0a93a;">No map anchors available — لا توجد مراسٍ على الخريطة</div>';
-        } else if (!st.can_start) {
-            startBtn = '<button data-act="start" disabled title="Place Objective X first" style="font:inherit;cursor:not-allowed;border:1px solid #3a5040;background:#162018;color:#5f8f74;border-radius:5px;padding:5px 10px;opacity:.6;">▶ Start Group Movement Demo</button>';
-            startNote = '<div style="margin:2px 0 6px;font-size:11px;color:#e0c060;">Place Objective X to start AI Free Fight<br>ضع الهدف X لبدء القتال التجريبي بالذكاء الاصطناعي</div>';
-        } else {
-            startBtn = '<button data-act="start" style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#1f3a2b;color:#7fd6a0;border-radius:5px;padding:5px 10px;">▶ Start Group Movement Demo</button>';
-        }
-        html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">' +
-            startBtn +
-            '<button data-act="replan" style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#172436;color:#9ec2ec;border-radius:5px;padding:5px 10px;">Re-plan Group Demo</button>' +
-            '<button data-act="pause" style="font:inherit;cursor:pointer;border:1px solid #8a6a20;background:#2a2412;color:#e0c060;border-radius:5px;padding:5px 10px;">⏸ Pause</button>' +
-            '<button data-act="reset" style="font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#e8eaed;border-radius:5px;padding:5px 10px;">⟲ Reset Group Demo</button>' +
-            '<button data-act="clear-obj" style="font:inherit;cursor:pointer;border:1px solid #7a3030;background:#241414;color:#f0a0a0;border-radius:5px;padding:5px 10px;">✕ Clear Objective X</button></div>';
-        html += startNote;
-        if (_llmStatus && _llmStatus.message) {
-            var statusColor = _llmStatus.state === 'received' ? '#7fd6a0' : (_llmStatus.state === 'loading' ? '#e0c060' : '#e0a93a');
-            html += '<div style="margin:2px 0 6px;font-size:11px;color:' + statusColor + ';">Group demo planner: ' + esc(_llmStatus.message) + '</div>';
-        }
-        html += '<div style="font-size:11px;color:#9aa3ad;margin-bottom:4px;">' + esc(objLine) + '</div>';
-        if (st.warnings && st.warnings.length) {
-            html += '<div style="margin-bottom:6px;font-size:11px;color:#e0a93a;">' +
-                st.warnings.map(function (w) { return '⚠ ' + esc(w); }).join('<br>') + '</div>';
-        }
-        html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;font-size:11px;">' +
-            '<span style="color:#f0a0a0;">RED demo attack — هجوم تجريبي للطرف الأحمر</span> · ' +
-            '<span style="color:#7fd6a0;">BLUE demo reaction — رد فعل تجريبي للطرف الأزرق</span></div>';
-        html += '<div style="padding:6px 8px;border-radius:5px;background:#2a2412;border:1px solid #b8860b;color:#e0c060;font-size:11px;line-height:1.5;">' +
-            '⚠ AI-assisted demo only — not final tasking — requires commander approval<br>' +
-            'عرض تجريبي بمساعدة الذكاء الاصطناعي — ليس إسناد واجب نهائي — يحتاج اعتماد القائد</div>';
-        html += renderAiDecisionHtml();
-        // RMOOZ-FREE-FIGHT-CONTROL-HARD-RESET-X: the operator-facing path is now the clean V2 control
-        // window (renderFreeFightControlV2) — it renders ONLY the active state's view with unique v2-*
-        // data-act ids, so no hidden duplicate buttons compete for clicks. The entire old crowded UI
-        // (objective placement + group-movement demo + the full diagnostics card, built into `html`
-        // above) is PRESERVED but inserted into the DOM ONLY when the closed "Diagnostics / Legacy"
-        // drawer is opened. Engine unchanged — this is cockpit-only.
-        bodyDiv.innerHTML = renderFreeFightControlV2() + _freeFightLegacyDrawerHtml(html);
-        bind('start', start); bind('replan', replan); bind('pause', pause); bind('reset', reset); bind('clear-obj', clearObjective);
-        bind('place-obj', armPlaceObjective);
-        // RMOOZ-FREE-FIGHT-CONTROL-HARD-RESET-X: V2 control-window binds. Unique v2-* ids, scoped to the
-        // new window — no collision with the legacy data-act ids (which only exist in the DOM when the
-        // Diagnostics/Legacy drawer is open). Every visible v2 button maps to an EXISTING engine fn.
-        bindFreeFightControlV2();
-        bind('preview-ai', _fetchAiDecision); bind('apply-ai', _applyAiDecision); bind('reset-ai', _resetAiDecision);
-        bind('test-llm', _testLlm);
-        // FREEFIGHT-AI-COA-PLANNER-A: COA planner bindings
-        bind('generate-coa', _generateCoaPlan);
-        bind('apply-coa', _applySelectedCoa);
-        bind('reset-coa', _resetCoa);
-        // RMOOZ-COA-COMMIT-EXECUTION-L: COA Commitment Mode controls.
-        bind('coa-commit', function () { _commitCoa(_coaSelectedIdx); });
-        bind('coa-run', _runCommittedCoa);
-        bind('coa-pause', _pauseCommittedCoa);
-        bind('coa-replan', _replanCoa);
-        bind('coa-exec-reset', _resetCoaExec);
-        // RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O: primary-strip controls (wire to existing functions only).
-        // Generate / Use Recommended / Use Selected are the only primary commit actions; COA reselection
-        // happens via the COA cards (select-coa-*), and Staff-Safe / Replan / Clear live under Advanced.
-        bind('generate-ai-plan', function () { setPlanningMode('commander'); _generateCoaPlan(); });
-        bind('coa-use-recommended', function () { _coaSelectedIdx = _pickRecommendedIdx(_coaPlan); _commitCoa(_coaSelectedIdx); });
-        bind('coa-use-selected', function () { _commitCoa(_coaSelectedIdx); });
-        bind('select-coa-0', function () { _coaSelectedIdx = 0; updatePanel(); });
-        bind('select-coa-1', function () { _coaSelectedIdx = 1; updatePanel(); });
-        bind('select-coa-2', function () { _coaSelectedIdx = 2; updatePanel(); });
-        // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: loop + speed bindings
-        bind('loop-start', startLoop);
-        bind('loop-pause', pauseLoop);
-        bind('loop-step', stepOnce);
-        bind('loop-reset', resetLoop);
-        bind('loop-route-check', _probeRouteHealth);
-        bind('camera-manual', function () { setCameraMode('manual'); });
-        bind('camera-follow', function () { setCameraMode('follow'); });
-        ['controlled', 'free', 'high_variation'].forEach(function (m) { bind('mode-' + m, function () { setCommanderMode(m); }); });
-        ['fast', 'normal', 'deep'].forEach(function (d) { bind('depth-' + d, function () { setAiDepth(d); }); });
-        ['commander', 'staff_safe'].forEach(function (pm) { bind('planmode-' + pm, function () { setPlanningMode(pm); }); }); // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A
-        bind('view-mcp-prompt', function () { _mcpPromptExpanded = !_mcpPromptExpanded; updatePanel(); });
-        bind('gen5-coas', generate5Coas);
-        FF_SPEED_ORDER.forEach(function (sp) { bind('loop-speed-' + sp, function () { setFreeFightSpeed(sp); }); });
-        renderCommanderPanel();
-        var modeSel = _panel.querySelector('[data-act="planner-mode"]');
-        if (modeSel && modeSel.addEventListener) modeSel.addEventListener('change', function () { setPlannerMode(modeSel.value); });
-        var llmCb = _panel.querySelector('[data-act="toggle-llm"]');
-        if (llmCb && llmCb.addEventListener) llmCb.addEventListener('change', function () { _useLlm = !!(llmCb && llmCb.checked); });
-        // RMOOZ-LOCAL-MODEL-SELECTOR-A: model picker controls (raw dropdown, under Advanced).
-        // Refresh keeps the current listing (local vs cloud) instead of receiving the click event.
-        bind('model-refresh', function () { _fetchModels(_modelInfo && _modelInfo.is_cloud ? 'openrouter' : undefined); });
-        bind('model-use', function () {
-            var s = _panel && _panel.querySelector('[data-act="model-select"]');
-            var v = s ? s.value : _pendingModel;
-            if (v) _selectModel(v);
-        });
-        var modelSel = _panel.querySelector('[data-act="model-select"]');
-        if (modelSel && modelSel.addEventListener) modelSel.addEventListener('change', function () { _pendingModel = modelSel.value; });
-        // RMOOZ-AI-USER-FRIENDLY-MODEL-FLOW-A: the friendly model flow controls.
-        bind('ff-open-model-picker', function () { _modelPickerOpen = !_modelPickerOpen; updatePanel(); });
-        bind('ff-reset-model', function () { _resetModelSelection(); });
-        bind('ff-load-local', function () { _fetchModels(); });
-        bind('ff-load-cloud', function () { _fetchModels('openrouter'); });
-        // RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P: local-inference warmup + benchmark (Advanced diagnostics).
-        bind('bench-warmup', _warmupModel);
-        bind('bench-run', _runBenchmark);
-        // RMOOZ-GREEN-WORLD-UI-R: manual Green refresh + the optional map-ring toggle.
-        bind('green-refresh', function () { _refreshGreenWorld('manual'); });
-        var greenCb = _panel.querySelector('[data-act="green-overlay-toggle"]');
-        if (greenCb && greenCb.addEventListener) greenCb.addEventListener('change', function () { _greenOverlayOn = !!greenCb.checked; _greenOverlayApply(); });
-        // RMOOZ-AI-SCHEDULER-DECISION-LOG-S: clear the audit buffer (record-only feature).
-        bind('decision-log-clear', _clearDecisionLog);
-        // RMOOZ-FREE-FIGHT-CONTROL-WINDOW-REBUILD-W: tab switching (view-only).
-        ['operator', 'coa_plans', 'green', 'white', 'diagnostics'].forEach(function (t) { bind('ff-tab-' + t, function () { _ffTab = t; updatePanel(); }); });
-        var picks = _panel.querySelectorAll ? _panel.querySelectorAll('[data-ff-model-pick]') : null;
-        if (picks && picks.forEach) picks.forEach(function (el) {
-            if (!el || !el.addEventListener) return;
-            el.addEventListener('click', function () {
-                var m = el.getAttribute('data-model');
-                var p = el.getAttribute('data-provider');
-                if (m) { _modelPickerOpen = false; _selectModel(m, p || undefined); }
-            });
-        });
+        // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: the operator card is the NEW Scenario Control Center —
+        // a HARD REPLACEMENT. The old Free Fight control window (renderFreeFightControlV2 / bindFreeFightControlV2 /
+        // legacy drawer / group-movement demo / old COA-card UI / every old data-act id) is no longer rendered
+        // or bound in the operator path. The SCC owns the entire operator flow and drives the UNCHANGED engine
+        // through the engine facade (window.RmoozFreeFightDemo.engine). No legacy / v2 data-act id exists in the
+        // operator DOM, so there are no hidden duplicate buttons competing for clicks.
+        var scc = W() && W().RmoozScenarioControlCenter;
+        bodyDiv.innerHTML = scc ? scc.render()
+            : '<div style="padding:12px;color:#f0707a;font-size:12px;">Scenario Control Center module failed to load (scenario-control-center.js).</div>';
+        if (scc && typeof scc.bind === 'function') scc.bind(bind);
     }
     function bind(act, fn) { if (!_panel) return; var b = _panel.querySelector('[data-act="' + act + '"]'); if (b && b.addEventListener) b.addEventListener('click', fn); }
 
@@ -1630,6 +1493,8 @@
     // body as text first and returns a structured object on any non-JSON response.
     function _fetchJsonSafe(url, options) {
         var w = W();
+        // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: log every COA/AI network call for the Evidence panel.
+        try { _netLog.push({ url: String(url), method: (options && options.method) || 'GET', t: _nowMs() }); if (_netLog.length > 25) _netLog.splice(0, _netLog.length - 25); } catch (_) {}
         return w.fetch(url, options).then(function (r) {
             return r.text().then(function (txt) {
                 var parsed = null;
@@ -5330,457 +5195,10 @@
         }
         return false;
     }
-    function _freeFightControlStateV2() {
-        var coas = arr(_coaPlan && _coaPlan.coas);
-        var hasPlan = !!(_coaPlan && _coaPlan.ok && coas.length);
-        var ex = _coaExec;
-        if (_coaLoading) return 'planning';
-        // AB1: a fresh plan / changed selection must supersede a stale commit → back to 'ready' to (re)commit
-        // the CURRENT plan, so Run/Run-Scenario can never fire on an out-of-date committed COA.
-        if (ex && ex.active && _coaCommitIsStale()) return 'ready';
-        if (ex && ex.replan_required) return 'blocked';
-        if (ex && ex.phase_status === 'complete') return 'complete';
-        if (ex && ex.active) {
-            if (!ex.paused && ex.phase_status === 'running') return 'running';
-            if (ex.paused) return 'paused';
-            return 'committed';   // active + pending (committed, not yet run)
-        }
-        return hasPlan ? 'ready' : 'empty';
-    }
-    function _v2StateLabel(s) { return ({ empty: 'No plan', planning: 'Planning…', ready: 'Plan ready', committed: 'Committed', running: 'Running', paused: 'Paused', blocked: 'Blocked', complete: 'Complete' })[s] || s; }
-    function _v2StateColor(s) { return ({ planning: '#e0c060', running: '#7fd6a0', paused: '#cdb86a', blocked: '#f0707a', complete: '#7fd6a0', committed: '#9ec2ec', ready: '#9ec2ec', empty: '#8fa5b8' })[s] || '#9ec2ec'; }
-    function _v2CoaId(coas, i) { return (coas[i] && coas[i].plan_id) || ('COA-' + (i + 1)); }
-    function _v2Pri(act, label, title) { return '<button data-ff-v2-primary="1" data-act="' + act + '"' + (title ? ' title="' + esc(title) + '"' : '') + ' style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#15301f;color:#9fe8c0;border-radius:6px;padding:8px 16px;font-size:12.5px;font-weight:700;">' + label + '</button>'; }
-    function _v2Sec(act, label, title) { return '<button data-act="' + act + '"' + (title ? ' title="' + esc(title) + '"' : '') + ' style="font:inherit;cursor:pointer;border:1px solid #4a5f75;background:#101b27;color:#9fb8c8;border-radius:6px;padding:7px 12px;font-size:11px;">' + label + '</button>'; }
-    function _v2Adv(act, label, title) { return '<button data-act="' + act + '"' + (title ? ' title="' + esc(title) + '"' : '') + ' style="font:inherit;cursor:pointer;border:1px dashed #5a6270;background:#171b21;color:#8fa5b8;border-radius:5px;padding:4px 9px;font-size:10px;">' + label + '</button>'; }
-    function _v2Note(t, c) { return '<div style="margin-top:6px;font-size:10.5px;color:' + (c || '#9fb8c8') + ';line-height:1.5;">' + t + '</div>'; }
-    function _v2ModelReadinessHtml() {
-        var s = null; try { s = _modelFlowStatus(); } catch (_) {}
-        var label = (s && s.label) ? s.label : 'Checking AI…';
-        var col = (s && s.color) ? s.color : '#8fa5b8';
-        var sel = (s && s.selected) ? (' · ' + esc(s.selected)) : '';
-        return '<div data-ff-v2="model-readiness" style="margin-top:6px;font-size:9.5px;color:' + col + ';">● ' + esc(label) + sel + '</div>';
-    }
-    // Clickable COA cards — recommended is visually first-class; the selected card is clearly highlighted.
-    // AD: plan-level commander-quality banner — verdict + intent + main/supporting effort + fallback warning.
-    function _v2PlanQualityBannerHtml() {
-        var q = _coaPlan && _coaPlan._coa_quality;
-        if (!q) return '';
-        var coas = arr(_coaPlan.coas);
-        var best = coas[_pickRecommendedIdx(_coaPlan)] || coas[0] || {};
-        var V = { pass: '#7fd6a0', repaired: '#7fd6a0', fallback: '#e0a93a', failed: '#f0707a' };
-        var col = V[q.verdict] || '#9fb8c8';
-        var label = { pass: 'Commander quality: PASS', repaired: 'Commander quality: REPAIRED (AI re-prompted)', fallback: 'Staff-Safe commander template (AI COA failed the quality gate)', failed: 'COA FAILED the quality gate' }[q.verdict] || q.verdict;
-        var h = '<div data-ff-v2="plan-quality" data-ff-v2-coa-quality="' + esc(q.verdict) + '" style="margin-top:6px;padding:6px 9px;border:1px solid ' + col + ';border-radius:6px;background:#0a1622;font-size:10px;color:#cdd8e4;">';
-        h += '<div><b style="color:' + col + ';">⚖ ' + esc(label) + '</b> · score ' + q.score + '</div>';
-        if (best.commander_intent) h += '<div style="margin-top:2px;"><span style="color:#8fa5b8;">Intent:</span> ' + esc(best.commander_intent) + '</div>';
-        if (best.main_effort) h += '<div><span style="color:#8fa5b8;">Main effort:</span> ' + esc(best.main_effort) + '</div>';
-        if (best.supporting_effort) h += '<div><span style="color:#8fa5b8;">Supporting:</span> ' + esc(best.supporting_effort) + '</div>';
-        if ((q.verdict === 'fallback' || q.verdict === 'failed') && arr(q.reasons).length) h += '<div style="margin-top:2px;color:#e0a93a;">Rejected: ' + esc(q.reasons.slice(0, 3).join('; ')) + '</div>';
-        if (q.verdict === 'fallback') h += '<div data-ff-v2="fallback-warning" style="margin-top:2px;color:#e0a93a;">⚠ Deterministic Staff-Safe template — NOT AI commander output.</div>';
-        h += '</div>';
-        return h;
-    }
-    // RMOOZ-STEP1-COA-PREPARATION-GATE-AE: Step-1 readiness banner — taskable/blocked counts, why blocked,
-    // and "No executable COA until review complete" when nothing is taskable. Silent for a fully-taskable
-    // operational scenario. (This minimal banner migrates to the Scenario Control Center Panel 1 in AF.)
-    function _v2Step1DetailHtml(r) {
-        if (!r) return '';
-        var execOk = r.executable, col = execOk ? '#e0a93a' : '#f0707a';
-        var h = '<div data-ff-v2="step1-readiness" data-ff-v2-step1-executable="' + (execOk ? '1' : '0') + '" data-ff-v2-step1-taskable="' + r.taskable + '" data-ff-v2-step1-blocked="' + r.blocked + '" style="margin:6px 0;padding:7px 10px;border:1px solid ' + col + ';border-radius:6px;background:#1a1207;font-size:10px;color:#e8d8c0;">';
-        h += '<div style="font-weight:700;color:' + col + ';">⚠ Step 1 Readiness — ' + r.taskable + ' taskable · ' + r.blocked + ' blocked</div>';
-        h += '<div style="margin-top:2px;color:#cdb89a;">Blocked by: source ' + r.blocked_by_missing_source + ' · coords ' + r.blocked_by_missing_coordinates + ' · doctrine ' + r.blocked_by_missing_doctrine + ' · commander ' + r.blocked_by_commander_review + '</div>';
-        if (!execOk) h += '<div data-ff-v2="step1-noexec" style="margin-top:3px;color:' + col + ';font-weight:700;">No executable COA until review complete.</div>';
-        if (arr(r.blocked_units).length) {
-            h += '<div style="margin-top:3px;color:#9fb8c8;">Held (review-only): ' + r.blocked_units.slice(0, 5).map(function (b) { return esc(String(b.id)) + ' (' + esc(b.review_status) + ')'; }).join(' · ') + (r.blocked_units.length > 5 ? ' …' : '') + '</div>';
-        }
-        h += '</div>';
-        return h;
-    }
-    function _v2Step1BannerHtml() {
-        var r = _step1PreparationReport();   // always reflect the CURRENT loaded units (cheap, deterministic)
-        if (!r || r.units_loaded === 0 || r.blocked === 0) return '';   // nothing blocked → no banner
-        return _v2Step1DetailHtml(r);
-    }
-    function _v2CoaCardsHtml(coas, recIdx) {
-        var h = '<div data-ff-v2="coa-cards" style="margin-top:8px;display:flex;flex-direction:column;gap:6px;">';
-        coas.forEach(function (coa, i) {
-            var sel = (i === _coaSelectedIdx);
-            var isRec = (i === recIdx);
-            var id = _v2CoaId(coas, i);
-            var border = sel ? '#4a9ed6' : (isRec ? '#2e7d54' : '#2a3f55');
-            var bg = sel ? '#0a1c33' : '#0c141d';
-            var risk = coa.risk || '—';
-            var riskCol = risk === 'high' ? '#f08080' : (risk === 'medium' ? '#e0c060' : '#90d090');
-            var score = (coa._ranking && coa._ranking.final_score != null) ? coa._ranking.final_score : null;
-            h += '<div data-act="v2-coa-' + i + '" data-ff-v2-coa="' + i + '"' + (sel ? ' data-ff-v2-selected="1"' : '') + ' style="cursor:pointer;border:' + (sel ? '2px' : '1px') + ' solid ' + border + ';border-radius:6px;background:' + bg + ';padding:' + (isRec ? '9px 11px' : '7px 10px') + ';">';
-            h += '<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;">';
-            h += '<span style="font-weight:700;font-size:' + (isRec ? '12px' : '11px') + ';color:#e8eaed;">' + (sel ? '▶ ' : '') + esc(id) + ' — ' + esc(coa.title || '') + '</span>';
-            h += '<span style="display:flex;gap:4px;align-items:center;flex-shrink:0;">';
-            if (isRec) h += '<span style="background:#1a5030;color:#7fd6a0;border-radius:3px;padding:1px 6px;font-size:9px;font-weight:700;">★ Recommended</span>';
-            if (sel) h += '<span data-ff-v2="selected-badge" style="background:#13344f;color:#cfe6ff;border-radius:3px;padding:1px 6px;font-size:9px;font-weight:700;">Selected</span>';
-            h += '</span></div>';
-            h += '<div style="margin-top:3px;font-size:10px;color:#9ab0c0;">Risk <span style="color:' + riskCol + ';">' + esc(risk) + '</span> · Confidence <span style="color:#9ec2ec;">' + esc(coa.confidence || '—') + '</span>' + (score != null ? ' · Score <b style="color:#cfe6ff;">' + score + '</b>' : '') + '</div>';
-            if (isRec && coa._ranking && coa._ranking.ranking_reason) h += '<div style="margin-top:2px;font-size:9px;color:#7fd6a0;">Recommended because: ' + esc(coa._ranking.ranking_reason) + '</div>';
-            if (coa._quality) {   // AD: commander-quality verdict per COA
-                var qp = coa._quality.pass, qcol = qp ? '#7fd6a0' : '#f0707a';
-                h += '<div data-ff-v2="coa-quality" data-ff-v2-quality="' + (qp ? 'pass' : 'low') + '" style="margin-top:2px;font-size:9px;color:' + qcol + ';">Commander quality: ' + (qp ? 'pass' : 'low') + ' (' + coa._quality.score + ')' + (!qp && arr(coa._quality.reasons).length ? ' — ' + esc(coa._quality.reasons.slice(0, 2).join('; ')) : '') + '</div>';
-            }
-            if (coa.summary) h += '<div style="margin-top:2px;font-size:9.5px;color:#cdd8e4;font-style:italic;">' + esc(coa.summary) + '</div>';
-            h += '</div>';
-        });
-        h += '</div>';
-        return h;
-    }
-    // ── RMOOZ-FREE-FIGHT-V2-OPERATOR-WALKTHROUGH-Y: a compact "What to do now" stepper + microcopy +
-    // a richer selected-COA summary. UI guidance only — NO new actions, NO backend touch. ──────────────
-    var _V2_STEPS = [[1, 'Generate'], [2, 'Select COA'], [3, 'Commit'], [4, 'Run'], [5, 'Pause/Resume']];
-    // current step(s) per state — a small set so 'ready' can highlight both Select + Commit.
-    function _v2StepperCurrentSet(state) {
-        return ({ empty: [1], planning: [1], ready: [2, 3], committed: [4], running: [4], paused: [5], blocked: [4], complete: [5] })[state] || [1];
-    }
-    function _v2StepStatus(state, n) {
-        var cur = _v2StepperCurrentSet(state);
-        if (cur.indexOf(n) !== -1) return (state === 'blocked' && n === 4) ? 'blocked' : 'current';
-        return n < Math.min.apply(null, cur) ? 'done' : 'todo';
-    }
-    function _v2StepperHtml(state) {
-        var h = '<div data-ff-v2="stepper" data-ff-v2-stepper-state="' + state + '" style="margin:8px 0 2px;padding:6px 8px;border:1px solid #1d3a52;border-radius:6px;background:#0a1320;">';
-        h += '<div style="font-size:9px;color:#8fa5b8;font-weight:700;margin-bottom:4px;letter-spacing:.4px;">WHAT TO DO NOW</div>';
-        h += '<div style="display:flex;gap:3px;flex-wrap:wrap;align-items:center;">';
-        _V2_STEPS.forEach(function (s, i) {
-            var st = _v2StepStatus(state, s[0]);
-            var col = st === 'blocked' ? '#f0707a' : (st === 'current' ? '#cfe6ff' : (st === 'done' ? '#5a9a70' : '#5a6f80'));
-            var bg = st === 'current' ? '#13314f' : (st === 'blocked' ? '#2a1416' : 'transparent');
-            var bd = st === 'current' ? '#3a6fa0' : (st === 'blocked' ? '#7a3030' : '#243443');
-            var mark = st === 'done' ? '✓' : s[0];
-            h += '<span data-ff-v2-step="' + s[0] + '" data-ff-v2-step-status="' + st + '" style="display:inline-flex;align-items:center;gap:3px;font-size:9px;color:' + col + ';border:1px solid ' + bd + ';background:' + bg + ';border-radius:10px;padding:2px 7px;' + ((st === 'current' || st === 'blocked') ? 'font-weight:700;' : '') + '"><b>' + mark + '</b> ' + s[1] + '</span>';
-            if (i < _V2_STEPS.length - 1) h += '<span style="color:#3a4a59;font-size:9px;">→</span>';
-        });
-        h += '</div></div>';
-        return h;
-    }
-    // Terse microcopy printed under the primary action(s), per state (the exact owner-specified phrases).
-    function _v2MicrocopyHtml(state) {
-        var items = [];
-        if (state === 'empty' || state === 'planning' || state === 'complete') items.push(['⚡ Generate AI Plan', 'slow — calls AI']);
-        if (state === 'ready') items.push(['✅ Commit Selected Plan', 'locks the selected COA']);
-        if (state === 'committed' || state === 'running' || state === 'paused') items.push(['▶ Run Plan', 'fast — no AI on normal ticks']);
-        if (state === 'blocked') { items.push(['▶ Run Plan', 'fast — no AI on normal ticks']); items.push(['↻ Replan with AI', 'advanced — calls AI again']); }
-        if (!items.length) return '';
-        var h = '<div data-ff-v2="microcopy" style="margin-top:5px;display:flex;flex-direction:column;gap:1px;">';
-        items.forEach(function (it) { h += '<div style="font-size:9px;color:#7a93a6;"><b style="color:#9fb8c8;">' + it[0] + '</b> — ' + it[1] + '</div>'; });
-        h += '</div>';
-        return h;
-    }
-    // Richer selected-COA summary for the READY state: Selected · Recommended · Operator override · Final
-    // score (when ranked). When nothing is selected, guides the operator to pick a card first.
-    function _v2SelectedSummaryHtml(coas, recIdx) {
-        var hasSel = (_coaSelectedIdx >= 0 && _coaSelectedIdx < coas.length);
-        var h = '<div data-ff-v2="selected-summary" style="margin-top:8px;padding:6px 9px;border:1px solid #2a4d6a;border-radius:6px;background:#08131e;font-size:10px;color:#cdd8e4;">';
-        if (!hasSel) {
-            h += '<div data-ff-v2="no-selection" style="color:#e0a93a;">⚠ Select a COA card first.</div></div>';
-            return h;
-        }
-        var selId = _v2CoaId(coas, _coaSelectedIdx), recId = _v2CoaId(coas, recIdx);
-        var override = (_coaSelectedIdx !== recIdx);
-        var sel = coas[_coaSelectedIdx] || {};
-        var score = (sel._ranking && sel._ranking.final_score != null) ? sel._ranking.final_score : null;
-        h += '<div><span style="color:#8fa5b8;">Selected COA:</span> <b style="color:#cfe6ff;">' + esc(selId) + '</b> · <span style="color:#8fa5b8;">Recommended:</span> <b style="color:#7fd6a0;">' + esc(recId) + '</b></div>';
-        h += '<div><span style="color:#8fa5b8;">Operator override:</span> <b style="color:' + (override ? '#e0a93a' : '#7fd6a0') + ';">' + (override ? 'yes' : 'no') + '</b>' + (score != null ? ' · <span style="color:#8fa5b8;">Final score:</span> <b style="color:#cfe6ff;">' + score + '</b>' : '') + '</div>';
-        if (override) h += '<div data-ff-v2="override" style="margin-top:3px;color:#e0a93a;">⚠ Operator override: you selected ' + esc(selId) + ' instead of recommended ' + esc(recId) + '.</div>';
-        h += '</div>';
-        return h;
-    }
-    // Committed/blocked/complete summary: selected + recommended + override + Green/White advisory (advisory only).
-    function _v2CommittedSummaryHtml() {
-        var ex = _coaExec;
-        if (!ex) return '';
-        var cac = ex.commit_advisory_context || {};
-        var h = _v2PlanQualityBannerHtml();   // AD: commander-quality verdict of the committed plan
-        if (ex.run_blocked_reason) h += '<div data-ff-v2="run-blocked" style="margin-top:6px;padding:6px 9px;border:1px solid #7a3030;border-radius:6px;background:#241414;color:#f0b0b0;font-size:10px;">⛔ ' + esc(ex.run_blocked_reason) + '</div>';
-        h += '<div data-ff-v2="committed-summary" style="margin-top:8px;padding:7px 9px;border:1px solid #2a4d6a;border-radius:6px;background:#08131e;font-size:10px;color:#cdd8e4;">';
-        h += '<div><span style="color:#8fa5b8;">Committed plan:</span> <b style="color:#e8eaed;">' + esc(ex.selected_coa_id) + '</b></div>';
-        // AE: movement proof — selected COA targets must match the committed/executed COA targets.
-        (function () {
-            var committedSum = _coaTargetSummary(ex.selected_coa);
-            var cs = arr(_coaPlan && _coaPlan.coas);
-            var selCoa = cs[_coaSelectedIdx] || cs[0];
-            var selSum = selCoa ? _coaTargetSummary(selCoa) : committedSum;
-            h += '<div data-ff-v2="committed-targets" style="margin-top:3px;font-size:9px;color:#7a93a6;"><span style="color:#8fa5b8;">Committed/executed targets:</span> ' + esc(committedSum) + '</div>';
-            h += '<div data-ff-v2="selected-targets" style="font-size:9px;color:#7a93a6;"><span style="color:#8fa5b8;">Selected targets:</span> ' + esc(selSum) + (committedSum === selSum ? ' <span style="color:#7fd6a0;">(match)</span>' : ' <span style="color:#e0a93a;">(≠ committed — recommit)</span>') + '</div>';
-        })();
-        if (cac.considered) {
-            h += '<div><span style="color:#8fa5b8;">Recommended:</span> <b style="color:#7fd6a0;">' + esc(cac.recommended_coa_id) + '</b> · <span style="color:#8fa5b8;">Operator override:</span> <b style="color:' + (cac.operator_override ? '#e0a93a' : '#7fd6a0') + ';">' + (cac.operator_override ? 'yes' : 'no') + '</b></div>';
-        }
-        var adv = _whiteAdvisory(_greenWorld);
-        var ga = cac.green_advisory || _greenAdvisoryScoring(_greenWorld);
-        h += '<div data-ff-v2="advisory" style="margin-top:4px;padding-top:4px;border-top:1px solid #163048;">';
-        h += '<div>⚖ <span style="color:#8fa5b8;">Green/White advisory:</span> ' + (adv
-            ? '<b style="color:' + _whiteAdvisoryColor(adv.advisory_level) + ';">' + esc(adv.advisory_level) + '</b> — ' + esc(adv.note)
-            : '<span style="color:#8fa5b8;">no Green assessment yet (refresh Green in Diagnostics).</span>') + '</div>';
-        if (ga && ga.considered) h += '<div style="color:#9ab0c0;">Green collateral: ' + esc(ga.collateral_risk_band) + ' · advisory Δ ' + ga.advisory_score_delta + (ga.neutral_reaction_score != null ? ' · reaction ' + ga.neutral_reaction_score : '') + '</div>';
-        h += '<div style="margin-top:2px;font-size:9px;color:#5a7a8a;">Advisory only — not a block. The structure/physics validator is the only gate.</div>';
-        h += '</div></div>';
-        return h + _v2MovementSummaryHtml();
-    }
-    function _v2RunProgressHtml() {
-        var ex = _coaExec;
-        if (!ex) return '';
-        var phases = arr(ex.selected_coa && ex.selected_coa.phases);
-        var pIdx = Math.min(ex.current_phase_index, Math.max(0, phases.length - 1));
-        var phase = phases[pIdx] || {};
-        var pct = phases.length ? Math.round((Math.min(ex.current_phase_index, phases.length) / phases.length) * 100) : 0;
-        var h = '<div data-ff-v2="progress" style="margin-top:8px;font-size:10.5px;color:#cdd8e4;">';
-        h += '<div><span style="color:#8fa5b8;">Plan:</span> <b style="color:#e8eaed;">' + esc(ex.selected_coa_id) + '</b> · <span style="color:#8fa5b8;">tick</span> ' + ex.ticks + '</div>';
-        h += '<div><span style="color:#8fa5b8;">Current phase:</span> <b style="color:#cfe6ff;">' + (ex.phase_status === 'complete' ? 'all done' : ((ex.current_phase_index + 1) + ' / ' + phases.length + (phase.name ? ' — ' + esc(phase.name) : ''))) + '</b></div>';
-        h += '<div data-ff-v2="tickstatus" style="font-size:9.5px;color:#7fd6a0;">Tick status: deterministic · llm_called_this_tick: <b>false</b></div>';
-        h += '<div style="margin-top:4px;height:6px;background:#0c1622;border:1px solid #24435f;border-radius:4px;overflow:hidden;"><div style="width:' + pct + '%;height:100%;background:#2e7d54;"></div></div>';
-        h += '</div>';
-        return h + _v2MovementSummaryHtml();
-    }
-    // ── RMOOZ-FREE-FIGHT-V2-REAL-OPERATOR-ACCEPTANCE-Z: movement feedback. A committed COA that holds
-    // position (or whose units are already at their objective) runs to "complete" with ZERO map movement
-    // — without this line the operator reads that as "Run doesn't work". Render-time only; reads the
-    // committed COA's own orders + the exec's completed_orders. No engine/movement/physics change.
-    function _v2CoaActionCounts(coa) {
-        var move = 0, hold = 0;
-        arr(coa && coa.phases).forEach(function (ph) {
-            arr(ph.actions).forEach(function (a) { if (!a) return; if (a.action_type === 'HOLD_POSITION') hold++; else move++; });
-        });
-        return { move: move, hold: hold };
-    }
-    function _v2MovementSummaryHtml() {
-        var ex = _coaExec;
-        if (!ex || !ex.selected_coa) return '';
-        var c = _v2CoaActionCounts(ex.selected_coa);
-        var doneMoves = arr(ex.completed_orders).filter(function (o) { return o && o.action_type && o.action_type !== 'HOLD_POSITION'; }).length;
-        var complete = ex.phase_status === 'complete';
-        var h = '<div data-ff-v2="movement" style="margin-top:6px;font-size:9.5px;color:#9ab0c0;border-top:1px solid #163048;padding-top:4px;">';
-        h += 'Movement: this plan orders <b style="color:#cfe6ff;">' + c.move + '</b> move · <b style="color:#cfe6ff;">' + c.hold + '</b> hold' + (c.move > 0 ? ' · executed <b style="color:#cfe6ff;">' + doneMoves + '</b>' : '');
-        h += '</div>';
-        if (c.move === 0) {
-            h += '<div data-ff-v2="no-movement" style="margin-top:3px;font-size:9.5px;color:#e0a93a;">ⓘ This COA holds position — no unit movement is expected on the map. Generate or select a maneuver COA (one with MOVE orders) to see units move.</div>';
-        } else if (complete && doneMoves === 0) {
-            h += '<div data-ff-v2="no-movement" style="margin-top:3px;font-size:9.5px;color:#e0a93a;">ⓘ The plan completed but no maneuver orders executed — units may already be at their objective. Open Diagnostics → COA to review the committed orders.</div>';
-        }
-        return h;
-    }
-    function _v2PlanningElapsed() { try { return _coaLoadingStart ? Math.max(0, Math.round((Date.now() - _coaLoadingStart) / 1000)) : 0; } catch (_) { return 0; } }
-    // Distinct blue primary for the scenario action (visually separates Run Scenario from Run Plan).
-    function _v2ScenarioPri(act, label, title) { return '<button data-ff-v2-primary="1" data-act="' + act + '"' + (title ? ' title="' + esc(title) + '"' : '') + ' style="font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#13243a;color:#9ec2ec;border-radius:6px;padding:8px 16px;font-size:12.5px;font-weight:700;">' + label + '</button>'; }
-    // RMOOZ-FREE-FIGHT-V2-COA-TO-SCENARIO-BUGFIX-AB1: an explicit one-line flow status so the operator
-    // always knows where they are: selected-not-committed → committed-ready-to-run → running.
-    function _v2FlowStatusHtml(state) {
-        var coas = arr(_coaPlan && _coaPlan.coas);
-        var selId = coas.length ? _v2CoaId(coas, _coaSelectedIdx) : '—';
-        var txt, col, stale = !!(_coaExec && _coaExec.active && state === 'ready');
-        if (state === 'ready') { txt = stale ? ('Selection changed — commit ' + selId + ' before running scenario') : ('Selected ' + selId + ' — not committed yet'); col = stale ? '#e0a93a' : '#cdb86a'; }
-        else if (state === 'committed') { txt = 'Committed ' + ((_coaExec && _coaExec.selected_coa_id) || selId) + ' — ready to Run Plan or Run Scenario'; col = '#7fd6a0'; }
-        else if (state === 'running') { txt = 'Running — deterministic ticks, no AI'; col = '#7fd6a0'; }
-        else if (state === 'paused') { txt = 'Paused — Resume or Clear'; col = '#cdb86a'; }
-        else if (state === 'blocked') { txt = 'Blocked — operator decision needed'; col = '#f0707a'; }
-        else if (state === 'complete') { txt = 'Plan complete'; col = '#7fd6a0'; }
-        else { return ''; }
-        return '<div data-ff-v2="flow-status" data-ff-v2-flow="' + state + (stale ? '-stale' : '') + '" style="margin-top:4px;font-size:9.5px;color:' + col + ';">● ' + esc(txt) + '</div>';
-    }
-    // What the operator must do next, in plain language (drives the "Next required action" line).
-    function _scenarioNextActionText() {
-        var s = _scenario; if (!s) return '';
-        var auto = !!(s.auto_continue && s.auto_director_enabled);
-        if (s.scenario_status === 'running') return auto ? 'Auto Director running — deterministic Staff-Safe orders, no AI.' : ('Fight running — ' + (s.current_actor || 'unit-controller') + ' acting.');
-        if (s.scenario_status === 'complete') return 'Scenario over (' + (s.end_condition || 'ended') + ').';
-        if (s.scenario_status === 'blocked') return 'Blocked — operator decision needed: ' + (s.pending_replan_reason || '');
-        if (_coaLoading) return 'Generating the next Blue order…';
-        if (_coaExec && _coaExec.active && _coaExec.phase_status !== 'complete') return 'Press Continue Scenario to run the next turn.';
-        if (_coaPlan && _coaPlan.ok && arr(_coaPlan.coas).length) return 'Commit the next order, then Continue Scenario.';
-        return auto ? 'Enable Auto Continue to keep going, or give Blue new orders.' : 'Blue needs new orders — Replan with AI or use a Staff-Safe order.';
-    }
-    // The Auto Continue toggle + its one-line explanation (shown in committed view and the scenario console).
-    function _v2AutoToggleHtml() {
-        var on = !!_scenarioAutoContinue;
-        return '<div data-ff-v2="auto-toggle" style="margin-top:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:10px;">' +
-            '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;color:#9ec2ec;font-weight:600;"><input type="checkbox" data-act="v2-scenario-auto-toggle"' + (on ? ' checked' : '') + ' style="accent-color:#5bd6a0;cursor:pointer;"> Auto Continue Scenario</label>' +
-            '<span data-ff-v2-auto="' + (on ? '1' : '0') + '" style="color:' + (on ? '#7fd6a0' : '#8fa5b8') + ';">' + (on ? 'ON' : 'OFF') + '</span>' +
-            '<span style="flex-basis:100%;font-size:9px;color:#5a7a8a;">Auto Continue uses deterministic Staff-Safe orders. No AI on normal turns.</span></div>';
-    }
-    // The continuous-scenario console: mode · Plan status · Scenario · Turn · Actor · Last outcome ·
-    // Blue auto order source · Red last maneuver · Next action.
-    function _renderScenarioCockpitV2() {
-        var s = _scenario;
-        var status = s.scenario_status;
-        var auto = !!(s.auto_continue && s.auto_director_enabled);
-        var COL = { running: '#7fd6a0', paused: '#cdb86a', complete: '#7fd6a0', blocked: '#f0707a' };
-        var LBL = { running: 'Scenario running', paused: 'Scenario paused', complete: 'Scenario complete', blocked: 'Scenario blocked' };
-        var phases = arr(_coaExec && _coaExec.selected_coa && _coaExec.selected_coa.phases);
-        var planStatus = _coaExec
-            ? (_coaExec.phase_status === 'complete' ? (esc(_coaExec.selected_coa_id) + ' complete') : (esc(_coaExec.selected_coa_id) + ' · phase ' + (Math.min(_coaExec.current_phase_index, phases.length) + (_coaExec.phase_status === 'complete' ? 0 : 1)) + '/' + phases.length))
-            : (_coaLoading ? 'generating new orders…' : (_coaPlan && _coaPlan.ok ? 'new plan ready — commit to continue' : 'no committed COA'));
-        var head = '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">' +
-            '<span style="font-size:12.5px;font-weight:700;color:#9ec2ec;">🎬 Free Fight — Continuous Scenario</span>' +
-            '<span data-ff-v2="scenario-state" data-ff-v2-scenario-status="' + status + '" style="font-size:9.5px;font-weight:700;color:' + (COL[status] || '#9ec2ec') + ';background:#0c1622;border:1px solid #24435f;border-radius:10px;padding:2px 9px;">' + (LBL[status] || status) + '</span></div>';
-        var cons = '<div data-ff-v2="scenario-status" style="margin-top:2px;padding:7px 9px;border:1px solid #2a4d6a;border-radius:6px;background:#08131e;font-size:10px;color:#cdd8e4;line-height:1.6;">' +
-            '<div><span style="color:#8fa5b8;">Scenario mode:</span> <b data-ff-v2-scenario-mode="' + (auto ? 'auto' : 'manual') + '" style="color:' + (auto ? '#7fd6a0' : '#cdb86a') + ';">' + (auto ? 'Auto Continue' : 'Manual') + '</b></div>' +
-            '<div><span style="color:#8fa5b8;">Plan status:</span> <b style="color:#cfe6ff;">' + planStatus + '</b></div>' +
-            '<div><span style="color:#8fa5b8;">Scenario:</span> <b style="color:' + (COL[status] || '#cfe6ff') + ';">' + esc(status) + '</b> · <span style="color:#8fa5b8;">Turn:</span> <b style="color:#cfe6ff;">' + s.scenario_turn + '</b> · <span style="color:#8fa5b8;">Actor:</span> <b style="color:#cfe6ff;">' + esc(s.current_actor) + '</b></div>' +
-            '<div data-ff-v2="objective-control"><span style="color:#8fa5b8;">Objective control:</span> <b data-ff-v2-control="' + esc(s.objective_control || 'uncontrolled') + '" style="color:' + ({ blue: '#7bb8e8', red: '#f0707a', contested: '#e0c060', uncontrolled: '#8fa5b8' }[s.objective_control] || '#8fa5b8') + ';">' + esc((s.objective_control || 'uncontrolled').charAt(0).toUpperCase() + (s.objective_control || 'uncontrolled').slice(1)) + '</b> · <span style="color:#8fa5b8;">Blue inside:</span> <b style="color:#7bb8e8;">' + (s.blue_presence || 0) + '</b> · <span style="color:#8fa5b8;">Red contesting:</span> <b style="color:#f0707a;">' + (s.red_contest || 0) + '</b></div>' +
-            '<div data-ff-v2="scenario-outcome"><span style="color:#8fa5b8;">Last White outcome:</span> ' + esc(s.last_outcome || '—') + '</div>' +
-            (s.last_formation_order ? '<div data-ff-v2="scenario-formation"><span style="color:#8fa5b8;">Last formation order:</span> <b style="color:#7bb8e8;">' + esc(s.last_formation_order) + '</b></div>' : '') +
-            (s.last_auto_order_source ? '<div data-ff-v2="scenario-blue-src"><span style="color:#8fa5b8;">Blue auto order source:</span> <b style="color:#7bb8e8;">' + esc(s.last_auto_order_source) + '</b></div>' : '') +
-            (s.last_red_maneuver ? '<div data-ff-v2="scenario-red"><span style="color:#8fa5b8;">Red last maneuver:</span> <b style="color:#f0707a;">' + esc(s.last_red_maneuver) + '</b></div>' : '') +
-            '<div data-ff-v2="scenario-next"><span style="color:#8fa5b8;">Next required action:</span> <b style="color:#e0c060;">' + esc(_scenarioNextActionText()) + '</b></div>' +
-            '<div style="margin-top:2px;font-size:9px;color:#7fd6a0;">Deterministic ticks · AI not called on normal ticks · /plan-coas only on explicit Replan.</div></div>' +
-            _v2AutoToggleHtml();
-        var hasRunnable = !!(_coaExec && _coaExec.active && _coaExec.phase_status !== 'complete');
-        var hasNewPlan = !!(_coaPlan && _coaPlan.ok && arr(_coaPlan.coas).length);
-        var actions = '', body = '';
-        if (status === 'running') {
-            actions = _v2Pri('v2-scenario-pause', '⏸ Pause Scenario', 'Pause the continuous fight') + _v2Sec('v2-scenario-stop', '⏹ Stop Scenario');
-            body = _v2RunProgressHtml();
-        } else if (status === 'complete') {
-            actions = _v2ScenarioPri('v2-run-scenario', '🎬 Run Another Turn', 'Continue the fight from here') + _v2Sec('v2-generate', '⚡ New AI Plan') + _v2Sec('v2-clear', 'Clear / Exit Scenario');
-            body = '<div data-ff-v2="scenario-complete" style="margin-top:8px;padding:6px 9px;border:1px solid #1a4030;border-radius:6px;background:#0c1f14;color:#9fd6b0;font-size:10px;">✅ Scenario complete — ' + esc(s.end_condition || 'ended') + (s.last_outcome ? ': ' + esc(s.last_outcome) : '') + '</div>';
-        } else if (status === 'blocked') {   // serious blocked condition — needs a human decision (auto will not override)
-            body += '<div data-ff-v2="scenario-blocked" style="margin-top:8px;padding:6px 9px;border:1px solid #7a3030;border-radius:6px;background:#241414;color:#f0b0b0;font-size:10px;">⛔ Scenario blocked — ' + esc(s.pending_replan_reason || 'operator decision needed.') + ' Auto Continue will not override a blocked state.</div>';
-            if (hasRunnable) { actions = _v2ScenarioPri('v2-scenario-continue', '▶ Continue anyway', 'Resume the committed COA despite the trigger') + _v2Sec('v2-scenario-stop', '⏹ Stop Scenario'); }
-            else if (hasNewPlan) {
-                var coasB = arr(_coaPlan.coas), recIdxB = _pickRecommendedIdx(_coaPlan);
-                actions = _v2Pri('v2-commit', '✅ Commit Next Order (' + esc(_v2CoaId(coasB, _coaSelectedIdx)) + ')', 'Lock the next COA, then Continue') + _v2Sec('v2-scenario-stop', '⏹ Stop Scenario');
-                body += _v2CoaCardsHtml(coasB, recIdxB) + _v2SelectedSummaryHtml(coasB, recIdxB);
-            } else {
-                actions = _v2Sec('v2-staff-safe', '🛡 Staff-Safe Next Order') + _v2Sec('v2-scenario-stop', '⏹ Stop Scenario');
-                body += '<div style="margin-top:6px;display:flex;align-items:center;gap:6px;"><span style="font-size:9.5px;color:#8fa5b8;">Advanced action:</span> ' + _v2Adv('v2-replan', '↻ Replan with AI (slow)', 'Call the AI for a fresh Blue plan') + '</div>';
-            }
-        } else {   // paused (manual) — the fight continues; Blue needs the next order
-            body += '<div data-ff-v2="scenario-needs-orders" style="margin-top:8px;padding:6px 9px;border:1px solid #6a5520;border-radius:6px;background:#1c1708;color:#e8d68a;font-size:10px;">⚠ Scenario needs new Blue orders — ' + esc(s.pending_replan_reason || 'choose the next order to continue the fight.') + (auto ? '' : ' (or enable Auto Continue above)') + '</div>';
-            if (_coaLoading) { actions = ''; body += _v2Note('Generating the next Blue order…', '#e0c060'); }
-            else if (hasRunnable) { actions = _v2ScenarioPri('v2-scenario-continue', '▶ Continue Scenario', 'Run the next turn with the committed COA') + _v2Sec('v2-scenario-stop', '⏹ Stop Scenario'); }
-            else if (hasNewPlan) {
-                var coas = arr(_coaPlan.coas), recIdx = _pickRecommendedIdx(_coaPlan);
-                actions = _v2Pri('v2-commit', '✅ Commit Next Order (' + esc(_v2CoaId(coas, _coaSelectedIdx)) + ')', 'Lock the next COA, then Continue Scenario') + _v2Sec('v2-scenario-stop', '⏹ Stop Scenario');
-                body += _v2CoaCardsHtml(coas, recIdx) + _v2SelectedSummaryHtml(coas, recIdx);
-            } else {
-                actions = _v2Sec('v2-staff-safe', '🛡 Staff-Safe Next Order') + _v2Sec('v2-scenario-stop', '⏹ Stop Scenario');
-                body += '<div style="margin-top:6px;display:flex;align-items:center;gap:6px;"><span style="font-size:9.5px;color:#8fa5b8;">Advanced action:</span> ' + _v2Adv('v2-replan', '↻ Replan with AI (slow)', 'Call the AI for a fresh Blue plan') + '</div>';
-            }
-        }
-        return '<div data-ff-v2="window" data-ff-v2-mode="scenario" style="margin:6px 0;padding:11px 13px;border:1px solid #2e5d7d;border-radius:8px;background:#0a1726;">' +
-            head + cons +
-            '<div data-ff-v2="actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;">' + actions + '</div>' +
-            body + '</div>';
-    }
-    function renderFreeFightControlV2() {
-        // RMOOZ-FREE-FIGHT-CONTINUOUS-SCENARIO-AA: when a continuous scenario is active, the cockpit body
-        // is the scenario console (Plan status · Scenario status · Turn · Actor · Last outcome · Next action).
-        if (_scenarioActive()) return _renderScenarioCockpitV2();
-        var state = _freeFightControlStateV2();
-        var coas = arr(_coaPlan && _coaPlan.coas);
-        var recIdx = _pickRecommendedIdx(_coaPlan);
-        var actions = '', body = '';
-        if (state === 'empty' && _coaPlan && _coaPlan._step1_blocked) {
-            // RMOOZ-STEP1-COA-PREPARATION-GATE-AE: Generate produced NO movement COA — Step-1 data is review-only.
-            actions = _v2Sec('v2-generate', '↻ Re-check readiness', 'Re-run the Step 1 gate after source / doctrine / commander review');
-            body = '<div data-ff-v2="step1-blocked" style="margin-top:6px;padding:8px 10px;border:1px solid #f0707a;border-radius:6px;background:#1f0d0d;color:#f0b0b0;font-size:11px;font-weight:700;">' +
-                esc((_coaPlan._step1_report && _coaPlan._step1_report.message) || 'COA unavailable — Step 1 data requires source/doctrine/commander review.') + '</div>' +
-                _v2Step1DetailHtml(_coaPlan._step1_report || _lastStep1Report);
-        } else if (state === 'empty') {
-            actions = _v2Pri('v2-generate', '⚡ Generate AI Plan', 'Calls the local AI model — can be slow') + _v2Sec('v2-staff-safe', '🛡 Use Staff-Safe Plan', 'Instant deterministic plan — no AI');
-            body = _v2Note('<b>Generate AI Plan</b> is slow because it calls the AI. <b>Staff-Safe</b> is an instant deterministic plan (no AI).') + _v2ModelReadinessHtml();
-        } else if (state === 'planning') {
-            actions = '';   // no fake cancel — the existing generator has no cancel
-            body = '<div data-ff-v2="planning" style="margin-top:6px;display:flex;align-items:center;gap:8px;font-size:12px;color:#e0c060;font-weight:700;">' +
-                '<span style="display:inline-block;width:12px;height:12px;border:2px solid #e0c060;border-top-color:transparent;border-radius:50%;"></span>' +
-                'AI is building COAs… <span style="color:#7fd6a0;">' + _v2PlanningElapsed() + 's</span></div>' +
-                _v2Note('The local model can take 30–90s. This window updates automatically when the plan is ready.', '#8fa5b8');
-        } else if (state === 'ready') {
-            var selId = _v2CoaId(coas, _coaSelectedIdx);
-            var staleExec = !!(_coaExec && _coaExec.active);   // AB1: a fresh plan / changed selection pushed us back to ready
-            actions = _v2Pri('v2-commit', '✅ Commit Selected Plan (' + esc(selId) + ')', 'Locks the selected COA for execution') + (staleExec ? _v2Sec('v2-clear', 'Clear Plan') : '');
-            body = (_coaCommitBlockedReason ? '<div data-ff-v2="commit-blocked" style="margin-bottom:6px;padding:6px 9px;border:1px solid #f0707a;border-radius:6px;background:#1f0d0d;color:#f0b0b0;font-size:10px;font-weight:700;">⛔ ' + esc(_coaCommitBlockedReason) + '</div>' : '') +
-                (staleExec ? '<div data-ff-v2="recommit-needed" style="margin-bottom:6px;padding:6px 9px;border:1px solid #6a5520;border-radius:6px;background:#1c1708;color:#e8d68a;font-size:10px;">⚠ Selection changed — commit selected plan before running scenario. (A new plan or a different COA replaced the previously committed one — Run / Run Scenario stay hidden until you commit.)</div>' : '') +
-                _v2PlanQualityBannerHtml() +
-                _v2CoaCardsHtml(coas, recIdx) + _v2SelectedSummaryHtml(coas, recIdx) +
-                '<div style="margin-top:8px;display:flex;align-items:center;gap:6px;"><span style="font-size:9.5px;color:#8fa5b8;">Advanced:</span> ' + _v2Adv('v2-regenerate', '↻ Regenerate Plan (AI · slow)', 'Calls the AI again') + '</div>';
-        } else if (state === 'committed') {
-            actions = _v2Pri('v2-run', '▶ Run Plan', 'Execute the committed COA ONCE — fast, no AI on normal ticks') +
-                _v2ScenarioPri('v2-run-scenario', '🎬 Run Scenario', 'Continuously run the fight — Red reaction, White adjudication, Green updates — until an end condition') +
-                _v2Sec('v2-clear', 'Clear Plan');
-            body = _v2CommittedSummaryHtml() +
-                _v2Note('<b>Run Plan</b> = execute the COA once (can end with "Plan complete"). <b>Run Scenario</b> = keep the fight going: White adjudicates, Green updates, Red reacts, until an end condition. Both are deterministic — no AI on normal ticks.', '#9fb8c8') +
-                _v2AutoToggleHtml();   // RMOOZ-...-AB: choose Manual vs Auto Continue before Run Scenario
-        } else if (state === 'running') {
-            actions = _v2Pri('v2-pause', '⏸ Pause', 'Stop movement');
-            body = _v2RunProgressHtml() + _v2Note('Running — <b>the AI is NOT called on normal ticks</b>.', '#7fd6a0');
-        } else if (state === 'paused') {
-            actions = _v2Pri('v2-resume', '▶ Resume', 'Continue deterministic execution') + _v2Sec('v2-clear', 'Clear Plan');
-            body = _v2RunProgressHtml() + _v2Note('Paused. Resume continues deterministic execution; Clear discards the committed plan.', '#cdb86a');
-        } else if (state === 'blocked') {
-            actions = _v2Sec('v2-continue', '▶ Continue anyway', 'Resume the committed COA despite the trigger') + _v2Sec('v2-clear', 'Clear Plan');
-            body = _v2Note('⚠ Blocked — ' + esc((_coaExec && _coaExec.replan_reason) || 'Replan required; execution paused.'), '#f0b0b0') +
-                _v2CommittedSummaryHtml() +
-                '<div style="margin-top:8px;display:flex;align-items:center;gap:6px;"><span style="font-size:9.5px;color:#8fa5b8;">Advanced action:</span> ' + _v2Adv('v2-replan', '↻ Replan with AI (slow)', 'Stop and call the AI for a fresh plan') + '</div>';
-        } else if (state === 'complete') {
-            actions = _v2ScenarioPri('v2-run-scenario', '🎬 Run Scenario', 'Continue the fight from here — Red reaction, White adjudication, Green updates, until an end condition') +
-                _v2Sec('v2-generate', '⚡ New AI Plan') + _v2Sec('v2-clear', 'Clear Plan');
-            body = _v2Note('✅ <b>Plan complete</b> — all phases executed with no AI calls. This is a single COA playback. <b>Run Scenario</b> to keep the fight going (White / Green / Red), or start a new plan.', '#7fd6a0') + _v2CommittedSummaryHtml();
-        }
-        var head = '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">' +
-            '<span style="font-size:12.5px;font-weight:700;color:#9ec2ec;">🎖 AI Commander — Free Fight</span>' +
-            '<span data-ff-v2="state" data-ff-v2-state="' + state + '" style="font-size:9.5px;font-weight:700;color:' + _v2StateColor(state) + ';background:#0c1622;border:1px solid #24435f;border-radius:10px;padding:2px 9px;">' + _v2StateLabel(state) + '</span>' +
-            '</div>';
-        return '<div data-ff-v2="window" style="margin:6px 0;padding:11px 13px;border:1px solid #2e5d7d;border-radius:8px;background:#0a1726;">' +
-            head +
-            _v2Step1BannerHtml() +
-            _v2StepperHtml(state) +
-            _v2FlowStatusHtml(state) +
-            '<div data-ff-v2="actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;">' + actions + '</div>' +
-            _v2MicrocopyHtml(state) +
-            body + '</div>';
-    }
-    // The closed "Diagnostics / Legacy" drawer. Its body (the full old crowded UI — objective placement,
-    // group-movement demo, model status, warmup/benchmark, scheduler decision log, raw JSON, manual
-    // planner, commit-exec detail, unit-decision, Staff-Safe internals) is inserted into the DOM ONLY
-    // when opened. Closed by default → none of those controls render, so there are no hidden duplicate
-    // data-act buttons in the operator-facing path.
-    function _freeFightLegacyDrawerHtml(legacyHtml) {
-        var open = !!_ffLegacyOpen;
-        var h = '<div data-ff-v2="legacy" style="margin-top:12px;border-top:1px solid #2a3f55;padding-top:7px;">';
-        h += '<button data-act="v2-legacy-toggle" data-ff-v2-legacy-open="' + (open ? '1' : '0') + '" style="font:inherit;cursor:pointer;border:1px solid #3a4658;background:#0c141d;color:#8fa5b8;border-radius:5px;padding:5px 10px;font-size:10.5px;font-weight:600;">' + (open ? '▾' : '▸') + ' Diagnostics / Legacy</button>';
-        h += '<div style="margin-top:3px;font-size:9px;color:#5a7a8a;line-height:1.5;">' +
-            (open ? 'Technical &amp; legacy controls — model status, warmup, benchmark, scheduler decision log, raw JSON, manual planner, group-movement demo, Staff-Safe internals. Not part of the normal flow.'
-                  : 'Hidden — model status · warmup · benchmark · scheduler decision log · raw JSON · manual planner · group-movement demo · Staff-Safe internals. Click to open.') + '</div>';
-        if (open) h += '<div data-ff-v2="legacy-body" style="margin-top:8px;opacity:.97;">' + (legacyHtml || '') + '</div>';
-        return h + '</div>';
-    }
-    // Bind the V2 control-window actions. All ids are unique to V2; when the legacy drawer is closed its
-    // controls are absent from the DOM, so these binds never collide. Every handler updates visible state.
-    function bindFreeFightControlV2() {
-        // v2-generate / v2-clear leave any active scenario (start fresh); the in-scenario "next order"
-        // paths (v2-staff-safe / v2-replan) keep the scenario alive on purpose.
-        bind('v2-generate', function () { _resetScenario(); setPlanningMode('commander'); _generateCoaPlan(); });
-        bind('v2-regenerate', function () { setPlanningMode('commander'); _generateCoaPlan(); });
-        bind('v2-staff-safe', function () { setPlanningMode('staff_safe'); _generateCoaPlan(); });
-        bind('v2-commit', function () { _commitCoa(_coaSelectedIdx); });
-        bind('v2-run', _runCommittedCoa);
-        bind('v2-resume', _runCommittedCoa);
-        bind('v2-continue', _runCommittedCoa);
-        bind('v2-pause', _pauseCommittedCoa);
-        bind('v2-clear', function () { _resetScenario(); _resetCoaExec(); });
-        bind('v2-replan', _replanCoa);
-        // RMOOZ-FREE-FIGHT-CONTINUOUS-SCENARIO-AA: continuous-scenario controls (deterministic; no LLM on ticks).
-        bind('v2-run-scenario', _runScenario);
-        bind('v2-scenario-continue', _runScenario);
-        bind('v2-scenario-pause', _pauseScenario);
-        bind('v2-scenario-stop', _stopScenario);
-        bind('v2-scenario-auto-toggle', _toggleScenarioAuto);   // RMOOZ-...-AB: Auto Continue toggle
-        bind('v2-legacy-toggle', function () { _ffLegacyOpen = !_ffLegacyOpen; updatePanel(); });
-        // COA card selection — clicking a card sets the selection and repaints immediately so the
-        // highlight + selected summary + Commit label update on the spot. Bind a generous range (plans
-        // carry 2–3 COAs); bind() no-ops on absent ids.
-        for (var i = 0; i < 8; i++) {
-            (function (idx) { bind('v2-coa-' + idx, function () { _coaSelectedIdx = idx; updatePanel(); }); })(i);
-        }
-    }
+    // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: the old Free Fight control window (the V2 cockpit —
+    // _freeFightControlStateV2 / all _v2* render helpers / _renderScenarioCockpitV2 /
+    // renderFreeFightControlV2 / _freeFightLegacyDrawerHtml / bindFreeFightControlV2) was DELETED here.
+    // The operator card is now client/shell/scenario-control-center.js (window.RmoozScenarioControlCenter).
     function _operatorStripHtml() {
         function pri(act, label, dis) { return '<button data-ff-primary="1" data-act="' + act + '"' + (dis ? ' disabled' : '') + ' style="font:inherit;cursor:' + (dis ? 'not-allowed' : 'pointer') + ';border:1px solid #2e7d54;background:#15301f;color:#9fe8c0;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;' + (dis ? 'opacity:.55;' : '') + '">' + label + '</button>'; }
         function note(txt, col) { return '<div style="margin-top:4px;font-size:10px;color:' + (col || '#9fb8c8') + ';">' + txt + '</div>'; }
@@ -6155,7 +5573,109 @@
     }
     try { document.addEventListener('rmooz:ai-model-changed', _onExternalModelChanged); } catch (_) {}
 
+    // ════════════════════════════════════════════════════════════════════════════════════════════════
+    // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF — ENGINE FACADE.
+    // The new operator UI (client/shell/scenario-control-center.js, window.RmoozScenarioControlCenter) is a
+    // hard replacement for the old Free Fight control window. It owns ALL operator UI/flow and drives the
+    // engine ONLY through this facade — it never reaches into the old renderers. The engine (taskability,
+    // quality gate, /plan-coas generate, COA commit/exec, continuous scenario, Green/White, decision log)
+    // is UNCHANGED; this object just exposes the seams the new UI reads/calls.
+    // ════════════════════════════════════════════════════════════════════════════════════════════════
+    function _sccActionTargets(coa) {
+        var obj = getObjective();
+        return _coaAllActions(coa).map(function (a) {
+            var t = a && a.target;
+            var hasT = !!(t && Number.isFinite(+t.lat) && Number.isFinite(+t.lon));
+            var taskable = a && a.unit_uid ? _isUnitTaskable(a.unit_uid) : true;
+            var kmFromObj = (hasT && obj) ? Math.round(_kmBetween({ lat: +t.lat, lon: +t.lon }, { lat: obj.lat, lon: obj.lon }) * 10) / 10 : null;
+            return {
+                unit_uid: (a && a.unit_uid) || '—',
+                role: _normRole(a && a.role) || '—',
+                action: (a && a.action_type) || '—',
+                target_type: (a && a.action_type === 'HOLD_POSITION') ? 'hold' : (hasT ? ((t.type) || 'point') : 'none'),
+                target_lat: hasT ? +(+t.lat).toFixed(4) : null,
+                target_lon: hasT ? +(+t.lon).toFixed(4) : null,
+                km_from_objective: kmFromObj,
+                reason: (a && (a.reason || a.why_unit)) || '',
+                roe_status: (a && a.action_type === 'HOLD_POSITION') ? 'hold-only' : (taskable ? 'permitted' : 'review-required'),
+                taskable: !!taskable,
+            };
+        });
+    }
+    var _engine = {
+        // ── state inputs (one source of truth — raw engine state) ──
+        objective: function () { return getObjective(); },
+        placeObjective: function () { try { armPlaceObjective(); } catch (_) {} },
+        clearObjectiveX: function () { try { clearObjective(); } catch (_) {} },
+        isLoading: function () { return !!_coaLoading; },
+        coaPlan: function () { return _coaPlan; },
+        selectedIdx: function () { return _coaSelectedIdx; },
+        selectCoa: function (i) { _coaSelectedIdx = i; updatePanel(); return _coaSelectedIdx; },
+        repaint: function () { updatePanel(); },
+        recommendedIdx: function () { try { return _pickRecommendedIdx(_coaPlan); } catch (_) { return 0; } },
+        committedExec: function () { return _coaExec; },
+        committedIsStale: function () { try { return _coaCommitIsStale(); } catch (_) { return false; } },
+        scenarioRuntime: function () { return _scenario; },
+        scenarioActive: function () { try { return _scenarioActive(); } catch (_) { return false; } },
+        commitBlockedReason: function () { return _coaCommitBlockedReason; },
+        // ── readiness / Step-1 gate (Panel 1) ──
+        readiness: function () {
+            var rep = _step1PreparationReport();
+            var w = W(); var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
+            var ctx = _taskabilityCtx();
+            return {
+                scenario_name: (sc && (sc.name || sc.title || sc.id)) || 'No scenario loaded',
+                objective_set: !!getObjective(),
+                units_loaded: rep.units_loaded, taskable: rep.taskable, blocked: rep.blocked,
+                blocked_by_missing_source: rep.blocked_by_missing_source,
+                blocked_by_missing_coordinates: rep.blocked_by_missing_coordinates,
+                blocked_by_missing_doctrine: rep.blocked_by_missing_doctrine,
+                blocked_by_commander_review: rep.blocked_by_commander_review,
+                blocked_units: rep.blocked_units, taskable_units: rep.taskable_units,
+                executable: rep.executable, message: rep.message,
+                source_status: rep.blocked_by_missing_source > 0 ? 'review required' : (rep.units_loaded ? 'sourced' : 'none'),
+                doctrine_status: ctx.doctrine_required ? (ctx.doctrine_ok ? 'applied' : 'upload required') : 'not required',
+                commander_review_status: ctx.commander_review_required ? (ctx.commander_approved ? 'approved' : 'pending') : 'not required',
+                data_reliability: !rep.units_loaded ? 'none' : (rep.blocked > 0 ? (rep.executable ? 'partial' : 'review-only') : 'operational'),
+            };
+        },
+        // ── COA preparation (Panel 2) — Step-1 + taskability + quality requirements then generate ──
+        prepareCoa: function () { setPlanningMode('commander'); _resetScenario(); _generateCoaPlan(); },
+        prepareStaffSafe: function () { setPlanningMode('staff_safe'); _resetScenario(); _generateCoaPlan(); },
+        // ── COA review (Panel 3) ──
+        coaQuality: function (coa) { try { return _coaQualityGate(coa); } catch (_) { return null; } },
+        hardBlockReason: function (coa) { try { return _coaHardBlockReason(coa); } catch (_) { return null; } },
+        tasksBlockedUnit: function (coa) { try { return _coaTasksBlockedUnit(coa); } catch (_) { return null; } },
+        targetSummary: function (coa) { try { return _coaTargetSummary(coa); } catch (_) { return ''; } },
+        actionTargets: function (coa) { return _sccActionTargets(coa); },
+        isExecutable: function (coa) { return !_coaHardBlockReason(coa) && !_coaTasksBlockedUnit(coa); },
+        isRealLlm: function (p) { try { return _isRealLlmPlan(p); } catch (_) { return false; } },
+        // ── commit (Panel 4) ──
+        commit: function (i) { return _commitCoa(i == null ? _coaSelectedIdx : i); },
+        // ── run / observe (Panel 5) ──
+        runScenario: function () { return _runScenario(); },
+        runCommittedOnce: function () { return _runCommittedCoa(); },
+        pauseScenario: function () { return _pauseScenario(); },
+        stopScenario: function () { return _stopScenario(); },
+        replan: function () { return _replanCoa(); },
+        clearAll: function () { _resetScenario(); _resetCoaExec(); },
+        whiteOutcome: function () { try { return _scenario ? _whiteScenarioOutcome() : null; } catch (_) { return null; } },
+        greenStatus: function () { return _greenWorld; },
+        runBlockedReason: function () { return _coaExec && _coaExec.run_blocked_reason; },
+        // ── evidence (Panel 6) ──
+        decisionLog: function () { return _decisionLog.slice(-20); },
+        networkCalls: function () { return _netLog.slice(-20); },
+        executedTrace: function () { return _coaMovedUnits.map(function (m) { return { uid: m.uid, from: m.oldPos, to: m.finalPos, role: m.role, action: m.action_type }; }); },
+        rawJson: function (which) {
+            if (which === 'committed') return _coaExec && _coaExec.selected_coa;
+            if (which === 'selected') { var c = arr(_coaPlan && _coaPlan.coas); return c[_coaSelectedIdx] || null; }
+            return _coaPlan;   // 'generated' / default
+        },
+        objectiveControlKm: function () { return { control: OBJ_CONTROL_KM, contest: OBJ_CONTEST_KM }; },
+    };
+
     var API = {
+        engine: _engine,   // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF facade
         mount: mount, init: init, setObjective: setObjective, clearObjective: clearObjective,
         start: start, pause: pause, reset: reset, step: step, replan: replan, clear: clear,
         setPlannerMode: setPlannerMode,
@@ -6252,20 +5772,15 @@
         _setCoaSelectedIdxForTest: function (i)             { _coaSelectedIdx = i; updatePanel(); return _coaSelectedIdx; },
         // RMOOZ-ADVISORY-COMMIT-JOURNAL-V test seam
         _buildCommitAdvisoryContextForTest: function (idx)  { return _buildCommitAdvisoryContext(idx); },
-        // RMOOZ-FREE-FIGHT-CONTROL-HARD-RESET-X test seams (the V2 cockpit)
-        _renderFreeFightControlV2HtmlForTest: function ()   { return renderFreeFightControlV2(); },
-        _freeFightControlStateV2ForTest: function ()        { return _freeFightControlStateV2(); },
-        _freeFightLegacyDrawerHtmlForTest: function (legacy) { return _freeFightLegacyDrawerHtml(legacy != null ? legacy : renderAiDecisionHtml()); },
-        _setFfLegacyOpenForTest:   function (v)             { _ffLegacyOpen = !!v; return _ffLegacyOpen; },
+        // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: the old Free Fight control window (V2 cockpit) and its
+        // render/walkthrough/movement-summary seams were DELETED. The seams below are engine-level only:
+        // selecting a COA, reading the new SCC state, and a no-op legacy-open flag (no drawer exists now).
+        _setFfLegacyOpenForTest:   function (v)             { _ffLegacyOpen = !!v; return _ffLegacyOpen; },   // no-op: legacy drawer removed
         _getFfLegacyOpenForTest:   function ()              { return _ffLegacyOpen; },
-        _v2SelectCoaForTest:       function (i)             { _coaSelectedIdx = i; updatePanel(); return _coaSelectedIdx; },   // simulates a v2-coa-<i> card click
-        // RMOOZ-FREE-FIGHT-V2-OPERATOR-WALKTHROUGH-Y test seams
-        _v2StepperHtmlForTest:     function (state)         { return _v2StepperHtml(state || _freeFightControlStateV2()); },
-        _v2StepStatusForTest:      function (state, n)      { return _v2StepStatus(state, n); },
-        _v2MicrocopyHtmlForTest:   function (state)         { return _v2MicrocopyHtml(state || _freeFightControlStateV2()); },
-        _v2SelectedSummaryHtmlForTest: function ()          { return _v2SelectedSummaryHtml(arr(_coaPlan && _coaPlan.coas), _pickRecommendedIdx(_coaPlan)); },
-        // RMOOZ-FREE-FIGHT-V2-REAL-OPERATOR-ACCEPTANCE-Z test seam
-        _v2MovementSummaryHtmlForTest: function ()          { return _v2MovementSummaryHtml(); },
+        _selectCoaForTest:         function (i)             { _coaSelectedIdx = i; updatePanel(); return _coaSelectedIdx; },
+        _v2SelectCoaForTest:       function (i)             { _coaSelectedIdx = i; updatePanel(); return _coaSelectedIdx; },   // alias kept for surviving tests
+        _sccStateForTest:          function ()              { return (W() && W().RmoozScenarioControlCenter) ? W().RmoozScenarioControlCenter.state() : 'no_scenario'; },
+        _sccRenderForTest:         function ()              { return (W() && W().RmoozScenarioControlCenter) ? W().RmoozScenarioControlCenter.render() : ''; },
         // RMOOZ-FREE-FIGHT-CONTINUOUS-SCENARIO-AA test seams
         _runScenarioForTest:       function ()              { return _runScenario(); },
         _scenarioTickForTest:      function ()              { return _scenarioTick(); },
@@ -6277,7 +5792,6 @@
         _pauseScenarioForTest:     function ()              { return _pauseScenario(); },
         _stopScenarioForTest:      function ()              { return _stopScenario(); },
         _resetScenarioForTest:     function ()              { return _resetScenario(); },
-        _renderScenarioCockpitV2ForTest: function ()        { return _scenarioActive() ? _renderScenarioCockpitV2() : ''; },
         // RMOOZ-FREE-FIGHT-AUTO-SCENARIO-DIRECTOR-AB test seams
         _setScenarioAutoContinueForTest: function (v)       { _scenarioAutoContinue = !!v; if (_scenario) _scenario.auto_continue = _scenarioAutoContinue; return _scenarioAutoContinue; },
         _toggleScenarioAutoForTest: function ()             { return _toggleScenarioAuto(); },
@@ -6308,7 +5822,6 @@
         _resolveCoaMovesForTest:       function (coa)       { return _resolveCoaMoves(coa); },
         _getCommitBlockedReasonForTest: function ()         { return _coaCommitBlockedReason; },
         _getLastStep1ReportForTest:    function ()          { return _lastStep1Report; },
-        _v2Step1BannerHtmlForTest:     function ()          { return _v2Step1BannerHtml(); },
         _getDecisionLogForTest:        function ()          { return _decisionLog.slice(); },
         // RMOOZ-FREE-FIGHT-V2-COA-TO-SCENARIO-BUGFIX-AB1 test seams
         _coaCommitIsStaleForTest:  function ()              { return _coaCommitIsStale(); },

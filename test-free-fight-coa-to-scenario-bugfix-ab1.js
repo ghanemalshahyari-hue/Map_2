@@ -53,6 +53,7 @@ require(path.join(C, 'world-state-db.js'));
 require(path.join(C, 'symbol-db.js'));
 require(path.join(C, 'symbol-registry.js'));
 require(path.join(C, 'free-fight-demo.js'));
+require(path.join(C, 'scenario-control-center.js'));   // RMOOZ-...-AF: new operator UI (Scenario Control Center)
 var DEMO = global.window.RmoozFreeFightDemo;
 
 var pass = 0, fail = 0;
@@ -69,26 +70,26 @@ function mkPlan(tag) {
 }
 function freshClean(plan) { DEMO._resetScenarioForTest(); DEMO._forgetCoaExecInMemoryForTest(); DEMO._resetCoaExecForTest(); DEMO._setCoaPlanForTest(plan || mkPlan('A')); DEMO._setCoaSelectedIdxForTest(0); DEMO._setFfLegacyOpenForTest(false); }
 
-// 1 — ready does NOT show Run Scenario until commit.
+// 1 — COA review does NOT show Run until commit (SCC).
 try {
     freshClean(mkPlan('A'));
-    assert(DEMO._freeFightControlStateV2ForTest() === 'ready', 'state ready');
-    var html = DEMO._renderFreeFightControlV2HtmlForTest();
-    assert(/data-act="v2-commit"/.test(html), 'Commit Selected Plan present in ready');
-    assert(!/data-act="v2-run-scenario"/.test(html) && !/data-act="v2-run"/.test(html), 'Run / Run Scenario NOT present until commit');
-    ok('1 ready shows Commit, not Run / Run Scenario');
+    assert(DEMO._sccStateForTest() === 'coa_review', 'SCC state coa_review');
+    var html = DEMO._sccRenderForTest();
+    assert(/data-act="scc-commit"/.test(html), 'Commit Selected COA present in review');
+    assert(!/data-act="scc-run"/.test(html) && !/data-act="scc-run-once"/.test(html), 'Run / Run Scenario NOT present until commit');
+    ok('1 review shows Commit, not Run / Run Scenario');
 } catch (e) { bad('1 ready no run-scenario', e); }
 
-// 2 — clicking COA-2 updates selected index + summary.
+// 2 — clicking COA-2 updates selected index + the SCC review.
 try {
     freshClean(mkPlan('A'));
     assert(DEMO._getCoaSelectedIdxForTest() === 0, 'starts on idx 0');
     DEMO._v2SelectCoaForTest(1);
     assert(DEMO._getCoaSelectedIdxForTest() === 1, 'selected idx → 1');
-    var h = DEMO._renderFreeFightControlV2HtmlForTest();
-    assert(/Commit Selected Plan \(COA-2\)/.test(h), 'commit label shows COA-2');
-    assert(/Selected COA:<\/span> <b[^>]*>COA-2/.test(h), 'selected summary shows COA-2');
-    ok('2 clicking COA-2 updates selected index + summary');
+    var h = DEMO._sccRenderForTest();
+    assert(/Commit Selected COA \(COA-2\)/.test(h), 'commit label shows COA-2');
+    assert(/data-scc-coa="1"[^>]*data-scc-selected="1"/.test(h), 'COA-2 card marked selected');
+    ok('2 clicking COA-2 updates selected index + SCC review');
 } catch (e) { bad('2 select coa-2', e); }
 
 // 3 — Commit commits COA-2 when COA-2 is selected.
@@ -104,9 +105,9 @@ try {
 try {
     freshClean(mkPlan('A'));
     DEMO._v2SelectCoaForTest(1); DEMO._commitCoaForTest();
-    assert(DEMO._freeFightControlStateV2ForTest() === 'committed', 'state committed');
-    var ch = DEMO._renderFreeFightControlV2HtmlForTest();
-    assert(/data-act="v2-run-scenario"/.test(ch) && /data-act="v2-run"/.test(ch), 'Run + Run Scenario visible after commit');
+    assert(DEMO._sccStateForTest() === 'committed', 'SCC state committed');
+    var ch = DEMO._sccRenderForTest();
+    assert(/data-act="scc-run"/.test(ch) && /data-act="scc-run-once"/.test(ch), 'Run Scenario + Run Plan once visible after commit');
     DEMO._runScenarioForTest();
     assert(DEMO._getScenarioForTest().scenario_active, 'scenario started');
     assert(DEMO._getCoaExecForTest().selected_coa_id === 'COA-2', 'scenario runs the committed COA-2');
@@ -124,24 +125,24 @@ try {
     // operator generates a NEW plan + picks a NEW COA
     DEMO._setCoaPlanForTest(mkPlan('NEW')); DEMO._setCoaSelectedIdxForTest(1);
     assert(DEMO._coaCommitIsStaleForTest() === true, 'commit detected as stale vs the new plan');
-    assert(DEMO._freeFightControlStateV2ForTest() === 'ready', 'state ready (NOT paused/committed) — BUG FIXED');
-    var sh = DEMO._renderFreeFightControlV2HtmlForTest();
-    assert(/data-act="v2-coa-1"/.test(sh) && /data-act="v2-commit"/.test(sh), 'new plan COA cards + Commit shown');
-    assert(/data-ff-v2="recommit-needed"/.test(sh), 'shows the commit-before-running banner');
-    assert(!/data-act="v2-run-scenario"/.test(sh), 'Run Scenario NOT shown while stale (must recommit)');
-    ok('5 stale restored commit + fresh plan → ready + recommit banner (bug fixed)');
+    assert(DEMO._sccStateForTest() === 'coa_review', 'SCC state coa_review (NOT committed) — BUG FIXED');
+    var sh = DEMO._sccRenderForTest();
+    assert(/data-act="scc-select-1"/.test(sh) && /data-act="scc-commit"/.test(sh), 'new plan COA cards + Commit shown');
+    assert(/data-scc="recommit-needed"/.test(sh), 'shows the commit-before-running banner');
+    assert(!/data-act="scc-run"/.test(sh), 'Run Scenario NOT shown while stale (must recommit)');
+    ok('5 stale restored commit + fresh plan → review + recommit banner (bug fixed)');
 } catch (e) { bad('5 stale restored', e); }
 
 // 6 — selection moved off the committed COA → ready + banner.
 try {
     freshClean(mkPlan('A'));
     DEMO._setCoaSelectedIdxForTest(0); DEMO._commitCoaForTest(0);   // commit COA-1
-    assert(DEMO._freeFightControlStateV2ForTest() === 'committed', 'committed COA-1');
+    assert(DEMO._sccStateForTest() === 'committed', 'committed COA-1');
     DEMO._setCoaSelectedIdxForTest(1);   // operator selects COA-2 (off the committed COA-1)
     assert(DEMO._coaCommitIsStaleForTest() === true, 'selection-off-committed detected as stale');
-    assert(DEMO._freeFightControlStateV2ForTest() === 'ready', 'state ready until recommit');
-    assert(/data-ff-v2="recommit-needed"/.test(DEMO._renderFreeFightControlV2HtmlForTest()), 'recommit banner shown');
-    ok('6 selection moved off committed COA → ready + recommit banner');
+    assert(DEMO._sccStateForTest() === 'coa_review', 'SCC state coa_review until recommit');
+    assert(/data-scc="recommit-needed"/.test(DEMO._sccRenderForTest()), 'recommit banner shown');
+    ok('6 selection moved off committed COA → review + recommit banner');
 } catch (e) { bad('6 selection changed', e); }
 
 // 7 — Clear removes committed COA + scenario runtime + committed-plan identity.
@@ -170,16 +171,18 @@ try {
     ok('8+9 Run Scenario no /plan-coas; ticks keep llm_called_this_tick=false');
 } catch (e) { bad('8+9 no-LLM', e); }
 
-// 10 — flow-status line reflects selected-not-committed / committed-ready.
+// 10 — SCC state reflects selected-not-committed → committed-ready.
 try {
     freshClean(mkPlan('A'));
     DEMO._setCoaSelectedIdxForTest(1);
-    var readyHtml = DEMO._renderFreeFightControlV2HtmlForTest();
-    assert(/data-ff-v2-flow="ready"/.test(readyHtml) && /not committed yet/.test(readyHtml), 'ready flow status: not committed yet');
+    assert(DEMO._sccStateForTest() === 'coa_review', 'review state: COA selected, not committed yet');
+    var readyHtml = DEMO._sccRenderForTest();
+    assert(/data-act="scc-commit"/.test(readyHtml) && !/data-act="scc-run"/.test(readyHtml), 'review shows Commit, not Run');
     DEMO._commitCoaForTest();
-    var commHtml = DEMO._renderFreeFightControlV2HtmlForTest();
-    assert(/data-ff-v2-flow="committed"/.test(commHtml) && /ready to Run Plan or Run Scenario/.test(commHtml), 'committed flow status: ready to run');
-    ok('10 flow-status line reflects selected-not-committed → committed-ready');
+    assert(DEMO._sccStateForTest() === 'committed', 'committed state after commit');
+    var commHtml = DEMO._sccRenderForTest();
+    assert(/Run Scenario/.test(commHtml) && /data-act="scc-run"/.test(commHtml), 'committed: ready to Run Scenario');
+    ok('10 SCC state reflects selected-not-committed → committed-ready');
 } catch (e) { bad('10 flow status', e); }
 
 // 11 — clean flow unaffected (regression guard).
@@ -189,7 +192,7 @@ try {
     assert(DEMO._coaCommitIsStaleForTest() === false, 'no stale before commit');
     var ex11 = DEMO._commitCoaForTest();
     assert(DEMO._coaCommitIsStaleForTest() === false, 'not stale right after committing the selected COA');
-    assert(DEMO._freeFightControlStateV2ForTest() === 'committed', 'committed');
+    assert(DEMO._sccStateForTest() === 'committed', 'committed');
     DEMO._runScenarioForTest();
     assert(DEMO._getCoaExecForTest().selected_coa_id === ex11.selected_coa_id, 'scenario runs exactly the committed COA');
     ok('11 clean flow unaffected: select → commit → Run Scenario runs the right COA');

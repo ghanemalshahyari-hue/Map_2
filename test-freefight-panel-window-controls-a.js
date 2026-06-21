@@ -300,20 +300,18 @@ ok('§9 win-close button triggers clear (source check)',
     /win-close.*clear|closeBtn.*addEventListener.*click.*clear/.test(CLIENT_SRC));
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// §10  AI Decision panel still renders in body with new COA Planner header
+// §10  Operator card renders in the panel body (RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: the old AI
+// Decision panel / GROUP DEMO / preview-ai / MAIN AI TEST / Place-Objective body content was DELETED with
+// the old Free Fight window. The body now hosts the Scenario Control Center; the old-content assertions
+// are retired.) [[retired-by-AF]]
 // ═══════════════════════════════════════════════════════════════════════════════
-console.log('\n§10  AI Decision panel still renders in body with new COA Planner header');
+console.log('\n§10  Operator card (Scenario Control Center) renders in the panel body');
 freshMount();
 panelEl = elById['rmooz-free-fight-panel'];
 bodyDiv = panelEl && deepQueryEl(panelEl, '[data-ff="body"]');
 var bodyHtml = bodyDiv ? bodyDiv.innerHTML : '';
 ok('§10 body div has content', bodyHtml.length > 0);
-ok('§10 data-act="preview-ai" in body', /data-act="preview-ai"/.test(bodyHtml));
-ok('§10 data-act="start" in body', /data-act="start"/.test(bodyHtml));
-ok('§10 data-act="reset" in body', /data-act="reset"/.test(bodyHtml));
-ok('§10 MAIN AI TEST header present',  /MAIN AI TEST/.test(bodyHtml));
-ok('§10 Attack Plan / COA Planner label present', /Attack Plan \/ COA Planner/.test(bodyHtml));
-ok('§10 Place Objective button present', /Place.*Objective X|Objective X/.test(bodyHtml));
+ok('§10 old Free Fight window content is gone', !/data-ff-v2|MAIN AI TEST|GROUP MOVEMENT DEMO|data-act="preview-ai"/.test(bodyHtml));
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // Summary

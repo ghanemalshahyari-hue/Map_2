@@ -64,6 +64,7 @@ require(path.join(C, 'world-state-db.js'));
 require(path.join(C, 'symbol-db.js'));
 require(path.join(C, 'symbol-registry.js'));
 require(path.join(C, 'free-fight-demo.js'));
+require(path.join(C, 'scenario-control-center.js'));   // RMOOZ-...-AF: new operator UI (Scenario Control Center)
 var DEMO = global.window.RmoozFreeFightDemo;
 
 var pass = 0, fail = 0;
@@ -217,8 +218,8 @@ function fresh(auto) {
         DEMO._runCommittedCoaForTest();
         assert(DEMO._getCoaExecForTest().phase_status === 'complete', 'Run Plan completes the COA once');
         assert(DEMO._getScenarioForTest() === null, 'Run Plan starts no scenario');
-        assert(/Plan complete/.test(DEMO._renderFreeFightControlV2HtmlForTest()), 'shows "Plan complete"');
-        ok('10 Run Plan behavior unchanged');
+        assert(DEMO._sccStateForTest() === 'scenario_complete', 'SCC shows complete state after Run Plan');
+        ok('10 Run Plan behavior unchanged (SCC complete state)');
     } catch (e) { bad('10 run plan unchanged', e); }
 
     // 11 — end condition fires (auto turn cap or red unable).

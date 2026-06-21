@@ -350,19 +350,15 @@ var u9alt = scen9.red_units.filter(function(u) { return u.id !== 'R-OBJ-001'; })
 ok('§9 no extra units created', scen9.red_units.length === 1);
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// §10  If unit not found, UI shows warning text
+// §10  unit-not-found path (RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: the AI-decision-preview BODY text
+// lived in the deleted Free Fight window; the engine apply path is exercised below. UI-text assertions
+// retired — the operator card is the Scenario Control Center.) [[retired-by-AF]]
 // ═══════════════════════════════════════════════════════════════════════════════
-console.log('\n§10  If unit not found, UI shows warning');
+console.log('\n§10  Unit-not-found apply path (engine, no throw)');
 freshMount(null); // no scenario
 injectDecision('NO-SUCH-UNIT', 27.10, 56.10);
 DEMO._applyAiDecisionForTest();
-var pEl = elById['rmooz-free-fight-panel'];
-var bodyDiv = pEl && deepQueryEl(pEl, '[data-ff="body"]');
-var bHtml = bodyDiv ? bodyDiv.innerHTML : '';
-ok('§10 warning text shown when unit not found',
-    /preview marker only|real scenario unit not found/i.test(bHtml));
-ok('§10 warning NOT showing "real unit marker moved on map"',
-    !/real unit marker moved on map/.test(bHtml));
+ok('§10 apply with a missing unit does not throw', true);
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // §11  Reset restores old coordinate and clears AI trail state
@@ -407,14 +403,10 @@ DEMO._applyAiDecisionForTest();
 // Should have polyline + multiple circle markers (not just one bare circle)
 ok('§12 has trail polyline', _polylines.length >= 1);
 ok('§12 has pulse circle(s)', _layerMarkers.filter(function(m) { return m._isCircleMarker; }).length >= 1);
-// Applied status text in panel
-pEl = elById['rmooz-free-fight-panel'];
-bodyDiv = pEl && deepQueryEl(pEl, '[data-ff="body"]');
-bHtml = bodyDiv ? bodyDiv.innerHTML : '';
-ok('§12 success text says "real unit marker moved on map"',
-    /real unit marker moved on map/.test(bHtml));
-ok('§12 success text does NOT say old bare "unit moved on map"',
-    !/✔ Applied — unit moved on map/.test(bHtml));
+// RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: the "Applied" success-text lived in the deleted Free Fight
+// window's AI-decision panel. The engine proof (trail polyline + pulse circle, asserted above) still holds;
+// the body success-text assertions are retired (the operator card is the Scenario Control Center).
+// [[retired-by-AF]]
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // Summary

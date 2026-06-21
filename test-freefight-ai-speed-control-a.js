@@ -185,7 +185,10 @@ function planForCurrentSide() { var b = DEMO._buildLoopRequestBodyForTest(); ret
     var src = fs.readFileSync(path.join(__dirname, 'UI_MOdified/client/shell/free-fight-demo.js'), 'utf8');
     console.log('\n§10  Source generates all speed buttons (dynamic)');
     ok('§10 dynamic loop-speed button generated', /data-act="loop-speed-' \+ sp/.test(src));
-    ok('§10 loop-speed bound for each preset', /bind\('loop-speed-' \+ sp/.test(src));
+    // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: the loop-speed buttons were BOUND in the old Free Fight
+    // control window's updatePanel binds, which were removed. The speed ENGINE (FF_SPEED_ORDER + every
+    // preset's timing config) is intact and asserted here; the old UI-binding assertion is retired.
+    // [[retired-by-AF]]
     ok('§10 FF_SPEED_ORDER lists all 5 presets',
         /FF_SPEED_ORDER\s*=\s*\['x1',\s*'x5',\s*'x15',\s*'fire',\s*'fire2'\]/.test(src));
     // Runtime proof: every preset resolves to a real config object

@@ -238,11 +238,9 @@ function injectUnitDecision(uid, lat, lon){
     var panToCount = (src.match(/\.map\.panTo\(|W\(\)\.map\.panTo\(/g) || []).length;
     ok('§11 exactly one raw map.panTo (inside the guard)', panToCount === 1, 'count=' + panToCount);
     ok('§11 old _panToMovedCentroid name removed', !/function _panToMovedCentroid\b/.test(src));
-    ok('§11 Camera toggle UI present (dynamic buttons + bindings)',
-        /data-act="camera-' \+ m\[0\]/.test(src) && /bind\('camera-manual'/.test(src) && /bind\('camera-follow'/.test(src));
-    // Runtime proof: the toggle renders in the panel body
-    var html11 = bodyEl.querySelector('[data-ff="body"]') ? bodyEl.querySelector('[data-ff="body"]').innerHTML : '';
-    ok('§11 Camera control rendered with Manual + Follow AI', /data-ff-loop="camera"/.test(html11) && /Manual/.test(html11) && /Follow AI/.test(html11));
+    // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: the Manual/Follow-AI camera TOGGLE UI lived in the old Free
+    // Fight control window, which was deleted. The camera-safety SOURCE guards above still hold; the toggle
+    // UI assertions are retired (the operator card is the Scenario Control Center). [[retired-by-AF]]
 
     // ── §12 redraw auto-fit is suppressed during AI movement ─────────────────
     console.log('\n§12  drawScenario auto-fitBounds is suppressed during AI redraws');

@@ -152,10 +152,9 @@ function realPlan(side){ var b=DEMO._buildLoopRequestBodyForTest(); return PLANN
     var plan3 = DEMO._getCoaPlanForTest();
     ok('§3 _coaPlan flagged route unavailable', plan3 && plan3._route_unavailable === true);
     ok('§3 _routeUnavailableMsg set', /Planner route unavailable/.test(DEMO._getRouteUnavailableMsgForTest() || ''));
-    DEMO._repaintForTest();
-    var bodyHtml = bodyEl.querySelector('[data-ff="body"]') ? bodyEl.querySelector('[data-ff="body"]').innerHTML : '';
-    ok('§3 UI renders route-unavailable banner', /data-ff-coa="route-unavailable"|data-ff-loop="route-unavailable"/.test(bodyHtml));
-    ok('§3 UI text mentions route, not "LLM failed"', /Planner route unavailable/.test(bodyHtml) && !/LLM failed/i.test(bodyHtml));
+    // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: the old route-unavailable BODY banner lived in the deleted
+    // Free Fight window. The ENGINE behaviour (route flagged + message set, distinct from "LLM failed") is
+    // asserted above and still holds; the old-body banner assertions are retired. [[retired-by-AF]]
 
     // ── §4 valid JSON still works ────────────────────────────────────────────
     console.log('\n§4  Valid JSON plan still works');
@@ -247,12 +246,10 @@ function realPlan(side){ var b=DEMO._buildLoopRequestBodyForTest(); return PLANN
     DEMO._setRouteHealthForTest({ ok: true, allow_sim_run: true, model_available: true,
         provider: 'ollama', configured_provider: 'ollama', model: AI_CFG.defaultModel });
     DEMO._repaintForTest();
-    var html10 = bodyEl.querySelector('[data-ff="body"]') ? bodyEl.querySelector('[data-ff="body"]').innerHTML : '';
-    ok('§10 route diagnostics rendered under Advanced diagnostics', /data-ff-loop="advanced-diagnostics"/.test(html10));
-    ok('§10 "Planner route:" label present', /Planner route:/.test(html10));
-    ok('§10 "Check route" button present', /data-act="loop-route-check"/.test(html10));
-    ok('§10 local-only policy shown', /Local-only policy/.test(html10) || /local only/i.test(html10));
-    ok('§10 model (ai-config default) shown', html10.indexOf(AI_CFG.defaultModel) !== -1);
+    // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: the route-status / Check-route / provider+model
+    // diagnostics BODY UI lived under the deleted Free Fight window's Advanced-diagnostics block. The
+    // route-health ENGINE seam (_setRouteHealthForTest) and the _fetchJsonSafe source guards below still
+    // hold; the old-body diagnostics assertions are retired. [[retired-by-AF]]
     // source-level: all three fetch sites use _fetchJsonSafe
     var src = fs.readFileSync(path.join(__dirname,'UI_MOdified/client/shell/free-fight-demo.js'),'utf8');
     var safeCount = (src.match(/_fetchJsonSafe\(/g) || []).length;

@@ -285,32 +285,11 @@ function restoreEnv(key, saved) { if (saved !== undefined) process.env[key] = sa
     var p7 = elById['rmooz-free-fight-panel'];
     ok('§7 panel created', !!p7);
     var h7 = p7 ? getAllHtml(p7) : '';
-    ok('§7 "Local only" text present', /Local only/i.test(h7));
-    ok('§7 "ollama" provider shown', /ollama/i.test(h7));
-    ok('§7 model shown (qwen3)', /qwen3/.test(h7));
-    ok('§7 "LLM mode" label present', /LLM mode/i.test(h7));
-    ok('§7 "Provider:" label present', /Provider:/i.test(h7));
-    ok('§7 "Model:" label present', /Model:/i.test(h7));
-    ok('§7 checkbox still has toggle-llm', /data-act="toggle-llm"/.test(h7));
-    ok('§7 "Test Local LLM" button text', /Test Local LLM/i.test(h7));
-
-    // Also test with fallback (local_only from deterministic fallback response)
-    var fallbackDec7 = {
-        ok: true, decision_source: 'deterministic_demo_ai', fallback_reason: 'local_llm_unavailable: connection refused',
-        local_only: true, provider_policy: 'local_only', provider_used: null, model_used: null,
-        action: { action_type: 'MOVE_TOWARD_OBJECTIVE', side: 'RED', unit_uid: 'IR-F14-LOCAL-001',
-                  reason: 'Fallback.', risk: 'low', confidence: 'low', source: 'deterministic_demo_ai' },
-        validation: { ok: true },
-        apply_result: { ok: true, new_pos: { lat: 27.18, lon: 56.30 } },
-        event_log_entry: 'AI Decision: RED [det]', scenario_patch: null,
-    };
-    DEMO._setAiDecisionForTest(fallbackDec7, false);
-    DEMO.mount(PAYLOAD);
-    p7 = elById['rmooz-free-fight-panel'];
-    h7 = p7 ? getAllHtml(p7) : '';
-    ok('§7 fallback: Local only still shown', /Local only/i.test(h7));
-    ok('§7 fallback: Fallback reason shown', /Fallback reason/.test(h7));
-    ok('§7 fallback: local_llm_unavailable in reason', /local_llm_unavailable/.test(h7));
+    // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: the "Local only" / Provider / Model / Use-LLM / Test-Local-LLM
+    // BODY UI lived in the deleted Free Fight window. The local-only PROVIDER POLICY is enforced server-side
+    // and covered by the engine sections (§1-6, §8-14); these old-body label assertions are retired (the
+    // operator card is the Scenario Control Center). [[retired-by-AF]]
+    ok('§7 panel hosts the new operator card (no old local-LLM body UI)', /data-scc="window"/.test(h7) || !/data-act="toggle-llm"/.test(h7));
 
     // ── §8  Existing deterministic demo still works (no regression) ──────────
     console.log('\n§8  Existing deterministic demo still works (no regression)');

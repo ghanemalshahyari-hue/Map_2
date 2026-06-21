@@ -228,26 +228,11 @@ function mockFail(errMsg) {
     var p7 = elById['rmooz-free-fight-panel'];
     ok('§7 panel created', !!p7);
     var h7 = p7 ? getAllHtml(p7) : '';
-    ok('§7 Decision source: llm shown', /Decision source.*llm/.test(h7));
-    ok('§7 green colour for llm source', /#90d090/.test(h7));
-    ok('§7 no Fallback reason line when null', !/Fallback reason/.test(h7));
-    ok('§7 Use LLM checkbox present', /data-act="toggle-llm"/.test(h7));
-    ok('§7 Test LLM button present', /data-act="test-llm"/.test(h7));
-
-    var fbDec7 = {
-        ok: true, decision_source: 'deterministic_demo_ai', fallback_reason: 'llm_disabled',
-        action: { action_type: 'MOVE_TOWARD_OBJECTIVE', side: 'RED', unit_uid: 'IR-F14-LLM-001',
-                  reason: 'Fallback.', risk: 'low', confidence: 'low', source: 'deterministic_demo_ai' },
-        validation: { ok: true }, apply_result: { ok: true, new_pos: { lat: 27.18, lon: 56.30 } },
-        event_log_entry: 'AI Decision: RED [det]', scenario_patch: null,
-    };
-    DEMO._setAiDecisionForTest(fbDec7, false);
-    DEMO.mount(PAYLOAD);
-    p7 = elById['rmooz-free-fight-panel'];
-    h7 = p7 ? getAllHtml(p7) : '';
-    ok('§7 Decision source: deterministic_demo_ai shown', /Decision source.*deterministic_demo_ai/.test(h7));
-    ok('§7 Fallback reason shown', /Fallback reason/.test(h7));
-    ok('§7 fallback value llm_disabled shown', /llm_disabled/.test(h7));
+    // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: the decision_source / fallback_reason / Use-LLM checkbox /
+    // Test-LLM button BODY UI lived in the deleted Free Fight window. The decision-bridge ENGINE (LLM vs
+    // deterministic fallback, validation, normalizeAction — §1-6, §8, §10-14) still holds; the old-body
+    // assertions are retired (the operator card is the Scenario Control Center). [[retired-by-AF]]
+    ok('§7 panel hosts the new operator card (no old AI-decision body)', /data-scc="window"/.test(h7) || !/data-act="toggle-llm"/.test(h7));
 
     // §8  Apply/Reset still work after LLM decision
     console.log('\n§8  Apply/Reset still work after LLM decision');
@@ -292,7 +277,8 @@ function mockFail(errMsg) {
     DEMO.mount(PAYLOAD);
     var p9 = elById['rmooz-free-fight-panel'];
     var h9 = p9 ? getAllHtml(p9) : '';
-    ok('§9 checkbox checked when _useLlm=true', /data-act="toggle-llm"[^>]* checked/.test(h9) || /checked[^>]*data-act="toggle-llm"/.test(h9));
+    // RMOOZ-...-AF: the Use-LLM checkbox UI was deleted with the old window; the _useLlm ENGINE state
+    // (getUseLlm / _setUseLlmForTest) still holds (asserted above/below). [[retired-by-AF]]
     DEMO._setUseLlmForTest(false);
     ok('§9 getUseLlm() reset to false', DEMO.getUseLlm() === false);
 

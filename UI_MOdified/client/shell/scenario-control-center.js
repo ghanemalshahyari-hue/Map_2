@@ -164,9 +164,9 @@
     function targetTable(eng, coa) {
         var rows = eng.actionTargets(coa);
         if (!rows.length) return note('No actions in this COA.', C.dim);
-        var h = '<div style="overflow-x:auto;margin-top:5px;"><table data-scc="target-table" style="border-collapse:collapse;font-size:9.5px;width:100%;min-width:520px;">' +
+        var h = '<div style="overflow-x:auto;margin-top:5px;"><table data-scc="target-table" style="border-collapse:collapse;font-size:9.5px;width:100%;min-width:600px;">' +
             '<thead><tr style="color:' + C.dim + ';text-align:left;">' +
-            ['unit', 'role', 'action', 'target', 'lat', 'lon', 'km→obj', 'ROE', 'taskable'].map(function (h) { return '<th style="border-bottom:1px solid ' + C.edgeSoft + ';padding:2px 6px;font-weight:600;white-space:nowrap;">' + h + '</th>'; }).join('') +
+            ['unit', 'role', 'action', 'target', 'lat', 'lon', 'km→obj', 'taskable', 'ROE', 'reason'].map(function (h) { return '<th style="border-bottom:1px solid ' + C.edgeSoft + ';padding:2px 6px;font-weight:600;white-space:nowrap;">' + h + '</th>'; }).join('') +
             '</tr></thead><tbody>';
         rows.forEach(function (r) {
             var tcol = r.taskable ? C.ink : C.bad;
@@ -178,8 +178,9 @@
                 '<td style="padding:2px 6px;color:' + C.dim + ';">' + (r.target_lat == null ? '—' : r.target_lat) + '</td>' +
                 '<td style="padding:2px 6px;color:' + C.dim + ';">' + (r.target_lon == null ? '—' : r.target_lon) + '</td>' +
                 '<td style="padding:2px 6px;color:' + C.dim + ';">' + (r.km_from_objective == null ? '—' : r.km_from_objective) + '</td>' +
+                '<td style="padding:2px 6px;color:' + tcol + ';font-weight:700;">' + (r.taskable ? 'yes' : 'no') + '</td>' +
                 '<td style="padding:2px 6px;color:' + (r.roe_status === 'review-required' ? C.bad : C.dim) + ';white-space:nowrap;">' + esc(r.roe_status) + '</td>' +
-                '<td style="padding:2px 6px;color:' + tcol + ';font-weight:700;">' + (r.taskable ? 'yes' : 'no') + '</td></tr>';
+                '<td style="padding:2px 6px;color:' + C.dim + ';">' + esc(r.reason || '—') + '</td></tr>';
         });
         return h + '</tbody></table></div>';
     }
@@ -198,7 +199,8 @@
         h += '<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;">' +
             '<span style="font-weight:700;font-size:11.5px;color:' + C.ink + ';">' + (sel ? '▶ ' : '') + esc(id) + ' — ' + esc(coa.title || '') + '</span>' +
             '<span style="display:flex;gap:4px;">' + (i === recIdx ? '<span style="background:#1a5030;color:' + C.good + ';border-radius:3px;padding:1px 6px;font-size:9px;font-weight:700;">★ Recommended</span>' : '') + (sel ? '<span style="background:' + C.chip + ';color:#cfe6ff;border-radius:3px;padding:1px 6px;font-size:9px;font-weight:700;">Selected</span>' : '') + '</span></div>';
-        h += '<div style="margin-top:3px;font-size:9.5px;color:' + C.dim + ';">source <b style="color:' + C.ink + ';">' + esc(plan.plan_source || '—') + '</b> · llm_called <b style="color:' + C.ink + ';">' + (llmCalled ? 'true' : 'false') + '</b> · <b style="color:' + vcol + ';">' + esc(verdict) + (q ? ' (' + q.score + ')' : '') + '</b></div>';
+        h += '<div style="margin-top:3px;font-size:9.5px;color:' + C.dim + ';">source <b style="color:' + C.ink + ';">' + esc(plan.plan_source || '—') + '</b> · llm_called <b style="color:' + C.ink + ';">' + (llmCalled ? 'true' : 'false') + '</b> · llm_status <b style="color:' + C.ink + ';">' + esc(plan.llm_status || '—') + '</b> · <b style="color:' + vcol + ';">' + esc(verdict) + (q ? ' (' + q.score + ')' : '') + '</b></div>';
+        h += '<div style="font-size:9.5px;color:' + C.dim + ';">risk <b style="color:' + C.ink + ';">' + esc(coa.risk || '—') + '</b> · confidence <b style="color:' + C.ink + ';">' + esc(coa.confidence || '—') + '</b></div>';
         // hard fail message
         if (!executable) {
             var reason = blockedUnit ? ('tasks Step-1 review-only unit ' + blockedUnit) : hardBlock;
@@ -330,8 +332,19 @@
         var nc = eng.networkCalls();
         inner += '<div style="margin-top:6px;font-size:9px;color:' + C.dim + ';font-weight:700;">Network calls (last ' + nc.length + ')</div>' +
             '<div style="font-size:9px;color:#bcd;font-family:monospace;line-height:1.5;max-height:90px;overflow:auto;">' + (nc.length ? nc.slice().reverse().slice(0, 10).map(function (n) { return esc((n.method || 'GET') + ' ' + n.url); }).join('<br>') : '(none)') + '</div>';
-        // raw JSON
-        inner += jsonBlock('Last generated COA plan', eng.rawJson('generated'));
+        // RMOOZ-SCC-PREPARE-COA-LIVE-AH: target-equality proof — selected == committed == executed (km from objective).
+        var selSum = (function () { try { return eng.targetSummary(eng.rawJson('selected')); } catch (_) { return ''; } })();
+        var comSum = (function () { try { return eng.targetSummary(eng.rawJson('committed')); } catch (_) { return ''; } })();
+        var exeSum = (function () { try { return eng.executedTargetSummary(); } catch (_) { return ''; } })();
+        var eqSelCom = !!comSum && selSum === comSum;
+        inner += '<div data-scc="target-equality" style="margin-top:6px;padding:6px 8px;border:1px solid ' + C.edgeSoft + ';border-radius:5px;background:#06101c;font-size:9px;color:#bcd;">' +
+            '<div style="color:' + C.dim + ';font-weight:700;">Target-equality proof (km from objective)</div>' +
+            '<div data-scc="sel-summary">selected&nbsp;&nbsp;: ' + esc(selSum || '(none)') + '</div>' +
+            '<div data-scc="com-summary">committed&nbsp;: ' + esc(comSum || '(not committed)') + (comSum ? (eqSelCom ? ' <span style="color:' + C.good + ';">✓ == selected</span>' : ' <span style="color:' + C.warn + ';">⚠ enforcement replaced the selected COA</span>') : '') + '</div>' +
+            '<div data-scc="exe-summary">executed&nbsp;&nbsp;: ' + esc(exeSum || '(not run)') + '</div></div>';
+        // readiness report + raw JSON
+        inner += jsonBlock('Readiness report', eng.readiness());
+        inner += jsonBlock('Last generated COA plan (raw planner response)', eng.rawJson('generated'));
         inner += jsonBlock('Selected COA', eng.rawJson('selected'));
         inner += jsonBlock('Committed COA', eng.rawJson('committed'));
         return panel('6', 'Debug / Evidence', inner, C.edgeSoft);
@@ -384,7 +397,8 @@
         for (var i = 0; i < 8; i++) { (function (idx) { bindFn('scc-select-' + idx, function () { eng.selectCoa(idx); }); })(i); }
     }
 
-    var API = { render: render, bind: bind, state: function () { var e = engine(); return e ? sccState(e) : 'no_scenario'; } };
+    var API = { render: render, bind: bind, state: function () { var e = engine(); return e ? sccState(e) : 'no_scenario'; },
+        _setEvidenceOpenForTest: function (v) { evidenceOpen = !!v; } };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozScenarioControlCenter = API;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

@@ -4807,6 +4807,16 @@
         decisionLog: function () { return _decisionLog.slice(-20); },
         networkCalls: function () { return _netLog.slice(-20); },
         executedTrace: function () { return _coaMovedUnits.map(function (m) { return { uid: m.uid, from: m.oldPos, to: m.finalPos, role: m.role, action: m.action_type }; }); },
+        // RMOOZ-SCC-PREPARE-COA-LIVE-AH: km-from-objective summary of the ACTUALLY-executed final positions —
+        // compared against selected/committed target summaries in the Evidence target-equality proof.
+        executedTargetSummary: function () {
+            var obj = getObjective();
+            return _coaMovedUnits.map(function (m) {
+                var p = m.finalPos || m.oldPos; if (!p || !Number.isFinite(+p.lat)) return _normRole(m.role) + ':?';
+                var km = obj ? _kmBetween({ lat: +p.lat, lon: +p.lon }, { lat: obj.lat, lon: obj.lon }) : 0;
+                return _normRole(m.role) + ':' + (Math.round(km * 10) / 10) + 'km';
+            }).join(' · ');
+        },
         rawJson: function (which) {
             if (which === 'committed') return _coaExec && _coaExec.selected_coa;
             if (which === 'selected') { var c = arr(_coaPlan && _coaPlan.coas); return c[_coaSelectedIdx] || null; }

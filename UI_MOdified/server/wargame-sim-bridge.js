@@ -1694,14 +1694,28 @@ function handle(req, res, ctx) {
                 });
                 if (includeTerrain) LOCATION.attachTerrainToCandidates(enriched.placement_candidates);
 
-                sendJson(res, 200, {
-                    ok: true,
-                    placement_candidates: enriched.placement_candidates || [],
-                    missing_information: enriched.missing_information || [],
-                    conflicts: enriched.conflicts || [],
-                    source_summary: enriched.source_summary || [],
-                    count: (enriched.placement_candidates || []).length,
-                });
+                var respond = function (cands, llmReport) {
+                    sendJson(res, 200, {
+                        ok: true,
+                        placement_candidates: cands || [],
+                        missing_information: enriched.missing_information || [],
+                        conflicts: enriched.conflicts || [],
+                        source_summary: enriched.source_summary || [],
+                        count: (cands || []).length,
+                        llm_resolution: llmReport || null,
+                    });
+                };
+                // RMOOZ-RESOLVER-LLM-FALLBACK-A: opt-in async LLM rung (rung 4) for unresolved
+                // named places. OFF by default (no behavior change); on via body.resolveLlm.
+                // Provider-agnostic, LOCAL FIRST, gated cloud only if explicitly enabled.
+                if (body.resolveLlm) {
+                    var llmLimit = Number.isFinite(body.llmLimit) ? body.llmLimit : 10;
+                    LOCATION.resolveUnresolvedWithLlm(enriched.placement_candidates, { limit: llmLimit, country: body.country })
+                        .then(function (r) { respond(r.candidates, r.report); })
+                        .catch(function (e) { respond(enriched.placement_candidates, { error: String((e && e.message) || e) }); });
+                } else {
+                    respond(enriched.placement_candidates, null);
+                }
             } catch (e) { sendJson(res, 400, { ok: false, error: 'placement failed: ' + (e && e.message) }); }
         });
         return true;

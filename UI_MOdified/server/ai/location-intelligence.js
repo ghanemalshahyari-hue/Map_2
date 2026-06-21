@@ -9,19 +9,38 @@
  * THIS IS NOT FINAL UNIT PLACEMENT. It is candidate generation for commander
  * review — every candidate is needs_review:true (LI-1/LI-4, design §A).
  *
- * Deterministic + offline ONLY (G-3B scope): no network, no geocoder, no LLM
- * calls, no Date, no RNG. An LLM rung exists ONLY as a passed-in placeholder
- * candidate (lowest priority). Pure: inputs are never mutated.
+ * resolveMention() is SYNC + offline + pure (inputs never mutated). The LLM rung
+ * is a SEPARATE async, opt-in pass (resolveUnresolvedWithLlm) — see §9.
  *
- * Resolution priority (LI-2 ladder, the G-3B subset):
+ * Resolution ladder (RMOOZ-RESOLVER-LLM-FALLBACK-A):
  *   A. explicit coordinate in the mention text/input  (highest)
- *   B. internal gazetteer / location_db
+ *   B. internal gazetteer / location_db (exact)
+ *   B2. fuzzy gazetteer near-match (rung 2)
+ *   MGRS. convert MGRS → lat/lon when present (rung 3)
  *   C. incident_log reference (مجرى الحوادث)
- *   D. llm_candidate placeholder (only if passed in)   (lowest)
+ *   D. UNRESOLVED → eligible for the async LLM fallback (rung 4, opt-in):
+ *      provider-agnostic via llm-runtime-config — LOCAL FIRST, gated cloud only
+ *      if explicitly enabled; result is ALWAYS a needs_review candidate, never
+ *      exact, tagged source local_llm | gated_cloud_llm with provenance.
  * ========================================================================== */
 'use strict';
 
 var PM = require('./planning-model.js');   // reuse SOURCE_TYPES + makeSource (one taxonomy)
+// RMOOZ-RESOLVER-LLM-FALLBACK-A: the lowest rung (rung 4) is an ASYNC, OPT-IN LLM
+// pass (resolveUnresolvedWithLlm) — provider-agnostic, local-first, gated cloud.
+// resolveMention itself stays SYNC + offline (rungs 1-3: explicit/gazetteer/fuzzy/MGRS/incident).
+var GEOCODE = require('./llm-geocode.js');
+// Lazy MGRS → {lat,lon} via the `mgrs` lib if installed; null when unavailable/invalid.
+var _mgrsLib = null, _mgrsTried = false;
+function mgrsToLatLon(s) {
+    if (!_mgrsTried) { _mgrsTried = true; try { _mgrsLib = require('mgrs'); } catch (_) { _mgrsLib = null; } }
+    if (!_mgrsLib || typeof _mgrsLib.toPoint !== 'function') return null;
+    try {
+        var pt = _mgrsLib.toPoint(String(s).replace(/\s+/g, '').toUpperCase()); // [lon, lat]
+        if (Array.isArray(pt) && isFinite(pt[0]) && isFinite(pt[1])) return { lat: pt[1], lon: pt[0] };
+    } catch (_) { /* invalid MGRS */ }
+    return null;
+}
 
 /* ── Arabic-aware normalization (LI-10) ─────────────────────────────────── */
 function normalize(s) {
@@ -339,6 +358,40 @@ function attachTerrainToCandidates(list) {
  *           includeTerrain? (T-4A: attach advisory candidate.terrain; default OFF) }
  * Priority: explicit coord > gazetteer > incident_log > llm placeholder.
  */
+/* ── Rung 2: fuzzy gazetteer near-match (Arabic-aware, token-overlap + edit-distance).
+ * Returns { entry, score, matched } only for a CONFIDENT near-match (>=0.72), else
+ * null — never a wild guess. The resulting candidate is still needs_review at low conf. */
+function _lev(a, b) {
+    a = a || ''; b = b || ''; var m = a.length, n = b.length;
+    if (!m) return n; if (!n) return m;
+    var prev = []; for (var j = 0; j <= n; j++) prev[j] = j;
+    for (var i = 1; i <= m; i++) {
+        var cur = [i];
+        for (var k = 1; k <= n; k++) {
+            var cost = a.charCodeAt(i - 1) === b.charCodeAt(k - 1) ? 0 : 1;
+            cur[k] = Math.min(prev[k] + 1, cur[k - 1] + 1, prev[k - 1] + cost);
+        }
+        prev = cur;
+    }
+    return prev[n];
+}
+function fuzzyGazetteer(phrase) {
+    var phraseNorm = normalize(phrase);
+    if (phraseNorm.length < 3) return null;
+    var pTok = phraseNorm.split(' ').filter(Boolean);
+    var best = null;
+    ALIAS_INDEX.forEach(function (row) {
+        var a = row.norm; if (!a || a.length < 3) return;
+        var aTok = a.split(' ').filter(Boolean);
+        var overlap = pTok.filter(function (t) { return aTok.indexOf(t) !== -1; }).length;
+        var tokScore = overlap / Math.max(pTok.length, aTok.length, 1);
+        var edScore = 1 - _lev(phraseNorm, a) / Math.max(phraseNorm.length, a.length, 1);
+        var score = Math.max(tokScore, edScore);
+        if (!best || score > best.score) best = { entry: row.entry, score: score, matched: a };
+    });
+    return (best && best.score >= 0.72) ? best : null;
+}
+
 function resolveMention(mention, opts) {
     var o = opts || {};
     var inObj = (mention && typeof mention === 'object') ? mention : { text: String(mention == null ? '' : mention) };
@@ -413,13 +466,26 @@ function resolveMention(mention, opts) {
         return candidates;
     }
     if (coord && coord.format === 'mgrs_candidate') {
-        build({
+        /* Rung 3: convert MGRS → lat/lon when the `mgrs` lib is available. The result
+         * is a reviewable candidate (needs_review, NOT exact) — operator confirms. */
+        var mg = mgrsToLatLon(coord.raw);
+        if (mg) {
+            build({
+                normalized_name: text ? normalize(text) : null, location_id: null,
+                lat: mg.lat, lon: mg.lon, coordinate_format: 'mgrs',
+                placement_type: 'mgrs_converted', exact_unit_position: false, confidence: 'medium',
+                warnings: ['mgrs_converted', 'requires_review'],
+                source: PM.makeSource({ type: inputType, key: 'mgrs_converted', origin: 'mgrs', confidence: 'medium' }),
+            }, evidence.concat([{ method: 'mgrs_convert', hit: true, raw: coord.raw }]));
+            return candidates;
+        }
+        build({                                   // lib unavailable / invalid grid → keep un-converted
             normalized_name: text ? normalize(text) : null, location_id: null,
             lat: null, lon: null, coordinate_format: 'mgrs_candidate',
             placement_type: 'suspected', exact_unit_position: false, confidence: 'low',
             warnings: coord.warnings,
             source: PM.makeSource({ type: inputType, key: 'mgrs_candidate', origin: 'mention', confidence: 'low' }),
-        }, evidence);
+        }, evidence.concat([{ method: 'mgrs_convert', hit: false, raw: coord.raw }]));
         return candidates;
     }
 
@@ -447,6 +513,20 @@ function resolveMention(mention, opts) {
                 source: PM.makeSource({ type: 'location_db', key: e.location_id, origin: 'gazetteer', confidence: 'low' }),
             }, evidence);
         });
+        return candidates;
+    }
+
+    /* B2. fuzzy gazetteer near-match (rung 2) — only when there was no exact hit */
+    var fz = (gaz.length === 0 && text) ? fuzzyGazetteer(text) : null;
+    if (fz) {
+        var fe = fz.entry;
+        build({
+            normalized_name: normalize(fe.canonical), location_id: fe.location_id,
+            lat: fe.lat, lon: fe.lon, coordinate_format: 'named',
+            placement_type: 'fuzzy_match', exact_unit_position: false, confidence: 'low',
+            warnings: ['fuzzy_gazetteer_match', 'requires_review'],
+            source: PM.makeSource({ type: 'location_db', key: fe.location_id, origin: 'gazetteer_fuzzy', confidence: 'low' }),
+        }, evidence.concat([{ method: 'gazetteer_fuzzy', hit: true, score: Math.round(fz.score * 100) / 100, location_id: fe.location_id }]));
         return candidates;
     }
 
@@ -563,8 +643,67 @@ function enrichPlanningModelLocations(planningModel, options) {
     return model;
 }
 
+/* ── 9. Rung 4: LLM fallback pass (ASYNC, OPT-IN) ───────────────────────────
+ * RMOOZ-RESOLVER-LLM-FALLBACK-A. For candidates still WITHOUT a coordinate, ask
+ * the configured LLM provider (local-first; gated cloud only if explicitly
+ * enabled) for an APPROXIMATE coordinate. Bounded by opts.limit. Operates on a
+ * CLONE (pure). GUARDRAILS (hard): every LLM coordinate →
+ *   coord_status:'candidate' · source:'local_llm'|'gated_cloud_llm' ·
+ *   needs_review:true · exact_unit_position:false · confidence + provenance.
+ * No silent guessing (the model may answer "no coordinate" → stays unresolved);
+ * never exact; no cloud egress unless the gated cloud mode is enabled upstream. */
+function _needsLlm(c) {
+    if (!c) return false;
+    var hasCoord = typeof c.lat === 'number' && typeof c.lon === 'number';
+    return !hasCoord && !!(c.mention || c.normalized_name);
+}
+async function resolveUnresolvedWithLlm(candidates, opts) {
+    opts = opts || {};
+    var list = Array.isArray(candidates) ? candidates.map(clone) : [];
+    var limit = Number.isFinite(opts.limit) ? opts.limit : 10;
+    var report = { attempted: 0, resolved: 0, unresolved: 0, provider: null, model: null, source: null, blocked: false, reason: null, items: [] };
+    var targets = list.filter(_needsLlm).slice(0, Math.max(0, limit));
+    for (var i = 0; i < targets.length; i++) {
+        var c = targets[i];
+        report.attempted++;
+        var name = c.mention || c.normalized_name || '';
+        var ctx = { country: opts.country || c.country, kind: c.kind || c.placement_type, side: c.side, model: opts.model };
+        var g;
+        try { g = await GEOCODE.geocodeNamedPlace(name, ctx); }
+        catch (e) { g = { ok: false, reason: 'exception: ' + (e && e.message) }; }
+        report.provider = g.provider || report.provider;
+        report.model = g.model || report.model;
+        if (g && g.ok) {
+            c.lat = g.lat; c.lon = g.lon;
+            c.coordinate_format = 'decimal_degrees';
+            c.coord_status = 'candidate';            // never 'exact'
+            c.placement_type = 'llm_candidate';
+            c.exact_unit_position = false;           // NEVER exact automatically
+            c.needs_review = true;                   // ALWAYS review
+            c.confidence = g.confidence || 'low';
+            c.source = PM.makeSource({ type: 'llm_candidate', key: g.source, origin: g.source, confidence: c.confidence });
+            c.llm_provenance = { provider: g.provider, model: g.model, reasoning: g.reasoning, raw: g.raw, generated_by: g.source };
+            if (!Array.isArray(c.warnings)) c.warnings = [];
+            ['llm_generated_coordinate', 'requires_review', 'not_source_verified'].forEach(function (w) { if (c.warnings.indexOf(w) === -1) c.warnings.push(w); });
+            report.source = g.source;
+            report.resolved++;
+            report.items.push({ name: name, lat: g.lat, lon: g.lon, source: g.source, confidence: c.confidence, model: g.model });
+        } else {
+            report.unresolved++;
+            if (g && (g.reason === 'provider_blocked_local_only' || /blocked|unavailable/.test(String(g.reason || '')))) { report.blocked = true; report.reason = g.reason; }
+            if (!Array.isArray(c.warnings)) c.warnings = [];
+            if (c.warnings.indexOf('llm_could_not_resolve') === -1) c.warnings.push('llm_could_not_resolve');
+            report.items.push({ name: name, resolved: false, reason: g && g.reason });
+        }
+    }
+    return { candidates: list, report: report };
+}
+
 module.exports = {
     GAZETTEER,
+    fuzzyGazetteer,
+    mgrsToLatLon,
+    resolveUnresolvedWithLlm,
     normalize,
     detectCoordinate,
     extractPlaceMentions,

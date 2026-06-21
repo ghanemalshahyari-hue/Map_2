@@ -51,8 +51,17 @@ var w3modConstStart = src.indexOf('// ── PR-241: Read-Only Map Overlay Data 
 var w3modConstEnd   = src.indexOf('// ── PR-241: Wargame 3 Read-Only Map Overlay type guard');
 var w3modConstSrc   = src.slice(w3modConstStart, w3modConstEnd);
 
+// PR-259 decision/result guard constants (_W3DRS_UNSAFE_FIELDS etc.) — required by
+// isWargame3DecisionOptionSafe, which the PR-215 adapter block's
+// applyWargame3DecisionOptionsFixtureOverlay calls during previewWargame3Fixture.
+var w3drsConstStart = src.indexOf('    var _W3DRS_UNSAFE_FIELDS');
+var w3drsConstEnd   = src.indexOf('    function isWargame3SelectedDecisionSafe', w3drsConstStart);
+if (w3drsConstStart === -1 || w3drsConstEnd === -1) { throw new Error('Cannot find PR-259 W3DRS const block'); }
+var w3drsConstSrc   = src.slice(w3drsConstStart, w3drsConstEnd);
+
 var builderSrc         = extractFn('buildScenarioStepPreview');
 var harnSrc            = extractFn('previewWargame3Fixture');
+var decisionOptGuardSrc = extractFn('isWargame3DecisionOptionSafe');
 var isGuardSrc         = extractFn('isWargame3ReadOnlyMapOverlayDataSafe');
 var buildOverlaySrc    = extractFn('buildWargame3ReadOnlyMapOverlayData');
 var auditCovSrc        = extractFn('auditWargame3MapPreviewCoverage');
@@ -85,6 +94,8 @@ var combined = [
     w3aSrc,
     harnSrc,
     w3modConstSrc,
+    w3drsConstSrc,
+    decisionOptGuardSrc,
     isGuardSrc,
     buildOverlaySrc,
     paintStubSrc,

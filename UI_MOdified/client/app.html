@@ -4742,6 +4742,19 @@
     <script src="shell/scenario-edit-mode.js?v=8"></script>
     <script src="shell/objectives-editor-step.js?v=1"></script>
     <style>
+        /* RMOOZ-LEGACY-OPERATOR-PATH-REMOVAL (Commander ruling 2026-06-21): hide the old
+           scenario-generation controls from the operator screen — single JSON scenario-package
+           path only. The DOM nodes remain (the wizard's shared route logic references them at
+           scenario-import-wizard.js:254/610/1024) but are not shown to the operator. Keeps
+           visible: JSON import -> Review AI Understanding -> Resolve Missing with AI ->
+           resolver candidates -> Scenario without AI / Scenario with AI - Free Fight. */
+        #wg-wz-setup,            /* old "Scenario Setup / تخطيط السيناريو" block */
+        #wg-wz-start,            /* old "Start Scenario Generation" button */
+        #wg-wz-mdmp-row,         /* "External MDMP files (steps 3/4/5, JSON)" + "Choose MDMP JSON" */
+        .wg-wz-docx-advanced,    /* Red/Blue DOCX staging (advanced) */
+        #wg-sim-import-card {    /* old WarGamingGEN / Import-Export RMOOZ card */
+            display: none !important;
+        }
         .sw-editmode-bar { display:flex; gap:8px; align-items:center; padding:6px 8px; flex-wrap:wrap; }
         .sw-edit-btn { font:inherit; cursor:pointer; border:1px solid #5a6270; background:#2a2f37;
             color:#e8eaed; border-radius:5px; padding:4px 10px; pointer-events: auto; }

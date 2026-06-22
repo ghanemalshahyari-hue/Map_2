@@ -73,7 +73,7 @@ var ALLOWED_ROLES = ['assault', 'support', 'screen', 'reserve', 'recon', 'hold',
                      'defend', 'intercept', 'reinforce'];
 var ALLOWED_RISK        = ['low', 'medium', 'high'];
 var ALLOWED_CONFIDENCE  = ['low', 'medium', 'high'];
-var REMOTE_PROVIDERS_BLOCKED = ['claude', 'zen', 'openai', 'auto'];
+var REMOTE_PROVIDERS_BLOCKED = ['claude', 'openai', 'auto'];   // RMOOZ-OPENCODE-ZEN-COA-A: zen moved to a gated allowance (zenReady) below
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function arr(v) { return Array.isArray(v) ? v : []; }
@@ -127,10 +127,11 @@ function resolveLocalProvider() {
 }
 function isRemoteProvider(name) {
     name = String(name || '').toLowerCase().trim();
-    // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A: openrouter is an EXPLICIT cloud mode — allowed ONLY
-    // when the owner enabled it (RMOOZ_ALLOW_CLOUD_AI=1 + OPENROUTER_API_KEY). Otherwise it is
-    // blocked like any remote provider. zen/claude/openai/auto stay blocked unconditionally.
+    // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A + RMOOZ-OPENCODE-ZEN-COA-A: openrouter AND opencode/zen are
+    // EXPLICIT cloud modes — allowed ONLY when the owner enabled cloud (RMOOZ_ALLOW_CLOUD_AI=1 + the
+    // provider's API key). Otherwise blocked. claude/openai/auto stay blocked unconditionally.
     if (name === 'openrouter') return !LLM_CFG.openrouterReady();
+    if (name === 'zen' || name === 'opencode') return !LLM_CFG.zenReady();
     return REMOTE_PROVIDERS_BLOCKED.indexOf(name) !== -1;
 }
 function resolveLocalModel() {

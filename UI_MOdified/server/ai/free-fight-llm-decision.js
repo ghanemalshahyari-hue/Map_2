@@ -35,7 +35,7 @@ const LLM_CFG    = require('./llm-runtime-config'); // RMOOZ-LLM-RUNTIME-CONFIG-
 const ENGINE     = require('./free-fight-action-engine');
 
 // ── Local-only provider enforcement ─────────────────────────────────────────
-const REMOTE_PROVIDERS_BLOCKED = ['claude', 'zen', 'openai', 'auto'];
+const REMOTE_PROVIDERS_BLOCKED = ['claude', 'openai', 'auto'];   // RMOOZ-OPENCODE-ZEN-COA-A: zen gated (zenReady) below
 
 function resolveLocalProvider() {
     // RMOOZ-LLM-RUNTIME-CONFIG-A: provider from the canonical resolver.
@@ -43,8 +43,9 @@ function resolveLocalProvider() {
 }
 function isRemoteProvider(name) {
     name = String(name || '').toLowerCase().trim();
-    // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A: openrouter allowed ONLY in explicit cloud mode.
+    // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A + RMOOZ-OPENCODE-ZEN-COA-A: openrouter + opencode/zen allowed ONLY in explicit cloud mode.
     if (name === 'openrouter') return !LLM_CFG.openrouterReady();
+    if (name === 'zen' || name === 'opencode') return !LLM_CFG.zenReady();
     return REMOTE_PROVIDERS_BLOCKED.includes(name);
 }
 function resolveLocalModel() {

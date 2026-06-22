@@ -3,12 +3,13 @@
  * test-free-fight-zen-blocked-a.js — SECURITY REGRESSION
  *   (RMOOZ-AI-FREE-FIGHT-SECURITY-CLEANUP-A)
  * ----------------------------------------------------------------------------
- * Locks the local-only policy after a foreign WIP change tried to (a) unblock
- * the `zen` cloud provider for Free Fight and (b) commit a real
- * OPENCODE_ZEN_API_KEY into the tracked .env.example. Both were reverted; this
- * test fails if either ever returns.
+ * Locks the local-only DEFAULT. RMOOZ-OPENCODE-ZEN-COA-A (owner-approved) makes
+ * opencode.ai/zen a GATED online provider: allowed ONLY when the owner enables
+ * cloud (RMOOZ_ALLOW_CLOUD_AI=1 + OPENCODE_ZEN_API_KEY), mirroring openrouter.
+ * This test locks: zen blocked by default (cloud OFF); zen allowed ONLY under the
+ * gate; claude/openai/auto blocked unconditionally; .env.example carries no secret.
  *
- *   PART 1 — Free Fight BLOCKS remote/cloud providers (zen / claude / openai / auto):
+ *   PART 1 — Free Fight is LOCAL-ONLY by default; cloud providers are GATED:
  *     - isRemoteProvider() classifies them as remote (ollama is local)
  *     - routeHealth() with provider=zen → provider_blocked, ai_execution disabled,
  *       and it NEVER reports zen as the active provider (reports ollama)
@@ -30,6 +31,10 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 
+// RMOOZ-OPENCODE-ZEN-COA-A: a NON-SECRET fixture key (set BEFORE the requires so ai-config picks it up)
+// makes the gated-allowance assertion deterministic; the gate ALSO requires RMOOZ_ALLOW_CLOUD_AI=1.
+if (!process.env.OPENCODE_ZEN_API_KEY) process.env.OPENCODE_ZEN_API_KEY = 'zen-test-fixture-not-a-real-key';
+
 const SRV = path.join(__dirname, '..', 'server', 'ai');
 const COA = require(path.join(SRV, 'free-fight-coa-planner.js'));
 const AIP = require(path.join(SRV, 'ai-provider.js'));
@@ -39,11 +44,18 @@ function test(name, fn) { try { fn(); console.log('  ✓ ' + name); pass++; } ca
 async function atest(name, fn) { try { await fn(); console.log('  ✓ ' + name); pass++; } catch (e) { console.log('  ✗ ' + name + ' — ' + (e && e.message)); fail++; } }
 
 // ── env hygiene: save/restore the keys we toggle ──────────────────────────────
-const SAVED = { p: process.env.RMOOZ_FREE_FIGHT_PROVIDER, g: process.env.RMOOZ_ALLOW_SIM_RUN };
-function setZen() { process.env.RMOOZ_FREE_FIGHT_PROVIDER = 'zen'; process.env.RMOOZ_ALLOW_SIM_RUN = '1'; }
+const SAVED = { l: process.env.RMOOZ_LLM_PROVIDER, p: process.env.RMOOZ_FREE_FIGHT_PROVIDER, g: process.env.RMOOZ_ALLOW_SIM_RUN, c: process.env.RMOOZ_ALLOW_CLOUD_AI };
+// RMOOZ_LLM_PROVIDER is the CANONICAL provider (highest precedence) — set it (not just the legacy
+// RMOOZ_FREE_FIGHT_PROVIDER) so the test controls the provider regardless of the ambient shell env.
+// setZen = provider=zen + exec gate on, but CLOUD OFF → zen MUST be blocked (local-only default).
+function setZen() { process.env.RMOOZ_LLM_PROVIDER = 'zen'; process.env.RMOOZ_FREE_FIGHT_PROVIDER = 'zen'; process.env.RMOOZ_ALLOW_SIM_RUN = '1'; delete process.env.RMOOZ_ALLOW_CLOUD_AI; }
+// RMOOZ-OPENCODE-ZEN-COA-A: cloud ON + key present → zen is a GATED allowance (zenReady) → NOT blocked.
+function setZenGated() { process.env.RMOOZ_LLM_PROVIDER = 'zen'; process.env.RMOOZ_FREE_FIGHT_PROVIDER = 'zen'; process.env.RMOOZ_ALLOW_SIM_RUN = '1'; process.env.RMOOZ_ALLOW_CLOUD_AI = '1'; }
 function restoreEnv() {
+    if (SAVED.l === undefined) delete process.env.RMOOZ_LLM_PROVIDER; else process.env.RMOOZ_LLM_PROVIDER = SAVED.l;
     if (SAVED.p === undefined) delete process.env.RMOOZ_FREE_FIGHT_PROVIDER; else process.env.RMOOZ_FREE_FIGHT_PROVIDER = SAVED.p;
     if (SAVED.g === undefined) delete process.env.RMOOZ_ALLOW_SIM_RUN; else process.env.RMOOZ_ALLOW_SIM_RUN = SAVED.g;
+    if (SAVED.c === undefined) delete process.env.RMOOZ_ALLOW_CLOUD_AI; else process.env.RMOOZ_ALLOW_CLOUD_AI = SAVED.c;
 }
 
 (async function () {
@@ -52,14 +64,25 @@ console.log('\n═══ RMOOZ-AI-FREE-FIGHT-SECURITY-CLEANUP-A (zen blocked + .
 // ─────────────────────────────────────────────────────────────────────────────
 console.log('PART 1 — Free Fight blocks remote/cloud providers');
 
-test('isRemoteProvider: zen/claude/openai/auto blocked; ollama allowed', function () {
-    assert.strictEqual(COA.isRemoteProvider('zen'), true, 'zen MUST be blocked');
-    assert.strictEqual(COA.isRemoteProvider('Zen'), true, 'case-insensitive');
-    assert.strictEqual(COA.isRemoteProvider('  ZEN '), true, 'trimmed + case-insensitive');
+test('isRemoteProvider: claude/openai/auto always blocked; ollama allowed; zen blocked when cloud OFF', function () {
+    delete process.env.RMOOZ_ALLOW_CLOUD_AI;   // local-only default
     assert.strictEqual(COA.isRemoteProvider('claude'), true);
     assert.strictEqual(COA.isRemoteProvider('openai'), true);
     assert.strictEqual(COA.isRemoteProvider('auto'), true);
     assert.strictEqual(COA.isRemoteProvider('ollama'), false, 'local ollama is allowed');
+    assert.strictEqual(COA.isRemoteProvider('zen'), true, 'zen blocked when cloud is OFF (local-only default)');
+    assert.strictEqual(COA.isRemoteProvider('Zen'), true, 'case-insensitive');
+    assert.strictEqual(COA.isRemoteProvider('  ZEN '), true, 'trimmed + case-insensitive');
+    restoreEnv();
+});
+
+test('RMOOZ-OPENCODE-ZEN-COA-A: zen/opencode ALLOWED only when gated (cloud ON + key); claude/openai still blocked', function () {
+    setZenGated();
+    assert.strictEqual(COA.isRemoteProvider('zen'), false, 'zen allowed under the explicit cloud gate (zenReady)');
+    assert.strictEqual(COA.isRemoteProvider('opencode'), false, 'opencode alias allowed under the gate');
+    assert.strictEqual(COA.isRemoteProvider('claude'), true, 'claude stays blocked even with cloud on');
+    assert.strictEqual(COA.isRemoteProvider('openai'), true, 'openai stays blocked even with cloud on');
+    restoreEnv();
 });
 
 test('routeHealth() with provider=zen → blocked + never leaks zen as active provider', function () {
@@ -69,7 +92,9 @@ test('routeHealth() with provider=zen → blocked + never leaks zen as active pr
     assert.strictEqual(h.provider_blocked, true, 'provider_blocked must be true');
     assert.strictEqual(h.ai_execution_enabled, false, 'ai_execution must be disabled for a blocked provider');
     assert.strictEqual(h.provider, 'ollama', 'must NOT report zen as the active provider (reports ollama)');
-    assert.ok(Array.isArray(h.remote_providers_blocked) && h.remote_providers_blocked.indexOf('zen') !== -1, 'zen listed in remote_providers_blocked');
+    // RMOOZ-OPENCODE-ZEN-COA-A: zen is now a GATED allowance (not in the unconditional list) — its
+    // block when cloud is OFF is asserted via provider_blocked above; claude stays unconditionally blocked.
+    assert.ok(Array.isArray(h.remote_providers_blocked) && h.remote_providers_blocked.indexOf('claude') !== -1, 'claude still in the unconditional remote_providers_blocked list');
     assert.ok(/blocked/i.test(String(h.reason_if_blocked || '')), 'reason_if_blocked names the block');
 });
 

@@ -115,6 +115,12 @@ function _openrouterKeyPresent() {
     return !!(AI_CONFIG && AI_CONFIG.openrouter && _s(AI_CONFIG.openrouter.apiKey) !== '');
 }
 function openrouterReady() { return cloudAllowed() && _openrouterKeyPresent(); }
+// RMOOZ-OPENCODE-ZEN-COA-A: opencode.ai/zen as a GATED online provider — mirrors openrouter and the
+// resolver's zenReady (llm-geocode.js). Requires cloud mode (RMOOZ_ALLOW_CLOUD_AI=1) + the opencode key.
+function _zenKeyPresent() {
+    return !!(AI_CONFIG && AI_CONFIG.zen && _s(AI_CONFIG.zen.apiKey) !== '');
+}
+function zenReady() { return cloudAllowed() && _zenKeyPresent(); }
 
 // ── Model ──────────────────────────────────────────────────────────────────
 // env/default model only (NO runtime UI file — that layer is model-selection).
@@ -228,6 +234,7 @@ module.exports = {
     getProvider,
     cloudAllowed,        // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A
     openrouterReady,     // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A
+    zenReady,            // RMOOZ-OPENCODE-ZEN-COA-A: gated opencode.ai/zen
     getModel,
     modelSource,
     envDefaultModel,

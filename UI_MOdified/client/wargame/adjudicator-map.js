@@ -81,6 +81,8 @@
     let advanceTip = null;       // arrow marker at current advance tip
     let redMarkers = {};         // { 'RED_xxx': L.marker }
     let blueMarkers = {};        // { 'BLUE_xxx': L.marker }
+    let placedUnitMarkers = [];  // flat list of ALL placed unit markers (RED+BLUE);
+                                 // uid-collision-proof source for the echelon roll-up
     let pipelineLatLngs = null;  // cached lat/lng array for split computation
     let pipelineSegmentKm = null;// cached cumulative km along pipeline per vertex
     let legendControl = null;    // Leaflet control (map legend panel)
@@ -814,13 +816,24 @@
     // all keep running underneath — only visibility changes. Aggregates are
     // separate markers (class wg-adj-aggregate, not hidden). No-op for
     // scenarios that don't yield >=2 division groups (e.g. non-W3 imports).
-    const ECHELON_EXPAND_ZOOM = 12;   // zoom >= this → show individual units
-    let echelonAggregates = [];       // L.markers for rolled-up formation symbols
-    // Formation roll-up DISABLED (operator request): units always render
-    // individually (zoom-scaled), no formation aggregates / auto-hide. The
-    // roll-up code is parked behind this flag pending a redesigned formation
-    // display. Flip to true (or call setEchelonRollup(true)) to revive it.
-    let echelonRollupEnabled = false; // master toggle (public API: setEchelonRollup)
+    const ECHELON_EXPAND_ZOOM = 12;   // zoom >= this → never cluster (full detail)
+    const MIN_CLUSTER_UNITS   = 30;   // below this many placed units, never cluster
+    const CLUSTER_BASE_DEG    = 100;  // grid cell ≈ BASE/2^zoom degrees (~70px cells)
+    let echelonAggregates = [];       // L.markers for rolled-up cluster symbols
+    // Map de-clutter REVIVED+REDESIGNED 2026-06-22 ("clean the crowded map"):
+    // SPATIAL clustering. The real imports place every unit at its own coordinate
+    // with no usable grouping attribute (unique base_id per unit, single shared
+    // bls, no country/domain), so the crowding is purely geographic — hundreds of
+    // symbols smeared across the region. We bin the placed markers into a
+    // geographic grid whose cell shrinks with zoom: at wide zoom a dense area
+    // collapses to ONE count-badged cluster symbol; zooming in shrinks the cells
+    // until each unit stands alone (or click a cluster to drill in). RED/BLUE bin
+    // separately so a cluster is unambiguously one side. Singletons are NOT
+    // clustered — they keep their real milsymbol. Built from the flat
+    // placedUnitMarkers list (uid-collision-proof) using each marker's CURRENT
+    // position so clusters track per-step movement. Small scenarios
+    // (< MIN_CLUSTER_UNITS) render individually, unchanged.
+    let echelonRollupEnabled = true;  // master toggle (public API: setEchelonRollup)
 
     // Parse SIDE-dDIV-... tolerant of Arabic FORM text (e.g. "R-d3-رادارت-072").
     // Returns null when the uid carries no division (that unit is never rolled).
@@ -829,26 +842,33 @@
         return m ? { side: m[1].toUpperCase(), div: m[2], key: m[1].toUpperCase() + '-d' + m[2] } : null;
     }
 
-    // Group placed markers by division. Built from the live marker dicts so the
-    // aggregate position tracks per-step movement. → [{ key, friendly, memberUids }].
-    function buildEchelonDivisionGroups() {
+    // Bin the placed unit markers into a geographic grid (cell = CLUSTER_BASE_DEG
+    // / 2^zoom degrees), separately per side, using each marker's CURRENT position.
+    // → [{ key, friendly, members: [L.marker, ...] }]. Pan-invariant (geographic,
+    // not screen-space) so only a zoom hook is needed. parseUnitDivision is kept
+    // for the public _getEchelonGroups label but no longer drives grouping.
+    function buildEchelonGroups() {
+        if (!hasMap() || !window.map.getZoom) return [];
+        const zoom = window.map.getZoom() || 0;
+        const cell = CLUSTER_BASE_DEG / Math.pow(2, zoom);
+        if (!(cell > 0)) return [];
         const groups = new Map();
-        const add = (uid, friendly) => {
-            const p = parseUnitDivision(uid);
-            if (!p) return;
-            if (!groups.has(p.key)) groups.set(p.key, { key: p.key, friendly: friendly, memberUids: [] });
-            groups.get(p.key).memberUids.push(uid);
-        };
-        Object.keys(blueMarkers).forEach((uid) => add(uid, true));
-        Object.keys(redMarkers).forEach((uid) => add(uid, false));
+        for (const m of placedUnitMarkers) {
+            if (!m || typeof m.getLatLng !== 'function') continue;
+            let ll; try { ll = m.getLatLng(); } catch (_) { ll = null; }
+            if (!ll) continue;
+            const side = m._echelonFriendly ? 'B' : 'R';
+            const key  = side + ':' + Math.floor(ll.lng / cell) + ':' + Math.floor(ll.lat / cell);
+            if (!groups.has(key)) groups.set(key, { key: key, friendly: !!m._echelonFriendly, members: [] });
+            groups.get(key).members.push(m);
+        }
         return Array.from(groups.values());
     }
 
     // Mean lat/lng of a group's CURRENT marker positions (tracks movement).
     function groupCentroid(group) {
         let sumLat = 0, sumLng = 0, n = 0;
-        group.memberUids.forEach((uid) => {
-            const m = blueMarkers[uid] || redMarkers[uid];
+        group.members.forEach((m) => {
             if (!m || typeof m.getLatLng !== 'function') return;
             try { const ll = m.getLatLng(); sumLat += ll.lat; sumLng += ll.lng; n++; } catch (_) {}
         });
@@ -860,13 +880,33 @@
         echelonAggregates = [];
     }
 
-    // Division aggregate icon: side-framed milsymbol at division echelon (XX)
-    // + a member-count badge. Falls back to a plain framed box if milsymbol is
-    // unavailable. SIDC digits 9-10 = "21" = division echelon; entity 000000.
+    // Per-marker visibility for clustered units (NOT a blanket container hide, so
+    // singletons that fall outside any cluster keep their real symbol).
+    // clearClusterHiding un-hides every placed marker; setClusterHidden folds a
+    // cluster's members in behind its aggregate.
+    function clearClusterHiding() {
+        for (const m of placedUnitMarkers) {
+            if (!m) continue;
+            let el; try { el = m.getElement(); } catch (_) { el = null; }
+            if (el && el.classList) el.classList.remove('wg-clustered');
+        }
+    }
+    function setClusterHidden(group, on) {
+        if (!group || !Array.isArray(group.members)) return;
+        group.members.forEach((mm) => {
+            if (!mm) return;
+            let el; try { el = mm.getElement(); } catch (_) { el = null; }
+            if (el && el.classList) el.classList[on ? 'add' : 'remove']('wg-clustered');
+        });
+    }
+
+    // Cluster aggregate icon: a side-framed milsymbol (no echelon — these are
+    // geographic clusters, not formations) + a member-count badge. Falls back to a
+    // plain framed box if milsymbol is unavailable. SIDC echelon digits 9-10 = 00.
     function buildAggregateIcon(group) {
-        const count = group.memberUids.length;
+        const count = group.members.length;
         const color = group.friendly ? COLORS.BLUE_UNIT : COLORS.RED_UNIT;
-        const sidc  = group.friendly ? '10031000210000000000' : '10061000210000000000';
+        const sidc  = (group.friendly ? '10031000' : '10061000') + '000000000000';
         let svg = '';
         try {
             if (window.ms && typeof window.ms.Symbol === 'function') {
@@ -880,51 +920,54 @@
         return window.L.divIcon({ className: 'wg-adj-aggregate', html: html, iconSize: [28, 28], iconAnchor: [14, 14] });
     }
 
-    // Render the roll-up for the current zoom. Idempotent: clears + rebuilds
-    // aggregates and toggles the container class. Safe to call on zoomend,
+    // Render the spatial clusters for the current zoom. Idempotent: clears old
+    // aggregates, un-hides all units, then folds each multi-unit grid cell into one
+    // count-badged aggregate (hiding just those members). Safe to call on zoomend,
     // after each step, and after drawScenario.
     function renderEchelonRollup() {
         if (!hasMap() || !layerGroup || !window.L) return;
         const container = (window.map.getContainer && window.map.getContainer()) || null;
-        const groups = echelonRollupEnabled ? buildEchelonDivisionGroups() : [];
-        const canRoll = groups.length >= 2;
-        const zoom = (window.map.getZoom && window.map.getZoom()) || 0;
-        const rolledUp = canRoll && zoom < ECHELON_EXPAND_ZOOM;
-
         clearEchelonAggregates();
-        if (rolledUp) {
-            groups.forEach((g) => {
+        clearClusterHiding();
+        const zoom = (window.map.getZoom && window.map.getZoom()) || 0;
+        const active = echelonRollupEnabled
+            && placedUnitMarkers.length >= MIN_CLUSTER_UNITS
+            && zoom < ECHELON_EXPAND_ZOOM;
+        let anyCluster = false;
+        if (active) {
+            buildEchelonGroups().forEach((g) => {
+                if (!g.members || g.members.length < 2) return;   // singletons keep their real symbol
                 const c = groupCentroid(g);
                 if (!c) return;
+                anyCluster = true;
                 const mk = window.L.marker(c, { icon: buildAggregateIcon(g), interactive: true, zIndexOffset: 1000 });
                 mk._aggGroup = g;
                 mk.on('click', () => {
-                    const pts = g.memberUids.map((uid) => {
-                        const mm = blueMarkers[uid] || redMarkers[uid];
+                    const pts = g.members.map((mm) => {
                         if (!mm || typeof mm.getLatLng !== 'function') return null;
                         try { const ll = mm.getLatLng(); return [ll.lat, ll.lng]; } catch (_) { return null; }
                     }).filter(Boolean);
                     if (pts.length) {
                         try {
-                            // Drill IN: center on the formation and zoom to at least the
-                            // expand threshold so its units actually appear (a wide division
-                            // would otherwise fitBounds to a low, still-rolled-up zoom).
+                            // Drill IN: zoom at least 2 levels past the current zoom so the
+                            // cell splits and the cluster's units begin to separate.
                             const b = window.L.latLngBounds(pts);
                             const fitZ = window.map.getBoundsZoom(b, false);
-                            const targetZ = Math.min(Math.max(fitZ, ECHELON_EXPAND_ZOOM), 14);
+                            const targetZ = Math.min(Math.max(fitZ, zoom + 2, ECHELON_EXPAND_ZOOM), 14);
                             window.map.setView(b.getCenter(), targetZ, { animate: true });
                         } catch (_) {}
                     }
                 });
                 mk.on('mouseover', () => { try { setFormationPeek(g, true); } catch (_) {} });
                 mk.on('mouseout',  () => { try { setFormationPeek(g, false); } catch (_) {} });
-                try { mk.bindTooltip(g.key + ' — ' + g.memberUids.length + ' units · hover to peek · click to zoom', { direction: 'top', offset: [0, -16] }); } catch (_) {}
+                try { mk.bindTooltip(g.members.length + (g.friendly ? ' BLUE' : ' RED') + ' units · hover to peek · click to zoom', { direction: 'top', offset: [0, -16] }); } catch (_) {}
                 mk.addTo(layerGroup);
                 echelonAggregates.push(mk);
+                setClusterHidden(g, true);
             });
         }
         if (container && container.classList) {
-            if (rolledUp) container.classList.add('wg-rolled-up');
+            if (anyCluster) container.classList.add('wg-rolled-up');
             else container.classList.remove('wg-rolled-up');
         }
     }
@@ -952,9 +995,8 @@
     // Hover-peek: temporarily reveal ONE formation's member units while the map is
     // rolled up (toggles .wg-peek; see style.css). Read-only / reversible.
     function setFormationPeek(group, on) {
-        if (!group || !Array.isArray(group.memberUids)) return;
-        group.memberUids.forEach((uid) => {
-            const mm = blueMarkers[uid] || redMarkers[uid];
+        if (!group || !Array.isArray(group.members)) return;
+        group.members.forEach((mm) => {
             if (!mm) return;
             let el; try { el = mm.getElement(); } catch (_) { el = null; }
             if (el && el.classList) el.classList[on ? 'add' : 'remove']('wg-peek');
@@ -2217,8 +2259,13 @@
             // walk parent/root without re-deriving each frame.
             registerRedUnit(unit);
             m._wgUnit = unitRegistry[unit.uid];
+            // Echelon roll-up grouping key: RED clusters by its BLS/anchor.
+            m._echelonBaseKey   = 'R:' + (unit.bls || 'unassigned');
+            m._echelonBaseLabel = unit.bls || 'RED units';
+            m._echelonFriendly  = false;
             m.addTo(layerGroup);
             redMarkers[unit.uid] = m;
+            placedUnitMarkers.push(m);
         }
 
         // Blue (friendly) units — drawn at the scenario's initial coords
@@ -2289,8 +2336,13 @@
             // → c<X><Y><Z>) without re-deriving the chain each step.
             registerBlueUnit(unit);
             m._wgUnit = unitRegistry[unit.unit_uid];
+            // Echelon roll-up grouping key: BLUE clusters by its base_id.
+            m._echelonBaseKey   = 'B:' + (unit.base_id || 'unassigned');
+            m._echelonBaseLabel = displayBlueId(unit.base_id) || unit.base_id || 'BLUE units';
+            m._echelonFriendly  = true;
             m.addTo(layerGroup);
             blueMarkers[unit.unit_uid] = m;
+            placedUnitMarkers.push(m);
         }
 
         // Fit the map view to the friendly operational area the first time, so the
@@ -5576,6 +5628,7 @@
         breachBadges = {};
         redMarkers = {};
         blueMarkers = {};
+        placedUnitMarkers = [];
         ewHalo = null;
         coverageRings = [];
         detectionContacts = [];
@@ -6633,7 +6686,7 @@
         fitScenarioAO,
         renderEchelonRollup,
         setEchelonRollup: (on) => { echelonRollupEnabled = (on !== false); try { renderEchelonRollup(); } catch (_) {} return echelonRollupEnabled; },
-        _getEchelonGroups: () => buildEchelonDivisionGroups().map((g) => ({ key: g.key, friendly: g.friendly, count: g.memberUids.length })),
+        _getEchelonGroups: () => buildEchelonGroups().map((g) => ({ key: g.key, label: g.label, friendly: g.friendly, count: g.members.length })),
         _echelonExpandZoom: ECHELON_EXPAND_ZOOM,
         renderEventPins,
         clearEventPins,

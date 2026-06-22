@@ -1697,9 +1697,13 @@ async function _assemblePlan(P, variationSeed, timer, light) {
             if (/timeout|timed.out|unavailable|error|remote_blocked/i.test(String(llmStatus || ''))) {
                 // Slow/unreachable model — re-prompting won't help; drop to Staff-Safe with an honest message.
                 fallbackReason = llmResult.fallback_reason || 'llm_failed';
+                var _mLabel = model ? (' (' + model + ')') : '';
+                var _isEmbedModel = /bge|embed|nomic-embed|all-minilm|mxbai-embed/i.test(String(model || ''));
                 fallbackMessage = /timeout|timed.out/i.test(String(llmStatus || ''))
-                    ? 'Local AI timed out — used Staff-Safe planner. Raise RMOOZ_FREE_FIGHT_TIMEOUT_MS or use a faster model.'
-                    : 'Local AI unavailable — used Staff-Safe planner.';
+                    ? ('Local AI' + _mLabel + ' timed out. Raise RMOOZ_FREE_FIGHT_TIMEOUT_MS or use a faster model.')
+                    : (_isEmbedModel
+                        ? ('Model "' + model + '" is an embedding model — it cannot generate COAs. Pull a chat model (e.g. qwen2.5:7b) and select it in the model picker.')
+                        : ('Local AI' + _mLabel + ' unavailable or returned an error. Check Ollama is running and the model is loaded.'));
                 break;
             }
             // invalid_json / invalid_schema / json_extraction_failed: repairable — tell the model the allowed IDs.

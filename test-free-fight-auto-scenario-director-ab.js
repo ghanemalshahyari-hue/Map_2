@@ -181,8 +181,8 @@ function fresh(auto) {
         function has(role, action) { return log.some(function (d) { return d.role === role && d.action === action && d.called_llm === false; }); }
         assert(has('performance', 'auto_director_next_blue_order'), 'Auto Director recorded');
         assert(has('red', 'red_maneuver_order'), 'Red maneuver recorded');
-        assert(has('white', 'scenario_outcome_check'), 'White outcome recorded');
-        assert(has('green', 'neutral_world_refresh'), 'Green refresh recorded');
+        assert(has('white', 'WHITE_ADJUDICATION'), 'White outcome recorded');
+        assert(has('green', 'GREEN_REFRESH'), 'Green refresh recorded');
         ok('7 Decision log records Auto Director + Red maneuver + White outcome + Green refresh (all no-LLM)');
     } catch (e) { bad('7 decision log', e); }
 

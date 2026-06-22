@@ -184,6 +184,9 @@ function routeHealth() {
 async function probeModelAvailable(provider, model) {
     provider = String(provider || '').toLowerCase();
     if (provider !== 'ollama') return { available: null, reason: 'model availability check not implemented for provider "' + provider + '"' };
+    // A cloud-format slug (contains '/') will never be in Ollama's catalog — treat as unknown
+    // rather than false so the gate does not block with a misleading "not loaded locally" message.
+    if (model && String(model).indexOf('/') !== -1) return { available: null, reason: 'model "' + model + '" looks like a cloud slug — not probed against local Ollama' };
     var host = (process.env.OLLAMA_HOST || process.env.RMOOZ_OLLAMA_HOST || 'http://localhost:11434').replace(/\/$/, '');
     try {
         var ctl = (typeof AbortController === 'function') ? new AbortController() : null;

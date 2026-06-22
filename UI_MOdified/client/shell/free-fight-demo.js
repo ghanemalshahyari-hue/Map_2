@@ -4070,6 +4070,16 @@
         // RMOOZ-OPENROUTER-FREE-FIGHT-CONTROL-FIX-I: a present-but-malformed cloud key (not sk-or-…) will
         // 401 at generation — disable Start so the card's pre-flight warning and the button agree.
         if (_modelInfo && _modelInfo.key_format_ok === false) return { ok: false, code: 'bad_key', reason: 'openrouter key malformed', msg: AI_NO_MODEL_MSG };
+        // A cloud slug (e.g. qwen/qwen3.5-397b-a17b) selected when OpenRouter was active persists in
+        // the runtime file. If the running server is now ollama, block with a clear mismatch message
+        // rather than silently failing at generation or showing "not loaded in local provider".
+        var _rh2 = _routeHealth;
+        var _serverIsLocal = !_rh2 || (_rh2.provider !== 'openrouter' && _rh2.configured_provider !== 'openrouter');
+        if (_modelInfo && _modelInfo.selected_is_cloud_slug === true && _serverIsLocal) {
+            return { ok: false, code: 'cloud_model_local_provider',
+                reason: 'a cloud model is selected but the server is using local Ollama',
+                msg: 'Model "' + ((_modelInfo.selected_model) || 'selected') + '" is an OpenRouter cloud model. The server is currently using local Ollama — select a local model from the model picker, or restart with RMOOZ_LLM_PROVIDER=openrouter + RMOOZ_ALLOW_CLOUD_AI=1.' };
+        }
         return { ok: true };
     }
 

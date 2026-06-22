@@ -335,8 +335,13 @@ async function buildModelsPayload(providerOverride) {
         else if (ping && ping.error) { pingErr = ping.error; }
     } catch (e) { pingErr = e && e.message || String(e); }
     const models = names.map(n => ({ name: n, available: true }));
-    const model_available = names.indexOf(selected) !== -1;
-    if (selected && !model_available) models.push({ name: selected, available: false });
+    // A cloud-format slug (contains '/') is an OpenRouter model name. It will never appear in
+    // Ollama's /api/tags — reporting it as model_available:false would show a misleading
+    // "not loaded in local provider" error. Return null (unknown) + a flag so the client can
+    // show a clear "cloud model selected but server is local" message instead.
+    const selectedIsCloudSlug = !!(selected && selected.indexOf('/') !== -1);
+    const model_available = selectedIsCloudSlug ? null : (names.indexOf(selected) !== -1);
+    if (selected && model_available === false) models.push({ name: selected, available: false });
     // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D: a non-local configured provider that ISN'T cloud-ready openrouter
     // is blocked (zen/claude/auto, or openrouter without the cloud gate) — the HUD must not imply FF can run.
     const provider_blocked = (configured_provider === 'openrouter')
@@ -345,6 +350,7 @@ async function buildModelsPayload(providerOverride) {
     return Object.assign(base, {
         provider_blocked,
         models, available_models_count: names.length, model_available, provider_reachable: reachable,
+        selected_is_cloud_slug: selectedIsCloudSlug,
         error: reachable ? null : (pingErr || 'local provider not reachable'),
     });
 }

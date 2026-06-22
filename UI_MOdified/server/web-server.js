@@ -642,6 +642,11 @@ const server = http.createServer((req, res) => {
                 return;
             }
             const sel = modelSelection.setSelectedModel(model, provider);
+            // RMOOZ-AI-MODEL-WIRING-COHERENCE-B: propagate the selected provider into process.env
+            // so LLM_CFG.getProvider() reflects the UI choice for this server session.
+            // Without this, a stale RMOOZ_LLM_PROVIDER system-env var silently overrides the
+            // runtime selection file, causing the getSelectedModel() guard to drop cloud slugs.
+            process.env.RMOOZ_LLM_PROVIDER = resolvedProv;
             if (!sel.ok) {
                 sendJson(res, 400, { ok: false, error: sel.error || 'invalid model',
                     selected_model: sel.selected_model });

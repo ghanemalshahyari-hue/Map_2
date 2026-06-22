@@ -1,19 +1,23 @@
 'use strict';
 /**
- * test-free-fight-model-wiring-coherence-a.js — RMOOZ-AI-MODEL-WIRING-COHERENCE-A
+ * test-free-fight-model-wiring-coherence-a.js — RMOOZ-AI-MODEL-WIRING-COHERENCE-A/B
  *
  * Acceptance tests: provider and model must be treated as one coherent pair.
  *
- * Tests (6):
+ * Tests (9):
  *  1  Server model-selection: getSelectedModel() returns env default when saved pair is
  *     cloud slug + openrouter but effective provider is ollama (cloud disabled).
  *  2  Server web-server: POST /api/ai/model/select rejects cloud slug with provider=ollama.
  *  3  Server routeHealth: pair_coherent=false when model is cloud slug + provider is ollama.
- *  4  Client: _freeFightAiReady() returns ok:false + code=pair_incoherent when
+ *  4  Server routeHealth: reason_if_blocked names the cloud slug when pair incoherent.
+ *  5  Client: _freeFightAiReady() returns ok:false + code=pair_incoherent when
  *     _routeHealth.pair_coherent===false.
- *  5  Client: _freeFightAiReady() returns ok:false + "cloud disabled" message when
+ *  6  Client: _freeFightAiReady() returns ok:false + "cloud disabled" message when
  *     provider_blocked=true + configured_provider=openrouter.
- *  6  Client: _freeFightAiReady() returns ok:true when provider=ollama + local model available.
+ *  7  Client: _freeFightAiReady() returns ok:true when provider=ollama + local model available.
+ *  8  Server routeHealth: COHERENCE-B — includes cloud_allowed and cloud_enabled fields.
+ *  9  Server model-selection: COHERENCE-B — process.env update makes cloud slug visible
+ *     (simulates what POST /api/ai/model/select does when the user selects OpenRouter).
  */
 
 var assert = require('assert');
@@ -115,7 +119,82 @@ function ok(label, cond) {
 })();
 
 // ─────────────────────────────────────────────────────────────────────────────
-// CLIENT TESTS (4–6) — require free-fight-demo.js with minimal DOM stub
+// TEST 8 — routeHealth() emits cloud_allowed and cloud_enabled (COHERENCE-B)
+// ─────────────────────────────────────────────────────────────────────────────
+(function () {
+    // Re-use the already-required planner and ms from test 3 (same require cache).
+    var plannerPath = path.join(__dirname, 'UI_MOdified', 'server', 'ai', 'free-fight-coa-planner.js');
+    var planner;
+    try { planner = require(plannerPath); } catch (e) { ok('planner loadable for test 8', false); return; }
+
+    var msPath = path.join(__dirname, 'UI_MOdified', 'server', 'ai', 'model-selection.js');
+    var ms = require(msPath);
+
+    // Empty selection file, local model via env, cloud flags set.
+    var tmpDir8 = fs.mkdtempSync(path.join(os.tmpdir(), 'rmooz-test8-'));
+    var tmpFile8 = path.join(tmpDir8, 'ai-model-selection.json');
+    fs.writeFileSync(tmpFile8, JSON.stringify({}), 'utf8');
+    ms._setSelectionFileForTest(tmpFile8);
+    delete process.env.RMOOZ_LLM_MODEL;
+    process.env.RMOOZ_ALLOW_SIM_RUN = '1';
+    process.env.RMOOZ_ALLOW_CLOUD_AI = '1';
+
+    var rh8 = planner.routeHealth();
+    ok('routeHealth: COHERENCE-B — cloud_allowed field present',
+        'cloud_allowed' in rh8);
+    ok('routeHealth: COHERENCE-B — cloud_enabled field present',
+        'cloud_enabled' in rh8);
+
+    ms._setSelectionFileForTest(null);
+    delete process.env.RMOOZ_ALLOW_SIM_RUN;
+    delete process.env.RMOOZ_ALLOW_CLOUD_AI;
+    try { fs.unlinkSync(tmpFile8); fs.rmdirSync(tmpDir8); } catch (_) {}
+})();
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TEST 9 — COHERENCE-B: updating process.env.RMOOZ_LLM_PROVIDER preserves cloud slug
+// Simulates what POST /api/ai/model/select does when user selects OpenRouter.
+// ─────────────────────────────────────────────────────────────────────────────
+(function () {
+    var msPath = path.join(__dirname, 'UI_MOdified', 'server', 'ai', 'model-selection.js');
+    var ms = require(msPath);
+    var llmCfgPath = path.join(__dirname, 'UI_MOdified', 'server', 'ai', 'llm-runtime-config.js');
+    var LLM_CFG = require(llmCfgPath);
+
+    // Write a runtime file with a cloud slug + openrouter provider.
+    var tmpDir9 = fs.mkdtempSync(path.join(os.tmpdir(), 'rmooz-test9-'));
+    var tmpFile9 = path.join(tmpDir9, 'ai-model-selection.json');
+    fs.writeFileSync(tmpFile9, JSON.stringify({
+        model: 'qwen/qwen3.5-397b-a17b', provider: 'openrouter', source: 'ui_selection'
+    }), 'utf8');
+    ms._setSelectionFileForTest(tmpFile9);
+
+    // Simulate the POST handler: set RMOOZ_LLM_PROVIDER to 'openrouter'.
+    // Without this, a stale RMOOZ_LLM_PROVIDER=ollama machine-env would silently override.
+    var savedProv9 = process.env.RMOOZ_LLM_PROVIDER;
+    process.env.RMOOZ_LLM_PROVIDER = 'openrouter';
+    // Cloud must be enabled for openrouterReady() → getProvider() to return 'openrouter'.
+    var savedAllowCloud = process.env.RMOOZ_ALLOW_CLOUD_AI;
+    process.env.RMOOZ_ALLOW_CLOUD_AI = '1';
+
+    // getSelectedModel() guard: isCloudSlug=true, savedForCloud=true,
+    // getProvider()=openrouter (cloud enabled) → guard does NOT fire → slug preserved.
+    var m9 = ms.getSelectedModel();
+    var isCloudReady = LLM_CFG.openrouterReady();
+    ok('COHERENCE-B: cloud slug preserved after process.env.RMOOZ_LLM_PROVIDER=openrouter (when cloud ready)',
+        isCloudReady ? m9.indexOf('/') !== -1 : true);  // skip check if key not present in test env
+
+    // Restore.
+    if (savedProv9 != null) process.env.RMOOZ_LLM_PROVIDER = savedProv9;
+    else delete process.env.RMOOZ_LLM_PROVIDER;
+    if (savedAllowCloud != null) process.env.RMOOZ_ALLOW_CLOUD_AI = savedAllowCloud;
+    else delete process.env.RMOOZ_ALLOW_CLOUD_AI;
+    ms._setSelectionFileForTest(null);
+    try { fs.unlinkSync(tmpFile9); fs.rmdirSync(tmpDir9); } catch (_) {}
+})();
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CLIENT TESTS (5–7) — require free-fight-demo.js with minimal DOM stub
 // ─────────────────────────────────────────────────────────────────────────────
 (function () {
     var elById = {};

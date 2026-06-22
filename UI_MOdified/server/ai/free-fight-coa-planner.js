@@ -185,6 +185,9 @@ function routeHealth() {
         // RMOOZ-AI-MODEL-WIRING-COHERENCE-A
         pair_coherent: pairCoherent,
         model_is_cloud_slug: modelIsCloudSlug,
+        // RMOOZ-AI-MODEL-WIRING-COHERENCE-B: align with /api/ai/models so both endpoints agree.
+        cloud_allowed: LLM_CFG.cloudAllowed(),
+        cloud_enabled: LLM_CFG.openrouterReady(),
     };
 }
 // RMOOZ-AI-EXECUTION-SINGLE-GATE-A: live check that the local provider has the model loaded. Used by

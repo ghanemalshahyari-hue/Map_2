@@ -46,6 +46,10 @@
     var _coaMovedUnits = [];  // [{unit, oldPos}, ...] — only units that VISIBLY moved
     var _movementValidationLog = [];   // RMOOZ-COA-REALISM-GATE-A: per-move territory/domain validation entries
     var _domainHeldUids = {};          // RMOOZ-COA-REALISM-GATE-A: log domain holds once per unit (prevents log spam)
+    // RMOOZ-MOVEMENT-INTELLIGENCE-A: per-commit truth records (visible on map + debug panel)
+    var _missingUnitRecords  = [];     // [{uid, reason}] — COA referenced unit not found on map
+    var _heldMovementRecords = [];     // [{uid, side, lat, lon, reason}] — step-1/domain held during execution
+    var _domainBlockedRecords = [];    // [{uid, side, lat, lon, domain, reason}] — domain-violation holds
     var _placementValidation = [];     // RMOOZ-COA-REALISM-GATE-A: initial placement check results on scenario start
     // FREEFIGHT-BLUE-THREAT-AWARE-MOVEMENT-A: a unit whose move is below this is
     // "already in position" — not counted as moved (so zero/tiny moves aren't faked).
@@ -2606,20 +2610,35 @@
             }
             return { uid: String(unit.id || unit.uid || unit.unit_uid), role: role, i: i };
         });
+        // RMOOZ-MOVEMENT-INTELLIGENCE-A: behavior-engine target positions (threat-axis aware).
+        // Falls back to ring placement when engine not loaded (staff_safe_no_ai).
+        var _ROLE_BEHAVIOR = {
+            assault: 'approach', support: 'support', screen: 'screen', recon: 'observe', reserve: 'reserve',
+            intercept: 'intercept', defend: 'defend', reinforce: 'support',
+        };
         function tgt(role, i) {
+            var ME = W() && W().RmoozMovementEngine;
+            if (ME && ME.buildWaypointsForAssignment) {
+                var enemySide = isRed ? 'BLUE' : 'RED';
+                var enemyUnits = _scenarioSideUnits ? _scenarioSideUnits(enemySide) : [];
+                var unit = u[i] || u[0] || {};
+                var wps = ME.buildWaypointsForAssignment(unit, { behavior: _ROLE_BEHAVIOR[role] || role }, obj, enemyUnits, i);
+                if (wps && wps[0] && Number.isFinite(wps[0].lat) && Number.isFinite(wps[0].lon)) return wps[0];
+            }
+            // Fallback: ring formation (fallback_formation:true, reason:staff_safe_no_ai)
             if (isRed) {
-                if (role === 'recon')   return _ringPos(obj, 7,               i, RED_BASE_DEG);           // 7km NE — RED probe/recon
-                if (role === 'support') return _ringPos(obj, RING_KM.support, i, RED_BASE_DEG + 30);      // 5km ENE — RED fire support
-                if (role === 'screen')  return _ringPos(obj, RING_KM.screen,  i, RED_BASE_DEG + 90);     // 3km SE  — RED flank screen
-                if (role === 'reserve') return _ringPos(obj, 10,              i, RED_BASE_DEG + 180);     // 10km SW — RED rear reserve
-                return _ringPos(obj, RING_KM.assault, i, RED_BASE_DEG);                                   // 2km NE  — RED assault position
+                if (role === 'recon')   return _ringPos(obj, 7,               i, RED_BASE_DEG);
+                if (role === 'support') return _ringPos(obj, RING_KM.support, i, RED_BASE_DEG + 30);
+                if (role === 'screen')  return _ringPos(obj, RING_KM.screen,  i, RED_BASE_DEG + 90);
+                if (role === 'reserve') return _ringPos(obj, 10,              i, RED_BASE_DEG + 180);
+                return _ringPos(obj, RING_KM.assault, i, RED_BASE_DEG);
             } else {
-                if (role === 'recon')     return _ringPos(obj, 6,               i, RED_BASE_DEG);         // 6km NE  — BLUE observe Red approach
-                if (role === 'screen')    return _screenRing(obj, i);                                     // 3km NE  — BLUE screening line
-                if (role === 'intercept') return _blockingRing(obj, i);                                   // 4km NE  — BLUE block Red axis
-                if (role === 'reserve')   return _reserveRing(obj, i);                                    // 8km SW  — BLUE reserve
-                if (role === 'reinforce') return _supportRing(obj, i);                                    // 5km SW  — BLUE reinforce
-                return _ringPos(obj, RING_KM.assault, i, RED_BASE_DEG - 15);                              // ~2km NNE — BLUE defensive perimeter facing Red
+                if (role === 'recon')     return _ringPos(obj, 6,               i, RED_BASE_DEG);
+                if (role === 'screen')    return _screenRing(obj, i);
+                if (role === 'intercept') return _blockingRing(obj, i);
+                if (role === 'reserve')   return _reserveRing(obj, i);
+                if (role === 'reinforce') return _supportRing(obj, i);
+                return _ringPos(obj, RING_KM.assault, i, RED_BASE_DEG - 15);
             }
         }
         function phaseActs(movers) {
@@ -3091,6 +3110,22 @@
             _coaCommitBlockedReason = 'Commit refused — COA tasks Step-1 review-only unit ' + _blkUid + ' with movement/combat. It can only HOLD/REVIEW until source/doctrine/commander review is complete.';
             try { _appendToEventLog('Commit refused: COA tasks non-taskable Step-1 unit ' + esc(_blkUid) + ' with movement — review required.'); } catch (_) {}
             try { _recordDecision({ role: 'white', action: 'step1_coa_preparation_gate', called_llm: false, source: 'commit-gate', reason: 'non-taskable unit tasked with movement', result_summary: 'commit refused · ' + _blkUid }); } catch (_) {}
+            updatePanel(); return null;
+        }
+        // RMOOZ-MOVEMENT-INTELLIGENCE-A: block commit if COA references unit UIDs not on the map.
+        _missingUnitRecords = []; _heldMovementRecords = []; _domainBlockedRecords = [];
+        var _missingUid = null;
+        _coaAllActions(coa).forEach(function (act) {
+            if (!act || !act.unit_uid || _missingUid) return;
+            if (act.action_type === 'HOLD_POSITION') return;
+            if (!_findRealUnit(act.unit_uid) || !(_findRealUnit(act.unit_uid) || {}).unit) {
+                _missingUid = act.unit_uid;
+                _missingUnitRecords.push({ uid: act.unit_uid, reason: 'unit not found on map' });
+            }
+        });
+        if (_missingUid) {
+            _coaCommitBlockedReason = 'Commit refused — COA references unit ' + _missingUid + ' not found on the map. Remove it from the plan or load the unit first.';
+            try { _appendToEventLog('Commit refused: unit ' + esc(_missingUid) + ' not found on map — COA cannot be executed.'); } catch (_) {}
             updatePanel(); return null;
         }
         _coaCommitBlockedReason = null;
@@ -4716,20 +4751,32 @@
                     if (d <= MAX_PLAN_TARGET_OBJ_KM) return;
                     var role = act.role || '';
                     var idx = (roleCount[role] = ((roleCount[role] || 0) + 1));
+                    // RMOOZ-MOVEMENT-INTELLIGENCE-A: use movement engine for normalization.
                     var normalized;
-                    if (isRed) {
-                        if (role === 'recon')        normalized = _ringPos(obj, 7, idx, RED_BASE_DEG);
-                        else if (role === 'support') normalized = _ringPos(obj, RING_KM.support, idx, RED_BASE_DEG + 30);
-                        else if (role === 'screen')  normalized = _ringPos(obj, RING_KM.screen,  idx, RED_BASE_DEG + 90);
-                        else if (role === 'reserve') normalized = _ringPos(obj, 10, idx, RED_BASE_DEG + 180);
-                        else                         normalized = _ringPos(obj, RING_KM.assault, idx, RED_BASE_DEG);
-                    } else {
-                        if (role === 'recon')            normalized = _ringPos(obj, 6, idx, RED_BASE_DEG);
-                        else if (role === 'screen')      normalized = _screenRing(obj, idx);
-                        else if (role === 'intercept')   normalized = _blockingRing(obj, idx);
-                        else if (role === 'reserve')     normalized = _reserveRing(obj, idx);
-                        else if (role === 'reinforce')   normalized = _supportRing(obj, idx);
-                        else                             normalized = _ringPos(obj, RING_KM.assault, idx, RED_BASE_DEG - 15);
+                    var _ME_n = W() && W().RmoozMovementEngine;
+                    if (_ME_n && _ME_n.buildWaypointsForAssignment) {
+                        var _nu = (_findRealUnit(act.unit_uid) || {}).unit || {};
+                        var _ne = _scenarioSideUnits ? _scenarioSideUnits(isRed ? 'BLUE' : 'RED') : [];
+                        var _nb = { assault:'approach', support:'support', screen:'screen', recon:'observe', reserve:'reserve', intercept:'intercept', defend:'defend', reinforce:'support' };
+                        var _nwps = _ME_n.buildWaypointsForAssignment(_nu, { behavior: _nb[role] || role }, obj, _ne, idx);
+                        normalized = _nwps && _nwps[0];
+                    }
+                    if (!normalized || !Number.isFinite(normalized.lat)) {
+                        // Fallback: ring placement (fallback_formation:true)
+                        if (isRed) {
+                            if (role === 'recon')        normalized = _ringPos(obj, 7, idx, RED_BASE_DEG);
+                            else if (role === 'support') normalized = _ringPos(obj, RING_KM.support, idx, RED_BASE_DEG + 30);
+                            else if (role === 'screen')  normalized = _ringPos(obj, RING_KM.screen,  idx, RED_BASE_DEG + 90);
+                            else if (role === 'reserve') normalized = _ringPos(obj, 10, idx, RED_BASE_DEG + 180);
+                            else                         normalized = _ringPos(obj, RING_KM.assault, idx, RED_BASE_DEG);
+                        } else {
+                            if (role === 'recon')            normalized = _ringPos(obj, 6, idx, RED_BASE_DEG);
+                            else if (role === 'screen')      normalized = _screenRing(obj, idx);
+                            else if (role === 'intercept')   normalized = _blockingRing(obj, idx);
+                            else if (role === 'reserve')     normalized = _reserveRing(obj, idx);
+                            else if (role === 'reinforce')   normalized = _supportRing(obj, idx);
+                            else                             normalized = _ringPos(obj, RING_KM.assault, idx, RED_BASE_DEG - 15);
+                        }
                     }
                     if (normalized && Number.isFinite(normalized.lat) && Number.isFinite(normalized.lon)) {
                         act.target = normalized;
@@ -4768,6 +4815,7 @@
         // RMOOZ-COA-REALISM-GATE-A: run placement validation on every scenario start.
         _movementValidationLog = [];
         _domainHeldUids = {};
+        _missingUnitRecords = []; _heldMovementRecords = []; _domainBlockedRecords = [];
         try { _placementValidation = _validateAllPlacements(); } catch (_ig) { _placementValidation = []; }
         var sc = { scenario_active: true, scenario_status: 'running', scenario_turn: 1, blue_cycle: 0, red_cycle: 0,
             current_actor: 'unit-controller', end_condition: null, last_outcome: null, pending_replan_reason: null,
@@ -5149,7 +5197,7 @@
         try { _appendToEventLog('Scenario stopped by operator.'); } catch (_) {}
         updatePanel();
     }
-    function _resetScenario() { _stopScenarioTimer(); _scenario = null; _step1HeldUids = {}; _coaLoading = false; }
+    function _resetScenario() { _stopScenarioTimer(); _scenario = null; _step1HeldUids = {}; _coaLoading = false; _missingUnitRecords = []; _heldMovementRecords = []; _domainBlockedRecords = []; }
     // ── operator-card stale-commit guard (consumed by the Scenario Control Center engine facade) ────────
     // RMOOZ-FREE-FIGHT-V2-COA-TO-SCENARIO-BUGFIX-AB1: is the committed COA STALE relative to what the
     // operator is now looking at? True when (a) a DIFFERENT (newer) plan object is loaded than the one we
@@ -5444,12 +5492,14 @@
                 : (_coaPlan && _coaPlan.ok && (_coaPlan.coas && (_coaPlan.coas[_coaSelectedIdx] || _coaPlan.coas[0])));
             if (!coa) return [];
             var obj = getObjective();
+            var ME = W() && W().RmoozMovementEngine;
             var result = [];
             arr(coa.phases).forEach(function (ph) {
                 arr(ph && ph.actions).forEach(function (act) {
                     if (!act) return;
                     var found = act.unit_uid ? _findRealUnit(act.unit_uid) : null;
                     var u = found && found.unit;
+                    var unitFound = !!u;
                     var cLat = u ? (u.lat != null ? +u.lat : (Array.isArray(u.coord) ? +u.coord[1] : null)) : null;
                     var cLon = u ? (u.lon != null ? +u.lon : (Array.isArray(u.coord) ? +u.coord[0] : null)) : null;
                     var tLat = act.target ? +act.target.lat : null;
@@ -5460,12 +5510,27 @@
                     var movedThisTick = _coaMovedUnits.some(function (m) { return m && String(m.uid || (m.unit && m.unit.id) || '') === String(act.unit_uid || ''); });
                     var heldStep1 = !!_step1HeldUids[String(act.unit_uid || '')];
                     var heldDomain = !!_domainHeldUids[String(act.unit_uid || '')];
+                    var isMissing  = _missingUnitRecords.some(function (r) { return r.uid === act.unit_uid; });
+                    var domain = (ME && u) ? ME.classifyUnitDomain(u) : 'unknown';
+                    var src = act.behavior ? 'ai_behavior' : ((_coaPlan && _coaPlan.plan_source === 'deterministic') ? 'staff_safe_fallback' : 'ai');
+                    var blockedReason = isMissing ? 'UNIT NOT FOUND' : heldStep1 ? 'HOLD REVIEW' : heldDomain ? 'DOMAIN BLOCKED' : (!taskable ? 'not taskable' : null);
                     result.push({ uid: act.unit_uid, side: u ? (u.side || '') : '', role: act.role || '',
-                        action_type: act.action_type || '', cur_lat: cLat, cur_lon: cLon,
-                        tgt_lat: tLat, tgt_lon: tLon, dist_km: distKm, obj_dist_km: objDistKm,
-                        moved: movedThisTick, taskable: taskable,
-                        blocked_reason: heldStep1 ? 'Step-1 review required' : (heldDomain ? 'domain violation' : (!taskable ? 'not taskable' : null)) });
+                        action_type: act.action_type || '', domain: domain,
+                        cur_lat: cLat, cur_lon: cLon, tgt_lat: tLat, tgt_lon: tLon,
+                        dist_km: distKm, obj_dist_km: objDistKm,
+                        moved: movedThisTick, taskable: taskable, unit_found: unitFound,
+                        blocked_reason: blockedReason,
+                        source: src });
                 });
+            });
+            // Append records for missing units not already in COA actions
+            _missingUnitRecords.forEach(function (r) {
+                if (!result.some(function (row) { return row.uid === r.uid; })) {
+                    result.push({ uid: r.uid, side: '', role: '', action_type: '', domain: 'unknown',
+                        cur_lat: null, cur_lon: null, tgt_lat: null, tgt_lon: null,
+                        dist_km: null, obj_dist_km: null, moved: false, taskable: false,
+                        unit_found: false, blocked_reason: 'UNIT NOT FOUND', source: 'unknown' });
+                }
             });
             return result;
         },
@@ -5724,6 +5789,10 @@
         _getObjectiveForTest:                function ()  { return _objective ? { lat: _objective.lat, lon: _objective.lon } : null; },
         // RMOOZ-MOVEMENT-TRUTH-A test seam
         _normalizeActionTargetsForTest: function (plan) { return _normalizeActionTargets(plan); },
+        // RMOOZ-MOVEMENT-INTELLIGENCE-A test seams
+        _getMissingUnitRecordsForTest:   function () { return _missingUnitRecords.slice(); },
+        _getHeldMovementRecordsForTest:  function () { return _heldMovementRecords.slice(); },
+        _getDomainBlockedRecordsForTest: function () { return _domainBlockedRecords.slice(); },
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozFreeFightDemo = API;

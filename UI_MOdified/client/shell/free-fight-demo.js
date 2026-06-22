@@ -1380,7 +1380,7 @@
             }).length;
         }
 
-        var units = [];
+        var units = [], hadScenarioUnits = false;
 
         // Priority A: window.RmoozScenario.scenario units (real loaded scenario)
         var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
@@ -1388,6 +1388,7 @@
             var rawA = (Array.isArray(sc.red_units) ? sc.red_units : []).concat(
                        Array.isArray(sc.blue_units_initial) ? sc.blue_units_initial : []);
             if (rawA.length) {
+                hadScenarioUnits = true;   // RMOOZ-AI-FREE-FIGHT-FORCE-POOL-PRESENT-A: a scenario IS loaded with units — never substitute brief/demo units
                 tallyRaw(rawA);
                 units = rawA.map(normUnit).filter(Boolean);
                 dMovable = units.length;
@@ -1395,8 +1396,9 @@
             }
         }
 
-        // Priority B: operational_brief.proposed_units
-        if (!units.length) {
+        // Priority B: operational_brief.proposed_units (ONLY when NO scenario is loaded — never substitute
+        // brief units for a loaded scenario, else the COA tasks units absent from window.RmoozScenario)
+        if (!units.length && !hadScenarioUnits) {
             var ob = (_payload && _payload.brief && _payload.brief.operational_brief) || (_payload && _payload.operational_brief) || {};
             var rawB = Array.isArray(ob.proposed_units) ? ob.proposed_units : [];
             if (rawB.length) {
@@ -1407,8 +1409,8 @@
             }
         }
 
-        // Priority C: _allGroups anchor positions
-        if (!units.length) {
+        // Priority C: _allGroups anchor positions (ONLY when NO scenario is loaded)
+        if (!units.length && !hadScenarioUnits) {
             var grps = _allGroups.filter(function(g) { return g && g.anchor && finiteLL(g.anchor); });
             if (grps.length) {
                 dTotal = grps.length; dWithId = grps.length; dWithCoords = grps.length;
@@ -2545,6 +2547,21 @@
         // RMOOZ-STEP1-COA-PREPARATION-GATE-AE: only TASKABLE units are sent to the planner — blocked Step-1
         // placeholders are held back so the AI/deterministic builder cannot task them with movement.
         body.units = arr(body.units).filter(function (u) { return _isUnitTaskable(u.id); });
+        // RMOOZ-AI-FREE-FIGHT-FORCE-POOL-PRESENT-A: the planner may ONLY task units that EXIST in the active
+        // loaded scenario (window.RmoozScenario.scenario) — _findRealUnit validates each COA action against
+        // it, so an absent (brief-only / unplaced) unit blocks execution with "unit missing". Lock the force
+        // pool to the present set and keep allowed_unit_ids in lockstep. force_pool_count then reports the
+        // present taskable count, never brief-only units.
+        (function () {
+            var sc2 = w && w.RmoozScenario && w.RmoozScenario.scenario; if (!sc2) return;
+            var present = {};
+            (Array.isArray(sc2.red_units) ? sc2.red_units : []).concat(Array.isArray(sc2.blue_units_initial) ? sc2.blue_units_initial : [])
+                .forEach(function (u) { var id = u && (u.id || u.uid || u.unit_uid); if (id) present[String(id)] = true; });
+            var before = arr(body.units).length;
+            body.units = arr(body.units).filter(function (u) { return present[String(u.id || u.uid)]; });
+            if (body.opts) body.opts.allowed_unit_ids = body.units.map(function (u) { return u.id; });
+            if (body.units.length !== before) { try { _appendToEventLog('Force pool locked to ' + body.units.length + ' present scenario unit(s) (dropped ' + (before - body.units.length) + ' absent/brief-only).'); } catch (_) {} }
+        })();
         // RMOOZ-AI-COMMANDER-DEMO-PACING-C: shape the request by planner mode.
         if (_planningMode === 'staff_safe') {
             // Staff-Safe = FAST deterministic. useLlm:false → the capability analyst uses deterministic

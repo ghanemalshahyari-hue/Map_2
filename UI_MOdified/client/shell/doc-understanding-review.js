@@ -159,6 +159,44 @@
         if (fromBrief.length) return fromBrief;
         return arr(u.objectives);
     }
+    // RMOOZ-AI-FREE-FIGHT-SCC-LOAD-A: the AI fork routes through the SAME server
+    // generate→load the non-AI fork uses, so the imported scenario becomes the
+    // engine's active scenario (window.RmoozScenario) before the Control Center
+    // mounts (otherwise the SCC opens over a leftover scenario). The server
+    // generator (brief-to-scenario.js resolveObjective) needs an objective and
+    // never invents one. The operator sets the REAL COA objective INSIDE the SCC
+    // (Place Objective X), so here we only seed a PROVISIONAL objective — the
+    // centroid of the placement candidates that carry coordinates — into the
+    // brief when none is resolvable, just so the scenario can be built. Returns
+    // true if an objective is now resolvable, false if there are no coordinates
+    // anywhere to anchor a scenario.
+    function ensureProvisionalObjective(p) {
+        var ob = opBrief(p);
+        if (!ob || typeof ob !== 'object' || Array.isArray(ob)) return false;
+        var ao = ob.area_of_operations;
+        var hasAo = ao && Array.isArray(ao.center) && ao.center.length === 2 &&
+            isFinite(ao.center[0]) && isFinite(ao.center[1]);
+        var hasObj = arr(ob.objectives).concat(arr(ob.objectives_list)).some(function (o) {
+            return o && Array.isArray(o.coord) && o.coord.length === 2 && isFinite(o.coord[0]) && isFinite(o.coord[1]);
+        });
+        if (hasAo || hasObj) return true;
+        var sx = 0, sy = 0, n = 0;
+        placementCandidates(p).forEach(function (c) {
+            if (!c) return;
+            var lon = (typeof c.lon === 'number') ? c.lon : (Array.isArray(c.coord) ? c.coord[0] : NaN);
+            var lat = (typeof c.lat === 'number') ? c.lat : (Array.isArray(c.coord) ? c.coord[1] : NaN);
+            if (isFinite(lon) && isFinite(lat)) { sx += lon; sy += lat; n++; }
+        });
+        if (!n) return false;
+        if (!Array.isArray(ob.objectives)) ob.objectives = [];
+        ob.objectives.push({
+            coord: [Math.round((sx / n) * 1e5) / 1e5, Math.round((sy / n) * 1e5) / 1e5],
+            name: 'OBJ X (provisional — refine in Control Center)',
+            source: 'provisional_candidate_centroid',
+            needs_review: true,
+        });
+        return true;
+    }
     function proposedCounts(p) {
         var u = (p && p.understanding) || {};
         var pc = u.proposed_unit_counts || {};
@@ -993,13 +1031,17 @@
         // Generate passes the chosen operation template (or null = auto-detect).
         // G-3 approval rule: when COAs exist, generation requires an operator-
         // selected BLUE COA (recommendation alone never satisfies this — D9).
-        bind('generate', function () {
+        // Factored into runGenerate() so the AI fork (mode-ai) can trigger the
+        // SAME generate→load chain (and reuse the identical COA gate) without a
+        // fragile .click() on the button. Returns true iff handlers.onGenerate
+        // was invoked (gate passed + handler present), false otherwise.
+        function runGenerate() {
             var warn = container.querySelector('[data-el="coa-block-warn"]');
             if (window.RmoozCoaPanel && window.RmoozCoaPanel.hasCoas(p)) {
                 var gate = window.RmoozCoaPanel.canGenerateNow();
                 if (!gate.ok) {
                     if (warn) { warn.style.display = 'block'; warn.textContent = '⛔ ' + (gate.reason || window.RmoozCoaPanel.BLOCK_MESSAGE); }
-                    return;
+                    return false;
                 }
                 if (warn) warn.style.display = 'none';
                 // Safe metadata wiring only: stamp the operator's approval on
@@ -1016,8 +1058,11 @@
                 } catch (_) {}
             }
             var sel = container.querySelector('[data-el="template"]');
-            if (handlers.onGenerate) handlers.onGenerate(sel ? (sel.value || null) : null);
-        });
+            if (!handlers.onGenerate) { alert('Generate is unavailable here (open this from the import wizard).'); return false; }
+            handlers.onGenerate(sel ? (sel.value || null) : null);
+            return true;
+        }
+        bind('generate', function () { runGenerate(); });
         bind('edit', function () {
             var ta = container.querySelector('[data-el="json"]');
             var box = container.querySelector('[data-el="editbox"]');
@@ -1068,10 +1113,48 @@
             var g = container.querySelector('[data-act="generate"]');
             if (g) g.click();
         });
+        // RMOOZ-AI-FREE-FIGHT-SCC-LOAD-A: "Scenario with AI" must open the Control
+        // Center over the IMPORTED scenario, not a leftover. mount(p) alone only
+        // builds the demo overlay and never sets window.RmoozScenario (which the
+        // SCC reads for units/COA/run). So we run the SAME deterministic
+        // generate→load the "without AI" fork uses (populating window.RmoozScenario)
+        // and only THEN mount the AI overlay. On failure we surface an error and do
+        // NOT mount, so the SCC can never open over a previously-loaded scenario.
         bind('mode-ai', function () {
-            var ff = container.querySelector('[data-act="free-fight"]');
-            if (ff) { ff.click(); return; }
-            if (window.RmoozFreeFightDemo && typeof window.RmoozFreeFightDemo.mount === 'function') window.RmoozFreeFightDemo.mount(p);
+            if (!(window.RmoozFreeFightDemo && typeof window.RmoozFreeFightDemo.mount === 'function')) {
+                alert('Free Fight engine not loaded (shell/free-fight-demo.js)');
+                return;
+            }
+            if (!ensureProvisionalObjective(p)) {
+                alert('No resolved coordinates yet to anchor a scenario. Resolve at least one location (placement candidate or objective) before opening the AI Control Center.');
+                return;
+            }
+            var aiBtn = container.querySelector('[data-act="mode-ai"]');
+            if (aiBtn) aiBtn.disabled = true;
+            var done = false;
+            function cleanup() {
+                try { document.removeEventListener('rmooz:wg-import-loaded', onLoaded); } catch (_) {}
+                clearTimeout(timer);
+                if (aiBtn) aiBtn.disabled = false;
+            }
+            function onLoaded() {
+                if (done) return; done = true; cleanup();
+                if (!(window.RmoozScenario && window.RmoozScenario.scenario)) {
+                    alert('Scenario generated but did not load into the engine — Control Center not opened.');
+                    return;
+                }
+                // window.RmoozScenario is now the freshly-imported scenario; mount(p)
+                // still needs p to build the demo overlay groups (load AND mount).
+                try { window.RmoozFreeFightDemo.mount(p); }
+                catch (e) { alert('Free Fight failed to open: ' + (e && (e.message || String(e)))); }
+            }
+            var timer = setTimeout(function () {
+                if (done) return; done = true; cleanup();
+                alert('Could not generate/load the reviewed scenario, so the Control Center was not opened. Check the wizard status line and try again.');
+            }, 45000);
+            document.addEventListener('rmooz:wg-import-loaded', onLoaded);
+            // Trigger the proven generate→openScenario→loadLiveScenarioFromJson chain.
+            if (!runGenerate()) { cleanup(); }
         });
     }
 

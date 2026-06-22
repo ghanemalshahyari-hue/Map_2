@@ -4459,10 +4459,45 @@
         arr(units).forEach(function (u) { var la = num(u.lat), lo = num(u.lon); if (isFinite(la) && isFinite(lo)) { sx += lo; sy += la; n++; } });
         return n ? { lat: round5(sy / n), lon: round5(sx / n) } : null;
     }
+    // ── COA_ACTION_BUDGET_AND_ROLE_GATE ───────────────────────────────────────
+    // A normal attack/reaction phase must MOVE only a realistic SUBSET of the present
+    // force — never all of it. The per-turn deterministic maneuvers below previously
+    // ordered EVERY present unit to move each turn (red.forEach / blue.map), which is
+    // why a continuous run showed movedTasked ≈ 65/77. _selectMovers picks the budget.
+    var COA_RED_MOVE_FRACTION = 0.13, COA_RED_MOVE_MIN = 3, COA_RED_MOVE_MAX = 12;   // 77 RED → ~10
+    var COA_BLUE_MOVE_FRACTION = 0.12, COA_BLUE_MOVE_MIN = 2, COA_BLUE_MOVE_MAX = 6;  // reaction → 2–6
+    // Hold-role gate: units that must NOT move as an assault/reaction element (air defense,
+    // bases, logistics/support/admin, radar, C2/HQ) unless explicitly repositioning.
+    function _moverHoldRole(u) {
+        var r = String((u && (u.role || u.domain || u.class || u.type)) || '').toLowerCase();
+        return /air[_ -]?def|\bsam\b|missile.?def|\bbase\b|logist|\bsupport\b|admin|depot|\bradar\b|\bc2\b|head.?quarter|\bhq\b/.test(r);
+    }
+    // Pick the realistic MOVE subset for one phase: drop hold-role units, then take the
+    // NEAREST `budget` to the focal point (objective/intercept). budget = clamp(round(taskable
+    // * fraction), min, max). The rest HOLD. → { movers, held, considered, taskable, maxAllowed }.
+    function _selectMovers(units, focal, opts) {
+        opts = opts || {};
+        var all = arr(units).filter(function (u) { return u && u.id != null; });
+        var eligible = all.filter(function (u) { return !_moverHoldRole(u); });
+        var pool = eligible.length ? eligible : all;   // never freeze the fight if EVERY unit is hold-role
+        var budget = Math.max(opts.min || 1, Math.min(opts.max || 12, Math.round(pool.length * (opts.fraction || 0.15))));
+        var sorted = pool.slice();
+        if (focal && Number.isFinite(+focal.lat) && Number.isFinite(+focal.lon)) {
+            sorted.sort(function (a, b) {
+                var da = (a.lat - focal.lat) * (a.lat - focal.lat) + (a.lon - focal.lon) * (a.lon - focal.lon);
+                var db = (b.lat - focal.lat) * (b.lat - focal.lat) + (b.lon - focal.lon) * (b.lon - focal.lon);
+                return da - db;
+            });
+        }
+        var movers = sorted.slice(0, budget);
+        var moverIds = {}; movers.forEach(function (u) { moverIds[String(u.id)] = 1; });
+        var held = all.filter(function (u) { return !moverIds[String(u.id)]; });
+        return { movers: movers, held: held, considered: all.length, taskable: pool.length, maxAllowed: budget };
+    }
     function _autoDirectorBuildCoa(outcome) {
         var obj = getObjective();
-        var blue = _taskableSideUnits('BLUE');   // AE: only taskable units receive movement orders
-        if (!blue.length) return null;                          // nothing to order (all blocked / none present)
+        var blueAll = _taskableSideUnits('BLUE');   // AE: only taskable units receive movement orders
+        if (!blueAll.length) return null;                       // nothing to order (all blocked / none present)
         var posture, title;
         if (!obj) { posture = 'consolidate'; title = 'Consolidate (no objective)'; }
         else if (outcome.blue_total > 0 && outcome.blue_total < outcome.units_missing) { posture = 'consolidate'; title = 'Consolidate / hold (Blue weak)'; }
@@ -4482,20 +4517,29 @@
         // RMOOZ-AUTO-SCENARIO-FORMATION-REALISM-AC: assign DETERMINISTIC ring positions (per unit index)
         // instead of the exact objective coordinate, so units never stack. Last unit holds back as support;
         // hold_screen spreads onto the support ring; consolidate/weak holds in place.
+        // COA_ACTION_BUDGET_AND_ROLE_GATE: a reaction MOVES only the nearest suitable subset to the
+        // intercept/objective — never all BLUE. The rest hold (omitted from the order = no move).
+        var _blueSel = _selectMovers(blueAll, _ringCenter, { fraction: COA_BLUE_MOVE_FRACTION, min: COA_BLUE_MOVE_MIN, max: COA_BLUE_MOVE_MAX });
+        var _movers = (posture === 'consolidate') ? [] : _blueSel.movers;
         var rings = [];
-        // assault element holds the inner (control) ring; the trailing unit screens from the support ring —
-        // so a held objective keeps Blue INSIDE the control radius (no retreat to the support ring).
-        var actions = blue.map(function (u, i) {
-            if (posture === 'consolidate') { rings.push('hold'); return { unit_uid: u.id, action_type: 'HOLD_POSITION', role: 'reserve' }; }
-            var isSupport = (blue.length > 1 && i === blue.length - 1);
-            var tgt = isSupport ? _supportRing(_ringCenter, i) : _assaultRing(_ringCenter, i);
-            rings.push(isSupport ? 'support' : 'assault');
-            return { unit_uid: u.id, action_type: 'MOVE', role: (isSupport ? 'support' : 'assault'), target: tgt };   // capped + teleport-guarded at execution
-        });
+        var actions;
+        if (!_movers.length) {
+            // consolidate / weak: hold a single small element in place (no advance).
+            actions = [{ unit_uid: (blueAll[0] && blueAll[0].id), action_type: 'HOLD_POSITION', role: 'reserve' }];
+            rings.push('hold');
+        } else {
+            // assault element holds the inner (control) ring; the trailing mover screens from the support ring.
+            actions = _movers.map(function (u, i) {
+                var isSupport = (_movers.length > 1 && i === _movers.length - 1);
+                var tgt = isSupport ? _supportRing(_ringCenter, i) : _assaultRing(_ringCenter, i);
+                rings.push(isSupport ? 'support' : 'assault');
+                return { unit_uid: u.id, action_type: 'MOVE', role: (isSupport ? 'support' : 'assault'), target: tgt };   // capped + teleport-guarded at execution
+            });
+        }
         // RMOOZ-REAL-COA-COMMANDER-QUALITY-AD: carry the commander structure so the auto order is
         // commander-quality (passes the quality gate), not a shallow move-to-objective order.
-        var assaultIds = blue.filter(function (u, i) { return !(posture !== 'consolidate' && blue.length > 1 && i === blue.length - 1); }).map(function (u) { return u.id; });
-        var supIds = (posture !== 'consolidate' && blue.length > 1) ? [blue[blue.length - 1].id] : [];
+        var assaultIds = _movers.filter(function (u, i) { return !(_movers.length > 1 && i === _movers.length - 1); }).map(function (u) { return u.id; });
+        var supIds = (_movers.length > 1) ? [_movers[_movers.length - 1].id] : [];
         var _moveCount = actions.filter(function (a) { return a.action_type === 'MOVE'; }).length;
         return { plan_id: 'AUTO-T' + (_scenario ? _scenario.scenario_turn : 1), title: title + (_intercept ? ' — intercept RED axis' : ''), side: 'BLUE',
             recommended: true, risk: 'low', confidence: 'medium', source_type: 'staff_safe_auto_director', posture: posture,
@@ -4508,6 +4552,7 @@
             risk_mitigation: 'Support-by-fire overwatch + screened flank; deterministic capped movement.',
             expected_enemy_reaction: ['Red counters toward the objective'],
             formation_rings: rings, phases: [{ name: title, actions: actions }],
+            _budget: { considered: _blueSel.considered, taskable: _blueSel.taskable, selected: _moveCount, max_allowed: _blueSel.maxAllowed, held: _blueSel.considered - _moveCount },
             _reaction: _intercept ? { intercept: _intercept, red_centroid: _redC, move_count: _moveCount } : null };
     }
     function _autoDirectorNextBlueOrder(outcome) {
@@ -4527,7 +4572,7 @@
         try { _recordDecision({ role: 'performance', action: 'formation_assignment', called_llm: false, source: 'staff_safe_auto_director',
             reason: 'Blue ' + coa.posture + ' formation', result_summary: 'Blue → ' + ringsLabel + ' positions (' + arr(coa.phases[0].actions).length + ' units)' }); } catch (_) {}
         try { _appendToEventLog('Formation: Blue assigned ' + esc(ringsLabel) + ' positions (turn ' + (_scenario ? _scenario.scenario_turn : '?') + ').'); } catch (_) {}
-        return { ok: true, coa_id: coa.plan_id, posture: coa.posture, rings: ringsLabel, source: 'staff_safe_auto_director', reaction: coa._reaction || null };
+        return { ok: true, coa_id: coa.plan_id, posture: coa.posture, rings: ringsLabel, source: 'staff_safe_auto_director', reaction: coa._reaction || null, budget: coa._budget || null };
     }
     // Deterministic Red maneuver — actually MOVES Red units through the SAME safe/teleport-guarded path
     // as Blue (_resolveCoaMoves → _writeMoveFrame). NO LLM. Returns {posture, moved, summary}.
@@ -4537,13 +4582,17 @@
         var red = _scenarioSideUnits('RED');
         // RMOOZ-AUTO-SCENARIO-FORMATION-REALISM-AC: Red moves to a RING (blocking/screen), never the exact
         // objective center. counter/block → blocking ring; withdraw → away; hold/none → keep current posture.
-        var actions = [], ring = null;
+        // COA_ACTION_BUDGET_AND_ROLE_GATE: only a realistic SUBSET maneuvers per turn (the nearest units to
+        // the objective), role-gated — NOT the whole present force every turn (the old red.forEach moved all).
+        var actions = [], ring = null, sel = null;
         if ((posture === 'counter' || posture === 'block') && obj) {
             ring = 'blocking';
-            red.forEach(function (u, i) { actions.push({ unit_uid: u.id, action_type: 'MOVE', role: posture, target: _blockingRing(obj, i) }); });
+            sel = _selectMovers(red, obj, { fraction: COA_RED_MOVE_FRACTION, min: COA_RED_MOVE_MIN, max: COA_RED_MOVE_MAX });
+            sel.movers.forEach(function (u, i) { actions.push({ unit_uid: u.id, action_type: 'MOVE', role: posture, target: _blockingRing(obj, i) }); });
         } else if (posture === 'withdraw' && obj) {
             ring = 'reserve';
-            red.forEach(function (u) {
+            sel = _selectMovers(red, obj, { fraction: COA_RED_MOVE_FRACTION, min: COA_RED_MOVE_MIN, max: COA_RED_MOVE_MAX });
+            sel.movers.forEach(function (u) {
                 var dLat = (u.lat - obj.lat), dLon = (u.lon - obj.lon);
                 var mag = Math.sqrt(dLat * dLat + dLon * dLon) || 1;
                 actions.push({ unit_uid: u.id, action_type: 'MOVE', role: 'withdraw', target: { lat: u.lat + (dLat / mag) * 0.2, lon: u.lon + (dLon / mag) * 0.2 } });
@@ -4558,8 +4607,10 @@
             if (moved && mapReady()) { try { _triggerScenarioRedraw(); syncMarkers(); } catch (_) {} }
         }
         var ringTxt = ring ? (' → ' + ring + ' ring') : '';
+        var _considered = red.length, _selected = sel ? sel.movers.length : 0, _maxAllowed = sel ? sel.maxAllowed : 0, _held = sel ? sel.held.length : red.length;
         return { posture: posture, moved: moved, ring: ring, target: firstTarget,
-            summary: 'Red ' + posture + ringTxt + (moved ? ' — moved ' + moved + ' unit(s)' : ' — held') + ' (deterministic, no LLM)' };
+            considered: _considered, selected: _selected, max_allowed: _maxAllowed, held: _held,
+            summary: 'Red ' + posture + ringTxt + (moved ? ' — moved ' + moved + '/' + _considered + ' (budget ' + _maxAllowed + ', ' + _held + ' hold)' : ' — held') + ' (deterministic, no LLM)' };
     }
     function _scenarioEndCondition(outcome) {
         if (outcome.blue_success) return { code: 'objective_secured', summary: 'Objective secured by Blue — scenario complete.' };
@@ -4636,7 +4687,7 @@
         // AC: record the Red maneuver WITH its formation target (ring), not just a log line.
         try { _recordDecision({ role: 'red', action: 'red_maneuver_order', called_llm: false, source: 'scenario', reason: red.reason,
             result_summary: maneuver.summary + (maneuver.ring ? ' · target ' + maneuver.ring + ' ring' : '') }); } catch (_) {}
-        try { _appendToEventLog('Red maneuver (turn ' + _scenario.scenario_turn + '): ' + (maneuver.ring ? esc(maneuver.ring) + ' ring around objective' : esc(maneuver.posture)) + (maneuver.moved ? ' — moved ' + maneuver.moved + ' unit(s)' : ' — held') + '.'); } catch (_) {}
+        try { _appendToEventLog('Red maneuver (turn ' + _scenario.scenario_turn + '): ' + (maneuver.ring ? esc(maneuver.ring) + ' ring around objective' : esc(maneuver.posture)) + ' — considered ' + maneuver.considered + ', selected ' + maneuver.selected + '/' + (maneuver.max_allowed || 0) + ' (budget), moved ' + maneuver.moved + ', held ' + maneuver.held + '.'); } catch (_) {}
         _scenario.blue_cycle++; _scenario.red_cycle++;
         _scenario.scenario_turn++;
         // 4) next Blue order
@@ -4651,10 +4702,11 @@
                 // RMOOZ-AI-FREE-FIGHT-BLUE-REACTION-A: named BLUE_REACTION milestone when the Blue order is a
                 // genuine intercept of RED's live axis (deterministic; the committed order executes next tick).
                 if (blue.reaction && blue.reaction.intercept) {
+                    var _bb = blue.budget || {};
                     try { _recordDecision({ role: 'blue', action: 'BLUE_REACTION', called_llm: false, source: 'staff_safe_auto_director',
-                        reason: 'intercept RED axis (deterministic, no LLM)',
-                        result_summary: blue.reaction.move_count + ' unit(s) -> intercept RED axis @ ' + Number(blue.reaction.intercept.lat).toFixed(2) + ',' + Number(blue.reaction.intercept.lon).toFixed(2) }); } catch (_) {}
-                    try { _appendToEventLog('BLUE REACTION (turn ' + _scenario.scenario_turn + '): ' + blue.reaction.move_count + ' unit(s) ordered to intercept the RED axis (commits + executes next tick).'); } catch (_) {}
+                        reason: 'intercept RED axis (deterministic, no LLM) — nearest ' + blue.reaction.move_count + ' of ' + (_bb.considered != null ? _bb.considered : '?') + ' BLUE (budget ' + (_bb.max_allowed != null ? _bb.max_allowed : '?') + ')',
+                        result_summary: blue.reaction.move_count + ' unit(s) -> intercept RED axis @ ' + Number(blue.reaction.intercept.lat).toFixed(2) + ',' + Number(blue.reaction.intercept.lon).toFixed(2) + (_bb.held != null ? ' · ' + _bb.held + ' hold' : '') }); } catch (_) {}
+                    try { _appendToEventLog('BLUE REACTION (turn ' + _scenario.scenario_turn + '): ' + blue.reaction.move_count + ' unit(s) (of ' + (_bb.considered != null ? _bb.considered : '?') + ' considered, budget ' + (_bb.max_allowed != null ? _bb.max_allowed : '?') + ', ' + (_bb.held != null ? _bb.held : '?') + ' hold) ordered to intercept the RED axis (commits + executes next tick).'); } catch (_) {}
                 }
                 if (!_scenarioTimer) _startScenarioTimer();   // keep the fight ticking
             } else {
@@ -5033,6 +5085,15 @@
         _modelFlowHtmlForTest:     function (rh, info, open) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; if (open !== undefined) _modelPickerOpen = !!open; return _modelFlowHtml(); },
         _advancedDiagnosticsHtmlForTest: function (rh, info) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; return _advancedDiagnosticsHtml(); },
         _benchHtmlForTest:         function (warmup, bench) { if (warmup !== undefined) _warmupResult = warmup; if (bench !== undefined) _benchResult = bench; return _benchHtml(); },   // RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P
+        // COA_ACTION_BUDGET_AND_ROLE_GATE test seam: verify the move-subset selector directly.
+        _selectMoversForTest: function (units, focal, opts) {
+            var r = _selectMovers(units, focal, opts);
+            return { considered: r.considered, taskable: r.taskable, maxAllowed: r.maxAllowed,
+                selected: r.movers.length, held: r.held.length,
+                moverIds: r.movers.map(function (u) { return u.id; }),
+                heldHoldRoleExcluded: r.considered - r.taskable };
+        },
+        _autoDirectorBuildCoaForTest: function (o) { return _autoDirectorBuildCoa(o || _whiteScenarioOutcome()); },
         // RMOOZ-GREEN-WORLD-UI-R test seams
         _refreshGreenWorldForTest: function (reason)        { return _refreshGreenWorld(reason); },
         _getGreenWorldForTest:     function ()              { return _greenWorld; },

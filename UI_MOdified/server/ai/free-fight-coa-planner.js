@@ -256,6 +256,57 @@ function bestObjective(objectives) {
  *   COA-2 "Flank / Fix"     — recommended:true,  risk:medium
  *   COA-3 "Probe / Recon"   — recommended:false, risk:low
  */
+// ── COA_ACTION_BUDGET_AND_ROLE_GATE (server) ───────────────────────────────────
+// A normal attack/reaction COA must MOVE only a realistic subset of the present taskable
+// force — never all of it. _enforceCoaActionBudget caps each phase to _moveBudgetFor(taskable)
+// MOVE actions (≤15%, hard max 12), converting the lowest-priority overflow to HOLD_POSITION.
+// Applied to BOTH the deterministic-side builders (via buildCoasForSide) and the LLM's
+// normalized COAs, so neither path can task the whole force. Mirrors the client maneuver
+// budget in free-fight-demo.js (_selectMovers).
+var COA_MOVE_MAX = 12, COA_MOVE_FRACTION = 0.15, COA_MOVE_MIN = 3;
+var _COA_KEEP_PRIORITY = { assault: 0, intercept: 0, main_effort: 0, breach: 0,
+    support: 1, support_by_fire: 1, fires: 1, block: 1, counter: 1, screen: 2, recon: 3 };
+// Hold-role gate: a unit whose role/domain marks it air-defense / base / logistics / support /
+// radar / C2 must NOT be tasked as an assault element (it holds/covers unless repositioning).
+function _serverHoldRole(u) {
+    var r = String((u && (u.role || u.domain || u.class || u.type)) || '').toLowerCase();
+    return /air[_ -]?def|\bsam\b|missile.?def|\bbase\b|logist|\bsupport\b|admin|depot|\bradar\b|\bc2\b|head.?quarter|\bhq\b/.test(r);
+}
+function _moveBudgetFor(taskableCount) {
+    var n = Number.isFinite(taskableCount) ? taskableCount : 0;
+    return Math.max(COA_MOVE_MIN, Math.min(COA_MOVE_MAX, Math.round(n * COA_MOVE_FRACTION)));
+}
+function _enforceCoaActionBudget(coas, taskableCount) {
+    var budget = _moveBudgetFor(taskableCount);
+    return arr(coas).map(function (coa) {
+        if (!coa || !Array.isArray(coa.phases)) return coa;
+        var selected = 0;
+        coa.phases.forEach(function (ph) {
+            var acts = arr(ph && ph.actions);
+            var movers = acts.filter(function (a) { return a && a.action_type && a.action_type !== 'HOLD_POSITION'; });
+            if (movers.length <= budget) { selected += movers.length; return; }
+            var ranked = movers.slice().sort(function (a, b) {
+                var pa = _COA_KEEP_PRIORITY[String(a.role || '').toLowerCase()]; if (pa == null) pa = 5;
+                var pb = _COA_KEEP_PRIORITY[String(b.role || '').toLowerCase()]; if (pb == null) pb = 5;
+                return pa - pb;
+            });
+            var keep = {};
+            ranked.slice(0, budget).forEach(function (a) { keep[a.unit_uid] = 1; });
+            ph.actions = acts.map(function (a) {
+                if (a && a.action_type && a.action_type !== 'HOLD_POSITION' && !keep[a.unit_uid]) {
+                    return Object.assign({}, a, { action_type: 'HOLD_POSITION', role: 'reserve',
+                        reason: 'Held in reserve — action budget reached (max ' + budget + ' moving units this phase).' });
+                }
+                return a;
+            });
+            selected += budget;
+        });
+        coa.action_budget = { max_moving_allowed: budget, selected_action_units: selected, considered: taskableCount };
+        coa.units_selected_count = selected;
+        return coa;
+    });
+}
+
 function buildDeterministicCoas(redUnits, obj) {
     var units = arr(redUnits).filter(unitHasCoord);
     var total = units.length;
@@ -266,6 +317,10 @@ function buildDeterministicCoas(redUnits, obj) {
             return dist({ lat: a.lat, lon: a.lon }, obj) - dist({ lat: b.lat, lon: b.lon }, obj);
         });
     }
+    // COA_ACTION_BUDGET_AND_ROLE_GATE: stable-sort hold-role units (AD/base/support/logistics)
+    // to the back so the nearest MANEUVER units fill the assault/support slots; hold-role units
+    // fall into the HOLD remainder instead of being tasked as assault.
+    units = units.slice().sort(function (a, b) { return (_serverHoldRole(a) ? 1 : 0) - (_serverHoldRole(b) ? 1 : 0); });
 
     var objName = (obj && (obj.name || obj.label)) || 'Objective X';
     var objLat = obj ? obj.lat : 0;
@@ -670,12 +725,16 @@ function buildDiverseCoas(units, obj, side, situation, capContext, mode, seed, i
  * intercept/defense builders. FREEFIGHT-BLUE-THREAT-AWARE-MOVEMENT-A + COMMANDER-FREEDOM-A.
  */
 function buildCoasForSide(units, obj, side, situation, capContext, mode, seed, intel, elevationFn) {
+    var coas;
     if (mode === 'free' || mode === 'high_variation') {
-        return buildDiverseCoas(units, obj, side, situation, capContext, mode, seed, intel, elevationFn);
+        coas = buildDiverseCoas(units, obj, side, situation, capContext, mode, seed, intel, elevationFn);
+    } else {
+        coas = String(side || 'RED').toUpperCase() === 'BLUE'
+            ? buildBlueCoas(units, obj, situation, capContext)
+            : buildDeterministicCoas(units, obj);
     }
-    return String(side || 'RED').toUpperCase() === 'BLUE'
-        ? buildBlueCoas(units, obj, situation, capContext)
-        : buildDeterministicCoas(units, obj);
+    // COA_ACTION_BUDGET_AND_ROLE_GATE: cap every deterministic-side COA to the move budget.
+    return _enforceCoaActionBudget(coas, arr(units).length);
 }
 
 // ── LLM normalizers ───────────────────────────────────────────────────────────
@@ -1130,6 +1189,9 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
         // (below the teleport guard) and identical to how the deterministic builder + the apply layer step.
         // The model's tactical CHOICE (unit / action / direction) is preserved; only the step is capped.
         _clampLlmTargets(normalized, units);
+        // COA_ACTION_BUDGET_AND_ROLE_GATE: cap the LLM's COAs to the move budget too — the model must
+        // not task the whole force; overflow movers become HOLD_POSITION (reserve). Same gate as deterministic.
+        normalized = _enforceCoaActionBudget(normalized, arr(units).length);
         if (normalized.length < 2) {
             lastFail = { ok: false, llm_status: 'invalid_schema', fallback_reason: 'llm_returned_fewer_than_2_valid_coas (' + normalized.length + ', attempt ' + attempt + '/' + maxAttempts + ')', partial: normalized,
                 raw_response: str(result.response || '', 8000) };   // AI: carry the failing raw output for SCC Evidence

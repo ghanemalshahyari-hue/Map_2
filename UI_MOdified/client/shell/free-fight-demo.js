@@ -2827,6 +2827,112 @@
             }
         });
     }
+    // RMOOZ-AI-COA-BEHAVIOR-PATH-REQUIRED-A: domain/movement_mode consistency fix for a single action.
+    // Corrects movement_mode when it contradicts domain, and fixes aircraft that must never direct_step
+    // to an objective (they patrol/orbit instead).
+    function _validateAndFixDomain(act) {
+        if (!act || !act.domain) return;
+        if (act.domain === 'air') {
+            if (act.movement_mode !== 'air') { act.movement_mode = 'air'; act._domain_validated = true; }
+            if (act.waypoint_policy === 'direct_step' || act.waypoint_policy === 'intercept_axis') {
+                act.waypoint_policy = (act.behavior === 'intercept') ? 'orbit' : 'patrol_loop';
+                act._domain_validated = true;
+            }
+        } else if (act.domain === 'naval') {
+            if (act.movement_mode === 'ground') { act.movement_mode = 'naval'; act._domain_validated = true; }
+        } else if (act.domain === 'ground') {
+            if (act.movement_mode === 'naval' || act.movement_mode === 'air') { act.movement_mode = 'ground'; act._domain_validated = true; }
+        }
+        if ((act.domain === 'static' || act.domain === 'sensor' || act.domain === 'air_defense') &&
+            (act.behavior === 'approach' || act.behavior === 'intercept')) {
+            act.behavior = (act.domain === 'air_defense') ? 'defend' : 'support';
+            act.waypoint_policy = 'hold_area';
+            act._domain_validated = true;
+        }
+    }
+
+    // RMOOZ-AI-COA-BEHAVIOR-PATH-REQUIRED-A: post-plan normalizer for real AI COAs.
+    // Runs after /plan-coas response, before quality gate. Ensures every MOVE action carries
+    // behavior intent so _resolvePhaseMoves always takes the behavior path (Layer 2).
+    // Repairs missing fields in-place; marks repaired actions _behavior_repaired + _source.
+    function _normalizeBehaviorIntentForPlan(plan) {
+        if (!plan || !plan.ok) return;
+        var ME = W() && W().RmoozMovementEngine;
+        var ROLE_BEH = {
+            assault: 'approach', support: 'support', screen: 'screen', recon: 'observe',
+            reserve: 'reserve', intercept: 'intercept', defend: 'defend', reinforce: 'support', hold: 'hold',
+        };
+        var ROLE_WP = {
+            assault: 'direct_step', support: 'support_position', screen: 'screen_line',
+            recon: 'direct_step', reserve: 'hold_area', intercept: 'intercept_axis',
+            defend: 'hold_area', reinforce: 'support_position', hold: 'hold_area',
+        };
+        var BEH_WP = {
+            approach: 'direct_step', support: 'support_position', screen: 'screen_line',
+            observe: 'direct_step', reserve: 'hold_area', intercept: 'intercept_axis',
+            defend: 'hold_area', patrol: 'patrol_loop', orbit: 'orbit', hold: 'hold_area',
+        };
+        var repairedCount = 0;
+        arr(plan.coas).forEach(function (coa) {
+            arr(coa && coa.phases).forEach(function (phase) {
+                arr(phase && phase.actions).forEach(function (act) {
+                    if (!act) return;
+                    var isHold = (act.action_type === 'HOLD_POSITION' || act.behavior === 'hold');
+                    if (isHold) {
+                        if (!act.behavior)        act.behavior        = 'hold';
+                        if (!act.domain)          act.domain          = 'ground';
+                        if (!act.movement_mode)   act.movement_mode   = 'static';
+                        if (!act.waypoint_policy) act.waypoint_policy = 'hold_area';
+                        return;
+                    }
+                    var needsRepair = !act.behavior || !act.domain || !act.movement_mode || !act.waypoint_policy;
+                    if (!needsRepair) { _validateAndFixDomain(act); return; }
+
+                    // Infer domain from the real unit (movement engine) or fall back to ground
+                    var found = _findRealUnit(act.unit_uid);
+                    var unit = found ? found.unit : null;
+                    var dom = (ME && unit) ? ME.classifyUnitDomain(unit) : 'ground';
+
+                    // Infer behavior from role, then action_type
+                    var roleKey = String(act.role || '').toLowerCase();
+                    var beh = ROLE_BEH[roleKey] || null;
+                    if (!beh) {
+                        var at = String(act.action_type || '').toLowerCase();
+                        if (at.indexOf('recon') >= 0)         beh = 'observe';
+                        else if (at.indexOf('screen') >= 0)   beh = 'screen';
+                        else if (at.indexOf('support') >= 0)  beh = 'support';
+                        else if (at.indexOf('hold') >= 0)     beh = 'hold';
+                        else                                   beh = 'approach';
+                    }
+                    if (dom === 'air' && beh === 'approach') beh = 'orbit';
+
+                    // Infer waypoint_policy from behavior/role
+                    var wp = BEH_WP[beh] || ROLE_WP[roleKey] || 'direct_step';
+                    if (dom === 'air' && (wp === 'direct_step' || wp === 'intercept_axis'))
+                        wp = (beh === 'intercept') ? 'orbit' : 'patrol_loop';
+
+                    var mm = (dom === 'air') ? 'air' : (dom === 'naval') ? 'naval' : 'ground';
+
+                    if (!act.behavior)        act.behavior        = beh;
+                    if (!act.domain)          act.domain          = dom;
+                    if (!act.movement_mode)   act.movement_mode   = mm;
+                    if (!act.waypoint_policy) act.waypoint_policy = wp;
+
+                    _validateAndFixDomain(act);
+                    act._behavior_repaired = true;
+                    act._source = 'degraded_behavior_repaired';
+                    repairedCount++;
+                });
+            });
+        });
+        if (repairedCount > 0) {
+            plan._behavior_repaired = true;
+            plan._behavior_repaired_count = repairedCount;
+            if (!plan.llm_status || plan.llm_status === 'ok') plan.llm_status = 'behavior_intent_repaired';
+        }
+        return { repaired: repairedCount };
+    }
+
     function _generateCoaPlan() {
         var w = W();
         if (!w || typeof w.fetch !== 'function') return;
@@ -2922,6 +3028,9 @@
             // RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O: auto-select the recommended COA so the simple flow
             // can offer "Use Recommended Plan" by default.
             if (_coaPlan && _coaPlan.ok && arr(_coaPlan.coas).length) { try { _coaSelectedIdx = _pickRecommendedIdx(_coaPlan); } catch (_) {} }
+            // RMOOZ-AI-COA-BEHAVIOR-PATH-REQUIRED-A: repair AI COAs that omit behavior intent fields so
+            // _resolvePhaseMoves always takes Layer 2. Only runs on real LLM plans (plan_source=llm).
+            if (_coaPlan && _coaPlan.ok && _coaPlan.plan_source === 'llm') { try { _normalizeBehaviorIntentForPlan(_coaPlan); } catch (_) {} }
             // RMOOZ-WARGAMINGGEN-MOVEMENT-ARCHITECTURE-A: AI COA uses behavior assignments — no ring normalization.
             // _normalizeActionTargets is staff-safe-only; do NOT apply to AI-generated plans.
             _coaLoading = false; _coaApplied = false; _stopCoaLoadingTicker();
@@ -3172,6 +3281,15 @@
                     waypoints: wps2, waypoint_idx: wpIdx,
                     moved_km: movedKm, remaining_km: remKm, distance_to_waypoint_km: wpDistKm,
                     source: act._source || 'ai_behavior' });
+                return;
+            }
+
+            // RMOOZ-AI-COA-BEHAVIOR-PATH-REQUIRED-A: AI MOVE without behavior after normalization must NOT
+            // silently fall to the legacy target-only path — log as blocked and skip execution.
+            if (_coaPlan && _coaPlan.plan_source === 'llm' && !behavior) {
+                if (!Array.isArray(_domainBlockedRecords)) _domainBlockedRecords = [];
+                _domainBlockedRecords.push({ uid: act.unit_uid, role: act.role || '', tick: _coaTick || 0,
+                    domain: act.domain || 'unknown', reason: 'AI_NO_BEHAVIOR_INTENT', source: 'llm_no_behavior' });
                 return;
             }
 

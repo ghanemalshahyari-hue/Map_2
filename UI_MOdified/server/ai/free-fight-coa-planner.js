@@ -1016,7 +1016,7 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
             'Recon must observe from standoff and avoid contact; delay must shape the enemy; flank must use a different axis; withdraw must increase distance; deceive must mislead.',
             'For every action explain why_action, why_unit, deciding_factor (terrain/zone/objective/enemy), risk, and expected_result.',
             'Return ONLY a JSON object with a "coas" array. Rules: valid JSON; every unit_uid MUST be from allowed_unit_ids; coordinates inside the map; no teleport (no impossible movement); no invented units; NEVER engage/destroy/open-fire.',
-            'IMPORTANT — Two-layer movement architecture: output behavior+domain+movement_mode+waypoint_policy for every action. The movement engine converts these to waypoints. Do NOT output raw ring/circular coordinates as the only targeting — use behavior intent instead. Aircraft use patrol|orbit|intercept waypoint_policy (never stationary at objective). Ground units use direct_step|intercept_axis. Naval units use patrol_loop only on water.',
+            'CRITICAL — behavior, domain, movement_mode, waypoint_policy are REQUIRED for every action (the JSON schema enforces this). Do NOT place units at Objective X using raw lat/lon ring coordinates — output behavior intent instead. The RMOOZ movement engine converts behavior intent to actual waypoints. Aircraft MUST use waypoint_policy=patrol_loop or orbit (never direct_step to the objective; never stationary at Obj X). Ground units use direct_step or intercept_axis. Naval units use patrol_loop on water only.',
         ].join(' ')
         : [
             'You are a military wargame AI for a Military exercise.',
@@ -1275,7 +1275,9 @@ function _coaOutputSchema() {
         update_trigger: { type: 'string' },
         target: { type: 'object', properties: { type: { type: 'string' }, lat: { type: 'number' }, lon: { type: 'number' } } },
         reason: { type: 'string' }, roe_status: { type: 'string' }, taskable: { type: 'boolean' } },
-        required: ['unit_uid', 'role', 'action_type', 'reason'] };
+        // RMOOZ-AI-COA-BEHAVIOR-PATH-REQUIRED-A: behavior/domain/movement_mode/waypoint_policy now required
+        // for all actions so the movement engine always has Layer 1 intent to work from.
+        required: ['unit_uid', 'role', 'action_type', 'behavior', 'domain', 'movement_mode', 'waypoint_policy', 'reason'] };
     var phase = { type: 'object', properties: {
         phase_id: { type: 'string' }, title: { type: 'string' }, purpose: { type: 'string' },
         actions: { type: 'array', items: action } }, required: ['title', 'actions'] };

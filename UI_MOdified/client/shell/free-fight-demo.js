@@ -342,6 +342,22 @@
         _objectiveSource = finiteLL(_objective) ? 'user_marked_demo_objective' : null;
         // Persist (browser) so a re-opened card can reuse the placed Objective X.
         try { if (finiteLL(_objective)) W().__rmoozFreeFightObjective = { lat: _objective.lat, lon: _objective.lon }; } catch (_) {}
+        // RMOOZ-OBJ-CANONICAL-A: sync to loaded scenario so all sc.obj readers see the same Objective X.
+        try {
+            var _sc = W() && W().RmoozScenario && W().RmoozScenario.scenario;
+            if (_sc) {
+                if (finiteLL(_objective)) {
+                    var _newObj = { lat: _objective.lat, lon: _objective.lon, coord: [_objective.lon, _objective.lat],
+                        name: 'Objective X', source_type: 'user_marked_demo_objective', needs_review: true };
+                    _sc._previous_objective = _sc.obj || _sc.objective || null;
+                    _sc.obj = _newObj; _sc.objective = _newObj;
+                    if (Array.isArray(_sc.objectives) && _sc.objectives.length) { _sc.objectives[0] = _newObj; } else { _sc.objectives = [_newObj]; }
+                } else if (_sc._previous_objective) {
+                    _sc.obj = _sc._previous_objective; _sc.objective = _sc._previous_objective;
+                    if (Array.isArray(_sc.objectives) && _sc.objectives.length) { _sc.objectives[0] = _sc._previous_objective; } else { _sc.objectives = [_sc._previous_objective]; }
+                }
+            }
+        } catch (_scEx) {}
         _terrain = { available: false };   // re-probe per new objective/targets
         _progress = 0; _running = false; _paused = false; clearTimer();
         _planSource = 'deterministic';
@@ -1428,12 +1444,11 @@
 
         _aiDiagnostics = { source_used: sourceUsed, units_total: dTotal, units_with_id: dWithId, units_with_coords: dWithCoords, units_movable: dMovable };
 
-        // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: the loop must follow the LOADED
-        // scenario's OWN objective — never a stale operator-placed Objective X left
-        // over from a previously-loaded scenario. Priority:
-        //   1. loaded scenario objective (sc.obj / sc.objective / sc.objectives[0])
-        //   2. operator-placed Objective X (_objective) — for scenarios with none
-        //   3. operational_brief objectives from the payload
+        // RMOOZ-OBJ-CANONICAL-A: operator Objective X is the canonical COA objective.
+        // Priority: 1. explicit operator _objective (user_marked_demo_objective / reused_previous / opts)
+        //           2. loaded scenario (sc.obj / sc.objective / sc.objectives[0]) — fallback only
+        //           3. other _objective sources (e.g. 'brief') — auto-derived
+        //           4. payload objectives / placement_candidates — last resort
         function scenObjToLL(o) {
             if (!o) return null;
             if (Array.isArray(o.coord) && o.coord.length >= 2 && Number.isFinite(+o.coord[0]) && Number.isFinite(+o.coord[1]))
@@ -1442,10 +1457,15 @@
             return null;
         }
         var objectives = [];
-        var scLL = sc ? (scenObjToLL(sc.obj) || scenObjToLL(sc.objective)) : null;
-        if (!scLL && sc && Array.isArray(sc.objectives) && sc.objectives.length) scLL = scenObjToLL(sc.objectives[0]);
-        if (scLL) objectives = [scLL];
-
+        var _srcIsOperator = finiteLL(_objective) && (_objectiveSource === 'user_marked_demo_objective' || _objectiveSource === 'reused_previous' || _objectiveSource === 'opts');
+        if (_srcIsOperator) {
+            objectives = [{ lat: _objective.lat, lon: _objective.lon, name: 'Objective X', source_type: _objectiveSource }];
+        }
+        if (!objectives.length && sc) {
+            var scLL = scenObjToLL(sc.obj) || scenObjToLL(sc.objective);
+            if (!scLL && Array.isArray(sc.objectives) && sc.objectives.length) scLL = scenObjToLL(sc.objectives[0]);
+            if (scLL) objectives = [scLL];
+        }
         var ob2 = (_payload && _payload.brief && _payload.brief.operational_brief) || (_payload && _payload.operational_brief) || {};
         if (!objectives.length && finiteLL(_objective)) objectives = [{ lat: _objective.lat, lon: _objective.lon, name: 'Objective X' }];
         if (!objectives.length && Array.isArray(ob2.placement_candidates)) {
@@ -5249,6 +5269,9 @@
         _getMovementValidationLogForTest:    function ()  { return _movementValidationLog.slice(); },
         _clearMovementValidationLogForTest:  function ()  { _movementValidationLog = []; _domainHeldUids = {}; },
         _getPlacementValidationForTest:      function ()  { return _placementValidation.slice(); },
+        // RMOOZ-OBJ-CANONICAL-A test seams
+        _getObjectiveSourceForTest:          function ()  { return _objectiveSource; },
+        _getObjectiveForTest:                function ()  { return _objective ? { lat: _objective.lat, lon: _objective.lon } : null; },
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozFreeFightDemo = API;

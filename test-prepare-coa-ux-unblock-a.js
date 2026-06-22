@@ -117,22 +117,29 @@ test('5 facade: switchToLocalModel, switchToOpenRouter, toggleAutoScenario exist
            typeof eng.toggleAutoScenario === 'function';
 });
 
-test('6 Panel 2: ⊘ AI COA unavailable + disabled when model missing', function () {
+test('6 Panel 2: strict AI button disabled (cursor:not-allowed) when model missing', function () {
+    // PRODUCT-FLOW-A: "Generate Real AI COA" is the strict disabled button; smart "Prepare COA" is always enabled.
     setModelUnavailable();
     var html = SCC.render();
-    return html.includes('⊘ AI COA unavailable') && html.includes('cursor:not-allowed');
+    return html.includes('scc-prepare-ai') && html.includes('cursor:not-allowed');
 });
 
-test('7 Panel 2: ✓ Prepare AI COA enabled when AI ready', function () {
+test('7 Panel 2: smart "Prepare COA" always enabled; strict button enabled when AI ready', function () {
     setReady();
     var html = SCC.render();
-    return html.includes('✓ Prepare AI COA') && !html.includes('⊘ AI COA unavailable');
+    // Smart button present without cursor:not-allowed; strict button also enabled (no cursor:not-allowed on it)
+    var smartIdx = html.indexOf('scc-prepare-smart');
+    var strictIdx = html.indexOf('scc-prepare-ai');
+    var smartSnippet = smartIdx >= 0 ? html.slice(smartIdx, smartIdx + 200) : '';
+    var strictSnippet = strictIdx >= 0 ? html.slice(strictIdx, strictIdx + 200) : '';
+    return smartIdx >= 0 && !smartSnippet.includes('cursor:not-allowed') &&
+           strictIdx >= 0 && !strictSnippet.includes('cursor:not-allowed');
 });
 
-test('8 Panel 2: cloud mismatch shows two action buttons + message', function () {
+test('8 Panel 2: cloud mismatch shows two action buttons + spec message', function () {
     setCloudMismatch();
     var html = SCC.render();
-    return html.includes('Cloud model selected, but Free Fight is using local Ollama') &&
+    return html.includes('Cloud model selected but provider is Ollama') &&
            html.includes('scc-use-local-model') &&
            html.includes('scc-use-openrouter');
 });
@@ -151,10 +158,11 @@ test('10 Panel 2: Staff-Safe always present (both AI ok and blocked)', function 
     return h1.includes('scc-prepare-staffsafe') && h2.includes('scc-prepare-staffsafe');
 });
 
-test('11 Panel 2: Staff-Safe promotion note when AI blocked', function () {
+test('11 Panel 2: mismatch banner text matches spec when AI blocked', function () {
+    // PRODUCT-FLOW-A: promotion note replaced by specific error banners; Staff-Safe button still present.
     setCloudMismatch();
     var html = SCC.render();
-    return html.includes('Staff-Safe') && html.includes('fix the AI model');
+    return html.includes('Staff-Safe') && html.includes('provider is Ollama');
 });
 
 test('12 bind() registers scc-use-local-model, scc-use-openrouter, scc-auto-continue', function () {

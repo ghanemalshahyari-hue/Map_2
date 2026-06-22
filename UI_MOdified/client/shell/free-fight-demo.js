@@ -584,6 +584,95 @@
     }
     function markerLatLng(g) { return [g.current.lat, g.current.lon]; }
 
+    // RMOOZ-MOVEMENT-TRUTH-A: Draw planned movement arrows when a COA plan exists but
+    // has NOT yet been committed. Preview-only — does NOT mutate unit positions.
+    function _planPreviewLayer(w) {
+        if (!_coaPlan || !_coaPlan.ok || _coaExec) return;
+        var L = w.L; if (!L) return;
+        var coa = (_coaPlan.coas && _coaPlan.coas[_coaSelectedIdx]) || (_coaPlan.coas && _coaPlan.coas[0]);
+        if (!coa) return;
+        var ROLE_COL_R = { assault: '#e86040', recon: '#d0b060', support: '#f0a040', screen: '#f07060', reserve: '#808898' };
+        var ROLE_COL_B = { intercept: '#40b8b0', defend: '#4090d0', screen: '#8888d0', reinforce: '#60a880', reserve: '#6090a0' };
+        arr(coa.phases).forEach(function (ph) {
+            arr(ph && ph.actions).forEach(function (act) {
+                if (!act || act.action_type === 'HOLD_POSITION') return;
+                if (!act.target || !Number.isFinite(+act.target.lat) || !Number.isFinite(+act.target.lon)) return;
+                var found = _findRealUnit(act.unit_uid); if (!found || !found.unit) return;
+                var u = found.unit;
+                var sLat = u.lat != null ? +u.lat : (Array.isArray(u.coord) ? +u.coord[1] : null);
+                var sLon = u.lon != null ? +u.lon : (Array.isArray(u.coord) ? +u.coord[0] : null);
+                if (!Number.isFinite(sLat) || !Number.isFinite(sLon)) return;
+                var tLat = +act.target.lat, tLon = +act.target.lon;
+                var side = String((u.side) || '').toUpperCase();
+                var role = act.role || 'unit';
+                var roleColor = side === 'RED' ? (ROLE_COL_R[role] || '#e07050') : (ROLE_COL_B[role] || '#50a0d0');
+                var roleLabel = (side === 'RED' ? 'RED ' : side === 'BLUE' ? 'BLUE ' : '') + role.toUpperCase();
+                var taskable = _isUnitTaskable(act.unit_uid);
+                var lineColor = taskable ? roleColor : '#505868';
+                try {
+                    _layer.addLayer(L.polyline([[sLat, sLon], [tLat, tLon]], {
+                        color: lineColor, weight: 2, opacity: 0.6, dashArray: '8 5', interactive: false,
+                    }));
+                    var diamondHtml = '<div style="width:10px;height:10px;border:2px solid ' + lineColor + ';background:rgba(8,14,20,.8);transform:rotate(45deg);"></div>';
+                    var tgtM = L.marker([tLat, tLon], {
+                        icon: L.divIcon({ className: '', html: diamondHtml, iconSize: [10, 10], iconAnchor: [5, 5] }),
+                        interactive: true, keyboard: false,
+                    });
+                    var distKm = _kmBetween({ lat: sLat, lon: sLon }, { lat: tLat, lon: tLon });
+                    var objDist = _objective ? Math.round(_kmBetween({ lat: tLat, lon: tLon }, _objective) * 10) / 10 : null;
+                    tgtM.bindPopup('<div style="font-size:11px;color:#e8eaed;min-width:175px;">' +
+                        '<b style="color:' + roleColor + ';">' + esc(act.unit_uid || '') + '</b> — <b style="color:' + roleColor + ';">' + esc(roleLabel) + '</b>' +
+                        (!taskable ? ' <b style="color:#f08060;">[HOLD REVIEW]</b>' : '') + '<br>' +
+                        'from: ' + sLat.toFixed(4) + ', ' + sLon.toFixed(4) + '<br>' +
+                        'target: ' + tLat.toFixed(4) + ', ' + tLon.toFixed(4) + '<br>' +
+                        'move: ' + Math.round(distKm * 10) / 10 + ' km' +
+                        (objDist != null ? ' · obj: ' + objDist + ' km' : '') + '</div>');
+                    _layer.addLayer(tgtM);
+                    var lbl = taskable
+                        ? '<div data-ff-ovl="plan-preview" style="font-size:8px;font-weight:700;color:' + roleColor + ';background:rgba(8,14,20,.82);padding:0 3px;border-radius:2px;white-space:nowrap;border:1px solid rgba(255,255,255,.1);">' + esc(roleLabel) + '</div>'
+                        : '<div data-ff-ovl="hold-review" style="font-size:8px;font-weight:700;color:#f0a060;background:rgba(20,12,4,.85);padding:0 3px;border-radius:2px;white-space:nowrap;border:1px solid rgba(240,160,96,.3);">HOLD REVIEW</div>';
+                    _layer.addLayer(L.marker([tLat, tLon], {
+                        icon: L.divIcon({ className: '', html: lbl, iconSize: [10, 10], iconAnchor: [-4, 5] }),
+                        interactive: false, keyboard: false,
+                    }));
+                } catch (_pe) {}
+            });
+        });
+    }
+    // RMOOZ-MOVEMENT-TRUTH-A: Committed target overlay — solid ring markers at each COA
+    // action target once a COA is committed but before the first Run tick executes.
+    function _committedOverlayLayer(w) {
+        if (!_coaExec || !_coaExec.active || _coaApplied) return;
+        var L = w.L; if (!L) return;
+        var coa = _coaExec.selected_coa; if (!coa) return;
+        var ROLE_COL_R = { assault: '#e86040', recon: '#d0b060', support: '#f0a040', screen: '#f07060', reserve: '#808898' };
+        var ROLE_COL_B = { intercept: '#40b8b0', defend: '#4090d0', screen: '#8888d0', reinforce: '#60a880', reserve: '#6090a0' };
+        arr(coa.phases).forEach(function (ph) {
+            arr(ph && ph.actions).forEach(function (act) {
+                if (!act || act.action_type === 'HOLD_POSITION') return;
+                if (!act.target || !Number.isFinite(+act.target.lat) || !Number.isFinite(+act.target.lon)) return;
+                var found = _findRealUnit(act.unit_uid); if (!found || !found.unit) return;
+                var u = found.unit;
+                var side = String((u.side) || '').toUpperCase();
+                var role = act.role || 'unit';
+                var roleColor = side === 'RED' ? (ROLE_COL_R[role] || '#e07050') : (ROLE_COL_B[role] || '#50a0d0');
+                var roleLabel = (side === 'RED' ? 'RED ' : side === 'BLUE' ? 'BLUE ' : '') + role.toUpperCase();
+                var tLat = +act.target.lat, tLon = +act.target.lon;
+                try {
+                    if (typeof L.circleMarker === 'function') {
+                        _layer.addLayer(L.circleMarker([tLat, tLon], {
+                            radius: 7, color: roleColor, weight: 2.5, fillColor: '#080f18', fillOpacity: 0.75, interactive: false,
+                        }));
+                    }
+                    _layer.addLayer(L.marker([tLat, tLon], {
+                        icon: L.divIcon({ className: '', html: '<div data-ff-ovl="committed-target" style="font-size:8px;font-weight:700;color:' + esc(roleColor) + ';background:rgba(8,14,20,.88);padding:0 3px;border-radius:2px;white-space:nowrap;border:1px solid ' + esc(roleColor) + ';">⊙ ' + esc(roleLabel) + '</div>', iconSize: [10, 10], iconAnchor: [-4, 5] }),
+                        interactive: false, keyboard: false,
+                    }));
+                } catch (_ce) {}
+            });
+        });
+    }
+
     function syncMarkers() {
         var w = W();
         if (!mapReady()) return;
@@ -639,6 +728,10 @@
             if (typeof m.on === 'function') m.on('click', function () { openDemoUnitCard(g); });
             _layer.addLayer(m);
         });
+        // RMOOZ-MOVEMENT-TRUTH-A: plan preview arrows (plan ready, not yet committed)
+        // and committed target overlay (committed, not yet run). Visual-only, no position mutation.
+        try { _planPreviewLayer(w); } catch (_pp) {}
+        try { _committedOverlayLayer(w); } catch (_co) {}
         // FREEFIGHT-AI-REAL-MAP-MOVE-A: trail + pulse after Apply Unit AI Action
         if (_aiApplied && _aiDecision && _aiDecision.ok && _aiDecision.scenario_patch) {
             var ap = _aiDecision.scenario_patch;
@@ -822,6 +915,21 @@
         }
         if (_coaHeldCount > 0) {
             label(objLat - (+th.warning || 0.2), objLon, '<div data-ff-ovl="held" style="font-size:9px;color:#9ab0c0;background:rgba(8,14,20,.75);padding:0 3px;border-radius:2px;white-space:nowrap;">' + _coaHeldCount + ' BLUE units already in position</div>', [0, 0]);
+        }
+        // RMOOZ-MOVEMENT-TRUTH-A: per-unit HOLD REVIEW labels for Step-1-held units.
+        // Shown regardless of _coaApplied so operators can see which units are suppressed.
+        var _heldKeys = Object.keys(_step1HeldUids);
+        if (_heldKeys.length && typeof L.marker === 'function' && typeof L.divIcon === 'function') {
+            _heldKeys.forEach(function (uid) {
+                var f = _findRealUnit(uid); if (!f || !f.unit) return;
+                var u = f.unit;
+                var lat = u.lat != null ? +u.lat : (Array.isArray(u.coord) ? +u.coord[1] : null);
+                var lon = u.lon != null ? +u.lon : (Array.isArray(u.coord) ? +u.coord[0] : null);
+                if (!Number.isFinite(lat) || !Number.isFinite(lon)) return;
+                try {
+                    label(lat, lon, '<div data-ff-ovl="hold-unit" style="font-size:8px;font-weight:700;color:#f0a060;background:rgba(20,12,4,.88);padding:1px 4px;border-radius:2px;white-space:nowrap;border:1px solid rgba(240,160,96,.35);">⚠ HOLD REVIEW · ' + esc(uid) + '</div>', [-4, 5]);
+                } catch (_) {}
+            });
         }
     }
 
@@ -2766,6 +2874,8 @@
             // RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O: auto-select the recommended COA so the simple flow
             // can offer "Use Recommended Plan" by default.
             if (_coaPlan && _coaPlan.ok && arr(_coaPlan.coas).length) { try { _coaSelectedIdx = _pickRecommendedIdx(_coaPlan); } catch (_) {} }
+            // RMOOZ-MOVEMENT-TRUTH-A: correct AI targets that are far from the objective.
+            if (_coaPlan && _coaPlan.ok) { try { _normalizeActionTargets(_coaPlan); } catch (_na) {} }
             _coaLoading = false; _coaApplied = false; _stopCoaLoadingTicker();
             updatePanel();
             // RMOOZ-GREEN-WORLD-UI-R + RMOOZ-GREEN-WHITE-SCORING-T: refresh Green, then score it onto the
@@ -2912,7 +3022,7 @@
             var startLon = u.lon != null ? +u.lon : (Array.isArray(u.coord) ? +u.coord[0] : null);
             if (!Number.isFinite(startLat) || !Number.isFinite(startLon)) return;
             var tgt = { lat: +act.target.lat, lon: +act.target.lon };
-            var fin = _stepTowardCapped({ lat: startLat, lon: startLon }, tgt);   // clamp/teleport guard
+            var fin = { lat: round5(tgt.lat), lon: round5(tgt.lon) };   // RMOOZ-MOVEMENT-TRUTH-A: one tick = full phase move
             var dLat = round5(fin.lat) - startLat, dLon = round5(fin.lon) - startLon;
             var stepDist = Math.sqrt(dLat * dLat + dLon * dLon);
             var dt = round5(fin.lat) - tgt.lat, dn = round5(fin.lon) - tgt.lon;
@@ -4587,6 +4697,49 @@
     function _screenRing(obj, i)   { return _ringPos(obj, RING_KM.screen, i, RED_BASE_DEG); }
     function _blockingRing(obj, i) { return _ringPos(obj, RING_KM.blocking, i, RED_BASE_DEG); }
     function _reserveRing(obj, i)  { return _ringPos(obj, RING_KM.reserve, i, BLUE_BASE_DEG + 180); }
+    // RMOOZ-MOVEMENT-TRUTH-A: normalize LLM-generated COA targets that are too far from
+    // the objective. If a target is > 40 km from the objective it is almost certainly an
+    // AI hallucination (staged positions, random coords) — replace with the correct ring.
+    var MAX_PLAN_TARGET_OBJ_KM = 40;
+    function _normalizeActionTargets(plan) {
+        var obj = getObjective();
+        if (!obj || !Number.isFinite(obj.lat) || !Number.isFinite(obj.lon)) return plan;
+        if (!plan || !plan.ok || !Array.isArray(plan.coas)) return plan;
+        plan.coas.forEach(function (coa) {
+            var isRed = String((coa && coa.side) || '').toUpperCase() === 'RED';
+            var roleCount = {};
+            arr(coa && coa.phases).forEach(function (ph) {
+                arr(ph && ph.actions).forEach(function (act) {
+                    if (!act || act.action_type === 'HOLD_POSITION') return;
+                    if (!act.target || !Number.isFinite(+act.target.lat) || !Number.isFinite(+act.target.lon)) return;
+                    var d = _kmBetween({ lat: +act.target.lat, lon: +act.target.lon }, obj);
+                    if (d <= MAX_PLAN_TARGET_OBJ_KM) return;
+                    var role = act.role || '';
+                    var idx = (roleCount[role] = ((roleCount[role] || 0) + 1));
+                    var normalized;
+                    if (isRed) {
+                        if (role === 'recon')        normalized = _ringPos(obj, 7, idx, RED_BASE_DEG);
+                        else if (role === 'support') normalized = _ringPos(obj, RING_KM.support, idx, RED_BASE_DEG + 30);
+                        else if (role === 'screen')  normalized = _ringPos(obj, RING_KM.screen,  idx, RED_BASE_DEG + 90);
+                        else if (role === 'reserve') normalized = _ringPos(obj, 10, idx, RED_BASE_DEG + 180);
+                        else                         normalized = _ringPos(obj, RING_KM.assault, idx, RED_BASE_DEG);
+                    } else {
+                        if (role === 'recon')            normalized = _ringPos(obj, 6, idx, RED_BASE_DEG);
+                        else if (role === 'screen')      normalized = _screenRing(obj, idx);
+                        else if (role === 'intercept')   normalized = _blockingRing(obj, idx);
+                        else if (role === 'reserve')     normalized = _reserveRing(obj, idx);
+                        else if (role === 'reinforce')   normalized = _supportRing(obj, idx);
+                        else                             normalized = _ringPos(obj, RING_KM.assault, idx, RED_BASE_DEG - 15);
+                    }
+                    if (normalized && Number.isFinite(normalized.lat) && Number.isFinite(normalized.lon)) {
+                        act.target = normalized;
+                        act._target_normalized = true;
+                    }
+                });
+            });
+        });
+        return plan;
+    }
     function _objFormation(obj) {
         return { objective_center: obj ? { lat: obj.lat, lon: obj.lon } : null,
             assault_ring: function (i) { return _assaultRing(obj, i); }, support_ring: function (i) { return _supportRing(obj, i); },
@@ -4996,7 +5149,7 @@
         try { _appendToEventLog('Scenario stopped by operator.'); } catch (_) {}
         updatePanel();
     }
-    function _resetScenario() { _stopScenarioTimer(); _scenario = null; _step1HeldUids = {}; }
+    function _resetScenario() { _stopScenarioTimer(); _scenario = null; _step1HeldUids = {}; _coaLoading = false; }
     // ── operator-card stale-commit guard (consumed by the Scenario Control Center engine facade) ────────
     // RMOOZ-FREE-FIGHT-V2-COA-TO-SCENARIO-BUGFIX-AB1: is the committed COA STALE relative to what the
     // operator is now looking at? True when (a) a DIFFERENT (newer) plan object is loaded than the one we
@@ -5285,6 +5438,37 @@
                 is_real_llm: (function () { try { return _isRealLlmPlan(p); } catch (_) { return false; } })(),
             };
         },
+        // RMOOZ-MOVEMENT-TRUTH-A: per-unit movement status for the debug panel in Panel 6.
+        movementDebug: function () {
+            var coa = _coaExec ? _coaExec.selected_coa
+                : (_coaPlan && _coaPlan.ok && (_coaPlan.coas && (_coaPlan.coas[_coaSelectedIdx] || _coaPlan.coas[0])));
+            if (!coa) return [];
+            var obj = getObjective();
+            var result = [];
+            arr(coa.phases).forEach(function (ph) {
+                arr(ph && ph.actions).forEach(function (act) {
+                    if (!act) return;
+                    var found = act.unit_uid ? _findRealUnit(act.unit_uid) : null;
+                    var u = found && found.unit;
+                    var cLat = u ? (u.lat != null ? +u.lat : (Array.isArray(u.coord) ? +u.coord[1] : null)) : null;
+                    var cLon = u ? (u.lon != null ? +u.lon : (Array.isArray(u.coord) ? +u.coord[0] : null)) : null;
+                    var tLat = act.target ? +act.target.lat : null;
+                    var tLon = act.target ? +act.target.lon : null;
+                    var distKm = (cLat != null && tLat != null) ? Math.round(_kmBetween({ lat: cLat, lon: cLon }, { lat: tLat, lon: tLon }) * 10) / 10 : null;
+                    var objDistKm = (obj && tLat != null) ? Math.round(_kmBetween({ lat: tLat, lon: tLon }, obj) * 10) / 10 : null;
+                    var taskable = _isUnitTaskable(act.unit_uid);
+                    var movedThisTick = _coaMovedUnits.some(function (m) { return m && String(m.uid || (m.unit && m.unit.id) || '') === String(act.unit_uid || ''); });
+                    var heldStep1 = !!_step1HeldUids[String(act.unit_uid || '')];
+                    var heldDomain = !!_domainHeldUids[String(act.unit_uid || '')];
+                    result.push({ uid: act.unit_uid, side: u ? (u.side || '') : '', role: act.role || '',
+                        action_type: act.action_type || '', cur_lat: cLat, cur_lon: cLon,
+                        tgt_lat: tLat, tgt_lon: tLon, dist_km: distKm, obj_dist_km: objDistKm,
+                        moved: movedThisTick, taskable: taskable,
+                        blocked_reason: heldStep1 ? 'Step-1 review required' : (heldDomain ? 'domain violation' : (!taskable ? 'not taskable' : null)) });
+                });
+            });
+            return result;
+        },
     };
 
     var API = {
@@ -5497,6 +5681,7 @@
         // "deterministic planner for tests" relaxation used by the loop-MECHANICS suites.
         _setAiOnlyGateForTest:     function (v)           { _aiOnlyGate = (v !== false); },
         _freeFightAiReadyForTest:  function ()            { return _freeFightAiReady(); },
+        _getPlanningModeForTest:   function ()            { return _planningMode; }, // RMOOZ-PREPARE-COA-PRODUCT-FLOW-A
         _getAiUnavailableMsgForTest: function ()          { return _aiUnavailableMsg; },
         _setRouteHealthForTest:    function (h)           { _routeHealth = h; },
         _setModelInfoForTest:      function (m)           { _modelInfo = m; },   // RMOOZ-PREPARE-COA-UX-UNBLOCK-A
@@ -5537,6 +5722,8 @@
         // RMOOZ-OBJ-CANONICAL-A test seams
         _getObjectiveSourceForTest:          function ()  { return _objectiveSource; },
         _getObjectiveForTest:                function ()  { return _objective ? { lat: _objective.lat, lon: _objective.lon } : null; },
+        // RMOOZ-MOVEMENT-TRUTH-A test seam
+        _normalizeActionTargetsForTest: function (plan) { return _normalizeActionTargets(plan); },
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozFreeFightDemo = API;

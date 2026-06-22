@@ -408,6 +408,32 @@
                 return esc(String(m.uid)) + ' ' + esc(m.role || '') + ' → ' + (m.to ? (m.to.lat.toFixed(3) + ',' + m.to.lon.toFixed(3)) : '?');
             }).join('<br>') + '</div>';
         } else { inner += note('(no movement executed yet)', C.dim); }
+        // RMOOZ-MOVEMENT-TRUTH-A: per-unit movement debug table (role/target/dist/obj-dist/taskable)
+        var mvd = (function () { try { return eng.movementDebug ? eng.movementDebug() : []; } catch (_) { return []; } })();
+        if (mvd.length) {
+            inner += '<div style="margin-top:6px;font-size:9px;color:' + C.dim + ';font-weight:700;">Movement debug (' + mvd.length + ' actions)</div>';
+            inner += '<div style="overflow-x:auto;margin-top:2px;"><table style="border-collapse:collapse;font-size:9px;width:100%;min-width:480px;">';
+            inner += '<thead><tr>' + ['unit', 'side', 'role', 'cur lat,lon', 'target lat,lon', 'dist', 'obj km', 'moved', 'ok', 'reason'].map(function (h) {
+                return '<th style="border-bottom:1px solid ' + C.edgeSoft + ';padding:2px 5px;color:' + C.dim + ';font-weight:700;white-space:nowrap;text-align:left;">' + esc(h) + '</th>';
+            }).join('') + '</tr></thead><tbody>';
+            mvd.forEach(function (r) {
+                var rowCol = r.blocked_reason ? C.bad : (r.moved ? C.good : C.ink);
+                var sCol = r.side === 'RED' ? '#f09080' : r.side === 'BLUE' ? '#80c0f0' : C.ink;
+                inner += '<tr>' +
+                    '<td style="padding:2px 5px;white-space:nowrap;color:' + rowCol + ';">' + esc(r.uid || '—') + '</td>' +
+                    '<td style="padding:2px 5px;font-weight:700;color:' + sCol + ';">' + esc(r.side || '—') + '</td>' +
+                    '<td style="padding:2px 5px;">' + esc(r.role || r.action_type || '—') + '</td>' +
+                    '<td style="padding:2px 5px;color:' + C.dim + ';font-size:8.5px;">' + (r.cur_lat != null ? r.cur_lat.toFixed(3) + ',' + r.cur_lon.toFixed(3) : '—') + '</td>' +
+                    '<td style="padding:2px 5px;color:' + C.dim + ';font-size:8.5px;">' + (r.tgt_lat != null ? r.tgt_lat.toFixed(3) + ',' + r.tgt_lon.toFixed(3) : '—') + '</td>' +
+                    '<td style="padding:2px 5px;">' + (r.dist_km != null ? r.dist_km : '—') + '</td>' +
+                    '<td style="padding:2px 5px;">' + (r.obj_dist_km != null ? r.obj_dist_km : '—') + '</td>' +
+                    '<td style="padding:2px 5px;font-weight:700;color:' + (r.moved ? C.good : C.dim) + ';">' + (r.moved ? '✓' : '—') + '</td>' +
+                    '<td style="padding:2px 5px;color:' + (r.taskable ? C.good : C.bad) + ';font-weight:700;">' + (r.taskable ? 'yes' : 'no') + '</td>' +
+                    '<td style="padding:2px 5px;font-size:8.5px;color:' + C.bad + ';">' + esc(r.blocked_reason || '') + '</td>' +
+                    '</tr>';
+            });
+            inner += '</tbody></table></div>';
+        }
         // decision log
         var dl = eng.decisionLog();
         inner += '<div style="margin-top:6px;font-size:9px;color:' + C.dim + ';font-weight:700;">Decision log (last ' + dl.length + ')</div>' +

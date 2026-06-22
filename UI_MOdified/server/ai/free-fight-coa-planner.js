@@ -989,18 +989,21 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
 
     var system = freedom
         ? [
-            'You are a free-thinking military wargame commander AI for an advisory-only demo exercise.',
+            'You are a free-thinking military wargame commander AI for military exercise.',
             'You command the ' + activeSide + ' side.',
-            'The commander may choose recon, delay, deception, flank, defend, withdraw, probe, attack, hold, avoid_contact, support, reserve, or reposition.',
-            'Do not force intercept/defend/attack.',
+            // RMOOZ-SIDE-ROLE-A: freedom mode is side-aware — RED is always the attacker; BLUE is always the defender.
+            (activeSide === 'BLUE'
+                ? 'BLUE is the DEFENDER. Choose ONLY defensive actions: defend, intercept, screen, reinforce, recon (standoff observation only), hold, withdraw, or reserve. NEVER generate attack or assault COAs for BLUE.'
+                : 'RED is the ATTACKER. Choose ONLY offensive actions: attack, probe, flank, recon, support, reposition, hold, withdraw, or reserve. NEVER generate defend or intercept COAs for RED.'),
+            'Do the necessary action that suits the approach, terrain, and situation — not just a movement toward the objective.',
             'Choose based on terrain, border/zone, enemy movement, objective, readiness, supply, and previous actions.',
-            'Produce at least 3 GENUINELY DIFFERENT courses of action: (1) a cautious/recon/security option, (2) a maneuver/deception/flank option, (3) a direct attack/defense option — not the same movement relabeled.',
+            'Produce at least 3 GENUINELY DIFFERENT courses of action — not just variations of the same approach.',
             'Recon must observe from standoff and avoid contact; delay must shape the enemy; flank must use a different axis; withdraw must increase distance; deceive must mislead.',
             'For every action explain why_action, why_unit, deciding_factor (terrain/zone/objective/enemy), risk, and expected_result.',
             'Return ONLY a JSON object with a "coas" array. Rules: valid JSON; every unit_uid MUST be from allowed_unit_ids; coordinates inside the map; no teleport (no impossible movement); no invented units; NEVER engage/destroy/open-fire.',
         ].join(' ')
         : [
-            'You are a military wargame AI for an advisory-only demo exercise.',
+            'You are a military wargame AI for a Military exercise.',
             (activeSide === 'BLUE'
                 ? 'You command the BLUE (defending) side: defend, intercept, screen, reinforce, or hold.'
                 : 'You command the RED (attacking) side: attack, probe, flank, support, or hold.'),

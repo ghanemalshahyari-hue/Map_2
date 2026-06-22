@@ -2435,22 +2435,42 @@
         side = String(side || 'BLUE').toUpperCase();
         var u = arr(units).filter(function (x) { return x && (x.id || x.uid || x.unit_uid); });
         if (!u.length || !obj) return null;
-        var baseDeg = side === 'RED' ? RED_BASE_DEG : BLUE_BASE_DEG;
+        var isRed = (side === 'RED');
+        // RMOOZ-SIDE-ROLE-A: role assignment and target positions are side-specific.
+        // RED (attacker from NE): recon→probe NE, support→fire support ENE, screen→flank SE, assault→assault NE, reserve→rear SW.
+        // BLUE (defender facing NE): recon→observe NE, screen→screen line NE, intercept→block axis NE, defend→perimeter NNE, reserve→rear SW.
         var assigns = u.map(function (unit, i) {
             var role, n = u.length;
-            if (n >= 5) role = (i === 0 ? 'recon' : i === 1 ? 'support' : i === 2 ? 'screen' : (i === n - 1 ? 'reserve' : 'assault'));
-            else if (n === 4) role = (i === 0 ? 'support' : i === 1 ? 'screen' : i === 2 ? 'assault' : 'reserve');
-            else if (n === 3) role = (i === 0 ? 'support' : i === 1 ? 'screen' : 'assault');
-            else if (n === 2) role = (i === 0 ? 'support' : 'assault');
-            else role = 'assault';
+            if (isRed) {
+                if (n >= 5) role = (i === 0 ? 'recon' : i === 1 ? 'support' : i === 2 ? 'screen' : (i === n - 1 ? 'reserve' : 'assault'));
+                else if (n === 4) role = (i === 0 ? 'support' : i === 1 ? 'screen' : i === 2 ? 'assault' : 'reserve');
+                else if (n === 3) role = (i === 0 ? 'support' : i === 1 ? 'screen' : 'assault');
+                else if (n === 2) role = (i === 0 ? 'support' : 'assault');
+                else role = 'assault';
+            } else {
+                if (n >= 5) role = (i === 0 ? 'recon' : i === 1 ? 'screen' : i === 2 ? 'intercept' : (i === n - 1 ? 'reserve' : 'defend'));
+                else if (n === 4) role = (i === 0 ? 'screen' : i === 1 ? 'intercept' : i === 2 ? 'defend' : 'reserve');
+                else if (n === 3) role = (i === 0 ? 'screen' : i === 1 ? 'defend' : 'reserve');
+                else if (n === 2) role = (i === 0 ? 'screen' : 'defend');
+                else role = 'defend';
+            }
             return { uid: String(unit.id || unit.uid || unit.unit_uid), role: role, i: i };
         });
         function tgt(role, i) {
-            if (role === 'support') return _supportRing(obj, i);
-            if (role === 'screen') return _ringPos(obj, RING_KM.screen, i, baseDeg + 90);
-            if (role === 'recon') return _reconPoint(obj, i, baseDeg);
-            if (role === 'reserve') return _reserveRing(obj, i);
-            return _assaultRing(obj, i);   // assault
+            if (isRed) {
+                if (role === 'recon')   return _ringPos(obj, 7,               i, RED_BASE_DEG);           // 7km NE — RED probe/recon
+                if (role === 'support') return _ringPos(obj, RING_KM.support, i, RED_BASE_DEG + 30);      // 5km ENE — RED fire support
+                if (role === 'screen')  return _ringPos(obj, RING_KM.screen,  i, RED_BASE_DEG + 90);     // 3km SE  — RED flank screen
+                if (role === 'reserve') return _ringPos(obj, 10,              i, RED_BASE_DEG + 180);     // 10km SW — RED rear reserve
+                return _ringPos(obj, RING_KM.assault, i, RED_BASE_DEG);                                   // 2km NE  — RED assault position
+            } else {
+                if (role === 'recon')     return _ringPos(obj, 6,               i, RED_BASE_DEG);         // 6km NE  — BLUE observe Red approach
+                if (role === 'screen')    return _screenRing(obj, i);                                     // 3km NE  — BLUE screening line
+                if (role === 'intercept') return _blockingRing(obj, i);                                   // 4km NE  — BLUE block Red axis
+                if (role === 'reserve')   return _reserveRing(obj, i);                                    // 8km SW  — BLUE reserve
+                if (role === 'reinforce') return _supportRing(obj, i);                                    // 5km SW  — BLUE reinforce
+                return _ringPos(obj, RING_KM.assault, i, RED_BASE_DEG - 15);                              // ~2km NNE — BLUE defensive perimeter facing Red
+            }
         }
         function phaseActs(movers) {
             return assigns.map(function (a) {
@@ -2460,27 +2480,53 @@
             });
         }
         var ids = function (rx) { return assigns.filter(function (a) { return rx.test(a.role); }).map(function (a) { return a.uid; }); };
-        var assaultIds = ids(/assault/), supIds = ids(/support|screen|recon/), resIds = ids(/reserve/), scrIds = ids(/screen/);
-        return {
-            plan_id: tag || 'SS-CMD-1', title: 'Staff-Safe commander template', side: side, recommended: true, risk: 'low', confidence: 'medium',
-            source_type: 'staff_safe_commander_template',
-            commander_intent: 'Seize and hold the objective with a supported, phased assault; keep a reserve and screen the flank.',
-            main_effort: 'Assault element (' + (assaultIds.join(', ') || '—') + ') onto the assault position.',
-            supporting_effort: 'Support-by-fire / recon (' + (supIds.join(', ') || '—') + ') overwatch the assault.',
-            reserve_or_follow_on: resIds.join(', ') || 'none (small force)',
-            security_or_screen: scrIds.join(', ') || 'none',
-            red_assumption: 'Red defends/contests the objective and may counterattack from the flank.',
-            risk_mitigation: 'Support-by-fire overwatch + a screened flank; the reserve covers a Red counterattack.',
-            control_measures: { assault_position: true, support_by_fire: true, screen_line: true, objective_radius_km: OBJ_CONTROL_KM },
-            success_criteria: 'Blue holds the objective radius; Red is unable to contest.',
-            expected_enemy_reaction: ['Red counters toward the objective', 'Red blocks consolidation'],
-            rationale: ['Role-separated commander template — supported assault, screened flank, reserve held; no unit sent to the exact objective center.'],
-            phases: [
-                { name: 'Phase 1 — Recon / establish support & screen', actions: phaseActs(['recon', 'support', 'screen']) },
-                { name: 'Phase 2 — Assault', actions: phaseActs(['assault']) },
-                { name: 'Phase 3 — Consolidate & secure', actions: phaseActs(['reserve']) },
-            ],
-        };
+        if (isRed) {
+            var assaultIds = ids(/assault/), supIds = ids(/support|screen|recon/), resIds = ids(/reserve/), scrIds = ids(/screen/);
+            try { _appendToEventLog('RED ATTACK COA generated against Objective X (' + (tag || 'SS-ATK-1') + ').'); } catch (_) {}
+            return {
+                plan_id: tag || 'SS-ATK-1', title: 'Staff-Safe RED attack template', side: 'RED',
+                recommended: true, risk: 'medium', confidence: 'medium', source_type: 'staff_safe_commander_template',
+                commander_intent: 'Attack and seize Objective X: probe forward, support-by-fire suppresses, assault element seizes, flank screen covers the approach.',
+                main_effort: 'Assault element (' + (assaultIds.join(', ') || '—') + ') advances to the assault position NE of Objective X.',
+                supporting_effort: 'Support-by-fire / recon (' + (supIds.join(', ') || '—') + ') overwatches the assault.',
+                reserve_or_follow_on: resIds.join(', ') || 'none (small force)',
+                security_or_screen: scrIds.join(', ') || 'none',
+                blue_assumption: 'BLUE defends Objective X and may counterattack from the SW.',
+                risk_mitigation: 'Support-by-fire overwatch + screened NE flank; reserve covers BLUE counterattack.',
+                control_measures: { assault_position: true, support_by_fire: true, screen_line: true, objective_radius_km: OBJ_CONTROL_KM },
+                success_criteria: 'RED holds Objective X radius; BLUE is unable to contest.',
+                expected_enemy_reaction: ['BLUE defends from the SW', 'BLUE counterattacks from the flank'],
+                rationale: ['RED attack template — phased supported assault from NE; recon probes, support-by-fire overwatches, assault seizes.'],
+                phases: [
+                    { name: 'Phase 1 — Recon & establish fire support', actions: phaseActs(['recon', 'support', 'screen']) },
+                    { name: 'Phase 2 — Assault toward Objective X',     actions: phaseActs(['assault']) },
+                    { name: 'Phase 3 — Consolidate & hold',             actions: phaseActs(['reserve']) },
+                ],
+            };
+        } else {
+            var defendIds = ids(/defend/), interceptIds = ids(/intercept/), screenIds = ids(/screen/), reconIds = ids(/recon/), resIds2 = ids(/reserve/);
+            try { _appendToEventLog('BLUE DEFENSE COA generated to defend Objective X (' + (tag || 'SS-DEF-1') + ').'); } catch (_) {}
+            return {
+                plan_id: tag || 'SS-DEF-1', title: 'Staff-Safe BLUE defense template', side: 'BLUE',
+                recommended: true, risk: 'low', confidence: 'medium', source_type: 'staff_safe_commander_template',
+                commander_intent: 'Defend Objective X: screen the RED approach axis, intercept RED before the objective, hold the defensive line, keep a reserve.',
+                main_effort: 'Defend/intercept element (' + (defendIds.concat(interceptIds).join(', ') || '—') + ') holds Objective X perimeter.',
+                supporting_effort: 'Screen / observe (' + (screenIds.concat(reconIds).join(', ') || '—') + ') delays RED on the approach axis.',
+                reserve_or_follow_on: resIds2.join(', ') || 'none (small force)',
+                security_or_screen: screenIds.concat(reconIds).join(', ') || 'none',
+                red_assumption: 'RED attacks toward Objective X from the NE sector.',
+                risk_mitigation: 'Layered screen + intercept delays RED; reserve covers RED breakthrough.',
+                control_measures: { screen_line: true, intercept_axis: true, defensive_line: true, objective_radius_km: OBJ_CONTROL_KM },
+                success_criteria: 'BLUE holds Objective X; RED is unable to seize.',
+                expected_enemy_reaction: ['RED assaults from NE', 'RED flanks the screen line'],
+                rationale: ['BLUE defense template — screen delays RED; intercept blocks axis; defend holds the perimeter.'],
+                phases: [
+                    { name: 'Phase 1 — Screen & observe the RED approach', actions: phaseActs(['recon', 'screen']) },
+                    { name: 'Phase 2 — Intercept & defend Objective X',    actions: phaseActs(['intercept', 'defend']) },
+                    { name: 'Phase 3 — Hold & reinforce',                  actions: phaseActs(['reserve', 'reinforce']) },
+                ],
+            };
+        }
     }
     function _planFallbackUnits(plan) {
         var side = String((arr(plan && plan.coas)[0] && arr(plan.coas)[0].side) || _activeSide || 'BLUE').toUpperCase();
@@ -4564,9 +4610,10 @@
         var actions = blue.map(function (u, i) {
             if (posture === 'consolidate') { rings.push('hold'); return { unit_uid: u.id, action_type: 'HOLD_POSITION', role: 'reserve' }; }
             var isSupport = (blue.length > 1 && i === blue.length - 1);
-            var tgt = isSupport ? _supportRing(_ringCenter, i) : _assaultRing(_ringCenter, i);
-            rings.push(isSupport ? 'support' : 'assault');
-            return { unit_uid: u.id, action_type: 'MOVE', role: (isSupport ? 'support' : 'assault'), target: tgt };   // capped + teleport-guarded at execution
+            // RMOOZ-SIDE-ROLE-A: BLUE is the DEFENDER — use intercept/blocking positions, not assault ring.
+            var tgt = isSupport ? _supportRing(_ringCenter, i) : _blockingRing(_ringCenter, i);
+            rings.push(isSupport ? 'reinforce' : 'intercept');
+            return { unit_uid: u.id, action_type: 'MOVE', role: (isSupport ? 'reinforce' : 'intercept'), target: tgt };   // capped + teleport-guarded at execution
         });
         // RMOOZ-REAL-COA-COMMANDER-QUALITY-AD: carry the commander structure so the auto order is
         // commander-quality (passes the quality gate), not a shallow move-to-objective order.
@@ -4576,11 +4623,11 @@
         return { plan_id: 'AUTO-T' + (_scenario ? _scenario.scenario_turn : 1), title: title + (_intercept ? ' — intercept RED axis' : ''), side: 'BLUE',
             recommended: true, risk: 'low', confidence: 'medium', source_type: 'staff_safe_auto_director', posture: posture,
             commander_intent: (_intercept
-                ? 'React to RED: intercept the RED axis between the force and Objective X with a supported assault, then secure the objective.'
-                : (posture === 'advance' ? 'Advance to and seize the objective with a supported assault.' : posture === 'secure' ? 'Secure the contested objective; screen against Red.' : posture === 'hold_screen' ? 'Hold the objective and screen the flank against a Red counterattack.' : 'Consolidate and preserve the force.')),
-            main_effort: 'Assault element (' + (assaultIds.join(', ') || '—') + ').',
-            supporting_effort: supIds.length ? ('Support-by-fire (' + supIds.join(', ') + ').') : 'Force consolidates (small element).',
-            red_assumption: 'Red contests/counters the objective from the flank.',
+                ? 'React to RED: intercept the RED approach axis and defend Objective X against RED assault.'
+                : (posture === 'advance' ? 'Advance to intercept the RED axis and defend Objective X.' : posture === 'secure' ? 'Secure Objective X; screen the RED approach; hold against RED assault.' : posture === 'hold_screen' ? 'Hold Objective X and screen the NE approaches against RED.' : 'Consolidate and preserve the defensive force.')),
+            main_effort: 'Intercept element (' + (assaultIds.join(', ') || '—') + ') blocks the RED approach axis.',
+            supporting_effort: supIds.length ? ('Reinforce / screen (' + supIds.join(', ') + ').') : 'Force consolidates (small element).',
+            red_assumption: 'RED attacks toward Objective X from the NE sector.',
             risk_mitigation: 'Support-by-fire overwatch + screened flank; deterministic capped movement.',
             expected_enemy_reaction: ['Red counters toward the objective'],
             formation_rings: rings, phases: [{ name: title, actions: actions }],
@@ -4602,7 +4649,7 @@
         if (_scenario) _scenario.last_formation_order = 'Blue ' + coa.posture + ' → ' + ringsLabel + (ringsLabel === 'hold' ? '' : ' ring');
         try { _recordDecision({ role: 'performance', action: 'formation_assignment', called_llm: false, source: 'staff_safe_auto_director',
             reason: 'Blue ' + coa.posture + ' formation', result_summary: 'Blue → ' + ringsLabel + ' positions (' + arr(coa.phases[0].actions).length + ' units)' }); } catch (_) {}
-        try { _appendToEventLog('Formation: Blue assigned ' + esc(ringsLabel) + ' positions (turn ' + (_scenario ? _scenario.scenario_turn : '?') + ').'); } catch (_) {}
+        try { _appendToEventLog('BLUE DEFENSE COA generated to defend Objective X — ' + esc(ringsLabel) + ' formation (turn ' + (_scenario ? _scenario.scenario_turn : '?') + ').'); } catch (_) {}
         return { ok: true, coa_id: coa.plan_id, posture: coa.posture, rings: ringsLabel, source: 'staff_safe_auto_director', reaction: coa._reaction || null };
     }
     // Deterministic Red maneuver — actually MOVES Red units through the SAME safe/teleport-guarded path
@@ -4611,12 +4658,12 @@
         var posture = _redReaction(outcome).posture;
         var obj = getObjective();
         var red = _scenarioSideUnits('RED');
-        // RMOOZ-AUTO-SCENARIO-FORMATION-REALISM-AC: Red moves to a RING (blocking/screen), never the exact
-        // objective center. counter/block → blocking ring; withdraw → away; hold/none → keep current posture.
+        // RMOOZ-AUTO-SCENARIO-FORMATION-REALISM-AC: Red moves to a RING, never the exact objective center.
+        // RMOOZ-SIDE-ROLE-A: RED is the ATTACKER — counter/block → assault approach ring (NE of obj); withdraw → away.
         var actions = [], ring = null;
         if ((posture === 'counter' || posture === 'block') && obj) {
-            ring = 'blocking';
-            red.forEach(function (u, i) { actions.push({ unit_uid: u.id, action_type: 'MOVE', role: posture, target: _blockingRing(obj, i) }); });
+            ring = 'assault';
+            red.forEach(function (u, i) { actions.push({ unit_uid: u.id, action_type: 'MOVE', role: 'assault', target: _blockingRing(obj, i) }); });
         } else if (posture === 'withdraw' && obj) {
             ring = 'reserve';
             red.forEach(function (u) {
@@ -4634,6 +4681,7 @@
             if (moved && mapReady()) { try { _triggerScenarioRedraw(); syncMarkers(); } catch (_) {} }
         }
         var ringTxt = ring ? (' → ' + ring + ' ring') : '';
+        try { _appendToEventLog('RED ATTACK COA — ' + posture + ringTxt + (moved ? ', moved ' + moved + ' unit(s) toward Objective X' : ', held position') + ' (turn ' + (_scenario ? _scenario.scenario_turn : '?') + ').'); } catch (_) {}
         return { posture: posture, moved: moved, ring: ring, target: firstTarget,
             summary: 'Red ' + posture + ringTxt + (moved ? ' — moved ' + moved + ' unit(s)' : ' — held') + ' (deterministic, no LLM)' };
     }
@@ -4905,16 +4953,26 @@
     // ════════════════════════════════════════════════════════════════════════════════════════════════
     function _sccActionTargets(coa) {
         var obj = getObjective();
+        var coaSide = String((coa && coa.side) || '').toUpperCase();
         return _coaAllActions(coa).map(function (a) {
             var t = a && a.target;
             var hasT = !!(t && Number.isFinite(+t.lat) && Number.isFinite(+t.lon));
             var taskable = a && a.unit_uid ? _isUnitTaskable(a.unit_uid) : true;
             var kmFromObj = (hasT && obj) ? Math.round(_kmBetween({ lat: +t.lat, lon: +t.lon }, { lat: obj.lat, lon: obj.lon }) * 10) / 10 : null;
+            var r = _normRole(a && a.role) || '';
+            // RMOOZ-SIDE-ROLE-A: target_type is side-aware — RED gets attack/recon/support labels; BLUE gets defend/intercept/screen.
+            var targetType = (function () {
+                if (a && a.action_type === 'HOLD_POSITION') return 'hold';
+                if (!hasT) return 'none';
+                if (coaSide === 'RED') return /assault|attack/.test(r) ? 'attack' : /support/.test(r) ? 'support' : /recon/.test(r) ? 'recon' : /screen|flank/.test(r) ? 'screen' : 'attack';
+                if (coaSide === 'BLUE') return /defend/.test(r) ? 'defend' : /intercept/.test(r) ? 'intercept' : /screen/.test(r) ? 'screen' : /recon|observe/.test(r) ? 'observe' : /reinforce/.test(r) ? 'reinforce' : 'defend';
+                return (t && t.type) || 'point';
+            })();
             return {
                 unit_uid: (a && a.unit_uid) || '—',
-                role: _normRole(a && a.role) || '—',
+                role: r || '—',
                 action: (a && a.action_type) || '—',
-                target_type: (a && a.action_type === 'HOLD_POSITION') ? 'hold' : (hasT ? ((t.type) || 'point') : 'none'),
+                target_type: targetType,
                 target_lat: hasT ? +(+t.lat).toFixed(4) : null,
                 target_lon: hasT ? +(+t.lon).toFixed(4) : null,
                 km_from_objective: kmFromObj,
@@ -5168,7 +5226,9 @@
         _autoDirectorBuildCoaForTest: function (o)          { return _autoDirectorBuildCoa(o || _whiteScenarioOutcome()); },
         // RMOOZ-REAL-COA-COMMANDER-QUALITY-AD test seams
         _coaQualityGateForTest:    function (coa)           { return _coaQualityGate(coa); },
-        _staffSafeCommanderCoaForTest: function (side, units, obj) { return _staffSafeCommanderCoa(side || 'BLUE', units, obj || getObjective(), 'SS-CMD-1'); },
+        _staffSafeCommanderCoaForTest: function (side, units, obj, tag) { return _staffSafeCommanderCoa(side || 'BLUE', units, obj || getObjective(), tag || 'SS-CMD-1'); },
+        // RMOOZ-SIDE-ROLE-A: expose _sccActionTargets for side-role acceptance tests
+        _sccActionTargetsForTest: function (coa)            { return _sccActionTargets(coa); },
         _gradeCoaPlanQualityForTest: function ()            { if (!_coaPlan || !_coaPlan.ok || !arr(_coaPlan.coas).length) return null; var q = _gradeCoaPlan(_coaPlan); if (q.pass) { _coaPlan._coa_quality = { verdict: 'pass', score: q.score, reasons: q.reasons }; _recordQualityGate('pass', q.score, q.reasons); } else { _coaFallbackToTemplate(_coaPlan, q); } return _coaPlan._coa_quality; },
         _getCoaPlanQualityForTest: function ()              { return _coaPlan && _coaPlan._coa_quality; },
         // RMOOZ-COA-QUALITY-HARD-ENFORCEMENT-AE test seams

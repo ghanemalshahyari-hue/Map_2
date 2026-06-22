@@ -846,7 +846,12 @@ function buildExpectedEnemyReaction(coa, rb) {
 function buildCommanderAssessment(coas, obj, context, planSource) {
     var list = arr(coas);
     var rec = list.filter(function (c) { return c && c.recommended; })[0] || list[0] || null;
-    var total = (list[0] && list[0].units_total_considered) || 0;
+    // RMOOZ-AI-FREE-FIGHT-MOVABLE-COUNT-FIX-A: the real count of units the planner
+    // considered comes through context.force_pool_count (the prefiltered candidate set);
+    // the LLM's COA objects never carry units_total_considered, so reading that alone
+    // printed "0 movable units considered" even when units were tasked + moved.
+    var total = (context && Number.isFinite(context.force_pool_count) ? context.force_pool_count : 0)
+        || (list[0] && list[0].units_total_considered) || 0;
     var parts = [];
     // Loop context: turn + active side, when present.
     var ctx = context || {};
@@ -1715,7 +1720,7 @@ async function _assemblePlan(P, variationSeed, timer, light) {
             llmStatus = 'ok';
             llmRawResponse = acceptedResult.raw_response || null; // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A
             var repaired = repairsDone > 0;
-            var llmAssess = buildCommanderAssessment(acceptedCoas, obj, context, 'llm');
+            var llmAssess = buildCommanderAssessment(acceptedCoas, obj, Object.assign({}, context, { force_pool_count: (allowedUnitIds && allowedUnitIds.length) || 0 }), 'llm');
             if (activeSide === 'BLUE' && blueIntent) llmAssess = appendSituationToAssessment(llmAssess, situation);
             return _finalize('llm', acceptedCoas, acceptedValidation, false,
                 { provider_used: acceptedResult.provider_used || null, model_used: acceptedResult.model_used || null },
@@ -1734,7 +1739,7 @@ async function _assemblePlan(P, variationSeed, timer, light) {
             buildCoasForSide(allUnits, obj, activeSide, situation, capContext, commanderMode, variationSeed, intel, P.elevFn),
             obj, context, detSource);
     });
-    var assess = buildCommanderAssessment(coas, obj, context, detSource);
+    var assess = buildCommanderAssessment(coas, obj, Object.assign({}, context, { force_pool_count: (allowedUnitIds && allowedUnitIds.length) || 0 }), detSource);
     if (activeSide === 'BLUE' && blueIntent) {
         if (!diverseMode) applyBlueReaction(coas, situation, blueIntent);
         assess = appendSituationToAssessment(assess, situation);

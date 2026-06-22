@@ -2825,6 +2825,9 @@
         try { _recordDecision({ role: 'white', action: 'commit_advisory_context_recorded', called_llm: false, source: 'commit-journal',
             reason: _ctx.considered ? (_ctx.operator_override ? 'operator override' : 'recommended committed') : 'no advisory context available',
             result_summary: _ctx.considered ? ('sel ' + _ctx.selected_coa_id + ' · rec ' + _ctx.recommended_coa_id + ' · override ' + _ctx.operator_override) : 'considered=false' }); } catch (_) {}
+        // RMOOZ-AI-FREE-FIGHT-EVENT-MILESTONES-A: named COA_COMMITTED milestone (structured ledger).
+        try { _recordDecision({ role: 'white', action: 'COA_COMMITTED', called_llm: false, source: 'operator-commit',
+            result_summary: _coaExec.selected_coa_id + ' · ' + arr(coa.phases).length + ' phase(s) · ' + ((_coaPlan && _coaPlan.plan_source) || 'unknown') + ' · side ' + side }); } catch (_) {}
         _persistCoaExec();   // RMOOZ-COA-COMMIT-PERSISTENCE-M (now also persists commit_advisory_context)
         updatePanel();
         _whiteAdvisoryLevel = null;   // RMOOZ-WHITE-GREEN-ANNOTATION-T: fresh committed decision → re-advise
@@ -2883,6 +2886,12 @@
         _coaExec.phase_status = 'running';
         var phase = phases[_coaExec.current_phase_index];
         var actions = arr(phase && phase.actions);
+        // RMOOZ-AI-FREE-FIGHT-EVENT-MILESTONES-A: named PHASE_STARTED milestone — once per phase (first tick).
+        if (_coaExec._loggedPhaseStart !== _coaExec.current_phase_index) {
+            _coaExec._loggedPhaseStart = _coaExec.current_phase_index;
+            try { _recordDecision({ role: 'unit-controller', action: 'PHASE_STARTED', called_llm: false, source: 'coa_commitment',
+                result_summary: 'phase ' + (_coaExec.current_phase_index + 1) + '/' + phases.length + ' (' + ((phase && (phase.title || phase.name)) || 'phase') + ') · ' + actions.length + ' action(s)' }); } catch (_) {}
+        }
         var moves = _resolvePhaseMoves(actions);
         var realMoves = moves.filter(function (m) { return !m.hold; });
         _writeMoveFrame(realMoves, 1);
@@ -3220,17 +3229,22 @@
     //   "EXECUTED: B-3 recon from 24.10,54.20 to 24.14,54.24 via recon_standoff_target"
     function _ll2(o) { return (Number(o.lat)).toFixed(2) + ',' + (Number(o.lon)).toFixed(2); }
     function _logExecutedMoves(moves) {
+        var _movedN = 0, _heldN = 0;
         arr(moves).forEach(function (m) {
             if (!m) return;
             var uid = String(m.uid || (m.unit && (m.unit.id || m.unit.uid || m.unit.unit_uid)) || '?');
             var at = String(m.action_type || '?');
             var mode = String(m.execution_mode || 'generic_target');
             if (m.held) {
+                _heldN++;
                 _appendToEventLog('EXECUTED: ' + esc(uid) + ' ' + esc(at) + ' HELD at ' + _ll2(m.start) + ' (already in position) via ' + esc(mode));
             } else {
+                _movedN++;
                 _appendToEventLog('EXECUTED: ' + esc(uid) + ' ' + esc(at) + ' from ' + _ll2(m.start) + ' to ' + _ll2(m.final) + ' via ' + esc(mode));
             }
         });
+        // RMOOZ-AI-FREE-FIGHT-EVENT-MILESTONES-A: named structured summary beside the per-unit ledger lines.
+        if (_movedN || _heldN) { try { _recordDecision({ role: 'unit-controller', action: 'UNIT_TASK_EXECUTED', called_llm: false, source: 'coa_commitment', result_summary: _movedN + ' moved · ' + _heldN + ' held' }); } catch (_) {} }
     }
     // Build the enriched moved-unit records (carry action_type / execution_mode / final / target
     // for the debug overlay). held units are excluded from the moved set (counted separately).
@@ -4187,7 +4201,7 @@
             method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
         }).then(function (a) {
             if (a && a.ok && a.collateral_risk) { a._reason = reason || 'manual'; _logGreenChanges(prev, a); _greenWorld = a; if (_greenOverlayOn) _greenOverlayApply();
-                try { _recordDecision({ role: 'green', action: 'neutral_world_refresh', called_llm: false, duration_ms: _nowMs() - _gT0, reason: reason || 'manual', source: 'green-world', result_summary: 'collateral ' + _greenBand(a) + ' (' + (a.collateral_risk && a.collateral_risk.score) + ')' }); } catch (_) {}
+                try { _recordDecision({ role: 'green', action: 'GREEN_REFRESH', called_llm: false, duration_ms: _nowMs() - _gT0, reason: reason || 'manual', source: 'green-world', result_summary: 'collateral ' + _greenBand(a) + ' (' + (a.collateral_risk && a.collateral_risk.score) + ')' }); } catch (_) {}
                 try { _recordWhiteAdvisory(a); } catch (_) {} }   // RMOOZ-WHITE-GREEN-ANNOTATION-T: deterministic White advisory (no gate, no LLM)
             _greenBusy = false; updatePanel();
             return _greenWorld;
@@ -4255,7 +4269,7 @@
                 result_summary: plan.validation.ok ? 'ok' : ('errors: ' + arr(plan.validation.errors).length) });
         }
     }
-    var DECISION_ROLE_COLORS = { blue: '#7bb8e8', red: '#f0707a', green: '#5bd6a0', white: '#cdd8e4', performance: '#e0a93a', 'unit-controller': '#9ec2ec' };
+    var DECISION_ROLE_COLORS = { blue: '#7bb8e8', red: '#f0707a', green: '#5bd6a0', white: '#cdd8e4', performance: '#e0a93a', 'unit-controller': '#9ec2ec', operator: '#c8a0e0' };
     function _decisionLogHtml() {
         var n = _decisionLog.length;
         var h = '<div data-ff-sched="panel" style="margin-top:6px;border-top:1px solid #1a3050;padding-top:5px;">';
@@ -4422,6 +4436,12 @@
     // outcome and commits it into the EXISTING committed-COA execution state (via _commitCoa). Returns
     // {ok, coa_id, posture} or {ok:false, reason} when no safe deterministic order is possible.
     function _scenarioSideUnits(side) { return _greenUnits().filter(function (u) { return String(u.side || '').toUpperCase() === side; }); }
+    // RMOOZ-AI-FREE-FIGHT-BLUE-REACTION-A: centroid (lon/lat avg) of a unit set, or null if none has coords.
+    function _centroidLL(units) {
+        var sx = 0, sy = 0, n = 0;
+        arr(units).forEach(function (u) { var la = num(u.lat), lo = num(u.lon); if (isFinite(la) && isFinite(lo)) { sx += lo; sy += la; n++; } });
+        return n ? { lat: round5(sy / n), lon: round5(sx / n) } : null;
+    }
     function _autoDirectorBuildCoa(outcome) {
         var obj = getObjective();
         var blue = _taskableSideUnits('BLUE');   // AE: only taskable units receive movement orders
@@ -4433,6 +4453,15 @@
         else if (outcome.objective_contested) { posture = 'secure'; title = 'Secure the objective'; }
         else if (!outcome.objective_reached) { posture = 'advance'; title = 'Continue the advance'; }
         else { posture = 'consolidate'; title = 'Consolidate on the objective'; }
+        // RMOOZ-AI-FREE-FIGHT-BLUE-REACTION-A: in a fighting posture with RED present, center BLUE's
+        // formation on an INTERCEPT point on RED's LIVE axis (between Objective X and RED's centroid —
+        // RED already maneuvered this turn) so BLUE genuinely REACTS to RED instead of holding a generic
+        // objective ring. Deterministic (no LLM); falls back to the objective ring when there is no RED /
+        // no objective (behaviour unchanged). The single committed order IS the reaction — no double-move.
+        var _redC = _centroidLL(_scenarioSideUnits('RED'));
+        var _reactive = !!(obj && _redC && (posture === 'advance' || posture === 'secure' || posture === 'hold_screen'));
+        var _intercept = _reactive ? interceptPoint(_redC, obj) : null;
+        var _ringCenter = _intercept || obj;
         // RMOOZ-AUTO-SCENARIO-FORMATION-REALISM-AC: assign DETERMINISTIC ring positions (per unit index)
         // instead of the exact objective coordinate, so units never stack. Last unit holds back as support;
         // hold_screen spreads onto the support ring; consolidate/weak holds in place.
@@ -4442,7 +4471,7 @@
         var actions = blue.map(function (u, i) {
             if (posture === 'consolidate') { rings.push('hold'); return { unit_uid: u.id, action_type: 'HOLD_POSITION', role: 'reserve' }; }
             var isSupport = (blue.length > 1 && i === blue.length - 1);
-            var tgt = isSupport ? _supportRing(obj, i) : _assaultRing(obj, i);
+            var tgt = isSupport ? _supportRing(_ringCenter, i) : _assaultRing(_ringCenter, i);
             rings.push(isSupport ? 'support' : 'assault');
             return { unit_uid: u.id, action_type: 'MOVE', role: (isSupport ? 'support' : 'assault'), target: tgt };   // capped + teleport-guarded at execution
         });
@@ -4450,15 +4479,19 @@
         // commander-quality (passes the quality gate), not a shallow move-to-objective order.
         var assaultIds = blue.filter(function (u, i) { return !(posture !== 'consolidate' && blue.length > 1 && i === blue.length - 1); }).map(function (u) { return u.id; });
         var supIds = (posture !== 'consolidate' && blue.length > 1) ? [blue[blue.length - 1].id] : [];
-        return { plan_id: 'AUTO-T' + (_scenario ? _scenario.scenario_turn : 1), title: title, side: 'BLUE',
+        var _moveCount = actions.filter(function (a) { return a.action_type === 'MOVE'; }).length;
+        return { plan_id: 'AUTO-T' + (_scenario ? _scenario.scenario_turn : 1), title: title + (_intercept ? ' — intercept RED axis' : ''), side: 'BLUE',
             recommended: true, risk: 'low', confidence: 'medium', source_type: 'staff_safe_auto_director', posture: posture,
-            commander_intent: (posture === 'advance' ? 'Advance to and seize the objective with a supported assault.' : posture === 'secure' ? 'Secure the contested objective; screen against Red.' : posture === 'hold_screen' ? 'Hold the objective and screen the flank against a Red counterattack.' : 'Consolidate and preserve the force.'),
+            commander_intent: (_intercept
+                ? 'React to RED: intercept the RED axis between the force and Objective X with a supported assault, then secure the objective.'
+                : (posture === 'advance' ? 'Advance to and seize the objective with a supported assault.' : posture === 'secure' ? 'Secure the contested objective; screen against Red.' : posture === 'hold_screen' ? 'Hold the objective and screen the flank against a Red counterattack.' : 'Consolidate and preserve the force.')),
             main_effort: 'Assault element (' + (assaultIds.join(', ') || '—') + ').',
             supporting_effort: supIds.length ? ('Support-by-fire (' + supIds.join(', ') + ').') : 'Force consolidates (small element).',
             red_assumption: 'Red contests/counters the objective from the flank.',
             risk_mitigation: 'Support-by-fire overwatch + screened flank; deterministic capped movement.',
             expected_enemy_reaction: ['Red counters toward the objective'],
-            formation_rings: rings, phases: [{ name: title, actions: actions }] };
+            formation_rings: rings, phases: [{ name: title, actions: actions }],
+            _reaction: _intercept ? { intercept: _intercept, red_centroid: _redC, move_count: _moveCount } : null };
     }
     function _autoDirectorNextBlueOrder(outcome) {
         var coa = _autoDirectorBuildCoa(outcome);
@@ -4477,7 +4510,7 @@
         try { _recordDecision({ role: 'performance', action: 'formation_assignment', called_llm: false, source: 'staff_safe_auto_director',
             reason: 'Blue ' + coa.posture + ' formation', result_summary: 'Blue → ' + ringsLabel + ' positions (' + arr(coa.phases[0].actions).length + ' units)' }); } catch (_) {}
         try { _appendToEventLog('Formation: Blue assigned ' + esc(ringsLabel) + ' positions (turn ' + (_scenario ? _scenario.scenario_turn : '?') + ').'); } catch (_) {}
-        return { ok: true, coa_id: coa.plan_id, posture: coa.posture, rings: ringsLabel, source: 'staff_safe_auto_director' };
+        return { ok: true, coa_id: coa.plan_id, posture: coa.posture, rings: ringsLabel, source: 'staff_safe_auto_director', reaction: coa._reaction || null };
     }
     // Deterministic Red maneuver — actually MOVES Red units through the SAME safe/teleport-guarded path
     // as Blue (_resolveCoaMoves → _writeMoveFrame). NO LLM. Returns {posture, moved, summary}.
@@ -4554,7 +4587,8 @@
         _scenario.objective_control = outcome.objective_control;   // AC: Blue / Red / Contested / Uncontrolled
         _scenario.blue_presence = outcome.blue_presence;
         _scenario.red_contest = outcome.red_contest;
-        try { _recordDecision({ role: 'white', action: 'scenario_outcome_check', called_llm: false, source: 'scenario',
+        // RMOOZ-AI-FREE-FIGHT-EVENT-MILESTONES-A: per-turn White adjudication, named milestone.
+        try { _recordDecision({ role: 'white', action: 'WHITE_ADJUDICATION', called_llm: false, source: 'scenario',
             reason: outcome.reason, result_summary: 'turn ' + _scenario.scenario_turn + ' · ' + outcome.summary + ' · contested ' + outcome.objective_contested }); } catch (_) {}
         try { _recordDecision({ role: 'white', action: 'objective_control_check', called_llm: false, source: 'scenario',
             reason: 'area-based control (obj ' + outcome.objective_radius_km + 'km / contest ' + outcome.contest_radius_km + 'km)',
@@ -4597,6 +4631,14 @@
                 _scenario.pending_replan_reason = null; _scenario.updated_at = _nowISO();
                 try { _recordDecision({ role: 'performance', action: 'auto_director_next_blue_order', called_llm: false, source: 'staff_safe_auto_director', reason: 'deterministic next Blue order (' + blue.posture + ')', result_summary: blue.coa_id + ' · ' + blue.posture }); } catch (_) {}
                 try { _appendToEventLog('Auto Director: generated Staff-Safe Blue next order (' + esc(blue.posture) + ') — turn ' + _scenario.scenario_turn + ', no AI.'); } catch (_) {}
+                // RMOOZ-AI-FREE-FIGHT-BLUE-REACTION-A: named BLUE_REACTION milestone when the Blue order is a
+                // genuine intercept of RED's live axis (deterministic; the committed order executes next tick).
+                if (blue.reaction && blue.reaction.intercept) {
+                    try { _recordDecision({ role: 'blue', action: 'BLUE_REACTION', called_llm: false, source: 'staff_safe_auto_director',
+                        reason: 'intercept RED axis (deterministic, no LLM)',
+                        result_summary: blue.reaction.move_count + ' unit(s) -> intercept RED axis @ ' + Number(blue.reaction.intercept.lat).toFixed(2) + ',' + Number(blue.reaction.intercept.lon).toFixed(2) }); } catch (_) {}
+                    try { _appendToEventLog('BLUE REACTION (turn ' + _scenario.scenario_turn + '): ' + blue.reaction.move_count + ' unit(s) ordered to intercept the RED axis (commits + executes next tick).'); } catch (_) {}
+                }
                 if (!_scenarioTimer) _startScenarioTimer();   // keep the fight ticking
             } else {
                 _scenario.scenario_status = 'blocked'; _scenario.pending_replan_reason = blue.reason;
@@ -4797,7 +4839,12 @@
         isLoading: function () { return !!_coaLoading; },
         coaPlan: function () { return _coaPlan; },
         selectedIdx: function () { return _coaSelectedIdx; },
-        selectCoa: function (i) { _coaSelectedIdx = i; updatePanel(); return _coaSelectedIdx; },
+        selectCoa: function (i) {
+            var _prevSel = _coaSelectedIdx; _coaSelectedIdx = i;
+            // RMOOZ-AI-FREE-FIGHT-EVENT-MILESTONES-A: named COA_SELECTED milestone (operator action; once per change).
+            if (i !== _prevSel) { try { var _selCoa = arr(_coaPlan && _coaPlan.coas)[i]; _recordDecision({ role: 'operator', action: 'COA_SELECTED', called_llm: false, source: 'operator-ui', result_summary: 'COA index ' + i + (_selCoa ? (' · ' + (_selCoa.plan_id || _selCoa.title || '')) : '') }); } catch (_) {} }
+            updatePanel(); return _coaSelectedIdx;
+        },
         repaint: function () { updatePanel(); },
         recommendedIdx: function () { try { return _pickRecommendedIdx(_coaPlan); } catch (_) { return 0; } },
         committedExec: function () { return _coaExec; },

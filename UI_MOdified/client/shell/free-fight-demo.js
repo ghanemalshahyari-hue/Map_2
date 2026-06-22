@@ -2401,14 +2401,24 @@
         var u = arr(units).filter(function (x) { return x && (x.id || x.uid || x.unit_uid); });
         if (!u.length || !obj) return null;
         var baseDeg = side === 'RED' ? RED_BASE_DEG : BLUE_BASE_DEG;
+        // COA_ACTION_BUDGET_AND_ROLE_GATE: the staff-safe template tasks only a realistic SUBSET
+        // (the nearest units to the objective, hold-role AD/base excluded); everyone else holds and
+        // never moves. Without this a big force (e.g. 487) put ~all units in the 'assault' role and
+        // moved them in Phase 2. The selected movers fill recon/support/screen/assault/reserve.
+        var _ssSel = _selectMovers(u, obj, { fraction: 0.15, min: 5, max: 12 });
+        var _moverIds = {}; _ssSel.movers.forEach(function (mu) { _moverIds[String(mu.id)] = 1; });
+        var _nMovers = _ssSel.movers.length, _mi = -1;
         var assigns = u.map(function (unit, i) {
-            var role, n = u.length;
-            if (n >= 5) role = (i === 0 ? 'recon' : i === 1 ? 'support' : i === 2 ? 'screen' : (i === n - 1 ? 'reserve' : 'assault'));
-            else if (n === 4) role = (i === 0 ? 'support' : i === 1 ? 'screen' : i === 2 ? 'assault' : 'reserve');
-            else if (n === 3) role = (i === 0 ? 'support' : i === 1 ? 'screen' : 'assault');
-            else if (n === 2) role = (i === 0 ? 'support' : 'assault');
+            var uid = String(unit.id || unit.uid || unit.unit_uid);
+            if (!_moverIds[uid]) return { uid: uid, role: 'hold', i: i };   // not selected → hold (never moves)
+            _mi++; var m = _mi;
+            var role;
+            if (_nMovers >= 5) role = (m === 0 ? 'recon' : m === 1 ? 'support' : m === 2 ? 'screen' : (m === _nMovers - 1 ? 'reserve' : 'assault'));
+            else if (_nMovers === 4) role = (m === 0 ? 'support' : m === 1 ? 'screen' : m === 2 ? 'assault' : 'reserve');
+            else if (_nMovers === 3) role = (m === 0 ? 'support' : m === 1 ? 'screen' : 'assault');
+            else if (_nMovers === 2) role = (m === 0 ? 'support' : 'assault');
             else role = 'assault';
-            return { uid: String(unit.id || unit.uid || unit.unit_uid), role: role, i: i };
+            return { uid: uid, role: role, i: i };
         });
         function tgt(role, i) {
             if (role === 'support') return _supportRing(obj, i);

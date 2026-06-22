@@ -165,7 +165,7 @@ function decideAction(units, objectives, opts) {
  * validateAction(action, units, objectives?)
  * Returns { ok: true } or { ok: false, reason: '...' }.
  */
-function validateAction(action, units, objectives) {
+function validateAction(action, units, objectives, opts) {
     if (!action || typeof action !== 'object') return { ok: false, reason: 'action is null or not an object' };
     if (ALLOWED_ACTION_TYPES.indexOf(action.action_type) === -1) return { ok: false, reason: 'Unknown action_type: ' + action.action_type };
     if (ALLOWED_SIDES.indexOf(String(action.side || '').toUpperCase()) === -1) return { ok: false, reason: 'Unknown side: ' + action.side };
@@ -189,6 +189,15 @@ function validateAction(action, units, objectives) {
         var d = dist({ lat: unit.lat, lon: unit.lon }, { lat: target.lat, lon: target.lon });
         var step = Math.min(d, STEP_DEG);
         if (step > MAX_STEP_DEG) return { ok: false, reason: 'Computed step exceeds teleport guard (' + MAX_STEP_DEG + '°)' };
+    }
+
+    // RMOOZ-COA-REALISM-GATE-A: optional injected domain/territory check.
+    // Caller passes opts.realismGate(from, to, opts) → { ok, reason? }.
+    if (opts && typeof opts.realismGate === 'function' && action.action_type !== 'HOLD_POSITION') {
+        var gateResult = opts.realismGate(
+            { lat: unit.lat, lon: unit.lon }, target,
+            { unit_id: action.unit_uid, side: action.side, movement_mode: action.movement_mode || '' });
+        if (gateResult && !gateResult.ok) return { ok: false, reason: 'Domain/territory: ' + (gateResult.reason || gateResult.violation_type || 'blocked') };
     }
 
     return { ok: true };

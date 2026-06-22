@@ -4702,6 +4702,9 @@
     <script src="shell/free-fight-ai.js?v=ff-card-fix"></script>
     <!-- DOMAIN-AWARE-MOVEMENT-A: review-only domain route shapes (naval→coast, support→hold). -->
     <script src="shell/domain-movement.js?v=domain-aware-movement-a"></script>
+    <!-- RMOOZ-COA-REALISM-GATE-A: sovereign-territory placement/movement/capture validation gate.
+         Loaded BEFORE free-fight-demo.js so window.RmoozCoaRealismGate is present at init. -->
+    <script src="shell/coa-realism-gate.js?v=coa-realism-gate-a"></script>
     <!-- RMOOZ-STEP1-COA-PREPARATION-GATE-AE: pure unit-taskability resolver (Step-1 review-only units are
          not taskable for movement). Loaded BEFORE free-fight-demo.js so window.RmoozTaskability is present. -->
     <script src="shell/unit-taskability.js?v=scenario-control-center-ak"></script>

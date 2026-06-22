@@ -44,6 +44,9 @@
     var _coaPlan = null, _coaLoading = false, _coaApplied = false, _coaSelectedIdx = 0;
     var _coaRepairAttempted = false;   // RMOOZ-REAL-COA-COMMANDER-QUALITY-AD: one LLM repair attempt per manual generate
     var _coaMovedUnits = [];  // [{unit, oldPos}, ...] — only units that VISIBLY moved
+    var _movementValidationLog = [];   // RMOOZ-COA-REALISM-GATE-A: per-move territory/domain validation entries
+    var _domainHeldUids = {};          // RMOOZ-COA-REALISM-GATE-A: log domain holds once per unit (prevents log spam)
+    var _placementValidation = [];     // RMOOZ-COA-REALISM-GATE-A: initial placement check results on scenario start
     // FREEFIGHT-BLUE-THREAT-AWARE-MOVEMENT-A: a unit whose move is below this is
     // "already in position" — not counted as moved (so zero/tiny moves aren't faked).
     var MIN_VISIBLE_MOVE_DEG = 0.003;
@@ -181,6 +184,8 @@
     function arr(v) { return Array.isArray(v) ? v : []; }
     // FREE-FIGHT-AI-LITE-A: deterministic planner + injected terrain results.
     function aiPlanner() { var w = W(); if (w && w.RmoozFreeFightAI) return w.RmoozFreeFightAI; try { return require('./free-fight-ai.js'); } catch (_) { return null; } }
+    // RMOOZ-COA-REALISM-GATE-A: returns the territory/movement validation gate if loaded.
+    function _getCoaRealismGate() { var w = W(); return (w && w.RmoozCoaRealismGate) || null; }
     function num(v) { var n = Number(v); return Number.isFinite(n) ? n : null; }
     function cloneLL(o) { return o ? { lat: num(o.lat), lon: num(o.lon) } : null; }
     function finiteLL(o) { return !!(o && Number.isFinite(o.lat) && Number.isFinite(o.lon)); }
@@ -3203,13 +3208,31 @@
                 // FREEFIGHT-BLUE-THREAT-AWARE-MOVEMENT-A: classify below-epsilon as already-in-position.
                 var dLat = round5(fin.lat) - startLat, dLon = round5(fin.lon) - startLon;
                 var held = Math.sqrt(dLat * dLat + dLon * dLon) < MIN_VISIBLE_MOVE_DEG;
+                // RMOOZ-COA-REALISM-GATE-A: territory/domain check — hold the step if unfeasible crossing.
+                var _domainValidation = null;
+                var _cgGate = _getCoaRealismGate();
+                if (_cgGate && act.action_type !== 'HOLD_POSITION') {
+                    var _cgResult = _cgGate.validateMovementStep(startLat, startLon, round5(fin.lat), round5(fin.lon), {
+                        unit_id: act.unit_uid, side: act.side || (u && u.side) || '', movement_mode: act.movement_mode || '' });
+                    _domainValidation = _cgResult;
+                    if (_cgResult && _cgResult.held) {
+                        held = true;
+                        var _dk = String(act.unit_uid);
+                        if (!_domainHeldUids[_dk]) { _domainHeldUids[_dk] = 1; try { _appendToEventLog('HELD_DOMAIN: ' + esc(_dk) + ' — ' + esc(_cgResult.reason || 'domain/territory violation')); } catch (_ig) {} }
+                        _movementValidationLog.push({ uid: act.unit_uid, side: act.side || (u && u.side) || '', validated: false, violation_type: _cgResult.violation_type || 'domain_held' });
+                    } else {
+                        _movementValidationLog.push({ uid: act.unit_uid, side: act.side || (u && u.side) || '', validated: true });
+                    }
+                }
                 // RMOOZ-AI-MOVEMENT-EXECUTION-AUDIT-A: carry the action_type + execution_mode + the
                 // action-specific target so the EXECUTED event log / debug overlay can PROVE the
                 // marker followed the COA's action target (recon standoff / flank off-axis / …).
+                var _movDistKm = (held ? 0 : Math.round(_kmBetween({ lat: startLat, lon: startLon }, { lat: round5(fin.lat), lon: round5(fin.lon) }) * 10) / 10);
                 moves.push({ unit: u, uid: act.unit_uid, role: act.role || '', action_type: act.action_type || '',
                     execution_mode: act.execution_mode || '', held: held,
                     start: { lat: startLat, lon: startLon }, final: { lat: round5(fin.lat), lon: round5(fin.lon) },
-                    target: { lat: +act.target.lat, lon: +act.target.lon } });
+                    target: { lat: +act.target.lat, lon: +act.target.lon },
+                    distance_km: _movDistKm, domain_validation: _domainValidation });
             });
         });
         return moves;
@@ -3225,10 +3248,12 @@
             var uid = String(m.uid || (m.unit && (m.unit.id || m.unit.uid || m.unit.unit_uid)) || '?');
             var at = String(m.action_type || '?');
             var mode = String(m.execution_mode || 'generic_target');
+            var _dKmStr = (m.distance_km != null && Number.isFinite(m.distance_km) && m.distance_km > 0) ? (' ~' + m.distance_km.toFixed(1) + 'km') : '';
+            var _valStr = (m.domain_validation && !m.domain_validation.ok) ? ' [DOMAIN_BLOCKED:' + esc(m.domain_validation.violation_type || '?') + ']' : '';
             if (m.held) {
-                _appendToEventLog('EXECUTED: ' + esc(uid) + ' ' + esc(at) + ' HELD at ' + _ll2(m.start) + ' (already in position) via ' + esc(mode));
+                _appendToEventLog('EXECUTED: ' + esc(uid) + ' ' + esc(at) + ' HELD at ' + _ll2(m.start) + ' (already in position) via ' + esc(mode) + _valStr);
             } else {
-                _appendToEventLog('EXECUTED: ' + esc(uid) + ' ' + esc(at) + ' from ' + _ll2(m.start) + ' to ' + _ll2(m.final) + ' via ' + esc(mode));
+                _appendToEventLog('EXECUTED: ' + esc(uid) + ' ' + esc(at) + ' from ' + _ll2(m.start) + ' to ' + _ll2(m.final) + _dKmStr + ' via ' + esc(mode) + _valStr);
             }
         });
     }
@@ -4337,15 +4362,39 @@
             reserve_ring: function (i) { return _reserveRing(obj, i); } };
     }
     function _scenarioActive() { return !!(_scenario && _scenario.scenario_active); }
+    // RMOOZ-COA-REALISM-GATE-A: validate initial placement of all Green units.
+    // Flags BLUE units in RED territory without forward_deployed authorization.
+    // Returns an array of { uid, side, lat, lon, result } records.
+    function _validateAllPlacements() {
+        var gate = _getCoaRealismGate();
+        if (!gate) return [];
+        var results = [];
+        _greenUnits().forEach(function (u) {
+            if (!u) return;
+            var r = gate.validatePlacement(u);
+            results.push({ uid: u.id, side: u.side, lat: u.lat, lon: u.lon, result: r });
+            if (!r.ok) {
+                try { _appendToEventLog('PLACEMENT_VIOLATION: ' + esc(String(u.id || '?')) + ' (' + esc(String(u.side || '?')) + ') — ' + esc(r.reason || r.violation_type || 'invalid placement')); } catch (_ig) {}
+            }
+        });
+        return results;
+    }
     function _newScenario() {
-        return { scenario_active: true, scenario_status: 'running', scenario_turn: 1, blue_cycle: 0, red_cycle: 0,
+        // RMOOZ-COA-REALISM-GATE-A: run placement validation on every scenario start.
+        _movementValidationLog = [];
+        _domainHeldUids = {};
+        try { _placementValidation = _validateAllPlacements(); } catch (_ig) { _placementValidation = []; }
+        var sc = { scenario_active: true, scenario_status: 'running', scenario_turn: 1, blue_cycle: 0, red_cycle: 0,
             current_actor: 'unit-controller', end_condition: null, last_outcome: null, pending_replan_reason: null,
             max_turns: SCENARIO_MAX_TURNS, started_at: _nowISO(), updated_at: _nowISO(),
             // RMOOZ-FREE-FIGHT-AUTO-SCENARIO-DIRECTOR-AB: auto-director settings
             auto_continue: _scenarioAutoContinue, auto_director_enabled: true, max_auto_turns: SCENARIO_MAX_AUTO_TURNS,
             last_auto_order_source: null, last_red_maneuver: null,
             // RMOOZ-AUTO-SCENARIO-FORMATION-REALISM-AC: objective-control + formation state
-            objective_control: 'uncontrolled', blue_presence: 0, red_contest: 0, last_formation_order: null };
+            objective_control: 'uncontrolled', blue_presence: 0, red_contest: 0, last_formation_order: null,
+            // RMOOZ-COA-REALISM-GATE-A: placement violation count at scenario start
+            placement_violations: _placementValidation.filter(function (r) { return r && r.result && !r.result.ok; }).length };
+        return sc;
     }
     // Count units of a side within `km` of the objective (area-based presence/contest).
     function _scenarioSideWithin(side, obj, km) {
@@ -4374,10 +4423,22 @@
         var unitsMissing = committed > 0 ? Math.max(0, committed - _sideUnitCount(activeSide)) : 0;
         var redAbilityToContest = redTotal > 0;
         var blueAbilityToContinue = blueTotal > 0;
-        var control;
+        var control, _captureGateReason = null;
         if (!obj) control = (redTotal > 0 && blueTotal > 0) ? 'contested' : (blueTotal > 0 ? 'blue' : (redTotal > 0 ? 'red' : 'uncontrolled'));
         else if (bluePresence > 0 && redContest === 0) control = 'blue';
-        else if (redControl > 0 && blueContest === 0) control = 'red';
+        else if (redControl > 0 && blueContest === 0) {
+            // RMOOZ-COA-REALISM-GATE-A: block RED capture when movement feasibility is not proven.
+            var _capGate = _getCoaRealismGate();
+            var _capGateResult = _capGate ? _capGate.gateObjectiveCapture('RED', null, _movementValidationLog) : null;
+            if (_capGateResult && !_capGateResult.capture_valid) {
+                control = 'contested';
+                _captureGateReason = _capGateResult.reason;
+                try { _appendToEventLog('GATE: RED objective capture blocked — ' + esc(_capGateResult.reason)); } catch (_ig) {}
+                try { _recordDecision({ role: 'white', action: 'capture_gate_block', called_llm: false, source: 'coa-realism-gate', reason: _capGateResult.reason, result_summary: 'RED capture → contested (movement feasibility not proven)' }); } catch (_ig) {}
+            } else {
+                control = 'red';
+            }
+        }
         else if ((bluePresence > 0 || blueContest > 0) && (redControl > 0 || redContest > 0)) control = 'contested';
         else control = 'uncontrolled';
         // backward-compatible fields (AA/AB consumers + _redReaction + end conditions read these)
@@ -4405,7 +4466,7 @@
             blue_unable: blueUnable, red_unable: redUnable, should_continue: shouldContinue,
             replan_required: replanRequired,
             replan_reason: replanRequired ? (control === 'contested' ? 'Objective contested by Red — Blue needs new orders.' : 'Objective not secured — Blue needs new orders.') : null,
-            reason: summary, summary: summary };
+            reason: summary, summary: summary, captureGateReason: _captureGateReason };
     }
     // Simple deterministic Red reaction posture (v1 — NO Red LLM yet; decision recorded only).
     function _redReaction(outcome) {
@@ -5136,6 +5197,11 @@
         _getLastCapabilityForTest:   function ()          { return _lastCapability; },
         // RMOZ-AI-TOOL-CONTRACT-A test seam
         _getLastToolContractForTest: function ()          { return _lastToolContract; },
+        // RMOOZ-COA-REALISM-GATE-A test seams
+        _validateAllPlacementsForTest:       function ()  { return _validateAllPlacements(); },
+        _getMovementValidationLogForTest:    function ()  { return _movementValidationLog.slice(); },
+        _clearMovementValidationLogForTest:  function ()  { _movementValidationLog = []; _domainHeldUids = {}; },
+        _getPlacementValidationForTest:      function ()  { return _placementValidation.slice(); },
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozFreeFightDemo = API;

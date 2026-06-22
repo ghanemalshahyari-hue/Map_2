@@ -1016,6 +1016,7 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
             'Recon must observe from standoff and avoid contact; delay must shape the enemy; flank must use a different axis; withdraw must increase distance; deceive must mislead.',
             'For every action explain why_action, why_unit, deciding_factor (terrain/zone/objective/enemy), risk, and expected_result.',
             'Return ONLY a JSON object with a "coas" array. Rules: valid JSON; every unit_uid MUST be from allowed_unit_ids; coordinates inside the map; no teleport (no impossible movement); no invented units; NEVER engage/destroy/open-fire.',
+            'IMPORTANT — Two-layer movement architecture: output behavior+domain+movement_mode+waypoint_policy for every action. The movement engine converts these to waypoints. Do NOT output raw ring/circular coordinates as the only targeting — use behavior intent instead. Aircraft use patrol|orbit|intercept waypoint_policy (never stationary at objective). Ground units use direct_step|intercept_axis. Naval units use patrol_loop only on water.',
         ].join(' ')
         : [
             'You are a military wargame AI for a Military exercise.',
@@ -1026,6 +1027,8 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
             'No other text, explanation, or preamble.',
             'Every unit_uid MUST be from the allowed_unit_ids list — never invent IDs.',
             'Every COA must have at least one action with a valid unit_uid.',
+            'For each action also output: domain (air|ground|naval|sensor|air_defense|support|static), behavior (approach|patrol|orbit|observe|intercept|defend|support|screen|reserve|hold), movement_mode, waypoint_policy, desired_effect.',
+            'Aircraft use behavior=patrol or orbit with waypoint_policy=patrol_loop or orbit. Ground units use behavior=approach/intercept/defend with waypoint_policy=direct_step or intercept_axis.',
         ].join(' ');
 
     // GIS / terrain / sovereign-zone / contact context the commander must reason from.
@@ -1064,7 +1067,17 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
                     side: 'RED|BLUE',
                     role: 'assault|support|screen|reserve|recon|hold|defend',
                     action_type: actionEnum,
-                    target: { lat: 0, lon: 0, type: 'objective|coord' },
+                    // RMOOZ-WARGAMINGGEN-MOVEMENT-ARCHITECTURE-A: Layer 1 — AI declares INTENT.
+                    // The deterministic movement engine (Layer 2) converts intent → waypoints.
+                    // DO NOT output raw lat/lon ring coordinates — output behavior instead.
+                    domain: 'air|ground|naval|sensor|air_defense|support|static',
+                    behavior: 'approach|patrol|orbit|observe|intercept|defend|support|screen|reserve|hold',
+                    movement_mode: 'ground|naval|amphibious|air|airlift|static',
+                    waypoint_policy: 'direct_step|patrol_loop|orbit|intercept_axis|hold_area|support_position|screen_line',
+                    priority: 1,
+                    desired_effect: '<tactical effect this unit should achieve>',
+                    update_trigger: 'enemy_detected|objective_changed|target_reached|stuck|manual_replan|none',
+                    target: { lat: 0, lon: 0, type: 'objective|coord' },   // optional hint; engine may override
                     reason: '<one sentence>',
                     why_action: freedom ? '<why this action>' : undefined,
                     why_unit: freedom ? '<why this unit>' : undefined,
@@ -1255,6 +1268,11 @@ function _coaOutputSchema() {
     var lohi = { type: 'string', enum: ['low', 'medium', 'high'] };
     var action = { type: 'object', properties: {
         unit_uid: { type: 'string' }, role: { type: 'string' }, action_type: { type: 'string' },
+        // RMOOZ-WARGAMINGGEN-MOVEMENT-ARCHITECTURE-A: Layer 1 behavior intent fields
+        domain: { type: 'string' }, behavior: { type: 'string' },
+        movement_mode: { type: 'string' }, waypoint_policy: { type: 'string' },
+        priority: { type: 'number' }, desired_effect: { type: 'string' },
+        update_trigger: { type: 'string' },
         target: { type: 'object', properties: { type: { type: 'string' }, lat: { type: 'number' }, lon: { type: 'number' } } },
         reason: { type: 'string' }, roe_status: { type: 'string' }, taskable: { type: 'boolean' } },
         required: ['unit_uid', 'role', 'action_type', 'reason'] };

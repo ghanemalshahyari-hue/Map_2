@@ -47,9 +47,10 @@
     var _movementValidationLog = [];   // RMOOZ-COA-REALISM-GATE-A: per-move territory/domain validation entries
     var _domainHeldUids = {};          // RMOOZ-COA-REALISM-GATE-A: log domain holds once per unit (prevents log spam)
     // RMOOZ-MOVEMENT-INTELLIGENCE-A: per-commit truth records (visible on map + debug panel)
-    var _missingUnitRecords  = [];     // [{uid, reason}] — COA referenced unit not found on map
-    var _heldMovementRecords = [];     // [{uid, side, lat, lon, reason}] — step-1/domain held during execution
-    var _domainBlockedRecords = [];    // [{uid, side, lat, lon, domain, reason}] — domain-violation holds
+    var _missingUnitRecords    = [];   // [{uid, reason}] — COA referenced unit not found on map
+    var _heldMovementRecords   = [];   // [{uid, side, lat, lon, reason}] — step-1/domain held during execution
+    var _domainBlockedRecords  = [];   // [{uid, side, lat, lon, domain, reason}] — domain-violation holds
+    var _movedMovementRecords  = [];   // [{uid, side, moved_km, behavior, domain, from, to}] — what actually moved this tick
     var _placementValidation = [];     // RMOOZ-COA-REALISM-GATE-A: initial placement check results on scenario start
     // FREEFIGHT-BLUE-THREAT-AWARE-MOVEMENT-A: a unit whose move is below this is
     // "already in position" — not counted as moved (so zero/tiny moves aren't faked).
@@ -2893,8 +2894,8 @@
             // RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O: auto-select the recommended COA so the simple flow
             // can offer "Use Recommended Plan" by default.
             if (_coaPlan && _coaPlan.ok && arr(_coaPlan.coas).length) { try { _coaSelectedIdx = _pickRecommendedIdx(_coaPlan); } catch (_) {} }
-            // RMOOZ-MOVEMENT-TRUTH-A: correct AI targets that are far from the objective.
-            if (_coaPlan && _coaPlan.ok) { try { _normalizeActionTargets(_coaPlan); } catch (_na) {} }
+            // RMOOZ-WARGAMINGGEN-MOVEMENT-ARCHITECTURE-A: AI COA uses behavior assignments — no ring normalization.
+            // _normalizeActionTargets is staff-safe-only; do NOT apply to AI-generated plans.
             _coaLoading = false; _coaApplied = false; _stopCoaLoadingTicker();
             updatePanel();
             // RMOOZ-GREEN-WORLD-UI-R + RMOOZ-GREEN-WHITE-SCORING-T: refresh Green, then score it onto the
@@ -3023,32 +3024,160 @@
         updatePanel();
         return true;
     }
-    // Resolve the moves for ONE phase's actions (same guard/HOLD logic as _resolveCoaMoves). Adds
-    // `reached` (unit is within epsilon of the ACTION target → the order is complete).
+    // ── RMOOZ-WARGAMINGGEN-MOVEMENT-ARCHITECTURE-A ────────────────────────────────
+    // Layer 2 — Deterministic Movement Engine
+    //
+    // Resolve ONE phase's actions into movement records:
+    //   • If act.behavior is set → route through RmoozMovementEngine (waypoint_policy-based step).
+    //   • Otherwise → step toward act.target at domain speed (staff-safe / legacy fallback).
+    //
+    // Domain step sizes per tick (realistic regional scale):
+    //   air 120 km · ground 25 km · naval 20 km · default 25 km
+    //
+    // Patrol/orbit cycle forever; all other behaviors advance toward final waypoint.
+    // Returns reached=true only when unit arrives at its last (or only) waypoint.
+    // ─────────────────────────────────────────────────────────────────────────────
+    var MOVE_STEP_KM = { air: 120, ground: 25, naval: 20, air_defense: 0, sensor: 0, support: 15, static: 0 };
+    var MOVE_CYCLE_POLICIES = { patrol_loop: true, orbit: true };
+
+    function _stepKmForDomain(domain) {
+        return MOVE_STEP_KM[domain] !== undefined ? MOVE_STEP_KM[domain] : 25;
+    }
+
     function _resolvePhaseMoves(actions) {
         var moves = [];
-        arr(actions).forEach(function (act) {
+        var obj = getObjective();
+        var ME = W() && W().RmoozMovementEngine;
+        var scenario = W() && W().RmoozScenario && W().RmoozScenario.scenario;
+
+        arr(actions).forEach(function (act, slotIdx) {
             if (!act) return;
-            if (act.action_type === 'HOLD_POSITION') {                    // never moves; order is complete
-                moves.push({ uid: act.unit_uid, role: act.role || '', action_type: 'HOLD_POSITION', held: true, hold: true, reached: true, unit: (_findRealUnit(act.unit_uid) || {}).unit || null });
+
+            // HOLD: no movement, order instantly complete
+            if (act.action_type === 'HOLD_POSITION' || act.behavior === 'hold') {
+                var heldUnit = (_findRealUnit(act.unit_uid) || {}).unit || null;
+                moves.push({ uid: act.unit_uid, role: act.role || '', action_type: act.action_type || 'HOLD_POSITION',
+                    held: true, hold: true, reached: true, unit: heldUnit,
+                    behavior: act.behavior || 'hold', domain: act.domain || 'ground',
+                    movement_mode: act.movement_mode || 'static',
+                    waypoint_policy: act.waypoint_policy || 'hold_area',
+                    moved_km: 0, remaining_km: 0, distance_to_waypoint_km: 0, source: act._source || 'staff_safe_fallback' });
                 return;
             }
-            if (!act.target || !Number.isFinite(+act.target.lat) || !Number.isFinite(+act.target.lon)) return;
+
             var found = _findRealUnit(act.unit_uid);
             if (!found || !found.unit) return;
             var u = found.unit;
             var startLat = u.lat != null ? +u.lat : (Array.isArray(u.coord) ? +u.coord[1] : null);
             var startLon = u.lon != null ? +u.lon : (Array.isArray(u.coord) ? +u.coord[0] : null);
             if (!Number.isFinite(startLat) || !Number.isFinite(startLon)) return;
+
+            var behavior = act.behavior || null;
+            var domain = act.domain || (ME ? ME.classifyUnitDomain(u) : 'ground');
+            var stepKm  = _stepKmForDomain(domain);
+            var stepDeg = stepKm / 111.0;   // rough degrees per km
+
+            // ── BEHAVIOR PATH (Layer 2) ──────────────────────────────────────────
+            if (behavior && ME && obj && stepKm > 0) {
+                // Compute waypoints once, cache in the action object for subsequent ticks
+                if (!act._waypoints) {
+                    var enemySide = String(u.side || '').toUpperCase() === 'RED' ? 'BLUE' : 'RED';
+                    var enemyUnits = scenario
+                        ? (enemySide === 'RED' ? arr(scenario.red_units) : arr(scenario.blue_units_initial || scenario.blue_units))
+                        : [];
+                    var wps = ME.buildWaypointsForAssignment(u, act, obj, enemyUnits, slotIdx);
+                    act._waypoints = (wps && wps.length) ? wps : null;
+                    act._wpIdx = 0;
+                }
+                var wps2 = act._waypoints;
+                if (!wps2 || !wps2.length) {
+                    // behavior=hold or engine returned nothing → hold in place
+                    moves.push({ uid: act.unit_uid, role: act.role || '', action_type: act.action_type || '',
+                        held: true, hold: false, reached: false, unit: u,
+                        behavior: behavior, domain: domain, movement_mode: act.movement_mode || domain,
+                        waypoint_policy: act.waypoint_policy || 'hold_area',
+                        moved_km: 0, remaining_km: 0, distance_to_waypoint_km: 0, source: 'ai_behavior',
+                        start: { lat: startLat, lon: startLon }, final: { lat: startLat, lon: startLon } });
+                    return;
+                }
+
+                var wpIdx  = act._wpIdx || 0;
+                var policy = act.waypoint_policy || '';
+                var cyclic = !!MOVE_CYCLE_POLICIES[policy];
+                var targetWp = wps2[wpIdx % wps2.length];
+
+                var dLat = targetWp.lat - startLat, dLon = targetWp.lon - startLon;
+                var distDeg = Math.sqrt(dLat * dLat + dLon * dLon);
+
+                var finLat, finLon, reached;
+                if (distDeg <= stepDeg) {
+                    // Arrive at this waypoint this tick
+                    finLat = round5(targetWp.lat);
+                    finLon = round5(targetWp.lon);
+                    reached = cyclic ? false : (wpIdx >= wps2.length - 1);   // cyclic never "reaches", others reach at last wp
+                    if (cyclic) {
+                        act._wpIdx = (wpIdx + 1) % wps2.length;
+                    } else {
+                        act._wpIdx = Math.min(wpIdx + 1, wps2.length - 1);
+                    }
+                } else {
+                    // Step one domain-speed increment toward this waypoint
+                    var frac = stepDeg / distDeg;
+                    finLat = round5(startLat + dLat * frac);
+                    finLon = round5(startLon + dLon * frac);
+                    reached = false;
+                }
+
+                var movedKm  = _kmBetween({ lat: startLat, lon: startLon }, { lat: finLat, lon: finLon });
+                var finalWp  = wps2[wps2.length - 1];
+                var remKm    = _kmBetween({ lat: finLat, lon: finLon }, finalWp);
+                var wpDistKm = _kmBetween({ lat: finLat, lon: finLon }, targetWp);
+                moves.push({ unit: u, uid: act.unit_uid, role: act.role || '', action_type: act.action_type || '',
+                    behavior: behavior, domain: domain,
+                    movement_mode: act.movement_mode || (domain === 'air' ? 'air' : domain === 'naval' ? 'naval' : 'ground'),
+                    waypoint_policy: policy || 'direct_step',
+                    execution_mode: act.execution_mode || '',
+                    held: movedKm < 0.5, hold: false, reached: reached,
+                    start: { lat: startLat, lon: startLon },
+                    final: { lat: finLat, lon: finLon },
+                    target: targetWp,
+                    waypoints: wps2, waypoint_idx: wpIdx,
+                    moved_km: movedKm, remaining_km: remKm, distance_to_waypoint_km: wpDistKm,
+                    source: act._source || 'ai_behavior' });
+                return;
+            }
+
+            // ── LEGACY / STAFF-SAFE PATH ─────────────────────────────────────────
+            // Step toward act.target at domain speed (no teleport).
+            if (!act.target || !Number.isFinite(+act.target.lat) || !Number.isFinite(+act.target.lon)) return;
             var tgt = { lat: +act.target.lat, lon: +act.target.lon };
-            var fin = { lat: round5(tgt.lat), lon: round5(tgt.lon) };   // RMOOZ-MOVEMENT-TRUTH-A: one tick = full phase move
-            var dLat = round5(fin.lat) - startLat, dLon = round5(fin.lon) - startLon;
-            var stepDist = Math.sqrt(dLat * dLat + dLon * dLon);
-            var dt = round5(fin.lat) - tgt.lat, dn = round5(fin.lon) - tgt.lon;
-            var reached = Math.sqrt(dt * dt + dn * dn) < MIN_VISIBLE_MOVE_DEG;   // at the action target
+            var dLat2 = tgt.lat - startLat, dLon2 = tgt.lon - startLon;
+            var dist2 = Math.sqrt(dLat2 * dLat2 + dLon2 * dLon2);
+
+            var finLat2, finLon2, reached2;
+            if (stepKm === 0 || dist2 <= (stepDeg || 0.01)) {
+                // Static units or already at target
+                finLat2 = round5(tgt.lat); finLon2 = round5(tgt.lon);
+                reached2 = true;
+            } else {
+                var frac2 = Math.min(1, (stepDeg || 0.225) / dist2);
+                finLat2 = round5(startLat + dLat2 * frac2);
+                finLon2 = round5(startLon + dLon2 * frac2);
+                reached2 = (frac2 >= 1);
+            }
+            var movedKm2  = _kmBetween({ lat: startLat, lon: startLon }, { lat: finLat2, lon: finLon2 });
+            var remKm2    = _kmBetween({ lat: finLat2, lon: finLon2 }, tgt);
             moves.push({ unit: u, uid: act.unit_uid, role: act.role || '', action_type: act.action_type || '',
-                execution_mode: act.execution_mode || '', held: stepDist < MIN_VISIBLE_MOVE_DEG, hold: false, reached: reached,
-                start: { lat: startLat, lon: startLon }, final: { lat: round5(fin.lat), lon: round5(fin.lon) }, target: tgt });
+                behavior: act.behavior || null, domain: domain,
+                movement_mode: act.movement_mode || (domain === 'air' ? 'air' : domain === 'naval' ? 'naval' : 'ground'),
+                waypoint_policy: act.waypoint_policy || 'direct_step',
+                execution_mode: act.execution_mode || '',
+                held: movedKm2 < 0.5, hold: false, reached: reached2,
+                start: { lat: startLat, lon: startLon },
+                final: { lat: finLat2, lon: finLon2 },
+                target: tgt,
+                moved_km: movedKm2, remaining_km: remKm2, distance_to_waypoint_km: remKm2,
+                source: act._source || 'staff_safe_fallback' });
         });
         return moves;
     }
@@ -3113,7 +3242,7 @@
             updatePanel(); return null;
         }
         // RMOOZ-MOVEMENT-INTELLIGENCE-A: block commit if COA references unit UIDs not on the map.
-        _missingUnitRecords = []; _heldMovementRecords = []; _domainBlockedRecords = [];
+        _missingUnitRecords = []; _heldMovementRecords = []; _domainBlockedRecords = []; _movedMovementRecords = [];
         var _missingUid = null;
         _coaAllActions(coa).forEach(function (act) {
             if (!act || !act.unit_uid || _missingUid) return;
@@ -3224,6 +3353,12 @@
         _writeMoveFrame(realMoves, 1);
         var movedNow = _movedRecords(realMoves);
         _coaMovedUnits = movedNow; _coaApplied = true;
+        // RMOOZ-WARGAMINGGEN-MOVEMENT-ARCHITECTURE-A: richer per-tick moved record
+        _movedMovementRecords = realMoves.filter(function (m) { return !m.held && m.moved_km > 0; }).map(function (m) {
+            return { uid: m.uid, side: m.unit ? (m.unit.side || '') : '', moved_km: m.moved_km || 0,
+                behavior: m.behavior || null, domain: m.domain || 'ground',
+                from: m.start, to: m.final, waypoint_policy: m.waypoint_policy || null };
+        });
         var _el0 = _nowMs(); _logExecutedMoves(realMoves); var event_log_ms = _nowMs() - _el0;   // RMOOZ-...-LIVE-DELAY-AUDIT-N
         // 3) per-order status + completion
         var anyMovedThisTick = false, allComplete = true;
@@ -4815,7 +4950,7 @@
         // RMOOZ-COA-REALISM-GATE-A: run placement validation on every scenario start.
         _movementValidationLog = [];
         _domainHeldUids = {};
-        _missingUnitRecords = []; _heldMovementRecords = []; _domainBlockedRecords = [];
+        _missingUnitRecords = []; _heldMovementRecords = []; _domainBlockedRecords = []; _movedMovementRecords = [];
         try { _placementValidation = _validateAllPlacements(); } catch (_ig) { _placementValidation = []; }
         var sc = { scenario_active: true, scenario_status: 'running', scenario_turn: 1, blue_cycle: 0, red_cycle: 0,
             current_actor: 'unit-controller', end_condition: null, last_outcome: null, pending_replan_reason: null,
@@ -5197,7 +5332,7 @@
         try { _appendToEventLog('Scenario stopped by operator.'); } catch (_) {}
         updatePanel();
     }
-    function _resetScenario() { _stopScenarioTimer(); _scenario = null; _step1HeldUids = {}; _coaLoading = false; _missingUnitRecords = []; _heldMovementRecords = []; _domainBlockedRecords = []; }
+    function _resetScenario() { _stopScenarioTimer(); _scenario = null; _step1HeldUids = {}; _coaLoading = false; _missingUnitRecords = []; _heldMovementRecords = []; _domainBlockedRecords = []; _movedMovementRecords = []; }
     // ── operator-card stale-commit guard (consumed by the Scenario Control Center engine facade) ────────
     // RMOOZ-FREE-FIGHT-V2-COA-TO-SCENARIO-BUGFIX-AB1: is the committed COA STALE relative to what the
     // operator is now looking at? True when (a) a DIFFERENT (newer) plan object is loaded than the one we
@@ -5487,6 +5622,7 @@
             };
         },
         // RMOOZ-MOVEMENT-TRUTH-A: per-unit movement status for the debug panel in Panel 6.
+        // RMOOZ-WARGAMINGGEN-MOVEMENT-ARCHITECTURE-A: full WargamingGEN-style per-unit debug row.
         movementDebug: function () {
             var coa = _coaExec ? _coaExec.selected_coa
                 : (_coaPlan && _coaPlan.ok && (_coaPlan.coas && (_coaPlan.coas[_coaSelectedIdx] || _coaPlan.coas[0])));
@@ -5502,34 +5638,64 @@
                     var unitFound = !!u;
                     var cLat = u ? (u.lat != null ? +u.lat : (Array.isArray(u.coord) ? +u.coord[1] : null)) : null;
                     var cLon = u ? (u.lon != null ? +u.lon : (Array.isArray(u.coord) ? +u.coord[0] : null)) : null;
-                    var tLat = act.target ? +act.target.lat : null;
-                    var tLon = act.target ? +act.target.lon : null;
-                    var distKm = (cLat != null && tLat != null) ? Math.round(_kmBetween({ lat: cLat, lon: cLon }, { lat: tLat, lon: tLon }) * 10) / 10 : null;
-                    var objDistKm = (obj && tLat != null) ? Math.round(_kmBetween({ lat: tLat, lon: tLon }, obj) * 10) / 10 : null;
+                    // Waypoint target: use cached _waypoints if present, else fall back to act.target
+                    var wpIdx   = act._wpIdx || 0;
+                    var wps     = act._waypoints;
+                    var curWp   = (wps && wps.length) ? wps[wpIdx % wps.length] : act.target;
+                    var finalWp = (wps && wps.length) ? wps[wps.length - 1] : act.target;
+                    var tLat = curWp ? +curWp.lat : null;
+                    var tLon = curWp ? +curWp.lon : null;
+                    var fLat = finalWp ? +finalWp.lat : tLat;
+                    var fLon = finalWp ? +finalWp.lon : tLon;
+                    var distToWpKm = (cLat != null && tLat != null)
+                        ? Math.round(_kmBetween({ lat: cLat, lon: cLon }, { lat: tLat, lon: tLon }) * 10) / 10 : null;
+                    var remainingKm = (cLat != null && fLat != null)
+                        ? Math.round(_kmBetween({ lat: cLat, lon: cLon }, { lat: fLat, lon: fLon }) * 10) / 10 : null;
+                    var objDistKm = (obj && fLat != null)
+                        ? Math.round(_kmBetween({ lat: fLat, lon: fLon }, obj) * 10) / 10 : null;
                     var taskable = _isUnitTaskable(act.unit_uid);
-                    var movedThisTick = _coaMovedUnits.some(function (m) { return m && String(m.uid || (m.unit && m.unit.id) || '') === String(act.unit_uid || ''); });
-                    var heldStep1 = !!_step1HeldUids[String(act.unit_uid || '')];
+                    var movedRec = _movedMovementRecords.filter(function (m) { return String(m.uid || '') === String(act.unit_uid || ''); });
+                    var movedThisTick = movedRec.length > 0;
+                    var movedKmThisTick = movedThisTick ? (movedRec[0].moved_km || 0) : 0;
+                    var heldStep1  = !!_step1HeldUids[String(act.unit_uid || '')];
                     var heldDomain = !!_domainHeldUids[String(act.unit_uid || '')];
                     var isMissing  = _missingUnitRecords.some(function (r) { return r.uid === act.unit_uid; });
-                    var domain = (ME && u) ? ME.classifyUnitDomain(u) : 'unknown';
-                    var src = act.behavior ? 'ai_behavior' : ((_coaPlan && _coaPlan.plan_source === 'deterministic') ? 'staff_safe_fallback' : 'ai');
-                    var blockedReason = isMissing ? 'UNIT NOT FOUND' : heldStep1 ? 'HOLD REVIEW' : heldDomain ? 'DOMAIN BLOCKED' : (!taskable ? 'not taskable' : null);
-                    result.push({ uid: act.unit_uid, side: u ? (u.side || '') : '', role: act.role || '',
-                        action_type: act.action_type || '', domain: domain,
-                        cur_lat: cLat, cur_lon: cLon, tgt_lat: tLat, tgt_lon: tLon,
-                        dist_km: distKm, obj_dist_km: objDistKm,
-                        moved: movedThisTick, taskable: taskable, unit_found: unitFound,
+                    var domain = act.domain || (ME && u ? ME.classifyUnitDomain(u) : 'unknown');
+                    var movMode = act.movement_mode || (domain === 'air' ? 'air' : domain === 'naval' ? 'naval' : 'ground');
+                    var src = act._source || (act.behavior ? 'ai_behavior' :
+                        ((_coaPlan && (_coaPlan.plan_source === 'deterministic' || _coaPlan.plan_source === 'staff_safe')) ? 'staff_safe_fallback' : 'ai'));
+                    // Unit not found: check both commit-time records AND runtime lookup
+                    var unitMissing = isMissing || (!unitFound && act.action_type !== 'HOLD_POSITION' && act.behavior !== 'hold');
+                    var blockedReason = unitMissing  ? 'UNIT NOT FOUND'
+                        : heldStep1  ? 'HOLD REVIEW'
+                        : heldDomain ? 'DOMAIN BLOCKED'
+                        : (!taskable ? 'NOT TASKABLE' : null);
+                    result.push({
+                        uid: act.unit_uid, side: u ? (u.side || '') : '', role: act.role || '',
+                        action_type: act.action_type || '',
+                        domain: domain, movement_mode: movMode,
+                        behavior: act.behavior || null, waypoint_policy: act.waypoint_policy || null,
+                        cur_lat: cLat, cur_lon: cLon,
+                        planned_wp_lat: tLat, planned_wp_lon: tLon,
+                        distance_to_waypoint_km: distToWpKm,
+                        distance_to_objective_km: objDistKm,
+                        remaining_km: remainingKm,
+                        moved_this_tick: movedThisTick, moved_km_this_tick: movedKmThisTick,
+                        taskable: taskable, unit_found: unitFound,
                         blocked_reason: blockedReason,
-                        source: src });
+                        source: src,
+                    });
                 });
             });
-            // Append records for missing units not already in COA actions
+            // Append missing-unit sentinel rows
             _missingUnitRecords.forEach(function (r) {
                 if (!result.some(function (row) { return row.uid === r.uid; })) {
                     result.push({ uid: r.uid, side: '', role: '', action_type: '', domain: 'unknown',
-                        cur_lat: null, cur_lon: null, tgt_lat: null, tgt_lon: null,
-                        dist_km: null, obj_dist_km: null, moved: false, taskable: false,
-                        unit_found: false, blocked_reason: 'UNIT NOT FOUND', source: 'unknown' });
+                        movement_mode: 'unknown', behavior: null, waypoint_policy: null,
+                        cur_lat: null, cur_lon: null, planned_wp_lat: null, planned_wp_lon: null,
+                        distance_to_waypoint_km: null, distance_to_objective_km: null, remaining_km: null,
+                        moved_this_tick: false, moved_km_this_tick: 0,
+                        taskable: false, unit_found: false, blocked_reason: 'UNIT NOT FOUND', source: 'unknown' });
                 }
             });
             return result;
@@ -5793,6 +5959,8 @@
         _getMissingUnitRecordsForTest:   function () { return _missingUnitRecords.slice(); },
         _getHeldMovementRecordsForTest:  function () { return _heldMovementRecords.slice(); },
         _getDomainBlockedRecordsForTest: function () { return _domainBlockedRecords.slice(); },
+        // RMOOZ-WARGAMINGGEN-MOVEMENT-ARCHITECTURE-A test seams
+        _getMovedMovementRecordsForTest: function () { return _movedMovementRecords.slice(); },
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozFreeFightDemo = API;

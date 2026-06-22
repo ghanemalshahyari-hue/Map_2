@@ -2616,7 +2616,20 @@
         var canRepair = _isRealLlmPlan(_coaPlan) && !_coaRepairAttempted && !labelledStaffSafe;
         var ready = false; try { ready = _freeFightAiReady().ok; } catch (_) {}
         if (canRepair && ready) { _coaRepairAttempted = true; _repairCoaPlanOnce(q.reasons, genT0); }
-        else { _coaFallbackToTemplate(_coaPlan, q); updatePanel(); }
+        else {
+            // RMOOZ-AI-COA-HONESTY-A: on the commander AI path, never silently replace a failed AI
+            // plan with a Staff-Safe template — that would display a deterministic plan as if AI
+            // generated it. Show the quality gate failure honestly; operator can still click Staff-Safe.
+            if (_planningMode !== 'staff_safe' && _coaPlan && _coaPlan._requestedVia === 'manual_generate') {
+                _coaPlan._quality_gate_failed = true;
+                _coaPlan._quality_gate_reasons = q.reasons;
+                _coaPlan._quality_gate_message = 'AI COA failed quality requirements — ' + arr(q.reasons).slice(0, 2).join('; ') + '. Retry or use Staff-Safe for a deterministic plan.';
+                _coaPlan.ok = false;
+                updatePanel();
+            } else {
+                _coaFallbackToTemplate(_coaPlan, q); updatePanel();
+            }
+        }
     }
     // One LLM repair attempt: re-request the planner with an explicit repair instruction, then re-grade.
     function _repairCoaPlanOnce(reasons, genT0) {
@@ -2638,7 +2651,18 @@
             _coaLoading = false; updatePanel();
             try { _recordPlanDecision(_coaPlan, _nowMs() - genT0); } catch (_) {}
             _runCoaQualityGateFlow(genT0);   // _coaRepairAttempted is set → no second repair → pass or fallback
-        }).catch(function () { _coaLoading = false; _coaFallbackToTemplate(_coaPlan, _gradeCoaPlan(_coaPlan)); updatePanel(); });
+        }).catch(function (e) {
+            _coaLoading = false;
+            // RMOOZ-AI-COA-HONESTY-A: repair fetch failed — show honest AI failure on commander path.
+            if (_planningMode !== 'staff_safe' && _coaPlan && _coaPlan._requestedVia === 'manual_generate') {
+                _coaPlan._quality_gate_failed = true;
+                _coaPlan._quality_gate_message = 'AI repair request failed: ' + ((e && e.message) || 'network error') + '. Use Staff-Safe for a deterministic plan.';
+                _coaPlan.ok = false;
+                updatePanel();
+            } else {
+                _coaFallbackToTemplate(_coaPlan, _gradeCoaPlan(_coaPlan)); updatePanel();
+            }
+        });
     }
     function _generateCoaPlan() {
         var w = W();
@@ -2655,6 +2679,21 @@
             _coaPlan = { ok: false, _step1_blocked: true, _step1_report: _s1, _error: _s1.message, _requestedVia: 'manual_generate' };
             _coaLoading = false; _stopCoaLoadingTicker(); updatePanel();
             return;
+        }
+        // RMOOZ-AI-COA-HONESTY-A: pre-flight AI readiness check for the commander (AI) path.
+        // If AI is not ready (gate off, no model, provider blocked, fast depth), block NOW —
+        // before any API call — so we never receive a deterministic plan dressed as AI output.
+        // Staff-Safe explicitly skips this check (it is deterministic by design).
+        if (_planningMode !== 'staff_safe') {
+            var _aiCheck = _freeFightAiReady();
+            if (!_aiCheck.ok) {
+                _coaPlan = { ok: false, _ai_precheck_blocked: true, _requestedVia: 'manual_generate',
+                    _error: 'AI COA not generated — ' + (_aiCheck.reason || _aiCheck.code || 'AI not ready') +
+                        '. ' + (_aiCheck.msg || 'Use Staff-Safe (deterministic) if you need a plan now.') };
+                _coaLoading = false; _stopCoaLoadingTicker(); updatePanel();
+                try { _recordPlanDecision(_coaPlan, 0); } catch (_x) {}
+                return;
+            }
         }
         _coaLoadingStart = (function () { try { return Date.now(); } catch (_) { return 0; } })();
         _startCoaLoadingTicker();   // RMOOZ-AI-COMMANDER-REPAIR-LOOP-A: live elapsed timer while the model thinks
@@ -2698,6 +2737,17 @@
                 if (_coaPlan && typeof _coaPlan === 'object') _coaPlan._step1_report = _lastStep1Report;
                 // RMOOZ-SCC-STEP1-TRAINING-APPROVAL-AK: mark a plan built on training-approved review-only units.
                 if (_coaPlan && typeof _coaPlan === 'object') _coaPlan._simulation_only = _isSimulationOnly();
+                // RMOOZ-AI-COA-HONESTY-A: defense-in-depth — if the commander AI path returned ok:true
+                // with a non-LLM plan_source (server now returns ok:false, but guard old behavior too).
+                if (_planningMode !== 'staff_safe' && _coaPlan && _coaPlan.ok === true &&
+                        _coaPlan.plan_source && _coaPlan.plan_source !== 'llm') {
+                    _coaPlan = { ok: false, _ai_fallback_blocked: true, _requestedVia: 'manual_generate',
+                        llm_called: _coaPlan.llm_called, llm_status: _coaPlan.llm_status,
+                        fallback_reason: _coaPlan.fallback_reason,
+                        _error: 'AI COA not generated — ' + (_coaPlan.fallback_message ||
+                            'AI was called but a deterministic fallback was applied.') +
+                            ' Use Staff-Safe (deterministic) if you need a plan now.' };
+                }
             }
             // RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O: auto-select the recommended COA so the simple flow
             // can offer "Use Recommended Plan" by default.
@@ -5072,6 +5122,8 @@
         // ── COA preparation (Panel 2) — Step-1 + taskability + quality requirements then generate ──
         prepareCoa: function () { setPlanningMode('commander'); _resetScenario(); _generateCoaPlan(); },
         prepareStaffSafe: function () { setPlanningMode('staff_safe'); _resetScenario(); _generateCoaPlan(); },
+        // RMOOZ-AI-COA-HONESTY-A: expose AI pre-flight readiness to the SCC (Panel 2 display)
+        aiReadiness: function () { try { return _freeFightAiReady(); } catch (_) { return { ok: false, code: 'error', reason: 'readiness check failed' }; } },
         // ── COA review (Panel 3) ──
         coaQuality: function (coa) { try { return _coaQualityGate(coa); } catch (_) { return null; } },
         hardBlockReason: function (coa) { try { return _coaHardBlockReason(coa); } catch (_) { return null; } },
@@ -5265,6 +5317,8 @@
         // RMOOZ-SIDE-ROLE-A: expose _sccActionTargets for side-role acceptance tests
         _sccActionTargetsForTest: function (coa)            { return _sccActionTargets(coa); },
         _gradeCoaPlanQualityForTest: function ()            { if (!_coaPlan || !_coaPlan.ok || !arr(_coaPlan.coas).length) return null; var q = _gradeCoaPlan(_coaPlan); if (q.pass) { _coaPlan._coa_quality = { verdict: 'pass', score: q.score, reasons: q.reasons }; _recordQualityGate('pass', q.score, q.reasons); } else { _coaFallbackToTemplate(_coaPlan, q); } return _coaPlan._coa_quality; },
+        // RMOOZ-AI-COA-HONESTY-A: test seam for the full quality gate flow (with commander-path guard)
+        _runCoaQualityGateFlowForTest: function (t0)        { return _runCoaQualityGateFlow(t0 || 0); },
         _getCoaPlanQualityForTest: function ()              { return _coaPlan && _coaPlan._coa_quality; },
         // RMOOZ-COA-QUALITY-HARD-ENFORCEMENT-AE test seams
         _coaHardBlockReasonForTest: function (coa)          { return _coaHardBlockReason(coa); },

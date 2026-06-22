@@ -167,7 +167,24 @@
                 note('Prepare COA is blocked: <b>' + esc(r.message || 'Step 1 review required') + '</b> Complete source / doctrine / commander review (Panel 1), then re-check.', C.warn) +
                 '<div style="margin-top:6px;">' + btnSec('scc-recheck', '↻ Re-check readiness') + '</div>';
         } else {
-            inner = btnPri('scc-prepare', '⚙ Prepare COA', 'Runs Step-1 gate → taskability → ROE/doctrine → quality, then generates a commander COA') +
+            // RMOOZ-AI-COA-HONESTY-A: show previous AI failure if any (ok:false plan from a prior attempt)
+            var _prevPlan = null; try { _prevPlan = eng.coaPlan(); } catch (_) {}
+            var _planErr = (_prevPlan && _prevPlan.ok === false && _prevPlan._requestedVia === 'manual_generate')
+                ? (_prevPlan._error || _prevPlan._quality_gate_message || null) : null;
+            var _planErrHtml = _planErr
+                ? '<div data-scc="ai-plan-error" style="margin-bottom:7px;padding:6px 9px;border-radius:5px;border:1.5px solid ' + C.bad + ';background:#1f0d0d;font-size:10px;color:' + C.bad + ';font-weight:700;">' + esc(_planErr) + '</div>'
+                : '';
+            // RMOOZ-AI-COA-HONESTY-A: AI readiness strip — gate/model/depth before the operator clicks
+            var _ar = null; try { _ar = (typeof eng.aiReadiness === 'function') ? eng.aiReadiness() : null; } catch (_) {}
+            var _aiOk = _ar && _ar.ok;
+            var _readinessHtml = _ar
+                ? '<div data-scc="ai-readiness" style="margin-bottom:6px;padding:5px 9px;border-radius:5px;border:1px solid ' + (_aiOk ? C.good : C.warn) + ';background:' + (_aiOk ? '#0a1f14' : '#1c1500') + ';font-size:9.5px;">' +
+                    '<span style="font-weight:700;color:' + (_aiOk ? C.good : C.warn) + ';">' + (_aiOk ? '✓ AI ready — Prepare COA will call the local model' : '⚠ AI not ready — Prepare COA will be blocked') + '</span>' +
+                    (!_aiOk && _ar ? '<div style="color:#d0a060;margin-top:2px;">' + esc(_ar.reason || '') + (_ar.msg ? ' — ' + esc(String(_ar.msg).split('\n')[0]) : '') + '</div>' : '') +
+                    '</div>'
+                : '';
+            inner = _planErrHtml + _readinessHtml +
+                btnPri('scc-prepare', '⚙ Prepare COA', 'Runs Step-1 gate → taskability → ROE/doctrine → quality, then generates a commander COA') +
                 ' <span style="display:inline-block;width:6px;"></span>' + btnSec('scc-prepare-staffsafe', '🛡 Staff-Safe (deterministic)', 'Deterministic role-separated COA — no AI') +
                 note('<b>Prepare COA</b> does not blindly call the AI — it first runs the Step-1 gate, the unit taskability resolver, the ROE/doctrine gate and the COA quality requirements; only taskable units are tasked.', C.dim);
         }
@@ -213,7 +230,17 @@
         h += '<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;">' +
             '<span style="font-weight:700;font-size:11.5px;color:' + C.ink + ';">' + (sel ? '▶ ' : '') + esc(id) + ' — ' + esc(coa.title || '') + '</span>' +
             '<span style="display:flex;gap:4px;">' + (i === recIdx ? '<span style="background:#1a5030;color:' + C.good + ';border-radius:3px;padding:1px 6px;font-size:9px;font-weight:700;">★ Recommended</span>' : '') + (sel ? '<span style="background:' + C.chip + ';color:#cfe6ff;border-radius:3px;padding:1px 6px;font-size:9px;font-weight:700;">Selected</span>' : '') + '</span></div>';
-        h += '<div style="margin-top:3px;font-size:9.5px;color:' + C.dim + ';">source <b style="color:' + C.ink + ';">' + esc(plan.plan_source || '—') + '</b> · llm_called <b style="color:' + C.ink + ';">' + (llmCalled ? 'true' : 'false') + '</b> · llm_status <b style="color:' + C.ink + ';">' + esc(plan.llm_status || '—') + '</b> · <b style="color:' + vcol + ';">' + esc(verdict) + (q ? ' (' + q.score + ')' : '') + '</b></div>';
+        // RMOOZ-AI-COA-HONESTY-A: prominent AI / NOT-AI badge — visible without opening Evidence panel
+        var _isRealAi = false; try { _isRealAi = !!eng.isRealLlm(plan); } catch (_) {}
+        var _isPlanningModeSS = String(plan.planning_mode || '').toLowerCase() === 'staff_safe';
+        var _aiBadgeColor = _isRealAi ? C.good : (_isPlanningModeSS ? C.dim : C.warn);
+        var _aiBadgeLabel = _isRealAi
+            ? '🤖 REAL AI COA — plan_source=llm · llm_called=true · llm_status=ok'
+            : (_isPlanningModeSS
+                ? '🛡 STAFF-SAFE — deterministic · llm_called=false'
+                : '⚠ NOT AI — ' + esc(plan.plan_source || 'deterministic') + (llmCalled ? ' · fallback_used=true · ' + esc(plan.llm_status || '') : ' · llm_called=false'));
+        h += '<div data-scc="ai-badge" style="margin-top:4px;margin-bottom:2px;padding:3px 8px;border-radius:4px;border:1px solid ' + _aiBadgeColor + ';background:' + (_isRealAi ? '#0a1f14' : (_isPlanningModeSS ? '#0e1a26' : '#1c1500')) + ';font-size:9.5px;font-weight:700;color:' + _aiBadgeColor + ';">' + _aiBadgeLabel + '</div>';
+        h += '<div style="margin-top:2px;font-size:9.5px;color:' + C.dim + ';">source <b style="color:' + C.ink + ';">' + esc(plan.plan_source || '—') + '</b> · llm_called <b style="color:' + C.ink + ';">' + (llmCalled ? 'true' : 'false') + '</b> · llm_status <b style="color:' + C.ink + ';">' + esc(plan.llm_status || '—') + '</b> · <b style="color:' + vcol + ';">' + esc(verdict) + (q ? ' (' + q.score + ')' : '') + '</b></div>';
         h += '<div style="font-size:9.5px;color:' + C.dim + ';">risk <b style="color:' + C.ink + ';">' + esc(coa.risk || '—') + '</b> · confidence <b style="color:' + C.ink + ';">' + esc(coa.confidence || '—') + '</b></div>';
         // hard fail message
         if (!executable) {

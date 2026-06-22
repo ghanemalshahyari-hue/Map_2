@@ -1732,6 +1732,32 @@ async function _assemblePlan(P, variationSeed, timer, light) {
         // else: fall through to the deterministic Staff-Safe floor (fallbackReason/_llmContractRejection set above).
     }
 
+    // RMOOZ-AI-COA-HONESTY-A: if the commander AI path was explicitly requested (useLlm=true and
+    // NOT staff_safe), never silently produce a deterministic plan — return ok:false with the real
+    // reason so the client can show an honest blocker. Only the explicit Staff-Safe path
+    // (planning_mode=staff_safe / useLlm=false) may return a deterministic plan.
+    if (opts && opts.useLlm === true && !staffSafe) {
+        var _blockMsg = !llmCalled
+            ? (!llmEnabled
+                ? 'AI execution gate is off — set RMOOZ_ALLOW_SIM_RUN=1 to enable AI COA.'
+                : (depth === 'fast'
+                    ? 'AI depth is "fast" — the LLM is skipped in fast mode. Switch to Normal or Deep.'
+                    : 'AI not called — provider blocked or request did not qualify.'))
+            : (fallbackMessage || fallbackReason || 'AI COA generation failed after repair attempts. Use Staff-Safe for a deterministic plan.');
+        return {
+            ok: false,
+            plan_source: llmCalled ? 'llm_failed' : 'ai_blocked',
+            llm_called: llmCalled,
+            llm_status: llmStatus || null,
+            fallback_reason: fallbackReason || null,
+            fallback_message: fallbackMessage || null,
+            allow_sim_run: llmEnabled,
+            ai_depth: depth,
+            _error: _blockMsg,
+            _ai_coa_honest_fail: true,
+        };
+    }
+
     // Deterministic plan. In 'free'/'high_variation' this is the diverse archetype builder
     // (genuine tactical variety); in 'controlled' it is the side-aware doctrine-guided
     // builder. The intercept-override (applyBlueReaction) is skipped in diverse mode so the

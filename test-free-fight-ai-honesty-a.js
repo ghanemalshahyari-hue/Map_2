@@ -6,7 +6,7 @@
  *   - Never silently replace a failed AI COA with a Staff-Safe/deterministic plan.
  *   - Staff-Safe button MUST still return a deterministic plan (unaffected).
  *
- * Tests (10):
+ * Tests (12):
  *   1  Server: useLlm=true + gate off → ok:false
  *   2  Server: useLlm=true + gate off → _ai_coa_honest_fail=true, plan_source='ai_blocked'
  *   3  Server: useLlm=true + gate off → response has no coas array
@@ -17,6 +17,8 @@
  *   8  Client: _isRealLlmPlan → false for deterministic plan even with llm_called=true
  *   9  Client: quality gate flow on commander path sets _quality_gate_failed, not _coaFallbackToTemplate
  *  10  Client: aiReadiness facade method exists and reflects _freeFightAiReady()
+ *  11  Client: _freeFightAiReady returns health_pending when _routeHealth is null
+ *  12  Client: _freeFightAiReady returns health_pending when allow_sim_run is null/unknown
  */
 'use strict';
 var assert = require('assert');
@@ -180,6 +182,20 @@ function clientTests() {
     var ar10seam   = ff._freeFightAiReadyForTest ? ff._freeFightAiReadyForTest() : null;
     ok('Client: eng.aiReadiness() exists and returns consistent ok value with _freeFightAiReady()',
         ar10facade !== null && ar10seam !== null && ar10facade.ok === ar10seam.ok);
+
+    // Test 11: _freeFightAiReady returns health_pending when _routeHealth is null
+    // (route health probe not yet returned — must NEVER claim "AI ready")
+    ff._setRouteHealthForTest(null);
+    var ar11 = ff._freeFightAiReadyForTest ? ff._freeFightAiReadyForTest() : null;
+    ok('Client: _freeFightAiReady returns ok:false + code=health_pending when routeHealth is null',
+        ar11 && ar11.ok === false && ar11.code === 'health_pending');
+
+    // Test 12: _freeFightAiReady returns health_pending when allow_sim_run is null/unknown
+    // (route health loaded but allow_sim_run field not yet populated — same risk as null health)
+    ff._setRouteHealthForTest({ ok: true, allow_sim_run: null, provider: 'ollama', provider_blocked: false });
+    var ar12 = ff._freeFightAiReadyForTest ? ff._freeFightAiReadyForTest() : null;
+    ok('Client: _freeFightAiReady returns ok:false + code=health_pending when allow_sim_run is null',
+        ar12 && ar12.ok === false && ar12.code === 'health_pending');
 
     summarize();
 }

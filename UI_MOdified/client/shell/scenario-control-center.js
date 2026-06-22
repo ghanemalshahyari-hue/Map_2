@@ -177,10 +177,16 @@
             // RMOOZ-AI-COA-HONESTY-A: AI readiness strip — gate/model/depth before the operator clicks
             var _ar = null; try { _ar = (typeof eng.aiReadiness === 'function') ? eng.aiReadiness() : null; } catch (_) {}
             var _aiOk = _ar && _ar.ok;
+            var _arPending = _ar && !_ar.ok && _ar.code === 'health_pending';
+            var _arColor = _aiOk ? C.good : (_arPending ? C.dim : C.warn);
+            var _arBg    = _aiOk ? '#0a1f14' : (_arPending ? '#0c1824' : '#1c1500');
+            var _arLabel = _aiOk ? '✓ AI ready — Prepare COA will call the local model'
+                         : (_arPending ? '⏳ Checking AI readiness…'
+                         : '⚠ AI not ready — Prepare COA will be blocked');
             var _readinessHtml = _ar
-                ? '<div data-scc="ai-readiness" style="margin-bottom:6px;padding:5px 9px;border-radius:5px;border:1px solid ' + (_aiOk ? C.good : C.warn) + ';background:' + (_aiOk ? '#0a1f14' : '#1c1500') + ';font-size:9.5px;">' +
-                    '<span style="font-weight:700;color:' + (_aiOk ? C.good : C.warn) + ';">' + (_aiOk ? '✓ AI ready — Prepare COA will call the local model' : '⚠ AI not ready — Prepare COA will be blocked') + '</span>' +
-                    (!_aiOk && _ar ? '<div style="color:#d0a060;margin-top:2px;">' + esc(_ar.reason || '') + (_ar.msg ? ' — ' + esc(String(_ar.msg).split('\n')[0]) : '') + '</div>' : '') +
+                ? '<div data-scc="ai-readiness" style="margin-bottom:6px;padding:5px 9px;border-radius:5px;border:1px solid ' + _arColor + ';background:' + _arBg + ';font-size:9.5px;">' +
+                    '<span style="font-weight:700;color:' + _arColor + ';">' + _arLabel + '</span>' +
+                    (!_aiOk && _ar && !_arPending ? '<div style="color:#d0a060;margin-top:2px;">' + esc(_ar.reason || '') + (_ar.msg ? ' — ' + esc(String(_ar.msg).split('\n')[0]) : '') + '</div>' : '') +
                     '</div>'
                 : '';
             inner = _planErrHtml + _readinessHtml +

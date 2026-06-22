@@ -4050,22 +4050,41 @@
     // gate is RMOOZ_ALLOW_SIM_RUN (route health allow_sim_run); then a local model must be available
     // (route health model_available); depth must not be fast. Returns a code so the caller picks the
     // right operator message (disabled vs no-model vs fast). The gate is RMOOZ_ALLOW_SIM_RUN only.
+    // RMOOZ-AI-COA-HONESTY-A hardening: every gate condition must be positively confirmed (=== true),
+    // never just "not false". A null/unknown value means we don't yet know — block with health_pending.
     function _freeFightAiReady() {
         if (_aiDepth === 'fast') return { ok: false, code: 'fast', reason: 'Fast mode skips the LLM — use Normal or Deep', msg: AI_FREE_FIGHT_REQUIRES_LLM };
         var rh = _routeHealth;
-        if (rh && rh.ok !== false) {
-            // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D: combine ALL active blocks (exec gate + remote provider),
-            // not just the first one, so the operator sees every reason + fix at once (req #6).
-            var reasons = _aiBlockReasons(rh);
-            if (reasons.length) {
-                return { ok: false, code: 'disabled',
-                    reason: reasons.map(function (r) { return r.code; }).join(' + '),
-                    msg: reasons.map(function (r) { return r.fix; }).join('  ') };
-            }
-            // RMOOZ-OPENROUTER-FREE-FIGHT-CONTROL-FIX-I: use the EFFECTIVE availability (route-health
-            // for local; /api/ai/models for cloud, where route-health is null) so Start is correctly
-            // disabled for an unavailable cloud slug and ENABLED when the cloud slug is in the catalog.
-            if (rh.allow_sim_run === true && _modelAvailableEffective() === false) return { ok: false, code: 'no_model', reason: rh.reason_if_blocked || 'no model available', msg: AI_NO_MODEL_MSG };
+        // Route health not yet loaded or returned an error — never claim "AI ready" when we
+        // don't know allow_sim_run / model / provider status.
+        if (!rh || rh.ok === false) {
+            return { ok: false, code: 'health_pending',
+                reason: 'AI route health not loaded yet',
+                msg: 'Wait for route health / model readiness check.' };
+        }
+        // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D: combine ALL active blocks (exec gate + remote provider),
+        // not just the first one, so the operator sees every reason + fix at once (req #6).
+        var reasons = _aiBlockReasons(rh);
+        if (reasons.length) {
+            return { ok: false, code: 'disabled',
+                reason: reasons.map(function (r) { return r.code; }).join(' + '),
+                msg: reasons.map(function (r) { return r.fix; }).join('  ') };
+        }
+        // Require allow_sim_run === true (not just not-false — null/undefined = pending).
+        if (rh.allow_sim_run !== true) {
+            return { ok: false, code: 'health_pending',
+                reason: 'AI gate status not yet confirmed (allow_sim_run)',
+                msg: 'Wait for route health check.' };
+        }
+        // RMOOZ-OPENROUTER-FREE-FIGHT-CONTROL-FIX-I: use the EFFECTIVE availability (route-health
+        // for local; /api/ai/models for cloud, where route-health is null) so Start is correctly
+        // disabled for an unavailable cloud slug and ENABLED when the cloud slug is in the catalog.
+        var avail = _modelAvailableEffective();
+        if (avail !== true) {
+            // null = probe not yet returned; false = confirmed unavailable. Both block.
+            return { ok: false, code: avail === false ? 'no_model' : 'health_pending',
+                reason: avail === false ? (rh.reason_if_blocked || 'no model available') : 'Model availability not yet confirmed',
+                msg: avail === false ? AI_NO_MODEL_MSG : 'Wait for model readiness check.' };
         }
         // RMOOZ-OPENROUTER-FREE-FIGHT-CONTROL-FIX-I: a present-but-malformed cloud key (not sk-or-…) will
         // 401 at generation — disable Start so the card's pre-flight warning and the button agree.
@@ -4073,8 +4092,7 @@
         // A cloud slug (e.g. qwen/qwen3.5-397b-a17b) selected when OpenRouter was active persists in
         // the runtime file. If the running server is now ollama, block with a clear mismatch message
         // rather than silently failing at generation or showing "not loaded in local provider".
-        var _rh2 = _routeHealth;
-        var _serverIsLocal = !_rh2 || (_rh2.provider !== 'openrouter' && _rh2.configured_provider !== 'openrouter');
+        var _serverIsLocal = rh.provider !== 'openrouter' && rh.configured_provider !== 'openrouter';
         if (_modelInfo && _modelInfo.selected_is_cloud_slug === true && _serverIsLocal) {
             return { ok: false, code: 'cloud_model_local_provider',
                 reason: 'a cloud model is selected but the server is using local Ollama',

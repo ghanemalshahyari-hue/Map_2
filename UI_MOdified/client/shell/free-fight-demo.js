@@ -2692,6 +2692,13 @@
         // before any API call — so we never receive a deterministic plan dressed as AI output.
         // Staff-Safe explicitly skips this check (it is deterministic by design).
         if (_planningMode !== 'staff_safe') {
+            // The AI Commander generate path below forces Normal when the visible depth is Fast,
+            // because Fast is reserved for deterministic/no-LLM operation. Do that before the
+            // readiness check so the preflight does not block the very upgrade it is about to make.
+            if (_aiDepth === 'fast') {
+                _aiDepth = 'normal';
+                try { _appendToEventLog('AI DEPTH: Normal — AI Commander requires the LLM path; Fast is Staff-Safe only.'); } catch (_) {}
+            }
             var _aiCheck = _freeFightAiReady();
             if (!_aiCheck.ok) {
                 _coaPlan = { ok: false, _ai_precheck_blocked: true, _requestedVia: 'manual_generate',
@@ -4064,7 +4071,8 @@
     // RMOOZ-AI-COA-HONESTY-A hardening: every gate condition must be positively confirmed (=== true),
     // never just "not false". A null/unknown value means we don't yet know — block with health_pending.
     function _freeFightAiReady() {
-        if (_aiDepth === 'fast') return { ok: false, code: 'fast', reason: 'Fast mode skips the LLM — use Normal or Deep', msg: AI_FREE_FIGHT_REQUIRES_LLM };
+        // RMOOZ-PREPARE-COA-UX-UNBLOCK-A: 'fast' depth still calls the COA generation LLM (it only
+        // skips the capability analyst pre-pass). Do NOT block Prepare AI COA for fast depth.
         var rh = _routeHealth;
         // Route health not yet loaded or returned an error — never claim "AI ready" when we
         // don't know allow_sim_run / model / provider status.
@@ -4079,7 +4087,7 @@
         if (rh.pair_coherent === false) {
             return { ok: false, code: 'pair_incoherent',
                 reason: rh.reason_if_blocked || 'provider/model pair is incoherent — cloud slug with local Ollama provider',
-                msg: 'Select a local model in the model picker, or restart with RMOOZ_LLM_PROVIDER=openrouter + RMOOZ_ALLOW_CLOUD_AI=1 + OPENROUTER_API_KEY.' };
+                msg: 'Cloud model selected but provider is Ollama. Choose local model or switch to OpenRouter.' };
         }
         // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D: combine ALL active blocks (exec gate + remote provider),
         // not just the first one, so the operator sees every reason + fix at once (req #6).
@@ -4115,7 +4123,7 @@
         if (_modelInfo && _modelInfo.selected_is_cloud_slug === true && _serverIsLocal) {
             return { ok: false, code: 'cloud_model_local_provider',
                 reason: 'a cloud model is selected but the server is using local Ollama',
-                msg: 'Model "' + ((_modelInfo.selected_model) || 'selected') + '" is an OpenRouter cloud model. The server is currently using local Ollama — select a local model from the model picker, or restart with RMOOZ_LLM_PROVIDER=openrouter + RMOOZ_ALLOW_CLOUD_AI=1.' };
+                msg: 'Cloud model selected but provider is Ollama. Choose local model or switch to OpenRouter.' };
         }
         return { ok: true };
     }
@@ -5173,9 +5181,38 @@
             setPlanningMode('commander'); _resetScenario();
             _probeRouteHealth().then(function () { _generateCoaPlan(); }).catch(function () { _generateCoaPlan(); });
         },
+        // RMOOZ-PREPARE-COA-PRODUCT-FLOW-A: smart prepare — tries AI, falls back to Staff-Safe
+        // immediately if AI is not ready. The result is badged honestly (plan_source=llm vs
+        // staff_safe_commander_template) — no silent rebranding.
+        prepareCoaSmart: function () {
+            var _ar = null; try { _ar = _freeFightAiReady(); } catch (_) {}
+            if (_ar && _ar.ok) {
+                setPlanningMode('commander'); _resetScenario();
+                _probeRouteHealth().then(function () { _generateCoaPlan(); }).catch(function () { _generateCoaPlan(); });
+            } else {
+                var why = (_ar && (_ar.reason || _ar.code)) || 'AI not ready';
+                try { _appendToEventLog('AI COA unavailable (' + why + ') — generating Staff-Safe COA instead.'); } catch (_) {}
+                setPlanningMode('staff_safe'); _resetScenario(); _generateCoaPlan();
+            }
+        },
         prepareStaffSafe: function () { setPlanningMode('staff_safe'); _resetScenario(); _generateCoaPlan(); },
         // RMOOZ-AI-COA-HONESTY-A: expose AI pre-flight readiness to the SCC (Panel 2 display)
         aiReadiness: function () { try { return _freeFightAiReady(); } catch (_) { return { ok: false, code: 'error', reason: 'readiness check failed' }; } },
+        // RMOOZ-PREPARE-COA-UX-UNBLOCK-A: expose model info + provider-switch helpers to Panel 2
+        aiModelInfo: function () { return _modelInfo || null; },
+        switchToLocalModel: function () {
+            var info = _modelInfo;
+            if (!info) { _fetchModels(); return; }
+            var avail = (Array.isArray(info.models) ? info.models : []).filter(function (m) { return m && m.available !== false && String(m.provider || '').toLowerCase() !== 'openrouter'; });
+            if (avail.length === 1) { _selectModel(avail[0].name, 'ollama'); }
+            else { _fetchModels(); }  // refresh list so operator can pick
+        },
+        switchToOpenRouter: function () {
+            var model = _modelInfo && _modelInfo.selected_model;
+            if (model) _selectModel(model, 'openrouter');
+        },
+        // ── run / observe auto-director ──
+        toggleAutoScenario: function () { return _toggleScenarioAuto(); },
         // ── COA review (Panel 3) ──
         coaQuality: function (coa) { try { return _coaQualityGate(coa); } catch (_) { return null; } },
         hardBlockReason: function (coa) { try { return _coaHardBlockReason(coa); } catch (_) { return null; } },
@@ -5188,6 +5225,20 @@
         commit: function (i) { return _commitCoa(i == null ? _coaSelectedIdx : i); },
         // ── run / observe (Panel 5) ──
         runScenario: function () { return _runScenario(); },
+        // RMOOZ-PREPARE-COA-UX-UNBLOCK-A: enable auto-continue + run — so "Run Scenario" (the primary
+        // button) keeps the fight going instead of pausing after every turn for manual Blue orders.
+        runScenarioContinuous: function () {
+            _scenarioAutoContinue = true;
+            if (_scenario) _scenario.auto_continue = true;
+            return _runScenario();
+        },
+        // Enable auto-continue without toggling (idempotent) + resume if currently paused.
+        enableAutoScenario: function () {
+            _scenarioAutoContinue = true;
+            if (_scenario) { _scenario.auto_continue = true; }
+            if (_scenario && _scenario.scenario_status === 'paused') { _runScenario(); }
+            else { updatePanel(); }
+        },
         runCommittedOnce: function () { return _runCommittedCoa(); },
         pauseScenario: function () { return _pauseScenario(); },
         stopScenario: function () { return _stopScenario(); },
@@ -5448,6 +5499,7 @@
         _freeFightAiReadyForTest:  function ()            { return _freeFightAiReady(); },
         _getAiUnavailableMsgForTest: function ()          { return _aiUnavailableMsg; },
         _setRouteHealthForTest:    function (h)           { _routeHealth = h; },
+        _setModelInfoForTest:      function (m)           { _modelInfo = m; },   // RMOOZ-PREPARE-COA-UX-UNBLOCK-A
         // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D test seams
         _aiGateStatusHtmlForTest:  function (h)           { if (h !== undefined) _routeHealth = h; return _aiGateStatusHtml(); },
         _aiBlockReasonsForTest:    function (h)           { return _aiBlockReasons(h); },

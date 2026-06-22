@@ -161,38 +161,71 @@
         if (state === 'generating_coa') {
             inner = '<div data-scc="generating" style="display:flex;align-items:center;gap:8px;font-size:12px;color:' + C.warn + ';font-weight:700;">' +
                 '<span style="display:inline-block;width:12px;height:12px;border:2px solid ' + C.warn + ';border-top-color:transparent;border-radius:50%;"></span> Preparing COA — running the AI commander…</div>' +
-                note('Step 1 gate · taskability resolver · ROE/doctrine · quality requirements ran first; the local model can take 30–90s.', C.dim);
+                note('Step 1 gate · taskability resolver · ROE/doctrine · quality requirements ran first; fast-depth AI (analyst skipped) — ~2–5 min on CPU, ~15–30s with GPU. Switch to llama3.2:1b in the header for faster results.', C.dim);
         } else if (!r.executable) {
             inner = '<button data-act="scc-prepare" disabled style="font:inherit;cursor:not-allowed;border:1px solid #3a5040;background:#162018;color:#5f8f74;border-radius:6px;padding:8px 15px;font-size:12.5px;opacity:.5;">⚙ Prepare COA</button>' +
                 note('Prepare COA is blocked: <b>' + esc(r.message || 'Step 1 review required') + '</b> Complete source / doctrine / commander review (Panel 1), then re-check.', C.warn) +
                 '<div style="margin-top:6px;">' + btnSec('scc-recheck', '↻ Re-check readiness') + '</div>';
         } else {
-            // RMOOZ-AI-COA-HONESTY-A: show previous AI failure if any (ok:false plan from a prior attempt)
+            // RMOOZ-PREPARE-COA-PRODUCT-FLOW-A: three-button layout.
+            //   1. "Prepare COA"           — smart, ALWAYS enabled; tries AI, silently falls back to Staff-Safe.
+            //   2. "Generate Real AI COA"  — strict, disabled with exact reason when AI is blocked; never falls back.
+            //   3. "Staff-Safe Now"        — always enabled, always deterministic.
+            var _ar = null; try { _ar = (typeof eng.aiReadiness === 'function') ? eng.aiReadiness() : null; } catch (_) {}
+            var _mi = null; try { _mi = (typeof eng.aiModelInfo === 'function') ? eng.aiModelInfo() : null; } catch (_) {}
+            var _aiOk = !!(_ar && _ar.ok);
+            var _arPending = !!(_ar && !_ar.ok && _ar.code === 'health_pending');
+            // ── 1. Smart "Prepare COA" button — always enabled ───────────────────────────────────────────
+            var _smartSubtitle = _arPending ? 'checking AI…' : (_aiOk ? 'AI ready' : 'will use Staff-Safe');
+            var _smartLabel = 'Prepare COA <span style="font-size:9px;opacity:.7;">(' + _smartSubtitle + ')</span>';
+            var _smartBtn = '<button data-act="scc-prepare-smart" title="Always generates a plan — uses AI when ready, Staff-Safe when not" style="font:inherit;cursor:pointer;border:1px solid #2a6e3a;background:#0e2818;color:#6de098;border-radius:6px;padding:8px 15px;font-size:12.5px;font-weight:700;">' + _smartLabel + '</button>';
+            // ── Provider / model detail card (always shown) ──────────────────────────────────────────────
+            var _prov = (_mi && (_mi.configured_provider || _mi.provider)) || (_ar && _ar.provider) || '…';
+            var _selModel = (_mi && _mi.selected_model) || '…';
+            var _modelAvailStr = (_mi && _mi.model_available != null) ? String(_mi.model_available) : 'pending';
+            var _modelAvailCol = (_mi && _mi.model_available === true) ? C.good : ((_mi && _mi.model_available === false) ? C.bad : C.warn);
+            var _reasonStr = (!_aiOk && !_arPending && _ar) ? (_ar.reason || '') : '';
+            var _providerCard = '<div data-scc="ai-provider-detail" style="margin-top:6px;margin-bottom:7px;padding:6px 9px;border-radius:5px;border:1px solid ' + C.edgeSoft + ';background:#08121d;font-size:9.5px;">' +
+                kv('provider', _prov, _aiOk ? C.good : C.warn) +
+                kv('selected_model', _selModel, C.ink) +
+                kv('model_available', _modelAvailStr, _modelAvailCol) +
+                (_reasonStr ? kv('reason', _reasonStr, C.bad) : '') +
+                '</div>';
+            // ── Cloud model / local provider mismatch actions ────────────────────────────────────────────
+            var _isMismatch = !!(_ar && (_ar.code === 'cloud_model_local_provider' || _ar.code === 'pair_incoherent'));
+            var _isCloudDisabled = !!(_ar && !_aiOk && !_arPending && !_isMismatch && _ar.msg && /cloud/i.test(String(_ar.msg)));
+            var _mismatchHtml = _isMismatch
+                ? '<div data-scc="ai-mismatch" style="margin-bottom:5px;padding:7px 10px;border:1.5px solid ' + C.warn + ';border-radius:5px;background:#1c1500;font-size:10.5px;color:' + C.warn + ';font-weight:700;">Cloud model selected but provider is Ollama. Choose local model or switch to OpenRouter.</div>' +
+                  '<div style="margin-bottom:7px;display:flex;gap:6px;flex-wrap:wrap;">' +
+                  btnSec('scc-use-local-model', '↩ Choose local Ollama model') + ' ' +
+                  btnSec('scc-use-openrouter', '☁ Use OpenRouter/cloud') + '</div>'
+                : '';
+            var _cloudDisabledHtml = _isCloudDisabled
+                ? note('Cloud AI disabled. Enable RMOOZ_ALLOW_CLOUD_AI=1 and OPENROUTER_API_KEY.', C.warn) : '';
+            // ── Non-mismatch / non-cloud block message ───────────────────────────────────────────────────
+            var _blockMsgHtml = (!_isMismatch && !_isCloudDisabled && !_aiOk && !_arPending && _ar && _ar.msg)
+                ? note(esc(String(_ar.msg).split('\n')[0]), C.warn) : '';
+            // ── Previous AI failure ──────────────────────────────────────────────────────────────────────
             var _prevPlan = null; try { _prevPlan = eng.coaPlan(); } catch (_) {}
             var _planErr = (_prevPlan && _prevPlan.ok === false && _prevPlan._requestedVia === 'manual_generate')
                 ? (_prevPlan._error || _prevPlan._quality_gate_message || null) : null;
             var _planErrHtml = _planErr
                 ? '<div data-scc="ai-plan-error" style="margin-bottom:7px;padding:6px 9px;border-radius:5px;border:1.5px solid ' + C.bad + ';background:#1f0d0d;font-size:10px;color:' + C.bad + ';font-weight:700;">' + esc(_planErr) + '</div>'
                 : '';
-            // RMOOZ-AI-COA-HONESTY-A: AI readiness strip — gate/model/depth before the operator clicks
-            var _ar = null; try { _ar = (typeof eng.aiReadiness === 'function') ? eng.aiReadiness() : null; } catch (_) {}
-            var _aiOk = _ar && _ar.ok;
-            var _arPending = _ar && !_ar.ok && _ar.code === 'health_pending';
-            var _arColor = _aiOk ? C.good : (_arPending ? C.dim : C.warn);
-            var _arBg    = _aiOk ? '#0a1f14' : (_arPending ? '#0c1824' : '#1c1500');
-            var _arLabel = _aiOk ? '✓ AI ready — Prepare COA will call the local model'
-                         : (_arPending ? '⏳ Checking AI readiness…'
-                         : '⚠ AI not ready — Prepare COA will be blocked');
-            var _readinessHtml = _ar
-                ? '<div data-scc="ai-readiness" style="margin-bottom:6px;padding:5px 9px;border-radius:5px;border:1px solid ' + _arColor + ';background:' + _arBg + ';font-size:9.5px;">' +
-                    '<span style="font-weight:700;color:' + _arColor + ';">' + _arLabel + '</span>' +
-                    (!_aiOk && _ar && !_arPending ? '<div style="color:#d0a060;margin-top:2px;">' + esc(_ar.reason || '') + (_ar.msg ? ' — ' + esc(String(_ar.msg).split('\n')[0]) : '') + '</div>' : '') +
-                    '</div>'
-                : '';
-            inner = _planErrHtml + _readinessHtml +
-                btnPri('scc-prepare', '⚙ Prepare COA', 'Runs Step-1 gate → taskability → ROE/doctrine → quality, then generates a commander COA') +
-                ' <span style="display:inline-block;width:6px;"></span>' + btnSec('scc-prepare-staffsafe', '🛡 Staff-Safe (deterministic)', 'Deterministic role-separated COA — no AI') +
-                note('<b>Prepare COA</b> does not blindly call the AI — it first runs the Step-1 gate, the unit taskability resolver, the ROE/doctrine gate and the COA quality requirements; only taskable units are tasked.', C.dim);
+            // ── 2. Strict "Generate Real AI COA" — disabled with exact reason when AI blocked ────────────
+            var _strictTitle = _aiOk ? 'Calls the AI model only — never falls back to deterministic' : esc((_ar && _ar.msg) || (_ar && _ar.reason) || 'AI not ready');
+            var _strictBtn = _aiOk
+                ? btnSec('scc-prepare-ai', '⚡ Generate Real AI COA', _strictTitle)
+                : '<button data-act="scc-prepare-ai" disabled title="' + _strictTitle + '" style="font:inherit;cursor:not-allowed;border:1px solid #3a3020;background:#14110a;color:#7a7050;border-radius:6px;padding:7px 13px;font-size:11.5px;opacity:.6;">⚡ Generate Real AI COA</button>';
+            inner = _planErrHtml +
+                _smartBtn +
+                _providerCard +
+                _mismatchHtml + _cloudDisabledHtml + _blockMsgHtml +
+                '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">' +
+                _strictBtn + ' ' +
+                btnSec('scc-prepare-staffsafe', '🛡 Staff-Safe Now', 'Deterministic role-separated COA — always works, no AI') +
+                '</div>' +
+                note('<b>Prepare COA</b> always gives a plan (AI when ready, Staff-Safe otherwise). <b>Generate Real AI COA</b> is AI-only — never deterministic. <b>Staff-Safe Now</b> is always fast and deterministic.', C.dim);
         }
         return panel('2', 'Prepare COA', inner, state === 'generating_coa' ? C.warn : C.edge);
     }
@@ -318,12 +351,15 @@
         // controls per state
         var controls = '';
         if (state === 'committed') {
-            controls = btnPri('scc-run', '🎬 Run Scenario', 'Continuous fight — deterministic ticks, White adjudication, Green updates, Red reaction; no AI on normal ticks') +
-                ' ' + btnSec('scc-run-once', '▶ Run Plan once', 'Execute the committed COA a single playback') + ' ' + btnWarn('scc-clear', '✕ Clear');
+            // RMOOZ-PREPARE-COA-UX-UNBLOCK-A: primary button uses auto-continue so the fight runs
+            // continuously — no per-turn "Blue needs new orders" pause. "Run Plan once" stays for single-turn.
+            controls = btnPri('scc-run-continuous', '🎬 Run Scenario', 'Auto-director: continuous fight — Blue orders generated each turn; stops only on end condition or max turns') +
+                ' ' + btnSec('scc-run-once', '▶ Run Plan once', 'Execute the committed COA a single turn then pause') + ' ' + btnWarn('scc-clear', '✕ Clear');
         } else if (state === 'scenario_running') {
             controls = btnPri('scc-pause', '⏸ Pause') + ' ' + btnWarn('scc-stop', '■ Stop') + ' ' + btnWarn('scc-clear', '✕ Clear');
         } else if (state === 'scenario_paused') {
-            controls = btnPri('scc-run', '▶ Resume') + ' ' + btnWarn('scc-stop', '■ Stop') + ' ' + btnWarn('scc-clear', '✕ Clear');
+            // RMOOZ-PREPARE-COA-UX-UNBLOCK-A: add auto-continue option so "Blue needs new orders" is actionable
+            controls = btnPri('scc-run', '▶ Resume (manual)') + ' ' + btnSec('scc-auto-continue', '▶▶ Auto Continue (Staff-Safe)', 'Let the auto-director generate deterministic Blue orders each turn — no AI needed') + ' ' + btnWarn('scc-stop', '■ Stop') + ' ' + btnWarn('scc-clear', '✕ Clear');
         } else if (state === 'scenario_blocked') {
             controls = btnSec('scc-run', '▶ Continue anyway') + ' ' + btnSec('scc-replan', '↻ Replan with AI') + ' ' + btnWarn('scc-clear', '✕ Clear');
         } else if (state === 'scenario_complete') {
@@ -341,7 +377,10 @@
                 kv('Last movement', String(scn.last_formation_order || '—'), C.dim) +
                 kv('Red reaction', String(scn.last_red_maneuver || '—'), C.dim) +
                 kv('Green status', (function () { var g = eng.greenStatus(); return g && g.collateral_risk ? ('collateral ' + (g.collateral_risk.band || '—')) : 'refreshed'; })(), C.dim);
-            if (scn.pending_replan_reason) inner += note('⚠ ' + esc(scn.pending_replan_reason), C.bad);
+            if (scn.pending_replan_reason) {
+                inner += note('⚠ ' + esc(scn.pending_replan_reason), C.bad);
+                if (scn.scenario_status === 'paused') inner += note('<b>▶ Resume (manual)</b> runs one more turn and pauses again. <b>▶▶ Auto Continue</b> generates deterministic Blue orders automatically every turn (no AI required).', C.dim);
+            }
             if (scn.end_condition) inner += note('End condition: ' + esc(scn.end_condition), C.good);
         } else if (state === 'committed') {
             inner += note('Committed — press <b>Run Scenario</b> to begin. There is no hidden Run button before commit.', C.dim);
@@ -457,7 +496,10 @@
     // bindFn is the host's bind(act, fn) helper (scoped to the panel DOM); no-ops on absent ids.
     function bind(bindFn) {
         var eng = engine(); if (!eng || typeof bindFn !== 'function') return;
-        bindFn('scc-prepare', function () { eng.prepareCoa(); });
+        // RMOOZ-PREPARE-COA-PRODUCT-FLOW-A: smart (always enabled, AI-or-StaffSafe), strict (AI only), staffsafe.
+        bindFn('scc-prepare-smart', function () { if (typeof eng.prepareCoaSmart === 'function') eng.prepareCoaSmart(); else eng.prepareStaffSafe(); });
+        bindFn('scc-prepare-ai', function () { eng.prepareCoa(); });
+        bindFn('scc-prepare', function () { eng.prepareCoa(); });   // legacy alias (direct AI path)
         bindFn('scc-prepare-staffsafe', function () { eng.prepareStaffSafe(); });
         bindFn('scc-recheck', function () { eng.clearAll(); });
         // RMOOZ-SCC-STEP1-TRAINING-APPROVAL-AK
@@ -472,6 +514,11 @@
         bindFn('scc-stop', function () { eng.stopScenario(); });
         bindFn('scc-clear', function () { eng.clearAll(); });
         bindFn('scc-replan', function () { eng.replan(); });
+        // RMOOZ-PREPARE-COA-UX-UNBLOCK-A: provider-switch, continuous run, auto-continue bindings
+        bindFn('scc-run-continuous', function () { if (typeof eng.runScenarioContinuous === 'function') eng.runScenarioContinuous(); else eng.runScenario(); });
+        bindFn('scc-use-local-model', function () { if (typeof eng.switchToLocalModel === 'function') eng.switchToLocalModel(); });
+        bindFn('scc-use-openrouter', function () { if (typeof eng.switchToOpenRouter === 'function') eng.switchToOpenRouter(); });
+        bindFn('scc-auto-continue', function () { if (typeof eng.enableAutoScenario === 'function') eng.enableAutoScenario(); });
         bindFn('scc-evidence-toggle', function () { evidenceOpen = !evidenceOpen; (eng.repaint || function () {})(); });
         for (var i = 0; i < 8; i++) { (function (idx) { bindFn('scc-select-' + idx, function () { eng.selectCoa(idx); }); })(i); }
     }

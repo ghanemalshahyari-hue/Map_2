@@ -3,3 +3,5 @@ Web server running at http://127.0.0.1:8000 (LAN accessible)
   Open workspace: http://127.0.0.1:8000/app.html
   Landing page:   http://127.0.0.1:8000/
   Note: if localhost is served by another process on this machine, prefer 127.0.0.1.
+[free-fight/plan-coas] total=559393ms llm=285354 cap=156587 intel=7 terrain=1 pack=9(capTool=0) coa=0 valid=1 brief=3 [source=llm depth=normal]
+[free-fight/plan-coas] total=574375ms llm=331877 cap=180004 intel=1 terrain=0 pack=1(capTool=1) coa=0 valid=0 brief=0 [source=llm depth=normal]

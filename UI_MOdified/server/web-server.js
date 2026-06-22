@@ -678,7 +678,7 @@ const server = http.createServer((req, res) => {
     // RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P: warm up (preload) the local model so the first real
     // request doesn't pay the cold-load penalty, and pin it resident via keep_alive. Gated by the
     // single execution gate (RMOOZ_ALLOW_SIM_RUN). Body: { model? }.
-    if (pathname === '/api/ai/warmup' && (req.method === 'POST' || req.method === 'GET')) {
+    if ((pathname === '/api/ai/warmup' || pathname === '/api/ai/model/warmup') && (req.method === 'POST' || req.method === 'GET')) {
         if (process.env.RMOOZ_ALLOW_SIM_RUN !== '1') {
             sendJson(res, 200, { ok: false, reason: 'ai_execution_disabled', message: 'AI execution is disabled. Set RMOOZ_ALLOW_SIM_RUN=1 and restart the server.' });
             return;

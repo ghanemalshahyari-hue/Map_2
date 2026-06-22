@@ -4566,8 +4566,11 @@
             _reaction: _intercept ? { intercept: _intercept, red_centroid: _redC, move_count: _moveCount } : null };
     }
     function _autoDirectorNextBlueOrder(outcome) {
+        // RMOOZ-FREE-FIGHT-CONTINUITY: specific, operator-visible failure codes (no silent stop).
+        if (!_taskableSideUnits('BLUE').length) return { ok: false, code: 'no_taskable_blue_units', reason: 'No taskable BLUE units available for a reaction.' };
+        if (!getObjective()) return { ok: false, code: 'invalid_objective', reason: 'No valid objective set — BLUE cannot orient a reaction.' };
         var coa = _autoDirectorBuildCoa(outcome);
-        if (!coa || !arr(coa.phases[0].actions).length) return { ok: false, reason: 'No safe deterministic Blue order available — operator decision needed.' };
+        if (!coa || !arr(coa.phases[0].actions).length) return { ok: false, code: 'no_safe_blue_order', reason: 'No safe deterministic BLUE order available — operator decision needed.' };
         coa._quality = _coaQualityGate(coa);   // AD: grade the auto order (role-separated → passes)
         // a deterministic, honestly-labelled Staff-Safe plan (NOT an LLM plan, never hits /plan-coas)
         _coaPlan = { ok: true, plan_source: 'deterministic', planning_mode: 'staff_safe', recommended_plan_id: coa.plan_id,
@@ -4576,7 +4579,7 @@
         try { _recordQualityGate(_coaPlan._coa_quality.verdict, _coaPlan._coa_quality.score, _coaPlan._coa_quality.reasons); } catch (_) {}
         _coaSelectedIdx = 0;
         var ex = _commitCoa(0);   // builds _coaExec (pending) — deterministic, no LLM, no /plan-coas
-        if (!ex) return { ok: false, reason: 'Auto-director order could not be committed — operator decision needed.' };
+        if (!ex) return { ok: false, code: 'blocked_replan', reason: 'Auto-director order could not be committed (replan blocked) — operator decision needed.' };
         var ringsLabel = (function () { var seen = {}, out = []; arr(coa.formation_rings).forEach(function (r) { if (!seen[r]) { seen[r] = 1; out.push(r); } }); return out.join('/') || coa.posture; })();
         if (_scenario) _scenario.last_formation_order = 'Blue ' + coa.posture + ' → ' + ringsLabel + (ringsLabel === 'hold' ? '' : ' ring');
         try { _recordDecision({ role: 'performance', action: 'formation_assignment', called_llm: false, source: 'staff_safe_auto_director',
@@ -4642,6 +4645,42 @@
         }
         return _scenarioTransition();
     }
+    // RMOOZ-FREE-FIGHT-CONTINUITY: commit the deterministic auto-director BLUE order and continue. Shared by
+    // the Auto-Continue turn loop AND the operator "Continue (BLUE Reaction)" button. On success → status
+    // running + BLUE_REACTION + BLUE_REACTION_AUTO_COMMITTED; on failure → blocked + the exact code/reason.
+    function _commitAutoBlueOrder(outcome) {
+        var blue = _autoDirectorNextBlueOrder(outcome);
+        if (blue.ok) {
+            _scenario.last_auto_order_source = blue.source;
+            _scenario.scenario_status = 'running'; _scenario.current_actor = 'unit-controller';
+            _scenario.pending_replan_reason = null; _scenario.updated_at = _nowISO();
+            try { _recordDecision({ role: 'performance', action: 'auto_director_next_blue_order', called_llm: false, source: 'staff_safe_auto_director', reason: 'deterministic next Blue order (' + blue.posture + ')', result_summary: blue.coa_id + ' · ' + blue.posture }); } catch (_) {}
+            try { _appendToEventLog('BLUE_REACTION_AUTO_COMMITTED (turn ' + _scenario.scenario_turn + '): Staff-Safe Blue order (' + esc(blue.posture) + ') committed — scenario continues, no AI.'); } catch (_) {}
+            if (blue.reaction && blue.reaction.intercept) {
+                var _bb = blue.budget || {};
+                try { _recordDecision({ role: 'blue', action: 'BLUE_REACTION', called_llm: false, source: 'staff_safe_auto_director',
+                    reason: 'intercept RED axis (deterministic, no LLM) — nearest ' + blue.reaction.move_count + ' of ' + (_bb.considered != null ? _bb.considered : '?') + ' BLUE (budget ' + (_bb.max_allowed != null ? _bb.max_allowed : '?') + ')',
+                    result_summary: blue.reaction.move_count + ' unit(s) -> intercept RED axis @ ' + Number(blue.reaction.intercept.lat).toFixed(2) + ',' + Number(blue.reaction.intercept.lon).toFixed(2) + (_bb.held != null ? ' · ' + _bb.held + ' hold' : '') }); } catch (_) {}
+                try { _appendToEventLog('BLUE REACTION (turn ' + _scenario.scenario_turn + '): ' + blue.reaction.move_count + ' unit(s) (of ' + (_bb.considered != null ? _bb.considered : '?') + ' considered, budget ' + (_bb.max_allowed != null ? _bb.max_allowed : '?') + ', ' + (_bb.held != null ? _bb.held : '?') + ' hold) ordered to intercept the RED axis (commits + executes next tick).'); } catch (_) {}
+            }
+            if (!_scenarioTimer) _startScenarioTimer();   // keep the fight ticking
+        } else {
+            _scenario.scenario_status = 'blocked'; _scenario.pending_replan_reason = (blue.code ? '[' + blue.code + '] ' : '') + blue.reason;
+            _scenario.current_actor = 'blue'; _scenario.updated_at = _nowISO();
+            _stopScenarioTimer();
+            try { _appendToEventLog('Auto Director could not continue (turn ' + _scenario.scenario_turn + '): ' + esc(blue.code || 'no_safe_blue_order') + ' — ' + esc(blue.reason)); } catch (_) {}
+        }
+        return blue;
+    }
+    // Operator "Continue (BLUE Reaction)" — force one deterministic BLUE reaction + continue from a manual
+    // pause, WITHOUT permanently enabling Auto-Continue. Returns { ok, code?, reason? }.
+    function _continueWithBlueReaction() {
+        if (!_scenarioActive()) return { ok: false, code: 'no_active_scenario', reason: 'No active scenario.' };
+        if (_scenario.scenario_status !== 'paused' && _scenario.scenario_status !== 'blocked') return { ok: false, code: 'not_paused', reason: 'Scenario is not paused.' };
+        var blue = _commitAutoBlueOrder(_whiteScenarioOutcome());
+        updatePanel();
+        return blue.ok ? { ok: true, posture: blue.posture, reaction: blue.reaction || null } : { ok: false, code: blue.code || 'no_safe_blue_order', reason: blue.reason };
+    }
     // White → Green → (Red maneuver) → next Blue order. All deterministic, no LLM, no /plan-coas.
     // Manual: pauses "needs new Blue orders". Auto: the Auto Director commits a Staff-Safe next order and
     // the fight continues — pausing only on an end condition, a serious blocked state, or the auto-turn cap.
@@ -4702,35 +4741,20 @@
         _scenario.scenario_turn++;
         // 4) next Blue order
         if (auto) {
-            var blue = _autoDirectorNextBlueOrder(outcome);
-            if (blue.ok) {
-                _scenario.last_auto_order_source = blue.source;   // 'staff_safe_auto_director'
-                _scenario.scenario_status = 'running'; _scenario.current_actor = 'unit-controller';
-                _scenario.pending_replan_reason = null; _scenario.updated_at = _nowISO();
-                try { _recordDecision({ role: 'performance', action: 'auto_director_next_blue_order', called_llm: false, source: 'staff_safe_auto_director', reason: 'deterministic next Blue order (' + blue.posture + ')', result_summary: blue.coa_id + ' · ' + blue.posture }); } catch (_) {}
-                try { _appendToEventLog('Auto Director: generated Staff-Safe Blue next order (' + esc(blue.posture) + ') — turn ' + _scenario.scenario_turn + ', no AI.'); } catch (_) {}
-                // RMOOZ-AI-FREE-FIGHT-BLUE-REACTION-A: named BLUE_REACTION milestone when the Blue order is a
-                // genuine intercept of RED's live axis (deterministic; the committed order executes next tick).
-                if (blue.reaction && blue.reaction.intercept) {
-                    var _bb = blue.budget || {};
-                    try { _recordDecision({ role: 'blue', action: 'BLUE_REACTION', called_llm: false, source: 'staff_safe_auto_director',
-                        reason: 'intercept RED axis (deterministic, no LLM) — nearest ' + blue.reaction.move_count + ' of ' + (_bb.considered != null ? _bb.considered : '?') + ' BLUE (budget ' + (_bb.max_allowed != null ? _bb.max_allowed : '?') + ')',
-                        result_summary: blue.reaction.move_count + ' unit(s) -> intercept RED axis @ ' + Number(blue.reaction.intercept.lat).toFixed(2) + ',' + Number(blue.reaction.intercept.lon).toFixed(2) + (_bb.held != null ? ' · ' + _bb.held + ' hold' : '') }); } catch (_) {}
-                    try { _appendToEventLog('BLUE REACTION (turn ' + _scenario.scenario_turn + '): ' + blue.reaction.move_count + ' unit(s) (of ' + (_bb.considered != null ? _bb.considered : '?') + ' considered, budget ' + (_bb.max_allowed != null ? _bb.max_allowed : '?') + ', ' + (_bb.held != null ? _bb.held : '?') + ' hold) ordered to intercept the RED axis (commits + executes next tick).'); } catch (_) {}
-                }
-                if (!_scenarioTimer) _startScenarioTimer();   // keep the fight ticking
-            } else {
-                _scenario.scenario_status = 'blocked'; _scenario.pending_replan_reason = blue.reason;
-                _scenario.current_actor = 'blue'; _scenario.updated_at = _nowISO();
-                _stopScenarioTimer();
-                try { _appendToEventLog('Auto Director could not continue safely (turn ' + _scenario.scenario_turn + '): ' + esc(blue.reason)); } catch (_) {}
-            }
+            // Auto-Continue: the director MUST generate + commit the next BLUE reaction and continue
+            // (it only blocks on a specific failure — no_taskable_blue_units / invalid_objective /
+            // no_safe_blue_order / blocked_replan — surfaced with its exact code).
+            _commitAutoBlueOrder(outcome);
         } else {
-            _scenario.scenario_status = 'paused';   // manual — the fight continues, but Blue needs new orders (no LLM on ticks)
+            // Manual: pause for the operator. Named BLUE_ORDER_REQUIRED ledger event + a clear next action
+            // ("Continue (BLUE Reaction)" button / enable Auto-Continue). NOT a dead-end, NOT a block.
+            _scenario.scenario_status = 'paused';
             _scenario.pending_replan_reason = outcome.replan_reason || 'Scenario continues — Blue needs new orders for the next turn.';
             _scenario.current_actor = 'blue'; _scenario.updated_at = _nowISO();
             _stopScenarioTimer();
-            try { _appendToEventLog('Scenario needs new Blue orders (turn ' + _scenario.scenario_turn + '): ' + esc(_scenario.pending_replan_reason)); } catch (_) {}
+            try { _recordDecision({ role: 'blue', action: 'BLUE_ORDER_REQUIRED', called_llm: false, source: 'scenario',
+                reason: _scenario.pending_replan_reason, result_summary: 'turn ' + _scenario.scenario_turn + ' · manual pause · operator: Continue (BLUE Reaction) or enable Auto-Continue' }); } catch (_) {}
+            try { _appendToEventLog('BLUE_ORDER_REQUIRED (turn ' + _scenario.scenario_turn + '): ' + esc(_scenario.pending_replan_reason) + ' — press “Continue (BLUE Reaction)” or enable Auto-Continue.'); } catch (_) {}
         }
         updatePanel();
         return _scenario;
@@ -4980,6 +5004,13 @@
         runCommittedOnce: function () { return _runCommittedCoa(); },
         pauseScenario: function () { return _pauseScenario(); },
         stopScenario: function () { return _stopScenario(); },
+        // RMOOZ-FREE-FIGHT-CONTINUITY: operator-exposed continuity controls (no dead-end at a manual pause).
+        continueWithBlueReaction: function () { return _continueWithBlueReaction(); },
+        setAutoContinue: function (v) { _scenarioAutoContinue = !!v; if (_scenario) _scenario.auto_continue = _scenarioAutoContinue;
+            try { _appendToEventLog('Auto-Continue ' + (_scenarioAutoContinue ? 'ENABLED — deterministic Staff-Safe BLUE reactions each turn, no AI on normal ticks.' : 'disabled — manual orders (operator continues each turn).')); } catch (_) {}
+            if (_scenarioAutoContinue && _scenario && _scenario.scenario_status === 'paused') { _runScenario(); }
+            try { updatePanel(); } catch (_) {} return _scenarioAutoContinue; },
+        autoContinueEnabled: function () { return _scenarioAutoContinue; },
         replan: function () { return _replanCoa(); },
         clearAll: function () { _resetScenario(); _resetCoaExec(); },
         whiteOutcome: function () { try { return _scenario ? _whiteScenarioOutcome() : null; } catch (_) { return null; } },

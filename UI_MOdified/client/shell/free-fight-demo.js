@@ -5167,7 +5167,12 @@
         approveTrainingSimulation: function () { _approveTrainingSimulation(); },
         clearTrainingApproval: function () { _clearTrainingApproval(); },
         // ── COA preparation (Panel 2) — Step-1 + taskability + quality requirements then generate ──
-        prepareCoa: function () { setPlanningMode('commander'); _resetScenario(); _generateCoaPlan(); },
+        // Always re-probe route health before generating so a stale cached state never silently blocks the
+        // button (e.g. after a server restart the browser may still hold a pair_incoherent snapshot).
+        prepareCoa: function () {
+            setPlanningMode('commander'); _resetScenario();
+            _probeRouteHealth().then(function () { _generateCoaPlan(); }).catch(function () { _generateCoaPlan(); });
+        },
         prepareStaffSafe: function () { setPlanningMode('staff_safe'); _resetScenario(); _generateCoaPlan(); },
         // RMOOZ-AI-COA-HONESTY-A: expose AI pre-flight readiness to the SCC (Panel 2 display)
         aiReadiness: function () { try { return _freeFightAiReady(); } catch (_) { return { ok: false, code: 'error', reason: 'readiness check failed' }; } },

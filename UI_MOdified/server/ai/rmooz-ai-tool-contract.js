@@ -894,7 +894,10 @@ function validateCommanderCoaTool(input) {
             }
 
             // PHYSICS — teleport guard: target too far from the unit's current position.
-            if (u && tgt) {
+            // HOLD actions never involve movement — skip the guard even if normalizeCoaAction
+            // synthesised a (0,0) fallback target when the model omitted the field.
+            var _isHoldForTeleport = (String(action || '').toUpperCase() === 'HOLD_POSITION' || String(action || '').toLowerCase() === 'hold');
+            if (u && tgt && !_isHoldForTeleport) {
                 var ull = unitLL(u);
                 if (ull) {
                     var d = degDist(ull, tgt);

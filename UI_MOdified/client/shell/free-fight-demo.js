@@ -589,13 +589,38 @@
         if (!mapReady()) return;
         if (!_layer) { _layer = w.L.layerGroup(); _layer.addTo(w.map); }
         _layer.clearLayers();
-        // Objective X
+        // RMOOZ-FREEFIGHT-MAP-TRUTH-A: Objective X — operator-placed marker.
+        // Shows as "ACTIVE OBJECTIVE X" with lat/lon/source. If the scenario had a
+        // previous objective at a different position, it is drawn as INACTIVE.
         if (finiteLL(_objective)) {
-            var objIcon = w.L.divIcon({ className: 'rmooz-ff-objective', html: '<div title="Objective X — review only" style="width:26px;height:26px;border-radius:50%;border:2px dashed #e0c060;background:rgba(224,192,96,.18);display:flex;align-items:center;justify-content:center;color:#ffe28a;font-size:14px;">◉</div>', iconSize: [28, 28], iconAnchor: [14, 14] });
-            var om = w.L.marker([_objective.lat, _objective.lon], { icon: objIcon, interactive: true, keyboard: false, title: 'Objective X — review only / الهدف X' });
+            // ── inactive previous objective (if present at a different position) ──
+            try {
+                var _mapSc = W() && W().RmoozScenario && W().RmoozScenario.scenario;
+                var _prevObj = _mapSc && _mapSc._previous_objective;
+                if (_prevObj && Number.isFinite(+_prevObj.lat) && Number.isFinite(+_prevObj.lon)) {
+                    var _pdist = Math.sqrt(Math.pow(+_prevObj.lat - _objective.lat, 2) + Math.pow(+_prevObj.lon - _objective.lon, 2));
+                    if (_pdist > 0.001) {
+                        var _pIcon = w.L.divIcon({ className: '', html: '<div style="width:20px;height:20px;border-radius:50%;border:1px dashed #5a6a7a;background:rgba(50,60,70,.18);display:flex;align-items:center;justify-content:center;color:#5a6a7a;font-size:10px;opacity:.55;">◎</div>', iconSize: [22, 22], iconAnchor: [11, 11] });
+                        var _pom = w.L.marker([+_prevObj.lat, +_prevObj.lon], { icon: _pIcon, interactive: false, keyboard: false });
+                        _pom._rmoozReviewOnly = true;
+                        _layer.addLayer(_pom);
+                        var _pLbl = w.L.divIcon({ className: '', html: '<div style="font-size:8px;color:#5a6a7a;background:rgba(8,14,20,.7);padding:1px 3px;border-radius:2px;white-space:nowrap;opacity:.65;border:1px solid rgba(90,106,122,.3);">previous objective — INACTIVE</div>', iconSize: [150, 12], iconAnchor: [-4, 6] });
+                        _layer.addLayer(w.L.marker([+_prevObj.lat, +_prevObj.lon], { icon: _pLbl, interactive: false, keyboard: false }));
+                    }
+                }
+            } catch (_prevEx) {}
+            // ── ACTIVE Objective X ──
+            var objIcon = w.L.divIcon({ className: 'rmooz-ff-objective', html: '<div style="width:32px;height:32px;border-radius:50%;border:3px solid #f0c040;background:rgba(240,192,64,.22);display:flex;align-items:center;justify-content:center;color:#ffe060;font-size:16px;box-shadow:0 0 8px rgba(240,192,64,.45);">◉</div>', iconSize: [34, 34], iconAnchor: [17, 17] });
+            var om = w.L.marker([_objective.lat, _objective.lon], { icon: objIcon, interactive: true, keyboard: false, title: 'ACTIVE OBJECTIVE X — ' + _objective.lat.toFixed(4) + ', ' + _objective.lon.toFixed(4) });
             om._rmoozReviewOnly = true; om._rmoozObjectiveX = true;
-            om.bindPopup('<div style="font-size:12px;color:#e8eaed;background:#0e1620;"><b>Objective X — الهدف X</b><br>review only · not final tasking<br>عقيدة غير مرفوعة / Doctrine pending</div>');
+            om.bindPopup('<div style="font-size:12px;color:#e8eaed;background:#0e1620;min-width:200px;padding:6px;"><b style="color:#f0c040;font-size:13px;">ACTIVE OBJECTIVE X</b><br>' +
+                '<span style="color:#a0b8c8;">' + _objective.lat.toFixed(5) + ', ' + _objective.lon.toFixed(5) + '</span><br>' +
+                '<span style="color:#6a8a9a;font-size:10px;">source: ' + esc(_objectiveSource || 'user_marked_demo_objective') + '</span><br>' +
+                '<span style="color:#5a7a6a;font-size:10px;">RED attacks this objective · BLUE defends it</span></div>');
             _layer.addLayer(om);
+            // Label offset from the marker
+            var _objLblIc = w.L.divIcon({ className: '', html: '<div style="font-size:9px;font-weight:700;color:#f0c040;background:rgba(8,14,20,.82);padding:1px 4px;border-radius:2px;white-space:nowrap;border:1px solid rgba(240,192,64,.35);">ACTIVE OBJECTIVE X</div>', iconSize: [130, 14], iconAnchor: [-8, 7] });
+            _layer.addLayer(w.L.marker([_objective.lat, _objective.lon], { icon: _objLblIc, interactive: false, keyboard: false }));
         }
         groups().forEach(function (g) {
             if (!finiteLL(g.current)) return;
@@ -668,10 +693,13 @@
                 if (!Number.isFinite(newLat) || !Number.isFinite(newLon)) return;
                 var oldLat = mv.oldPos.lat, oldLon = mv.oldPos.lon;
                 var role = mv.role || '';
-                // Role colours — RED attack roles + BLUE defense roles.
-                var ROLE_COLORS = { assault: '#ff9060', support: '#60b0ff', recon: '#b0b0b0',
-                    reinforce: '#7fd6a0', intercept: '#5ad0d0', defend: '#9ec2ec', screen: '#c0a0e0' };
-                var trailColor = ROLE_COLORS[role] || '#90d090';
+                // RMOOZ-FREEFIGHT-MAP-TRUTH-A: side-aware trail colours and labels.
+                // RED uses warm tones; BLUE uses cool tones.
+                var unitSideT = String((mv.unit && mv.unit.side) || '').toUpperCase();
+                var ROLE_COLORS_RED  = { assault: '#e86040', recon: '#d0b060', support: '#f0a040', screen: '#f07060', reserve: '#808898', hold: '#808898' };
+                var ROLE_COLORS_BLUE = { intercept: '#40b8b0', defend: '#4090d0', screen: '#8888d0', reinforce: '#60a880', reserve: '#6090a0', hold: '#6090a0' };
+                var trailColor = (unitSideT === 'RED' ? ROLE_COLORS_RED[role] : ROLE_COLORS_BLUE[role]) || (unitSideT === 'RED' ? '#e07050' : '#50a0d0');
+                var sideRoleLabel = (unitSideT === 'RED' ? 'RED ' : unitSideT === 'BLUE' ? 'BLUE ' : '') + role.toUpperCase();
                 try {
                     var coaTrail = w.L.polyline([[oldLat, oldLon], [newLat, newLon]], {
                         color: trailColor, weight: 2, opacity: 0.7, dashArray: '6 4',
@@ -682,7 +710,7 @@
                     });
                     var popText = '<div style="font-size:11px;color:#e8eaed;min-width:160px;">' +
                         '<b style="color:' + esc(trailColor) + ';">' + esc(mv.unit.id || mv.unit.uid || mv.unit_uid || '') + '</b>' +
-                        ' [' + esc(role) + ']<br>' +
+                        ' [' + esc(sideRoleLabel) + ']<br>' +
                         'old: ' + oldLat.toFixed(4) + ', ' + oldLon.toFixed(4) + '<br>' +
                         'new: ' + newLat.toFixed(4) + ', ' + newLon.toFixed(4) + '</div>';
                     coaPulse.bindPopup(popText, { maxWidth: 260 });
@@ -743,7 +771,7 @@
         var nr = situation.nearest_red;
         if (nr && Number.isFinite(+nr.lat) && Number.isFinite(+nr.lon) && typeof L.polyline === 'function') {
             try { add(L.polyline([[+nr.lat, +nr.lon], [objLat, objLon]], { color: '#f0606a', weight: 2, opacity: 0.85, dashArray: '9 6', interactive: false })); } catch (_) {}
-            label((+nr.lat + objLat) / 2, (+nr.lon + objLon) / 2, '<div data-ff-ovl="red-axis" style="font-size:9px;color:#f0808a;background:rgba(8,14,20,.72);padding:0 3px;border-radius:2px;white-space:nowrap;">RED threat axis</div>', [0, 0]);
+            label((+nr.lat + objLat) / 2, (+nr.lon + objLon) / 2, '<div data-ff-ovl="red-axis" style="font-size:9px;font-weight:700;color:#f07070;background:rgba(8,14,20,.72);padding:0 4px;border-radius:2px;white-space:nowrap;border:1px solid rgba(240,96,96,.3);">RED ATTACK AXIS</div>', [0, 0]);
         }
 
         // 3) + 4) BLUE intercept/block point + intercept line (from the selected COA).
@@ -755,10 +783,12 @@
                 try { add(L.circleMarker([ipLat, ipLon], { radius: 10, color: '#5ad0d0', weight: 3, fillColor: '#0a2630', fillOpacity: 0.7, interactive: false })); } catch (_) {}
                 try { add(L.circleMarker([ipLat, ipLon], { radius: 4, color: '#c0ffff', weight: 2, fillColor: '#5ad0d0', fillOpacity: 1, interactive: false })); } catch (_) {}
             }
-            label(ipLat, ipLon, '<div data-ff-ovl="block-point" style="font-size:9px;font-weight:700;color:#9fe8e8;background:rgba(8,14,20,.82);padding:0 4px;border-radius:2px;white-space:nowrap;">BLOCK POINT · نقطة الاعتراض</div>', [0, -12]);
-            // BLUE intercept line: a strong shared line from a moved BLUE unit's start to the block point.
+            label(ipLat, ipLon, '<div data-ff-ovl="block-point" style="font-size:9px;font-weight:700;color:#60d8d0;background:rgba(8,14,20,.82);padding:0 4px;border-radius:2px;white-space:nowrap;border:1px solid rgba(64,192,192,.3);">BLUE INTERCEPT POINT · نقطة الاعتراض</div>', [0, -12]);
+            // BLUE intercept line: from first moved BLUE unit's start position to the intercept point.
+            // RMOOZ-FREEFIGHT-MAP-TRUTH-A: use first BLUE unit, not first unit overall.
             if (_coaMovedUnits.length && typeof L.polyline === 'function') {
-                var origin = _coaMovedUnits[0];
+                var _blueOrigins = _coaMovedUnits.filter(function (mv) { return mv && mv.unit && String(mv.unit.side || '').toUpperCase() === 'BLUE'; });
+                var origin = (_blueOrigins.length ? _blueOrigins[0] : _coaMovedUnits[0]);
                 if (origin && origin.oldPos && Number.isFinite(+origin.oldPos.lat)) {
                     try { add(L.polyline([[+origin.oldPos.lat, +origin.oldPos.lon], [ipLat, ipLon]], { color: '#5ad0d0', weight: 3, opacity: 0.9, dashArray: '10 5', interactive: false })); } catch (_) {}
                 }
@@ -776,13 +806,18 @@
             label(objLat, objLon, '<div data-ff-ovl="alert" style="font-size:10px;font-weight:700;color:' + aColor + ';background:rgba(8,14,20,.88);border:1px solid ' + aColor + ';padding:2px 5px;border-radius:3px;white-space:nowrap;">BLUE ' + esc(alert) + ' · ROE: ' + esc(situation.roe_state || '') + '<br>' + esc(ru) + ' inside ' + esc(zoneTxt) + '</div>', [0, 30]);
         }
 
-        // 6) Role badges on moved BLUE units + a grouped already-in-position label.
+        // 6) Side-aware role badges on all moved units.
+        // RMOOZ-FREEFIGHT-MAP-TRUTH-A: RED badges use "RED ASSAULT/RECON/…"; BLUE use "BLUE DEFEND/INTERCEPT/…"
         if (_coaApplied && _coaMovedUnits.length) {
             _coaMovedUnits.forEach(function (mv) {
                 if (!mv || !mv.unit || !mv.role) return;
                 var lat = mv.unit.lat, lon = mv.unit.lon;
                 if (!Number.isFinite(+lat) || !Number.isFinite(+lon)) return;
-                label(+lat, +lon, '<div data-ff-ovl="role" style="font-size:8px;color:#cfeaff;background:rgba(8,30,40,.8);padding:0 3px;border-radius:2px;white-space:nowrap;">' + esc(mv.role) + '</div>', [0, 14]);
+                var unitSideB = String((mv.unit && mv.unit.side) || '').toUpperCase();
+                var badgeLabel = (unitSideB === 'RED' ? 'RED ' : unitSideB === 'BLUE' ? 'BLUE ' : '') + mv.role.toUpperCase();
+                var badgeColor = unitSideB === 'RED' ? '#f09080' : unitSideB === 'BLUE' ? '#80c0f0' : '#cfeaff';
+                var bgColor = unitSideB === 'RED' ? 'rgba(30,12,8,.82)' : unitSideB === 'BLUE' ? 'rgba(8,20,36,.82)' : 'rgba(8,30,40,.8)';
+                label(+lat, +lon, '<div data-ff-ovl="role" style="font-size:8px;font-weight:700;color:' + badgeColor + ';background:' + bgColor + ';padding:0 3px;border-radius:2px;white-space:nowrap;">' + esc(badgeLabel) + '</div>', [0, 14]);
             });
         }
         if (_coaHeldCount > 0) {

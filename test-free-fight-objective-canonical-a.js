@@ -221,5 +221,51 @@ try {
 } catch (e) { bad('8 brief-source below sc.obj', e); }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Test 9 — clearObjective() restores sc.obj to A (not stale B)
+// ─────────────────────────────────────────────────────────────────────────────
+try {
+    setScenario();   // sc.obj at A
+    DEMO.mount({ brief: { operational_brief: { proposed_units: [{ id: 'B-1', side: 'BLUE', lat: 25.5, lon: 50.5 }] } } });
+    DEMO.setObjective({ lat: B_LAT, lon: B_LON });   // sc.obj → B, _previous_objective → A (coord [A_LON,A_LAT])
+    // Verify sc.obj is now B before clearing
+    var sc9before = global.window.RmoozScenario.scenario;
+    assert(sc9before.obj && sc9before.obj.lat === B_LAT, 'pre-clear: sc.obj should be B, got ' + (sc9before.obj && sc9before.obj.lat));
+
+    DEMO.clearObjective();
+
+    var sc9 = global.window.RmoozScenario.scenario;
+    // sc.obj must be restored to A (from _previous_objective), NOT stale B
+    var obj9 = sc9.obj;
+    var restoredToA = obj9 && (
+        (obj9.lat === A_LAT && obj9.lon === A_LON) ||
+        (Array.isArray(obj9.coord) && obj9.coord[0] === A_LON && obj9.coord[1] === A_LAT)
+    );
+    assert(restoredToA, 'sc.obj restored to A after clearObjective(); got lat=' + (obj9 && obj9.lat) + ' lon=' + (obj9 && obj9.lon) + ' coord=' + JSON.stringify(obj9 && obj9.coord));
+    assert(!sc9._previous_objective, '_previous_objective cleared after restore');
+    ok('9 clearObjective() restores sc.obj to A (not stale B)');
+} catch (e) { bad('9 clearObjective restores sc.obj', e); }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Test 10 — _buildAiRequestBody after clearObjective() uses sc.obj (A), not stale B
+// ─────────────────────────────────────────────────────────────────────────────
+try {
+    setScenario();   // sc.obj at A
+    DEMO.mount({ brief: { operational_brief: { proposed_units: [{ id: 'B-1', side: 'BLUE', lat: 25.5, lon: 50.5 }] } } });
+    DEMO.setObjective({ lat: B_LAT, lon: B_LON });
+    DEMO.clearObjective();
+
+    var body10 = DEMO._buildAiRequestBodyForTest();
+    var o10 = body10.objectives && body10.objectives[0];
+    // After clear: _objective=null, _objectiveSource=null → operator path skipped
+    // sc.obj was restored to A → falls back to A
+    assert(!o10 || (o10.lat !== B_LAT || o10.lon !== B_LON),
+        '_buildAiRequestBody must NOT use stale B after clearObjective(); got lat=' + (o10 && o10.lat) + ' lon=' + (o10 && o10.lon));
+    // Specifically it should be A (the restored sc.obj)
+    var isA = o10 && (o10.lat === A_LAT && o10.lon === A_LON);
+    assert(isA, '_buildAiRequestBody falls back to sc.obj A after clear; got lat=' + (o10 && o10.lat) + ' lon=' + (o10 && o10.lon));
+    ok('10 _buildAiRequestBody after clearObjective() uses restored sc.obj A, not stale B');
+} catch (e) { bad('10 request body not stale after clear', e); }
+
+// ─────────────────────────────────────────────────────────────────────────────
 console.log('\n' + (fail === 0 ? '✅ ' : '❌ ') + pass + ' passed, ' + fail + ' failed (test-free-fight-objective-canonical-a.js)');
 process.exit(fail === 0 ? 0 : 1);

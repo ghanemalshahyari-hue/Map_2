@@ -372,6 +372,18 @@
         _planSource = 'deterministic';
         _llmStatus = { state: 'idle', message: '', validation_result: 'not_requested', fallback_reason: null };
         try { delete W().__rmoozFreeFightObjective; } catch (_) {}   // forget the persisted Objective X
+        // RMOOZ-OBJ-CANONICAL-A: restore sc.obj from _previous_objective so /plan-coas
+        // does not fall back to the stale operator B that was written into sc.obj.
+        // Only acts when setObjective() previously wrote to sc.obj (_previous_objective set).
+        try {
+            var _sc2 = W() && W().RmoozScenario && W().RmoozScenario.scenario;
+            if (_sc2 && _sc2._previous_objective) {
+                _sc2.obj = _sc2._previous_objective; _sc2.objective = _sc2._previous_objective;
+                if (Array.isArray(_sc2.objectives) && _sc2.objectives.length) { _sc2.objectives[0] = _sc2._previous_objective; } else { _sc2.objectives = [_sc2._previous_objective]; }
+                _sc2._previous_objective = null;
+            }
+            // No _previous_objective means setObjective() was never called — sc.obj is already the original scenario value; leave it alone.
+        } catch (_scEx2) {}
         _progress = 0; _running = false; _paused = false; clearTimer();
         if (mapReady()) syncMarkers();
         updatePanel(); renderAiPanel();

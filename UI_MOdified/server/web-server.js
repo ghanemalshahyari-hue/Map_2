@@ -630,6 +630,17 @@ const server = http.createServer((req, res) => {
             const model = body && typeof body.model === 'string' ? body.model.trim() : '';
             // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A: optional provider ('ollama' | 'openrouter').
             const provider = body && typeof body.provider === 'string' ? body.provider.trim() : '';
+            // RMOOZ-AI-MODEL-WIRING-COHERENCE-A: reject incoherent pair at write time.
+            // A cloud slug (contains '/') with provider=ollama would silently fail later;
+            // block it here so the UI can show a clear fix instead.
+            const resolvedProv = provider || 'ollama';
+            if (model.indexOf('/') !== -1 && resolvedProv !== 'openrouter') {
+                sendJson(res, 400, { ok: false,
+                    error: 'Model "' + model + '" is a cloud model slug (contains "/"). ' +
+                        'Set provider to "openrouter" and enable RMOOZ_ALLOW_CLOUD_AI=1 to use it.',
+                    hint: 'For local Ollama, select a model without "/" in the name (e.g. qwen2.5:7b).' });
+                return;
+            }
             const sel = modelSelection.setSelectedModel(model, provider);
             if (!sel.ok) {
                 sendJson(res, 400, { ok: false, error: sel.error || 'invalid model',

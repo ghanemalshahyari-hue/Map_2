@@ -147,35 +147,44 @@ function routeHealth() {
     var remoteBlocked = isRemoteProvider(provider);
     var allow = aiExecutionAllowed();
     var aiEnabled = allow && !remoteBlocked;
+    var model = resolveLocalModel();
+    // RMOOZ-AI-MODEL-WIRING-COHERENCE-A: a cloud slug (contains '/') paired with the local ollama
+    // provider is incoherent — model-selection.getSelectedModel() already guards this, but surface
+    // the flag here so the client can detect a mismatch immediately from the route-health response.
+    var modelIsCloudSlug = model ? (model.indexOf('/') !== -1) : false;
+    var effectiveProvider = remoteBlocked ? 'ollama' : provider;
+    var pairCoherent = !(modelIsCloudSlug && effectiveProvider === 'ollama');
     var reason = !allow ? 'RMOOZ_ALLOW_SIM_RUN is not enabled'
-        : (remoteBlocked ? 'configured provider is blocked (local-only policy)' : null);
+        : (remoteBlocked ? 'configured provider is blocked (local-only policy)'
+        : (!pairCoherent ? ('cloud model "' + model + '" selected with local Ollama provider — select a local model or enable OpenRouter')
+        : null));
     return {
         planner: 'free-fight-coa-planner',
         local_only: true,
         provider_policy: 'local_only',
         // RMOOZ-AI-EXECUTION-SINGLE-GATE-A: the single top-level permission gate.
         allow_sim_run: allow,
-        ai_execution_enabled: aiEnabled,
+        ai_execution_enabled: aiEnabled && pairCoherent,
         reason_if_blocked: reason,
         // model_available + available_models_count are filled by the endpoint
         // (live /api/tags probe); default null here.
         model_available: null,
         available_models_count: null,
         // Never report a remote provider as ACTIVE — if one is misconfigured it is blocked.
-        provider: remoteBlocked ? 'ollama' : provider,
+        provider: effectiveProvider,
         provider_blocked: remoteBlocked,
         // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D: the RAW configured provider (from llm-runtime-config),
-        // surfaced so the AI gate card can name it in the local-only fix message ("Current
-        // provider is <x>"). Diagnostic only — `provider` above stays masked to ollama.
+        // surfaced so the AI gate card can name it in the local-only fix message.
         configured_provider: provider,
-        model: resolveLocalModel(),
-        // RMOOZ-LOCAL-MODEL-SELECTOR-A: surface the operator-selected model + where it
-        // came from. `model` and `selected_model` are the same value (kept both for
-        // back-compat); selection_source tells the UI whether it's a UI pick or env/default.
-        selected_model: resolveLocalModel(),
+        model: model,
+        // RMOOZ-LOCAL-MODEL-SELECTOR-A: surface the operator-selected model + where it came from.
+        selected_model: model,
         selection_source: LLM_CFG.modelSource('coa_planner'),
         llm_enabled: aiEnabled,   // back-compat alias (= ai_execution_enabled)
         remote_providers_blocked: REMOTE_PROVIDERS_BLOCKED.slice(),
+        // RMOOZ-AI-MODEL-WIRING-COHERENCE-A
+        pair_coherent: pairCoherent,
+        model_is_cloud_slug: modelIsCloudSlug,
     };
 }
 // RMOOZ-AI-EXECUTION-SINGLE-GATE-A: live check that the local provider has the model loaded. Used by

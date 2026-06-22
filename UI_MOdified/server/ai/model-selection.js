@@ -103,9 +103,21 @@ function selectedProviderRaw() {
 // The effective model, by precedence. The runtime-file selection (operator UI
 // pick) wins; otherwise the env default + ai-config committed default come from
 // the canonical resolver (RMOOZ-LLM-RUNTIME-CONFIG-A — single source for env reads).
+// RMOOZ-AI-MODEL-WIRING-COHERENCE-A: if the saved model is a cloud slug (contains '/') and the
+// saved provider was 'openrouter' but the effective provider is now 'ollama' (cloud disabled /
+// no key), the stored pair is incoherent. Return the env default instead — never let Ollama
+// receive an OpenRouter slug as its model name.
 function getSelectedModel() {
     if (!_loaded) load();
-    if (_selected) return _selected;
+    if (_selected) {
+        var isCloudSlug    = _selected.indexOf('/') !== -1;
+        var savedForCloud  = _selectedProvider === 'openrouter';
+        if (isCloudSlug && savedForCloud && getProvider() !== 'openrouter') {
+            // Cloud no longer active — stale cloud slug is incoherent with the local provider.
+            return LLM_CFG.envDefaultModel();
+        }
+        return _selected;
+    }
     return LLM_CFG.envDefaultModel();
 }
 

@@ -1597,6 +1597,11 @@
         if (!m || m.ok === false) return;
         var prev = _routeHealth || {};
         var cloud = (m.is_cloud === true) || (m.provider === 'openrouter');
+        // RMOOZ-AI-MODEL-WIRING-COHERENCE-A: a cloud slug with a local provider is incoherent.
+        // Compute pair_coherent from the /api/ai/models payload so _freeFightAiReady() sees it
+        // immediately — before the next /route-health probe fires.
+        var cloudSlug = !!(m.selected_is_cloud_slug);
+        var pairCoherent = cloudSlug ? cloud : true;  // cloud slug OK only when provider=openrouter
         _routeHealth = Object.assign({}, prev, {
             ok: true,
             allow_sim_run:    (m.allow_sim_run    != null) ? m.allow_sim_run    : prev.allow_sim_run,
@@ -1606,6 +1611,8 @@
             provider: (m.provider_blocked ? 'ollama' : (cloud ? 'openrouter' : 'ollama')),
             model:          m.selected_model || prev.model,
             selected_model: m.selected_model || prev.selected_model,
+            pair_coherent: pairCoherent,
+            selected_is_cloud_slug: cloudSlug,
         });
     }
     // RMOOZ-LOCAL-MODEL-SELECTOR-A: list models + current selection (mirrors the global header HUD).
@@ -3609,6 +3616,10 @@
     // (local-only policy) — both can be true at once, so we show ALL that apply (req #4/#5/#6).
     var AI_FIX_EXEC_GATE = 'AI execution is disabled. Set RMOOZ_ALLOW_SIM_RUN=1 and restart the server.';
     function _aiProviderFix(provider) {
+        // RMOOZ-AI-MODEL-WIRING-COHERENCE-A: OpenRouter is a valid provider but requires cloud gates.
+        if (provider === 'openrouter') {
+            return 'Cloud model selected but cloud AI is disabled. Enable RMOOZ_ALLOW_CLOUD_AI=1 and add OPENROUTER_API_KEY, or choose a local Ollama model.';
+        }
         return 'Free Fight is local-only. Current provider is ' + (provider || 'unknown') + '. Set RMOOZ_LLM_PROVIDER=ollama or remove remote provider env.';
     }
     // Read the route-health and return the list of ACTIVE blocking reasons (gate + provider).
@@ -4061,6 +4072,14 @@
             return { ok: false, code: 'health_pending',
                 reason: 'AI route health not loaded yet',
                 msg: 'Wait for route health / model readiness check.' };
+        }
+        // RMOOZ-AI-MODEL-WIRING-COHERENCE-A: check pair coherence before any gate checks.
+        // pair_coherent===false means a cloud slug is paired with the local Ollama provider —
+        // block immediately with a message that names the exact problem and fix.
+        if (rh.pair_coherent === false) {
+            return { ok: false, code: 'pair_incoherent',
+                reason: rh.reason_if_blocked || 'provider/model pair is incoherent — cloud slug with local Ollama provider',
+                msg: 'Select a local model in the model picker, or restart with RMOOZ_LLM_PROVIDER=openrouter + RMOOZ_ALLOW_CLOUD_AI=1 + OPENROUTER_API_KEY.' };
         }
         // RMOOZ-FREE-FIGHT-AI-GATE-CARD-D: combine ALL active blocks (exec gate + remote provider),
         // not just the first one, so the operator sees every reason + fix at once (req #6).

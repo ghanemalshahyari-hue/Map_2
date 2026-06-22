@@ -1467,6 +1467,103 @@ function _spreadCenterClusteredCoas(coas, obj) {
     });
     return coas;
 }
+// RMOOZ-REAL-AI-BEHAVIOR-CONTRACT-A: server-side behavior normalizer. Runs BEFORE the contract
+// validator so that a local model that omits behavior/domain/movement_mode/waypoint_policy fields
+// can be repaired in-place rather than triggering the repair loop with behavior violations.
+// Uses SIDC-prefix heuristics for domain (no dependency on the client-side movement engine).
+function _serverNormalizeBehaviorIntent(coas, unitList) {
+    var byUid = {};
+    (unitList || []).forEach(function (u) {
+        var id = u && (u.uid || u.unit_uid || u.id);
+        if (id != null) byUid[String(id)] = u;
+    });
+    function inferDomain(u) {
+        var s = String((u && (u.sidc || u.type || u.name)) || '').toUpperCase();
+        if (/^S[FHNU]AP/.test(s) || /AIRCRAFT|FIGHTER|BOMBER|UAV|DRONE|HELO|HELICOPTER|AWACS|PATROL\s*AIRCRAFT/.test(s)) return 'air';
+        if (/^S[FHNU]SP/.test(s) || /FRIGATE|DESTROYER|CORVETTE|SUBMARINE|NAVAL|SHIP|VESSEL|COAST/.test(s)) return 'naval';
+        if (/AIR.DEF|MISSILE\s*BAT|SAM\s*SYS|RADAR\s*STA/.test(s)) return 'air_defense';
+        if (/SENSOR|RADAR|EW\s*STA|SIGNAL/.test(s)) return 'sensor';
+        return 'ground';
+    }
+    var ROLE_BEH = {
+        assault: 'approach', support: 'support', screen: 'screen', recon: 'observe',
+        reserve: 'reserve', intercept: 'intercept', defend: 'defend', reinforce: 'support', hold: 'hold',
+    };
+    var ROLE_WP = {
+        assault: 'direct_step', support: 'support_position', screen: 'screen_line',
+        recon: 'direct_step', reserve: 'hold_area', intercept: 'intercept_axis',
+        defend: 'hold_area', reinforce: 'support_position', hold: 'hold_area',
+    };
+    var BEH_WP = {
+        approach: 'direct_step', support: 'support_position', screen: 'screen_line',
+        observe: 'direct_step', reserve: 'hold_area', intercept: 'intercept_axis',
+        defend: 'hold_area', patrol: 'patrol_loop', orbit: 'orbit', hold: 'hold_area',
+    };
+    (coas || []).forEach(function (coa) {
+        (coa && coa.phases || []).forEach(function (ph) {
+            (ph && ph.actions || []).forEach(function (a) {
+                if (!a) return;
+                var isHold = (String(a.action_type || '').toUpperCase() === 'HOLD_POSITION' || a.behavior === 'hold');
+                if (isHold) {
+                    if (!a.behavior)        a.behavior        = 'hold';
+                    if (!a.domain)          a.domain          = 'ground';
+                    if (!a.movement_mode)   a.movement_mode   = 'static';
+                    if (!a.waypoint_policy) a.waypoint_policy = 'hold_area';
+                    return;
+                }
+                var needsRepair = !a.behavior || !a.domain || !a.movement_mode || !a.waypoint_policy;
+                if (!needsRepair) {
+                    // Still validate domain/movement_mode consistency
+                    _serverFixDomain(a);
+                    return;
+                }
+                var u = a.unit_uid != null ? byUid[String(a.unit_uid)] : null;
+                var dom = inferDomain(u);
+                var roleKey = String(a.role || '').toLowerCase();
+                var beh = ROLE_BEH[roleKey] || null;
+                if (!beh) {
+                    var at = String(a.action_type || '').toLowerCase();
+                    if (at.indexOf('recon') >= 0 || at.indexOf('observe') >= 0) beh = 'observe';
+                    else if (at.indexOf('screen') >= 0)  beh = 'screen';
+                    else if (at.indexOf('support') >= 0) beh = 'support';
+                    else if (at.indexOf('hold') >= 0)    beh = 'hold';
+                    else                                 beh = 'approach';
+                }
+                if (dom === 'air' && beh === 'approach') beh = 'orbit';
+                var wp = BEH_WP[beh] || ROLE_WP[roleKey] || 'direct_step';
+                if (dom === 'air' && (wp === 'direct_step' || wp === 'intercept_axis'))
+                    wp = (beh === 'intercept') ? 'orbit' : 'patrol_loop';
+                var mm = (dom === 'air') ? 'air' : (dom === 'naval') ? 'naval' : 'ground';
+                if (!a.behavior)        a.behavior        = beh;
+                if (!a.domain)          a.domain          = dom;
+                if (!a.movement_mode)   a.movement_mode   = mm;
+                if (!a.waypoint_policy) a.waypoint_policy = wp;
+                _serverFixDomain(a);
+                a._behavior_repaired = true;
+                a._source = 'degraded_behavior_repaired';
+            });
+        });
+    });
+}
+function _serverFixDomain(a) {
+    if (!a || !a.domain) return;
+    var dom = a.domain, mm = a.movement_mode, wp = a.waypoint_policy, beh = a.behavior;
+    if (dom === 'air') {
+        if (mm !== 'air') a.movement_mode = 'air';
+        if (wp === 'direct_step' || wp === 'intercept_axis')
+            a.waypoint_policy = (beh === 'intercept') ? 'orbit' : 'patrol_loop';
+    } else if (dom === 'naval' && mm === 'ground') {
+        a.movement_mode = 'naval';
+    } else if (dom === 'ground' && (mm === 'naval' || mm === 'air')) {
+        a.movement_mode = 'ground';
+    }
+    if ((dom === 'static' || dom === 'sensor' || dom === 'air_defense') &&
+        (beh === 'approach' || beh === 'intercept')) {
+        a.behavior = (dom === 'air_defense') ? 'defend' : 'support';
+        a.waypoint_policy = 'hold_area';
+    }
+}
+
 async function _assemblePlan(P, variationSeed, timer, light) {
     var obj = P.obj, activeSide = P.activeSide, commanderMode = P.commanderMode, diverseMode = P.diverseMode;
     var allUnits = P.allUnits, units = P.units, objectives = P.objectives, context = P.context, opts = P.opts, depth = P.depth;
@@ -1680,6 +1777,10 @@ async function _assemblePlan(P, variationSeed, timer, light) {
     function _validateLlm(res) {
         var c = enrichCoasWithNarrative(res.coas, obj, context, 'llm');
         if (activeSide === 'BLUE' && blueIntent) applyBlueReaction(c, situation, blueIntent);
+        // RMOOZ-REAL-AI-BEHAVIOR-CONTRACT-A: repair missing behavior intent BEFORE validation so
+        // the validator only sees true structural/physics violations, not behaviour-field gaps that
+        // the local model routinely omits. Avoids triggering the repair loop for fixable omissions.
+        try { _serverNormalizeBehaviorIntent(c, allUnits); } catch (_) {}
         var idx = 0; for (var i = 0; i < c.length; i++) { if (c[i].recommended) { idx = i; break; } }
         var val = timer.sync('validation_ms', function () {
             try {
@@ -2120,6 +2221,7 @@ module.exports = {
     planCoas:               planCoas,
     _extractCoaJsonForTest: extractCoaJson,   // RMOOZ-SCC-COA-COMMANDER-QUALITY-AI: hardened LLM-output extraction
     _spreadCenterClusteredCoasForTest: _spreadCenterClusteredCoas,   // RMOOZ-COA-QUALITY-HARD-ENFORCEMENT-AE
+    _serverNormalizeBehaviorIntentForTest: _serverNormalizeBehaviorIntent, // RMOOZ-REAL-AI-BEHAVIOR-CONTRACT-A
     planCoaVariations:      planCoaVariations,        // RMOOZ-AI-COA-PERFORMANCE-A (Generate-N, shared context)
     validateCoaPlan:        validateCoaPlan,
     applyCoaPlan:           applyCoaPlan,

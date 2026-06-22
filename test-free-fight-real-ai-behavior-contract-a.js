@@ -225,6 +225,43 @@ test('T-12: repaired_decision drops behavior-violation actions, keeps valid ones
     eq(kept[0].unit_uid, 'G1', 'valid action preserved');
 });
 
+// T-13: _serverNormalizeBehaviorIntent repairs missing behavior on target-only action
+test('T-13: server normalizer repairs target-only LLM action before validator', function () {
+    var act = { unit_uid: 'G1', role: 'assault', action_type: 'MOVE_TOWARD_OBJECTIVE',
+        target: { lat: 28.2, lon: 45.2 }, reason: 'attack' };
+    var coa = { phases: [{ actions: [act] }] };
+    PLANNER._serverNormalizeBehaviorIntentForTest([coa], [GROUND_UNIT]);
+    ok(act.behavior,        'behavior inferred');
+    ok(act.domain,          'domain inferred');
+    ok(act.movement_mode,   'movement_mode inferred');
+    ok(act.waypoint_policy, 'waypoint_policy inferred');
+    ok(act._behavior_repaired, '_behavior_repaired flag set');
+    eq(act._source, 'degraded_behavior_repaired', '_source');
+});
+
+// T-14: server normalizer infers air domain for aircraft SIDC + fixes waypoint_policy
+test('T-14: server normalizer infers air domain from SIDC, corrects to patrol_loop', function () {
+    var airUnit = { id: 'A1', unit_uid: 'A1', lat: 28.21, lon: 45.21, sidc: 'SFAPCA-----' };
+    var act = { unit_uid: 'A1', role: 'assault', action_type: 'MOVE_TOWARD_OBJECTIVE',
+        target: { lat: 28.2, lon: 45.2 }, reason: 'attack' };
+    var coa = { phases: [{ actions: [act] }] };
+    PLANNER._serverNormalizeBehaviorIntentForTest([coa], [airUnit]);
+    eq(act.domain, 'air', 'domain=air inferred from SIDC');
+    eq(act.movement_mode, 'air', 'movement_mode=air');
+    ok(act.waypoint_policy === 'patrol_loop' || act.waypoint_policy === 'orbit', 'aircraft policy is patrol_loop/orbit');
+});
+
+// T-15: server normalizer leaves already-complete actions unchanged
+test('T-15: server normalizer does not alter complete behavior-intent actions', function () {
+    var act = { unit_uid: 'G1', role: 'screen', action_type: 'SCREEN_FLANK',
+        behavior: 'screen', domain: 'ground', movement_mode: 'ground', waypoint_policy: 'screen_line',
+        _source: 'ai_behavior', reason: 'screen' };
+    var coa = { phases: [{ actions: [act] }] };
+    PLANNER._serverNormalizeBehaviorIntentForTest([coa], [GROUND_UNIT]);
+    ok(!act._behavior_repaired, 'no repair flag on complete action');
+    eq(act._source, 'ai_behavior', 'original _source preserved');
+});
+
 // ── Summary ───────────────────────────────────────────────────────────────────
 
 console.log('\n─────────────────────────────────────────────────────');

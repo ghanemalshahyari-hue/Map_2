@@ -1338,6 +1338,11 @@ async function _buildPlanningContext(units, objectives, context, opts, depth, ti
     // free (free tactical reasoning), high_variation (creative / rotates).
     var commanderMode = String(opts.commander_mode || context.commander_mode || 'controlled').toLowerCase().trim();
     if (['controlled', 'free', 'high_variation'].indexOf(commanderMode) === -1) commanderMode = 'controlled';
+    // Staff-Safe MUST use doctrine-guided building regardless of operator commander_mode.
+    // free/high_variation → buildDiverseCoas with screen/avoid_contact targets that point
+    // the attacker AWAY from the objective; controlled → buildDeterministicCoas with proper
+    // MOVE_TOWARD_OBJECTIVE ring targets. (RMOOZ-STAFF-SAFE-CONTROLLED-MODE-RULE)
+    if (String((opts && opts.planning_mode) || 'commander').toLowerCase() === 'staff_safe') commanderMode = 'controlled';
     var diverseMode = (commanderMode === 'free' || commanderMode === 'high_variation');
     var allUnits = arr(units).filter(function (u) { return unitHasCoord(u) && String(u.side || 'RED').toUpperCase() === activeSide; });
     if (!allUnits.length) {

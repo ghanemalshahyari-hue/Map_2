@@ -1448,6 +1448,10 @@ function _spreadCenterClusteredCoas(coas, obj) {
         var phases = Array.isArray(coa.phases) ? coa.phases : [{ actions: coa.actions || [] }];
         var moves = [];
         phases.forEach(function (ph) { (ph && ph.actions || []).forEach(function (a) { if (a && a.action_type !== 'HOLD_POSITION' && a.target && Number.isFinite(Number(a.target.lat))) moves.push(a); }); });
+        // RMOOZ-REAL-AI-BEHAVIOR-CONTRACT-A: behavior-based COAs are executed via the movement
+        // engine, not by target coordinates. Ring-spreading would overwrite behavior targets with
+        // ring positions and corrupt Layer 1 intent — skip these COAs entirely.
+        if (moves.some(function (m) { return !!m.behavior; })) return;
         if (moves.length < 2) return;
         var centerCnt = moves.filter(function (m) { return km({ lat: Number(m.target.lat), lon: Number(m.target.lon) }, { lat: objLat, lon: objLon }) < 0.6; }).length;
         var f = moves[0].target, allSame = moves.every(function (m) { return Math.abs(Number(m.target.lat) - Number(f.lat)) < 1e-4 && Math.abs(Number(m.target.lon) - Number(f.lon)) < 1e-4; });
@@ -1500,11 +1504,19 @@ async function _assemblePlan(P, variationSeed, timer, light) {
         };
     }
     // Convert a COA into the contract's decision shape for validation.
+    // RMOOZ-REAL-AI-BEHAVIOR-CONTRACT-A: preserve all behavior intent fields so the validator
+    // can check them. Previously only unit_uid/role/action_type/target were passed, causing the
+    // validator to silently accept target-only AI actions with no behavior.
     function _coaToDecision(coa) {
         var assigns = [];
         arr(coa && coa.phases).forEach(function (ph) {
             arr(ph.actions).forEach(function (a) {
-                assigns.push({ unit_uid: a.unit_uid, role: a.role, action_type: a.action_type, target: a.target });
+                assigns.push({
+                    unit_uid: a.unit_uid, role: a.role, action_type: a.action_type, target: a.target,
+                    behavior: a.behavior, domain: a.domain, movement_mode: a.movement_mode,
+                    waypoint_policy: a.waypoint_policy, priority: a.priority,
+                    desired_effect: a.desired_effect, update_trigger: a.update_trigger, reason: a.reason,
+                });
             });
         });
         return { selected_coa_family: (intel && intel.recommended_coa_family) || 'air_intercept', unit_assignments: assigns };

@@ -905,6 +905,56 @@ function validateCommanderCoaTool(input) {
                 }
             }
 
+            // RMOOZ-REAL-AI-BEHAVIOR-CONTRACT-A: behavior intent check. MOVE actions must carry
+            // behavior/domain/movement_mode/waypoint_policy so the movement engine can execute
+            // them. Target-only AI actions are silently unexecutable — flag them here so the
+            // repair loop can send the violation back to the model for correction.
+            if (!dropped) {
+                var isHoldAct = (String(action || '').toUpperCase() === 'HOLD_POSITION' || String(a.behavior || '') === 'hold');
+                if (!isHoldAct) {
+                    if (!a.behavior) {
+                        violations.push({ code: 'missing_behavior_intent', unit_uid: uid,
+                            text: 'MOVE action for unit "' + uid + '" is missing the behavior field. ' +
+                                'Output behavior (approach|patrol|orbit|intercept|defend|screen|support|hold) for every MOVE action.' });
+                        dropped = true;
+                    } else if (!a.domain) {
+                        violations.push({ code: 'missing_domain', unit_uid: uid,
+                            text: 'MOVE action for unit "' + uid + '" is missing the domain field (air|ground|naval|sensor|air_defense|static).' });
+                        dropped = true;
+                    } else if (!a.movement_mode) {
+                        violations.push({ code: 'missing_movement_mode', unit_uid: uid,
+                            text: 'MOVE action for unit "' + uid + '" is missing movement_mode.' });
+                        dropped = true;
+                    } else if (!a.waypoint_policy) {
+                        violations.push({ code: 'missing_waypoint_policy', unit_uid: uid,
+                            text: 'MOVE action for unit "' + uid + '" is missing waypoint_policy.' });
+                        dropped = true;
+                    } else {
+                        // Domain vs movement_mode consistency
+                        var dom = String(a.domain || '').toLowerCase();
+                        var mm  = String(a.movement_mode || '').toLowerCase();
+                        var wp2 = String(a.waypoint_policy || '').toLowerCase();
+                        if (dom === 'air' && mm !== 'air') {
+                            violations.push({ code: 'domain_mm_mismatch', unit_uid: uid,
+                                text: 'Air unit has movement_mode="' + mm + '"; must be "air".' });
+                            dropped = true;
+                        } else if (dom === 'naval' && mm === 'ground') {
+                            violations.push({ code: 'domain_mm_mismatch', unit_uid: uid,
+                                text: 'Naval unit has movement_mode="ground"; must be "naval".' });
+                            dropped = true;
+                        } else if (dom === 'ground' && (mm === 'naval' || mm === 'air')) {
+                            violations.push({ code: 'domain_mm_mismatch', unit_uid: uid,
+                                text: 'Ground unit has movement_mode="' + mm + '"; must be "ground".' });
+                            dropped = true;
+                        } else if (dom === 'air' && (wp2 === 'direct_step' || wp2 === 'intercept_axis')) {
+                            violations.push({ code: 'aircraft_direct_step_blocked', unit_uid: uid,
+                                text: 'Aircraft must use patrol_loop or orbit waypoint_policy — not direct_step/intercept_axis.' });
+                            dropped = true;
+                        }
+                    }
+                }
+            }
+
             if (!dropped) keptAssignments.push(a);
         });
 

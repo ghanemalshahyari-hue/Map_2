@@ -35,6 +35,7 @@ const CONTRACT   = require('./rmooz-ai-tool-contract');            // RMOZ-AI-TO
 const TACTICS    = require('./tactical-action-library');           // RMOOZ-AI-COMMANDER-FREEDOM-A
 const TERRAIN_CTX = require('./tactical-terrain-context');         // GIS terrain-aware tactics
 const PREFILTER  = require('./candidate-prefilter');               // RMOOZ-AI-FREE-FIGHT-CANDIDATE-PREFILTER-A
+const MRC        = require('./mission-role-contract');              // RMOOZ-MISSION-ROLE-CONTRACT-A
 // Optional REAL elevation (DEM). Lazy + guarded: returns null off-coverage (e.g. Libya-only
 // dataset) so high-ground / route-cost gracefully fall back to inferred geometry.
 var _demFn = null;
@@ -1326,9 +1327,13 @@ function _coaOutputSchema() {
 // (_precomputed_profiles) so the analyst is never run twice for the same units/context.
 async function _buildPlanningContext(units, objectives, context, opts, depth, timer) {
     var obj = bestObjective(arr(objectives));
-    // Active side: loop context wins, then opts.preferSide, then RED.
-    var activeSide = String(context.active_side || opts.preferSide || 'RED').toUpperCase();
+    // RMOOZ-MISSION-ROLE-CONTRACT-A: use the derived contract when present; fall back to
+    // loop context, then opts, then RED/BLUE defaults.
+    var _mrc = context.mission_role_contract || null;
+    // Active side: loop context wins, then contract, then opts.preferSide, then RED.
+    var activeSide = String(context.active_side || (_mrc && _mrc.active_coa_side) || opts.preferSide || 'RED').toUpperCase();
     if (activeSide !== 'RED' && activeSide !== 'BLUE') activeSide = 'RED';
+    var defenderSide = String((_mrc && _mrc.defender_side) || context.defending_side || 'BLUE').toUpperCase();
     // RMOOZ-AI-COMMANDER-FREEDOM-A: AI Commander Mode — controlled (doctrine-guided),
     // free (free tactical reasoning), high_variation (creative / rotates).
     var commanderMode = String(opts.commander_mode || context.commander_mode || 'controlled').toLowerCase().trim();
@@ -1349,7 +1354,7 @@ async function _buildPlanningContext(units, objectives, context, opts, depth, ti
     try {
         intel = timer.sync('build_scenario_intel_ms', function () {
             return INTEL.buildScenarioIntel(units, objectives,
-                Object.assign({}, context, { defending_side: 'BLUE', active_side: activeSide }));
+                Object.assign({}, context, { defending_side: defenderSide, active_side: activeSide }));
         });
     } catch (_) { intel = null; }
 
@@ -1384,7 +1389,7 @@ async function _buildPlanningContext(units, objectives, context, opts, depth, ti
         var capKey = _capCacheKey(units, activeSide, capOpts.useLlm, obj);
         var capRes = await timer.async('analyze_unit_capabilities_ms', function () {
             return _capCacheGet(capKey, function () {
-                return ANALYST.analyzeUnitCapabilities(units, Object.assign({}, context, { defending_side: 'BLUE', active_side: activeSide }), capOpts);
+                return ANALYST.analyzeUnitCapabilities(units, Object.assign({}, context, { defending_side: defenderSide, active_side: activeSide }), capOpts);
             });
         });
         capProfiles = (capRes && capRes.value) || [];
@@ -1670,6 +1675,8 @@ async function _assemblePlan(P, variationSeed, timer, light) {
             repaired_violations: (repairInfo && repairInfo.repaired_violations) || null,
             planning_trace: light ? null : _buildPlanningTrace(planSource, coas, validation, repaired,
                 (repairInfo && repairInfo.repair_attempts) || 0, pProvider, pModel),
+            // RMOOZ-MISSION-ROLE-CONTRACT-A: echo the derived contract so the client can log COA_SIDE_SELECTED.
+            mission_role_contract: (context && context.mission_role_contract) || null,
         };
         // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A: expose the raw model output only when the caller asks
         // (opts.capture_raw_llm) — proof for the real-LLM E2E; omitted from normal/light payloads.

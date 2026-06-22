@@ -65,6 +65,7 @@
     // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: continuous AI commander loop state
     var _turnNumber = 0;
     var _activeSide = 'RED';
+    var _missionRoleContract = null;     // RMOOZ-MISSION-ROLE-CONTRACT-A: derived from scenario JSON
     var _loopRunning = false, _loopPaused = false;
     var _freeFightSpeed = 'x1';
     var _lastCommanderDecision = null; // { turn, side, coa_id, coa_title, source, moved, rationale[], expected[], summary }
@@ -2589,10 +2590,39 @@
             // show parse/schema/repair/fallback honesty (incl. the failing raw output on invalid_json).
             body.opts.capture_raw_llm = true;
         }
+        // RMOOZ-MISSION-ROLE-CONTRACT-A: derive and cache the mission role contract before
+        // sending the COA request so active_side + defending_side are data-driven, not guessed.
+        _missionRoleContract = _buildMissionRoleContract();
+        try {
+            _recordDecision({ role: 'white', action: 'MISSION_ROLE_RESOLVED', called_llm: false,
+                source: 'mission-role-contract',
+                reason: 'derived from ' + _missionRoleContract.objective_source + ' (confidence: ' + _missionRoleContract.confidence + ')',
+                result_summary: 'attacker=' + _missionRoleContract.attacker_side +
+                    ' / defender=' + _missionRoleContract.defender_side +
+                    ' / objective_owner=' + _missionRoleContract.objective_owner_side +
+                    ' / initial_actor=' + _missionRoleContract.initial_actor +
+                    ' / mission_type=' + _missionRoleContract.mission_type });
+        } catch (_) {}
+        try {
+            _appendToEventLog('MISSION_ROLE_RESOLVED: attacker=' + _missionRoleContract.attacker_side +
+                ' / defender=' + _missionRoleContract.defender_side +
+                ' / objective_owner=' + _missionRoleContract.objective_owner_side +
+                ' / initial_actor=' + _missionRoleContract.initial_actor +
+                ' / mission_type=' + _missionRoleContract.mission_type +
+                ' / source=' + _missionRoleContract.objective_source);
+        } catch (_) {}
         var _genT0 = _nowMs();   // RMOOZ-AI-SCHEDULER-DECISION-LOG-S: measure the commander call duration
         _fetchJsonSafe('/api/wargame-sim/free-fight/plan-coas', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ units: body.units, objectives: body.objectives, context: { commander_mode: body.opts.commander_mode, ai_depth: body.opts.ai_depth }, opts: body.opts }),
+            body: JSON.stringify({ units: body.units, objectives: body.objectives,
+                context: {
+                    commander_mode: body.opts.commander_mode,
+                    ai_depth: body.opts.ai_depth,
+                    active_side: _missionRoleContract.active_coa_side,
+                    defending_side: _missionRoleContract.defender_side,
+                    mission_role_contract: _missionRoleContract
+                },
+                opts: body.opts }),
         }).then(function (plan) {
             if (_isRouteUnavailable(plan)) {
                 _routeUnavailableMsg = _routeUnavailableText(plan);
@@ -2611,6 +2641,14 @@
             // RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O: auto-select the recommended COA so the simple flow
             // can offer "Use Recommended Plan" by default.
             if (_coaPlan && _coaPlan.ok && arr(_coaPlan.coas).length) { try { _coaSelectedIdx = _pickRecommendedIdx(_coaPlan); } catch (_) {} }
+            // RMOOZ-MISSION-ROLE-CONTRACT-A: log which side the initial COA was generated for.
+            try {
+                var _coaSide = (_missionRoleContract && _missionRoleContract.active_coa_side) ||
+                    (plan && plan.active_side) || 'RED';
+                _recordDecision({ role: 'white', action: 'COA_SIDE_SELECTED', called_llm: false,
+                    source: 'mission-role-contract', result_summary: 'active_coa_side=' + _coaSide });
+                _appendToEventLog('COA_SIDE_SELECTED: active_coa_side=' + _coaSide);
+            } catch (_) {}
             _coaLoading = false; _coaApplied = false; _stopCoaLoadingTicker();
             updatePanel();
             // RMOOZ-GREEN-WORLD-UI-R + RMOOZ-GREEN-WHITE-SCORING-T: refresh Green, then score it onto the
@@ -3073,6 +3111,66 @@
         return { lat: from.lat + dx * t, lon: from.lon + dy * t };
     }
 
+    // RMOOZ-MISSION-ROLE-CONTRACT-A: derive mission roles from the loaded scenario JSON.
+    // Mirrors server/ai/mission-role-contract.js (client copy avoids a round-trip before
+    // the initial COA call). Priority: generation.template → role analysis → default.
+    function _deriveObjOwner(sc) {
+        var obj = sc.obj;
+        if (!obj || !obj.coord || !isFinite(+obj.coord[0]) || !isFinite(+obj.coord[1])) return 'uncontrolled';
+        var oLon = +obj.coord[0], oLat = +obj.coord[1];
+        function centroid(units) {
+            var n = 0, sLat = 0, sLon = 0;
+            (units || []).forEach(function (u) {
+                var c = u.coord;
+                if (c && c.length >= 2 && isFinite(+c[0]) && isFinite(+c[1])) { sLon += +c[0]; sLat += +c[1]; n++; }
+            });
+            return n ? { lat: sLat / n, lon: sLon / n } : null;
+        }
+        var rc = centroid(sc.red_units), bc = centroid(sc.blue_units_initial || sc.blue_units);
+        if (!rc || !bc) return 'uncontrolled';
+        var dR = (oLat - rc.lat) * (oLat - rc.lat) + (oLon - rc.lon) * (oLon - rc.lon);
+        var dB = (oLat - bc.lat) * (oLat - bc.lat) + (oLon - bc.lon) * (oLon - bc.lon);
+        return dB < dR ? 'BLUE' : 'RED';
+    }
+    function _buildMissionRoleContract() {
+        var w = (typeof window !== 'undefined') ? window : null;
+        var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        if (!sc) {
+            return { attacker_side: 'RED', defender_side: 'BLUE', objective_owner_side: 'uncontrolled',
+                     initial_actor: 'RED', active_coa_side: 'RED', reaction_side: 'BLUE',
+                     mission_type: 'attack', objective_source: 'provisional', confidence: 'low' };
+        }
+        var objOwner = _deriveObjOwner(sc);
+        var tpl = String((sc.generation && sc.generation.template) || '').toLowerCase().trim();
+        if (tpl === 'attack_objective' || tpl === 'attack') {
+            return { attacker_side: 'RED', defender_side: 'BLUE', objective_owner_side: objOwner,
+                     initial_actor: 'RED', active_coa_side: 'RED', reaction_side: 'BLUE',
+                     mission_type: 'attack', objective_source: 'file_explicit', confidence: 'high' };
+        }
+        if (tpl === 'defend_objective' || tpl === 'defend') {
+            return { attacker_side: 'BLUE', defender_side: 'RED', objective_owner_side: objOwner,
+                     initial_actor: 'BLUE', active_coa_side: 'BLUE', reaction_side: 'RED',
+                     mission_type: 'defend', objective_source: 'file_explicit', confidence: 'high' };
+        }
+        var offRoles = ['armor', 'mech_infantry', 'fires', 'assault', 'attack', 'armored', 'mechanized', 'artillery'];
+        function countOff(units) {
+            return (units || []).filter(function (u) {
+                var r = String(u.role || u.type || '').toLowerCase();
+                return offRoles.some(function (o) { return r.indexOf(o) !== -1; });
+            }).length;
+        }
+        var redOff = countOff(sc.red_units), blueOff = countOff(sc.blue_units_initial || sc.blue_units);
+        if (redOff > 0 || blueOff > 0) {
+            var atk = redOff >= blueOff ? 'RED' : 'BLUE', def = atk === 'RED' ? 'BLUE' : 'RED';
+            return { attacker_side: atk, defender_side: def, objective_owner_side: objOwner,
+                     initial_actor: atk, active_coa_side: atk, reaction_side: def,
+                     mission_type: 'attack', objective_source: 'role_inferred', confidence: 'medium' };
+        }
+        return { attacker_side: 'RED', defender_side: 'BLUE', objective_owner_side: objOwner,
+                 initial_actor: 'RED', active_coa_side: 'RED', reaction_side: 'BLUE',
+                 mission_type: 'attack', objective_source: 'provisional', confidence: 'low' };
+    }
+
     // Build the plan-coas request body for the active side, with loop context.
     function _buildLoopRequestBody() {
         var base = _buildAiRequestBody(); // units + objectives + opts (preferSide RED)
@@ -3093,7 +3191,8 @@
                 // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A: feed recent COA families so the
                 // intel layer's COA-variation engine avoids repeating the same family.
                 previous_coa_families: _coaFamilyHistory.slice(-3),
-                defending_side: 'BLUE',
+                // RMOOZ-MISSION-ROLE-CONTRACT-A: use derived defender, not hardcoded BLUE.
+                defending_side: (_missionRoleContract && _missionRoleContract.defender_side) || 'BLUE',
                 // RMOOZ-AI-COMMANDER-FREEDOM-A: commander mode + a per-turn variation seed
                 // so high-variation rotates the recommended approach across cycles.
                 commander_mode: _commanderMode,
@@ -4818,7 +4917,7 @@
         try { _appendToEventLog('Scenario stopped by operator.'); } catch (_) {}
         updatePanel();
     }
-    function _resetScenario() { _stopScenarioTimer(); _scenario = null; _step1HeldUids = {}; }
+    function _resetScenario() { _stopScenarioTimer(); _scenario = null; _step1HeldUids = {}; _missionRoleContract = null; }
     // ── operator-card stale-commit guard (consumed by the Scenario Control Center engine facade) ────────
     // RMOOZ-FREE-FIGHT-V2-COA-TO-SCENARIO-BUGFIX-AB1: is the committed COA STALE relative to what the
     // operator is now looking at? True when (a) a DIFFERENT (newer) plan object is loaded than the one we

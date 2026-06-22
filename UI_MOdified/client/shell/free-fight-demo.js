@@ -2617,36 +2617,64 @@
             assault: 'approach', support: 'support', screen: 'screen', recon: 'observe', reserve: 'reserve',
             intercept: 'intercept', defend: 'defend', reinforce: 'support',
         };
+        // Waypoint policy per role — matches the behavior intent.
+        var _ROLE_WP = {
+            assault: 'direct_step', support: 'support_position', screen: 'screen_line',
+            recon: 'direct_step', reserve: 'hold_area',
+            intercept: 'intercept_axis', defend: 'hold_area', reinforce: 'support_position',
+        };
+        // tgt() returns { lat, lon, _fallback_formation, reason } — _fallback_formation=true when the
+        // movement engine was unavailable and a ring position was used instead (staff_safe_no_ai).
         function tgt(role, i) {
-            var ME = W() && W().RmoozMovementEngine;
-            if (ME && ME.buildWaypointsForAssignment) {
-                var enemySide = isRed ? 'BLUE' : 'RED';
-                var enemyUnits = _scenarioSideUnits ? _scenarioSideUnits(enemySide) : [];
-                var unit = u[i] || u[0] || {};
-                var wps = ME.buildWaypointsForAssignment(unit, { behavior: _ROLE_BEHAVIOR[role] || role }, obj, enemyUnits, i);
-                if (wps && wps[0] && Number.isFinite(wps[0].lat) && Number.isFinite(wps[0].lon)) return wps[0];
+            var ME2 = W() && W().RmoozMovementEngine;
+            if (ME2 && ME2.buildWaypointsForAssignment) {
+                var enemySide2 = isRed ? 'BLUE' : 'RED';
+                var enemyUnits2 = _scenarioSideUnits ? _scenarioSideUnits(enemySide2) : [];
+                var unit2 = u[i] || u[0] || {};
+                var wps2 = ME2.buildWaypointsForAssignment(unit2, { behavior: _ROLE_BEHAVIOR[role] || role }, obj, enemyUnits2, i);
+                if (wps2 && wps2[0] && Number.isFinite(wps2[0].lat) && Number.isFinite(wps2[0].lon))
+                    return { lat: wps2[0].lat, lon: wps2[0].lon, _fallback_formation: false };
             }
-            // Fallback: ring formation (fallback_formation:true, reason:staff_safe_no_ai)
+            // Ring fallback — movement engine unavailable or returned nothing.
+            // Marked fallback_formation:true so callers can label the source honestly.
+            var rp;
             if (isRed) {
-                if (role === 'recon')   return _ringPos(obj, 7,               i, RED_BASE_DEG);
-                if (role === 'support') return _ringPos(obj, RING_KM.support, i, RED_BASE_DEG + 30);
-                if (role === 'screen')  return _ringPos(obj, RING_KM.screen,  i, RED_BASE_DEG + 90);
-                if (role === 'reserve') return _ringPos(obj, 10,              i, RED_BASE_DEG + 180);
-                return _ringPos(obj, RING_KM.assault, i, RED_BASE_DEG);
+                if (role === 'recon')        rp = _ringPos(obj, 7,               i, RED_BASE_DEG);
+                else if (role === 'support') rp = _ringPos(obj, RING_KM.support, i, RED_BASE_DEG + 30);
+                else if (role === 'screen')  rp = _ringPos(obj, RING_KM.screen,  i, RED_BASE_DEG + 90);
+                else if (role === 'reserve') rp = _ringPos(obj, 10,              i, RED_BASE_DEG + 180);
+                else                         rp = _ringPos(obj, RING_KM.assault, i, RED_BASE_DEG);
             } else {
-                if (role === 'recon')     return _ringPos(obj, 6,               i, RED_BASE_DEG);
-                if (role === 'screen')    return _screenRing(obj, i);
-                if (role === 'intercept') return _blockingRing(obj, i);
-                if (role === 'reserve')   return _reserveRing(obj, i);
-                if (role === 'reinforce') return _supportRing(obj, i);
-                return _ringPos(obj, RING_KM.assault, i, RED_BASE_DEG - 15);
+                if (role === 'recon')            rp = _ringPos(obj, 6,               i, RED_BASE_DEG);
+                else if (role === 'screen')      rp = _screenRing(obj, i);
+                else if (role === 'intercept')   rp = _blockingRing(obj, i);
+                else if (role === 'reserve')     rp = _reserveRing(obj, i);
+                else if (role === 'reinforce')   rp = _supportRing(obj, i);
+                else                             rp = _ringPos(obj, RING_KM.assault, i, RED_BASE_DEG - 15);
             }
+            return { lat: rp.lat, lon: rp.lon, _fallback_formation: true, reason: 'movement engine unavailable' };
         }
+        // phaseActs() — every MOVE action carries full behavior intent (behavior/domain/movement_mode/
+        // waypoint_policy/_source) so _resolvePhaseMoves always takes the behavior path (Layer 2).
         function phaseActs(movers) {
             return assigns.map(function (a) {
-                return (movers.indexOf(a.role) !== -1)
-                    ? { unit_uid: a.uid, action_type: 'MOVE', role: a.role, target: tgt(a.role, a.i) }
-                    : { unit_uid: a.uid, action_type: 'HOLD_POSITION', role: a.role };
+                if (movers.indexOf(a.role) === -1) {
+                    return { unit_uid: a.uid, action_type: 'HOLD_POSITION', role: a.role,
+                             behavior: 'hold', domain: 'ground', movement_mode: 'static',
+                             waypoint_policy: 'hold_area', _source: 'staff_safe_movement_engine' };
+                }
+                var beh = _ROLE_BEHAVIOR[a.role] || 'approach';
+                var wp  = _ROLE_WP[a.role]       || 'direct_step';
+                var ME3 = W() && W().RmoozMovementEngine;
+                var unitR = u[a.i] || u[0] || {};
+                var dom = ME3 && ME3.classifyUnitDomain ? ME3.classifyUnitDomain(unitR) : 'ground';
+                var mm  = (dom === 'air' ? 'air' : dom === 'naval' ? 'naval' : 'ground');
+                var t   = tgt(a.role, a.i);
+                var src = (t && t._fallback_formation) ? 'staff_safe_no_ai' : 'staff_safe_movement_engine';
+                return { unit_uid: a.uid, action_type: 'MOVE', role: a.role,
+                         behavior: beh, domain: dom, movement_mode: mm, waypoint_policy: wp,
+                         target: t, _source: src,
+                         fallback_formation: !!(t && t._fallback_formation) };
             });
         }
         var ids = function (rx) { return assigns.filter(function (a) { return rx.test(a.role); }).map(function (a) { return a.uid; }); };
@@ -3155,12 +3183,14 @@
             var dist2 = Math.sqrt(dLat2 * dLat2 + dLon2 * dLon2);
 
             var finLat2, finLon2, reached2;
-            if (stepKm === 0 || dist2 <= (stepDeg || 0.01)) {
-                // Static units or already at target
-                finLat2 = round5(tgt.lat); finLon2 = round5(tgt.lon);
-                reached2 = true;
+            if (stepKm === 0) {
+                // Static/sensor/air_defense domain — unit stays in place, never "reaches".
+                finLat2 = round5(startLat); finLon2 = round5(startLon);
+                reached2 = false;
             } else {
-                var frac2 = Math.min(1, (stepDeg || 0.225) / dist2);
+                // Step toward target at domain speed. Arrive (reached=true) only when within
+                // one step's distance — never teleport the unit past that point in one tick.
+                var frac2 = (dist2 > 0) ? Math.min(1, stepDeg / dist2) : 1;
                 finLat2 = round5(startLat + dLat2 * frac2);
                 finLon2 = round5(startLon + dLon2 * frac2);
                 reached2 = (frac2 >= 1);
@@ -3358,6 +3388,27 @@
             return { uid: m.uid, side: m.unit ? (m.unit.side || '') : '', moved_km: m.moved_km || 0,
                 behavior: m.behavior || null, domain: m.domain || 'ground',
                 from: m.start, to: m.final, waypoint_policy: m.waypoint_policy || null };
+        });
+        // Held units (moved < 0.5km but not HOLD_POSITION) and domain-blocked units tracked
+        // separately so movementDebug() and the map overlay can show WHY they didn't move.
+        var holdActions = moves.filter(function (m) { return m.hold; });
+        var heldInPlace = realMoves.filter(function (m) { return m.held; });
+        _heldMovementRecords = holdActions.concat(heldInPlace).map(function (m) {
+            var ulat = m.start ? m.start.lat : (m.unit ? (m.unit.lat != null ? m.unit.lat : (Array.isArray(m.unit.coord) ? m.unit.coord[1] : null)) : null);
+            var ulon = m.start ? m.start.lon : (m.unit ? (m.unit.lon != null ? m.unit.lon : (Array.isArray(m.unit.coord) ? m.unit.coord[0] : null)) : null);
+            return { uid: m.uid, side: m.unit ? (m.unit.side || '') : '',
+                lat: ulat, lon: ulon,
+                behavior: m.behavior || null, domain: m.domain || 'ground',
+                reason: m.hold ? 'HOLD_POSITION' : 'held — already in position' };
+        });
+        _domainBlockedRecords = realMoves.filter(function (m) {
+            return m.held && m.domain_validation && !m.domain_validation.ok;
+        }).map(function (m) {
+            return { uid: m.uid, side: m.unit ? (m.unit.side || '') : '',
+                lat: m.start ? m.start.lat : null, lon: m.start ? m.start.lon : null,
+                domain: m.domain || 'ground',
+                reason: (m.domain_validation && m.domain_validation.reason) || 'domain/territory violation',
+                violation_type: (m.domain_validation && m.domain_validation.violation_type) || '' };
         });
         var _el0 = _nowMs(); _logExecutedMoves(realMoves); var event_log_ms = _nowMs() - _el0;   // RMOOZ-...-LIVE-DELAY-AUDIT-N
         // 3) per-order status + completion
@@ -5659,6 +5710,8 @@
                     var movedKmThisTick = movedThisTick ? (movedRec[0].moved_km || 0) : 0;
                     var heldStep1  = !!_step1HeldUids[String(act.unit_uid || '')];
                     var heldDomain = !!_domainHeldUids[String(act.unit_uid || '')];
+                    var domBlkRec  = _domainBlockedRecords.filter(function(r){ return r.uid === act.unit_uid; })[0];
+                    var heldThisTick = _heldMovementRecords.some(function(r){ return r.uid === act.unit_uid && r.reason !== 'HOLD_POSITION'; });
                     var isMissing  = _missingUnitRecords.some(function (r) { return r.uid === act.unit_uid; });
                     var domain = act.domain || (ME && u ? ME.classifyUnitDomain(u) : 'unknown');
                     var movMode = act.movement_mode || (domain === 'air' ? 'air' : domain === 'naval' ? 'naval' : 'ground');
@@ -5668,8 +5721,10 @@
                     var unitMissing = isMissing || (!unitFound && act.action_type !== 'HOLD_POSITION' && act.behavior !== 'hold');
                     var blockedReason = unitMissing  ? 'UNIT NOT FOUND'
                         : heldStep1  ? 'HOLD REVIEW'
-                        : heldDomain ? 'DOMAIN BLOCKED'
-                        : (!taskable ? 'NOT TASKABLE' : null);
+                        : (domBlkRec  ? ('DOMAIN BLOCKED: ' + (domBlkRec.reason || domBlkRec.violation_type || 'territory violation'))
+                        : (heldDomain ? 'DOMAIN BLOCKED'
+                        : (heldThisTick ? 'HELD IN PLACE'
+                        : (!taskable ? 'NOT TASKABLE' : null))));
                     result.push({
                         uid: act.unit_uid, side: u ? (u.side || '') : '', role: act.role || '',
                         action_type: act.action_type || '',

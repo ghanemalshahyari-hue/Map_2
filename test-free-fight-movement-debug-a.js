@@ -98,7 +98,7 @@ function test(name, fn) {
 }
 
 var VALID_DOMAINS = ['air', 'ground', 'naval', 'sensor', 'air_defense', 'support', 'static', 'unknown'];
-var VALID_SOURCES = ['ai_behavior', 'staff_safe_fallback', 'ai', 'manual', 'unknown'];
+var VALID_SOURCES = ['ai_behavior', 'staff_safe_fallback', 'staff_safe_movement_engine', 'staff_safe_no_ai', 'ai', 'manual', 'unknown'];
 
 var rows = eng.movementDebug();
 
@@ -253,6 +253,40 @@ test('T-20 moved_km_this_tick > 0 for ground unit after tick', function () {
     var moveRow = postTickRows.find(function (r) { return r.uid === 'R-001'; });
     if (!moveRow) { console.log('    (R-001 row not found — skipping)'); return; }
     assert.ok(moveRow.moved_km_this_tick > 0, 'moved_km_this_tick must be > 0, got ' + moveRow.moved_km_this_tick);
+});
+
+// T-21: staff-safe COA actions carry behavior metadata (not just target coordinates)
+test('T-21 staff-safe action includes behavior/domain/waypoint_policy fields', function () {
+    Demo._setCoaPlanForTest(PLAN, false, 0);
+    // PLAN has explicit _source:'ai_behavior'; now generate a real staff-safe COA
+    var OBJ2 = { lat: 24.45, lon: 54.40, name: 'Obj X', object_type: 'objective' };
+    var ssUnits = [
+        { id: 'R-001', uid: 'R-001', side: 'RED', lat: 23.0, lon: 53.0, unit_type: 'Armor', name: 'armor-1', taskable: true }
+    ];
+    var ssCoa = Demo._staffSafeCommanderCoaForTest('RED', ssUnits, OBJ2, 'SS-T21');
+    assert.ok(ssCoa, 'must return a staff-safe COA');
+    var moveActs = (ssCoa.phases || []).reduce(function(arr, ph){ return arr.concat((ph.actions||[]).filter(function(a){return a.action_type !== 'HOLD_POSITION';})); }, []);
+    assert.ok(moveActs.length > 0, 'must have MOVE actions');
+    moveActs.forEach(function(act) {
+        assert.ok(act.behavior, 'MOVE action must have behavior, got: ' + act.behavior);
+        assert.ok(act.domain,   'MOVE action must have domain');
+        assert.ok(act.waypoint_policy, 'MOVE action must have waypoint_policy');
+        assert.ok(act._source && (act._source === 'staff_safe_movement_engine' || act._source === 'staff_safe_no_ai'),
+            '_source must be staff_safe_movement_engine or staff_safe_no_ai, got: ' + act._source);
+    });
+});
+
+// T-22: held movement records populated after tick (HOLD_POSITION units in records)
+test('T-22 _heldMovementRecords populated after tick with HOLD_POSITION units', function () {
+    Demo._setCoaPlanForTest(PLAN, false, 0);
+    Demo._commitCoaForTest(0);
+    Demo._coaExecTickForTest();
+    var held = Demo._getHeldMovementRecordsForTest();
+    // PLAN has one HOLD_POSITION action for B-001
+    var holdEntry = held.find(function(r){ return r.uid === 'B-001'; });
+    assert.ok(holdEntry, '_heldMovementRecords must contain the HOLD_POSITION unit B-001');
+    assert.strictEqual(holdEntry.reason, 'HOLD_POSITION', 'reason must be HOLD_POSITION');
+    Demo._setCoaPlanForTest(PLAN, false, 0);   // restore
 });
 
 // ── Summary ───────────────────────────────────────────────────────────────────

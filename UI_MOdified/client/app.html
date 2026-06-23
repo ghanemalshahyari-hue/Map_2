@@ -4699,23 +4699,23 @@
     <!-- FREE-FIGHT-DEMO + AI-LITE: symbolic RED-attacks-Objective-X / BLUE-reacts
          demo with a deterministic (no-LLM) attack/reaction planner. Review/demo
          only — no tasking/COA/weapons/damage/adjudication/world-state. -->
-    <script src="shell/free-fight-ai.js?v=ff-card-fix"></script>
+    <script src="shell/free-fight-ai.js?v=dual-layer-conflict-a"></script>
     <!-- DOMAIN-AWARE-MOVEMENT-A: review-only domain route shapes (naval→coast, support→hold). -->
     <script src="shell/domain-movement.js?v=domain-aware-movement-a"></script>
     <!-- RMOOZ-MOVEMENT-INTELLIGENCE-A: behavior-driven movement engine (domain classification,
          threat-axis, behavior→waypoints). Loaded BEFORE free-fight-demo.js. -->
-    <script src="shell/free-fight-movement-engine.js?v=movement-intelligence-a"></script>
+    <script src="shell/free-fight-movement-engine.js?v=movement-intelligence-b"></script>
     <!-- RMOOZ-COA-REALISM-GATE-A: sovereign-territory placement/movement/capture validation gate.
          Loaded BEFORE free-fight-demo.js so window.RmoozCoaRealismGate is present at init. -->
     <script src="shell/coa-realism-gate.js?v=coa-realism-gate-a"></script>
     <!-- RMOOZ-STEP1-COA-PREPARATION-GATE-AE: pure unit-taskability resolver (Step-1 review-only units are
          not taskable for movement). Loaded BEFORE free-fight-demo.js so window.RmoozTaskability is present. -->
     <script src="shell/unit-taskability.js?v=scenario-control-center-ak"></script>
-    <script src="shell/free-fight-demo.js?v=prepare-reprobe-a"></script>
+    <script src="shell/free-fight-demo.js?v=behavior-path-required-a"></script>
     <!-- RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: the new operator window (hard replacement for the old
          Free Fight control window). Drives the engine via window.RmoozFreeFightDemo.engine. The old
          right-side reasoning panel is disconnected; the old COA-card and V2 renderers are unreachable. -->
-    <script src="shell/scenario-control-center.js?v=honesty-harden-a"></script>
+    <script src="shell/scenario-control-center.js?v=dual-layer-conflict-a"></script>
     <script src="shell/free-fight-demo-ai-panel.js?v=1"></script>
     <!-- DEMO-ACTUAL-1: AI Decision-Making Scenario Preview. Isolated preview
          layer — never touches RmoozScenario.stepIndex, proposed_units, or any

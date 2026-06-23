@@ -35,6 +35,10 @@
     var _allGroups = [], _red = [], _blue = [], _anchors = [];
     var _progress = 0, _running = false, _paused = false, _timer = null;
     var _layer = null, _panel = null, _card = null, _aiPanel = null, _cmdrPanel = null;
+    // RMOOZ-DUAL-MAP-LAYER-CONFLICT-A: AI-lite staged preview lives on its own Leaflet
+    // layer group so it never bleeds onto the Free Fight / SCC execution layer.
+    var _aiLiteLayer = null;
+    var _aiLiteStagedVisible = true; // cleared permanently when SCC/COA mode activates
     var _winState = null, _viewportResizeHandler = null;
     var _plan = null, _terrain = { available: false }, _objectiveSource = null;
     var _aiDecision = null, _aiLoading = false, _aiApplied = false, _aiDiagnostics = null;
@@ -520,6 +524,15 @@
         return getState();
     }
 
+    // RMOOZ-DUAL-MAP-LAYER-CONFLICT-A: clear AI-lite staged preview groups and hide the
+    // overlay permanently for this session. Called before any real COA operation so the
+    // "staged" label markers are never visible alongside execution-path map output.
+    function _clearAiLiteStagedGroups() {
+        _aiLiteStagedVisible = false;
+        _red = []; _blue = [];
+        if (_aiLiteLayer) { try { _aiLiteLayer.clearLayers(); } catch (_) {} }
+    }
+
     // FREE-FIGHT-DEMO-B: graceful degradation messages (no crash for any shape).
     function freeFightWarnings() {
         var w = [];
@@ -683,6 +696,9 @@
         if (!mapReady()) return;
         if (!_layer) { _layer = w.L.layerGroup(); _layer.addTo(w.map); }
         _layer.clearLayers();
+        // RMOOZ-DUAL-MAP-LAYER-CONFLICT-A: AI-lite staged preview layer (separate from execution layer)
+        if (!_aiLiteLayer) { _aiLiteLayer = w.L.layerGroup(); _aiLiteLayer.addTo(w.map); }
+        _aiLiteLayer.clearLayers();
         // RMOOZ-FREEFIGHT-MAP-TRUTH-A: Objective X — operator-placed marker.
         // Shows as "ACTIVE OBJECTIVE X" with lat/lon/source. If the scenario had a
         // previous objective at a different position, it is drawn as INACTIVE.
@@ -716,23 +732,29 @@
             var _objLblIc = w.L.divIcon({ className: '', html: '<div style="font-size:9px;font-weight:700;color:#f0c040;background:rgba(8,14,20,.82);padding:1px 4px;border-radius:2px;white-space:nowrap;border:1px solid rgba(240,192,64,.35);">ACTIVE OBJECTIVE X</div>', iconSize: [130, 14], iconAnchor: [-8, 7] });
             _layer.addLayer(w.L.marker([_objective.lat, _objective.lon], { icon: _objLblIc, interactive: false, keyboard: false }));
         }
-        groups().forEach(function (g) {
-            if (!finiteLL(g.current)) return;
-            var color = colorFor(g);
-            var icon = w.L.divIcon({
-                className: 'rmooz-ff-group rmooz-ff-' + g.role.toLowerCase(),
-                html: '<div title="' + esc(g.role + ' demo group') + '" style="display:flex;align-items:center;gap:3px;">' +
-                    '<span style="width:15px;height:15px;border-radius:3px;background:' + color + ';border:2px solid ' + (g.role === 'RED' ? '#8f1f1f' : '#1f7a4d') + ';box-shadow:0 0 0 2px rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;color:#0c1118;font-size:10px;">' + groupGlyph(g) + '</span>' +
-                    '<span style="background:#0e1620;color:#e8eaed;border:1px solid ' + color + ';border-radius:3px;padding:0 4px;font-size:10px;font-weight:700;white-space:nowrap;">' + esc(g.country || g.side) + ' · ' + esc(g.phase) + '</span></div>',
-                iconSize: [120, 18], iconAnchor: [7, 9],
+        // RMOOZ-DUAL-MAP-LAYER-CONFLICT-A: AI-lite staged preview groups render on _aiLiteLayer,
+        // NOT on _layer. Gated: once any real COA operation fires, _aiLiteStagedVisible=false
+        // and these "staged" labels never appear alongside execution-path markers.
+        if (_aiLiteStagedVisible) {
+            groups().forEach(function (g) {
+                if (!finiteLL(g.current)) return;
+                var color = colorFor(g);
+                var icon = w.L.divIcon({
+                    className: 'rmooz-ff-group rmooz-ff-' + g.role.toLowerCase(),
+                    html: '<div title="' + esc(g.role + ' demo group') + '" style="display:flex;align-items:center;gap:3px;">' +
+                        '<span style="width:15px;height:15px;border-radius:3px;background:' + color + ';border:2px solid ' + (g.role === 'RED' ? '#8f1f1f' : '#1f7a4d') + ';box-shadow:0 0 0 2px rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;color:#0c1118;font-size:10px;">' + groupGlyph(g) + '</span>' +
+                        '<span style="background:#0e1620;color:#e8eaed;border:1px solid ' + color + ';border-radius:3px;padding:0 4px;font-size:10px;font-weight:700;white-space:nowrap;opacity:0.55;">' + esc(g.country || g.side) + ' · REVIEW PREVIEW</span></div>',
+                    iconSize: [120, 18], iconAnchor: [7, 9],
+                });
+                var m = w.L.marker(markerLatLng(g), { icon: icon, interactive: true, keyboard: false, title: 'AI-lite review preview (not execution) — preview overlay only, not actual imported positions' });
+                m._rmoozDemoOnly = true; m._rmoozReviewOnly = true; m._rmoozExactUnitPosition = false;
+                m._rmoozAiLitePreview = true;
+                m._rmoozSymbolCategory = dominant(g);
+                m._rmoozUnitIntelSummary = g.unit_intel_summary || null;
+                if (typeof m.on === 'function') m.on('click', function () { openDemoUnitCard(g); });
+                _aiLiteLayer.addLayer(m);
             });
-            var m = w.L.marker(markerLatLng(g), { icon: icon, interactive: true, keyboard: false, title: 'Free Fight Preview Group (' + g.role + ') — preview overlay only, not actual imported positions' });
-            m._rmoozDemoOnly = true; m._rmoozReviewOnly = true; m._rmoozExactUnitPosition = false;
-            m._rmoozSymbolCategory = dominant(g);
-            m._rmoozUnitIntelSummary = g.unit_intel_summary || null;
-            if (typeof m.on === 'function') m.on('click', function () { openDemoUnitCard(g); });
-            _layer.addLayer(m);
-        });
+        }
         // RMOOZ-MOVEMENT-TRUTH-A: plan preview arrows (plan ready, not yet committed)
         // and committed target overlay (committed, not yet run). Visual-only, no position mutation.
         try { _planPreviewLayer(w); } catch (_pp) {}
@@ -2936,6 +2958,7 @@
     function _generateCoaPlan() {
         var w = W();
         if (!w || typeof w.fetch !== 'function') return;
+        _clearAiLiteStagedGroups(); // RMOOZ-DUAL-MAP-LAYER-CONFLICT-A: clear AI-lite staged overlay before any COA operation
         _coaRepairAttempted = false;   // AD: fresh generate → repair budget reset
         _coaLoading = true; _coaPlan = null; _coaApplied = false; _coaMovedUnits = []; _mcpPromptExpanded = false;
         _routeUnavailableMsg = null;
@@ -3065,6 +3088,7 @@
         _coaLoadingTimer = null;
     }
     function _applySelectedCoa() {
+        _clearAiLiteStagedGroups(); // RMOOZ-DUAL-MAP-LAYER-CONFLICT-A
         if (!_coaPlan || !_coaPlan.ok || !Array.isArray(_coaPlan.coas) || !_coaPlan.coas.length) return;
         var idx = _coaSelectedIdx;
         if (idx < 0 || idx >= _coaPlan.coas.length) idx = 0;
@@ -3361,6 +3385,7 @@
         };
     }
     function _commitCoa(idx) {
+        _clearAiLiteStagedGroups(); // RMOOZ-DUAL-MAP-LAYER-CONFLICT-A
         if (!_coaPlan || !_coaPlan.ok || !Array.isArray(_coaPlan.coas) || !_coaPlan.coas.length) return null;
         var i = (idx == null) ? _coaSelectedIdx : idx;
         if (i < 0 || i >= _coaPlan.coas.length) i = 0;
@@ -3630,6 +3655,7 @@
     }
     // The ONLY operator path that re-engages the AI: stop executing + run a fresh Deep Plan (LLM).
     function _replanCoa() {
+        _clearAiLiteStagedGroups(); // RMOOZ-DUAL-MAP-LAYER-CONFLICT-A
         _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
         try { _appendToEventLog('Replan requested — calling the AI Commander for a fresh plan.'); } catch (_) {}
         _coaExec = null;
@@ -6134,7 +6160,24 @@
         _getDomainBlockedRecordsForTest: function () { return _domainBlockedRecords.slice(); },
         // RMOOZ-WARGAMINGGEN-MOVEMENT-ARCHITECTURE-A test seams
         _getMovedMovementRecordsForTest: function () { return _movedMovementRecords.slice(); },
+        // RMOOZ-DUAL-MAP-LAYER-CONFLICT-A test seams
+        _getAiLiteStagedVisibleForTest:  function ()  { return _aiLiteStagedVisible; },
+        _clearAiLiteStagedGroupsForTest: function ()  { _clearAiLiteStagedGroups(); },
+        _resetAiLiteStagedVisibleForTest: function () { _aiLiteStagedVisible = true; _red = []; _blue = []; },
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozFreeFightDemo = API;
+
+    // RMOOZ-DUAL-MAP-LAYER-CONFLICT-A: map layer mode controller.
+    // mode: 'ai_lite_preview' (default) → AI-lite staged preview visible.
+    //        'free_fight'               → SCC/COA execution active; AI-lite cleared.
+    if (typeof window !== 'undefined') window.RmoozMapLayerMode = {
+        _mode: 'ai_lite_preview',
+        mode: function () { return this._mode; },
+        setMode: function (m) {
+            this._mode = m;
+            if (m === 'free_fight') { try { _clearAiLiteStagedGroups(); } catch (_) {} }
+        },
+        isAiLiteVisible: function () { return _aiLiteStagedVisible; },
+    };
 })(typeof globalThis !== 'undefined' ? globalThis : this);

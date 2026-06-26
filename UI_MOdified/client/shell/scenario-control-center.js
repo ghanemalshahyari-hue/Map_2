@@ -396,10 +396,86 @@
         return '<div style="margin-top:6px;"><div style="font-size:9px;color:' + C.dim + ';font-weight:700;">' + esc(label) + '</div>' +
             '<pre style="margin:2px 0 0;padding:6px 8px;background:#06101c;border:1px solid ' + C.edgeSoft + ';border-radius:5px;color:#bcd;font-size:9px;line-height:1.4;overflow:auto;max-height:170px;white-space:pre-wrap;">' + esc(txt) + '</pre></div>';
     }
+    // RMOOZ-FF-EVIDENCE-BUILD-MARKER-A: the four Free Fight scripts whose ?v= must match the new build.
+    // Reading the live <script> src proves what the BROWSER loaded (cache detector), independent of what
+    // the running code believes its version is.
+    var FF_REQUIRED_SCRIPTS = [
+        { file: 'free-fight-ai.js', v: 'dual-layer-conflict-a' },
+        { file: 'free-fight-movement-engine.js', v: 'movement-intelligence-b' },
+        { file: 'free-fight-demo.js', v: 'behavior-path-required-a' },
+        { file: 'scenario-control-center.js', v: 'dual-layer-conflict-a' },
+    ];
+    function loadedScriptVersions() {
+        var out = {};
+        try {
+            var srcs = (typeof document !== 'undefined' && document.scripts)
+                ? [].slice.call(document.scripts).map(function (s) { return s.src || ''; }) : [];
+            FF_REQUIRED_SCRIPTS.forEach(function (r) {
+                var hit = srcs.filter(function (s) { return s.indexOf(r.file) !== -1; })[0] || '';
+                var m = hit.match(/[?&]v=([^&]+)/);
+                out[r.file] = { expected: r.v, loaded: m ? m[1] : null, match: !!m && m[1] === r.v };
+            });
+        } catch (_) {}
+        return out;
+    }
+    function diagRow(label, value, col) {
+        return '<div><span style="color:' + C.dim + ';">' + esc(label) + ':</span> <b style="color:' + (col || '#cfe6ff') + ';">' + esc(String(value)) + '</b></div>';
+    }
+    function buildDiagnosticsBlock(eng) {
+        var d = (function () { try { return eng.diagnostics ? eng.diagnostics() : null; } catch (_) { return null; } })();
+        var sv = loadedScriptVersions();
+        var allMatch = Object.keys(sv).length > 0 && Object.keys(sv).every(function (k) { return sv[k].match; });
+        var aiLiteVis = d ? d.ai_lite_layer_visible : null;
+        var aiLiteCol = aiLiteVis === false ? C.good : (aiLiteVis === true ? C.bad : C.dim);
+        var srcSum = (d && d.movement_source_summary) || {};
+        var html = '<div data-scc="ff-diagnostics" style="margin-top:6px;padding:7px 9px;border:1px solid ' +
+            (allMatch ? C.good : C.warn) + ';border-radius:5px;background:#06121e;font-size:9px;color:#bcd;line-height:1.55;">' +
+            '<div style="color:' + C.dim + ';font-weight:700;">Runtime build &amp; map-layer diagnostics</div>';
+        // build / cache marker
+        html += '<div data-scc="diag-build" style="margin-top:3px;">';
+        html += diagRow('free_fight_demo_version', d ? d.free_fight_demo_version : '—');
+        Object.keys(sv).forEach(function (f) {
+            var s = sv[f];
+            html += '<div style="font-size:8.5px;"><span style="color:' + C.dim + ';">' + esc(f) + ':</span> ' +
+                '<b style="color:' + (s.match ? C.good : C.bad) + ';">' + esc(String(s.loaded || '(not loaded)')) + '</b>' +
+                (s.match ? ' <span style="color:' + C.good + ';">✓</span>' : ' <span style="color:' + C.bad + ';">⚠ expected ' + esc(s.v || s.expected || '') + '</span>') + '</div>';
+        });
+        html += '<div style="margin-top:2px;font-weight:700;color:' + (allMatch ? C.good : C.bad) + ';">' +
+            (allMatch ? '✓ Browser is running THIS build' : '⚠ STALE CACHE or version mismatch — hard-refresh') + '</div>';
+        html += '</div>';
+        // map-layer ownership
+        html += '<div data-scc="diag-layer" style="margin-top:4px;border-top:1px solid ' + C.edgeSoft + ';padding-top:3px;">';
+        html += diagRow('map_layer_mode', d ? (d.map_layer_mode || '—') : '—');
+        html += diagRow('ai_lite_layer_visible', d ? d.ai_lite_layer_visible : '—', aiLiteCol);
+        html += diagRow('movement_engine_loaded', d ? d.movement_engine_loaded : '—', (d && d.movement_engine_loaded) ? C.good : C.bad);
+        html += '</div>';
+        // plan source
+        html += '<div data-scc="diag-plan" style="margin-top:4px;border-top:1px solid ' + C.edgeSoft + ';padding-top:3px;">';
+        html += diagRow('plan_source', d ? (d.plan_source || '—') : '—');
+        html += diagRow('llm_status', d ? (d.llm_status || '—') : '—');
+        html += diagRow('selected_coa_id', d ? (d.selected_coa_id || '—') : '—');
+        html += '</div>';
+        // movement source summary
+        html += '<div data-scc="diag-movement" style="margin-top:4px;border-top:1px solid ' + C.edgeSoft + ';padding-top:3px;">';
+        html += '<div style="color:' + C.dim + ';font-weight:700;">movement_source_summary</div>';
+        html += diagRow('ai_behavior', srcSum.ai_behavior || 0, C.good);
+        html += diagRow('degraded_behavior_repaired', srcSum.degraded_behavior_repaired || 0, C.good);
+        html += diagRow('staff_safe_movement_engine', srcSum.staff_safe_movement_engine || 0, C.warn);
+        html += diagRow('legacy_target', srcSum.legacy_target || 0, (srcSum.legacy_target ? C.bad : C.dim));
+        html += diagRow('moved / held / blocked / missing',
+            (d ? d.moved_count : 0) + ' / ' + (d ? d.held_count : 0) + ' / ' + (d ? d.blocked_count : 0) + ' / ' + (d ? d.missing_unit_count : 0));
+        html += '</div>';
+        html += '</div>';
+        return html;
+    }
     function panel6Evidence(eng) {
         var head = '<button data-act="scc-evidence-toggle" data-scc-evidence-open="' + (evidenceOpen ? '1' : '0') + '" style="font:inherit;cursor:pointer;border:1px solid #3a4658;background:#0c141d;color:' + C.dim + ';border-radius:5px;padding:5px 10px;font-size:10.5px;font-weight:600;">' + (evidenceOpen ? '▾' : '▸') + ' Debug / Evidence</button>';
         if (!evidenceOpen) return panel('6', 'Debug / Evidence', head + note('Proves exactly what is being executed — generated / selected / committed COA JSON, executed movement trace, decision log, network calls. Click to open.', C.dim), C.edgeSoft);
         var inner = head;
+        // RMOOZ-FF-EVIDENCE-BUILD-MARKER-A: runtime build + map-layer + movement-source diagnostics.
+        // First thing in the panel so an operator screenshot immediately reveals whether the browser ran
+        // THIS build or a stale cache, and whether AI-lite preview leaked into execution.
+        inner += buildDiagnosticsBlock(eng);
         // executed movement trace
         var trace = eng.executedTrace();
         inner += '<div style="margin-top:6px;font-size:9px;color:' + C.dim + ';font-weight:700;">Executed movement trace (' + trace.length + ')</div>';
@@ -412,22 +488,36 @@
         var mvd = (function () { try { return eng.movementDebug ? eng.movementDebug() : []; } catch (_) { return []; } })();
         if (mvd.length) {
             inner += '<div style="margin-top:6px;font-size:9px;color:' + C.dim + ';font-weight:700;">Movement debug (' + mvd.length + ' actions)</div>';
-            inner += '<div style="overflow-x:auto;margin-top:2px;"><table style="border-collapse:collapse;font-size:9px;width:100%;min-width:480px;">';
-            inner += '<thead><tr>' + ['unit', 'side', 'role', 'cur lat,lon', 'target lat,lon', 'dist', 'obj km', 'moved', 'ok', 'reason'].map(function (h) {
+            inner += '<div style="overflow-x:auto;margin-top:2px;"><table style="border-collapse:collapse;font-size:9px;width:100%;min-width:680px;">';
+            // RMOOZ-MOVEMENT-TRUTH-A + RMOOZ-FF-EVIDENCE-BUILD-MARKER-A: show domain/behavior/mode/source +
+            // moved-km/remaining-km so the operator can SEE that movement came from the behavior path.
+            inner += '<thead><tr>' + ['unit', 'side', 'domain', 'behavior', 'mode', 'source', 'cur lat,lon', 'cur→wp km', 'obj km', 'moved km', 'rem km', 'ok', 'reason'].map(function (h) {
                 return '<th style="border-bottom:1px solid ' + C.edgeSoft + ';padding:2px 5px;color:' + C.dim + ';font-weight:700;white-space:nowrap;text-align:left;">' + esc(h) + '</th>';
             }).join('') + '</tr></thead><tbody>';
             mvd.forEach(function (r) {
-                var rowCol = r.blocked_reason ? C.bad : (r.moved ? C.good : C.ink);
+                var moved = (r.moved != null) ? r.moved : r.moved_this_tick;
+                var rowCol = r.blocked_reason ? C.bad : (moved ? C.good : C.ink);
                 var sCol = r.side === 'RED' ? '#f09080' : r.side === 'BLUE' ? '#80c0f0' : C.ink;
+                var src = String(r.source || '');
+                var srcCol = (src === 'ai_behavior' || src === 'degraded_behavior_repaired') ? C.good
+                    : /staff_safe/.test(src) ? C.warn
+                    : (src === 'ai' || src === 'legacy' || src === 'legacy_target') ? C.bad : C.dim;
+                var curLat = (r.cur_lat != null) ? r.cur_lat : null;
+                var curLon = (r.cur_lon != null) ? r.cur_lon : null;
+                var d2wp = (r.distance_to_waypoint_km != null) ? r.distance_to_waypoint_km : r.dist_km;
+                var objKm = (r.distance_to_objective_km != null) ? r.distance_to_objective_km : r.obj_dist_km;
                 inner += '<tr>' +
                     '<td style="padding:2px 5px;white-space:nowrap;color:' + rowCol + ';">' + esc(r.uid || '—') + '</td>' +
                     '<td style="padding:2px 5px;font-weight:700;color:' + sCol + ';">' + esc(r.side || '—') + '</td>' +
-                    '<td style="padding:2px 5px;">' + esc(r.role || r.action_type || '—') + '</td>' +
-                    '<td style="padding:2px 5px;color:' + C.dim + ';font-size:8.5px;">' + (r.cur_lat != null ? r.cur_lat.toFixed(3) + ',' + r.cur_lon.toFixed(3) : '—') + '</td>' +
-                    '<td style="padding:2px 5px;color:' + C.dim + ';font-size:8.5px;">' + (r.tgt_lat != null ? r.tgt_lat.toFixed(3) + ',' + r.tgt_lon.toFixed(3) : '—') + '</td>' +
-                    '<td style="padding:2px 5px;">' + (r.dist_km != null ? r.dist_km : '—') + '</td>' +
-                    '<td style="padding:2px 5px;">' + (r.obj_dist_km != null ? r.obj_dist_km : '—') + '</td>' +
-                    '<td style="padding:2px 5px;font-weight:700;color:' + (r.moved ? C.good : C.dim) + ';">' + (r.moved ? '✓' : '—') + '</td>' +
+                    '<td style="padding:2px 5px;color:' + C.dim + ';">' + esc(r.domain || '—') + '</td>' +
+                    '<td style="padding:2px 5px;">' + esc(r.behavior || '—') + '</td>' +
+                    '<td style="padding:2px 5px;color:' + C.dim + ';">' + esc(r.movement_mode || '—') + '</td>' +
+                    '<td style="padding:2px 5px;font-weight:700;font-size:8.5px;color:' + srcCol + ';white-space:nowrap;">' + esc(src || '—') + '</td>' +
+                    '<td style="padding:2px 5px;color:' + C.dim + ';font-size:8.5px;">' + (curLat != null ? curLat.toFixed(3) + ',' + curLon.toFixed(3) : '—') + '</td>' +
+                    '<td style="padding:2px 5px;">' + (d2wp != null ? d2wp : '—') + '</td>' +
+                    '<td style="padding:2px 5px;">' + (objKm != null ? objKm : '—') + '</td>' +
+                    '<td style="padding:2px 5px;font-weight:700;color:' + (moved ? C.good : C.dim) + ';">' + (r.moved_km_this_tick != null ? r.moved_km_this_tick : (moved ? '✓' : '—')) + '</td>' +
+                    '<td style="padding:2px 5px;color:' + C.dim + ';">' + (r.remaining_km != null ? r.remaining_km : '—') + '</td>' +
                     '<td style="padding:2px 5px;color:' + (r.taskable ? C.good : C.bad) + ';font-weight:700;">' + (r.taskable ? 'yes' : 'no') + '</td>' +
                     '<td style="padding:2px 5px;font-size:8.5px;color:' + C.bad + ';">' + esc(r.blocked_reason || '') + '</td>' +
                     '</tr>';

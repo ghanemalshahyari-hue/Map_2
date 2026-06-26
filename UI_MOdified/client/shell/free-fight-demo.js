@@ -27,6 +27,10 @@
 (function (root) {
     'use strict';
 
+    // RMOOZ-FF-EVIDENCE-BUILD-MARKER-A: a single source-of-truth build tag, surfaced in the SCC
+    // Evidence/Debug panel so an operator screenshot proves whether the browser ran THIS build or a
+    // stale cache. Bump this when shipping a Free Fight behavior/layer change (mirror the app.html ?v=).
+    var _BUILD_MARKER = 'behavior-path-required-a';
     var RED_ATTACK = 2, BLUE_REACT = 3;     // sample sizes (nearest to Objective X)
     var STEP = 0.1, TICK_MS = 90;
     var BLUE_RING = 0.35;                    // BLUE intercept standoff (fraction of anchor→obj dist)
@@ -39,6 +43,10 @@
     // layer group so it never bleeds onto the Free Fight / SCC execution layer.
     var _aiLiteLayer = null;
     var _aiLiteStagedVisible = true; // cleared permanently when SCC/COA mode activates
+    // RMOOZ-FF-EVIDENCE-BUILD-MARKER-A: the live map-layer mode label. Flips to 'free_fight' the first
+    // time a real COA operation clears the AI-lite overlay, so the SCC Evidence panel reports the TRUE
+    // execution posture instead of a stuck default. Mirrored by window.RmoozMapLayerMode below.
+    var _mapLayerMode = 'ai_lite_preview';
     var _winState = null, _viewportResizeHandler = null;
     var _plan = null, _terrain = { available: false }, _objectiveSource = null;
     var _aiDecision = null, _aiLoading = false, _aiApplied = false, _aiDiagnostics = null;
@@ -529,6 +537,7 @@
     // "staged" label markers are never visible alongside execution-path map output.
     function _clearAiLiteStagedGroups() {
         _aiLiteStagedVisible = false;
+        _mapLayerMode = 'free_fight';   // a real COA operation owns the map now (execution posture)
         _red = []; _blue = [];
         if (_aiLiteLayer) { try { _aiLiteLayer.clearLayers(); } catch (_) {} }
     }
@@ -5899,6 +5908,46 @@
             });
             return result;
         },
+        // RMOOZ-FF-EVIDENCE-BUILD-MARKER-A: one runtime diagnostics object for the SCC Evidence panel.
+        // Lets an operator screenshot prove (a) which build the browser actually ran, (b) the map-layer
+        // ownership state (AI-lite cleared during execution), and (c) where movement came from — split
+        // by behavior source — without opening devtools. Pure read; mutates nothing.
+        diagnostics: function () {
+            var w = (typeof window !== 'undefined') ? window : {};
+            var p = _coaPlan || {};
+            var rows = (function () { try { return _engine.movementDebug(); } catch (_) { return []; } })();
+            var srcSummary = { ai_behavior: 0, degraded_behavior_repaired: 0, staff_safe_movement_engine: 0, legacy_target: 0, other: 0 };
+            var moved = 0, held = 0, blocked = 0, missing = 0;
+            rows.forEach(function (r) {
+                var s = String(r.source || '');
+                if (s === 'ai_behavior') srcSummary.ai_behavior++;
+                else if (s === 'degraded_behavior_repaired') srcSummary.degraded_behavior_repaired++;
+                else if (/staff_safe/.test(s)) srcSummary.staff_safe_movement_engine++;
+                else if (s === 'ai' || s === 'legacy' || s === 'legacy_target') srcSummary.legacy_target++;
+                else srcSummary.other++;
+                if (r.moved_this_tick) moved++;
+                if (r.blocked_reason === 'UNIT NOT FOUND') missing++;
+                else if (r.blocked_reason) { if (/HELD|HOLD/.test(r.blocked_reason)) held++; else blocked++; }
+            });
+            var selCoa = (function () { try { return _engine.rawJson('selected'); } catch (_) { return null; } })();
+            var mlm = w.RmoozMapLayerMode || null;
+            return {
+                free_fight_demo_version: _BUILD_MARKER,
+                movement_engine_loaded: !!w.RmoozMovementEngine,
+                realism_gate_loaded: !!w.RmoozCoaRealismGate,
+                map_layer_mode: (mlm && mlm.mode) ? mlm.mode() : null,
+                ai_lite_layer_visible: (mlm && mlm.isAiLiteVisible) ? !!mlm.isAiLiteVisible() : null,
+                plan_source: p.plan_source || null,
+                llm_called: !!p.llm_called,
+                llm_status: p.llm_status || null,
+                selected_coa_id: (selCoa && (selCoa.id || selCoa.coa_id || selCoa.name)) || null,
+                movement_source_summary: srcSummary,
+                moved_count: moved,
+                held_count: held,
+                blocked_count: blocked,
+                missing_unit_count: missing,
+            };
+        },
     };
 
     var API = {
@@ -6163,7 +6212,7 @@
         // RMOOZ-DUAL-MAP-LAYER-CONFLICT-A test seams
         _getAiLiteStagedVisibleForTest:  function ()  { return _aiLiteStagedVisible; },
         _clearAiLiteStagedGroupsForTest: function ()  { _clearAiLiteStagedGroups(); },
-        _resetAiLiteStagedVisibleForTest: function () { _aiLiteStagedVisible = true; _red = []; _blue = []; },
+        _resetAiLiteStagedVisibleForTest: function () { _aiLiteStagedVisible = true; _mapLayerMode = 'ai_lite_preview'; _red = []; _blue = []; },
     };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozFreeFightDemo = API;
@@ -6172,10 +6221,9 @@
     // mode: 'ai_lite_preview' (default) → AI-lite staged preview visible.
     //        'free_fight'               → SCC/COA execution active; AI-lite cleared.
     if (typeof window !== 'undefined') window.RmoozMapLayerMode = {
-        _mode: 'ai_lite_preview',
-        mode: function () { return this._mode; },
+        mode: function () { return _mapLayerMode; },
         setMode: function (m) {
-            this._mode = m;
+            _mapLayerMode = m;
             if (m === 'free_fight') { try { _clearAiLiteStagedGroups(); } catch (_) {} }
         },
         isAiLiteVisible: function () { return _aiLiteStagedVisible; },

@@ -71,7 +71,19 @@
         return null;
     }
 
+    function labelsApi() {
+        if (root.AppCmoEvidenceLabels) return root.AppCmoEvidenceLabels;
+        if (typeof require === 'function') {
+            try { return require('./cmo-evidence-labels.js'); } catch (_) {}
+        }
+        return null;
+    }
+
     function reasonLabelAr(code) {
+        var shared = labelsApi();
+        if (shared && typeof shared.reasonLabel === 'function') {
+            try { return shared.reasonLabel(code || 'unknown_reason', 'ar'); } catch (_) {}
+        }
         var DC = localDecisionApi();
         if (DC && typeof DC.reasonLabel === 'function') {
             try { return DC.reasonLabel(code || 'unknown_reason', 'ar'); } catch (_) {}
@@ -218,8 +230,10 @@
         var targetLatLng = resolveLatLng(ws, targetUid, opts.targetLatLng)
             || firstRawLatLng(engagement, 'target')
             || firstRawLatLng(contact, 'target');
-        var reason = decision.blocking_reason_code || engagement.reason_code || contact.reason_code || null;
         var status = decision.final_status || (engagement.can_engage ? 'Ready' : 'Unknown');
+        var reason = status === 'Ready'
+            ? null
+            : (decision.blocking_reason_code || engagement.reason_code || contact.reason_code || null);
         var weaponRangeNm = firstRangeNm(engagement, 'max_range_nm');
         var sensorRangeNm = firstRangeNm(contact, 'max_range_nm');
 

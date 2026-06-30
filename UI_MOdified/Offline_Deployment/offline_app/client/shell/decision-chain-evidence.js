@@ -88,6 +88,14 @@
         return null;
     }
 
+    function labelsApi() {
+        if (root.AppCmoEvidenceLabels) return root.AppCmoEvidenceLabels;
+        if (typeof require === 'function') {
+            try { return require('./cmo-evidence-labels.js'); } catch (_) {}
+        }
+        return null;
+    }
+
     function statusStep(key, status, reason, detail) {
         return {
             key: key,
@@ -116,6 +124,10 @@
     }
 
     function reasonLabel(code, lang) {
+        var shared = labelsApi();
+        if (shared && typeof shared.reasonLabel === 'function') {
+            try { return shared.reasonLabel(code || 'unknown_reason', lang); } catch (_) {}
+        }
         var k = code || 'unknown_reason';
         var map = String(lang || '').toLowerCase().indexOf('ar') === 0
             ? BLOCKING_REASON_LABELS_AR
@@ -230,7 +242,10 @@
         var status = ev.final_status || 'Unknown';
         var reasonCode = ev.blocking_reason_code || null;
         var reasonText = reasonCode ? reasonLabel(reasonCode, lang) + ' (' + reasonCode + ')' : 'None';
-        var statusArabic = status === 'Ready' ? 'جاهز' : (status === 'Blocked' ? 'ممنوع' : 'غير معروف');
+        var shared = labelsApi();
+        var statusArabic = shared && typeof shared.statusLabel === 'function'
+            ? shared.statusLabel(status, 'ar')
+            : (status === 'Ready' ? 'جاهز' : (status === 'Blocked' ? 'ممنوع' : 'غير معروف'));
         var html = '';
         html += '<div class="usp-chain-status ' + esc(String(status).toLowerCase()) + '">' +
             esc(status + ' / ' + statusArabic) + '</div>';

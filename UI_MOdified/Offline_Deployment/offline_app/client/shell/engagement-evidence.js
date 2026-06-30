@@ -49,7 +49,19 @@
             .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
     }
 
+    function labelsApi() {
+        if (root.AppCmoEvidenceLabels) return root.AppCmoEvidenceLabels;
+        if (typeof require === 'function') {
+            try { return require('./cmo-evidence-labels.js'); } catch (_) {}
+        }
+        return null;
+    }
+
     function reasonLabel(code, lang) {
+        var shared = labelsApi();
+        if (shared && typeof shared.reasonLabel === 'function') {
+            try { return shared.reasonLabel(code || 'unknown_reason', lang); } catch (_) {}
+        }
         var k = code || 'unknown_reason';
         var map = String(lang || '').toLowerCase().indexOf('ar') === 0
             ? ENGAGEMENT_REASON_LABELS_AR

@@ -4,6 +4,7 @@ const path = require('path');
 
 const modPath = path.join(__dirname, 'UI_MOdified', 'client', 'shell', 'contact-evidence.js');
 const source = fs.readFileSync(modPath, 'utf8');
+const Labels = require(path.join(__dirname, 'UI_MOdified', 'client', 'shell', 'cmo-evidence-labels.js'));
 const CE = require(modPath);
 
 let passed = 0;
@@ -80,7 +81,7 @@ test('unknown reason falls back safely and keeps code visible', () => {
   }, 'U1');
   const html = CE.renderContactEvidenceHtml(ev, { lang: 'ar' });
   assert.strictEqual(ev.reason_code, 'mystery_contact_gate');
-  assert.ok(html.includes('سبب الرصد غير معروف'));
+  assert.ok(html.includes(Labels.reasonLabel('unknown_reason', 'ar')));
   assert.ok(html.includes('mystery_contact_gate'));
 });
 

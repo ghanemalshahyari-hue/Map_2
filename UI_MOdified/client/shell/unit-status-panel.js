@@ -243,6 +243,7 @@
         populateFuelAmmo(unit, enriched);
         populateAssignment(unit);
         populateContactEvidence(unit);
+        populateDecisionChainEvidence(unit);
         populateEngagementEvidence(unit);
         populateSensors(enriched, getCapabilitySourceLabel(unit, enriched, 'sensors'));
         populateWeapons(enriched, getCapabilitySourceLabel(unit, enriched, 'weapons'));
@@ -1051,6 +1052,34 @@
         var uid = unit && (unit.uid || unit.id || unit.unit_uid);
         var evidence = _getUnitContactEvidence(uid);
         body.innerHTML = CE.renderContactEvidenceHtml(evidence, { lang: 'ar' });
+        block.removeAttribute('hidden');
+    }
+
+    // RMOOZ-CMO-3: read-only sensor-to-shooter decision chain.
+    // Aggregates existing CMO-1/CMO-2 evidence only.
+    function _getUnitDecisionChainEvidence(uid) {
+        if (!uid) return null;
+        try {
+            var DC = root.AppDecisionChainEvidence;
+            var map = root.AppAdjudicatorMap;
+            if (!DC || typeof DC.getUnitDecisionChainEvidence !== 'function') return null;
+            if (!map || typeof map.getWorldState !== 'function') return null;
+            return DC.getUnitDecisionChainEvidence(function () { return map.getWorldState(); }, uid);
+        } catch (_) { return null; }
+    }
+
+    function populateDecisionChainEvidence(unit) {
+        var block = $('usp-chain-evidence-block');
+        var body = $('usp-chain-evidence-body');
+        if (!block || !body) return;
+        var DC = root.AppDecisionChainEvidence;
+        if (!DC || typeof DC.renderDecisionChainEvidenceHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var uid = unit && (unit.uid || unit.id || unit.unit_uid);
+        var evidence = _getUnitDecisionChainEvidence(uid);
+        body.innerHTML = DC.renderDecisionChainEvidenceHtml(evidence, { lang: 'ar' });
         block.removeAttribute('hidden');
     }
 

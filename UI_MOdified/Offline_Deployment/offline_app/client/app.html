@@ -4625,11 +4625,6 @@
          Import Tools" (kept, not deleted). Orchestration only; porter unchanged. -->
     <!-- OFFLINE-RUNTIME-FIX-4: offline overlay replaces OSM tile URL with offline source -->
     <script src="shell/scenario-import-wizard.js?v=offline-fix4"></script>
-    <!-- FAST-DOC-1: DOCX Force Upload → WarGamingGEN → GeoJSON import bridge.
-         Uploads red/blue .docx to a staging folder, runs/stages the existing
-         WarGamingGEN generation, then imports the generated all_phases.geojson
-         through the same porter. RMOOZ never parses DOCX or calls the LLM. -->
-    <script src="shell/wargame-sim-import.js?v=4"></script>
     <!-- PR2: RMOOZ-native scenario loader + home-hub launch-intent wiring.
          Reuses AppShellScenarioWorkspace.loadLiveScenarioFromJson (global path);
          only acts when a ?launch= intent is present, so direct /app.html and the

@@ -72,30 +72,6 @@
                 'والأهداف والمواقع، ويحل الإحداثيات الناقصة للمراجعة، ثم تختار سيناريو بدون أو مع الذكاء الاصطناعي.</span>' +
             '</div>' +
             '<div class="wg-wz-body">' +
-              '<div class="wg-wz-doc-grid">' +
-                '<div class="wg-wz-doc-card wg-wz-doc-card--red" data-slot="red">' +
-                  '<div class="wg-wz-doc-head">' +
-                    '<span class="wg-wz-doc-side">Red team</span>' +
-                    '<span class="wg-wz-doc-type">.docx</span>' +
-                  '</div>' +
-                  '<div class="wg-wz-doc-file" id="wg-wz-red-name">No file selected</div>' +
-                  '<label class="wg-wz-file-btn" for="wg-wz-red">' +
-                    '<span>Choose DOCX</span>' +
-                    '<input type="file" id="wg-wz-red" class="wg-wz-file-input" accept=".docx">' +
-                  '</label>' +
-                '</div>' +
-                '<div class="wg-wz-doc-card wg-wz-doc-card--blue" data-slot="blue">' +
-                  '<div class="wg-wz-doc-head">' +
-                    '<span class="wg-wz-doc-side">Blue team</span>' +
-                    '<span class="wg-wz-doc-type">.docx</span>' +
-                  '</div>' +
-                  '<div class="wg-wz-doc-file" id="wg-wz-blue-name">No file selected</div>' +
-                  '<label class="wg-wz-file-btn" for="wg-wz-blue">' +
-                    '<span>Choose DOCX</span>' +
-                    '<input type="file" id="wg-wz-blue" class="wg-wz-file-input" accept=".docx">' +
-                  '</label>' +
-                '</div>' +
-              '</div>' +
               // Scenario name (optional) — set/edit before Start. Sent to the
               // importer as ?name=; blank keeps the existing safe default
               // (operation_name → safeName, or the partial auto-name).
@@ -186,9 +162,7 @@
             '<div style="margin-top:8px;">' +
               '<div style="font-size:11px;color:#9aa3ad;line-height:1.5;">' +
                 'Which files build the scenario, and how to change them safely:' +
-                '<ul style="margin:4px 0 6px 16px;padding:0;">' +
-                  '<li>To change <b>units</b> → edit the <b>DOCX</b> and regenerate.</li>' +
-                  '<li>To change <b>phase count / names</b> → edit <b>scenario.json</b> and regenerate.</li>' +
+                '<ul style="margin:4px 0 6px 16px;padding:0;">' +                  '<li>To change <b>phase count / names</b> → edit <b>scenario.json</b> and regenerate.</li>' +
                   '<li><b>Do not edit generated files</b> (OOB, checkpoints, GeoJSON, export).</li>' +
                   '<li>Step 0 files are <b>planning context</b> unless explicitly wired as generator input.</li>' +
                   '<li><b>GeoJSON is output, not source.</b></li>' +
@@ -203,8 +177,6 @@
         function fmtSrcStatus(s) {
             var t = s.status || {};
             switch (s.key) {
-                case 'red_docx': case 'blue_docx':
-                    return (t.input && t.input.present ? 'present' : 'missing') + (t.staged && t.staged.present ? ' · staged✓' : '');
                 case 'scenario_json': return t.present ? ('present · phases_total=' + t.phases_total) : 'missing';
                 case 'scenario_overrides': return t.present ? ('override active · lon ' + (t.override && t.override.lon ? t.override.lon.toFixed(2) : '?') + ' lat ' + (t.override && t.override.lat ? t.override.lat.toFixed(2) : '?')) : 'no override yet';
                 case 'step0':         return t.present ? (t.count + ' json file(s)') : 'folder absent';
@@ -244,12 +216,6 @@
         loadSources();
 
         var el = {
-            red:    card.querySelector('#wg-wz-red'),
-            blue:   card.querySelector('#wg-wz-blue'),
-            redRow: card.querySelector('[data-slot="red"]'),
-            blueRow: card.querySelector('[data-slot="blue"]'),
-            redName: card.querySelector('#wg-wz-red-name'),
-            blueName: card.querySelector('#wg-wz-blue-name'),
             name:    card.querySelector('#wg-wz-name'),
             start:  card.querySelector('#wg-wz-start'),
             stop:   card.querySelector('#wg-wz-stop'),
@@ -299,9 +265,7 @@
             var analyzeHint = document.createElement('div');
             analyzeHint.id = 'wg-wz-analyze-hint';
             analyzeHint.style.cssText = 'font-size:11px;color:#9aa3ad;margin-top:4px;line-height:1.5;';
-            analyzeHint.innerHTML = 'DOCX review uses staged <b>Red + Blue</b> documents. ' +
-                '<b>MDMP JSON</b> review can run separately. ' +
-                '<span style="color:#8fa5b8;">— مراجعة DOCX تستخدم مستندي الأحمر والأزرق؛ مراجعة MDMP JSON تعمل بشكل منفصل.</span>';
+            analyzeHint.innerHTML = 'JSON and MDMP review are available before generation.';
             actionRow.parentNode.insertBefore(analyzeHint, review);
             el.analyze = analyzeBtn;
             el.analyzeHint = analyzeHint;
@@ -661,7 +625,7 @@
             updateStartEnabled();   // restore Start button visibility
         }
         // WIZARD-FINGERPRINT-1: a stopped/partial run may only be surfaced as the
-        // CURRENT run when (a) the server proves the staged setup matches the
+        // CURRENT run when (a) the server proves the setup matches the
         // fingerprint that run was launched with, and (b) the operator hasn't
         // started reconfiguring a new setup since the wizard opened. Conservative:
         // missing metadata or any mismatch → not ours → Start-only.
@@ -749,7 +713,7 @@
         }
 
         function updateStartEnabled() {
-            el.start.disabled = !(st.red && st.blue) || st.running;
+            el.start.disabled = !!st.running;
             // WIZARD-STATE-1: hide the Start button while the stopped panel is shown
             // so the two are never simultaneously active.  The Restart button inside
             // the stopped panel serves the same action as Start.
@@ -758,107 +722,18 @@
                 el.stop.style.display = st.running ? 'inline-flex' : 'none';
                 el.stop.disabled = !!st.stopping;
             }
-            // DOC-UNDERSTANDING-1 / Phase E + RMOOZ-IMPORT-OBJECTIVE-UNITSTATUS-FIX-B (A):
-            // DOCX review needs BOTH Red + Blue staged (a single DOCX yields an
-            // incomplete, one-sided review/generation). MDMP JSON is the only
-            // "single-input" review path — staged MDMP files run on their own.
             if (el.analyze) {
                 el.analyze.style.display = st.stopped ? 'none' : '';
-                var mdmpOnly = !!(st.mdmpFiles && st.mdmpFiles.length);
-                var docxReady = !!(st.red && st.blue);
-                var jsonOnly = !!st.jsonImport;
-                // JSON understanding imports and staged MDMP JSONs are valid single-input
-                // review paths; DOCX requires both Red and Blue staged together.
-                el.analyze.disabled = st.running || !(mdmpOnly || jsonOnly || docxReady);
-                // Dynamic hint: explain the gate when exactly one DOCX is staged
-                // (and no MDMP) — the case that previously enabled an incomplete review.
+                var mdmpReady = !!(st.mdmpFiles && st.mdmpFiles.length);
+                var jsonReady = !!st.jsonImport;
+                el.analyze.disabled = st.running || !(mdmpReady || jsonReady);
                 if (el.analyzeHint) {
-                    var oneDocxOnly = (!!st.red !== !!st.blue) && !mdmpOnly && !jsonOnly;
-                    if (jsonOnly) {
-                        el.analyzeHint.innerHTML = 'JSON review is ready. DOCX review needs <b>both</b> Red + Blue staged. ' +
-                            '<span style="color:#8fa5b8;">— مراجعة JSON جاهزة، ومراجعة DOCX تتطلب المستندين معًا.</span>';
-                        el.analyzeHint.style.color = '#7fd6a0';
-                    } else {
-                        el.analyzeHint.innerHTML = oneDocxOnly
-                        ? '⚠ DOCX review needs <b>both</b> Red + Blue staged. Stage the other document, or use the MDMP JSON path for a separate review. ' +
-                          '<span style="color:#8fa5b8;">— مراجعة DOCX تتطلب المستندين معًا.</span>'
-                        : 'DOCX review uses staged <b>Red + Blue</b> documents. <b>MDMP JSON</b> review can run separately. ' +
-                          '<span style="color:#8fa5b8;">— مراجعة DOCX تستخدم مستندي الأحمر والأزرق؛ مراجعة MDMP JSON تعمل بشكل منفصل.</span>';
-                        el.analyzeHint.style.color = oneDocxOnly ? '#e0a93a' : '#9aa3ad';
-                    }
+                    el.analyzeHint.innerHTML = 'JSON and MDMP review are available before generation.';
+                    el.analyzeHint.style.color = (mdmpReady || jsonReady) ? '#7fd6a0' : '#9aa3ad';
                 }
             }
         }
 
-        function slotUi(slot) {
-            return slot === 'red'
-                ? { row: el.redRow, name: el.redName }
-                : { row: el.blueRow, name: el.blueName };
-        }
-
-        function markChoosing(slot) {
-            var ui = slotUi(slot);
-            var other = slotUi(slot === 'red' ? 'blue' : 'red');
-            if (other.row) other.row.classList.remove('is-active');
-            if (ui.row) {
-                ui.row.classList.add('is-active');
-                ui.row.classList.remove('is-error');
-            }
-        }
-
-        function markFilePicked(slot, file) {
-            var ui = slotUi(slot);
-            if (ui.name) ui.name.textContent = file && file.name ? file.name : 'No file selected';
-            if (ui.row) {
-                ui.row.classList.toggle('has-file', !!file);
-                ui.row.classList.remove('is-error');
-            }
-        }
-
-        function markReady(slot) {
-            var ui = slotUi(slot);
-            if (ui.row) {
-                ui.row.classList.add('is-ready');
-                ui.row.classList.remove('is-active', 'is-error');
-            }
-        }
-
-        function markError(slot) {
-            var ui = slotUi(slot);
-            if (ui.row) {
-                ui.row.classList.add('is-error');
-                ui.row.classList.remove('is-ready');
-            }
-        }
-
-        function stageDoc(slot, file) {
-            markChoosing(slot);
-            markFilePicked(slot, file);
-            setProgress(0, 'validating ' + slot + ' document');
-            if (!/\.docx$/i.test(file.name)) {
-                markError(slot);
-                setStatus('Please choose a .docx file for ' + slot + '.', '#e05252');
-                return;
-            }
-            setProgress(10, 'staging ' + slot + ' document');
-            return api('POST', '/api/wargame-sim/stage-doc?slot=' + slot, file, true).then(function (r) {
-                if (r.status !== 200 || !r.body || !r.body.ok) {
-                    markError(slot);
-                    setStatus('Upload failed for ' + slot + ': ' + ((r.body && r.body.error) || r.status), '#e05252');
-                    return;
-                }
-                st[slot] = true;
-                markReady(slot);
-                // WIZARD-FINGERPRINT-1: a newly staged DOCX is a new setup. Drop any
-                // stale stopped panel and show Start (the server will re-prove a
-                // match against the next run, not the old one).
-                markSetupDirty();
-                setStatus((st.red && st.blue) ? 'Both documents staged. Click Start.' : (slot + ' document staged.'), '#7fc07f');
-                updateStartEnabled();
-            });
-        }
-
-        // ── PREGEN-CONTROL-2: Scenario Setup (Objective X control) ──────────────
         var objMap = null;
         var objMarker = null;
         // FIX-B (B): Objective X is the single visible source of truth. Label whether
@@ -1037,7 +912,7 @@
             el.badge.style.display = 'none';
             // WIZARD-FINGERPRINT-1: a fresh Start defines the new run's setup, so the
             // setup is no longer "dirty" relative to it. The run-meta the server
-            // persists will match this staged setup.
+            // persists will match this setup.
             if (!resume) st.setupDirty = false;
             st.running = true; st.stopping = false; updateStartEnabled();
             // Part A: a fresh run starts at 0 (resume keeps its prior progress).
@@ -1230,7 +1105,7 @@
 
         function importPartial(customName) {
             // WIZARD-FINGERPRINT-1: never import a partial run that no longer matches
-            // the staged setup (operator changed DOCX / name / objective since it ran).
+            // the setup (operator changed DOCX / name / objective since it ran).
             if (st.setupDirty) {
                 hideStopped();
                 setStatus('That partial run is from a different setup. Start a new generation instead.', '#e0a93a');
@@ -1333,14 +1208,6 @@
         }
 
         // wire
-        el.red.addEventListener('click', function () { markChoosing('red'); });
-        el.blue.addEventListener('click', function () { markChoosing('blue'); });
-        el.red.addEventListener('focus', function () { markChoosing('red'); });
-        el.blue.addEventListener('focus', function () { markChoosing('blue'); });
-        if (el.redRow) el.redRow.addEventListener('click', function () { markChoosing('red'); });
-        if (el.blueRow) el.blueRow.addEventListener('click', function () { markChoosing('blue'); });
-        el.red.addEventListener('change', function () { if (el.red.files[0]) stageDoc('red', el.red.files[0]); });
-        el.blue.addEventListener('change', function () { if (el.blue.files[0]) stageDoc('blue', el.blue.files[0]); });
         el.start.addEventListener('click', function () { start(false); });
         el.stop.addEventListener('click', stopGeneration);
         el.cont.addEventListener('click', function () { start(true); });
@@ -1363,42 +1230,17 @@
         api('GET', STATUS).then(function (r) {
             var b = r.body || {}; var sim = b.sim || {};
             st.runEnabled = !!b.runEnabled;
-            st.red = !!(b.docs && b.docs.red); st.blue = !!(b.docs && b.docs.blue);
-            if (st.red) { try { el.red.previousSibling; } catch (_) {} }
             updateStartEnabled();
             if (sim.running) { st.running = true; updateStartEnabled(); el.pwrap.style.display = 'block'; beginPoll(); }
             // WIZARD-STATE-1: don't show the stopped panel for cancelled+phases_done=0
             // after a browser refresh — that normalises to clean idle (state A).
             // WIZARD-FINGERPRINT-1: AND only when the stopped run belongs to the
-            // current staged setup; otherwise stay in the clean Start state so a new
+            // current setup; otherwise stay in the clean Start state so a new
             // setup never inherits an unrelated old run's Continue/Partial options.
             else if ((sim.partial_available || sim.status === 'error' || sim.status === 'stopped_partial' ||
                      (sim.status === 'cancelled' && (sim.phases_done || 0) > 0)) && stoppedBelongsToSetup(sim)) { showStopped(b); }
             else { hideStopped(); }
         }).catch(function () { /* server may be down; wizard still renders */ });
-
-        // RMOOZ-AI-FREE-FIGHT-OPERATING-1 (Slice 1): make the JSON scenario-package
-        // import the PRIMARY operator path and demote the legacy Red/Blue DOCX inputs
-        // into a collapsed "Advanced" disclosure. DOCX generation stays fully available
-        // (Start Scenario Generation still works once both .docx are staged) — it is
-        // just off the main path, per "hide DOCX red/blue from the operator path".
-        (function reframeAsJsonFirst() {
-            try {
-                var grid = card.querySelector('.wg-wz-doc-grid');
-                if (grid && !(grid.parentNode && grid.parentNode.className === 'wg-wz-docx-advanced')) {
-                    var adv = document.createElement('details');
-                    adv.className = 'wg-wz-docx-advanced';
-                    adv.style.cssText = 'margin:8px 0;border:1px solid #2a3f37;border-radius:6px;padding:6px 10px;background:#0e1411;';
-                    adv.innerHTML = '<summary style="cursor:pointer;font-size:11.5px;color:#8fa5b8;">Advanced — generate from Red/Blue DOCX · متقدّم: التوليد من وثائق DOCX</summary>' +
-                        '<div style="font-size:10.5px;color:#7f8893;margin:6px 0 2px;">Legacy WarGamingGEN path — stage Red &amp; Blue .docx, then Start Scenario Generation. Not required for the JSON package import above.</div>';
-                    grid.parentNode.insertBefore(adv, grid);
-                    adv.appendChild(grid);
-                }
-                var body = card.querySelector('.wg-wz-body');
-                var jsonRow = card.querySelector('#wg-wz-json-row');
-                if (body && jsonRow && body.firstChild !== jsonRow) body.insertBefore(jsonRow, body.firstChild);
-            } catch (_) {}
-        })();
 
         window.AppScenarioImportWizard = {
             refresh: function () { return api('GET', STATUS); },
@@ -1413,7 +1255,7 @@
     function relocateAdvancedCards(attempt) {
         var body = document.getElementById('wg-advanced-body');
         if (!body) return;
-        var ids = ['wg-geojson-import-card', 'wg-sim-import-card', 'wg-local-import-card'];
+        var ids = ['wg-geojson-import-card', 'wg-local-import-card'];
         var moved = 0;
         ids.forEach(function (id) {
             var c = document.getElementById(id);

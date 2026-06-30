@@ -81,7 +81,7 @@ function emptyBrief() {
 
 // ── Slot dedupe → document set ──────────────────────────────────────
 // inputs: [{ slot:'red'|'blue'|…, filename, text?, bytes?, hash? }]
-// A precomputed `hash` (e.g. of the raw DOCX bytes captured at stage-doc)
+// A precomputed `hash` from the upstream source package
 // wins; otherwise we hash bytes, else the extracted text.
 function buildDocumentSet(inputs) {
     const list = Array.isArray(inputs) ? inputs.filter(Boolean) : [];

@@ -4728,11 +4728,6 @@
     <!-- DOC-UNDERSTANDING-1 / Phase E: shared AI-Understanding review renderer (used by the wizard + verify page). -->
     <script src="shell/doc-understanding-review.js?v=scc-load-a"></script>
     <script src="shell/scenario-import-wizard.js?v=ai-free-fight-slice1"></script>
-    <!-- FAST-DOC-1: DOCX Force Upload → WarGamingGEN → GeoJSON import bridge.
-         Uploads red/blue .docx to a staging folder, runs/stages the existing
-         WarGamingGEN generation, then imports the generated all_phases.geojson
-         through the same porter. RMOOZ never parses DOCX or calls the LLM. -->
-    <script src="shell/wargame-sim-import.js?v=4"></script>
     <!-- PR2: RMOOZ-native scenario loader + home-hub launch-intent wiring.
          Reuses AppShellScenarioWorkspace.loadLiveScenarioFromJson (global path);
          only acts when a ?launch= intent is present, so direct /app.html and the
@@ -4757,10 +4752,6 @@
         #wg-wz-setup,            /* old "Scenario Setup / تخطيط السيناريو" block */
         #wg-wz-start,            /* old "Start Scenario Generation" button */
         #wg-wz-mdmp-row,         /* "External MDMP files (steps 3/4/5, JSON)" + "Choose MDMP JSON" */
-        .wg-wz-docx-advanced,    /* Red/Blue DOCX staging (advanced) */
-        #wg-sim-import-card {    /* old WarGamingGEN / Import-Export RMOOZ card */
-            display: none !important;
-        }
         .sw-editmode-bar { display:flex; gap:8px; align-items:center; padding:6px 8px; flex-wrap:wrap; }
         .sw-edit-btn { font:inherit; cursor:pointer; border:1px solid #5a6270; background:#2a2f37;
             color:#e8eaed; border-radius:5px; padding:4px 10px; pointer-events: auto; }

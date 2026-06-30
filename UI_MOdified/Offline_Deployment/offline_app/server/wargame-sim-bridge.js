@@ -2,7 +2,6 @@
  * wargame-sim-bridge.js — FAST-DOC-1 / FAST-DOC-2: DOCX → WarGamingGEN → import
  * ----------------------------------------------------------------------------
  * Lets RMOOZ:
- *   1. accept red_team.docx / blue_team.docx uploads and place them where
  *      WarGamingGEN consumes them (inputs/forces, with .bak backup),
  *   2. RUN the real WarGamingGEN simulation on those DOCX (the full LLM run),
  *      forcing a working local config (LLM_LOCAL_FORCE_FALLBACK=0 + a capable
@@ -14,7 +13,6 @@
  *      porter (scripts/port-wargame.js), stamping DOCX provenance.
  *
  * Safety / guardrails:
- *   - DOCX only (ext + ZIP magic), fixed slots red|blue.
  *   - The ONLY runnable command is the WarGamingGEN run (test_full_run.py),
  *     and ONLY when RMOOZ_ALLOW_SIM_RUN=1. No arbitrary execution.
  *   - Import reuses port-wargame.js (no second parser, no rebuild).
@@ -39,8 +37,7 @@ const PORTER = require(path.join(ROOT, 'scripts', 'port-wargame.js'));
 
 // Resolve the TestingAI root. DEBUG-DOCX-1 root cause RC-2: the old hardcoded
 // 'C:/Users/ADMIN/Desktop/TestingAI' default is dead on any box whose user isn't
-// "ADMIN", so staged DOCX, the run, and the import all silently targeted a
-// non-existent tree (uploads never reached WarGamingGEN/inputs/forces → same
+// "ADMIN", so JSON input, the run, and the import all silently targeted a
 // result every time). Honor the env override first, then auto-detect the tree
 // under the CURRENT user's Desktop, then fall back to the legacy default.
 function resolveTestingAiDir() {
@@ -80,7 +77,6 @@ function cfg() {
     const wgen      = process.env.RMOOZ_WARGAMEGEN_DIR || path.join(testingAi, 'WarGamingGEN');
     return {
         testingAi, wgen,
-        importFromRmooz: path.join(testingAi, 'import_from_rmooz'),
         exportToRmooz:   path.join(testingAi, 'export_to_rmooz'),
         forcesDir:       path.join(wgen, 'inputs', 'forces'),
         runsDir:         path.join(wgen, 'runs'),
@@ -214,7 +210,6 @@ function redactSecrets(text) {
         .join('\n');
 }
 
-const SLOT_FILE = { red: 'red_team.docx', blue: 'blue_team.docx' };
 
 // Module-level state for the (long-running) simulation process.
 var simState = {
@@ -293,7 +288,7 @@ function publishRunToExport(c, runDir, inputDocs) {
         schema: 'testingai-export', version: 2,
         run_id: runName,
         generated_at: new Date().toISOString(),
-        input_docs: inputDocs || ['red_team.docx', 'blue_team.docx'],
+        input_docs: Array.isArray(inputDocs) ? inputDocs : [],
         files: {
             geojson_all: 'geojson/all_phases.geojson',
             geojson_steps: steps.sort(),
@@ -476,7 +471,7 @@ function computeSimProgress(c, st) {
     else if (done >= total)  { status = 'complete';        message = 'All ' + total + ' phases generated.'; }
     else                     { status = 'stopped_partial'; message = 'Generation stopped after ' + done + ' of ' + total + ' phases.'; }
     // WIZARD-FINGERPRINT-1: only let the client offer Continue / Partial-Import
-    // when the current staged setup matches the fingerprint this run launched
+    // when the current setup matches the fingerprint this run launched
     // with. While running, match is irrelevant (the progress panel owns the UI).
     var fp = (!running && done > 0) ? setupMatchesRun(c, runDir) : { matches: false, meta: null };
     return {
@@ -566,10 +561,6 @@ function computeSources(c, ctx) {
     var scenarioJsonPath = path.join(c.wgen, 'inputs', 'scenario.json');
     var oobPath  = path.join(c.forcesDir, 'current_oob_from_docx.json');
     var allPath  = runDir ? path.join(runDir, 'outputs', 'geojson', 'all_phases.geojson') : null;
-    var redIn    = path.join(c.forcesDir, 'red_team.docx');
-    var blueIn   = path.join(c.forcesDir, 'blue_team.docx');
-    var redStg   = path.join(c.importFromRmooz, 'red_team.docx');
-    var blueStg  = path.join(c.importFromRmooz, 'blue_team.docx');
     var ex       = latestExport(c);
     var fresh    = computeFreshness(c);
     var step0    = listStep0(c);
@@ -589,16 +580,6 @@ function computeSources(c, ctx) {
 
     var T = phasesTotal(c);
     var sources = [
-        { key: 'red_docx', file: 'red_team.docx', location: redIn,
-          role: 'RED force source document', used_for: 'enemy/RED ORBAT — formations, units, capabilities',
-          source_type: 'source input', editable: true,
-          how_to_modify: 'Edit the DOCX, re-upload in the wizard, then Start (regenerate).',
-          regen_needed: true, status: { input: fileStatus(redIn), staged: fileStatus(redStg) } },
-        { key: 'blue_docx', file: 'blue_team.docx', location: blueIn,
-          role: 'BLUE force source document', used_for: 'friendly/BLUE ORBAT — units, defenses, reserves',
-          source_type: 'source input', editable: true,
-          how_to_modify: 'Edit the DOCX, re-upload in the wizard, then Start (regenerate).',
-          regen_needed: true, status: { input: fileStatus(blueIn), staged: fileStatus(blueStg) } },
         { key: 'scenario_json', file: 'scenario.json', location: scenarioJsonPath,
           role: 'scenario plan / phase list', used_for: 'phase count, phase names, timeline, objective',
           source_type: 'advanced input', editable: true, editable_note: 'advanced — edit carefully',
@@ -824,7 +805,7 @@ function normalizeOverrideFile(c) {
 
 // ── WIZARD-FINGERPRINT-1: tie a stopped run to the setup that produced it ─────
 // A stopped/partial run must only be offered for Continue / Partial-Import when
-// the CURRENT staged setup (red+blue DOCX content + active objective) matches the
+// the current setup (red+blue DOCX content + active objective) matches the
 // setup the run was launched with. Otherwise the wizard would mix an old stopped
 // run into a brand-new scenario setup. We fingerprint by DOCX content hash (the
 // raw bytes staged into inputs/forces) + the active objective, persisted as
@@ -840,22 +821,18 @@ function round4(n) { return (typeof n === 'number' && isFinite(n)) ? Math.round(
 function currentSetupFingerprint(c) {
     var act = readObjectiveOverride(c) || getDefaultObjective(c) || {};
     return {
-        red_hash:  hashFile(path.join(c.forcesDir, SLOT_FILE.red)),
-        blue_hash: hashFile(path.join(c.forcesDir, SLOT_FILE.blue)),
         objective_lon: round4(act.lon),
         objective_lat: round4(act.lat),
     };
 }
 
-// Does the current staged setup match the fingerprint a stopped run was made
+// Does the current setup match the fingerprint a stopped run was made
 // with? Missing/partial metadata or any hash/objective mismatch → false.
 function setupMatchesRun(c, runDir) {
     var meta = runDir ? readJson(path.join(runDir, 'run-meta.json')) : null;
-    if (!meta || !meta.red_hash || !meta.blue_hash) return { matches: false, meta: meta || null };
+    if (!meta) return { matches: false, meta: null };
     var cur = currentSetupFingerprint(c);
-    var matches = meta.red_hash === cur.red_hash &&
-                  meta.blue_hash === cur.blue_hash &&
-                  meta.objective_lon === cur.objective_lon &&
+    var matches = meta.objective_lon === cur.objective_lon &&
                   meta.objective_lat === cur.objective_lat;
     return { matches: matches, meta: meta };
 }
@@ -872,8 +849,6 @@ function persistRunMetaWhenReady(c, baselineRun, fingerprint, requestedName, att
                 var meta = {
                     runId: runId,
                     requestedName: requestedName || null,
-                    red_hash: fingerprint.red_hash,
-                    blue_hash: fingerprint.blue_hash,
                     objective_lon: fingerprint.objective_lon,
                     objective_lat: fingerprint.objective_lat,
                     createdAt: new Date().toISOString(),
@@ -967,13 +942,11 @@ function handle(req, res, ctx) {
         var ex = latestExport(c);
         sendJson(res, 200, {
             ok: true,
-            docs: { red: exists(path.join(c.importFromRmooz, SLOT_FILE.red)),
-                    blue: exists(path.join(c.importFromRmooz, SLOT_FILE.blue)) },
             export: ex ? { run_id: ex.run_id, all_phases: ex.all_phases_present, report: ex.report, schedule: ex.schedule }
                        : { run_id: null, all_phases: false, report: false, schedule: false },
             sim: simPayload(c),                         // UNIFIED-IMPORT-2/3: real phase progress + cancel state
             runEnabled: c.allowRun,
-            paths: { import_from_rmooz: c.importFromRmooz, export_to_rmooz: c.exportToRmooz, forces: c.forcesDir, runs: c.runsDir },
+            paths: { export_to_rmooz: c.exportToRmooz, forces: c.forcesDir, runs: c.runsDir },
             commands: manualCommands(c),
             freshness: computeFreshness(c),               // FAST-DOC-2: stale-source visibility
         });
@@ -986,34 +959,6 @@ function handle(req, res, ctx) {
         return true;
     }
 
-    // ── stage a docx (raw body) ──
-    if (pathname === '/api/wargame-sim/stage-doc' && method === 'POST') {
-        const slot = (url.searchParams.get('slot') || '').toLowerCase();
-        if (!SLOT_FILE[slot]) { sendJson(res, 400, { ok: false, error: 'slot must be red|blue' }); return true; }
-        const chunks = []; let size = 0; const MAX = 20_000_000;
-        req.on('data', (d) => { size += d.length; if (size <= MAX) chunks.push(d); });
-        req.on('error', () => sendJson(res, 400, { ok: false, error: 'upload error' }));
-        req.on('end', () => {
-            if (size > MAX) { sendJson(res, 413, { ok: false, error: 'file too large' }); return; }
-            const buf = Buffer.concat(chunks);
-            if (buf.length < 4 || buf[0] !== 0x50 || buf[1] !== 0x4B) {
-                sendJson(res, 400, { ok: false, error: 'not a .docx (ZIP/PK signature missing)' }); return;
-            }
-            try {
-                mkdirp(c.importFromRmooz);
-                fs.writeFileSync(path.join(c.importFromRmooz, SLOT_FILE[slot]), buf);
-                let placed = false;
-                if (exists(c.forcesDir)) {
-                    const dest = path.join(c.forcesDir, SLOT_FILE[slot]);
-                    try { if (exists(dest)) fs.copyFileSync(dest, dest + '.bak'); fs.writeFileSync(dest, buf); placed = true; } catch (_) {}
-                }
-                sendJson(res, 200, { ok: true, slot, file: SLOT_FILE[slot], bytes: buf.length, placed_in_forces: placed });
-            } catch (e) { sendJson(res, 500, { ok: false, error: e.message }); }
-        });
-        return true;
-    }
-
-    // ── run the REAL WarGamingGEN simulation on the staged DOCX ──
     if (pathname === '/api/wargame-sim/run' && method === 'POST') {
         if (!c.allowRun) {
             sendJson(res, 200, { ok: false, manual: true,
@@ -1068,7 +1013,7 @@ function handle(req, res, ctx) {
         try {
             child = spawn(c.python, runArgs(resume), { cwd: c.wgen, env: env });
         } catch (e) { sendJson(res, 500, { ok: false, error: 'spawn failed: ' + e.message }); return true; }
-        // WIZARD-FINGERPRINT-1: snapshot the staged setup and persist run-meta.json
+        // WIZARD-FINGERPRINT-1: snapshot the setup and persist run-meta.json
         // into the new run dir once it appears, so a later "stopped run" can be
         // matched to (and only offered for) the setup that produced it. Fresh runs
         // only — a resume continues an existing run and keeps its original meta.
@@ -1101,7 +1046,7 @@ function handle(req, res, ctx) {
                 return;
             }
             if (code === 0) {
-                const pub = publishRunToExport(c, latestRunDir(c), ['red_team.docx', 'blue_team.docx']);
+                const pub = publishRunToExport(c, latestRunDir(c), []);
                 simState.published = pub.ok ? pub.run_id : null;
                 simState.runName = pub.ok ? pub.run_id : simState.runName;
                 if (!pub.ok) simState.error = 'publish: ' + pub.error;
@@ -1221,7 +1166,7 @@ function handle(req, res, ctx) {
             }
         });
         sendJson(res, 200, { ok: true, started: true,
-            note: 'Full WarGamingGEN run started on the staged DOCX (model ' + c.simModel + '). This takes a while; poll /status, then Import when sim.running is false and export.all_phases is true.',
+            note: 'Full WarGamingGEN run started from configured inputs (model ' + c.simModel + '). This takes a while; poll /status, then Import when sim.running is false and export.all_phases is true.',
             sim: simState });
         return true;
     }
@@ -1320,7 +1265,7 @@ function handle(req, res, ctx) {
 
     // ── publish newest run → dated export folder (no sim) ──
     if (pathname === '/api/wargame-sim/publish' && method === 'POST') {
-        const pub = publishRunToExport(c, latestRunDir(c), ['red_team.docx', 'blue_team.docx']);
+        const pub = publishRunToExport(c, latestRunDir(c), []);
         sendJson(res, pub.ok ? 200 : 400, pub);
         return true;
     }
@@ -1362,7 +1307,7 @@ function handle(req, res, ctx) {
         try {
             const scenario = PORTER.buildScenarioFromGeoJson(fc, { name: safeName });
             scenario.source = 'WarGamingGEN';
-            scenario.input_docs = ['red_team.docx', 'blue_team.docx'];
+            scenario.input_docs = [];
             scenario.generated_from_docs = true;
             scenario.imported_from_geojson = true;
             scenario.source_file = 'all_phases.geojson';

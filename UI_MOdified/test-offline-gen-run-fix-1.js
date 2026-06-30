@@ -199,19 +199,19 @@ test('.env.offline.example contains NO real API key', () => {
     assert.ok(!/sk-[A-Za-z0-9]{16,}/.test(envEx), 'no OpenAI-style key in example');
 });
 
-// ─── §8  Main app untouched ──────────────────────────────────────────────────
-console.log('\n── §8  Main app untouched ──────────────────────────────────────');
+// ─── §8  Main app parity cleanup ─────────────────────────────────────────────
+console.log('\n── §8  Main app parity cleanup ─────────────────────────────────');
 
-test('main server/wargame-sim-bridge.js still has original single-line spawn env', () => {
+test('main server/wargame-sim-bridge.js no longer exposes removed DOCX staging', () => {
     const mainBridge = fs.readFileSync(path.join(ROOT, 'server', 'wargame-sim-bridge.js'), 'utf8');
-    assert.ok(mainBridge.includes("Object.assign({}, process.env, { LLM_LOCAL_FORCE_FALLBACK: '1', LLM_MODEL: c.simModel })"),
-        'main bridge must be unchanged');
-    assert.ok(!mainBridge.includes('buildLlmChildEnv'), 'main bridge must NOT have the overlay helper');
+    assert.ok(!mainBridge.includes('/api/wargame-sim/stage-doc'), 'main bridge must not expose stage-doc');
+    assert.ok(!mainBridge.includes('SLOT_FILE'), 'main bridge must not retain DOCX slot constants');
 });
 
-test('main client/shell/scenario-import-wizard.js untouched (no genFailed)', () => {
+test('main client/shell/scenario-import-wizard.js no longer calls stage-doc', () => {
     const mainWiz = fs.readFileSync(path.join(ROOT, 'client', 'shell', 'scenario-import-wizard.js'), 'utf8');
-    assert.ok(!mainWiz.includes('genFailed'), 'main wizard must be unchanged');
+    assert.ok(!mainWiz.includes('/api/wargame-sim/stage-doc'), 'main wizard must not call stage-doc');
+    assert.ok(!mainWiz.includes('wg-wz-red'), 'main wizard must not render removed Red DOCX input');
 });
 
 // ─── §9  Runtime (optional — needs container) ────────────────────────────────

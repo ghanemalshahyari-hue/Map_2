@@ -242,6 +242,7 @@
         populateMagazines(enriched);
         populateFuelAmmo(unit, enriched);
         populateAssignment(unit);
+        populateEngagementEvidence(unit);
         populateSensors(enriched, getCapabilitySourceLabel(unit, enriched, 'sensors'));
         populateWeapons(enriched, getCapabilitySourceLabel(unit, enriched, 'weapons'));
         populateSpeed(unit);
@@ -996,6 +997,34 @@
     }
 
     // ── Assignment ────────────────────────────────────────────────────
+    // RMOOZ-CMO-1: read-only engagement "why not" evidence accessor.
+    // Reads already-derived World State engagement records only.
+    function _getUnitEngagementWhyNot(uid) {
+        if (!uid) return null;
+        try {
+            var EE = root.AppEngagementEvidence;
+            var map = root.AppAdjudicatorMap;
+            if (!EE || typeof EE.getUnitEngagementWhyNot !== 'function') return null;
+            if (!map || typeof map.getWorldState !== 'function') return null;
+            return EE.getUnitEngagementWhyNot(function () { return map.getWorldState(); }, uid);
+        } catch (_) { return null; }
+    }
+
+    function populateEngagementEvidence(unit) {
+        var block = $('usp-engagement-evidence-block');
+        var body = $('usp-engagement-evidence-body');
+        if (!block || !body) return;
+        var EE = root.AppEngagementEvidence;
+        if (!EE || typeof EE.renderEngagementEvidenceHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var uid = unit && (unit.uid || unit.id || unit.unit_uid);
+        var evidence = _getUnitEngagementWhyNot(uid);
+        body.innerHTML = EE.renderEngagementEvidenceHtml(evidence, { lang: 'ar' });
+        block.removeAttribute('hidden');
+    }
+
     function populateAssignment(unit) {
         // Read current-step tasking record (null = no actor for this unit this step)
         var uid = unit.uid || unit.id;

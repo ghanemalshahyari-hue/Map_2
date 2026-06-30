@@ -242,6 +242,7 @@
         populateMagazines(enriched);
         populateFuelAmmo(unit, enriched);
         populateAssignment(unit);
+        populateContactEvidence(unit);
         populateEngagementEvidence(unit);
         populateSensors(enriched, getCapabilitySourceLabel(unit, enriched, 'sensors'));
         populateWeapons(enriched, getCapabilitySourceLabel(unit, enriched, 'weapons'));
@@ -1022,6 +1023,34 @@
         var uid = unit && (unit.uid || unit.id || unit.unit_uid);
         var evidence = _getUnitEngagementWhyNot(uid);
         body.innerHTML = EE.renderEngagementEvidenceHtml(evidence, { lang: 'ar' });
+        block.removeAttribute('hidden');
+    }
+
+    // RMOOZ-CMO-2: read-only contact freshness evidence.
+    // Reads existing World State contacts only; never computes or changes detection.
+    function _getUnitContactEvidence(uid) {
+        if (!uid) return null;
+        try {
+            var CE = root.AppContactEvidence;
+            var map = root.AppAdjudicatorMap;
+            if (!CE || typeof CE.getUnitContactEvidence !== 'function') return null;
+            if (!map || typeof map.getWorldState !== 'function') return null;
+            return CE.getUnitContactEvidence(function () { return map.getWorldState(); }, uid);
+        } catch (_) { return null; }
+    }
+
+    function populateContactEvidence(unit) {
+        var block = $('usp-contact-evidence-block');
+        var body = $('usp-contact-evidence-body');
+        if (!block || !body) return;
+        var CE = root.AppContactEvidence;
+        if (!CE || typeof CE.renderContactEvidenceHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var uid = unit && (unit.uid || unit.id || unit.unit_uid);
+        var evidence = _getUnitContactEvidence(uid);
+        body.innerHTML = CE.renderContactEvidenceHtml(evidence, { lang: 'ar' });
         block.removeAttribute('hidden');
     }
 

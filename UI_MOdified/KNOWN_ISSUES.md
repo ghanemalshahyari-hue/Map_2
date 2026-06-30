@@ -95,13 +95,7 @@ Existing WHITE/adjudication logic if present must be wrapped as WHITE agent outp
 UI_MOdified/client/shell/scenario-control-center.js
 Replace old DOCX/demo-first flow with scenario import → resolver review → AI/non-AI choice → agent Free Fight.
 Remove/deprecate from operator path
-The old red/blue DOCX staging flow must not be the main flow anymore:
-
-/api/wargame-sim/stage-doc?slot=red|blue
-old red_team.docx / blue_team.docx workflow
-old UI labels/buttons that make the operator think they must import separate blue/red docs
-old demo wording around WarGamingGEN DOCX import
-Do not blindly delete useful backend helpers until all references are mapped. First hide/deprecate from UI, then remove dead routes/tests once replacement path is green.
+Completed by RMOOZ-CLEANUP-1: the legacy red/blue DOCX staging route, upload gate, and operator labels were removed from the live app path. Keep the Objective X / scenario setup path as the canonical source.
 
 New architecture
 Canonical scenario input contract

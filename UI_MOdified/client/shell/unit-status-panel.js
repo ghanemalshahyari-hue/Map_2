@@ -245,6 +245,7 @@
         populateContactEvidence(unit);
         populateDecisionChainEvidence(unit);
         populateEngagementEvidence(unit);
+        populateEvidenceTimeline(unit);
         populateSensors(enriched, getCapabilitySourceLabel(unit, enriched, 'sensors'));
         populateWeapons(enriched, getCapabilitySourceLabel(unit, enriched, 'weapons'));
         populateSpeed(unit);
@@ -1024,6 +1025,11 @@
         var uid = unit && (unit.uid || unit.id || unit.unit_uid);
         var evidence = _getUnitEngagementWhyNot(uid);
         body.innerHTML = EE.renderEngagementEvidenceHtml(evidence, { lang: 'ar' });
+        try {
+            if (root.RmoozCmoEvidenceTimeline && typeof root.RmoozCmoEvidenceTimeline.observeEngagement === 'function') {
+                root.RmoozCmoEvidenceTimeline.observeEngagement(uid, evidence);
+            }
+        } catch (_) {}
         block.removeAttribute('hidden');
     }
 
@@ -1052,6 +1058,11 @@
         var uid = unit && (unit.uid || unit.id || unit.unit_uid);
         var evidence = _getUnitContactEvidence(uid);
         body.innerHTML = CE.renderContactEvidenceHtml(evidence, { lang: 'ar' });
+        try {
+            if (root.RmoozCmoEvidenceTimeline && typeof root.RmoozCmoEvidenceTimeline.observeContact === 'function') {
+                root.RmoozCmoEvidenceTimeline.observeContact(uid, evidence);
+            }
+        } catch (_) {}
         block.removeAttribute('hidden');
     }
 
@@ -1080,6 +1091,25 @@
         var uid = unit && (unit.uid || unit.id || unit.unit_uid);
         var evidence = _getUnitDecisionChainEvidence(uid);
         body.innerHTML = DC.renderDecisionChainEvidenceHtml(evidence, { lang: 'ar' });
+        try {
+            if (root.RmoozCmoEvidenceTimeline && typeof root.RmoozCmoEvidenceTimeline.observeDecision === 'function') {
+                root.RmoozCmoEvidenceTimeline.observeDecision(uid, evidence);
+            }
+        } catch (_) {}
+        block.removeAttribute('hidden');
+    }
+
+    function populateEvidenceTimeline(unit) {
+        var block = $('usp-evidence-timeline-block');
+        var body = $('usp-evidence-timeline-body');
+        if (!block || !body) return;
+        var TL = root.RmoozCmoEvidenceTimeline;
+        if (!TL || typeof TL.renderTimelineHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var uid = unit && (unit.uid || unit.id || unit.unit_uid);
+        body.innerHTML = TL.renderTimelineHtml(uid, { lang: 'ar', limit: 6 });
         block.removeAttribute('hidden');
     }
 

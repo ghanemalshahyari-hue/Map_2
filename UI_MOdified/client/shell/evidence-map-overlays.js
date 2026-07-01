@@ -334,6 +334,11 @@
         }
 
         try { overlayLayer.addTo(map); } catch (_) {}
+        try {
+            if (root.RmoozCmoEvidenceTimeline && typeof root.RmoozCmoEvidenceTimeline.observeOverlay === 'function') {
+                root.RmoozCmoEvidenceTimeline.observeOverlay(state.uid, state);
+            }
+        } catch (_) {}
         return state;
     }
 

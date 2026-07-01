@@ -3600,6 +3600,14 @@
                         <div class="usp-section-body" id="usp-chain-evidence-body"></div>
                     </div>
 
+                    <!-- RMOOZ-CMO-5: bounded read-only evidence timeline -->
+                    <div class="usp-tasking-block usp-evidence-timeline-block" id="usp-evidence-timeline-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">Evidence Timeline / سجل الأدلة</span>
+                        </div>
+                        <div class="usp-section-body" id="usp-evidence-timeline-body"></div>
+                    </div>
+
                     <!-- RMOOZ-CMO-1: read-only engagement evidence from World State / ENG1 -->
                     <div class="usp-tasking-block usp-engagement-evidence-block" id="usp-engagement-evidence-block" hidden>
                         <div class="usp-section-hdr">
@@ -4541,6 +4549,7 @@
     <!-- App-shell safe-area measurer: publishes --rmooz-shell-top-safe / --rmooz-shell-bottom-safe so fixed right-side drawers bound to the content band. Must load before the panels that use it. -->
     <script src="shell/shell-safe-area.js?v=1"></script>
     <script src="shell/cmo-evidence-labels.js?v=1"></script>
+    <script src="shell/cmo-evidence-timeline.js?v=1"></script>
     <script src="shell/contact-evidence.js?v=1"></script>
     <script src="shell/engagement-evidence.js?v=1"></script>
     <script src="shell/decision-chain-evidence.js?v=1"></script>
@@ -6135,6 +6144,26 @@
         .usp-chain-pill.pass { color:#8fd6a3; }
         .usp-chain-pill.blocked { color:#f0ad7a; }
         .usp-chain-pill.unknown { color:#9aa8b6; }
+        .usp-evidence-timeline-block { background:#080d14; }
+        .usp-timeline-intro {
+            padding:5px 0.75rem; font-size:0.66rem; color:#7fa0b8;
+            border-bottom:1px solid #142033; text-transform:uppercase;
+            font-family:'Consolas','Courier New',monospace;
+        }
+        .usp-timeline-row {
+            display:grid; grid-template-columns:58px minmax(0,1fr); gap:7px;
+            padding:4px 0.75rem; border-bottom:1px solid #0d1420;
+            font-family:'Consolas','Courier New',monospace;
+        }
+        .usp-timeline-row:last-child { border-bottom:none; }
+        .usp-timeline-time { color:#5a7890; font-size:0.63rem; white-space:nowrap; }
+        .usp-timeline-text { color:#a8c8e8; font-size:0.68rem; line-height:1.35; word-break:break-word; }
+        .usp-timeline-row.ready .usp-timeline-text { color:#8fd6a3; }
+        .usp-timeline-row.blocked .usp-timeline-text { color:#f0ad7a; }
+        .usp-timeline-empty {
+            padding:6px 0.75rem; color:#9aa8b6; font-size:0.68rem;
+            font-family:'Consolas','Courier New',monospace;
+        }
         .usp-engagement-evidence-block { background:#080d14; }
         .usp-engagement-status {
             padding:5px 0.75rem; font-size:0.72rem; font-weight:bold;
@@ -6178,6 +6207,12 @@
         [data-theme="light"] .usp-chain-status { border-bottom-color:#d5e4f0; }
         [data-theme="light"] .usp-chain-lbl { color:#5a7890; }
         [data-theme="light"] .usp-chain-val { color:#244c68; }
+        [data-theme="light"] .usp-evidence-timeline-block { background:#f7fbff; }
+        [data-theme="light"] .usp-timeline-intro,
+        [data-theme="light"] .usp-timeline-row { border-bottom-color:#d5e4f0; }
+        [data-theme="light"] .usp-timeline-time { color:#5a7890; }
+        [data-theme="light"] .usp-timeline-text { color:#244c68; }
+        [data-theme="light"] .usp-timeline-empty { color:#5a7890; }
         [data-theme="light"] .usp-engagement-evidence-block { background:#f7fbff; }
         [data-theme="light"] .usp-engagement-row,
         [data-theme="light"] .usp-engagement-status { border-bottom-color:#d5e4f0; }

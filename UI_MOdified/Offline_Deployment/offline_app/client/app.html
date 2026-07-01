@@ -5605,6 +5605,20 @@
         .usp-matrix-count.ready .usp-matrix-count-val { color:#8fd6a3; }
         .usp-matrix-count.blocked .usp-matrix-count-val { color:#f0ad7a; }
         .usp-matrix-count.unknown .usp-matrix-count-val { color:#9aa8b6; }
+        .usp-matrix-filters {
+            display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px;
+            padding:6px 0.75rem; border-bottom:1px solid #142033;
+        }
+        .usp-matrix-filter-btn {
+            border:1px solid #1d3148; background:#0d1724; color:#8aaabb;
+            font-size:0.6rem; line-height:1; padding:5px 4px; border-radius:4px;
+            font-family:'Consolas','Courier New',monospace; cursor:pointer;
+            text-transform:uppercase;
+        }
+        .usp-matrix-filter-btn:hover,
+        .usp-matrix-filter-btn.active {
+            background:#183047; border-color:#3a6a90; color:#d6e4ef;
+        }
         .usp-matrix-subtitle {
             padding:5px 0.75rem 3px; color:#7fa0b8; font-size:0.62rem;
             text-transform:uppercase; font-family:'Consolas','Courier New',monospace;
@@ -5613,8 +5627,12 @@
         .usp-matrix-blocker {
             display:grid; grid-template-columns:minmax(0,1fr) 28px; gap:5px;
             padding:3px 0; border-bottom:1px solid #0d1420;
-            font-family:'Consolas','Courier New',monospace;
+            font-family:'Consolas','Courier New',monospace; width:100%;
+            appearance:none; background:transparent; border-left:none; border-right:none;
+            border-top:none; cursor:pointer; text-align:left;
         }
+        .usp-matrix-blocker:hover,
+        .usp-matrix-blocker.active { background:#101c2a; }
         .usp-matrix-blocker span { color:#f0ad7a; font-size:0.66rem; word-break:break-word; }
         .usp-matrix-blocker strong { color:#d6e4ef; font-size:0.68rem; text-align:right; }
         .usp-matrix-blocker em {
@@ -5634,6 +5652,9 @@
         .usp-matrix-table th { color:#5a7890; text-transform:uppercase; font-size:0.56rem; }
         .usp-matrix-row.ready td { color:#8fd6a3; }
         .usp-matrix-row.blocked td { color:#f0ad7a; }
+        .usp-matrix-row { cursor:pointer; }
+        .usp-matrix-row:hover,
+        .usp-matrix-row:focus { outline:none; background:#101c2a; }
         .usp-matrix-pill {
             display:inline-block; min-width:48px; color:#9aa8b6; font-weight:bold;
             text-transform:uppercase;

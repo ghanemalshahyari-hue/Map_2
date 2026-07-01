@@ -1063,6 +1063,17 @@
         }, { limit: 24 });
         body._cmoEvidenceReadinessMatrix = matrix;
         body.innerHTML = MX.renderMatrixHtml(matrix, { lang: 'ar' });
+        if (typeof MX.bindMatrixInteractions === 'function') {
+            MX.bindMatrixInteractions(body, matrix, {
+                onSelectUnit: function (row) {
+                    if (!row || !root.document || typeof root.document.dispatchEvent !== 'function') return;
+                    var unit = row.unit || { uid: row.uid, label: row.unit_label, side: row.side };
+                    root.document.dispatchEvent(new CustomEvent('rmooz:unit-selected', {
+                        detail: { unit: unit, selectedAt: Date.now(), source: 'cmo-readiness-matrix' }
+                    }));
+                }
+            });
+        }
         block.removeAttribute('hidden');
     }
 

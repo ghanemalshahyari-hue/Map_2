@@ -3584,6 +3584,14 @@
                         </div>
                     </div>
 
+                    <!-- RMOOZ-CMO-9: read-only evidence alert badges -->
+                    <div class="usp-tasking-block usp-evidence-alerts-block" id="usp-evidence-alerts-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">Evidence Alerts / &#1578;&#1606;&#1576;&#1610;&#1607;&#1575;&#1578; &#1575;&#1604;&#1571;&#1583;&#1604;&#1577;</span>
+                        </div>
+                        <div class="usp-section-body" id="usp-evidence-alerts-body"></div>
+                    </div>
+
                     <!-- RMOOZ-CMO-7: read-only force-level evidence readiness matrix -->
                     <div class="usp-tasking-block usp-evidence-matrix-block" id="usp-evidence-matrix-block" hidden>
                         <div class="usp-section-hdr">
@@ -4570,6 +4578,7 @@
     <script src="shell/engagement-evidence.js?v=1"></script>
     <script src="shell/decision-chain-evidence.js?v=1"></script>
     <script src="shell/cmo-evidence-readiness-matrix.js?v=1"></script>
+    <script src="shell/cmo-evidence-alerts.js?v=1"></script>
     <script src="shell/evidence-map-overlays.js?v=1"></script>
     <script src="shell/cmo-evidence-export.js?v=1"></script>
     <script src="shell/unit-status-panel.js?v=1"></script>
@@ -6111,6 +6120,34 @@
             color:#a8c8e8;
             white-space:pre-line;
         }
+        .usp-evidence-alerts-block { background:#080d14; }
+        .usp-alert-grid {
+            display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px;
+            padding:6px 0.75rem;
+        }
+        .usp-alert-badge {
+            display:flex; align-items:center; justify-content:space-between; gap:6px;
+            min-height:32px; padding:5px 6px; border:1px solid #1d3148;
+            border-radius:4px; background:#0d1724; color:#a8c8e8;
+            font-family:'Consolas','Courier New',monospace; cursor:pointer;
+            text-align:left;
+        }
+        .usp-alert-badge:hover { background:#16263a; border-color:#3a6a90; }
+        .usp-alert-label {
+            font-size:0.58rem; line-height:1.2; text-transform:uppercase;
+            color:#7fa0b8; word-break:break-word;
+        }
+        .usp-alert-value {
+            font-size:0.74rem; color:#d6e4ef; white-space:nowrap;
+        }
+        .usp-alert-badge.blocked .usp-alert-value,
+        .usp-alert-badge.top .usp-alert-value { color:#f0ad7a; }
+        .usp-alert-badge.unknown .usp-alert-value,
+        .usp-alert-badge.contact .usp-alert-value { color:#9aa8b6; }
+        .usp-alert-top-label {
+            padding:0 0.75rem 6px; color:#8aaabb; font-size:0.64rem;
+            font-family:'Consolas','Courier New',monospace; line-height:1.35;
+        }
         .usp-evidence-matrix-block { background:#080d14; }
         .usp-matrix-summary {
             display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:4px;
@@ -6311,6 +6348,14 @@
         [data-theme="light"] .usp-tasking-overlay-val { color:#0f5f94; }
         [data-theme="light"] .usp-tasking-diff-row { background:#f6fbff; border-bottom-color:#d5e4f0; }
         [data-theme="light"] .usp-tasking-diff-val { color:#244c68; }
+        [data-theme="light"] .usp-evidence-alerts-block { background:#f7fbff; }
+        [data-theme="light"] .usp-alert-badge {
+            background:#eef7ff; border-color:#c8dff2; color:#244c68;
+        }
+        [data-theme="light"] .usp-alert-badge:hover { background:#e3f1fb; }
+        [data-theme="light"] .usp-alert-label { color:#5a7890; }
+        [data-theme="light"] .usp-alert-value,
+        [data-theme="light"] .usp-alert-top-label { color:#244c68; }
         [data-theme="light"] .usp-evidence-matrix-block { background:#f7fbff; }
         [data-theme="light"] .usp-matrix-summary,
         [data-theme="light"] .usp-matrix-filters,

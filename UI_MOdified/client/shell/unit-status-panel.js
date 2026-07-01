@@ -21,6 +21,7 @@
 
     var $ = function(id) { return document.getElementById(id); };
     var currentUnit = null;
+    var currentMatrixFilter = { status: 'All', reason_code: null };
 
     // ── i18n helper ───────────────────────────────────────────────────
     function tr(key, fallback) {
@@ -242,6 +243,7 @@
         populateMagazines(enriched);
         populateFuelAmmo(unit, enriched);
         populateAssignment(unit);
+        populateEvidenceAlerts(unit);
         populateEvidenceReadinessMatrix(unit);
         populateContactEvidence(unit);
         populateDecisionChainEvidence(unit);
@@ -1048,6 +1050,36 @@
         } catch (_) { return null; }
     }
 
+    function _getCurrentWorldState() {
+        var map = root.AppAdjudicatorMap;
+        return map && typeof map.getWorldState === 'function' ? map.getWorldState() : null;
+    }
+
+    function populateEvidenceAlerts(unit) {
+        var block = $('usp-evidence-alerts-block');
+        var body = $('usp-evidence-alerts-body');
+        if (!block || !body) return;
+        var MX = root.RmoozCmoEvidenceReadinessMatrix;
+        var AL = root.RmoozCmoEvidenceAlerts;
+        if (!MX || !AL || typeof MX.buildMatrix !== 'function' || typeof AL.buildAlerts !== 'function' || typeof AL.renderAlertsHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var matrix = MX.buildMatrix(_getCurrentWorldState, { limit: 24 });
+        var alerts = AL.buildAlerts(matrix);
+        body._cmoEvidenceAlerts = alerts;
+        body.innerHTML = AL.renderAlertsHtml(alerts, { lang: 'ar' });
+        if (typeof AL.bindAlertInteractions === 'function') {
+            AL.bindAlertInteractions(body, alerts, {
+                onFilter: function (filter) {
+                    currentMatrixFilter = filter || { status: 'All', reason_code: null };
+                    populateEvidenceReadinessMatrix(unit || currentUnit);
+                }
+            });
+        }
+        block.removeAttribute('hidden');
+    }
+
     function populateEvidenceReadinessMatrix(unit) {
         var block = $('usp-evidence-matrix-block');
         var body = $('usp-evidence-matrix-body');
@@ -1057,14 +1089,15 @@
             block.setAttribute('hidden', '');
             return;
         }
-        var map = root.AppAdjudicatorMap;
         var matrix = MX.buildMatrix(function () {
-            return map && typeof map.getWorldState === 'function' ? map.getWorldState() : null;
+            return _getCurrentWorldState();
         }, { limit: 24 });
         body._cmoEvidenceReadinessMatrix = matrix;
-        body.innerHTML = MX.renderMatrixHtml(matrix, { lang: 'ar' });
+        body.innerHTML = MX.renderMatrixHtml(matrix, { lang: 'ar', filter: currentMatrixFilter });
         if (typeof MX.bindMatrixInteractions === 'function') {
             MX.bindMatrixInteractions(body, matrix, {
+                filter: currentMatrixFilter,
+                onFilter: function (filter) { currentMatrixFilter = filter || { status: 'All', reason_code: null }; },
                 onSelectUnit: function (row) {
                     if (!row || !root.document || typeof root.document.dispatchEvent !== 'function') return;
                     var unit = row.unit || { uid: row.uid, label: row.unit_label, side: row.side };

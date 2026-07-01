@@ -246,6 +246,7 @@
         populateEvidenceAlerts(unit);
         populateEvidenceReadinessMatrix(unit);
         populateForceEvidenceFeed(unit);
+        populateForceEvidenceReport(unit);
         populateContactEvidence(unit);
         populateDecisionChainEvidence(unit);
         populateEngagementEvidence(unit);
@@ -1137,6 +1138,25 @@
                 onSelectUnit: function (event) { selectEvidenceUnit(event, 'cmo-force-evidence-feed'); }
             });
         }
+        block.removeAttribute('hidden');
+    }
+
+    function populateForceEvidenceReport(unit) {
+        var block = $('usp-force-report-block');
+        var body = $('usp-force-report-body');
+        if (!block || !body) return;
+        var RP = root.RmoozCmoForceEvidenceReport;
+        if (!RP || typeof RP.buildReport !== 'function' || typeof RP.renderReportHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var report = RP.buildReport(_getCurrentWorldState, {
+            selected_unit: unit || currentUnit,
+            generated_at: new Date().toISOString()
+        });
+        body._cmoForceEvidenceReport = report;
+        body.innerHTML = RP.renderReportHtml(report);
+        if (typeof RP.bindReportActions === 'function') RP.bindReportActions(body, report);
         block.removeAttribute('hidden');
     }
 

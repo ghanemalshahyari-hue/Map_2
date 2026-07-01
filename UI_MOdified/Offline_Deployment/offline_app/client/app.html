@@ -3546,6 +3546,14 @@
                         <div class="usp-arow"><span class="usp-arow-lbl" data-i18n="up-field-mission">Mission</span><span class="usp-arow-val usp-link" id="usp-mission">&#8212;</span></div>
                     </div>
 
+                    <!-- RMOOZ-CMO-7: read-only force-level evidence readiness matrix -->
+                    <div class="usp-tasking-block usp-evidence-matrix-block" id="usp-evidence-matrix-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">Evidence Readiness Matrix / &#1605;&#1589;&#1601;&#1608;&#1601;&#1577; &#1580;&#1575;&#1607;&#1586;&#1610;&#1577; &#1575;&#1604;&#1575;&#1588;&#1578;&#1576;&#1575;&#1603;</span>
+                        </div>
+                        <div class="usp-section-body" id="usp-evidence-matrix-body"></div>
+                    </div>
+
                     <!-- RMOOZ-CMO-2: read-only contact freshness evidence from World State / DET1 -->
                     <div class="usp-tasking-block usp-contact-evidence-block" id="usp-contact-evidence-block" hidden>
                         <div class="usp-section-hdr">
@@ -4509,6 +4517,7 @@
     <script src="shell/contact-evidence.js?v=1"></script>
     <script src="shell/engagement-evidence.js?v=1"></script>
     <script src="shell/decision-chain-evidence.js?v=1"></script>
+    <script src="shell/cmo-evidence-readiness-matrix.js?v=1"></script>
     <script src="shell/evidence-map-overlays.js?v=1"></script>
     <script src="shell/cmo-evidence-export.js?v=1"></script>
     <script src="shell/unit-status-panel.js?v=1"></script>
@@ -5577,6 +5586,65 @@
         .usp-link { color:#4a90c0; cursor:default; }
         .usp-tasking-block { border-bottom:1px solid #141e2a; }
         .usp-tasking-block[hidden] { display:none !important; }
+        .usp-evidence-matrix-block { background:#080d14; }
+        .usp-matrix-summary {
+            display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:4px;
+            padding:6px 0.75rem; border-bottom:1px solid #142033;
+        }
+        .usp-matrix-count {
+            border:1px solid #142033; background:#0b121c; padding:5px 4px;
+            font-family:'Consolas','Courier New',monospace;
+        }
+        .usp-matrix-count-val {
+            display:block; font-size:0.86rem; font-weight:bold; color:#d6e4ef;
+        }
+        .usp-matrix-count-lbl {
+            display:block; font-size:0.56rem; color:#7fa0b8; text-transform:uppercase;
+            line-height:1.25; word-break:break-word;
+        }
+        .usp-matrix-count.ready .usp-matrix-count-val { color:#8fd6a3; }
+        .usp-matrix-count.blocked .usp-matrix-count-val { color:#f0ad7a; }
+        .usp-matrix-count.unknown .usp-matrix-count-val { color:#9aa8b6; }
+        .usp-matrix-subtitle {
+            padding:5px 0.75rem 3px; color:#7fa0b8; font-size:0.62rem;
+            text-transform:uppercase; font-family:'Consolas','Courier New',monospace;
+        }
+        .usp-matrix-blockers { padding:0 0.75rem 5px; }
+        .usp-matrix-blocker {
+            display:grid; grid-template-columns:minmax(0,1fr) 28px; gap:5px;
+            padding:3px 0; border-bottom:1px solid #0d1420;
+            font-family:'Consolas','Courier New',monospace;
+        }
+        .usp-matrix-blocker span { color:#f0ad7a; font-size:0.66rem; word-break:break-word; }
+        .usp-matrix-blocker strong { color:#d6e4ef; font-size:0.68rem; text-align:right; }
+        .usp-matrix-blocker em {
+            grid-column:1 / -1; color:#8aaabb; font-size:0.62rem; font-style:normal;
+            word-break:break-word;
+        }
+        .usp-matrix-table-wrap { overflow:auto; max-height:190px; border-top:1px solid #142033; }
+        .usp-matrix-table {
+            width:100%; border-collapse:collapse; table-layout:fixed;
+            font-family:'Consolas','Courier New',monospace; font-size:0.62rem;
+        }
+        .usp-matrix-table th,
+        .usp-matrix-table td {
+            padding:4px 5px; border-bottom:1px solid #0d1420;
+            text-align:left; color:#a8c8e8; word-break:break-word;
+        }
+        .usp-matrix-table th { color:#5a7890; text-transform:uppercase; font-size:0.56rem; }
+        .usp-matrix-row.ready td { color:#8fd6a3; }
+        .usp-matrix-row.blocked td { color:#f0ad7a; }
+        .usp-matrix-pill {
+            display:inline-block; min-width:48px; color:#9aa8b6; font-weight:bold;
+            text-transform:uppercase;
+        }
+        .usp-matrix-pill.ready { color:#8fd6a3; }
+        .usp-matrix-pill.blocked { color:#f0ad7a; }
+        .usp-matrix-source,
+        .usp-matrix-empty {
+            padding:6px 0.75rem; color:#9aa8b6; font-size:0.64rem;
+            font-family:'Consolas','Courier New',monospace; line-height:1.35;
+        }
         .usp-contact-evidence-block { background:#080d14; }
         .usp-contact-status {
             padding:5px 0.75rem; font-size:0.72rem; font-weight:bold;

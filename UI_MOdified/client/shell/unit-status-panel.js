@@ -242,6 +242,7 @@
         populateMagazines(enriched);
         populateFuelAmmo(unit, enriched);
         populateAssignment(unit);
+        populateEvidenceReadinessMatrix(unit);
         populateContactEvidence(unit);
         populateDecisionChainEvidence(unit);
         populateEngagementEvidence(unit);
@@ -1045,6 +1046,24 @@
             if (!map || typeof map.getWorldState !== 'function') return null;
             return CE.getUnitContactEvidence(function () { return map.getWorldState(); }, uid);
         } catch (_) { return null; }
+    }
+
+    function populateEvidenceReadinessMatrix(unit) {
+        var block = $('usp-evidence-matrix-block');
+        var body = $('usp-evidence-matrix-body');
+        if (!block || !body) return;
+        var MX = root.RmoozCmoEvidenceReadinessMatrix;
+        if (!MX || typeof MX.buildMatrix !== 'function' || typeof MX.renderMatrixHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var map = root.AppAdjudicatorMap;
+        var matrix = MX.buildMatrix(function () {
+            return map && typeof map.getWorldState === 'function' ? map.getWorldState() : null;
+        }, { limit: 24 });
+        body._cmoEvidenceReadinessMatrix = matrix;
+        body.innerHTML = MX.renderMatrixHtml(matrix, { lang: 'ar' });
+        block.removeAttribute('hidden');
     }
 
     function populateContactEvidence(unit) {

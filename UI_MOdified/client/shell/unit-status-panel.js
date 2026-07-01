@@ -244,6 +244,7 @@
         populateFuelAmmo(unit, enriched);
         populateAssignment(unit);
         populateEvidenceAlerts(unit);
+        populateEvidenceQualityGate(unit);
         populateEvidenceReadinessMatrix(unit);
         populateForceEvidenceFeed(unit);
         populateForceEvidenceReport(unit);
@@ -1092,6 +1093,24 @@
         root.document.dispatchEvent(new CustomEvent('rmooz:unit-selected', {
             detail: { unit: unit, selectedAt: Date.now(), source: source || 'cmo-evidence' }
         }));
+    }
+
+    function populateEvidenceQualityGate(unit) {
+        var block = $('usp-evidence-quality-block');
+        var body = $('usp-evidence-quality-body');
+        if (!block || !body) return;
+        var QG = root.RmoozCmoEvidenceQualityGate;
+        if (!QG || typeof QG.buildQualityGate !== 'function' || typeof QG.renderQualityGateHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var quality = QG.buildQualityGate(_getCurrentWorldState, {
+            selected_unit: unit || currentUnit,
+            generated_at: new Date().toISOString()
+        });
+        body._cmoEvidenceQualityGate = quality;
+        body.innerHTML = QG.renderQualityGateHtml(quality);
+        block.removeAttribute('hidden');
     }
 
     function populateEvidenceReadinessMatrix(unit) {

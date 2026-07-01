@@ -3554,6 +3554,14 @@
                         <div class="usp-section-body" id="usp-evidence-alerts-body"></div>
                     </div>
 
+                    <!-- RMOOZ-CMO-12: read-only evidence quality gate -->
+                    <div class="usp-tasking-block usp-evidence-quality-block" id="usp-evidence-quality-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">Evidence Quality / &#1580;&#1608;&#1583;&#1577; &#1575;&#1604;&#1571;&#1583;&#1604;&#1577;</span>
+                        </div>
+                        <div class="usp-section-body" id="usp-evidence-quality-body"></div>
+                    </div>
+
                     <!-- RMOOZ-CMO-7: read-only force-level evidence readiness matrix -->
                     <div class="usp-tasking-block usp-evidence-matrix-block" id="usp-evidence-matrix-block" hidden>
                         <div class="usp-section-hdr">
@@ -4543,6 +4551,7 @@
     <script src="shell/decision-chain-evidence.js?v=1"></script>
     <script src="shell/cmo-evidence-readiness-matrix.js?v=1"></script>
     <script src="shell/cmo-evidence-alerts.js?v=1"></script>
+    <script src="shell/cmo-evidence-quality-gate.js?v=1"></script>
     <script src="shell/cmo-force-evidence-feed.js?v=1"></script>
     <script src="shell/cmo-force-evidence-report.js?v=1"></script>
     <script src="shell/evidence-map-overlays.js?v=1"></script>
@@ -5639,6 +5648,52 @@
         .usp-alert-badge.contact .usp-alert-value { color:#9aa8b6; }
         .usp-alert-top-label {
             padding:0 0.75rem 6px; color:#8aaabb; font-size:0.64rem;
+            font-family:'Consolas','Courier New',monospace; line-height:1.35;
+        }
+        .usp-evidence-quality-block { background:#080d14; }
+        .usp-quality-status {
+            display:flex; align-items:center; justify-content:space-between; gap:8px;
+            padding:6px 0.75rem; border-bottom:1px solid #142033;
+            font-family:'Consolas','Courier New',monospace;
+        }
+        .usp-quality-status span {
+            color:#7fa0b8; font-size:0.62rem; text-transform:uppercase;
+        }
+        .usp-quality-status strong { color:#d6e4ef; font-size:0.72rem; text-align:right; }
+        .usp-quality-status.ready strong { color:#8fd6a3; }
+        .usp-quality-status.review strong { color:#f0ad7a; }
+        .usp-quality-status.unknown strong { color:#9aa8b6; }
+        .usp-quality-counts {
+            display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px;
+            padding:6px 0.75rem; border-bottom:1px solid #142033;
+            font-family:'Consolas','Courier New',monospace;
+        }
+        .usp-quality-counts div {
+            border:1px solid #142033; background:#0b121c; padding:5px 6px;
+        }
+        .usp-quality-counts strong {
+            display:block; color:#d6e4ef; font-size:0.78rem;
+        }
+        .usp-quality-counts span {
+            display:block; color:#7fa0b8; font-size:0.56rem; text-transform:uppercase;
+            line-height:1.25; word-break:break-word;
+        }
+        .usp-quality-warnings-title {
+            padding:5px 0.75rem 3px; color:#7fa0b8; font-size:0.62rem;
+            text-transform:uppercase; font-family:'Consolas','Courier New',monospace;
+        }
+        .usp-quality-warnings {
+            margin:0; padding:0 0.75rem 5px 1.55rem; color:#a8c8e8;
+            font-family:'Consolas','Courier New',monospace; font-size:0.66rem; line-height:1.35;
+        }
+        .usp-quality-warnings li { padding:2px 0; }
+        .usp-quality-warnings strong { color:#f0ad7a; }
+        .usp-quality-warnings em {
+            display:block; color:#8aaabb; font-style:normal; font-size:0.62rem;
+        }
+        .usp-quality-empty,
+        .usp-quality-source {
+            padding:6px 0.75rem; color:#9aa8b6; font-size:0.64rem;
             font-family:'Consolas','Courier New',monospace; line-height:1.35;
         }
         .usp-evidence-matrix-block { background:#080d14; }

@@ -3570,6 +3570,14 @@
                         <div class="usp-section-body" id="usp-evidence-timeline-body"></div>
                     </div>
 
+                    <!-- RMOOZ-CMO-6: read-only evidence after-action snapshot export -->
+                    <div class="usp-tasking-block usp-evidence-export-block" id="usp-evidence-export-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">Evidence Snapshot / &#1604;&#1602;&#1591;&#1577; &#1575;&#1604;&#1571;&#1583;&#1604;&#1577;</span>
+                        </div>
+                        <div class="usp-section-body" id="usp-evidence-export-body"></div>
+                    </div>
+
                     <!-- RMOOZ-CMO-1: read-only engagement evidence from World State / ENG1 -->
                     <div class="usp-tasking-block usp-engagement-evidence-block" id="usp-engagement-evidence-block" hidden>
                         <div class="usp-section-hdr">
@@ -4502,6 +4510,7 @@
     <script src="shell/engagement-evidence.js?v=1"></script>
     <script src="shell/decision-chain-evidence.js?v=1"></script>
     <script src="shell/evidence-map-overlays.js?v=1"></script>
+    <script src="shell/cmo-evidence-export.js?v=1"></script>
     <script src="shell/unit-status-panel.js?v=1"></script>
     <script src="shell/objective-evidence-panel.js?v=3"></script>
     <!-- L3-B-1: read-only Why-Not display panel in the Scenario Workspace.
@@ -5638,6 +5647,22 @@
         .usp-timeline-empty {
             padding:6px 0.75rem; color:#9aa8b6; font-size:0.68rem;
             font-family:'Consolas','Courier New',monospace;
+        }
+        .usp-evidence-export-block { background:#080d14; }
+        .usp-export-actions {
+            display:flex; gap:6px; flex-wrap:wrap; padding:6px 0.75rem;
+            border-bottom:1px solid #142033;
+        }
+        .usp-export-btn {
+            border:1px solid #25415c; background:#0f1a27; color:#a8c8e8;
+            font-size:0.64rem; line-height:1; padding:5px 7px; border-radius:4px;
+            font-family:'Consolas','Courier New',monospace; cursor:pointer;
+        }
+        .usp-export-btn:hover { background:#16263a; color:#d6e4ef; }
+        .usp-export-summary {
+            margin:0; padding:7px 0.75rem; color:#a8c8e8;
+            white-space:pre-wrap; word-break:break-word; font-size:0.67rem;
+            line-height:1.4; font-family:'Consolas','Courier New',monospace;
         }
         .usp-engagement-evidence-block { background:#080d14; }
         .usp-engagement-status {

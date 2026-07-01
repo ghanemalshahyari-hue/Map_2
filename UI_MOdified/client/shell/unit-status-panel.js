@@ -246,6 +246,7 @@
         populateDecisionChainEvidence(unit);
         populateEngagementEvidence(unit);
         populateEvidenceTimeline(unit);
+        populateEvidenceExport(unit);
         populateSensors(enriched, getCapabilitySourceLabel(unit, enriched, 'sensors'));
         populateWeapons(enriched, getCapabilitySourceLabel(unit, enriched, 'weapons'));
         populateSpeed(unit);
@@ -1111,6 +1112,43 @@
         var uid = unit && (unit.uid || unit.id || unit.unit_uid);
         body.innerHTML = TL.renderTimelineHtml(uid, { lang: 'ar', limit: 6 });
         block.removeAttribute('hidden');
+    }
+
+    function populateEvidenceExport(unit) {
+        var block = $('usp-evidence-export-block');
+        var body = $('usp-evidence-export-body');
+        if (!block || !body) return;
+        var EX = root.RmoozCmoEvidenceExport;
+        if (!EX || typeof EX.buildSnapshot !== 'function' || typeof EX.renderExportHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var map = root.AppAdjudicatorMap;
+        var snapshot = EX.buildSnapshot(function () {
+            return map && typeof map.getWorldState === 'function' ? map.getWorldState() : null;
+        }, unit);
+        body._cmoEvidenceSnapshot = snapshot;
+        body.innerHTML = EX.renderExportHtml(snapshot, { lang: 'ar' });
+        bindEvidenceExportActions(body, snapshot);
+        block.removeAttribute('hidden');
+    }
+
+    function bindEvidenceExportActions(body, snapshot) {
+        if (!body || !body.querySelectorAll) return;
+        var buttons = body.querySelectorAll('[data-cmo-export-action]');
+        Array.prototype.forEach.call(buttons, function (btn) {
+            btn.addEventListener('click', function () {
+                var action = btn.getAttribute('data-cmo-export-action');
+                if (!root.RmoozCmoEvidenceExport) return;
+                if (action === 'json' && typeof root.RmoozCmoEvidenceExport.copyJson === 'function') {
+                    root.RmoozCmoEvidenceExport.copyJson(snapshot);
+                } else if (action === 'summary' && typeof root.RmoozCmoEvidenceExport.copySummary === 'function') {
+                    root.RmoozCmoEvidenceExport.copySummary(snapshot);
+                } else if (action === 'download' && typeof root.RmoozCmoEvidenceExport.downloadJson === 'function') {
+                    root.RmoozCmoEvidenceExport.downloadJson(snapshot);
+                }
+            });
+        });
     }
 
     function populateAssignment(unit) {

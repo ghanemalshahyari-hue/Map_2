@@ -179,6 +179,110 @@
     function copyJson(report) { return copyText(toJson(report)); }
     function copySummary(report) { return copyText(buildSummary(report)); }
 
+    function readOnlyDisclaimer() {
+        return 'Read-only force evidence report. This report does not authorize fire, mutate doctrine, or change scenario state.';
+    }
+
+    function buildPrintableReportHtml(report) {
+        report = obj(report);
+        var counts = obj(report.counts);
+        var topBlockers = arr(report.top_blockers);
+        var rows = arr(report.readiness_rows);
+        var events = arr(report.force_events).slice(-10);
+        var selected = obj(report.selected_unit);
+        var html = '<article class="cmo-print-report cmo-print-report--force">' +
+            '<header class="cmo-print-header">' +
+                '<div class="cmo-print-kicker">RMOOZ CMO Evidence</div>' +
+                '<h1>Force Evidence Report</h1>' +
+                '<div class="cmo-print-subtitle">تقرير أدلة القوة</div>' +
+            '</header>' +
+            '<section class="cmo-print-grid">' +
+                '<div><span>Generated</span><strong>' + esc(report.generated_at || 'Unknown') + '</strong></div>' +
+                '<div><span>Evidence Quality</span><strong>' + esc(obj(report.quality).status || (counts.Unknown || report.no_contact_count ? 'Needs Review' : 'Ready for Review')) + '</strong></div>' +
+                '<div><span>Ready</span><strong>' + esc(counts.Ready || 0) + '</strong></div>' +
+                '<div><span>Blocked</span><strong>' + esc(counts.Blocked || 0) + '</strong></div>' +
+                '<div><span>Unknown</span><strong>' + esc(counts.Unknown || 0) + '</strong></div>' +
+                '<div><span>No-contact</span><strong>' + esc(report.no_contact_count || 0) + '</strong></div>' +
+                '<div><span>Selected unit</span><strong>' + esc(selected.label || selected.uid || 'None') + '</strong></div>' +
+            '</section>' +
+            '<section class="cmo-print-section">' +
+                '<h2>Top Blockers / أهم أسباب المنع</h2>' +
+                '<ul class="cmo-print-list">';
+        if (!topBlockers.length) {
+            html += '<li>None recorded.</li>';
+        } else {
+            topBlockers.forEach(function (blocker) {
+                blocker = obj(blocker);
+                html += '<li>' + esc(blocker.code || 'unknown_reason') + ' x ' + esc(blocker.count || 0) +
+                    ' - <span dir="rtl">' + esc(blocker.label_ar || reasonLabel(blocker.code, 'ar')) + '</span></li>';
+            });
+        }
+        html += '</ul></section>' +
+            '<section class="cmo-print-section">' +
+                '<h2>Readiness Matrix / مصفوفة الجاهزية</h2>' +
+                '<table class="cmo-print-table"><thead><tr><th>Unit</th><th>Contact</th><th>Final</th><th>Reason</th><th>Arabic</th></tr></thead><tbody>';
+        if (!rows.length) {
+            html += '<tr><td colspan="5">No readiness rows available.</td></tr>';
+        } else {
+            rows.forEach(function (row) {
+                row = obj(row);
+                html += '<tr><td>' + esc(row.unit_label || row.uid || 'Unknown unit') + '</td><td>' +
+                    esc(row.contact_status || 'Unknown') + '</td><td>' +
+                    esc(row.final_status || 'Unknown') + '</td><td>' +
+                    esc(row.reason_code || 'None') + '</td><td dir="rtl">' +
+                    esc(row.reason_label_ar || (row.reason_code ? reasonLabel(row.reason_code, 'ar') : '')) + '</td></tr>';
+            });
+        }
+        html += '</tbody></table></section>' +
+            '<section class="cmo-print-section">' +
+                '<h2>Force Events / سجل أدلة القوة</h2>' +
+                '<ul class="cmo-print-list">';
+        if (!events.length) {
+            html += '<li>No force evidence events recorded.</li>';
+        } else {
+            events.forEach(function (event) {
+                event = obj(event);
+                html += '<li>' + esc(event.timestamp || 'time unknown') + ' - ' +
+                    esc(event.unit_label || event.uid || 'Force') + ' - ' +
+                    esc(event.status || event.type || 'Evidence') +
+                    (event.reason_code ? ' - ' + esc(event.reason_code) : '') +
+                    (event.reason_label_ar ? ' - <span dir="rtl">' + esc(event.reason_label_ar) + '</span>' : '') +
+                    '</li>';
+            });
+        }
+        html += '</ul></section>' +
+            '<footer class="cmo-print-disclaimer">' + esc(readOnlyDisclaimer()) + '</footer>' +
+            '</article>';
+        return html;
+    }
+
+    function printHtml(html) {
+        if (!root.document || typeof root.print !== 'function') return false;
+        var doc = root.document;
+        var host = doc.getElementById('cmo-print-root');
+        if (!host) {
+            host = doc.createElement('div');
+            host.id = 'cmo-print-root';
+            host.className = 'cmo-print-root';
+            doc.body.appendChild(host);
+        }
+        host.innerHTML = html;
+        doc.body.setAttribute('data-cmo-print-mode', 'evidence');
+        var cleanup = function () {
+            doc.body.removeAttribute('data-cmo-print-mode');
+        };
+        if (typeof root.addEventListener === 'function') {
+            root.addEventListener('afterprint', cleanup, { once: true });
+        }
+        root.print();
+        setTimeout(cleanup, 1000);
+        return true;
+    }
+
+    function printReport(report) {
+        return printHtml(buildPrintableReportHtml(report));
+    }
+
     function downloadJson(report, filename) {
         if (!root.document || typeof root.Blob !== 'function' || !root.URL || typeof root.URL.createObjectURL !== 'function') {
             return false;
@@ -200,6 +304,7 @@
             '<button type="button" class="usp-force-report-btn" data-cmo-force-report-action="summary">Copy Summary</button>' +
             '<button type="button" class="usp-force-report-btn" data-cmo-force-report-action="json">Copy JSON</button>' +
             '<button type="button" class="usp-force-report-btn" data-cmo-force-report-action="download">Download JSON</button>' +
+            '<button type="button" class="usp-force-report-btn usp-force-report-btn--print" data-cmo-force-report-action="print">Print Force Report</button>' +
             '</div>' +
             '<pre class="usp-force-report-summary">' + esc(buildSummary(report)) + '</pre>';
     }
@@ -212,6 +317,7 @@
                 if (action === 'summary') copySummary(report);
                 else if (action === 'json') copyJson(report);
                 else if (action === 'download') downloadJson(report);
+                else if (action === 'print') printReport(report);
             });
         });
         return true;
@@ -225,6 +331,8 @@
         copyJson: copyJson,
         copySummary: copySummary,
         downloadJson: downloadJson,
+        buildPrintableReportHtml: buildPrintableReportHtml,
+        printReport: printReport,
         renderReportHtml: renderReportHtml,
         bindReportActions: bindReportActions
     };

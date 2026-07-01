@@ -1291,6 +1291,8 @@
                     root.RmoozCmoEvidenceExport.copySummary(snapshot);
                 } else if (action === 'download' && typeof root.RmoozCmoEvidenceExport.downloadJson === 'function') {
                     root.RmoozCmoEvidenceExport.downloadJson(snapshot);
+                } else if (action === 'print' && typeof root.RmoozCmoEvidenceExport.printSnapshot === 'function') {
+                    root.RmoozCmoEvidenceExport.printSnapshot(snapshot);
                 }
             });
         });

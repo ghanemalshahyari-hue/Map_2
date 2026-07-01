@@ -255,6 +255,97 @@
     function copyJson(snapshot) { return copyText(toJson(snapshot)); }
     function copySummary(snapshot) { return copyText(buildSummary(snapshot)); }
 
+    function readOnlyDisclaimer() {
+        return 'Read-only evidence snapshot. This report does not authorize fire, mutate doctrine, or change scenario state.';
+    }
+
+    function buildPrintableSnapshotHtml(snapshot) {
+        snapshot = obj(snapshot);
+        var unit = obj(snapshot.selected_unit);
+        var blocking = obj(snapshot.blocking_reason);
+        var engagement = obj(snapshot.engagement);
+        var contact = obj(snapshot.contact);
+        var decision = obj(snapshot.decision_chain);
+        var overlay = obj(snapshot.overlay);
+        var timeline = arr(snapshot.timeline);
+        var steps = arr(decision.steps);
+        var html = '<article class="cmo-print-report cmo-print-report--unit">' +
+            '<header class="cmo-print-header">' +
+                '<div class="cmo-print-kicker">RMOOZ CMO Evidence</div>' +
+                '<h1>Selected-unit Evidence Snapshot</h1>' +
+                '<div class="cmo-print-subtitle">لقطة أدلة الوحدة المحددة</div>' +
+            '</header>' +
+            '<section class="cmo-print-grid">' +
+                '<div><span>Unit</span><strong>' + esc(unit.label || unit.uid || 'Unknown unit') + '</strong></div>' +
+                '<div><span>Generated</span><strong>' + esc(snapshot.generated_at || 'Unknown') + '</strong></div>' +
+                '<div><span>Final status</span><strong>' + esc(snapshot.final_status || decision.final_status || 'Unknown') + '</strong></div>' +
+                '<div><span>Blocking reason</span><strong>' + esc(blocking.code || 'None') + '</strong></div>' +
+                '<div><span>Arabic reason</span><strong dir="rtl">' + esc(blocking.label_ar || 'None') + '</strong></div>' +
+                '<div><span>Target</span><strong>' + esc(engagement.target_uid || contact.target_uid || overlay.target_uid || 'Unknown') + '</strong></div>' +
+                '<div><span>Weapon</span><strong>' + esc(engagement.weapon || 'Unknown') + '</strong></div>' +
+                '<div><span>Contact status</span><strong>' + esc(contact.detection_status || 'Unknown') + '</strong></div>' +
+                '<div><span>Overlay status</span><strong>' + esc(overlay.status || 'Unknown') + '</strong></div>' +
+            '</section>' +
+            '<section class="cmo-print-section">' +
+                '<h2>Decision Chain / سلسلة قرار الاشتباك</h2>' +
+                '<table class="cmo-print-table"><tbody>';
+        if (!steps.length) {
+            html += '<tr><td colspan="3">No decision-chain steps available.</td></tr>';
+        } else {
+            steps.forEach(function (step) {
+                step = obj(step);
+                html += '<tr><th>' + esc(step.label || step.key || 'Step') + '</th><td>' + esc(step.status || 'Unknown') + '</td><td dir="rtl">' + esc(step.label_ar || step.detail || '') + '</td></tr>';
+            });
+        }
+        html += '</tbody></table></section>' +
+            '<section class="cmo-print-section">' +
+                '<h2>Evidence Timeline / سجل الأدلة</h2>' +
+                '<ul class="cmo-print-list">';
+        if (!timeline.length) {
+            html += '<li>No evidence events recorded.</li>';
+        } else {
+            timeline.forEach(function (event) {
+                event = obj(event);
+                html += '<li>' + esc(event.timestamp || 'time unknown') + ' - ' +
+                    esc(event.type || event.status || 'Evidence') +
+                    (event.reason_code ? ' - ' + esc(event.reason_code) : '') +
+                    (event.reason_label_ar ? ' - <span dir="rtl">' + esc(event.reason_label_ar) + '</span>' : '') +
+                    '</li>';
+            });
+        }
+        html += '</ul></section>' +
+            '<footer class="cmo-print-disclaimer">' + esc(readOnlyDisclaimer()) + '</footer>' +
+            '</article>';
+        return html;
+    }
+
+    function printHtml(html) {
+        if (!root.document || typeof root.print !== 'function') return false;
+        var doc = root.document;
+        var host = doc.getElementById('cmo-print-root');
+        if (!host) {
+            host = doc.createElement('div');
+            host.id = 'cmo-print-root';
+            host.className = 'cmo-print-root';
+            doc.body.appendChild(host);
+        }
+        host.innerHTML = html;
+        doc.body.setAttribute('data-cmo-print-mode', 'evidence');
+        var cleanup = function () {
+            doc.body.removeAttribute('data-cmo-print-mode');
+        };
+        if (typeof root.addEventListener === 'function') {
+            root.addEventListener('afterprint', cleanup, { once: true });
+        }
+        root.print();
+        setTimeout(cleanup, 1000);
+        return true;
+    }
+
+    function printSnapshot(snapshot) {
+        return printHtml(buildPrintableSnapshotHtml(snapshot));
+    }
+
     function downloadJson(snapshot, filename) {
         if (!root.document || typeof root.Blob !== 'function' || !root.URL || typeof root.URL.createObjectURL !== 'function') {
             return false;
@@ -277,6 +368,7 @@
             '<button type="button" class="usp-export-btn" data-cmo-export-action="json">Copy JSON</button>' +
             '<button type="button" class="usp-export-btn" data-cmo-export-action="summary">Copy Summary</button>' +
             '<button type="button" class="usp-export-btn" data-cmo-export-action="download">Download JSON</button>' +
+            '<button type="button" class="usp-export-btn usp-export-btn--print" data-cmo-export-action="print">Print Unit Snapshot</button>' +
             '</div>' +
             '<pre class="usp-export-summary">' + esc(summary) + '</pre>';
     }
@@ -289,6 +381,8 @@
         copyJson: copyJson,
         copySummary: copySummary,
         downloadJson: downloadJson,
+        buildPrintableSnapshotHtml: buildPrintableSnapshotHtml,
+        printSnapshot: printSnapshot,
         renderExportHtml: renderExportHtml
     };
 

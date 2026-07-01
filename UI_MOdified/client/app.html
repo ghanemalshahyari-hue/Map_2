@@ -6212,6 +6212,12 @@
             font-family:'Consolas','Courier New',monospace; font-size:0.66rem; line-height:1.35;
         }
         .usp-quality-warnings li { padding:2px 0; }
+        .usp-quality-warning-btn {
+            display:block; width:100%; border:0; background:transparent; color:#a8c8e8;
+            font:inherit; line-height:1.35; text-align:left; padding:2px 0; cursor:pointer;
+        }
+        .usp-quality-warning-btn:hover,
+        .usp-quality-warning-btn:focus { color:#d6e4ef; outline:none; }
         .usp-quality-warnings strong { color:#f0ad7a; }
         .usp-quality-warnings em {
             display:block; color:#8aaabb; font-style:normal; font-size:0.62rem;
@@ -6476,7 +6482,10 @@
         [data-theme="light"] .usp-quality-warnings-title { color:#5a7890; }
         [data-theme="light"] .usp-quality-status strong,
         [data-theme="light"] .usp-quality-counts strong,
-        [data-theme="light"] .usp-quality-warnings { color:#244c68; }
+        [data-theme="light"] .usp-quality-warnings,
+        [data-theme="light"] .usp-quality-warning-btn { color:#244c68; }
+        [data-theme="light"] .usp-quality-warning-btn:hover,
+        [data-theme="light"] .usp-quality-warning-btn:focus { color:#0f5f94; }
         [data-theme="light"] .usp-quality-counts div {
             background:#eef7ff; border-color:#d5e4f0;
         }

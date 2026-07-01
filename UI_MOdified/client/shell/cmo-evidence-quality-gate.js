@@ -132,6 +132,14 @@
         return 'review';
     }
 
+    function filterForWarning(code) {
+        if (code === 'no_contact_evidence') return { status: 'Unknown', reason_code: 'no_contact_evidence' };
+        if (code === 'force_report_unknown') return { status: 'Unknown', reason_code: null };
+        if (code === 'no_force_evidence') return { status: 'All', reason_code: null };
+        if (code) return { status: 'All', reason_code: code };
+        return { status: 'All', reason_code: null };
+    }
+
     function renderQualityGateHtml(quality) {
         quality = quality || buildQualityGate(null);
         var counts = obj(quality.counts);
@@ -152,19 +160,36 @@
             html += '<ul class="usp-quality-warnings">' + warnings.map(function (warning) {
                 var count = warning.count == null ? '' : '<strong>' + esc(warning.count) + '</strong> ';
                 var label = warning.label_ar ? '<em>' + esc(warning.label_ar) + '</em>' : '';
-                return '<li data-cmo-quality-warning="' + esc(warning.code || '') + '">' +
+                return '<li><button type="button" class="usp-quality-warning-btn" data-cmo-quality-warning="' + esc(warning.code || '') + '">' +
                     count + '<span>' + esc(warning.text || warning.code || 'Evidence warning') + '</span>' + label +
-                    '</li>';
+                    '</button></li>';
             }).join('') + '</ul>';
         }
         html += '<div class="usp-quality-source">Source: ' + esc(quality.source || 'Readiness matrix + alerts + force report') + '</div>';
         return html;
     }
 
+    function bindQualityInteractions(container, quality, opts) {
+        opts = opts || {};
+        if (!container || !container.querySelectorAll) return false;
+        Array.prototype.forEach.call(container.querySelectorAll('[data-cmo-quality-warning]'), function (btn) {
+            btn.addEventListener('click', function () {
+                var code = btn.getAttribute('data-cmo-quality-warning');
+                var filter = filterForWarning(code);
+                if (opts.onFilter && typeof opts.onFilter === 'function') {
+                    try { opts.onFilter(filter, quality); } catch (_) {}
+                }
+            });
+        });
+        return true;
+    }
+
     var api = {
         CMO_EVIDENCE_QUALITY_GATE_VERSION: CMO_EVIDENCE_QUALITY_GATE_VERSION,
         buildQualityGate: buildQualityGate,
-        renderQualityGateHtml: renderQualityGateHtml
+        filterForWarning: filterForWarning,
+        renderQualityGateHtml: renderQualityGateHtml,
+        bindQualityInteractions: bindQualityInteractions
     };
 
     root.RmoozCmoEvidenceQualityGate = api;

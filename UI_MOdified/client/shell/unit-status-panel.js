@@ -1110,6 +1110,14 @@
         });
         body._cmoEvidenceQualityGate = quality;
         body.innerHTML = QG.renderQualityGateHtml(quality);
+        if (typeof QG.bindQualityInteractions === 'function') {
+            QG.bindQualityInteractions(body, quality, {
+                onFilter: function (filter) {
+                    currentMatrixFilter = filter || { status: 'All', reason_code: null };
+                    populateEvidenceReadinessMatrix(unit || currentUnit);
+                }
+            });
+        }
         block.removeAttribute('hidden');
     }
 

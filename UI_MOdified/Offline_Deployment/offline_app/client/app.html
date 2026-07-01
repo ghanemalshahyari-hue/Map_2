@@ -3562,6 +3562,14 @@
                         <div class="usp-section-body" id="usp-evidence-matrix-body"></div>
                     </div>
 
+                    <!-- RMOOZ-CMO-10: read-only force-wide evidence event feed -->
+                    <div class="usp-tasking-block usp-force-feed-block" id="usp-force-feed-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">Force Evidence Feed / &#1587;&#1580;&#1604; &#1571;&#1583;&#1604;&#1577; &#1575;&#1604;&#1602;&#1608;&#1577;</span>
+                        </div>
+                        <div class="usp-section-body" id="usp-force-feed-body"></div>
+                    </div>
+
                     <!-- RMOOZ-CMO-2: read-only contact freshness evidence from World State / DET1 -->
                     <div class="usp-tasking-block usp-contact-evidence-block" id="usp-contact-evidence-block" hidden>
                         <div class="usp-section-hdr">
@@ -4527,6 +4535,7 @@
     <script src="shell/decision-chain-evidence.js?v=1"></script>
     <script src="shell/cmo-evidence-readiness-matrix.js?v=1"></script>
     <script src="shell/cmo-evidence-alerts.js?v=1"></script>
+    <script src="shell/cmo-force-evidence-feed.js?v=1"></script>
     <script src="shell/evidence-map-overlays.js?v=1"></script>
     <script src="shell/cmo-evidence-export.js?v=1"></script>
     <script src="shell/unit-status-panel.js?v=1"></script>
@@ -5702,6 +5711,29 @@
         .usp-matrix-empty {
             padding:6px 0.75rem; color:#9aa8b6; font-size:0.64rem;
             font-family:'Consolas','Courier New',monospace; line-height:1.35;
+        }
+        .usp-force-feed-block { background:#080d14; }
+        .usp-force-feed-intro {
+            padding:5px 0.75rem; font-size:0.66rem; color:#7fa0b8;
+            border-bottom:1px solid #142033; text-transform:uppercase;
+            font-family:'Consolas','Courier New',monospace;
+        }
+        .usp-force-feed-row {
+            display:grid; grid-template-columns:58px minmax(0,1fr); gap:7px;
+            padding:4px 0.75rem; border-bottom:1px solid #0d1420;
+            font-family:'Consolas','Courier New',monospace; cursor:pointer;
+        }
+        .usp-force-feed-row:last-child { border-bottom:none; }
+        .usp-force-feed-row:hover,
+        .usp-force-feed-row:focus { outline:none; background:#101c2a; }
+        .usp-force-feed-time { color:#5a7890; font-size:0.63rem; white-space:nowrap; }
+        .usp-force-feed-text { color:#a8c8e8; font-size:0.68rem; line-height:1.35; word-break:break-word; }
+        .usp-force-feed-row.ready .usp-force-feed-text { color:#8fd6a3; }
+        .usp-force-feed-row.blocked .usp-force-feed-text { color:#f0ad7a; }
+        .usp-force-feed-row.unknown .usp-force-feed-text { color:#9aa8b6; }
+        .usp-force-feed-empty {
+            padding:6px 0.75rem; color:#9aa8b6; font-size:0.68rem;
+            font-family:'Consolas','Courier New',monospace;
         }
         .usp-contact-evidence-block { background:#080d14; }
         .usp-contact-status {

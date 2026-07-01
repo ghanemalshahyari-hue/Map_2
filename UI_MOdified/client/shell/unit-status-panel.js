@@ -245,6 +245,7 @@
         populateAssignment(unit);
         populateEvidenceAlerts(unit);
         populateEvidenceReadinessMatrix(unit);
+        populateForceEvidenceFeed(unit);
         populateContactEvidence(unit);
         populateDecisionChainEvidence(unit);
         populateEngagementEvidence(unit);
@@ -1080,6 +1081,18 @@
         block.removeAttribute('hidden');
     }
 
+    function selectEvidenceUnit(rowOrEvent, source) {
+        if (!rowOrEvent || !root.document || typeof root.document.dispatchEvent !== 'function') return;
+        var unit = rowOrEvent.unit || {
+            uid: rowOrEvent.uid,
+            label: rowOrEvent.unit_label,
+            side: rowOrEvent.side
+        };
+        root.document.dispatchEvent(new CustomEvent('rmooz:unit-selected', {
+            detail: { unit: unit, selectedAt: Date.now(), source: source || 'cmo-evidence' }
+        }));
+    }
+
     function populateEvidenceReadinessMatrix(unit) {
         var block = $('usp-evidence-matrix-block');
         var body = $('usp-evidence-matrix-body');
@@ -1093,18 +1106,35 @@
             return _getCurrentWorldState();
         }, { limit: 24 });
         body._cmoEvidenceReadinessMatrix = matrix;
+        try {
+            if (root.RmoozCmoForceEvidenceFeed && typeof root.RmoozCmoForceEvidenceFeed.observeMatrix === 'function') {
+                root.RmoozCmoForceEvidenceFeed.observeMatrix(matrix);
+            }
+        } catch (_) {}
         body.innerHTML = MX.renderMatrixHtml(matrix, { lang: 'ar', filter: currentMatrixFilter });
         if (typeof MX.bindMatrixInteractions === 'function') {
             MX.bindMatrixInteractions(body, matrix, {
                 filter: currentMatrixFilter,
                 onFilter: function (filter) { currentMatrixFilter = filter || { status: 'All', reason_code: null }; },
-                onSelectUnit: function (row) {
-                    if (!row || !root.document || typeof root.document.dispatchEvent !== 'function') return;
-                    var unit = row.unit || { uid: row.uid, label: row.unit_label, side: row.side };
-                    root.document.dispatchEvent(new CustomEvent('rmooz:unit-selected', {
-                        detail: { unit: unit, selectedAt: Date.now(), source: 'cmo-readiness-matrix' }
-                    }));
-                }
+                onSelectUnit: function (row) { selectEvidenceUnit(row, 'cmo-readiness-matrix'); }
+            });
+        }
+        block.removeAttribute('hidden');
+    }
+
+    function populateForceEvidenceFeed(unit) {
+        var block = $('usp-force-feed-block');
+        var body = $('usp-force-feed-body');
+        if (!block || !body) return;
+        var FF = root.RmoozCmoForceEvidenceFeed;
+        if (!FF || typeof FF.renderFeedHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        body.innerHTML = FF.renderFeedHtml({ lang: 'ar', limit: 7 });
+        if (typeof FF.bindFeedInteractions === 'function') {
+            FF.bindFeedInteractions(body, {
+                onSelectUnit: function (event) { selectEvidenceUnit(event, 'cmo-force-evidence-feed'); }
             });
         }
         block.removeAttribute('hidden');

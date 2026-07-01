@@ -980,7 +980,7 @@
             'usp-tab-weapons':          'Weapons',
             'usp-badge-veteran':        'VETERAN',
             'usp-badge-elite':          'ELITE',
-            'usp-no-unit':              'No unit selected. Click a unit on the map.',
+            'usp-no-unit':              'No selected unit. Select a row from the readiness matrix to inspect evidence.',
             'usp-unit-status':          'UNIT STATUS',
             /* ── TASK1-C: Current Orders tasking details ── */
             'usp-lbl-orders':     'CURRENT ORDERS',
@@ -3396,7 +3396,7 @@
             'usp-tab-weapons':          'الأسلحة',
             'usp-badge-veteran':        'محنك',
             'usp-badge-elite':          'نخبة',
-            'usp-no-unit':              'لم يتم تحديد وحدة. انقر على وحدة على الخريطة.',
+            'usp-no-unit':              'لا توجد وحدة محددة. اختر وحدة من مصفوفة الجاهزية لعرض الأدلة.',
             'usp-unit-status':          'حالة الوحدة',
             /* ── TASK1-C: Current Orders tasking details ── */
             'usp-lbl-orders':     'الأوامر الحالية',

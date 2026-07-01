@@ -181,8 +181,13 @@
     }
 
     function _showEmpty() {
-        // When no unit is selected, close the panel entirely (no blank empty state)
-        closePanel();
+        currentUnit = null;
+        openPanel();
+        var e = $('empty-state'), b = $('usp-body');
+        if (b) b.setAttribute('hidden', '');
+        if (e) e.removeAttribute('hidden');
+        var tab = $('usp-reopen-tab');
+        if (tab) tab.setAttribute('hidden', '');
     }
 
     function _showBody() {
@@ -243,16 +248,16 @@
         populateMagazines(enriched);
         populateFuelAmmo(unit, enriched);
         populateAssignment(unit);
-        populateEvidenceAlerts(unit);
         populateEvidenceQualityGate(unit);
+        populateEvidenceAlerts(unit);
         populateEvidenceReadinessMatrix(unit);
         populateForceEvidenceFeed(unit);
-        populateForceEvidenceReport(unit);
         populateContactEvidence(unit);
-        populateDecisionChainEvidence(unit);
         populateEngagementEvidence(unit);
+        populateDecisionChainEvidence(unit);
         populateEvidenceTimeline(unit);
         populateEvidenceExport(unit);
+        populateForceEvidenceReport(unit);
         populateSensors(enriched, getCapabilitySourceLabel(unit, enriched, 'sensors'));
         populateWeapons(enriched, getCapabilitySourceLabel(unit, enriched, 'weapons'));
         populateSpeed(unit);

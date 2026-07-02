@@ -58,6 +58,11 @@
                      Rendered by shell/scenario-evidence-release-hud.js when a scenario
                      is active; each chip opens its matching drawer section. -->
                 <div id="release-hud-mount" class="release-hud" role="group" aria-label="Scenario evidence status" hidden></div>
+                <button id="scenario-command-palette-btn" class="header-btn header-btn--text scenario-command-btn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="scenario-command-palette" title="Scenario Actions (Ctrl+K)">
+                    <span class="scenario-command-btn-label">Scenario Actions</span>
+                    <span class="scenario-command-btn-ar" dir="rtl">&#1571;&#1608;&#1575;&#1605;&#1585; &#1575;&#1604;&#1587;&#1610;&#1606;&#1575;&#1585;&#1610;&#1608;</span>
+                    <span class="scenario-command-shortcut" aria-hidden="true">Ctrl+K</span>
+                </button>
                 <!-- RMOOZ-LOCAL-MODEL-SELECTOR-A: always-visible local AI model picker
                      (Provider · model dropdown · Refresh · Use · status). Built by
                      shell/ai-model-hud.js; talks to /api/ai/models + /api/ai/model/select. -->
@@ -4754,13 +4759,14 @@
     <script src="shell/cmo-evidence-export.js?v=cmo-22-drilldown"></script>
     <script src="shell/unit-status-panel.js?v=qa-batch-36-43"></script>
     <script>
-        // RMOOZ-SCENARIO-QA-BATCH-14/15: main-only header status details/actions.
+        // RMOOZ-SCENARIO-QA-BATCH-14/15/16: main-only header status details/actions/palette.
         // Wraps the browser-local HUD renderer to add hover/focus explanations and shortcuts.
         (function (root) {
             'use strict';
 
             var VERSION = '1.0.0-rmooz-scenario-qa-batch-14';
             var ACTIONS_VERSION = '1.0.0-rmooz-scenario-qa-batch-15';
+            var COMMAND_PALETTE_VERSION = '1.0.0-rmooz-scenario-qa-batch-16';
             var TARGET_LABELS = {
                 release: 'Release',
                 closeout: 'Closeout',
@@ -4768,6 +4774,9 @@
                 handoff: 'Handoff'
             };
             var SEVERITY_RANK = { 'not-ready': 1, warnings: 2, incomplete: 3, ready: 4 };
+            var latestStatusInput = {};
+            var latestCluster = null;
+            var commandPaletteState = null;
 
             function obj(v) { return v && typeof v === 'object' ? v : {}; }
             function arr(v) { return Array.isArray(v) ? v : []; }
@@ -4834,6 +4843,53 @@
                 if (info.kicker) lines.push(cleanLine(info.kicker));
                 arr(info.lines).forEach(function (line) { lines.push('- ' + cleanLine(line)); });
                 return lines.filter(Boolean).join('\n');
+            }
+            function commandPaletteActions() {
+                return [
+                    { key: 'open-release-gate', label: 'Open Release Gate', kind: 'open', target: 'release', block: 'usp-release-gate-block', group: 'Release', hint: 'Evidence Release Gate', keywords: 'release gate approval blockers readiness' },
+                    { key: 'view-release-blockers', label: 'View Release Blockers', kind: 'focus', target: 'release', block: 'usp-release-gate-block', group: 'Release', hint: 'Jump to release blockers', keywords: 'release blockers unresolved fingerprint handoff' },
+                    { key: 'open-closeout', label: 'Open Closeout', kind: 'open', target: 'closeout', block: 'usp-review-closeout-block', group: 'Closeout', hint: 'Evidence Review Closeout', keywords: 'closeout review exceptions deferred fixed' },
+                    { key: 'view-unresolved-issues', label: 'View Unresolved Issues', kind: 'focus', target: 'closeout', block: 'usp-review-queue-block', group: 'Closeout', hint: 'Review queue issues', keywords: 'unresolved issues review queue needs review' },
+                    { key: 'open-coverage', label: 'Open Coverage', kind: 'open', target: 'coverage', block: 'usp-evidence-coverage-block', group: 'Coverage', hint: 'Evidence Coverage', keywords: 'coverage evidence contact engagement decision chain' },
+                    { key: 'open-review-queue', label: 'Open Review Queue', kind: 'focus', target: 'coverage', block: 'usp-review-queue-block', group: 'Coverage', hint: 'Evidence review queue', keywords: 'review queue coverage needs review' },
+                    { key: 'open-handoff-package', label: 'Open Handoff Package', kind: 'focus', target: 'handoff', block: 'usp-handoff-package-block', group: 'Handoff', hint: 'Handoff package', keywords: 'handoff package fingerprint receipt' },
+                    { key: 'open-handoff-acceptance', label: 'Open Handoff Acceptance', kind: 'open', target: 'handoff', block: 'usp-handoff-acceptance-block', group: 'Handoff', hint: 'Handoff acceptance', keywords: 'handoff acceptance decision receipt warnings' },
+                    { key: 'copy-release-summary', label: 'Copy Release Summary', kind: 'copy', target: 'release', group: 'Release', hint: 'Copy status summary', keywords: 'copy release summary blockers' },
+                    { key: 'copy-coverage-summary', label: 'Copy Coverage Summary', kind: 'copy', target: 'coverage', group: 'Coverage', hint: 'Copy status summary', keywords: 'copy coverage summary evidence' }
+                ];
+            }
+            function commandSearchText(command) {
+                command = obj(command);
+                return [command.label, command.group, command.hint, command.key, command.target, command.keywords].join(' ').toLowerCase();
+            }
+            function filterCommands(commands, query) {
+                if (!Array.isArray(commands)) {
+                    query = commands;
+                    commands = commandPaletteActions();
+                }
+                var q = cleanLine(query || '').toLowerCase();
+                if (!q) return arr(commands).slice();
+                return arr(commands).filter(function (command) { return commandSearchText(command).indexOf(q) !== -1; });
+            }
+            function renderCommandPaletteHtml(commands, activeIndex) {
+                commands = arr(commands);
+                if (!commands.length) {
+                    return '<li class="scenario-command-empty" role="option" aria-selected="false">No matching scenario actions</li>';
+                }
+                return commands.map(function (command, idx) {
+                    command = obj(command);
+                    var active = idx === activeIndex;
+                    return '<li role="option" aria-selected="' + (active ? 'true' : 'false') + '">' +
+                        '<button type="button" class="scenario-command-item' + (active ? ' scenario-command-item--active' : '') + '"' +
+                        ' data-scenario-command-key="' + esc(command.key || '') + '">' +
+                        '<span class="scenario-command-item-main">' +
+                        '<strong>' + esc(command.label || 'Scenario action') + '</strong>' +
+                        '<em>' + esc(command.group || 'Scenario') + '</em>' +
+                        '</span>' +
+                        '<span class="scenario-command-item-hint">' + esc(command.hint || '') + '</span>' +
+                        '</button>' +
+                    '</li>';
+                }).join('');
             }
             function checkLine(check) {
                 check = obj(check);
@@ -5081,10 +5137,180 @@
                     });
                 });
             }
+            function detailForAction(action) {
+                action = obj(action);
+                var target = action.target || 'release';
+                var chip = latestCluster && latestCluster[target] ? latestCluster[target] : {};
+                return buildDetail(target, latestStatusInput || {}, chip);
+            }
+            function commandByKey(key, commands) {
+                var found = null;
+                arr(commands || commandPaletteActions()).forEach(function (command) {
+                    if (!found && obj(command).key === key) found = command;
+                });
+                return found;
+            }
+            function executeCommand(command, palette, ev) {
+                command = obj(command);
+                var ok = handleAction(command, detailForAction(command), palette, ev);
+                if (command.kind !== 'copy') closeCommandPalette(false);
+                return ok;
+            }
+            function setTriggerExpanded(open) {
+                var doc = root.document;
+                var btn = doc && typeof doc.getElementById === 'function' ? doc.getElementById('scenario-command-palette-btn') : null;
+                if (btn && typeof btn.setAttribute === 'function') btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            }
+            function ensureCommandPalette() {
+                var doc = root.document;
+                if (!doc || typeof doc.createElement !== 'function') return null;
+                if (commandPaletteState && commandPaletteState.palette) return commandPaletteState;
+                var palette = typeof doc.getElementById === 'function' ? doc.getElementById('scenario-command-palette') : null;
+                if (!palette) {
+                    palette = doc.createElement('div');
+                    palette.id = 'scenario-command-palette';
+                    palette.className = 'scenario-command-palette';
+                    palette.setAttribute('role', 'dialog');
+                    palette.setAttribute('aria-modal', 'true');
+                    palette.setAttribute('aria-labelledby', 'scenario-command-palette-title');
+                    palette.setAttribute('hidden', '');
+                    palette.innerHTML = '' +
+                        '<div class="scenario-command-panel">' +
+                        '<div class="scenario-command-header">' +
+                        '<div><strong id="scenario-command-palette-title">Scenario command palette</strong>' +
+                        '<span dir="rtl">&#1571;&#1608;&#1575;&#1605;&#1585; &#1575;&#1604;&#1587;&#1610;&#1606;&#1575;&#1585;&#1610;&#1608;</span></div>' +
+                        '<button type="button" class="scenario-command-close" data-scenario-command-close aria-label="Close scenario command palette">&times;</button>' +
+                        '</div>' +
+                        '<input id="scenario-command-search" class="scenario-command-search" type="search" autocomplete="off" spellcheck="false" placeholder="Search scenario actions" aria-label="Search scenario actions">' +
+                        '<ul id="scenario-command-results" class="scenario-command-results" role="listbox" aria-label="Scenario evidence actions"></ul>' +
+                        '<div class="scenario-command-help">Ctrl+K opens this palette. Enter runs the selected action. Escape closes it.</div>' +
+                        '</div>';
+                    if (doc.body && typeof doc.body.appendChild === 'function') doc.body.appendChild(palette);
+                }
+                commandPaletteState = {
+                    palette: palette,
+                    input: palette.querySelector ? palette.querySelector('#scenario-command-search') : null,
+                    list: palette.querySelector ? palette.querySelector('#scenario-command-results') : null,
+                    activeIndex: 0,
+                    commands: commandPaletteActions()
+                };
+                bindCommandPalette(commandPaletteState);
+                return commandPaletteState;
+            }
+            function renderCommandPalette(state) {
+                state = state || commandPaletteState;
+                if (!state || !state.list) return [];
+                state.commands = filterCommands(commandPaletteActions(), state.input ? state.input.value : '');
+                if (state.activeIndex >= state.commands.length) state.activeIndex = Math.max(0, state.commands.length - 1);
+                state.list.innerHTML = renderCommandPaletteHtml(state.commands, state.activeIndex);
+                bindCommandItems(state);
+                return state.commands;
+            }
+            function bindCommandItems(state) {
+                var buttons = state && state.list && state.list.querySelectorAll ? state.list.querySelectorAll('[data-scenario-command-key]') : [];
+                Array.prototype.forEach.call(buttons, function (btn) {
+                    btn.addEventListener('click', function (ev) {
+                        executeCommand(commandByKey(btn.getAttribute('data-scenario-command-key'), state.commands), state.palette, ev);
+                    });
+                });
+            }
+            function moveCommandSelection(state, delta) {
+                state = state || commandPaletteState;
+                if (!state || !state.commands.length) return;
+                state.activeIndex = (state.activeIndex + delta + state.commands.length) % state.commands.length;
+                renderCommandPalette(state);
+            }
+            function bindCommandPalette(state) {
+                if (!state || state.bound) return;
+                state.bound = true;
+                if (state.input && typeof state.input.addEventListener === 'function') {
+                    state.input.addEventListener('input', function () {
+                        state.activeIndex = 0;
+                        renderCommandPalette(state);
+                    });
+                    state.input.addEventListener('keydown', function (ev) {
+                        if (!ev) return;
+                        if (ev.key === 'Escape') {
+                            closeCommandPalette(true);
+                        } else if (ev.key === 'ArrowDown') {
+                            if (typeof ev.preventDefault === 'function') ev.preventDefault();
+                            moveCommandSelection(state, 1);
+                        } else if (ev.key === 'ArrowUp') {
+                            if (typeof ev.preventDefault === 'function') ev.preventDefault();
+                            moveCommandSelection(state, -1);
+                        } else if (ev.key === 'Enter') {
+                            if (typeof ev.preventDefault === 'function') ev.preventDefault();
+                            executeCommand(state.commands[state.activeIndex], state.palette, ev);
+                        }
+                    });
+                }
+                if (state.palette && typeof state.palette.addEventListener === 'function') {
+                    state.palette.addEventListener('click', function (ev) {
+                        var t = ev && ev.target;
+                        if (t === state.palette || (t && typeof t.getAttribute === 'function' && t.getAttribute('data-scenario-command-close') != null)) {
+                            closeCommandPalette(true);
+                        }
+                    });
+                }
+            }
+            function openCommandPalette(query) {
+                var state = ensureCommandPalette();
+                if (!state || !state.palette) return false;
+                state.palette.removeAttribute('hidden');
+                setTriggerExpanded(true);
+                if (state.input) state.input.value = typeof query === 'string' ? query : '';
+                state.activeIndex = 0;
+                renderCommandPalette(state);
+                if (state.input && typeof state.input.focus === 'function') {
+                    try { state.input.focus({ preventScroll: true }); } catch (_) { try { state.input.focus(); } catch (_) {} }
+                }
+                return true;
+            }
+            function closeCommandPalette(refocusTrigger) {
+                var state = commandPaletteState;
+                if (state && state.palette) state.palette.setAttribute('hidden', '');
+                setTriggerExpanded(false);
+                if (refocusTrigger) {
+                    var doc = root.document;
+                    var btn = doc && typeof doc.getElementById === 'function' ? doc.getElementById('scenario-command-palette-btn') : null;
+                    if (btn && typeof btn.focus === 'function') {
+                        try { btn.focus({ preventScroll: true }); } catch (_) { try { btn.focus(); } catch (_) {} }
+                    }
+                }
+            }
+            function installCommandPalette() {
+                var doc = root.document;
+                if (!doc || root._scenarioCommandPaletteBatch16) return false;
+                root._scenarioCommandPaletteBatch16 = true;
+                function bind() {
+                    var trigger = typeof doc.getElementById === 'function' ? doc.getElementById('scenario-command-palette-btn') : null;
+                    if (trigger && typeof trigger.addEventListener === 'function') {
+                        trigger.addEventListener('click', function (ev) {
+                            if (ev && typeof ev.preventDefault === 'function') ev.preventDefault();
+                            openCommandPalette('');
+                        });
+                    }
+                    if (typeof doc.addEventListener === 'function') {
+                        doc.addEventListener('keydown', function (ev) {
+                            if (!ev || ev.defaultPrevented) return;
+                            var key = String(ev.key || '').toLowerCase();
+                            if (key === 'k' && (ev.ctrlKey || ev.metaKey)) {
+                                if (typeof ev.preventDefault === 'function') ev.preventDefault();
+                                openCommandPalette('');
+                            }
+                        });
+                    }
+                }
+                if (doc.readyState === 'loading' && typeof doc.addEventListener === 'function') doc.addEventListener('DOMContentLoaded', bind, { once: true });
+                else bind();
+                return true;
+            }
             function enhance(mount, statusInput) {
                 var RH = root.RmoozScenarioEvidenceReleaseHud;
                 if (!mount || !RH || typeof RH.buildCluster !== 'function') return null;
                 var cluster = statusInput && statusInput.chips ? statusInput : RH.buildCluster(statusInput || {});
+                latestStatusInput = normalizeInput(statusInput || {});
+                latestCluster = cluster;
                 var pop = ensurePopover(mount);
                 var buttons = mount.querySelectorAll ? mount.querySelectorAll('[data-scenario-status-open]') : [];
                 var hideTimer = null;
@@ -5147,15 +5373,24 @@
             root.RmoozScenarioStatusHudDetails = {
                 VERSION: VERSION,
                 ACTIONS_VERSION: ACTIONS_VERSION,
+                COMMAND_PALETTE_VERSION: COMMAND_PALETTE_VERSION,
                 buildDetail: buildDetail,
                 actionsForTarget: actionsForTarget,
+                commandPaletteActions: commandPaletteActions,
+                filterCommands: filterCommands,
+                renderCommandPaletteHtml: renderCommandPaletteHtml,
+                executeCommand: executeCommand,
+                openCommandPalette: openCommandPalette,
+                closeCommandPalette: closeCommandPalette,
                 summaryText: summaryText,
                 renderDetailHtml: renderDetailHtml,
                 handleAction: handleAction,
                 enhance: enhance,
-                install: install
+                install: install,
+                installCommandPalette: installCommandPalette
             };
             install();
+            installCommandPalette();
         })(window);
     </script>
     <script src="shell/objective-evidence-panel.js?v=3"></script>
@@ -7887,6 +8122,32 @@
         .release-hud-detail-action:hover { background:#1c1a44; border-color:#7d75bf; }
         .release-hud-detail-action:focus-visible { outline:2px solid #b9b6ff; outline-offset:2px; background:#1c1a44; }
         .release-hud-detail-copy-state { min-height:1em; color:#8fd6a3; font-size:0.64rem; margin-left:2px; }
+        .scenario-command-btn { display:inline-flex; align-items:center; gap:5px; min-width:0; }
+        .scenario-command-btn-ar { color:#8f9dac; font-size:0.64rem; }
+        .scenario-command-shortcut { border:1px solid #4b4580; border-radius:4px; padding:1px 4px; color:#b9b6ff; font-size:0.58rem; line-height:1.15; }
+        @media (max-width: 1300px) {
+            .scenario-command-btn-ar, .scenario-command-shortcut { display:none; }
+        }
+        .scenario-command-palette[hidden] { display:none !important; }
+        .scenario-command-palette { position:fixed; inset:0; z-index:1600; display:flex; justify-content:center; align-items:flex-start; padding-top:calc(var(--rmooz-shell-top-safe, 74px) + 18px); background:rgba(0,0,0,0.42); }
+        .scenario-command-panel { width:min(560px, calc(100vw - 32px)); border:1px solid #4b4580; border-radius:8px; background:#090917; color:#dce8f4; box-shadow:0 20px 52px rgba(0,0,0,0.48); overflow:hidden; direction:ltr; }
+        .scenario-command-header { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px 8px; border-bottom:1px solid #2c2850; }
+        .scenario-command-header div { display:flex; flex-direction:column; gap:2px; min-width:0; }
+        .scenario-command-header strong { color:#f2f0ff; font-size:0.86rem; }
+        .scenario-command-header span { color:#8f9dac; font-size:0.72rem; }
+        .scenario-command-close { border:1px solid #4b4580; border-radius:5px; background:#121128; color:#d8d5ff; width:28px; height:28px; cursor:pointer; font-size:1rem; line-height:1; }
+        .scenario-command-close:hover, .scenario-command-close:focus-visible { background:#1c1a44; outline:2px solid #b9b6ff; outline-offset:2px; }
+        .scenario-command-search { width:calc(100% - 20px); box-sizing:border-box; margin:10px; border:1px solid #4b4580; border-radius:6px; background:#0e0e20; color:#f2f0ff; font:inherit; font-size:0.86rem; padding:8px 9px; }
+        .scenario-command-search:focus { outline:2px solid #b9b6ff; outline-offset:1px; }
+        .scenario-command-results { list-style:none; margin:0; padding:0 10px 10px; display:grid; gap:5px; max-height:min(46vh, 380px); overflow:auto; }
+        .scenario-command-item { width:100%; border:1px solid #2c2850; border-radius:6px; background:#111029; color:#dce8f4; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:center; padding:7px 8px; text-align:left; cursor:pointer; font:inherit; }
+        .scenario-command-item:hover, .scenario-command-item--active, .scenario-command-item:focus-visible { border-color:#7d75bf; background:#1c1a44; outline:none; }
+        .scenario-command-item-main { min-width:0; display:flex; flex-direction:column; gap:2px; }
+        .scenario-command-item-main strong { color:#f2f0ff; font-size:0.78rem; line-height:1.2; }
+        .scenario-command-item-main em { color:#8f9dac; font-style:normal; font-size:0.66rem; }
+        .scenario-command-item-hint { color:#b9b6ff; font-size:0.68rem; white-space:nowrap; }
+        .scenario-command-empty { border:1px dashed #4b4580; border-radius:6px; color:#8f9dac; padding:10px; font-size:0.76rem; }
+        .scenario-command-help { border-top:1px solid #2c2850; color:#8f9dac; font-size:0.66rem; padding:7px 10px 9px; }
 
         /* Unit status panel — extend the drawer down to cover the empty band below
            it, but STOP just above the footer stack. The footer bars

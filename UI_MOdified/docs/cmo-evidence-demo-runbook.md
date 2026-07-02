@@ -335,6 +335,31 @@ The open and view actions use the existing Scenario Evidence drawer targets.
 Copy actions place a plain-text status summary on the clipboard for a quick
 handoff note.
 
+Status Header Command Palette (Batch 16) gives the same actions a fast
+keyboard/search path from the main header:
+
+```text
+Ctrl+K or Scenario Actions -> Scenario command palette / أوامر السيناريو
+Type release / coverage / handoff / review
+Enter or click -> run the selected scenario evidence action
+Escape -> close the palette
+```
+
+Searchable actions:
+
+```text
+Open Release Gate
+View Release Blockers
+Open Closeout
+View Unresolved Issues
+Open Coverage
+Open Review Queue
+Open Handoff Package
+Open Handoff Acceptance
+Copy Release Summary
+Copy Coverage Summary
+```
+
 The cluster is display/navigation only. It does not add backend routes, database
 state, auto-fix behavior, combat/action mutation, doctrine mutation, scenario
 contract changes, or DOCX staging.

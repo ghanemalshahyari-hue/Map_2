@@ -143,6 +143,18 @@ scenario-evidence v15 Header Status Actions + Operator Shortcuts (Batch 15):
                       write, auto-fix behavior, combat/action mutation, doctrine
                       mutation, scenario-contract change, or DOCX staging.
                       Offline sync/testing: pending by user instruction.
+scenario-evidence v16 Status Header Command Palette (Batch 16):
+                      main-app header HUD enhancement only. Adds a Scenario
+                      Actions / أوامر السيناريو button and Ctrl+K command
+                      palette for searching scenario evidence shortcuts. Commands
+                      include Release Gate, Release Blockers, Closeout,
+                      Unresolved Issues, Coverage, Review Queue, Handoff Package,
+                      Handoff Acceptance, and copy summary actions for Release
+                      and Coverage. Reuses the existing drawer jump and clipboard
+                      summary paths; no backend route, database write, auto-fix
+                      behavior, combat/action mutation, doctrine mutation,
+                      scenario-contract change, or DOCX staging.
+                      Offline sync/testing: pending by user instruction.
 ```
 
 Active Scenario-QA scripts mirrored between main and offline app shells:

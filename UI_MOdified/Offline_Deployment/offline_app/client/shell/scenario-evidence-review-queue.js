@@ -34,6 +34,7 @@
     function objectiveApi()    { return localApi('RmoozObjectiveXEvidenceHealth',     'objective-x-evidence-health.js'); }
     function matrixApi()       { return localApi('RmoozCmoEvidenceReadinessMatrix',   'cmo-evidence-readiness-matrix.js'); }
     function labelsApi()       { return localApi('AppCmoEvidenceLabels',              'cmo-evidence-labels.js'); }
+    function fixStatusApi()    { return localApi('RmoozScenarioEvidenceFixStatus',    'scenario-evidence-fix-status.js'); }
 
     /* ── Reason → group + drilldown mapping ─────────────────────────────── */
     var GROUP_ORDER = ['contact', 'weapon', 'range', 'doctrine', 'coordinate_role', 'objective_x_health'];
@@ -156,6 +157,7 @@
             seen[key] = true;
             var info = labelMap[uid] || {};
             issues.push({
+                issue_id: (uid || 'force') + '|' + reason,
                 uid: uid || null,
                 label: info.label || uid || null,
                 side: info.side || null,
@@ -181,6 +183,7 @@
             c = obj(c);
             if (c.pass) return;
             issues.push({
+                issue_id: 'force|objective_' + c.key,
                 uid: null,
                 label: c.label_en || c.key,
                 label_ar: c.label_ar || null,
@@ -191,8 +194,16 @@
             });
         });
 
+        var FS = fixStatusApi();
+        var enrichedIssues = issues.map(function (issue) {
+            return FS && typeof FS.enrichIssue === 'function' ? FS.enrichIssue(issue) : issue;
+        });
+        var statusSummary = FS && typeof FS.summarize === 'function'
+            ? FS.summarize(enrichedIssues)
+            : { counts: { total: enrichedIssues.length, needs_review: enrichedIssues.length, reviewed: 0, deferred: 0, fixed_externally: 0 }, records: enrichedIssues };
+
         var groups = GROUP_ORDER.map(function (g) {
-            var groupIssues = issues.filter(function (i) { return i.group === g; });
+            var groupIssues = enrichedIssues.filter(function (i) { return i.group === g; });
             return {
                 key: g,
                 label_en: GROUP_LABELS[g].en,
@@ -203,16 +214,17 @@
         }).filter(function (g) { return g.count > 0; });
 
         var flagged = {};
-        issues.forEach(function (i) { if (i.uid) flagged[i.uid] = true; });
+        enrichedIssues.forEach(function (i) { if (i.uid) flagged[i.uid] = true; });
 
         return {
             version: SCENARIO_EVIDENCE_REVIEW_QUEUE_VERSION,
             generated_at: opts.generated_at || new Date().toISOString(),
-            total_issues: issues.length,
+            total_issues: enrichedIssues.length,
             needs_review: completeness.needs_review || 0,
             units_flagged: Object.keys(flagged).length,
             group_count: groups.length,
             groups: groups,
+            manual_review: statusSummary,
             objective_health_pct: health.health_score,
             normalization: {
                 fields_normalized: normResult.fields_normalized || 0,
@@ -246,13 +258,17 @@
                 '</div><ul class="usp-queue-list">';
             arr(g.issues).forEach(function (issue) {
                 var who = issue.uid ? esc(issue.uid) : esc(issue.label || 'Objective');
+                var status = issue.manual_status || 'needs_review';
+                var statusLabel = issue.manual_status_label_en || status;
                 var ar = issue.reason_label_ar ? '<span class="usp-queue-reason-ar" dir="rtl">' + esc(issue.reason_label_ar) + '</span>' : '';
                 html += '<li><button type="button" class="usp-queue-issue" ' +
                     'data-cmo-queue-issue="1" ' +
+                    'data-cmo-queue-issue-id="' + esc(issue.issue_id || '') + '" ' +
                     'data-cmo-queue-uid="' + esc(issue.uid || '') + '" ' +
                     'data-cmo-queue-reason="' + esc(issue.reason) + '">' +
                     '<span class="usp-queue-uid">' + who + '</span>' +
                     '<span class="usp-queue-reason">' + esc(issue.reason) + '</span>' + ar +
+                    '<span class="usp-queue-status usp-queue-status--' + esc(status) + '">' + esc(statusLabel) + '</span>' +
                     '</button></li>';
             });
             html += '</ul></div>';
@@ -282,6 +298,9 @@
                 var reason = btn.getAttribute('data-cmo-queue-reason') || '';
                 var issue = findIssue(queue, uid, reason);
                 var intent = resolveDrilldownIntent(reason);
+                if (opts.onOpenManualFix && typeof opts.onOpenManualFix === 'function') {
+                    try { opts.onOpenManualFix(issue, intent); } catch (_) {}
+                }
                 if (opts.onSelectIssue && typeof opts.onSelectIssue === 'function') {
                     try { opts.onSelectIssue(issue, intent); } catch (_) {}
                 }

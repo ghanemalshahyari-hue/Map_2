@@ -34,6 +34,7 @@
     function completenessApi() { return localApi('RmoozScenarioEvidenceCompleteness', 'scenario-evidence-completeness.js'); }
     function reviewQueueApi()  { return localApi('RmoozScenarioEvidenceReviewQueue',   'scenario-evidence-review-queue.js'); }
     function repairPlannerApi(){ return localApi('RmoozScenarioEvidenceRepairPlanner', 'scenario-evidence-repair-planner.js'); }
+    function fixStatusApi()    { return localApi('RmoozScenarioEvidenceFixStatus',     'scenario-evidence-fix-status.js'); }
 
     function reasonLabel(code, lang) {
         var labels = labelsApi();
@@ -121,6 +122,10 @@
         var repairPlan = (RPP && typeof RPP.buildRepairPlan === 'function')
             ? RPP.buildRepairPlan(ws, { matrix: matrix, review_queue: reviewQueue })
             : null;
+        var FS = fixStatusApi();
+        var manualReview = (FS && typeof FS.summarize === 'function')
+            ? FS.summarize(reviewQueue || [])
+            : null;
         return {
             version: CMO_FORCE_EVIDENCE_REPORT_VERSION,
             generated_at: opts.generated_at || new Date().toISOString(),
@@ -144,6 +149,7 @@
             completeness: completeness,
             review_queue: reviewQueue,
             repair_plan: repairPlan,
+            manual_review: manualReview,
             selected_unit: selected,
             source: 'Readiness matrix + force evidence feed'
         };
@@ -205,6 +211,21 @@
                 (orr.ready ? ' (ready)' : ' (' + (orr.failing_count || 0) + ' to repair)'));
             arr(rp.plans).slice(0, 6).forEach(function (p) {
                 lines.push('  - [' + p.priority_label_en + '] ' + (p.uid || p.label || 'Objective') + ' — ' + p.reason);
+            });
+            lines.push('');
+        }
+        var mr = obj(report.manual_review);
+        var mrc = obj(mr.counts);
+        if (mrc.total != null) {
+            lines.push('Evidence Manual Review:');
+            lines.push('  Reviewed: ' + (mrc.reviewed || 0));
+            lines.push('  Deferred: ' + (mrc.deferred || 0));
+            lines.push('  Fixed Externally: ' + (mrc.fixed_externally || 0));
+            lines.push('  Needs Review: ' + (mrc.needs_review || 0));
+            arr(mr.records).slice(0, 12).forEach(function (issue) {
+                lines.push('- ' + (issue.uid || issue.label || 'Objective') + ' — ' +
+                    (issue.reason || issue.code || 'unknown') + ' — ' +
+                    (issue.manual_status_label_en || issue.manual_status || 'Needs Review'));
             });
             lines.push('');
         }

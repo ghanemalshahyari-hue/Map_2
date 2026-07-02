@@ -37,6 +37,7 @@
     function reviewQueueApi() { return localApi('RmoozScenarioEvidenceReviewQueue', 'scenario-evidence-review-queue.js'); }
     function objectiveApi()   { return localApi('RmoozObjectiveXEvidenceHealth',     'objective-x-evidence-health.js'); }
     function matrixApi()      { return localApi('RmoozCmoEvidenceReadinessMatrix',    'cmo-evidence-readiness-matrix.js'); }
+    function fixStatusApi()   { return localApi('RmoozScenarioEvidenceFixStatus',     'scenario-evidence-fix-status.js'); }
 
     /* ── QA-36: repair steps per evidence reason (read-only guidance) ──────── */
     function step(en, ar) { return { en: en, ar: ar }; }
@@ -176,12 +177,14 @@
             ? RQ.buildReviewQueue(ws, { matrix: matrix, objective_health: health })
             : { groups: [], total_issues: 0 });
 
+        var FS = fixStatusApi();
         var plans = [];
         arr(reviewQueue.groups).forEach(function (group) {
             arr(group.issues).forEach(function (issue) {
                 var reason = issue.reason;
                 var prio = priorityOf(reason);
-                plans.push({
+                var planIssue = {
+                    issue_id: issue.issue_id || ((issue.uid || 'force') + '|' + reason),
                     uid: issue.uid || null,
                     label: issue.label || issue.uid || null,
                     side: issue.side || null,
@@ -192,7 +195,15 @@
                     priority_label_en: PRIORITY_LABEL[prio].en,
                     priority_label_ar: PRIORITY_LABEL[prio].ar,
                     steps: stepsFor(reason)
-                });
+                };
+                if (FS && typeof FS.enrichIssue === 'function') {
+                    var enriched = FS.enrichIssue(planIssue);
+                    planIssue.manual_status = enriched.manual_status;
+                    planIssue.manual_status_label_en = enriched.manual_status_label_en;
+                    planIssue.manual_status_label_ar = enriched.manual_status_label_ar;
+                    planIssue.manual_note = enriched.manual_note;
+                }
+                plans.push(planIssue);
             });
         });
         // QA-38: rank by priority (critical first), then group, then uid.
@@ -217,6 +228,7 @@
             by_priority: byPriority,
             plans: plans,
             objective_readiness: buildObjectiveReadiness(health),
+            manual_review: FS && typeof FS.summarize === 'function' ? FS.summarize(plans) : null,
             source: 'Review queue + Objective X health — read-only repair guidance'
         };
     }
@@ -311,6 +323,12 @@
                         '<span class="usp-repair-prio">' + esc(p.priority_label_en) + '</span>' +
                         '<span class="usp-repair-who">' + who + '</span>' +
                         '<span class="usp-repair-reason">' + esc(p.reason) + '</span>' +
+                        '<span class="usp-repair-status usp-repair-status--' + esc(p.manual_status || 'needs_review') + '">' +
+                            esc(p.manual_status_label_en || 'Needs Review') + '</span>' +
+                        '<button type="button" class="usp-repair-open" data-cmo-repair-issue="1" ' +
+                            'data-cmo-repair-issue-id="' + esc(p.issue_id || '') + '" ' +
+                            'data-cmo-repair-uid="' + esc(p.uid || '') + '" ' +
+                            'data-cmo-repair-reason="' + esc(p.reason || '') + '">Manual</button>' +
                     '</div><ol class="usp-repair-steps">';
                 arr(p.steps).forEach(function (s) {
                     html += '<li><span class="usp-repair-step-en">' + esc(s.en) + '</span>' +
@@ -324,7 +342,8 @@
         return html;
     }
 
-    function bindRepairActions(container, plan) {
+    function bindRepairActions(container, plan, opts) {
+        opts = opts || {};
         if (!container || !container.querySelectorAll) return false;
         Array.prototype.forEach.call(container.querySelectorAll('[data-cmo-repair-action]'), function (btn) {
             btn.addEventListener('click', function () {
@@ -332,6 +351,23 @@
                 if (action === 'text') copyPlanText(plan);
                 else if (action === 'json') copyPlanJson(plan);
                 else if (action === 'download') downloadJson(plan);
+            });
+        });
+        Array.prototype.forEach.call(container.querySelectorAll('[data-cmo-repair-issue]'), function (btn) {
+            btn.addEventListener('click', function () {
+                if (typeof opts.onOpenManualFix !== 'function') return;
+                var id = btn.getAttribute('data-cmo-repair-issue-id') || '';
+                var uid = btn.getAttribute('data-cmo-repair-uid') || '';
+                var reason = btn.getAttribute('data-cmo-repair-reason') || '';
+                var found = null;
+                arr(obj(plan).plans).some(function (p) {
+                    if ((p.issue_id || '') === id || ((p.uid || '') === uid && (p.reason || '') === reason)) {
+                        found = p;
+                        return true;
+                    }
+                    return false;
+                });
+                try { opts.onOpenManualFix(found || { issue_id: id, uid: uid, reason: reason }); } catch (_) {}
             });
         });
         return true;

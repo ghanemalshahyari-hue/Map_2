@@ -3586,6 +3586,14 @@
                         <div class="usp-section-body" id="usp-repair-plan-body"></div>
                     </div>
 
+                    <!-- RMOOZ-QA-44: local manual evidence fix workflow -->
+                    <div class="usp-tasking-block usp-manual-fix-block" id="usp-manual-fix-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">Manual Evidence Fix / &#1573;&#1589;&#1604;&#1575;&#1581; &#1575;&#1604;&#1571;&#1583;&#1604;&#1577; &#1575;&#1604;&#1610;&#1583;&#1608;&#1610;</span>
+                        </div>
+                        <div class="usp-section-body" id="usp-manual-fix-body"></div>
+                    </div>
+
                     <!-- RMOOZ-CMO-12: read-only evidence quality gate -->
                     <div class="usp-tasking-block usp-evidence-quality-block" id="usp-evidence-quality-block" hidden>
                         <div class="usp-section-hdr">
@@ -4632,6 +4640,8 @@
     <script src="shell/scenario-evidence-completeness.js?v=1"></script>
     <script src="shell/scenario-evidence-normalizer.js?v=1"></script>
     <script src="shell/objective-x-evidence-health.js?v=1"></script>
+    <script src="shell/scenario-evidence-fix-status.js?v=1"></script>
+    <script src="shell/scenario-evidence-manual-fix.js?v=1"></script>
     <script src="shell/scenario-evidence-review-queue.js?v=1"></script>
     <script src="shell/scenario-evidence-repair-planner.js?v=1"></script>
     <script src="shell/cmo-force-evidence-feed.js?v=1"></script>
@@ -6867,6 +6877,27 @@
         .usp-repair-empty { padding:9px 0.8rem; color:#8fd6a3; font-size:0.76rem; }
         .usp-repair-disclaimer { padding:5px 0.8rem; color:#8298ac; font-size:0.7rem; border-top:1px solid #0d1420; }
         .usp-repair-source { padding:2px 0.8rem 7px; color:#8298ac; font-size:0.7rem; }
+        .usp-queue-status, .usp-repair-status { margin-left:auto; font-family:'Consolas','Courier New',monospace; font-size:0.66rem; padding:1px 6px; border-radius:3px; background:#101d2a; color:#9fb8cf; }
+        .usp-queue-status--reviewed, .usp-repair-status--reviewed { color:#8fd6a3; }
+        .usp-queue-status--deferred, .usp-repair-status--deferred { color:#e8c97a; }
+        .usp-queue-status--fixed_externally, .usp-repair-status--fixed_externally { color:#76c6e8; }
+        .usp-repair-open { border:1px solid #25415c; background:#0f1a27; color:#bcd6ee; font-size:0.66rem; padding:2px 6px; border-radius:4px; cursor:pointer; font-family:inherit; }
+        .usp-manual-fix-block { background:#06100f; border-bottom:2px solid #173833; }
+        .usp-manual-empty { padding:9px 0.8rem; color:#91b8b0; font-size:0.76rem; line-height:1.45; }
+        .usp-manual-card { padding:8px 0.8rem 9px; color:#cfe3f4; font-size:0.75rem; }
+        .usp-manual-summary { display:flex; gap:7px; flex-wrap:wrap; align-items:center; border-bottom:1px solid #12302c; padding-bottom:6px; margin-bottom:7px; }
+        .usp-manual-kicker { width:100%; color:#8dbbb1; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.04em; }
+        .usp-manual-priority, .usp-manual-status { font-family:'Consolas','Courier New',monospace; font-size:0.68rem; padding:1px 6px; border-radius:3px; background:#0d1b1c; color:#9fb8cf; }
+        .usp-manual-status--reviewed { color:#8fd6a3; } .usp-manual-status--deferred { color:#e8c97a; } .usp-manual-status--fixed_externally { color:#76c6e8; }
+        .usp-manual-fields span, .usp-manual-steps span { display:block; color:#8dbbb1; font-size:0.7rem; margin:5px 0 2px; }
+        .usp-manual-fields ul, .usp-manual-steps ol { margin:0 0 4px 1.2rem; padding:0; line-height:1.45; }
+        .usp-manual-steps small { display:block; color:#8fb8d8; font-size:0.7rem; }
+        .usp-manual-controls { display:flex; gap:6px; flex-wrap:wrap; padding:6px 0; }
+        .usp-manual-controls button { border:1px solid #24534c; background:#0d1b1c; color:#bde2dc; font-size:0.68rem; padding:4px 7px; border-radius:4px; cursor:pointer; font-family:inherit; }
+        .usp-manual-controls button:hover, .usp-repair-open:hover { background:#17302f; }
+        .usp-manual-note { display:block; color:#8dbbb1; font-size:0.7rem; }
+        .usp-manual-note textarea { box-sizing:border-box; width:100%; margin-top:3px; border:1px solid #204842; border-radius:4px; background:#071315; color:#d7edf0; font-family:inherit; font-size:0.74rem; padding:5px; resize:vertical; }
+        .usp-manual-disclaimer { margin-top:6px; color:#8298ac; font-size:0.69rem; }
 
     </style>
     <script>

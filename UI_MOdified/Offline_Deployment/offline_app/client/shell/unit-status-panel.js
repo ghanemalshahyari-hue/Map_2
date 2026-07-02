@@ -22,6 +22,7 @@
     var $ = function(id) { return document.getElementById(id); };
     var currentUnit = null;
     var currentMatrixFilter = { status: 'All', reason_code: null };
+    var currentManualFixIssue = null;
 
     // ── i18n helper ───────────────────────────────────────────────────
     function tr(key, fallback) {
@@ -253,6 +254,7 @@
         populateObjectiveHealth(unit);
         populateScenarioReviewQueue(unit);
         populateScenarioRepairPlan(unit);
+        populateScenarioManualFix(unit);
         populateEvidenceQualityGate(unit);
         populateEvidenceAlerts(unit);
         populateEvidenceCoverage(unit);
@@ -1322,6 +1324,10 @@
         body.innerHTML = RQ.renderQueueHtml(queue, { lang: 'ar' });
         if (typeof RQ.bindQueueInteractions === 'function') {
             RQ.bindQueueInteractions(body, queue, {
+                onOpenManualFix: function (issue) {
+                    currentManualFixIssue = issue || null;
+                    populateScenarioManualFix(unit || currentUnit);
+                },
                 onSelectIssue: function (issue, intent) {
                     intent = intent || (typeof RQ.resolveDrilldownIntent === 'function'
                         ? RQ.resolveDrilldownIntent(issue && issue.reason)
@@ -1367,7 +1373,45 @@
         });
         body._scenarioRepairPlan = plan;
         body.innerHTML = RPP.renderRepairHtml(plan, { lang: 'ar' });
-        if (typeof RPP.bindRepairActions === 'function') RPP.bindRepairActions(body, plan);
+        if (typeof RPP.bindRepairActions === 'function') {
+            RPP.bindRepairActions(body, plan, {
+                onOpenManualFix: function (issue) {
+                    currentManualFixIssue = issue || null;
+                    populateScenarioManualFix(unit || currentUnit);
+                }
+            });
+        }
+        block.removeAttribute('hidden');
+    }
+
+    // QA-44/45: local manual evidence fix workspace. Tracks review status only.
+    function populateScenarioManualFix(unit) {
+        var block = $('usp-manual-fix-block');
+        var body = $('usp-manual-fix-body');
+        if (!block || !body) return;
+        var MF = root.RmoozScenarioEvidenceManualFix;
+        if (!MF || typeof MF.buildWorkspace !== 'function' || typeof MF.renderWorkspaceHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var RPP = root.RmoozScenarioEvidenceRepairPlanner;
+        var plan = RPP && typeof RPP.buildRepairPlan === 'function'
+            ? RPP.buildRepairPlan(_getCurrentWorldState, { generated_at: new Date().toISOString() })
+            : null;
+        var workspace = MF.buildWorkspace(currentManualFixIssue, { repair_plan: plan });
+        body._scenarioManualFixWorkspace = workspace;
+        body.innerHTML = MF.renderWorkspaceHtml(workspace, { lang: 'ar' });
+        if (typeof MF.bindWorkspaceInteractions === 'function') {
+            MF.bindWorkspaceInteractions(body, workspace, {
+                onStatusChange: function () {
+                    populateScenarioReviewQueue(unit || currentUnit);
+                    populateScenarioRepairPlan(unit || currentUnit);
+                    populateCommanderBrief(unit || currentUnit);
+                    populateForceEvidenceReport(unit || currentUnit);
+                    populateScenarioManualFix(unit || currentUnit);
+                }
+            });
+        }
         block.removeAttribute('hidden');
     }
 

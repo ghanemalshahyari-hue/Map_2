@@ -60,6 +60,7 @@
     function remediationApi(){ return localApi('RmoozCmoBlockerRemediation',     'cmo-blocker-remediation.js'); }
     function reviewQueueApi(){ return localApi('RmoozScenarioEvidenceReviewQueue','scenario-evidence-review-queue.js'); }
     function objectiveApi()  { return localApi('RmoozObjectiveXEvidenceHealth',    'objective-x-evidence-health.js'); }
+    function fixStatusApi()  { return localApi('RmoozScenarioEvidenceFixStatus',   'scenario-evidence-fix-status.js'); }
 
     function resolveHeadlineStatus(coverage, quality, alertCount, readyCount, totalCount) {
         var coveragePct = coverage && coverage.coverage_pct != null ? coverage.coverage_pct : 0;
@@ -114,6 +115,10 @@
         var reviewQueue = opts.review_queue || (RQ && typeof RQ.buildReviewQueue === 'function'
             ? RQ.buildReviewQueue(ws, { matrix: matrix, objective_health: objHealth })
             : null);
+        var FS = fixStatusApi();
+        var manualReview = opts.manual_review || (FS && typeof FS.summarize === 'function'
+            ? FS.summarize(reviewQueue || [])
+            : { counts: { total: reviewQueue ? (reviewQueue.total_issues || 0) : 0, needs_review: reviewQueue ? (reviewQueue.total_issues || 0) : 0, reviewed: 0, deferred: 0, fixed_externally: 0 } });
 
         var alertList = arr(alerts.alerts || []);
         var alertCount = alertList.length;
@@ -161,7 +166,8 @@
                 needs_review: reviewQueue ? (reviewQueue.total_issues > 0 || reviewQueue.needs_review > 0) : false,
                 evidence_issues: reviewQueue ? (reviewQueue.total_issues || 0) : 0,
                 units_flagged: reviewQueue ? (reviewQueue.units_flagged || 0) : 0,
-                objective_health_pct: objHealth ? (objHealth.health_score == null ? null : objHealth.health_score) : null
+                objective_health_pct: objHealth ? (objHealth.health_score == null ? null : objHealth.health_score) : null,
+                manual_review: manualReview
             },
             selected_unit: selectedSummary,
             source: 'Coverage + quality-gate + alerts + matrix + scenario QA — commander summary'
@@ -204,6 +210,14 @@
             if (qa.objective_health_pct != null) {
                 html += '<div class="usp-brief-cell"><dt>Objective X Health</dt><dd>' + esc(qa.objective_health_pct) + '%</dd></div>';
             }
+            var mr = obj(qa.manual_review);
+            var mrc = obj(mr.counts);
+            html += '<div class="usp-brief-cell"><dt>Manual Review</dt><dd>' +
+                'Reviewed ' + esc(mrc.reviewed || 0) +
+                ' / Deferred ' + esc(mrc.deferred || 0) +
+                ' / Fixed externally ' + esc(mrc.fixed_externally || 0) +
+                ' / Needs review ' + esc(mrc.needs_review || 0) +
+                '</dd></div>';
         }
         html += '</dl>';
 

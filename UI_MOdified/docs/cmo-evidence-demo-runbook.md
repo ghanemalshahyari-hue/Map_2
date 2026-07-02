@@ -321,6 +321,20 @@ Enter / Space   -> open the matching Scenario Evidence drawer section
 Escape          -> dismiss the details popover
 ```
 
+Header Status Actions (Batch 15) adds compact operator shortcuts inside that
+same details popover:
+
+```text
+Release  -> Open Release Gate / View Release Blockers / Copy Release Summary
+Closeout -> Open Closeout / View Unresolved Issues / Copy Closeout Summary
+Coverage -> Open Coverage / View Review Queue / Copy Coverage Summary
+Handoff  -> Open Handoff Acceptance / Open Handoff Package / Copy Handoff Summary
+```
+
+The open and view actions use the existing Scenario Evidence drawer targets.
+Copy actions place a plain-text status summary on the clipboard for a quick
+handoff note.
+
 The cluster is display/navigation only. It does not add backend routes, database
 state, auto-fix behavior, combat/action mutation, doctrine mutation, scenario
 contract changes, or DOCX staging.

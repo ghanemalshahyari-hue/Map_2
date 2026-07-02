@@ -4754,12 +4754,13 @@
     <script src="shell/cmo-evidence-export.js?v=cmo-22-drilldown"></script>
     <script src="shell/unit-status-panel.js?v=qa-batch-36-43"></script>
     <script>
-        // RMOOZ-SCENARIO-QA-BATCH-14: main-only header status details.
-        // Wraps the browser-local HUD renderer to add hover/focus explanations.
+        // RMOOZ-SCENARIO-QA-BATCH-14/15: main-only header status details/actions.
+        // Wraps the browser-local HUD renderer to add hover/focus explanations and shortcuts.
         (function (root) {
             'use strict';
 
             var VERSION = '1.0.0-rmooz-scenario-qa-batch-14';
+            var ACTIONS_VERSION = '1.0.0-rmooz-scenario-qa-batch-15';
             var TARGET_LABELS = {
                 release: 'Release',
                 closeout: 'Closeout',
@@ -4798,8 +4799,41 @@
                     cls: cls || 'incomplete',
                     severity_rank: SEVERITY_RANK[cls] || 9,
                     kicker: kicker || 'Why this status?',
-                    lines: uniqueLines(lines).length ? uniqueLines(lines) : ['Open Scenario Evidence for full details.']
+                    lines: uniqueLines(lines).length ? uniqueLines(lines) : ['Open Scenario Evidence for full details.'],
+                    actions: actionsForTarget(target)
                 };
+            }
+            function actionsForTarget(target) {
+                var map = {
+                    release: [
+                        { key: 'open-release-gate', label: 'Open Release Gate', kind: 'open', target: 'release', block: 'usp-release-gate-block' },
+                        { key: 'view-release-blockers', label: 'View Release Blockers', kind: 'focus', target: 'release', block: 'usp-release-gate-block' },
+                        { key: 'copy-release-summary', label: 'Copy Release Summary', kind: 'copy', target: 'release' }
+                    ],
+                    closeout: [
+                        { key: 'open-closeout', label: 'Open Closeout', kind: 'open', target: 'closeout', block: 'usp-review-closeout-block' },
+                        { key: 'view-unresolved-issues', label: 'View Unresolved Issues', kind: 'focus', target: 'closeout', block: 'usp-review-queue-block' },
+                        { key: 'copy-closeout-summary', label: 'Copy Closeout Summary', kind: 'copy', target: 'closeout' }
+                    ],
+                    coverage: [
+                        { key: 'open-coverage', label: 'Open Coverage', kind: 'open', target: 'coverage', block: 'usp-evidence-coverage-block' },
+                        { key: 'view-review-queue', label: 'View Review Queue', kind: 'focus', target: 'coverage', block: 'usp-review-queue-block' },
+                        { key: 'copy-coverage-summary', label: 'Copy Coverage Summary', kind: 'copy', target: 'coverage' }
+                    ],
+                    handoff: [
+                        { key: 'open-handoff-acceptance', label: 'Open Handoff Acceptance', kind: 'open', target: 'handoff', block: 'usp-handoff-acceptance-block' },
+                        { key: 'open-handoff-package', label: 'Open Handoff Package', kind: 'focus', target: 'handoff', block: 'usp-handoff-package-block' },
+                        { key: 'copy-handoff-summary', label: 'Copy Handoff Summary', kind: 'copy', target: 'handoff' }
+                    ]
+                };
+                return arr(map[target]).map(function (action) { return obj(action); });
+            }
+            function summaryText(info) {
+                info = obj(info);
+                var lines = [cleanLine(info.title || 'Scenario status')];
+                if (info.kicker) lines.push(cleanLine(info.kicker));
+                arr(info.lines).forEach(function (line) { lines.push('- ' + cleanLine(line)); });
+                return lines.filter(Boolean).join('\n');
             }
             function checkLine(check) {
                 check = obj(check);
@@ -4922,9 +4956,23 @@
             }
             function renderDetailHtml(info) {
                 info = obj(info);
+                var actionHtml = arr(info.actions).length
+                    ? '<div class="release-hud-detail-actions" role="group" aria-label="' + esc((TARGET_LABELS[info.target] || 'Scenario') + ' status actions') + '">' +
+                        arr(info.actions).map(function (action) {
+                            action = obj(action);
+                            return '<button type="button" class="release-hud-detail-action" data-scenario-status-action="' + esc(action.kind || 'open') + '"' +
+                                ' data-scenario-status-action-key="' + esc(action.key || '') + '"' +
+                                ' data-scenario-status-action-target="' + esc(action.target || info.target || 'release') + '"' +
+                                (action.block ? ' data-scenario-status-action-block="' + esc(action.block) + '"' : '') +
+                                ' aria-label="' + esc(action.label || 'Open status action') + '">' + esc(action.label || 'Open') + '</button>';
+                        }).join('') +
+                        '<span class="release-hud-detail-copy-state" data-scenario-status-copy-state aria-live="polite"></span>' +
+                    '</div>'
+                    : '';
                 return '<div class="release-hud-detail-title">' + esc(info.title || 'Scenario status') + '</div>' +
                     '<div class="release-hud-detail-kicker">' + esc(info.kicker || 'Why this status?') + '</div>' +
-                    '<ul>' + arr(info.lines).map(function (line) { return '<li>' + esc(line) + '</li>'; }).join('') + '</ul>';
+                    '<ul>' + arr(info.lines).map(function (line) { return '<li>' + esc(line) + '</li>'; }).join('') + '</ul>' +
+                    actionHtml;
             }
             function ensurePopover(mount) {
                 if (!mount || !root.document) return null;
@@ -4942,10 +4990,96 @@
                 if (!pop) return;
                 pop.className = 'release-hud-detail release-hud-detail--' + esc(info.cls || 'incomplete');
                 pop.innerHTML = renderDetailHtml(info);
+                bindDetailActions(pop, info);
                 pop.removeAttribute('hidden');
             }
             function hideDetail(pop) {
                 if (pop) pop.setAttribute('hidden', '');
+            }
+            function setCopyState(pop, label) {
+                var node = pop && pop.querySelector ? pop.querySelector('[data-scenario-status-copy-state]') : null;
+                if (node) node.textContent = label || '';
+            }
+            function openStatusTarget(target) {
+                var panel = root.AppUnitStatusPanel;
+                if (panel && typeof panel.openScenarioEvidenceTarget === 'function') {
+                    panel.openScenarioEvidenceTarget(target || 'release');
+                    return true;
+                }
+                if (target === 'release' && panel && typeof panel.openReleaseGate === 'function') {
+                    panel.openReleaseGate();
+                    return true;
+                }
+                return false;
+            }
+            function openContainingEvidenceGroup(block) {
+                var section = block && typeof block.closest === 'function' ? block.closest('.se-group') : null;
+                if (!section) return;
+                section.setAttribute('data-collapsed', 'false');
+                var header = section.querySelector ? section.querySelector('.se-group-hdr') : null;
+                if (header) header.setAttribute('aria-expanded', 'true');
+            }
+            function focusEvidenceBlock(blockId) {
+                var doc = root.document;
+                var block = doc && typeof doc.getElementById === 'function' ? doc.getElementById(blockId) : null;
+                if (!block) return false;
+                openContainingEvidenceGroup(block);
+                if (!block.hasAttribute || !block.hasAttribute('tabindex')) block.setAttribute('tabindex', '-1');
+                if (typeof block.focus === 'function') {
+                    try { block.focus({ preventScroll: true }); } catch (_) { try { block.focus(); } catch (_) {} }
+                }
+                if (typeof block.scrollIntoView === 'function') {
+                    try { block.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (_) { block.scrollIntoView(); }
+                }
+                return true;
+            }
+            function findAction(info, key) {
+                var found = null;
+                arr(info && info.actions).forEach(function (action) {
+                    if (!found && obj(action).key === key) found = action;
+                });
+                return found;
+            }
+            function copySummary(info, pop) {
+                var nav = root.navigator || {};
+                if (!nav.clipboard || typeof nav.clipboard.writeText !== 'function') {
+                    setCopyState(pop, 'Copy unavailable');
+                    return false;
+                }
+                try {
+                    var ret = nav.clipboard.writeText(summaryText(info));
+                    if (ret && typeof ret.then === 'function') {
+                        ret.then(function () { setCopyState(pop, 'Copied'); }, function () { setCopyState(pop, 'Copy unavailable'); });
+                    } else {
+                        setCopyState(pop, 'Copied');
+                    }
+                    return true;
+                } catch (_) {
+                    setCopyState(pop, 'Copy unavailable');
+                    return false;
+                }
+            }
+            function handleAction(action, info, pop, ev) {
+                action = obj(action);
+                if (ev && typeof ev.preventDefault === 'function') ev.preventDefault();
+                if (ev && typeof ev.stopPropagation === 'function') ev.stopPropagation();
+                if (action.kind === 'copy') return copySummary(info, pop);
+                var target = action.target || (info && info.target) || 'release';
+                openStatusTarget(target);
+                if (action.block) {
+                    if (typeof root.setTimeout === 'function') root.setTimeout(function () { focusEvidenceBlock(action.block); }, 0);
+                    else focusEvidenceBlock(action.block);
+                }
+                return true;
+            }
+            function bindDetailActions(pop, info) {
+                var buttons = pop && pop.querySelectorAll ? pop.querySelectorAll('[data-scenario-status-action-key]') : [];
+                Array.prototype.forEach.call(buttons, function (btn) {
+                    btn.addEventListener('click', function (ev) {
+                        var action = findAction(info, btn.getAttribute('data-scenario-status-action-key'));
+                        handleAction(action, info, pop, ev);
+                    });
+                });
             }
             function enhance(mount, statusInput) {
                 var RH = root.RmoozScenarioEvidenceReleaseHud;
@@ -4953,6 +5087,27 @@
                 var cluster = statusInput && statusInput.chips ? statusInput : RH.buildCluster(statusInput || {});
                 var pop = ensurePopover(mount);
                 var buttons = mount.querySelectorAll ? mount.querySelectorAll('[data-scenario-status-open]') : [];
+                var hideTimer = null;
+                function cancelHide() {
+                    if (hideTimer && typeof root.clearTimeout === 'function') root.clearTimeout(hideTimer);
+                    hideTimer = null;
+                }
+                function scheduleHide() {
+                    cancelHide();
+                    if (typeof root.setTimeout === 'function') hideTimer = root.setTimeout(function () { hideDetail(pop); }, 140);
+                    else hideDetail(pop);
+                }
+                function reveal(info) {
+                    cancelHide();
+                    showDetail(pop, info);
+                }
+                if (pop && typeof pop.addEventListener === 'function' && !pop._scenarioStatusActionsBatch15) {
+                    pop.addEventListener('mouseenter', cancelHide);
+                    pop.addEventListener('mouseleave', scheduleHide);
+                    pop.addEventListener('focusin', cancelHide);
+                    pop.addEventListener('focusout', scheduleHide);
+                    pop._scenarioStatusActionsBatch15 = true;
+                }
                 Array.prototype.forEach.call(buttons, function (btn) {
                     var target = btn.getAttribute('data-scenario-status-open') || 'release';
                     var chip = cluster[target] || cluster.release || {};
@@ -4962,12 +5117,13 @@
                     btn.setAttribute('data-scenario-status-severity', chip.cls || 'incomplete');
                     btn.setAttribute('data-scenario-status-rank', String(info.severity_rank || 9));
                     btn.setAttribute('title', info.title + '\n' + info.lines.join('\n'));
-                    btn.addEventListener('mouseenter', function () { showDetail(pop, info); });
-                    btn.addEventListener('focus', function () { showDetail(pop, info); });
-                    btn.addEventListener('mouseleave', function () { hideDetail(pop); });
-                    btn.addEventListener('blur', function () { hideDetail(pop); });
+                    btn.addEventListener('mouseenter', function () { reveal(info); });
+                    btn.addEventListener('focus', function () { reveal(info); });
+                    btn.addEventListener('mouseleave', scheduleHide);
+                    btn.addEventListener('blur', scheduleHide);
                     btn.addEventListener('keydown', function (ev) {
                         if (ev && ev.key === 'Escape') {
+                            cancelHide();
                             hideDetail(pop);
                             if (typeof ev.stopPropagation === 'function') ev.stopPropagation();
                         }
@@ -4990,8 +5146,12 @@
 
             root.RmoozScenarioStatusHudDetails = {
                 VERSION: VERSION,
+                ACTIONS_VERSION: ACTIONS_VERSION,
                 buildDetail: buildDetail,
+                actionsForTarget: actionsForTarget,
+                summaryText: summaryText,
                 renderDetailHtml: renderDetailHtml,
+                handleAction: handleAction,
                 enhance: enhance,
                 install: install
             };
@@ -7722,6 +7882,11 @@
         .release-hud-detail ul { margin:0; padding-left:1rem; }
         .release-hud-detail li { margin:2px 0; color:#dce8f4; }
         .release-hud-detail code { color:#d7edf8; font-family:'Consolas','Courier New',monospace; }
+        .release-hud-detail-actions { display:flex; flex-wrap:wrap; align-items:center; gap:5px; margin-top:7px; padding-top:7px; border-top:1px solid #2c2850; }
+        .release-hud-detail-action { min-height:24px; border:1px solid #4b4580; border-radius:4px; background:#121128; color:#ebe9ff; font:inherit; font-size:0.66rem; line-height:1.2; padding:4px 6px; cursor:pointer; }
+        .release-hud-detail-action:hover { background:#1c1a44; border-color:#7d75bf; }
+        .release-hud-detail-action:focus-visible { outline:2px solid #b9b6ff; outline-offset:2px; background:#1c1a44; }
+        .release-hud-detail-copy-state { min-height:1em; color:#8fd6a3; font-size:0.64rem; margin-left:2px; }
 
         /* Unit status panel — extend the drawer down to cover the empty band below
            it, but STOP just above the footer stack. The footer bars

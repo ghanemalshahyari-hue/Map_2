@@ -131,6 +131,18 @@ scenario-evidence v14 Header Status Details + Accessibility Polish (Batch 14):
                       writes, auto-fix behavior, combat/action mutation, doctrine
                       mutation, scenario-contract changes, or DOCX staging.
                       Offline sync/testing: pending by user instruction.
+scenario-evidence v15 Header Status Actions + Operator Shortcuts (Batch 15):
+                      main-app header HUD enhancement only. The detail popover
+                      now exposes compact actions per chip: open the matching
+                      drawer section, jump to the relevant blocker/review/package
+                      block, or copy a plain-text status summary. Release routes
+                      to Release Gate / Release Blockers, Closeout to Closeout /
+                      Unresolved Issues, Coverage to Coverage / Review Queue,
+                      and Handoff to Handoff Acceptance / Handoff Package. Display,
+                      navigation, and clipboard only: no backend route, database
+                      write, auto-fix behavior, combat/action mutation, doctrine
+                      mutation, scenario-contract change, or DOCX staging.
+                      Offline sync/testing: pending by user instruction.
 ```
 
 Active Scenario-QA scripts mirrored between main and offline app shells:

@@ -47,7 +47,7 @@ global.window = {
 };
 global.window.window = global.window;
 global.CustomEvent = function (t, o) { this.type = t; this.detail = (o && o.detail) || {}; };
-global.navigator = { userAgent: '' };
+Object.defineProperty(global, 'navigator', { value: { userAgent: '' }, configurable: true });
 
 function setUnits(red, blue) { global.window.RmoozScenario = { scenario: { red_units: red, blue_units_initial: blue, obj: { name: 'Obj X', coord: [54.40, 24.45] } } }; }
 setUnits([{ id: 'R-1', side: 'RED', lat: 24.45, lon: 54.46, coord: [54.46, 24.45] }],

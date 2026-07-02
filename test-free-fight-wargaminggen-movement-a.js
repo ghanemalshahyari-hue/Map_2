@@ -52,7 +52,7 @@ global.window = {
 };
 global.window.window = global.window;
 global.CustomEvent = function (t, o) { this.type = t; this.detail = (o && o.detail) || {}; };
-global.navigator = { userAgent: '' };
+Object.defineProperty(global, 'navigator', { value: { userAgent: '' }, configurable: true });
 
 var OBJ = { lat: 24.45, lon: 54.40 };
 

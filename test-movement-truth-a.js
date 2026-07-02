@@ -47,7 +47,7 @@ global.window = {
 };
 global.window.window = global.window;
 global.CustomEvent = function (t, o) { this.type = t; this.detail = (o && o.detail) || {}; };
-global.navigator = { userAgent: '' };
+Object.defineProperty(global, 'navigator', { value: { userAgent: '' }, configurable: true });
 
 // Objective at 24.45, 54.40 — units placed ~100km away (far enough to trigger normalization at > 40km)
 var OBJ = { lat: 24.45, lon: 54.40 };

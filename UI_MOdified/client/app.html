@@ -7141,6 +7141,15 @@
         .usp-queue-empty { padding:9px 0.8rem; color:#8fd6a3; font-size:0.76rem; }
         .usp-queue-source { padding:4px 0.8rem 7px; color:#8298ac; font-size:0.72rem; border-top:1px solid #0d1420; }
 
+        /* Unit status panel — extend the drawer down to cover the empty band below
+           it (the "down part"), overriding the shell-safe-area bottom inset which
+           otherwise stops the panel well above the footer. A ~28px bottom inset is
+           kept so the bottom classification banner stays visible. Main build only. */
+        .unit-status-panel {
+            bottom: 28px !important;
+            max-height: calc(100vh - var(--rmooz-shell-top-safe, 74px) - 28px) !important;
+        }
+
     </style>
     <script>
         // Mount Edit Mode once the DOM (workspace panel) is ready.

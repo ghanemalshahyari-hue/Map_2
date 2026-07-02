@@ -1,5 +1,33 @@
 # Known Issues
 
+## D6 — offline scenario-import-wizard.js is stale (main/offline drift)
+
+Found by RMOOZ-AUDIT-APP-2 (2026-07-02). The offline app shell loads its own copy of
+`scenario-import-wizard.js` (offline `app.html:4848`), and that copy is ~407 lines behind the
+main client copy — it is missing the DOC-UNDERSTANDING-1 Phase E "AI Understanding review"
+screen, the FIX-B Objective-X source-of-truth indicator, and the package-import copy rewrite.
+
+No parity gate covers this module (the byte-parity tests only cover the CMO/Scenario-QA
+evidence lists), so the drift accumulated silently. Pending owner ruling:
+
+```text
+Option A: copy main -> offline, re-verify the offline import flow, rebuild the offline
+          image, and add the module to a parity gate
+Option B: record the divergence as intentional for the offline runtime
+```
+
+## scenario_overrides.json is tracked but is app-written runtime state
+
+`UI_MOdified/TestingAI/WarGamingGEN/inputs/scenario_overrides.json` is committed to the repo
+but is rewritten by the app at runtime (operator Objective-X overrides with timestamps). The
+working tree is therefore perpetually dirty, and the file collides on every pull/fast-forward
+(it did on 2026-07-02). Keep local changes out of feature commits. Pending owner ruling:
+
+```text
+Option A: gitignore it + git rm --cached (app must tolerate the file being absent)
+Option B: keep a committed default seed and stop the app writing to the tracked path
+```
+
 ## NET-8640-REMOTE-1 public endpoint exposure (network/admin-side)
 
 The offline runtime is healthy locally and on the LAN, but the public endpoint is not confirmed reachable from outside the network.

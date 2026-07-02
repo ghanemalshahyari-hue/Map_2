@@ -4759,7 +4759,7 @@
     <script src="shell/cmo-evidence-export.js?v=cmo-22-drilldown"></script>
     <script src="shell/unit-status-panel.js?v=qa-batch-36-43"></script>
     <script>
-        // RMOOZ-SCENARIO-QA-BATCH-14/15/16: main-only header status details/actions/palette.
+        // RMOOZ-SCENARIO-QA-BATCH-14/15/16/17: main-only header status details/actions/palette.
         // Wraps the browser-local HUD renderer to add hover/focus explanations and shortcuts.
         (function (root) {
             'use strict';
@@ -4767,6 +4767,7 @@
             var VERSION = '1.0.0-rmooz-scenario-qa-batch-14';
             var ACTIONS_VERSION = '1.0.0-rmooz-scenario-qa-batch-15';
             var COMMAND_PALETTE_VERSION = '1.0.0-rmooz-scenario-qa-batch-16';
+            var COMMAND_CONTEXT_VERSION = '1.0.0-rmooz-scenario-qa-batch-17';
             var TARGET_LABELS = {
                 release: 'Release',
                 closeout: 'Closeout',
@@ -4858,18 +4859,66 @@
                     { key: 'copy-coverage-summary', label: 'Copy Coverage Summary', kind: 'copy', target: 'coverage', group: 'Coverage', hint: 'Copy status summary', keywords: 'copy coverage summary evidence' }
                 ];
             }
+            function commandPaletteFilters() {
+                return [
+                    { key: 'all', label: 'All' },
+                    { key: 'release', label: 'Release' },
+                    { key: 'closeout', label: 'Closeout' },
+                    { key: 'coverage', label: 'Coverage' },
+                    { key: 'handoff', label: 'Handoff' },
+                    { key: 'copy', label: 'Copy' }
+                ];
+            }
+            function commandFilterMatch(command, filter) {
+                command = obj(command);
+                filter = cleanLine(filter || 'all').toLowerCase();
+                if (!filter || filter === 'all') return true;
+                if (filter === 'copy') return command.kind === 'copy';
+                return command.target === filter || String(command.group || '').toLowerCase() === filter;
+            }
             function commandSearchText(command) {
                 command = obj(command);
-                return [command.label, command.group, command.hint, command.key, command.target, command.keywords].join(' ').toLowerCase();
+                return [command.label, command.group, command.hint, command.key, command.target, command.keywords, command.context, command.context_detail].join(' ').toLowerCase();
             }
-            function filterCommands(commands, query) {
+            function filterCommands(commands, query, filter) {
                 if (!Array.isArray(commands)) {
                     query = commands;
                     commands = commandPaletteActions();
                 }
                 var q = cleanLine(query || '').toLowerCase();
-                if (!q) return arr(commands).slice();
-                return arr(commands).filter(function (command) { return commandSearchText(command).indexOf(q) !== -1; });
+                return arr(commands).filter(function (command) {
+                    if (!commandFilterMatch(command, filter)) return false;
+                    return !q || commandSearchText(command).indexOf(q) !== -1;
+                });
+            }
+            function commandContext(command, statusInput, cluster) {
+                command = obj(command);
+                var target = command.target || 'release';
+                statusInput = normalizeInput(statusInput || latestStatusInput || {});
+                cluster = cluster || latestCluster || {};
+                var chip = cluster[target] || {};
+                var info = buildDetail(target, statusInput, chip);
+                var detailLine = cleanLine(arr(info.lines)[0] || '');
+                return {
+                    title: info.title || statusTitle(target, chip.label_en),
+                    detail: detailLine,
+                    cls: info.cls || chip.cls || 'incomplete',
+                    rank: info.severity_rank || 9
+                };
+            }
+            function decorateCommand(command, statusInput, cluster) {
+                command = obj(command);
+                var ctx = commandContext(command, statusInput, cluster);
+                var out = {};
+                Object.keys(command).forEach(function (key) { out[key] = command[key]; });
+                out.context = ctx.title;
+                out.context_detail = ctx.detail;
+                out.context_cls = ctx.cls;
+                out.context_rank = ctx.rank;
+                return out;
+            }
+            function decorateCommands(commands, statusInput, cluster) {
+                return arr(commands).map(function (command) { return decorateCommand(command, statusInput, cluster); });
             }
             function renderCommandPaletteHtml(commands, activeIndex) {
                 commands = arr(commands);
@@ -4885,10 +4934,23 @@
                         '<span class="scenario-command-item-main">' +
                         '<strong>' + esc(command.label || 'Scenario action') + '</strong>' +
                         '<em>' + esc(command.group || 'Scenario') + '</em>' +
+                        (command.context ? '<span class="scenario-command-item-context">' + esc(command.context) + '</span>' : '') +
                         '</span>' +
+                        '<span class="scenario-command-item-side">' +
                         '<span class="scenario-command-item-hint">' + esc(command.hint || '') + '</span>' +
+                        (command.context_detail ? '<span class="scenario-command-item-detail">' + esc(command.context_detail) + '</span>' : '') +
+                        '</span>' +
                         '</button>' +
                     '</li>';
+                }).join('');
+            }
+            function renderCommandFiltersHtml(activeFilter) {
+                activeFilter = cleanLine(activeFilter || 'all').toLowerCase();
+                return commandPaletteFilters().map(function (filter) {
+                    var active = filter.key === activeFilter;
+                    return '<button type="button" class="scenario-command-filter' + (active ? ' scenario-command-filter--active' : '') + '"' +
+                        ' data-scenario-command-filter="' + esc(filter.key) + '"' +
+                        ' aria-pressed="' + (active ? 'true' : 'false') + '">' + esc(filter.label) + '</button>';
                 }).join('');
             }
             function checkLine(check) {
@@ -5182,6 +5244,7 @@
                         '<button type="button" class="scenario-command-close" data-scenario-command-close aria-label="Close scenario command palette">&times;</button>' +
                         '</div>' +
                         '<input id="scenario-command-search" class="scenario-command-search" type="search" autocomplete="off" spellcheck="false" placeholder="Search scenario actions" aria-label="Search scenario actions">' +
+                        '<div id="scenario-command-filters" class="scenario-command-filters" role="toolbar" aria-label="Filter scenario commands"></div>' +
                         '<ul id="scenario-command-results" class="scenario-command-results" role="listbox" aria-label="Scenario evidence actions"></ul>' +
                         '<div class="scenario-command-help">Ctrl+K opens this palette. Enter runs the selected action. Escape closes it.</div>' +
                         '</div>';
@@ -5190,8 +5253,10 @@
                 commandPaletteState = {
                     palette: palette,
                     input: palette.querySelector ? palette.querySelector('#scenario-command-search') : null,
+                    filters: palette.querySelector ? palette.querySelector('#scenario-command-filters') : null,
                     list: palette.querySelector ? palette.querySelector('#scenario-command-results') : null,
                     activeIndex: 0,
+                    activeFilter: 'all',
                     commands: commandPaletteActions()
                 };
                 bindCommandPalette(commandPaletteState);
@@ -5200,11 +5265,29 @@
             function renderCommandPalette(state) {
                 state = state || commandPaletteState;
                 if (!state || !state.list) return [];
-                state.commands = filterCommands(commandPaletteActions(), state.input ? state.input.value : '');
+                if (state.filters) {
+                    state.filters.innerHTML = renderCommandFiltersHtml(state.activeFilter || 'all');
+                    bindCommandFilters(state);
+                }
+                state.commands = decorateCommands(filterCommands(commandPaletteActions(), state.input ? state.input.value : '', state.activeFilter), latestStatusInput, latestCluster);
                 if (state.activeIndex >= state.commands.length) state.activeIndex = Math.max(0, state.commands.length - 1);
                 state.list.innerHTML = renderCommandPaletteHtml(state.commands, state.activeIndex);
                 bindCommandItems(state);
                 return state.commands;
+            }
+            function bindCommandFilters(state) {
+                var buttons = state && state.filters && state.filters.querySelectorAll ? state.filters.querySelectorAll('[data-scenario-command-filter]') : [];
+                Array.prototype.forEach.call(buttons, function (btn) {
+                    btn.addEventListener('click', function (ev) {
+                        if (ev && typeof ev.preventDefault === 'function') ev.preventDefault();
+                        state.activeFilter = btn.getAttribute('data-scenario-command-filter') || 'all';
+                        state.activeIndex = 0;
+                        renderCommandPalette(state);
+                        if (state.input && typeof state.input.focus === 'function') {
+                            try { state.input.focus({ preventScroll: true }); } catch (_) { try { state.input.focus(); } catch (_) {} }
+                        }
+                    });
+                });
             }
             function bindCommandItems(state) {
                 var buttons = state && state.list && state.list.querySelectorAll ? state.list.querySelectorAll('[data-scenario-command-key]') : [];
@@ -5260,6 +5343,7 @@
                 setTriggerExpanded(true);
                 if (state.input) state.input.value = typeof query === 'string' ? query : '';
                 state.activeIndex = 0;
+                state.activeFilter = 'all';
                 renderCommandPalette(state);
                 if (state.input && typeof state.input.focus === 'function') {
                     try { state.input.focus({ preventScroll: true }); } catch (_) { try { state.input.focus(); } catch (_) {} }
@@ -5374,11 +5458,17 @@
                 VERSION: VERSION,
                 ACTIONS_VERSION: ACTIONS_VERSION,
                 COMMAND_PALETTE_VERSION: COMMAND_PALETTE_VERSION,
+                COMMAND_CONTEXT_VERSION: COMMAND_CONTEXT_VERSION,
                 buildDetail: buildDetail,
                 actionsForTarget: actionsForTarget,
                 commandPaletteActions: commandPaletteActions,
+                commandPaletteFilters: commandPaletteFilters,
                 filterCommands: filterCommands,
+                commandContext: commandContext,
+                decorateCommand: decorateCommand,
+                decorateCommands: decorateCommands,
                 renderCommandPaletteHtml: renderCommandPaletteHtml,
+                renderCommandFiltersHtml: renderCommandFiltersHtml,
                 executeCommand: executeCommand,
                 openCommandPalette: openCommandPalette,
                 closeCommandPalette: closeCommandPalette,
@@ -8139,13 +8229,19 @@
         .scenario-command-close:hover, .scenario-command-close:focus-visible { background:#1c1a44; outline:2px solid #b9b6ff; outline-offset:2px; }
         .scenario-command-search { width:calc(100% - 20px); box-sizing:border-box; margin:10px; border:1px solid #4b4580; border-radius:6px; background:#0e0e20; color:#f2f0ff; font:inherit; font-size:0.86rem; padding:8px 9px; }
         .scenario-command-search:focus { outline:2px solid #b9b6ff; outline-offset:1px; }
+        .scenario-command-filters { display:flex; flex-wrap:wrap; gap:5px; padding:0 10px 9px; }
+        .scenario-command-filter { border:1px solid #2c2850; border-radius:5px; background:#111029; color:#b9b6ff; font:inherit; font-size:0.66rem; line-height:1.2; padding:4px 7px; cursor:pointer; }
+        .scenario-command-filter:hover, .scenario-command-filter:focus-visible, .scenario-command-filter--active { border-color:#7d75bf; background:#1c1a44; color:#f2f0ff; outline:none; }
         .scenario-command-results { list-style:none; margin:0; padding:0 10px 10px; display:grid; gap:5px; max-height:min(46vh, 380px); overflow:auto; }
         .scenario-command-item { width:100%; border:1px solid #2c2850; border-radius:6px; background:#111029; color:#dce8f4; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:center; padding:7px 8px; text-align:left; cursor:pointer; font:inherit; }
         .scenario-command-item:hover, .scenario-command-item--active, .scenario-command-item:focus-visible { border-color:#7d75bf; background:#1c1a44; outline:none; }
         .scenario-command-item-main { min-width:0; display:flex; flex-direction:column; gap:2px; }
         .scenario-command-item-main strong { color:#f2f0ff; font-size:0.78rem; line-height:1.2; }
         .scenario-command-item-main em { color:#8f9dac; font-style:normal; font-size:0.66rem; }
+        .scenario-command-item-context { color:#dce8f4; font-size:0.69rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .scenario-command-item-side { min-width:0; display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
         .scenario-command-item-hint { color:#b9b6ff; font-size:0.68rem; white-space:nowrap; }
+        .scenario-command-item-detail { max-width:210px; color:#8f9dac; font-size:0.65rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .scenario-command-empty { border:1px dashed #4b4580; border-radius:6px; color:#8f9dac; padding:10px; font-size:0.76rem; }
         .scenario-command-help { border-top:1px solid #2c2850; color:#8f9dac; font-size:0.66rem; padding:7px 10px 9px; }
 

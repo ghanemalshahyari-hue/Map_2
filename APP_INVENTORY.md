@@ -155,6 +155,16 @@ scenario-evidence v16 Status Header Command Palette (Batch 16):
                       behavior, combat/action mutation, doctrine mutation,
                       scenario-contract change, or DOCX staging.
                       Offline sync/testing: pending by user instruction.
+scenario-evidence v17 Command Palette Context + Quick Filters (Batch 17):
+                      main-app header HUD enhancement only. The Scenario Actions
+                      palette now shows current status context beside each result
+                      (for example Release: Not Ready plus the leading blocker)
+                      and adds quick filters for All, Release, Closeout, Coverage,
+                      Handoff, and Copy. It continues to reuse the existing drawer
+                      jump and clipboard summary paths without backend routes,
+                      database writes, auto-fix behavior, combat/action mutation,
+                      doctrine mutation, scenario-contract changes, or DOCX
+                      staging. Offline sync/testing: pending by user instruction.
 ```
 
 Active Scenario-QA scripts mirrored between main and offline app shells:

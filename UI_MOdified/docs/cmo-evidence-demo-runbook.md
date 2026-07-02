@@ -360,6 +360,15 @@ Copy Release Summary
 Copy Coverage Summary
 ```
 
+Command Palette Context + Quick Filters (Batch 17) adds scan helpers inside the
+same palette:
+
+```text
+All / Release / Closeout / Coverage / Handoff / Copy -> filter the result list
+Each result row -> current status context + leading reason or count
+Example: Open Release Gate -> Release: Not Ready -> 2 unresolved issues
+```
+
 The cluster is display/navigation only. It does not add backend routes, database
 state, auto-fix behavior, combat/action mutation, doctrine mutation, scenario
 contract changes, or DOCX staging.

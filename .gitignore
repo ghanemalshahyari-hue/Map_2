@@ -75,6 +75,8 @@ UI_MOdified/data/users/**/*.tmp.*
 # on demand, so tracking them makes test/server flows dirty. Keep only explicit
 # fixture examples outside this runtime glob, if a future test needs one.
 UI_MOdified/data/users/*/plans/*.geojson
+UI_MOdified/Offline_Deployment/data_runtime/users/**/*.tmp.*
+UI_MOdified/Offline_Deployment/data_runtime/users/*/plans/*.geojson
 
 # one-time bootstrap admin password — secret, never commit
 UI_MOdified/data/BOOTSTRAP_PASSWORD.txt

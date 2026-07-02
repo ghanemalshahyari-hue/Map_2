@@ -7119,24 +7119,28 @@
 
         /* ── RMOOZ-QA-BATCH-13: top-level scenario status cluster ── */
         .release-hud[hidden] { display:none !important; }
-        .release-hud { flex:0 1 auto; min-width:0; max-width:min(54vw, 620px); }
-        .release-hud-cluster { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
-        .release-hud-chip { display:inline-flex; align-items:center; gap:7px; min-height:30px; border:1px solid #4b4580; border-radius:8px; background:#12112b; color:#d8d5ff; font-family:inherit; font-size:0.68rem; padding:3px 8px; cursor:pointer; line-height:1.15; }
+        .release-hud { flex:0 1 360px; width:min(36vw, 360px); min-width:220px; max-width:360px; align-self:center; }
+        .release-hud-cluster { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); align-items:stretch; gap:4px; }
+        .release-hud-chip { width:100%; min-width:0; display:inline-flex; align-items:center; gap:4px; min-height:23px; border:1px solid #4b4580; border-radius:6px; background:#12112b; color:#d8d5ff; font-family:inherit; font-size:0.63rem; padding:2px 5px; cursor:pointer; line-height:1.05; overflow:hidden; }
         .release-hud-chip:hover { background:#1c1a44; }
-        .release-hud-chip::before { content:''; width:8px; height:8px; border-radius:50%; background:#8f9dac; flex:0 0 auto; }
+        .release-hud-chip::before { content:''; width:6px; height:6px; border-radius:50%; background:#8f9dac; flex:0 0 auto; }
         .release-hud-chip--ready::before { background:#8fd6a3; }
         .release-hud-chip--warnings::before { background:#f1d48f; }
         .release-hud-chip--not-ready::before { background:#f09b87; }
         .release-hud-chip--incomplete::before { background:#8f9dac; }
-        .release-hud-key { display:flex; flex-direction:column; text-align:left; }
-        .release-hud-key-en { font-size:0.56rem; text-transform:uppercase; letter-spacing:0; color:#8f9dac; }
-        .release-hud-key-ar { font-size:0.58rem; color:#8f9dac; }
-        .release-hud-val { display:flex; flex-direction:column; text-align:left; }
-        .release-hud-status { font-size:0.72rem; white-space:nowrap; }
-        .release-hud-status-ar { font-size:0.58rem; color:#b9b6ff; }
+        .release-hud-key { min-width:0; display:flex; flex-direction:column; text-align:left; }
+        .release-hud-key-en { font-size:0.5rem; text-transform:uppercase; letter-spacing:0; color:#8f9dac; }
+        .release-hud-key-ar { font-size:0.5rem; color:#8f9dac; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .release-hud-val { min-width:0; display:flex; flex-direction:column; text-align:left; }
+        .release-hud-status { font-size:0.63rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .release-hud-status-ar { display:none; font-size:0.52rem; color:#b9b6ff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         [dir="rtl"] .release-hud-key, [dir="rtl"] .release-hud-val { text-align:right; }
+        @media (min-width: 1500px) {
+            .release-hud { flex-basis:420px; width:min(34vw, 420px); max-width:420px; }
+            .release-hud-status-ar { display:block; }
+        }
         @media (max-width: 1100px) {
-            .release-hud { max-width:46vw; }
+            .release-hud { width:min(44vw, 260px); min-width:180px; max-width:260px; }
             .release-hud-key-ar, .release-hud-status-ar { display:none; }
         }
 

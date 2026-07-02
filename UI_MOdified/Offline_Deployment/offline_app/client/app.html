@@ -54,6 +54,10 @@
                     </div>
                 </div>
                 <div id="side-picker-mount" class="side-picker" role="group" aria-label="Operational view"></div>
+                <!-- RMOOZ-QA-108: top-level evidence release status chip. Rendered by
+                     shell/scenario-evidence-release-hud.js when a scenario is active;
+                     clicking it opens the Scenario Evidence drawer at the Release Gate. -->
+                <div id="release-hud-mount" class="release-hud" role="status" aria-label="Evidence release status" hidden></div>
 
                 <button id="chat-toggle-btn" class="header-btn header-btn--chat" type="button" aria-expanded="false" aria-controls="chat-sidebar">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -4689,6 +4693,7 @@
     <script src="shell/scenario-evidence-handoff-acceptance.js?v=1"></script>
     <script src="shell/scenario-evidence-release-gate.js?v=1"></script>
     <script src="shell/scenario-evidence-release-audit.js?v=1"></script>
+    <script src="shell/scenario-evidence-release-hud.js?v=1"></script>
     <script src="shell/scenario-evidence-review-queue.js?v=1"></script>
     <script src="shell/scenario-evidence-repair-planner.js?v=1"></script>
     <script src="shell/cmo-force-evidence-feed.js?v=1"></script>
@@ -7109,6 +7114,25 @@
         .usp-release-history--empty p { color:#8f9dac; margin:0; }
         .usp-release-history button { border:1px solid #4b4580; background:#111029; color:#d8d5ff; font-size:0.66rem; padding:4px 7px; border-radius:4px; cursor:pointer; font-family:inherit; }
         .usp-release-history button:hover { background:#1a1840; }
+        .usp-release-btn--print { border-color:#5a5330; background:#1a1608; color:#f1d48f; }
+        .usp-release-btn--print:hover { background:#241d0a; }
+
+        /* ── RMOOZ-QA-108/109: top-level release status chip ── */
+        .release-hud[hidden] { display:none !important; }
+        .release-hud-chip { display:inline-flex; align-items:center; gap:8px; border:1px solid #4b4580; border-radius:14px; background:#12112b; color:#d8d5ff; font-family:inherit; font-size:0.7rem; padding:4px 10px; cursor:pointer; line-height:1.2; }
+        .release-hud-chip:hover { background:#1c1a44; }
+        .release-hud-chip::before { content:''; width:8px; height:8px; border-radius:50%; background:#8f9dac; flex:0 0 auto; }
+        .release-hud-chip--ready::before { background:#8fd6a3; }
+        .release-hud-chip--warnings::before { background:#f1d48f; }
+        .release-hud-chip--not-ready::before { background:#f09b87; }
+        .release-hud-chip--incomplete::before { background:#8f9dac; }
+        .release-hud-key { display:flex; flex-direction:column; text-align:left; }
+        .release-hud-key-en { font-size:0.56rem; text-transform:uppercase; letter-spacing:0.04em; color:#8f9dac; }
+        .release-hud-key-ar { font-size:0.58rem; color:#8f9dac; }
+        .release-hud-val { display:flex; flex-direction:column; text-align:left; }
+        .release-hud-status { font-size:0.74rem; }
+        .release-hud-status-ar { font-size:0.58rem; color:#b9b6ff; }
+        [dir="rtl"] .release-hud-key, [dir="rtl"] .release-hud-val { text-align:right; }
 
     </style>
     <script>

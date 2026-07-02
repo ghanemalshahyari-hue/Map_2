@@ -156,6 +156,18 @@
         var releaseHistory = opts.release_history || (RA && typeof RA.exportState === 'function' && releaseGate
             ? RA.exportState(releaseGate.scenario_fingerprint || obj(manualReview && manualReview.session).scenario_fingerprint || ws, { generated_at: generatedAt })
             : null);
+        // QA-113: link release certificate metadata (type + status + fingerprint).
+        var releaseCert = opts.release_certificate || (RG && typeof RG.buildCertificate === 'function' && releaseGate
+            ? RG.buildCertificate(releaseGate, { latest_timestamp: obj(releaseHistory && releaseHistory.latest).timestamp, generated_at: generatedAt })
+            : null);
+        var releaseCertMeta = releaseCert ? {
+            certificate_type: releaseCert.certificate_type,
+            release_status: releaseCert.release_status,
+            release_status_label_en: releaseCert.release_status_label_en,
+            scenario_fingerprint: releaseCert.scenario_fingerprint,
+            latest_decision_at: releaseCert.latest_decision_at || null,
+            generated_at: releaseCert.generated_at
+        } : null;
         return {
             version: CMO_FORCE_EVIDENCE_REPORT_VERSION,
             generated_at: generatedAt,
@@ -187,6 +199,7 @@
             handoff_acceptance: acceptance ? obj(acceptance) : null,
             release_gate: releaseGate ? obj(releaseGate) : null,
             release_history: releaseHistory ? obj(releaseHistory) : null,
+            release_certificate: releaseCertMeta,
             selected_unit: selected,
             source: 'Readiness matrix + force evidence feed'
         };
@@ -340,6 +353,15 @@
                 lines.push('  - ' + (r.timestamp || 'unknown') + ' — ' + (r.decision_label_en || r.decision) +
                     ' (' + (r.blocker_count || 0) + ' blocker(s))' + (r.exported ? ' [exported]' : ''));
             });
+            lines.push('');
+        }
+        var relCert = obj(report.release_certificate);
+        if (relCert.certificate_type) {
+            lines.push('Release Certificate:');
+            lines.push('  Type: ' + relCert.certificate_type);
+            lines.push('  Status: ' + (relCert.release_status_label_en || relCert.release_status || 'unknown'));
+            lines.push('  Scenario fingerprint: ' + (relCert.scenario_fingerprint || 'unknown'));
+            lines.push('  Generated: ' + (relCert.generated_at || 'unknown'));
             lines.push('');
         }
         if (report.selected_unit) {

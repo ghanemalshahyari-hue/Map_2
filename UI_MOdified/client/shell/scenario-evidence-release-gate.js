@@ -11,7 +11,7 @@
 (function (root) {
     'use strict';
 
-    var SCENARIO_EVIDENCE_RELEASE_GATE_VERSION = '1.0.0-rmooz-qa-92';
+    var SCENARIO_EVIDENCE_RELEASE_GATE_VERSION = '1.1.0-rmooz-qa-92-qa111';
     var CERTIFICATE_TYPE = 'rmooz.scenarioEvidenceReleaseCertificate';
 
     var STATUS_META = {
@@ -267,6 +267,8 @@
             closeout_status: gate.closeout_status || null,
             acceptance_decision: gate.acceptance_decision || null,
             acceptance_fingerprint_match: gate.acceptance_fingerprint_match,
+            counts: obj(gate.counts),
+            latest_decision_at: opts.latest_timestamp || null,
             checks: arr(gate.checks).map(function (c) {
                 return { key: c.key, label_en: c.label_en, required: c.required, actual: c.actual, status: c.status };
             }),
@@ -288,6 +290,10 @@
             'Scenario fingerprint: ' + (cert.scenario_fingerprint || 'unknown'),
             'Closeout status: ' + (cert.closeout_status || 'unknown'),
             'Handoff acceptance: ' + (cert.acceptance_decision || 'none'),
+            'Fingerprint validation: ' + (cert.acceptance_fingerprint_match === true ? 'Match' : (cert.acceptance_fingerprint_match === false ? 'Mismatch' : 'n/a')),
+            'Deferred issues: ' + (obj(cert.counts).deferred || 0),
+            'Fixed-externally verified: ' + (obj(cert.counts).fixed_externally || 0),
+            'Latest release decision: ' + (cert.latest_decision_at || cert.generated_at || 'unknown'),
             ''
         ];
         lines.push('Required checks:');
@@ -336,6 +342,77 @@
         return true;
     }
 
+    // ── QA-111: printable release certificate ────────────────────────────
+    function readOnlyDisclaimer() {
+        return 'Read-only release certificate. This certificate records a review decision only; it does not release, authorize, mutate doctrine, fire, or change scenario state.';
+    }
+
+    function buildPrintableCertificateHtml(cert) {
+        cert = obj(cert);
+        var counts = obj(cert.counts);
+        var fpValid = cert.acceptance_fingerprint_match === true ? 'Match'
+            : (cert.acceptance_fingerprint_match === false ? 'Mismatch' : 'n/a');
+        var html = '<article class="cmo-print-report cmo-print-report--certificate">' +
+            '<header class="cmo-print-header">' +
+                '<div class="cmo-print-kicker">RMOOZ Evidence</div>' +
+                '<h1>Evidence Release Certificate</h1>' +
+                '<div class="cmo-print-subtitle" dir="rtl">&#1588;&#1607;&#1575;&#1583;&#1577; &#1575;&#1593;&#1578;&#1605;&#1575;&#1583; &#1575;&#1604;&#1571;&#1583;&#1604;&#1577;</div>' +
+            '</header>' +
+            '<section class="cmo-print-grid">' +
+                '<div><span>Release status</span><strong>' + esc(cert.release_status_label_en || cert.release_status || 'Incomplete') + '</strong></div>' +
+                '<div><span>Releasable</span><strong>' + (cert.releasable ? 'Yes' : 'No') + '</strong></div>' +
+                '<div><span>Scenario fingerprint</span><strong>' + esc(cert.scenario_fingerprint || 'unknown') + '</strong></div>' +
+                '<div><span>Closeout status</span><strong>' + esc(cert.closeout_status || 'unknown') + '</strong></div>' +
+                '<div><span>Handoff acceptance</span><strong>' + esc(cert.acceptance_decision || 'none') + '</strong></div>' +
+                '<div><span>Fingerprint validation</span><strong>' + esc(fpValid) + '</strong></div>' +
+                '<div><span>Deferred issues</span><strong>' + esc(counts.deferred || 0) + '</strong></div>' +
+                '<div><span>Fixed-externally verified</span><strong>' + esc(counts.fixed_externally || 0) + '</strong></div>' +
+                '<div><span>Latest release decision</span><strong>' + esc(cert.latest_decision_at || cert.generated_at || 'unknown') + '</strong></div>' +
+            '</section>' +
+            '<section class="cmo-print-section">' +
+                '<h2>Required Checks / &#1575;&#1604;&#1601;&#1581;&#1608;&#1589; &#1575;&#1604;&#1605;&#1591;&#1604;&#1608;&#1576;&#1577;</h2>' +
+                '<ul class="cmo-print-list">';
+        var checks = arr(cert.checks);
+        if (!checks.length) html += '<li>No checks recorded.</li>';
+        else checks.forEach(function (c) {
+            var mark = c.status === 'pass' ? 'PASS' : c.status === 'warn' ? 'WARN' : c.status === 'na' ? 'N/A' : 'FAIL';
+            html += '<li><strong>[' + esc(mark) + ']</strong> ' + esc(c.label_en) + ' &mdash; ' + esc(c.actual) + '</li>';
+        });
+        html += '</ul></section>' +
+            '<section class="cmo-print-section">' +
+                '<h2>Unresolved Blockers / &#1575;&#1604;&#1593;&#1608;&#1575;&#1574;&#1602;</h2>' +
+                '<ul class="cmo-print-list">';
+        var blockers = arr(cert.blockers);
+        if (!blockers.length) html += '<li>None &mdash; no release blockers.</li>';
+        else blockers.forEach(function (b) { html += '<li>' + esc(obj(b).label || obj(b).code) + '</li>'; });
+        html += '</ul></section>' +
+            (cert.operator_note ? '<section class="cmo-print-section"><h2>Operator Note</h2><p>' + esc(cert.operator_note) + '</p></section>' : '') +
+            '<footer class="cmo-print-disclaimer">' + esc(readOnlyDisclaimer()) + '</footer>' +
+            '</article>';
+        return html;
+    }
+
+    function printHtml(html) {
+        if (!root.document || typeof root.print !== 'function') return false;
+        var doc = root.document;
+        var host = doc.getElementById('cmo-print-root');
+        if (!host) {
+            host = doc.createElement('div');
+            host.id = 'cmo-print-root';
+            host.className = 'cmo-print-root';
+            doc.body.appendChild(host);
+        }
+        host.innerHTML = html;
+        doc.body.setAttribute('data-cmo-print-mode', 'evidence');
+        var cleanup = function () { doc.body.removeAttribute('data-cmo-print-mode'); };
+        if (typeof root.addEventListener === 'function') root.addEventListener('afterprint', cleanup, { once: true });
+        root.print();
+        setTimeout(cleanup, 1000);
+        return true;
+    }
+
+    function printCertificate(cert) { return printHtml(buildPrintableCertificateHtml(cert)); }
+
     // ── Rendering ────────────────────────────────────────────────────────
     function checkMark(status) {
         return status === 'pass' ? '&#10003;' : status === 'warn' ? '&#9888;' : status === 'na' ? '&#8211;' : '&#10007;';
@@ -372,6 +449,7 @@
                 '<button type="button" data-release-action="certificate">Copy Release Certificate</button>' +
                 '<button type="button" data-release-action="json">Copy Release JSON</button>' +
                 '<button type="button" data-release-action="download">Download Release JSON</button>' +
+                '<button type="button" class="usp-release-btn--print" data-release-action="print">Print Release Certificate</button>' +
             '</div>' +
             '<div class="usp-release-source">Source: ' + esc(gate.source || '') + '. Read-only release decision — does not release or mutate scenario state.</div>' +
             '</div>';
@@ -388,10 +466,11 @@
                 if (action === 'certificate') copyCertificate(cert);
                 else if (action === 'json') copyJson(cert);
                 else if (action === 'download') downloadJson(cert);
+                else if (action === 'print') printCertificate(cert);
                 // QA-101: let the host log the export in the release audit trail.
-                // certificate -> certificate export; json/download -> JSON export.
+                // certificate/print -> certificate export; json/download -> JSON export.
                 if (typeof opts.onExport === 'function') {
-                    opts.onExport(action === 'certificate' ? 'certificate' : 'json', gate);
+                    opts.onExport((action === 'certificate' || action === 'print') ? 'certificate' : 'json', gate);
                 }
             });
         });
@@ -409,6 +488,8 @@
         copyCertificate: copyCertificate,
         copyJson: copyJson,
         downloadJson: downloadJson,
+        buildPrintableCertificateHtml: buildPrintableCertificateHtml,
+        printCertificate: printCertificate,
         renderReleaseGateHtml: renderReleaseGateHtml,
         bindReleaseGateActions: bindReleaseGateActions
     };

@@ -104,6 +104,13 @@ scenario-evidence v11 Release Decision Audit + Drawer Consolidation (QA-101..107
                       consolidated into 4 collapsible groups (Commander Overview /
                       Scenario QA Review / Handoff Workflow / Force Evidence) with a
                       sticky quick-jump bar. Unit Status stays selected-unit only.
+scenario-evidence v12 Release Visibility + Printable Certificate (QA-108..115):
+                      top-level release status HUD chip in the app header (click ->
+                      open drawer at the Release Gate); printable Release Certificate
+                      (شهادة اعتماد الأدلة) reusing the CMO print layout; certificate
+                      export refinement (fingerprint validation + deferred/fixed
+                      counts + latest timestamp); Force Report certificate metadata.
+                      New module scenario-evidence-release-hud.js.
 ```
 
 Active Scenario-QA scripts mirrored between main and offline app shells:
@@ -123,9 +130,10 @@ scenario-evidence-handoff-package.js
 scenario-evidence-handoff-acceptance.js
 scenario-evidence-release-gate.js
 scenario-evidence-release-audit.js
+scenario-evidence-release-hud.js
 ```
 
-Gate tests (root, run individually): `test-scenario-evidence-{completeness,review-queue,repair-plan,manual-fix,review-session,review-closeout,review-audit-trail,handoff-package,handoff-acceptance,release-gate}-batch-1.js` and `test-scenario-evidence-release-audit-ux-batch-1.js`.
+Gate tests (root, run individually): `test-scenario-evidence-{completeness,review-queue,repair-plan,manual-fix,review-session,review-closeout,review-audit-trail,handoff-package,handoff-acceptance,release-gate}-batch-1.js`, `test-scenario-evidence-release-audit-ux-batch-1.js`, and `test-scenario-evidence-release-visibility-batch-1.js`.
 Boundary note: the whole stack is browser-local (localStorage + in-memory fallback) — no backend routes, no scenario/world-state mutation; package/acceptance import restores review-session UI state only.
 
 ### Runtime and release baselines
@@ -153,6 +161,7 @@ localhost:8640 works
 Current relevant tags:
 
 ```text
+scenario-evidence-v12 -> release visibility + printable certificate (Batch 12)
 scenario-evidence-v11 -> release audit + drawer consolidation (Batch 11)
 scenario-evidence-v10 -> evidence release gate (Batch 10)
 scenario-evidence-v9 -> evidence handoff acceptance workflow (Batch 9)

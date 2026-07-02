@@ -1727,6 +1727,7 @@
         body.innerHTML = RG.renderReleaseGateHtml(gate) + latestHtml;
         if (typeof RG.bindReleaseGateActions === 'function') {
             RG.bindReleaseGateActions(body, gate, {
+                latest_timestamp: latestReceipt && latestReceipt.timestamp,
                 onExport: function (kind) {
                     if (RA && typeof RA.recordExport === 'function') {
                         try { RA.recordExport(kind, gate, { world_state: _getCurrentWorldState }); } catch (_) {}
@@ -1737,7 +1738,29 @@
             });
         }
         if (RA && typeof RA.bindLatestActions === 'function') RA.bindLatestActions(body, gate.scenario_fingerprint, {});
+        updateReleaseHud(gate);
         block.removeAttribute('hidden');
+    }
+
+    // QA-108/109/110: top-level release status chip near the workspace header.
+    function updateReleaseHud(gate) {
+        var mount = $('release-hud-mount');
+        if (!mount) return;
+        var RH = root.RmoozScenarioEvidenceReleaseHud;
+        if (!RH || typeof RH.update !== 'function') return;
+        RH.update(mount, gate, { onOpen: openReleaseGate });
+    }
+
+    // Open the drawer straight to the Evidence Release Gate (Commander Overview).
+    function openReleaseGate() {
+        ensureScenarioEvidencePanel();
+        openScenarioEvidencePanel();
+        populateScenarioReleaseGate(currentUnit);
+        if (typeof jumpToScenarioEvidenceGroup === 'function') jumpToScenarioEvidenceGroup('overview');
+        var block = $('usp-release-gate-block');
+        if (block && typeof block.scrollIntoView === 'function') {
+            try { block.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (_) { block.scrollIntoView(); }
+        }
     }
 
     function populateContactEvidence(unit) {
@@ -2328,7 +2351,8 @@
         closePanel: closePanel,
         populatePanel: populatePanel,
         displayUnitName: displayUnitName,   // FIX-B (D): exposed for tests / reuse
-        getCurrentUnit: function() { return currentUnit; }
+        getCurrentUnit: function() { return currentUnit; },
+        openReleaseGate: openReleaseGate
     };
     init();
 

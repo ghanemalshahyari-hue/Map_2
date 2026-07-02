@@ -95,6 +95,12 @@ Scenario Evidence drawer — 4 collapsible groups with a quick-jump bar
 Release decisions are logged into the Audit Trail (release_* events) and a "Latest
 Release Decision" receipt shows under the Evidence Release Gate.
 
+Release visibility (Batch 12): a release status chip in the app header
+(`Evidence Release: <status>` / `بوابة الأدلة`) shows the verdict without opening
+the drawer; clicking it opens the drawer at the Evidence Release Gate. The gate
+also offers [Print Release Certificate] (شهادة اعتماد الأدلة) for a formatted,
+read-only handoff certificate.
+
 ## Demo Flow
 
 Recommended live demo path:

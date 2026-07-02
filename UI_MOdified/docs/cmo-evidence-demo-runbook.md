@@ -5,16 +5,16 @@
 Use this runbook for the current release-candidate baseline:
 
 ```text
+scenario-evidence-v12  -> feat(scenario): add release visibility and certificate
 scenario-evidence-v11  -> feat(scenario): add release audit and drawer consolidation
 scenario-evidence-v10  -> feat(scenario): add evidence release gate
 scenario-evidence-v9   -> feat(scenario): add evidence handoff acceptance workflow
 cmo-evidence-rehome-v1 -> 764d260f style(cmo): rehome scenario evidence from unit status
 scenario-evidence-v8   -> 941aa275 feat(scenario): add evidence handoff package
 cmo-evidence-v14 -> 6f310c00 feat(cmo): add evidence actionability commander pack
-cmo-evidence-rc1 -> 4314f16c test(cmo): lock evidence release candidate
 ```
 
-This baseline includes the full CMO evidence workflow, print-ready evidence reports, the release-candidate static/runtime gate, actionability guidance, recommendations, Scenario Evidence completeness/review/repair/manual-fix/closeout/audit-trail, the handoff package + Handoff Acceptance workflow, the Evidence Release Gate (final release decision + certificate), release decision audit + receipt history, the consolidated 4-group Scenario Evidence drawer, and main/offline parity checks.
+This baseline includes the full CMO evidence workflow, print-ready evidence reports, the release-candidate static/runtime gate, actionability guidance, recommendations, Scenario Evidence completeness/review/repair/manual-fix/closeout/audit-trail, the handoff package + Handoff Acceptance workflow, the Evidence Release Gate (final release decision + certificate), release decision audit + receipt history, the consolidated 4-group Scenario Evidence drawer, the top-level release status HUD chip + printable release certificate, and main/offline parity checks.
 
 ## UI Layout — Scenario Evidence Drawer
 
@@ -263,6 +263,52 @@ Evidence Release Gate panel (Commander Overview group)       -> Latest Release D
 Force Evidence Report (Force Evidence group)                 -> Release Decision History
 ```
 
+## Release Visibility + Printable Certificate (Batch 12)
+
+Release Status HUD chip — the release verdict is now visible at the workspace level
+without opening the drawer. A chip in the app header shows:
+
+```text
+Evidence Release: <status>
+بوابة الأدلة: <الحالة>
+```
+
+Chip states (color-dotted): Ready for Release / Ready with Warnings / Not Ready /
+Incomplete. The chip appears once a scenario is active (populated from the release
+gate). Clicking it:
+
+```text
+Click the release status chip
+-> opens the Scenario Evidence drawer
+-> expands the Commander Overview group
+-> scrolls to / focuses the Evidence Release Gate
+```
+
+Printable Release Certificate — the Evidence Release Gate panel now has a
+[Print Release Certificate] button (alongside Copy Certificate / Copy JSON /
+Download JSON). It opens the browser print dialog with a formatted certificate:
+
+```text
+RMOOZ Evidence Release Certificate / شهادة اعتماد الأدلة
+- Release status + releasable
+- Scenario fingerprint
+- Closeout status
+- Handoff acceptance decision
+- Fingerprint validation (Match / Mismatch)
+- Required checks (pass/warn/fail/na)
+- Deferred issue count
+- Fixed-externally verification count
+- Latest release decision timestamp
+- Unresolved blockers
+- Read-only disclaimer
+```
+
+The printable certificate reuses the existing CMO print layout (`cmo-print-report`).
+The Force Evidence Report also links certificate metadata (type + status +
+fingerprint + generated time) in its Release Certificate section. Still read-only:
+printing/exporting records a review decision only — it does not release or mutate
+scenario state.
+
 ## Print Preview Smoke Checklist
 
 Manual browser print-preview smoke is still required for final demo confidence.
@@ -304,6 +350,7 @@ node test-scenario-evidence-handoff-package-batch-1.js
 node test-scenario-evidence-handoff-acceptance-batch-1.js
 node test-scenario-evidence-release-gate-batch-1.js
 node test-scenario-evidence-release-audit-ux-batch-1.js
+node test-scenario-evidence-release-visibility-batch-1.js
 node test-cmo-evidence-print-layout-ui-1.js
 node test-cmo-demo-flow-gate-1.js
 node test-cmo-evidence-quality-drilldown-ui-1.js
@@ -374,7 +421,8 @@ External `8080` is optional because tiles are proxied through `8640` in the norm
 Use these rollback/demo points:
 
 ```text
-scenario-evidence-v11 - release audit + drawer consolidation (this baseline)
+scenario-evidence-v12 - release visibility + printable certificate (this baseline)
+scenario-evidence-v11 - release audit + drawer consolidation
 scenario-evidence-v10 - evidence release gate
 scenario-evidence-v9 - handoff acceptance workflow
 scenario-evidence-v8 - handoff package export/import

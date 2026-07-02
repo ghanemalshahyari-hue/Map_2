@@ -120,7 +120,9 @@ test('scenario-level evidence is rehomed outside Unit Status at runtime', () => 
     assert.ok(source.includes('SCENARIO_EVIDENCE_BLOCK_IDS'), label + ' missing rehome block list');
     assert.ok(source.includes("panel.id = 'scenario-evidence-panel'"), label + ' missing scenario panel creation');
     assert.ok(source.includes("panel.className = 'unit-status-panel scenario-evidence-panel'"), label + ' missing scenario panel class');
-    assert.ok(source.includes('body.appendChild(block)'), label + ' does not move blocks to scenario body');
+    // Batch 11: blocks are rehomed into collapsible group bodies inside the drawer
+    // (groupBody.appendChild) rather than flat into the scenario body.
+    assert.ok(source.includes('groupBody.appendChild(block)') || source.includes('body.appendChild(block)'), label + ' does not move blocks into the scenario evidence drawer');
     assert.ok(source.indexOf('ensureScenarioEvidencePanel();') < source.indexOf('populateCommanderBrief(unit)'), label + ' rehome must happen before scenario renderers populate');
   });
   [

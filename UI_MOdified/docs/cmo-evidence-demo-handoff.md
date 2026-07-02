@@ -74,28 +74,26 @@ Scenario Evidence drawer / أدلة السيناريو
   (opens beside Unit Status when an operational scenario is active)
 ```
 
-Scenario Evidence drawer panel order:
+Scenario Evidence drawer — 4 collapsible groups with a quick-jump bar
+(`[Overview] [QA Review] [Handoff] [Force Evidence]`), since Batch 11:
 
 ```text
-1. Commander Brief
-2. Scenario Completeness
-3. Objective X Health
-4. Scenario Evidence Review Queue
-5. Evidence Repair Planner
-6. Manual Evidence Fix
-7. Evidence Review Closeout
-8. Evidence Review Audit Trail
-9. Evidence Handoff Package
-10. Handoff Acceptance
-11. Evidence Release Gate
-12. Evidence Quality
-13. Evidence Alerts
-14. Coverage
-15. Readiness Matrix
-16. Blocker Remediation
-17. Force Feed
-18. Force Report
+1. Commander Overview     (default OPEN)
+   Commander Brief · Evidence Release Gate · Evidence Quality · Evidence Alerts · Evidence Coverage
+
+2. Scenario QA Review      (default OPEN)
+   Scenario Completeness · Objective X Health · Review Queue · Repair Planner ·
+   Manual Evidence Fix · Review Closeout · Audit Trail
+
+3. Handoff Workflow        (default COLLAPSED)
+   Evidence Handoff Package · Handoff Acceptance
+
+4. Force Evidence          (default COLLAPSED)
+   Readiness Matrix · Blocker Remediation · Force Feed · Force Report
 ```
+
+Release decisions are logged into the Audit Trail (release_* events) and a "Latest
+Release Decision" receipt shows under the Evidence Release Gate.
 
 ## Demo Flow
 

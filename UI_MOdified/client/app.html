@@ -4740,6 +4740,7 @@
     <script src="shell/scenario-evidence-handoff-package.js?v=1"></script>
     <script src="shell/scenario-evidence-handoff-acceptance.js?v=1"></script>
     <script src="shell/scenario-evidence-release-gate.js?v=1"></script>
+    <script src="shell/scenario-evidence-release-audit.js?v=1"></script>
     <script src="shell/scenario-evidence-review-queue.js?v=1"></script>
     <script src="shell/scenario-evidence-repair-planner.js?v=1"></script>
     <script src="shell/cmo-force-evidence-feed.js?v=1"></script>
@@ -7402,6 +7403,33 @@
         .usp-release-actions { display:flex; gap:6px; flex-wrap:wrap; margin-top:7px; }
         .usp-release-actions button { border:1px solid #4b4580; background:#111029; color:#d8d5ff; font-size:0.66rem; padding:4px 7px; border-radius:4px; cursor:pointer; font-family:inherit; }
         .usp-release-actions button:hover { background:#1a1840; }
+
+        /* ── RMOOZ-QA-103/104: Scenario Evidence drawer groups + quick-jump ── */
+        .se-jumpbar { position:sticky; top:0; z-index:6; display:flex; gap:5px; flex-wrap:wrap; padding:7px 0.7rem; background:#07070e; border-bottom:1px solid #2c2850; }
+        .se-jump-btn { border:1px solid #4b4580; background:#12112b; color:#c9c6ff; font-size:0.66rem; padding:4px 9px; border-radius:12px; cursor:pointer; font-family:inherit; }
+        .se-jump-btn:hover { background:#1c1a44; }
+        .se-group { border-bottom:2px solid #23204a; }
+        .se-group-hdr { width:100%; box-sizing:border-box; display:flex; align-items:center; gap:8px; padding:8px 0.7rem; background:#100f22; border:0; border-top:1px solid #2c2850; color:#d8d5ff; font-family:inherit; font-size:0.74rem; cursor:pointer; text-align:left; }
+        .se-group-hdr:hover { background:#161430; }
+        .se-group-title { flex:1; text-transform:uppercase; font-size:0.7rem; letter-spacing:0.04em; color:#b9b6ff; }
+        .se-group-title-ar { color:#8f9dac; font-size:0.68rem; }
+        .se-group-caret { color:#8f9dac; transition:transform 0.15s ease; }
+        .se-group[data-collapsed="true"] .se-group-caret { transform:rotate(-90deg); }
+        .se-group[data-collapsed="true"] .se-group-body { display:none; }
+
+        /* ── RMOOZ-QA-102: latest release decision receipt ── */
+        .usp-release-history { padding:8px 0.8rem 9px; border-top:1px solid #2c2850; color:#dce8f4; font-size:0.72rem; }
+        .usp-release-history > span { display:block; color:#b9b6ff; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:5px; }
+        .usp-release-history dl { display:grid; gap:4px; margin:0 0 6px; }
+        .usp-release-history dl div { display:grid; grid-template-columns:1fr; gap:2px; }
+        .usp-release-history dt { color:#8f9dac; font-size:0.66rem; }
+        .usp-release-history dd { margin:0; color:#dce8f4; }
+        .usp-release-history dd code { color:#d7edf8; font-family:'Consolas','Courier New',monospace; }
+        .usp-release-history--ok > span { color:#8fd6a3; }
+        .usp-release-history--blocked > span { color:#f09b87; }
+        .usp-release-history--empty p { color:#8f9dac; margin:0; }
+        .usp-release-history button { border:1px solid #4b4580; background:#111029; color:#d8d5ff; font-size:0.66rem; padding:4px 7px; border-radius:4px; cursor:pointer; font-family:inherit; }
+        .usp-release-history button:hover { background:#1a1840; }
 
         /* Unit status panel — extend the drawer down to cover the empty band below
            it, but STOP just above the footer stack. The footer bars

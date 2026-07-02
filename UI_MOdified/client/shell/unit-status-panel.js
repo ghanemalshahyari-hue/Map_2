@@ -183,6 +183,40 @@
         'usp-force-report-block'
     ];
 
+    // RMOOZ-QA-103/104: the drawer is consolidated into 4 collapsible groups
+    // with a quick-jump bar. SCENARIO_EVIDENCE_BLOCK_IDS above stays the flat
+    // membership union; SCENARIO_EVIDENCE_GROUPS defines grouping + visual order.
+    var SCENARIO_EVIDENCE_GROUPS = [
+        { key: 'overview', label_en: 'Commander Overview', label_ar: '\u0646\u0638\u0631\u0629 \u0627\u0644\u0642\u0627\u0626\u062f', jump_en: 'Overview', open: true,
+          blocks: ['usp-commander-brief-block', 'usp-release-gate-block', 'usp-evidence-quality-block', 'usp-evidence-alerts-block', 'usp-evidence-coverage-block'] },
+        { key: 'qa', label_en: 'Scenario QA Review', label_ar: '\u0645\u0631\u0627\u062c\u0639\u0629 \u062c\u0648\u062f\u0629 \u0627\u0644\u0633\u064a\u0646\u0627\u0631\u064a\u0648', jump_en: 'QA Review', open: true,
+          blocks: ['usp-scenario-completeness-block', 'usp-objective-health-block', 'usp-review-queue-block', 'usp-repair-plan-block', 'usp-manual-fix-block', 'usp-review-closeout-block', 'usp-review-audit-block'] },
+        { key: 'handoff', label_en: 'Handoff Workflow', label_ar: '\u0633\u064a\u0631 \u0639\u0645\u0644 \u0627\u0644\u062a\u0633\u0644\u064a\u0645', jump_en: 'Handoff', open: false,
+          blocks: ['usp-handoff-package-block', 'usp-handoff-acceptance-block'] },
+        { key: 'force', label_en: 'Force Evidence', label_ar: '\u0623\u062f\u0644\u0629 \u0627\u0644\u0642\u0648\u0629', jump_en: 'Force Evidence', open: false,
+          blocks: ['usp-evidence-matrix-block', 'usp-blocker-remediation-block', 'usp-force-feed-block', 'usp-force-report-block'] }
+    ];
+
+    function toggleScenarioEvidenceGroup(section, force) {
+        if (!section) return;
+        var next;
+        if (force === true) next = false;
+        else if (force === false) next = true;
+        else next = section.getAttribute('data-collapsed') !== 'true';
+        section.setAttribute('data-collapsed', next ? 'true' : 'false');
+        var hdr = section.querySelector('.se-group-hdr');
+        if (hdr) hdr.setAttribute('aria-expanded', next ? 'false' : 'true');
+    }
+
+    function jumpToScenarioEvidenceGroup(key) {
+        var section = document.querySelector('.se-group[data-se-group="' + key + '"]');
+        if (!section) return;
+        toggleScenarioEvidenceGroup(section, true);
+        if (typeof section.scrollIntoView === 'function') {
+            try { section.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (_) { section.scrollIntoView(); }
+        }
+    }
+
     function ensureScenarioEvidencePanel() {
         var panel = $('scenario-evidence-panel');
         var body = $('scenario-evidence-body');
@@ -191,6 +225,21 @@
             panel.id = 'scenario-evidence-panel';
             panel.className = 'unit-status-panel scenario-evidence-panel';
             panel.setAttribute('hidden', '');
+            var jumpHtml = '<div class="se-jumpbar" id="scenario-evidence-jumpbar">'
+                + SCENARIO_EVIDENCE_GROUPS.map(function (g) {
+                    return '<button type="button" class="se-jump-btn" data-se-jump="' + g.key + '">' + g.jump_en + '</button>';
+                }).join('')
+                + '</div>';
+            var groupsHtml = SCENARIO_EVIDENCE_GROUPS.map(function (g) {
+                return '<section class="se-group" data-se-group="' + g.key + '" data-collapsed="' + (g.open ? 'false' : 'true') + '">'
+                    + '<button type="button" class="se-group-hdr" data-se-toggle="' + g.key + '" aria-expanded="' + (g.open ? 'true' : 'false') + '">'
+                    + '<span class="se-group-title">' + g.label_en + '</span>'
+                    + '<span class="se-group-title-ar" dir="rtl">' + g.label_ar + '</span>'
+                    + '<span class="se-group-caret" aria-hidden="true">&#9662;</span>'
+                    + '</button>'
+                    + '<div class="se-group-body" id="se-group-body-' + g.key + '"></div>'
+                    + '</section>';
+            }).join('');
             panel.innerHTML = ''
                 + '<header class="usp-header scenario-evidence-header">'
                 + '<span class="usp-header-title">Scenario Evidence / &#1571;&#1583;&#1604;&#1577; &#1575;&#1604;&#1587;&#1610;&#1606;&#1575;&#1585;&#1610;&#1608;</span>'
@@ -200,18 +249,31 @@
                 + '<div class="usp-empty-icon">&#x25C8;</div>'
                 + '<p>Scenario evidence workspace.<br>&#1605;&#1587;&#1575;&#1581;&#1577; &#1593;&#1605;&#1604; &#1571;&#1583;&#1604;&#1577; &#1575;&#1604;&#1587;&#1610;&#1606;&#1575;&#1585;&#1610;&#1608;.</p>'
                 + '</div>'
-                + '<div class="usp-body scenario-evidence-body" id="scenario-evidence-body" hidden></div>';
+                + '<div class="usp-body scenario-evidence-body" id="scenario-evidence-body" hidden>'
+                + jumpHtml
+                + groupsHtml
+                + '</div>';
             var unitPanel = $('unit-status-panel');
             if (unitPanel && unitPanel.parentNode) unitPanel.parentNode.insertBefore(panel, unitPanel);
             else document.body.appendChild(panel);
             var close = $('scenario-evidence-close');
             if (close) close.addEventListener('click', closeScenarioEvidencePanel);
+            Array.prototype.forEach.call(panel.querySelectorAll('.se-group-hdr'), function (hdr) {
+                hdr.addEventListener('click', function () { toggleScenarioEvidenceGroup(hdr.parentNode); });
+            });
+            Array.prototype.forEach.call(panel.querySelectorAll('[data-se-jump]'), function (btn) {
+                btn.addEventListener('click', function () { jumpToScenarioEvidenceGroup(btn.getAttribute('data-se-jump')); });
+            });
             body = $('scenario-evidence-body');
         }
         if (!body) return panel;
-        SCENARIO_EVIDENCE_BLOCK_IDS.forEach(function (id) {
-            var block = $(id);
-            if (block && block.parentNode !== body) body.appendChild(block);
+        SCENARIO_EVIDENCE_GROUPS.forEach(function (g) {
+            var groupBody = $('se-group-body-' + g.key);
+            if (!groupBody) return;
+            g.blocks.forEach(function (id) {
+                var block = $(id);
+                if (block && block.parentNode !== groupBody) groupBody.appendChild(block);
+            });
         });
         return panel;
     }
@@ -1655,8 +1717,26 @@
             generated_at: new Date().toISOString()
         });
         body._scenarioEvidenceReleaseGate = gate;
-        body.innerHTML = RG.renderReleaseGateHtml(gate);
-        if (typeof RG.bindReleaseGateActions === 'function') RG.bindReleaseGateActions(body, gate);
+        // QA-101/102: log release status transitions + render the latest receipt.
+        var RA = root.RmoozScenarioEvidenceReleaseAudit;
+        var latestReceipt = null;
+        if (RA && typeof RA.observeRelease === 'function') {
+            try { latestReceipt = RA.observeRelease(gate, { world_state: _getCurrentWorldState }); } catch (_) {}
+        }
+        var latestHtml = (RA && typeof RA.renderLatestHtml === 'function') ? RA.renderLatestHtml(latestReceipt || gate.scenario_fingerprint) : '';
+        body.innerHTML = RG.renderReleaseGateHtml(gate) + latestHtml;
+        if (typeof RG.bindReleaseGateActions === 'function') {
+            RG.bindReleaseGateActions(body, gate, {
+                onExport: function (kind) {
+                    if (RA && typeof RA.recordExport === 'function') {
+                        try { RA.recordExport(kind, gate, { world_state: _getCurrentWorldState }); } catch (_) {}
+                    }
+                    populateScenarioReviewAuditTrail(unit || currentUnit);
+                    populateScenarioReleaseGate(unit || currentUnit);
+                }
+            });
+        }
+        if (RA && typeof RA.bindLatestActions === 'function') RA.bindLatestActions(body, gate.scenario_fingerprint, {});
         block.removeAttribute('hidden');
     }
 

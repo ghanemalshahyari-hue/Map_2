@@ -388,6 +388,11 @@
                 if (action === 'certificate') copyCertificate(cert);
                 else if (action === 'json') copyJson(cert);
                 else if (action === 'download') downloadJson(cert);
+                // QA-101: let the host log the export in the release audit trail.
+                // certificate -> certificate export; json/download -> JSON export.
+                if (typeof opts.onExport === 'function') {
+                    opts.onExport(action === 'certificate' ? 'certificate' : 'json', gate);
+                }
             });
         });
         return true;

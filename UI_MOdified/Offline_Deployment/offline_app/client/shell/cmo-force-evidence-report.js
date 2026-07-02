@@ -8,7 +8,7 @@
 (function (root) {
     'use strict';
 
-    var CMO_FORCE_EVIDENCE_REPORT_VERSION = '1.2.0-rmooz-cmo-11-qa98';
+    var CMO_FORCE_EVIDENCE_REPORT_VERSION = '1.3.0-rmooz-cmo-11-qa105';
 
     function obj(v) { return v && typeof v === 'object' ? v : {}; }
     function arr(v) { return Array.isArray(v) ? v : []; }
@@ -39,6 +39,7 @@
     function auditApi()        { return localApi('RmoozScenarioEvidenceReviewAuditTrail','scenario-evidence-review-audit-trail.js'); }
     function acceptanceApi()   { return localApi('RmoozScenarioEvidenceHandoffAcceptance','scenario-evidence-handoff-acceptance.js'); }
     function releaseGateApi()  { return localApi('RmoozScenarioEvidenceReleaseGate','scenario-evidence-release-gate.js'); }
+    function releaseAuditApi() { return localApi('RmoozScenarioEvidenceReleaseAudit','scenario-evidence-release-audit.js'); }
 
     function reasonLabel(code, lang) {
         var labels = labelsApi();
@@ -150,6 +151,11 @@
         var releaseGate = opts.release_gate || (RG && typeof RG.buildReleaseGate === 'function'
             ? RG.buildReleaseGate(ws, { closeout: closeout, acceptance: acceptance, generated_at: generatedAt })
             : null);
+        // QA-105: fold the release decision history (latest + receipts) into the report.
+        var RA = releaseAuditApi();
+        var releaseHistory = opts.release_history || (RA && typeof RA.exportState === 'function' && releaseGate
+            ? RA.exportState(releaseGate.scenario_fingerprint || obj(manualReview && manualReview.session).scenario_fingerprint || ws, { generated_at: generatedAt })
+            : null);
         return {
             version: CMO_FORCE_EVIDENCE_REPORT_VERSION,
             generated_at: generatedAt,
@@ -180,6 +186,7 @@
             handoff_package_manifest: opts.handoff_package ? obj(opts.handoff_package.manifest || opts.handoff_package) : null,
             handoff_acceptance: acceptance ? obj(acceptance) : null,
             release_gate: releaseGate ? obj(releaseGate) : null,
+            release_history: releaseHistory ? obj(releaseHistory) : null,
             selected_unit: selected,
             source: 'Readiness matrix + force evidence feed'
         };
@@ -317,6 +324,22 @@
                 lines.push('  Blockers:');
                 arr(release.blockers).forEach(function (b) { lines.push('  - ' + b.label); });
             }
+            lines.push('');
+        }
+        var relHist = obj(report.release_history);
+        if (relHist.latest || arr(relHist.history).length) {
+            lines.push('Release Decision History:');
+            var latest = obj(relHist.latest);
+            if (latest.decision) {
+                lines.push('  Latest: ' + (latest.decision_label_en || latest.decision) +
+                    ' — ' + (latest.reason || '') +
+                    (latest.exported ? ' [certificate/JSON exported]' : ''));
+                lines.push('  Fingerprint: ' + (latest.scenario_fingerprint || 'unknown'));
+            }
+            arr(relHist.history).slice(-8).forEach(function (r) {
+                lines.push('  - ' + (r.timestamp || 'unknown') + ' — ' + (r.decision_label_en || r.decision) +
+                    ' (' + (r.blocker_count || 0) + ' blocker(s))' + (r.exported ? ' [exported]' : ''));
+            });
             lines.push('');
         }
         if (report.selected_unit) {

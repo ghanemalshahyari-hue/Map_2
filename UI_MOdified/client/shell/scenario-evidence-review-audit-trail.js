@@ -94,6 +94,13 @@
         if (event.type === 'session_exported') return 'Review session exported';
         if (event.type === 'session_reset') return 'Review session reset';
         if (event.type === 'closeout_status_changed') return 'Closeout status changed: ' + (event.old_status || 'unknown') + ' -> ' + (event.new_status || 'unknown');
+        if (event.type === 'release_ready') return 'Release ready';
+        if (event.type === 'release_ready_with_warnings') return 'Release ready with warnings';
+        if (event.type === 'release_not_ready') return 'Release not ready' + (event.blocker_count ? ' - ' + event.blocker_count + ' blocker(s)' : '');
+        if (event.type === 'release_incomplete') return 'Release incomplete';
+        if (event.type === 'release_blockers_changed') return 'Release blockers changed' + (event.blocker_count != null ? ' - ' + event.blocker_count + ' blocker(s)' : '');
+        if (event.type === 'release_certificate_exported') return 'Release certificate exported';
+        if (event.type === 'release_json_exported') return 'Release JSON exported';
         return event.type || 'review_event';
     }
 

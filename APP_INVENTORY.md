@@ -97,6 +97,13 @@ scenario-evidence v10 Evidence Release Gate (QA-92..100): deterministic release 
                       synthesizing closeout + handoff acceptance + fingerprint; release
                       blockers summary; release certificate JSON/text export;
                       commander-brief + force-report release status
+scenario-evidence v11 Release Decision Audit + Drawer Consolidation (QA-101..107):
+                      release status/blocker/export events logged into the Evidence
+                      Review Audit Trail; "Latest Release Decision" receipt + history;
+                      Force Report "Release Decision History" section; the drawer is
+                      consolidated into 4 collapsible groups (Commander Overview /
+                      Scenario QA Review / Handoff Workflow / Force Evidence) with a
+                      sticky quick-jump bar. Unit Status stays selected-unit only.
 ```
 
 Active Scenario-QA scripts mirrored between main and offline app shells:
@@ -115,9 +122,10 @@ scenario-evidence-review-audit-trail.js
 scenario-evidence-handoff-package.js
 scenario-evidence-handoff-acceptance.js
 scenario-evidence-release-gate.js
+scenario-evidence-release-audit.js
 ```
 
-Gate tests (root, run individually): `test-scenario-evidence-{completeness,review-queue,repair-plan,manual-fix,review-session,review-closeout,review-audit-trail,handoff-package,handoff-acceptance,release-gate}-batch-1.js`.
+Gate tests (root, run individually): `test-scenario-evidence-{completeness,review-queue,repair-plan,manual-fix,review-session,review-closeout,review-audit-trail,handoff-package,handoff-acceptance,release-gate}-batch-1.js` and `test-scenario-evidence-release-audit-ux-batch-1.js`.
 Boundary note: the whole stack is browser-local (localStorage + in-memory fallback) — no backend routes, no scenario/world-state mutation; package/acceptance import restores review-session UI state only.
 
 ### Runtime and release baselines
@@ -145,6 +153,7 @@ localhost:8640 works
 Current relevant tags:
 
 ```text
+scenario-evidence-v11 -> release audit + drawer consolidation (Batch 11)
 scenario-evidence-v10 -> evidence release gate (Batch 10)
 scenario-evidence-v9 -> evidence handoff acceptance workflow (Batch 9)
 cmo-evidence-rehome-v1 -> 764d260f Scenario Evidence drawer split from Unit Status

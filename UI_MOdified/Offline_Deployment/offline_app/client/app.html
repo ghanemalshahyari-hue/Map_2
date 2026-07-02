@@ -6575,6 +6575,218 @@
         /* Close button RTL */
         [dir="rtl"] .usp-header { flex-direction: row-reverse; }
 
+
+        /* ═══════════════════════════════════════════════════════════════════
+           RMOOZ-CMO EVIDENCE PANEL — READABILITY PASS (2026-07-02)
+           Append-only override. Dark-theme (default) values only; the
+           [data-theme="light"] rules win by specificity and are untouched.
+           Goals: (1) font floor — no evidence text below ~0.72rem/11px;
+           (2) lift dim #5a7890/#7fa0b8 labels to legible contrast;
+           (3) wider panel + breathing room; (4) sans stack for dense prose,
+           monospace kept for numbers/codes/coordinates/tables.
+           ═══════════════════════════════════════════════════════════════════ */
+
+        /* ── Width: give the wall of text more horizontal room ─────────────── */
+        .unit-status-panel { width: 400px; }
+        @media (max-width: 1200px) { .unit-status-panel { width: 360px; } }
+        @media (max-width: 768px)  { .unit-status-panel { width: 100%; } }
+
+        /* ── Sans stack for dense BODY prose (numbers/codes/tables stay mono) ─ */
+        .usp-quality-warnings, .usp-quality-warning-btn, .usp-quality-empty, .usp-quality-source,
+        .usp-matrix-source, .usp-matrix-empty, .usp-matrix-blocker em,
+        .usp-force-feed-text, .usp-force-feed-empty, .usp-force-report-summary, .usp-export-summary,
+        .usp-timeline-text, .usp-timeline-empty,
+        .usp-contact-val, .usp-chain-val, .usp-engagement-val,
+        .usp-rec-list, .usp-rec-empty, .usp-rec-reason-ar, .usp-rec-source,
+        .usp-drilldown-context, .usp-drilldown-list, .usp-drilldown-empty, .usp-drilldown-source, .usp-drilldown-title-ar,
+        .usp-alt-meta, .usp-alt-empty, .usp-alt-disclaimer,
+        .usp-rem-summary, .usp-rem-steps, .usp-rem-empty, .usp-rem-disclaimer, .usp-rem-label-ar,
+        .usp-cov-blockers, .usp-cov-verdict-ar,
+        .usp-brief-status-ar, .usp-brief-unit, .usp-brief-disclaimer,
+        .usp-comp-verdict-ar, .usp-comp-source,
+        .usp-norm-list, .usp-norm-units, .usp-norm-empty,
+        .usp-objh-label-en, .usp-objh-label-ar, .usp-objh-status-ar, .usp-objh-source {
+            font-family: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        /* ── Section headers: brighter, larger label + stronger separators ─── */
+        .usp-section-label { font-size: 0.76rem; letter-spacing: 0.09em; color: #6ec0e0; }
+        .usp-evidence-alerts-block, .usp-evidence-quality-block, .usp-evidence-matrix-block,
+        .usp-force-feed-block, .usp-force-report-block, .usp-contact-evidence-block,
+        .usp-chain-evidence-block, .usp-evidence-recommendations-block, .usp-evidence-coverage-block,
+        .usp-evidence-timeline-block, .usp-evidence-export-block, .usp-engagement-evidence-block,
+        .usp-scenario-completeness-block, .usp-objective-health-block, .usp-blocker-remediation-block,
+        .usp-alternative-shooters-block { border-bottom: 2px solid #14263a; }
+
+        /* ── Commander brief ───────────────────────────────────────────────── */
+        .usp-commander-brief-block { border-bottom: 2px solid #22436a; }
+        .usp-brief-header { padding: 9px 0.8rem; }
+        .usp-brief-status-en { font-size: 0.82rem; }
+        .usp-brief-status-ar { font-size: 0.75rem; color: #a8c4dd; margin-top: 3px; }
+        .usp-brief-grid { padding: 6px 0.8rem; }
+        .usp-brief-cell { padding: 4px 12px 4px 0; }
+        .usp-brief-cell dt { font-size: 0.72rem; color: #8fa8c0; }
+        .usp-brief-cell dd { font-size: 0.78rem; color: #bcd6ee; }
+        .usp-brief-unit { font-size: 0.75rem; color: #a8c4dd; padding: 5px 0.8rem 6px; }
+        .usp-brief-disclaimer { font-size: 0.72rem; color: #8298ac; padding: 5px 0.8rem 7px; line-height: 1.45; }
+
+        /* ── Scenario completeness ─────────────────────────────────────────── */
+        .usp-comp-header { padding: 8px 0.8rem; }
+        .usp-comp-title-en { font-size: 0.75rem; color: #a8c4dd; }
+        .usp-comp-verdict-en { font-size: 0.8rem; }
+        .usp-comp-verdict-ar { font-size: 0.73rem; color: #a8c4dd; }
+        .usp-comp-stats { padding: 6px 0.8rem; }
+        .usp-comp-stat { padding: 4px 12px 4px 0; }
+        .usp-comp-stat dt { font-size: 0.72rem; color: #8fa8c0; }
+        .usp-comp-stat dd { font-size: 0.8rem; color: #bcd6ee; }
+        .usp-comp-source { font-size: 0.72rem; color: #8298ac; padding: 4px 0.8rem 7px; line-height: 1.45; }
+
+        /* ── Objective X health ────────────────────────────────────────────── */
+        .usp-objh-header { padding: 8px 0.8rem; gap: 9px; }
+        .usp-objh-score { font-size: 1.15rem; }
+        .usp-objh-status-en { font-size: 0.76rem; color: #a8c4dd; }
+        .usp-objh-status-badge { font-size: 0.7rem; color: #bcd6ee; }
+        .usp-objh-status-ar { font-size: 0.73rem; color: #a8c4dd; }
+        .usp-objh-checks { padding: 5px 0.8rem 7px; }
+        .usp-objh-check { font-size: 0.78rem; line-height: 1.5; padding: 4px 0; gap: 8px; }
+        .usp-objh-label-en { color: #d0e4f6; line-height: 1.45; }
+        .usp-objh-check--fail .usp-objh-label-en { color: #f0b4b4; }
+        .usp-objh-label-ar { font-size: 0.73rem; color: #a8c4dd; }
+        .usp-objh-source { font-size: 0.72rem; color: #8298ac; padding: 4px 0.8rem 7px; }
+
+        /* ── Evidence quality ──────────────────────────────────────────────── */
+        .usp-quality-status { padding: 8px 0.8rem; }
+        .usp-quality-status span { font-size: 0.72rem; color: #a8c4dd; }
+        .usp-quality-status strong { font-size: 0.82rem; color: #e2eefa; }
+        .usp-quality-counts { gap: 7px; padding: 8px 0.8rem; }
+        .usp-quality-counts div { padding: 7px 8px; }
+        .usp-quality-counts strong { font-size: 0.9rem; }
+        .usp-quality-counts span { font-size: 0.7rem; color: #a8c4dd; line-height: 1.3; }
+        .usp-quality-warnings-title { font-size: 0.72rem; color: #a8c4dd; padding: 7px 0.8rem 4px; }
+        .usp-quality-warnings { font-size: 0.77rem; line-height: 1.55; padding: 0 0.8rem 7px 1.6rem; color: #c4dcf0; }
+        .usp-quality-warning-btn { padding: 3px 0; line-height: 1.5; color: #c4dcf0; }
+        .usp-quality-warnings em { font-size: 0.73rem; color: #a8c4dd; }
+        .usp-quality-empty, .usp-quality-source { font-size: 0.74rem; color: #aebccb; line-height: 1.5; padding: 8px 0.8rem; }
+
+        /* ── Evidence alerts ───────────────────────────────────────────────── */
+        .usp-alert-grid { gap: 7px; padding: 8px 0.8rem; }
+        .usp-alert-badge { min-height: 38px; padding: 7px 8px; }
+        .usp-alert-label { font-size: 0.72rem; color: #a8c4dd; line-height: 1.35; }
+        .usp-alert-value { font-size: 0.82rem; color: #e2eefa; }
+        .usp-alert-top-label { font-size: 0.75rem; color: #a8c4dd; line-height: 1.5; padding: 0 0.8rem 8px; }
+
+        /* ── Evidence coverage (bar %/values stay monospace) ───────────────── */
+        .usp-cov-header { padding: 8px 0.8rem; gap: 9px; }
+        .usp-cov-pct { font-size: 1.2rem; }
+        .usp-cov-verdict-en { font-size: 0.78rem; color: #d0e4f6; }
+        .usp-cov-verdict-ar { font-size: 0.73rem; color: #a8c4dd; }
+        .usp-cov-stats { padding: 6px 0.8rem; }
+        .usp-cov-stat { padding: 4px 10px 4px 0; }
+        .usp-cov-stat dt { font-size: 0.72rem; color: #8fa8c0; }
+        .usp-cov-stat dd { font-size: 0.78rem; color: #bcd6ee; }
+        .usp-cov-blockers-hdr { font-size: 0.72rem; color: #a8c4dd; padding: 5px 0.8rem 0; }
+        .usp-cov-blockers { font-size: 0.76rem; color: #c4dcf0; line-height: 1.5; padding: 5px 0.8rem 7px 1.6rem; }
+
+        /* ── Readiness matrix (data table stays monospace) ─────────────────── */
+        .usp-matrix-summary { gap: 6px; padding: 8px 0.8rem; }
+        .usp-matrix-count { padding: 7px 5px; }
+        .usp-matrix-count-val { font-size: 0.95rem; color: #e2eefa; }
+        .usp-matrix-count-lbl { font-size: 0.7rem; color: #a8c4dd; line-height: 1.3; }
+        .usp-matrix-filters { gap: 5px; padding: 8px 0.8rem; }
+        .usp-matrix-filter-btn { font-size: 0.7rem; padding: 6px 5px; color: #a8c4dd; }
+        .usp-matrix-subtitle { font-size: 0.72rem; color: #a8c4dd; padding: 7px 0.8rem 4px; }
+        .usp-matrix-blocker span { font-size: 0.74rem; color: #f0ad7a; }
+        .usp-matrix-blocker strong { font-size: 0.78rem; color: #e2eefa; }
+        .usp-matrix-blocker em { font-size: 0.72rem; color: #a8c4dd; }
+        .usp-matrix-table { font-size: 0.72rem; }
+        .usp-matrix-table th { font-size: 0.68rem; color: #8fa8c0; }
+        .usp-matrix-table td { color: #bcd6ee; }
+        .usp-matrix-source, .usp-matrix-empty { font-size: 0.74rem; color: #aebccb; line-height: 1.5; padding: 8px 0.8rem; }
+
+        /* ── Blocker remediation ───────────────────────────────────────────── */
+        .usp-rem-summary { font-size: 0.75rem; color: #a8c4dd; padding: 7px 0.8rem; line-height: 1.45; }
+        .usp-rem-group-hdr { font-size: 0.78rem; color: #d0e4f6; padding: 7px 0.8rem; gap: 7px; }
+        .usp-rem-count { font-size: 0.72rem; color: #f0ad7a; }
+        .usp-rem-label-ar { font-size: 0.73rem; color: #a8c4dd; }
+        .usp-rem-units { padding: 4px 0.8rem 5px 1.6rem; gap: 5px; }
+        .usp-rem-unit-tag { font-size: 0.7rem; padding: 2px 6px; color: #a8c4dd; }
+        .usp-rem-steps { font-size: 0.77rem; line-height: 1.55; padding: 5px 1.6rem 7px 2.1rem; color: #c4dcf0; }
+        .usp-rem-steps li { margin: 4px 0; }
+        .usp-rem-step-en { color: #d0e4f6; }
+        .usp-rem-step-ar { font-size: 0.73rem; color: #f4c58a; }
+        .usp-rem-disclaimer { font-size: 0.72rem; color: #8298ac; padding: 5px 0.8rem 7px; line-height: 1.45; }
+        .usp-rem-empty { font-size: 0.76rem; color: #8fd6a3; padding: 9px 0.8rem; }
+
+        /* ── Alternative shooters (shooter table stays monospace) ──────────── */
+        .usp-alt-meta { font-size: 0.75rem; color: #a8c4dd; padding: 7px 0.8rem; line-height: 1.45; }
+        .usp-alt-count, .usp-alt-total { color: #8fd6a3; }
+        .usp-alt-table { font-size: 0.72rem; }
+        .usp-alt-table th { padding: 5px 0.55rem; color: #8fa8c0; }
+        .usp-alt-table td { padding: 5px 0.55rem; color: #bcd6ee; }
+        .usp-alt-disclaimer { font-size: 0.72rem; color: #8298ac; padding: 5px 0.8rem 7px; line-height: 1.45; }
+        .usp-alt-empty { font-size: 0.76rem; color: #aebccb; padding: 9px 0.8rem; }
+
+        /* ── Recommendations + drilldown ───────────────────────────────────── */
+        .usp-rec-summary { gap: 6px; padding: 7px 0.8rem; }
+        .usp-rec-status, .usp-rec-reason { font-size: 0.72rem; padding: 3px 7px; color: #bcd6ee; }
+        .usp-rec-reason-ar { font-size: 0.77rem; color: #f4c58a; line-height: 1.5; }
+        .usp-rec-list { font-size: 0.78rem; color: #c4dcf0; line-height: 1.55; padding: 7px 1.35rem 7px 1.85rem; }
+        .usp-rec-list li { margin: 4px 0; }
+        .usp-rec-empty { font-size: 0.77rem; color: #aebccb; line-height: 1.5; padding: 9px 0.8rem; }
+        .usp-rec-source { font-size: 0.72rem; color: #8fa8c0; padding: 6px 0.8rem 8px; }
+        .usp-drilldown-header { padding: 8px 0.8rem 5px; }
+        .usp-drilldown-title { font-size: 0.78rem; color: #ecca7e; }
+        .usp-drilldown-title-ar { font-size: 0.75rem; color: #f4c58a; }
+        .usp-drilldown-context { font-size: 0.77rem; color: #a8c4dd; line-height: 1.5; padding: 6px 0.8rem; }
+        .usp-drilldown-list { font-size: 0.77rem; color: #c4dcf0; line-height: 1.55; padding: 6px 1.6rem 6px 2.1rem; }
+        .usp-drilldown-list li { margin: 4px 0; }
+        .usp-drilldown-check-en { color: #d0e4f6; }
+        .usp-drilldown-check-ar { font-size: 0.74rem; color: #f4c58a; }
+        .usp-drilldown-source { font-size: 0.72rem; color: #8fa8c0; padding: 5px 0.8rem 7px; }
+        .usp-drilldown-empty { font-size: 0.77rem; color: #aebccb; padding: 9px 0.8rem; }
+
+        /* ── Contact / chain / engagement rows ─────────────────────────────── */
+        .usp-contact-status, .usp-chain-status, .usp-engagement-status { font-size: 0.78rem; color: #e2eefa; padding: 7px 0.8rem; }
+        .usp-contact-row, .usp-chain-row, .usp-engagement-row { padding: 6px 0.8rem; gap: 10px; }
+        .usp-contact-lbl, .usp-chain-lbl, .usp-engagement-lbl { font-size: 0.72rem; color: #8fa8c0; min-width: 132px; }
+        .usp-contact-val, .usp-chain-val, .usp-engagement-val { font-size: 0.78rem; color: #bcd6ee; line-height: 1.5; }
+        .usp-chain-pill { font-size: 0.72rem; }
+
+        /* ── Force feed + timeline (time column stays monospace) ───────────── */
+        .usp-force-feed-intro { font-size: 0.74rem; color: #a8c4dd; padding: 7px 0.8rem; }
+        .usp-force-feed-row { padding: 6px 0.8rem; gap: 8px; }
+        .usp-force-feed-time { font-size: 0.72rem; color: #8fa8c0; }
+        .usp-force-feed-text { font-size: 0.78rem; color: #bcd6ee; line-height: 1.5; }
+        .usp-force-feed-empty { font-size: 0.77rem; color: #aebccb; padding: 8px 0.8rem; }
+        .usp-timeline-intro { font-size: 0.74rem; color: #a8c4dd; padding: 7px 0.8rem; }
+        .usp-timeline-row { padding: 6px 0.8rem; gap: 8px; }
+        .usp-timeline-time { font-size: 0.72rem; color: #8fa8c0; }
+        .usp-timeline-text { font-size: 0.78rem; color: #bcd6ee; line-height: 1.5; }
+        .usp-timeline-empty { font-size: 0.77rem; color: #aebccb; padding: 8px 0.8rem; }
+
+        /* ── Force report / export summaries ───────────────────────────────── */
+        .usp-force-report-actions, .usp-export-actions { gap: 7px; padding: 8px 0.8rem; }
+        .usp-force-report-btn, .usp-export-btn { font-size: 0.72rem; padding: 6px 8px; color: #bcd6ee; }
+        .usp-force-report-summary, .usp-export-summary { font-size: 0.78rem; color: #bcd6ee; line-height: 1.55; padding: 9px 0.8rem; }
+
+        /* ── Evidence normalizer ───────────────────────────────────────────── */
+        .usp-norm-header { padding: 7px 0.8rem; gap: 10px; }
+        .usp-norm-count { font-size: 0.78rem; color: #ecca7e; }
+        .usp-norm-units { font-size: 0.74rem; color: #a8c4dd; }
+        .usp-norm-list { font-size: 0.76rem; color: #c4dcf0; line-height: 1.5; padding: 5px 0.8rem 7px 1.6rem; }
+        .usp-norm-list li { margin: 3px 0; }
+        .usp-norm-field { font-size: 0.75rem; color: #d0e4f6; }
+        .usp-norm-badge { font-size: 0.68rem; color: #a8c4dd; }
+        .usp-norm-applied { font-size: 0.72rem; color: #8fa8c0; }
+        .usp-norm-empty { font-size: 0.77rem; color: #8fd6a3; padding: 9px 0.8rem; }
+
+        /* ── Identity / position provenance + capability footnote ──────────── */
+        .usp-identity-source { font-size: 0.72rem; color: #8fa8c0; }
+        .usp-identity-source .usp-identity-key { color: #7f9ec0; }
+        .usp-code-line { font-size: 0.72rem; color: #8fa8c0; }
+        .usp-pos-selat { font-size: 0.72rem; color: #7f9ec0; }
+        .capability-source { color: #7f9ec0 !important; font-size: 0.72rem !important; }
+
     </style>
     <script>
         // Mount Edit Mode once the DOM (workspace panel) is ready.

@@ -217,6 +217,37 @@
         }
     }
 
+    var SCENARIO_EVIDENCE_STATUS_TARGETS = {
+        release:  { group: 'overview', block: 'usp-release-gate-block' },
+        closeout: { group: 'qa',       block: 'usp-review-closeout-block' },
+        coverage: { group: 'overview', block: 'usp-evidence-coverage-block' },
+        handoff:  { group: 'handoff',  block: 'usp-handoff-acceptance-block' }
+    };
+
+    function focusScenarioEvidenceBlock(blockId) {
+        var block = $(blockId);
+        if (!block) return;
+        if (!block.hasAttribute('tabindex')) block.setAttribute('tabindex', '-1');
+        if (typeof block.focus === 'function') {
+            try { block.focus({ preventScroll: true }); } catch (_) { try { block.focus(); } catch (_) {} }
+        }
+        if (typeof block.scrollIntoView === 'function') {
+            try { block.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (_) { block.scrollIntoView(); }
+        }
+    }
+
+    function openScenarioEvidenceTarget(target) {
+        var cfg = SCENARIO_EVIDENCE_STATUS_TARGETS[target] || SCENARIO_EVIDENCE_STATUS_TARGETS.release;
+        ensureScenarioEvidencePanel();
+        openScenarioEvidencePanel();
+        if (target === 'release') populateScenarioReleaseGate(currentUnit);
+        else if (target === 'closeout') populateScenarioReviewCloseout(currentUnit);
+        else if (target === 'coverage') populateEvidenceCoverage(currentUnit);
+        else if (target === 'handoff') populateScenarioHandoffAcceptance(currentUnit);
+        if (cfg.group) jumpToScenarioEvidenceGroup(cfg.group);
+        focusScenarioEvidenceBlock(cfg.block);
+    }
+
     function ensureScenarioEvidencePanel() {
         var panel = $('scenario-evidence-panel');
         var body = $('scenario-evidence-body');
@@ -1380,6 +1411,7 @@
         });
         body._cmoEvidenceCoverage = coverage;
         body.innerHTML = COV.renderCoverageHtml(coverage, { lang: 'ar' });
+        updateScenarioStatusHud({ coverage: coverage });
         block.removeAttribute('hidden');
     }
 
@@ -1597,6 +1629,7 @@
         body._scenarioReviewCloseout = closeout;
         body.innerHTML = CO.renderCloseoutHtml(closeout, { lang: 'ar' });
         if (typeof CO.bindCloseoutActions === 'function') CO.bindCloseoutActions(body, closeout);
+        updateScenarioStatusHud({ closeout: closeout });
         block.removeAttribute('hidden');
     }
 
@@ -1677,6 +1710,7 @@
         });
         body._scenarioEvidenceHandoffAcceptance = acceptance;
         body.innerHTML = HA.renderAcceptanceHtml(acceptance, { lang: 'ar', diff: diff });
+        updateScenarioStatusHud({ acceptance: acceptance });
         if (typeof HA.bindAcceptanceActions === 'function') {
             HA.bindAcceptanceActions(body, acceptance, {
                 world_state: _getCurrentWorldState,
@@ -1742,13 +1776,28 @@
         block.removeAttribute('hidden');
     }
 
-    // QA-108/109/110: top-level release status chip near the workspace header.
-    function updateReleaseHud(gate) {
+    function readScenarioStatusSurface(bodyId, prop) {
+        var body = $(bodyId);
+        return body ? body[prop] : null;
+    }
+
+    // QA-108/109/110 + Batch 13: top-level scenario status chip cluster.
+    function updateScenarioStatusHud(next) {
         var mount = $('release-hud-mount');
         if (!mount) return;
         var RH = root.RmoozScenarioEvidenceReleaseHud;
         if (!RH || typeof RH.update !== 'function') return;
-        RH.update(mount, gate, { onOpen: openReleaseGate });
+        next = next || {};
+        RH.update(mount, {
+            release_gate: next.release_gate || readScenarioStatusSurface('usp-release-gate-body', '_scenarioEvidenceReleaseGate'),
+            closeout: next.closeout || readScenarioStatusSurface('usp-review-closeout-body', '_scenarioReviewCloseout'),
+            coverage: next.coverage || readScenarioStatusSurface('usp-evidence-coverage-body', '_cmoEvidenceCoverage'),
+            acceptance: next.acceptance || readScenarioStatusSurface('usp-handoff-acceptance-body', '_scenarioEvidenceHandoffAcceptance')
+        }, { onOpenTarget: openScenarioEvidenceTarget });
+    }
+
+    function updateReleaseHud(gate) {
+        updateScenarioStatusHud({ release_gate: gate });
     }
 
     // Open the drawer straight to the Evidence Release Gate (Commander Overview).
@@ -1759,7 +1808,7 @@
         if (typeof jumpToScenarioEvidenceGroup === 'function') jumpToScenarioEvidenceGroup('overview');
         var block = $('usp-release-gate-block');
         if (block && typeof block.scrollIntoView === 'function') {
-            try { block.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (_) { block.scrollIntoView(); }
+            focusScenarioEvidenceBlock('usp-release-gate-block');
         }
     }
 
@@ -2352,6 +2401,7 @@
         populatePanel: populatePanel,
         displayUnitName: displayUnitName,   // FIX-B (D): exposed for tests / reuse
         getCurrentUnit: function() { return currentUnit; },
+        openScenarioEvidenceTarget: openScenarioEvidenceTarget,
         openReleaseGate: openReleaseGate
     };
     init();

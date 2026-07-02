@@ -111,6 +111,15 @@ scenario-evidence v12 Release Visibility + Printable Certificate (QA-108..115):
                       export refinement (fingerprint validation + deferred/fixed
                       counts + latest timestamp); Force Report certificate metadata.
                       New module scenario-evidence-release-hud.js.
+scenario-evidence v13 Scenario Status Header Cluster (Batch 13):
+                      expands the header HUD from one release chip into four compact
+                      read-only chips: Release, Closeout, Coverage, and Handoff
+                      (Arabic labels: الاعتماد / الإغلاق / التغطية / التسليم).
+                      Each chip opens the Scenario Evidence drawer at the matching
+                      section: Evidence Release Gate, Evidence Review Closeout,
+                      Evidence Coverage, or Handoff Acceptance. Display/navigation
+                      only: no backend route, database, auto-fix, combat/action,
+                      doctrine, scenario-contract, or DOCX-staging change.
 ```
 
 Active Scenario-QA scripts mirrored between main and offline app shells:

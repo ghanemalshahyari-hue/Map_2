@@ -280,9 +280,31 @@ gate). Clicking it:
 ```text
 Click the release status chip
 -> opens the Scenario Evidence drawer
--> expands the Commander Overview group
 -> scrolls to / focuses the Evidence Release Gate
 ```
+
+Scenario Status Header Cluster (Batch 13) expands that header signal into four
+compact read-only chips:
+
+```text
+Release: <status>     / الاعتماد
+Closeout: <status>    / الإغلاق
+Coverage: <percent>   / التغطية
+Handoff: <status>     / التسليم
+```
+
+Click behavior:
+
+```text
+Release  -> Scenario Evidence drawer -> Evidence Release Gate
+Closeout -> Scenario Evidence drawer -> Evidence Review Closeout
+Coverage -> Scenario Evidence drawer -> Evidence Coverage
+Handoff  -> Scenario Evidence drawer -> Handoff Acceptance
+```
+
+The cluster is display/navigation only. It does not add backend routes, database
+state, auto-fix behavior, combat/action mutation, doctrine mutation, scenario
+contract changes, or DOCX staging.
 
 Printable Release Certificate — the Evidence Release Gate panel now has a
 [Print Release Certificate] button (alongside Copy Certificate / Copy JSON /

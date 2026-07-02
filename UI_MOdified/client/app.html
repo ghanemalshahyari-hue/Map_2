@@ -54,10 +54,10 @@
                     </div>
                 </div>
                 <div id="side-picker-mount" class="side-picker" role="group" aria-label="Operational view"></div>
-                <!-- RMOOZ-QA-108: top-level evidence release status chip. Rendered by
-                     shell/scenario-evidence-release-hud.js when a scenario is active;
-                     clicking it opens the Scenario Evidence drawer at the Release Gate. -->
-                <div id="release-hud-mount" class="release-hud" role="status" aria-label="Evidence release status" hidden></div>
+                <!-- RMOOZ-QA-BATCH-13: compact Scenario Evidence status cluster.
+                     Rendered by shell/scenario-evidence-release-hud.js when a scenario
+                     is active; each chip opens its matching drawer section. -->
+                <div id="release-hud-mount" class="release-hud" role="group" aria-label="Scenario evidence status" hidden></div>
                 <!-- RMOOZ-LOCAL-MODEL-SELECTOR-A: always-visible local AI model picker
                      (Provider · model dropdown · Refresh · Use · status). Built by
                      shell/ai-model-hud.js; talks to /api/ai/models + /api/ai/model/select. -->
@@ -7438,9 +7438,11 @@
         .usp-release-btn--print { border-color:#5a5330; background:#1a1608; color:#f1d48f; }
         .usp-release-btn--print:hover { background:#241d0a; }
 
-        /* ── RMOOZ-QA-108/109: top-level release status chip ── */
+        /* ── RMOOZ-QA-BATCH-13: top-level scenario status cluster ── */
         .release-hud[hidden] { display:none !important; }
-        .release-hud-chip { display:inline-flex; align-items:center; gap:8px; border:1px solid #4b4580; border-radius:14px; background:#12112b; color:#d8d5ff; font-family:inherit; font-size:0.7rem; padding:4px 10px; cursor:pointer; line-height:1.2; }
+        .release-hud { flex:0 1 auto; min-width:0; max-width:min(54vw, 620px); }
+        .release-hud-cluster { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+        .release-hud-chip { display:inline-flex; align-items:center; gap:7px; min-height:30px; border:1px solid #4b4580; border-radius:8px; background:#12112b; color:#d8d5ff; font-family:inherit; font-size:0.68rem; padding:3px 8px; cursor:pointer; line-height:1.15; }
         .release-hud-chip:hover { background:#1c1a44; }
         .release-hud-chip::before { content:''; width:8px; height:8px; border-radius:50%; background:#8f9dac; flex:0 0 auto; }
         .release-hud-chip--ready::before { background:#8fd6a3; }
@@ -7448,12 +7450,16 @@
         .release-hud-chip--not-ready::before { background:#f09b87; }
         .release-hud-chip--incomplete::before { background:#8f9dac; }
         .release-hud-key { display:flex; flex-direction:column; text-align:left; }
-        .release-hud-key-en { font-size:0.56rem; text-transform:uppercase; letter-spacing:0.04em; color:#8f9dac; }
+        .release-hud-key-en { font-size:0.56rem; text-transform:uppercase; letter-spacing:0; color:#8f9dac; }
         .release-hud-key-ar { font-size:0.58rem; color:#8f9dac; }
         .release-hud-val { display:flex; flex-direction:column; text-align:left; }
-        .release-hud-status { font-size:0.74rem; }
+        .release-hud-status { font-size:0.72rem; white-space:nowrap; }
         .release-hud-status-ar { font-size:0.58rem; color:#b9b6ff; }
         [dir="rtl"] .release-hud-key, [dir="rtl"] .release-hud-val { text-align:right; }
+        @media (max-width: 1100px) {
+            .release-hud { max-width:46vw; }
+            .release-hud-key-ar, .release-hud-status-ar { display:none; }
+        }
 
         /* Unit status panel — extend the drawer down to cover the empty band below
            it, but STOP just above the footer stack. The footer bars

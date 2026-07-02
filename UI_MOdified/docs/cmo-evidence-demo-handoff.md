@@ -101,6 +101,14 @@ the drawer; clicking it opens the drawer at the Evidence Release Gate. The gate
 also offers [Print Release Certificate] (شهادة اعتماد الأدلة) for a formatted,
 read-only handoff certificate.
 
+Scenario Status Header Cluster (Batch 13): the same header area now shows four
+compact read-only chips: Release / الاعتماد, Closeout / الإغلاق, Coverage /
+التغطية, and Handoff / التسليم. Clicking them opens the Scenario Evidence drawer
+at Evidence Release Gate, Evidence Review Closeout, Evidence Coverage, and
+Handoff Acceptance respectively. This is display/navigation only: no backend,
+database, auto-fix, combat/action, doctrine, scenario-contract, or DOCX-staging
+change.
+
 ## Demo Flow
 
 Recommended live demo path:

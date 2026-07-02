@@ -2,7 +2,16 @@
 
 ## Baseline
 
-Current stable demo baseline:
+Current stable demo and audit baseline:
+
+```text
+03c9113e feat(scenario): add evidence repair planner
+cmo-evidence-v14 -> 6f310c00 feat(cmo): add evidence actionability commander pack
+cmo-evidence-v13 -> 9dc07bdb feat(cmo): add printable evidence report layout
+cmo-evidence-rc1 -> 4314f16c test(cmo): lock evidence release candidate
+```
+
+Prior UX baseline:
 
 ```text
 cmo-evidence-v12 -> abdbe4a7 style(cmo): polish evidence workflow UX
@@ -11,7 +20,7 @@ cmo-evidence-v12 -> abdbe4a7 style(cmo): polish evidence workflow UX
 Meaning:
 
 ```text
-Full CMO evidence workflow + force report + workflow/demo gates + UX polish.
+Full CMO evidence workflow + force report + workflow/demo gates + UX polish + print layout + actionability + recommendations + Scenario-QA completeness/review/repair planning.
 ```
 
 ## Capability Stack
@@ -31,6 +40,12 @@ CMO-11  Force Evidence Report
 CMO-12  Evidence Quality Gate
 CMO-13  Quality Gate Drilldown
 CMO-14  Evidence UX Polish Pass
+CMO-15  Printable Evidence Report Layout
+CMO-16  Evidence Recommendations
+CMO Actionability Batch
+        Evidence coverage, blocker remediation, alternative shooters, commander brief
+Scenario Evidence QA
+        Completeness validation, normalizer, review queue, repair planner
 ```
 
 The system is intentionally read-only. It explains existing evidence and renders commander-facing workflow surfaces; it does not add firing logic or change doctrine.
@@ -50,6 +65,8 @@ Generate/open scenario
 -> timeline shows deduped evidence changes
 -> copy/download selected-unit Evidence Snapshot
 -> copy/download Force Evidence Report
+-> review Recommended Checks
+-> review repair planner if Scenario-QA flags gaps
 ```
 
 Polished panel order:
@@ -62,9 +79,10 @@ Polished panel order:
 5. Contact Evidence
 6. Engagement Evidence
 7. Decision Chain
-8. Evidence Timeline
-9. Evidence Snapshot
-10. Force Evidence Report
+8. Recommended Checks
+9. Evidence Timeline
+10. Evidence Snapshot
+11. Force Evidence Report
 ```
 
 If no unit is selected, the unit panel now points the user to the readiness matrix:
@@ -105,14 +123,16 @@ git diff --check
 Runtime smoke:
 
 ```bash
+docker compose --env-file UI_MOdified/Offline_Deployment/.env.offline -f UI_MOdified/Offline_Deployment/docker-compose.offline.yml up -d
 curl -sS http://localhost:8640/api/offline/map-config
 curl -sS http://localhost:8640/api/ai/generation-health
+curl -sS http://172.16.29.157:8640/api/offline/map-config
 ```
 
 Browser smoke target:
 
 ```text
-localhost:8640
+http://172.16.29.157:8640
 -> sign in/register
 -> open app shell
 -> run/open scenario
@@ -144,7 +164,14 @@ Known-good local runtime checks at the time of this handoff:
 ```text
 localhost:8640/api/offline/map-config -> healthy
 localhost:8640/api/ai/generation-health -> healthy
+172.16.29.157:8640/api/offline/map-config -> healthy on LAN
 rmooz-offline container -> healthy
+```
+
+Use the env-file compose command for runtime/package checks:
+
+```bash
+docker compose --env-file UI_MOdified/Offline_Deployment/.env.offline -f UI_MOdified/Offline_Deployment/docker-compose.offline.yml up -d
 ```
 
 When validating browser changes without rebuilding the image, copy changed static client files into the running container for a smoke test only. Rebuild the offline image before packaging/release validation.

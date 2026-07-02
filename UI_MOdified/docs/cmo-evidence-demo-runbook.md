@@ -7,9 +7,11 @@ Use this runbook for the current release-candidate baseline:
 ```text
 cmo-evidence-v13 -> 9dc07bdb feat(cmo): add printable evidence report layout
 cmo-evidence-rc1 -> 4314f16c test(cmo): lock evidence release candidate
+cmo-evidence-v14 -> 6f310c00 feat(cmo): add evidence actionability commander pack
+03c9113e -> Scenario-QA repair planner and RMOOZ-AUDIT-APP-1 inventory refresh baseline
 ```
 
-This baseline includes the full CMO evidence workflow, print-ready evidence reports, and the release-candidate static/runtime gate.
+This baseline includes the full CMO evidence workflow, print-ready evidence reports, the release-candidate static/runtime gate, actionability guidance, recommendations, Scenario Evidence completeness/review/repair planning, and main/offline parity checks.
 
 ## Start Runtime
 
@@ -71,8 +73,10 @@ Open RMOOZ
 -> Review Contact Evidence
 -> Review Engagement Evidence
 -> Review Decision Chain
+-> Review Recommended Checks
 -> Confirm map overlay reason matches the panel reason
 -> Review timeline and confirm events do not duplicate on refresh/reselect
+-> Review Scenario Evidence Review Queue and Repair Planner when quality gaps exist
 -> Open Evidence Snapshot
 -> Copy JSON or Copy Summary
 -> Download JSON if needed
@@ -87,6 +91,7 @@ The commander story should read as:
 
 ```text
 quality warning -> affected units -> unit explanation -> map reason -> timeline -> export/print
+scenario evidence gap -> review queue -> repair plan -> affected unit
 ```
 
 ## Print Preview Smoke Checklist
@@ -120,6 +125,10 @@ Run the release and evidence gate stack:
 
 ```bash
 node test-cmo-release-gate-1.js
+node test-cmo-actionability-batch-gate-1.js
+node test-scenario-evidence-completeness-batch-1.js
+node test-scenario-evidence-review-queue-batch-1.js
+node test-scenario-evidence-repair-plan-batch-1.js
 node test-cmo-evidence-print-layout-ui-1.js
 node test-cmo-demo-flow-gate-1.js
 node test-cmo-evidence-quality-drilldown-ui-1.js
@@ -158,7 +167,7 @@ scenario contract changes
 AI-written decision overrides
 ```
 
-The evidence UI displays existing world-state, contact, engagement, decision-chain, overlay, timeline, readiness, and report data.
+The evidence UI displays existing world-state, contact, engagement, decision-chain, overlay, timeline, readiness, Scenario-QA, recommendation, repair-plan, and report data.
 
 ## Known Remote/Public Issue
 
@@ -192,6 +201,8 @@ Use these rollback/demo points:
 ```text
 cmo-evidence-v13 - print-ready CMO evidence layout
 cmo-evidence-rc1 - release-candidate gate for v13
+cmo-evidence-v14 - actionability commander pack
+cmo-evidence-readability-v1 - readability CSS baseline
 ```
 
 To inspect:

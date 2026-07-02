@@ -1,10 +1,134 @@
-﻿<!-- AUDIT_SHA: 3b192475fe2d5d51119d60f46c4b8ed98ac770b1 -->
+﻿<!-- AUDIT_SHA: 03c9113e2ac955bf194527d36216b3b65b6ff614 -->
 # APP_INVENTORY — RMOOZ / CMO feature map
 
 > **The single map of what this app has, what it doesn't, and what's drifting.**
 > Read this before building anything. If you'd add a module/card/endpoint, find it here first.
 > Refresh with `/audit-app` (see `.claude/skills/audit-app/`). The freshness check at session
 > start reads the `AUDIT_SHA` marker on line 1 to tell you how stale this is.
+
+## Current audit checkpoint - RMOOZ-AUDIT-APP-1
+
+**Last audited:** `03c9113e` · 2026-07-02 · by RMOOZ-AUDIT-APP-1. This refresh covers the post-CMO evidence/actionability and Scenario-QA surface area, with the active offline runtime treated as the deployment baseline.
+
+Current top baseline:
+
+```text
+03c9113e feat(scenario): add evidence repair planner
+87fd06bf fix(cmo): stop unit status panel above the footer bars
+bb718a1a style(cmo): extend unit status panel to cover the footer band
+368a0c3e feat(scenario): add evidence review queue
+05e3fa58 style(cmo): raise unit status evidence panel readability
+64178d84 feat(scenario): add evidence completeness validation pack
+6f310c00 feat(cmo): add evidence actionability commander pack
+f7e9a88f feat(cmo): add evidence recommendations
+```
+
+### CMO evidence and actionability stack
+
+The active CMO evidence workflow is read-only UI evidence, aggregation, export, report, print, and operator recommendation guidance. It does not add combat math, backend evidence routes, doctrine mutation, auto-fire, or AI decision overrides.
+
+```text
+CMO-1   Engagement Evidence
+CMO-2   Contact Detection Evidence
+CMO-3   Sensor-to-Shooter Decision Chain
+CMO-4   Map Evidence Overlays
+CMO-5   Selected-Unit Evidence Timeline
+CMO-6   Selected-Unit Evidence Export
+CMO-7   Force Readiness Matrix
+CMO-8   Matrix Filters + Drilldown
+CMO-9   Evidence Alert Badges
+CMO-10  Force Evidence Event Feed
+CMO-11  Force Evidence Report
+CMO-12  Evidence Quality Gate
+CMO-13  Quality Gate Drilldown
+CMO-14  Evidence UX Polish
+CMO-15  Printable Evidence Report Layout
+CMO-16  Evidence Recommendations
+CMO Actionability Batch  cmo-blocker-remediation + cmo-alternative-shooters + cmo-commander-brief + cmo-evidence-coverage
+```
+
+Active CMO/evidence scripts mirrored between `UI_MOdified/client/app.html` and `UI_MOdified/Offline_Deployment/offline_app/client/app.html`:
+
+```text
+cmo-evidence-labels.js
+cmo-evidence-timeline.js
+contact-evidence.js
+engagement-evidence.js
+decision-chain-evidence.js
+cmo-evidence-recommendations.js
+cmo-recommendation-drilldown.js
+cmo-evidence-readiness-matrix.js
+cmo-evidence-alerts.js
+cmo-evidence-quality-gate.js
+cmo-evidence-coverage.js
+cmo-blocker-remediation.js
+cmo-alternative-shooters.js
+cmo-commander-brief.js
+cmo-force-evidence-feed.js
+cmo-force-evidence-report.js
+evidence-map-overlays.js
+cmo-evidence-export.js
+unit-status-panel.js
+```
+
+### Scenario Evidence QA stack
+
+Scenario-evidence v1/v2/v3 is now active as a read-only quality layer over the same selected-unit and force evidence path:
+
+```text
+scenario-evidence v1  Scenario Evidence Completeness validation pack
+scenario-evidence v2  Scenario Evidence Review Queue
+scenario-evidence v3  Scenario Evidence Repair Planner
+```
+
+Active Scenario-QA scripts mirrored between main and offline app shells:
+
+```text
+scenario-evidence-completeness.js
+scenario-evidence-normalizer.js
+objective-x-evidence-health.js
+scenario-evidence-review-queue.js
+scenario-evidence-repair-planner.js
+```
+
+### Runtime and release baselines
+
+Canonical offline runtime command:
+
+```bash
+docker compose --env-file UI_MOdified/Offline_Deployment/.env.offline -f UI_MOdified/Offline_Deployment/docker-compose.offline.yml up -d
+```
+
+Known-good demo URL for the LAN runtime:
+
+```text
+http://172.16.29.157:8640
+```
+
+Remote/public access remains a network/admin-side issue, not an RMOOZ app-code issue:
+
+```text
+localhost:8640 works
+172.16.29.157:8640 works on LAN
+155.140.70.51:8640 previously timed out
+```
+
+Current relevant tags:
+
+```text
+cmo-evidence-v13 -> 9dc07bdb printable evidence report layout
+cmo-evidence-rc1 -> 4314f16c evidence release candidate gate
+cmo-evidence-v14 -> 6f310c00 evidence actionability commander pack
+cmo-evidence-readability-v1 -> 05e3fa58 evidence readability CSS
+```
+
+### Audit findings
+
+- Main/offline static parity is intact for the CMO and Scenario-QA evidence scripts listed above.
+- Script ordering keeps labels/timeline/contact/engagement/decision-chain before recommendations, matrix, quality, reports, overlays, export, and `unit-status-panel.js`.
+- The old live DOCX staging route/UI is not present in active client/offline/server app code. Historical docs/tests may still mention `stage-doc` and Red/Blue DOCX as archived integration history.
+- The offline runtime command must include `--env-file`; plain compose is not the release/demo command.
+- Public `155.140.70.51:8640` reachability remains `NET-8640-REMOTE-1` and needs firewall/NAT/admin work outside the app.
 
 **Last audited:** `3b192475` · 2026-06-16 · by /audit-app (**full sweep — 144 commits since `e42e2d5`**; `3b192475` landed from a concurrent agent mid-audit — gate-card diagnostics, folded in). The body was already kept current per-feature through 2026-06-16 — the entire **Free Fight AI Commander** subsystem (rows 98–113: FREEDOM-A/B, MCP tool-contract, repair loop, candidate pre-filter, single execution gate, LLM runtime-config resolver, local-only security lock, demo pacing) carries accurate rows; this pass **re-stamps the marker**, fills server-module census gaps, and runs a live smoke test. **Smoke test PASS** against the already-running dev server (:8000): `app.html`/`home.html` 200, `/api/ai/scenarios`·`/api/wargame-sim/status`·`/api/ai/models`·`/api/wargame-sim/free-fight/plan-coas/health` all 200, `auth/me` 401 (expected on the real server; verify stub returns 200). **Free Fight security posture intact** (`local_only:true`, `allow_sim_run:true`, `ai_execution_enabled:true`). **Runtime finding — NOT drift:** the operator-selected local model **`qwen3.6-plus-free` is not pulled in Ollama** → `model_available:false` → Free Fight correctly falls back to `deterministic_diverse_coa` (this is the source of the `coa=2 valid=0 [source=deterministic_diverse_coa]` console log) — exactly the no-silent-swap behaviour designed in **RMOOZ-LOCAL-MODEL-SELECTOR-A** (run `ollama pull <model>` or pick an installed model to exercise the LLM). ⚠️ **SECURITY (surfaced + resolved mid-audit; one OPEN follow-up):** `server/ai/ai-config.js` briefly held **foreign WIP** (a hardcoded Zen `sk-…` key in `zen.apiKey` + `aiProvider: ollama→opencode.ai` cloud switch + cloud default models); the concurrent commit `3b192475` excluded it and a concurrent agent **reverted it to HEAD during this audit** — working tree re-verified **CLEAN** (`git diff` empty, no `sk-` in the file, `aiProvider:'ollama'`, `defaultModel:'qwen2.5:7b'`). **STILL OPEN (owner): ROTATE the exposed Zen key** (treat as compromised — it was present in the shared tree). `[[feedback_free_fight_local_only_security]]`, `[[feedback_shared_working_tree_concurrency]]`. **This pass added:** §C census for the **RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A** intel foundation + the Free Fight server modules (`free-fight-coa-planner` 1864 L, `rmooz-ai-tool-contract` 1233 L, analyst/decision/plan/action-engine/situation-triggers, `candidate-prefilter`, `tactical-action-library`/`tactical-terrain-context`, `commander-brief`/`coalition-posture-engine`, `scenario-intel`/`platform-capability-catalog`/`contact-detection-engine`/`sovereign-zone-engine`/`roe-escalation-engine`, `llm-runtime-config`) + AI-GLOBAL-REFACTOR helpers (`ai-json`/`ai-guardrails`); §A rows for the Free Fight **client** display modules (`free-fight-demo.js` ~3.4k L, `free-fight-ai.js`, `ai-model-hud.js`, `symbol-identity`/`unit-intel-normalizer`/`sidc-preview`/`demo-scenario-preview`/`domain-movement`); §E `/api/wargame-sim/free-fight/*` route group; §F refresh (≈81 test files; new free-fight/intel/identity/model suites live under `scripts/`). **Fixed stale Duplications #7** (the Middle East loader + `platforms.json` it cited were DELETED at D5, 2026-06-09 — confirmed gone) and added a geo-math copy item. **`wargame 6/` dead-dup dir still present** (#6, delete candidate). ⚠️ **Audit-method note:** judge wiring by the FULL require graph — many `server/ai/*` modules are wired via `wargame-sim-bridge.js`/`terrain-api.js`/`scenario-intel.js`/`scenario-validator.js`, NOT `web-server.js` (a sweep grepping only `web-server.js` false-flags them dead). **Drift D1–D5 all remain RESOLVED.** **Prior — `e42e2d5` · 2026-06-12 · by /audit-app (scoped: SYMBOL-DB-B / Object Status Card / DOC-UNDERSTANDING-1 G-3* coverage).** Verified all recently-added `shell/`+`server/ai/` modules carry inventory rows (no un-inventoried features). Tests re-run green: **test-symbol-db-b 37/37 · test-base-status-panel-a 17/17 · test-placement-candidates-panel-1 18/18 · test-step1-unified-bases-map-anchors (STEP1-C) 6/6.** **Catalog single-source confirmed** — `CAPABILITY_CATALOG`/`classifyKind` live ONLY in `world-state-db.js`; SYMBOL-DB-B sources systems from it, never fabricated (no-invent invariant tested). proposed_units enrichment stays **review-only** (`needs_review:true` always); SYMBOL-DB-B diff is purely additive — **no final units / placement / tasking / COA execution / movement / world-state mutation** introduced. session-memory mirror in sync (15 local files mirrored; `MEMORY.md` is the union-index superset). **⚠️ NEW finding:** the SYMBOL-DB-A *category ladder* is duplicated in `symbol-db.js` (canonical) + `base-status-panel.js` (defensive inline fallback) — see Duplications #intentional-mirror. **⚠️ Divergence:** local `main` `31914b6` holds an UN-PUSHED *"unify selected object panel for step1 base anchors"* commit that re-applies the owner-reverted unification (`86af86e`→`083afb1`); must be reconciled before the sync pushes it or it re-introduces reverted work. *(Prior — `d8efac0` · 2026-06-05 · Wave 7 — TestingAI→RMOOZ integration + Phase 6 state overlay + Middle East catalog.)* Smoke test PASS (server boots; `app.html`/`home.html`/`/api/ai/scenarios`/**`/api/wargame-sim/status`** all 200; auth/me 401 as expected on the real server — verify stub returns 200). Static tests re-run: FAST-INT-2 21/21 · FAST-DOC-1 30/30 · FAST-INT-3 24/24 · phase-6f-a applied-state 50/50 — all green; **`test-db-1-a-middle-east-catalog.js` 29 FAILING (new Drift D5).** New modules added: integration (`wargame-geojson-import.js`, `wargame-sim-import.js`, server `wargame-sim-bridge.js`), Phase 6 (`applied-state.js`, `delta-extractor.js`, `unit-status-panel.js`), Middle East DB (`middle-east-platform-loader.js` 🔴 unwired + `data/db/middle-east/platforms.json`). ⚠️ **app.html line refs in older rows below are now shifted (+577 lines since f43fd97)** — new rows cite fresh lines; treat older inline `app.html:NNNN` refs as approximate until next full re-stamp. See `SESSION_SUMMARY_2026-06-05.md`.
 **Prior — Wave 6-GEN:** `f43fd97` · 2026-06-05 · by /audit-app (Wave 6-GEN — Phases 4A–5D: objectives hardening, Coastal Shield unit seed, BLUE base parity, coverage-summary panel (Phase 5C), DB-Lite Soviet platform expansion (Phase 5D-1); 6 new shell/wargame rows added; D4 ✅ confirmed resolved). See `docs/app-inventory-refresh-after-ui-unit-and-db.md`. ⚠️ **MERGE 2026-06-05:** this line (Phases 4A–5D) was reconciled with the parallel Command-Launch line below; the hub-launch redesign (home.js + native-scenario-loader.js) from that line WON the merge, superseding this session's hub point-fix. **Re-audit due.**

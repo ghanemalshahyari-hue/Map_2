@@ -1,5 +1,37 @@
 # Known Issues
 
+## NET-8640-REMOTE-1 public endpoint exposure (network/admin-side)
+
+The offline runtime is healthy locally and on the LAN, but the public endpoint is not confirmed reachable from outside the network.
+
+Known state:
+
+```text
+localhost:8640 -> healthy
+172.16.29.157:8640 -> healthy on LAN
+155.140.70.51:8640 -> previously timed out externally
+```
+
+Use the LAN demo URL unless public NAT/firewall has been fixed:
+
+```text
+http://172.16.29.157:8640
+```
+
+Canonical startup command:
+
+```bash
+docker compose --env-file UI_MOdified/Offline_Deployment/.env.offline -f UI_MOdified/Offline_Deployment/docker-compose.offline.yml up -d
+```
+
+This is not a CMO/Scenario-QA code issue. Public access requires an admin-side inbound firewall/NAT mapping to the RMOOZ host.
+
+## Legacy Red/Blue DOCX staging flow removed from active operator path
+
+The old Red/Blue DOCX staging route and upload-first operator UI were removed by the cleanup milestone. Current scenario review should use Objective X / scenario setup, generated/opened scenarios, Scenario Evidence QA, and CMO evidence surfaces.
+
+Historical integration docs and old bridge tests may still mention `red_team.docx`, `blue_team.docx`, or `stage-doc` as archived context, but active client/offline/server app code must not restore that workflow.
+
 ## wargame1 BLS-4 regression test failure (pre-existing)
 
 `scripts/test-scenarios.js` currently reports a FAIL for **wargame1** due to a

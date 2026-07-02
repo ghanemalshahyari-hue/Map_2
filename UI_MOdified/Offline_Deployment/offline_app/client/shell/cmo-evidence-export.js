@@ -32,6 +32,7 @@
     function decisionApi() { return localApi('AppDecisionChainEvidence', 'decision-chain-evidence.js'); }
     function overlayApi() { return localApi('AppEvidenceMapOverlays', 'evidence-map-overlays.js'); }
     function timelineApi() { return localApi('RmoozCmoEvidenceTimeline', 'cmo-evidence-timeline.js'); }
+    function drilldownApi() { return localApi('RmoozCmoRecommendationDrilldown', 'cmo-recommendation-drilldown.js'); }
 
     function uidOf(unit) {
         unit = obj(unit);
@@ -190,6 +191,11 @@
         var timeline = TL && typeof TL.get === 'function' ? TL.get(uid) : [];
         var blockingCode = decision.blocking_reason_code || overlay.reason_code || engagement.reason_code || contact.reason_code || null;
 
+        var DRILL = drilldownApi();
+        var drilldown = (DRILL && typeof DRILL.buildDrilldown === 'function')
+            ? DRILL.buildDrilldown(decision, { uid: uid })
+            : null;
+
         var snapshot = {
             version: CMO_EVIDENCE_EXPORT_VERSION,
             generated_at: opts.generated_at || new Date().toISOString(),
@@ -210,7 +216,8 @@
             contact: compactContact(contact),
             decision_chain: compactDecision(decision),
             overlay: compactOverlay(overlay),
-            timeline: compactTimeline(timeline)
+            timeline: compactTimeline(timeline),
+            drilldown: drilldown
         };
         snapshot.sources = sourceList(snapshot);
         return snapshot;

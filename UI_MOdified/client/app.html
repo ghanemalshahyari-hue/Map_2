@@ -3584,6 +3584,14 @@
                         </div>
                     </div>
 
+                    <!-- RMOOZ-CMO-21: read-only commander evidence brief -->
+                    <div class="usp-tasking-block usp-commander-brief-block" id="usp-commander-brief-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">Commander Brief / &#1605;&#1604;&#1582;&#1589; &#1575;&#1604;&#1602;&#1575;&#1574;&#1583;</span>
+                        </div>
+                        <div class="usp-section-body" id="usp-commander-brief-body"></div>
+                    </div>
+
                     <!-- RMOOZ-CMO-12: read-only evidence quality gate -->
                     <div class="usp-tasking-block usp-evidence-quality-block" id="usp-evidence-quality-block" hidden>
                         <div class="usp-section-hdr">
@@ -3600,12 +3608,28 @@
                         <div class="usp-section-body" id="usp-evidence-alerts-body"></div>
                     </div>
 
+                    <!-- RMOOZ-CMO-20: read-only evidence coverage summary -->
+                    <div class="usp-tasking-block usp-evidence-coverage-block" id="usp-evidence-coverage-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">Evidence Coverage / &#1578;&#1594;&#1591;&#1610;&#1577; &#1575;&#1604;&#1571;&#1583;&#1604;&#1577;</span>
+                        </div>
+                        <div class="usp-section-body" id="usp-evidence-coverage-body"></div>
+                    </div>
+
                     <!-- RMOOZ-CMO-7: read-only force-level evidence readiness matrix -->
                     <div class="usp-tasking-block usp-evidence-matrix-block" id="usp-evidence-matrix-block" hidden>
                         <div class="usp-section-hdr">
                             <span class="usp-section-label">Evidence Readiness Matrix / &#1605;&#1589;&#1601;&#1608;&#1601;&#1577; &#1580;&#1575;&#1607;&#1586;&#1610;&#1577; &#1575;&#1604;&#1575;&#1588;&#1578;&#1576;&#1575;&#1603;</span>
                         </div>
                         <div class="usp-section-body" id="usp-evidence-matrix-body"></div>
+                    </div>
+
+                    <!-- RMOOZ-CMO-19: read-only blocker remediation guide -->
+                    <div class="usp-tasking-block usp-blocker-remediation-block" id="usp-blocker-remediation-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">Blocker Remediation / &#1573;&#1586;&#1575;&#1604;&#1577; &#1575;&#1604;&#1581;&#1608;&#1575;&#1580;&#1586;</span>
+                        </div>
+                        <div class="usp-section-body" id="usp-blocker-remediation-body"></div>
                     </div>
 
                     <!-- RMOOZ-CMO-10: read-only force-wide evidence event feed -->
@@ -3646,6 +3670,14 @@
                             <span class="usp-section-label">Recommended Checks / &#1575;&#1604;&#1578;&#1608;&#1589;&#1610;&#1575;&#1578;</span>
                         </div>
                         <div class="usp-section-body" id="usp-evidence-recommendations-body"></div>
+                    </div>
+
+                    <!-- RMOOZ-CMO-18: read-only alternative shooter candidates -->
+                    <div class="usp-tasking-block usp-alternative-shooters-block" id="usp-alternative-shooters-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">Alternative Shooters / &#1585;&#1575;&#1605;&#1608;&#1606; &#1576;&#1583;&#1610;&#1604;&#1608;&#1606;</span>
+                        </div>
+                        <div class="usp-section-body" id="usp-alternative-shooters-body"></div>
                     </div>
 
                     <!-- RMOOZ-CMO-5: bounded read-only evidence timeline -->
@@ -4609,14 +4641,19 @@
     <script src="shell/engagement-evidence.js?v=1"></script>
     <script src="shell/decision-chain-evidence.js?v=1"></script>
     <script src="shell/cmo-evidence-recommendations.js?v=1"></script>
+    <script src="shell/cmo-recommendation-drilldown.js?v=1"></script>
     <script src="shell/cmo-evidence-readiness-matrix.js?v=1"></script>
     <script src="shell/cmo-evidence-alerts.js?v=1"></script>
     <script src="shell/cmo-evidence-quality-gate.js?v=1"></script>
+    <script src="shell/cmo-evidence-coverage.js?v=1"></script>
+    <script src="shell/cmo-blocker-remediation.js?v=1"></script>
+    <script src="shell/cmo-alternative-shooters.js?v=1"></script>
+    <script src="shell/cmo-commander-brief.js?v=1"></script>
     <script src="shell/cmo-force-evidence-feed.js?v=1"></script>
-    <script src="shell/cmo-force-evidence-report.js?v=1"></script>
+    <script src="shell/cmo-force-evidence-report.js?v=cmo-23-coverage"></script>
     <script src="shell/evidence-map-overlays.js?v=1"></script>
-    <script src="shell/cmo-evidence-export.js?v=1"></script>
-    <script src="shell/unit-status-panel.js?v=1"></script>
+    <script src="shell/cmo-evidence-export.js?v=cmo-22-drilldown"></script>
+    <script src="shell/unit-status-panel.js?v=cmo-batch-17-24"></script>
     <script src="shell/objective-evidence-panel.js?v=3"></script>
     <!-- L3-B-1: read-only Why-Not display panel in the Scenario Workspace.
          Paints #wn-body from AppActionFeasibility.evaluateAction. No controls. -->
@@ -6434,6 +6471,80 @@
             border-top:1px solid #0d1420;
             font-family:'Consolas','Courier New',monospace;
         }
+        /* RMOOZ-CMO-17: recommendation drilldown */
+        .usp-drilldown-header { padding:6px 0.75rem 4px; border-bottom:1px solid #142033; }
+        .usp-drilldown-title { color:#e8c97a; font-size:0.7rem; font-weight:600; font-family:'Consolas','Courier New',monospace; }
+        .usp-drilldown-title-ar { color:#f0ad7a; font-size:0.68rem; }
+        .usp-drilldown-context { padding:4px 0.75rem; color:#8fb8d8; font-size:0.68rem; line-height:1.4; border-bottom:1px solid #0d1420; }
+        .usp-drilldown-list { margin:0; padding:5px 1.5rem 5px 2rem; color:#a8c8e8; font-size:0.68rem; line-height:1.45; }
+        .usp-drilldown-list li { margin:3px 0; }
+        .usp-drilldown-check-en { color:#c8dff2; }
+        .usp-drilldown-check-ar { color:#f0c080; font-size:0.66rem; }
+        .usp-drilldown-source { padding:3px 0.75rem 5px; color:#5a7890; font-size:0.62rem; border-top:1px solid #0d1420; }
+        .usp-drilldown-empty { padding:8px 0.75rem; color:#5a7890; font-size:0.68rem; }
+        /* RMOOZ-CMO-18: alternative shooters */
+        .usp-alt-meta { padding:5px 0.75rem; color:#7fa0b8; font-size:0.67rem; border-bottom:1px solid #142033; }
+        .usp-alt-count, .usp-alt-total { color:#8fd6a3; font-weight:600; }
+        .usp-alt-table { width:100%; border-collapse:collapse; font-size:0.67rem; font-family:'Consolas','Courier New',monospace; }
+        .usp-alt-table th { padding:3px 0.5rem; background:#0d1a28; color:#7fa0b8; text-align:left; border-bottom:1px solid #142033; }
+        .usp-alt-table td { padding:3px 0.5rem; color:#a8c8e8; border-bottom:1px solid #0d1420; }
+        .usp-alt-row--shared td { background:#0d1f12; }
+        .usp-alt-shared-target { color:#8fd6a3; font-weight:700; }
+        .usp-alt-disclaimer { padding:3px 0.75rem 5px; color:#5a7890; font-size:0.62rem; border-top:1px solid #0d1420; }
+        .usp-alt-empty { padding:8px 0.75rem; color:#5a7890; font-size:0.68rem; }
+        /* RMOOZ-CMO-19: blocker remediation */
+        .usp-rem-summary { padding:5px 0.75rem; color:#7fa0b8; font-size:0.67rem; border-bottom:1px solid #142033; }
+        .usp-rem-group { border-bottom:1px solid #0d1420; }
+        .usp-rem-group-hdr { padding:5px 0.75rem; cursor:pointer; color:#c8dff2; font-size:0.69rem; display:flex; align-items:center; gap:6px; }
+        .usp-rem-code { font-family:'Consolas','Courier New',monospace; color:#e8c97a; font-weight:600; }
+        .usp-rem-count { color:#f0ad7a; font-size:0.65rem; }
+        .usp-rem-label-ar { color:#8fb8d8; font-size:0.66rem; }
+        .usp-rem-units { padding:3px 0.75rem 4px 1.5rem; display:flex; flex-wrap:wrap; gap:4px; }
+        .usp-rem-unit-tag { background:#0d1a28; border:1px solid #142033; border-radius:3px; padding:1px 5px; font-size:0.63rem; color:#7fa0b8; font-family:'Consolas','Courier New',monospace; }
+        .usp-rem-steps { margin:0; padding:4px 1.5rem 6px 2rem; color:#a8c8e8; font-size:0.68rem; line-height:1.45; }
+        .usp-rem-steps li { margin:2px 0; }
+        .usp-rem-step-en { color:#c8dff2; }
+        .usp-rem-step-ar { color:#f0c080; font-size:0.66rem; }
+        .usp-rem-disclaimer { padding:3px 0.75rem 5px; color:#5a7890; font-size:0.62rem; border-top:1px solid #0d1420; }
+        .usp-rem-empty { padding:8px 0.75rem; color:#8fd6a3; font-size:0.68rem; }
+        /* RMOOZ-CMO-20: evidence coverage */
+        .usp-evidence-coverage-block { background:#080d14; }
+        .usp-cov-header { padding:6px 0.75rem; display:flex; align-items:center; gap:8px; border-bottom:1px solid #142033; }
+        .usp-cov-pct { font-size:1.1rem; font-weight:700; font-family:'Consolas','Courier New',monospace; color:#8fd6a3; min-width:3em; }
+        .usp-cov--medium .usp-cov-pct { color:#e8c97a; }
+        .usp-cov--low .usp-cov-pct { color:#e87a7a; }
+        .usp-cov-verdict-en { color:#c8dff2; font-size:0.71rem; font-weight:600; }
+        .usp-cov-verdict-ar { color:#8fb8d8; font-size:0.68rem; }
+        .usp-cov-bar-wrap { padding:0 0.75rem 4px; }
+        .usp-cov-bar { height:6px; background:#0d1a28; border-radius:3px; overflow:hidden; display:flex; }
+        .usp-cov-bar-ready { background:#3a8a52; }
+        .usp-cov-bar-blocked { background:#8a3a3a; }
+        .usp-cov-bar-unknown { background:#3a5a7a; }
+        .usp-cov-stats { display:flex; flex-wrap:wrap; gap:0; margin:0; padding:4px 0.75rem; }
+        .usp-cov-stat { display:flex; flex-direction:column; padding:3px 8px 3px 0; min-width:70px; }
+        .usp-cov-stat dt { color:#5a7890; font-size:0.62rem; text-transform:uppercase; }
+        .usp-cov-stat dd { color:#a8c8e8; font-size:0.71rem; font-weight:600; margin:0; font-family:'Consolas','Courier New',monospace; }
+        .usp-cov-stat--ready dd { color:#8fd6a3; }
+        .usp-cov-stat--blocked dd { color:#e87a7a; }
+        .usp-cov-stat--unknown dd { color:#7fa0b8; }
+        .usp-cov-blockers-hdr { padding:3px 0.75rem 0; color:#7fa0b8; font-size:0.64rem; text-transform:uppercase; border-top:1px solid #0d1420; }
+        .usp-cov-blockers { margin:0; padding:3px 0.75rem 6px 1.5rem; color:#a8c8e8; font-size:0.67rem; }
+        .usp-cov-blockers li { margin:1px 0; }
+        /* RMOOZ-CMO-21: commander brief */
+        .usp-commander-brief-block { background:#06101a; border-bottom:2px solid #1a3050; }
+        .usp-brief-header { padding:8px 0.75rem; border-bottom:1px solid #142033; }
+        .usp-brief-status-en { display:block; font-size:0.73rem; font-weight:700; color:#8fd6a3; font-family:'Consolas','Courier New',monospace; }
+        .usp-brief--partial .usp-brief-status-en { color:#e8c97a; }
+        .usp-brief--gaps .usp-brief-status-en, .usp-brief--action .usp-brief-status-en { color:#e87a7a; }
+        .usp-brief-status-ar { display:block; font-size:0.68rem; color:#8fb8d8; margin-top:2px; }
+        .usp-brief-grid { display:flex; flex-wrap:wrap; gap:0; margin:0; padding:4px 0.75rem; }
+        .usp-brief-cell { display:flex; flex-direction:column; padding:3px 10px 3px 0; min-width:120px; }
+        .usp-brief-cell dt { color:#5a7890; font-size:0.62rem; text-transform:uppercase; }
+        .usp-brief-cell dd { color:#a8c8e8; font-size:0.69rem; margin:0; font-family:'Consolas','Courier New',monospace; }
+        .usp-brief-pass { color:#8fd6a3; }
+        .usp-brief-fail { color:#e87a7a; }
+        .usp-brief-unit { padding:3px 0.75rem 4px; color:#8fb8d8; font-size:0.67rem; border-top:1px solid #0d1420; }
+        .usp-brief-disclaimer { padding:3px 0.75rem 5px; color:#5a7890; font-size:0.62rem; border-top:1px solid #0d1420; }
         .usp-evidence-timeline-block { background:#080d14; }
         .usp-timeline-intro {
             padding:5px 0.75rem; font-size:0.66rem; color:#7fa0b8;

@@ -30,6 +30,7 @@
     function matrixApi() { return localApi('RmoozCmoEvidenceReadinessMatrix', 'cmo-evidence-readiness-matrix.js'); }
     function alertsApi() { return localApi('RmoozCmoEvidenceAlerts', 'cmo-evidence-alerts.js'); }
     function feedApi() { return localApi('RmoozCmoForceEvidenceFeed', 'cmo-force-evidence-feed.js'); }
+    function coverageApi() { return localApi('RmoozCmoEvidenceCoverage', 'cmo-evidence-coverage.js'); }
 
     function reasonLabel(code, lang) {
         var labels = labelsApi();
@@ -101,6 +102,10 @@
             : { no_contact_count: 0, top_blocker: null });
         var feedEvents = opts.feed_events || (FF && typeof FF.get === 'function' ? FF.get() : []);
         var selected = selectedUnitSummary(opts.selected_unit);
+        var COV = coverageApi();
+        var coverage = (COV && typeof COV.buildCoverage === 'function')
+            ? COV.buildCoverage(ws, { matrix: matrix, alerts: alerts })
+            : null;
         return {
             version: CMO_FORCE_EVIDENCE_REPORT_VERSION,
             generated_at: opts.generated_at || new Date().toISOString(),
@@ -120,6 +125,7 @@
             }),
             readiness_rows: compactRows(matrix.rows),
             force_events: compactEvents(feedEvents),
+            coverage: coverage,
             selected_unit: selected,
             source: 'Readiness matrix + force evidence feed'
         };

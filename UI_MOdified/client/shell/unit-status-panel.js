@@ -248,14 +248,18 @@
         populateMagazines(enriched);
         populateFuelAmmo(unit, enriched);
         populateAssignment(unit);
+        populateCommanderBrief(unit);
         populateEvidenceQualityGate(unit);
         populateEvidenceAlerts(unit);
+        populateEvidenceCoverage(unit);
         populateEvidenceReadinessMatrix(unit);
+        populateBlockerRemediation(unit);
         populateForceEvidenceFeed(unit);
         populateContactEvidence(unit);
         populateEngagementEvidence(unit);
         populateDecisionChainEvidence(unit);
         populateEvidenceRecommendations(unit);
+        populateAlternativeShooters(unit);
         populateEvidenceTimeline(unit);
         populateEvidenceExport(unit);
         populateForceEvidenceReport(unit);
@@ -1190,6 +1194,75 @@
         body._cmoForceEvidenceReport = report;
         body.innerHTML = RP.renderReportHtml(report);
         if (typeof RP.bindReportActions === 'function') RP.bindReportActions(body, report);
+        block.removeAttribute('hidden');
+    }
+
+    function populateCommanderBrief(unit) {
+        var block = $('usp-commander-brief-block');
+        var body = $('usp-commander-brief-body');
+        if (!block || !body) return;
+        var CB = root.RmoozCmoCommanderBrief;
+        if (!CB || typeof CB.buildBrief !== 'function' || typeof CB.renderBriefHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var brief = CB.buildBrief(_getCurrentWorldState, unit || currentUnit, {
+            generated_at: new Date().toISOString()
+        });
+        body._cmoCommanderBrief = brief;
+        body.innerHTML = CB.renderBriefHtml(brief, { lang: 'ar' });
+        block.removeAttribute('hidden');
+    }
+
+    function populateEvidenceCoverage(unit) {
+        var block = $('usp-evidence-coverage-block');
+        var body = $('usp-evidence-coverage-body');
+        if (!block || !body) return;
+        var COV = root.RmoozCmoEvidenceCoverage;
+        if (!COV || typeof COV.buildCoverage !== 'function' || typeof COV.renderCoverageHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var coverage = COV.buildCoverage(_getCurrentWorldState, {
+            selected_unit: unit || currentUnit
+        });
+        body._cmoEvidenceCoverage = coverage;
+        body.innerHTML = COV.renderCoverageHtml(coverage, { lang: 'ar' });
+        block.removeAttribute('hidden');
+    }
+
+    function populateBlockerRemediation(unit) {
+        var block = $('usp-blocker-remediation-block');
+        var body = $('usp-blocker-remediation-body');
+        if (!block || !body) return;
+        var REM = root.RmoozCmoBlockerRemediation;
+        if (!REM || typeof REM.buildRemediation !== 'function' || typeof REM.renderRemediationHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var remediation = REM.buildRemediation(_getCurrentWorldState, {
+            selected_unit: unit || currentUnit
+        });
+        body._cmoBlockerRemediation = remediation;
+        body.innerHTML = REM.renderRemediationHtml(remediation, { lang: 'ar' });
+        block.removeAttribute('hidden');
+    }
+
+    function populateAlternativeShooters(unit) {
+        var block = $('usp-alternative-shooters-block');
+        var body = $('usp-alternative-shooters-body');
+        if (!block || !body) return;
+        var ALT = root.RmoozCmoAlternativeShooters;
+        if (!ALT || typeof ALT.buildAlternatives !== 'function' || typeof ALT.renderAlternativesHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var uid = unit && (unit.uid || unit.id || unit.unit_uid);
+        var result = ALT.buildAlternatives(_getCurrentWorldState, uid, {
+            selected_unit: unit || currentUnit
+        });
+        body._cmoAlternativeShooters = result;
+        body.innerHTML = ALT.renderAlternativesHtml(result, { lang: 'ar' });
         block.removeAttribute('hidden');
     }
 

@@ -6,11 +6,13 @@ const root = __dirname;
 const mainAppPath = path.join(root, 'UI_MOdified', 'client', 'app.html');
 const offlineAppPath = path.join(root, 'UI_MOdified', 'Offline_Deployment', 'offline_app', 'client', 'app.html');
 const panelPath = path.join(root, 'UI_MOdified', 'client', 'shell', 'unit-status-panel.js');
+const offlinePanelPath = path.join(root, 'UI_MOdified', 'Offline_Deployment', 'offline_app', 'client', 'shell', 'unit-status-panel.js');
 const shellDir = path.join(root, 'UI_MOdified', 'client', 'shell');
 
 const mainHtml = fs.readFileSync(mainAppPath, 'utf8');
 const offlineHtml = fs.readFileSync(offlineAppPath, 'utf8');
 const panelSource = fs.readFileSync(panelPath, 'utf8');
+const offlinePanelSource = fs.readFileSync(offlinePanelPath, 'utf8');
 
 const Labels = require(path.join(shellDir, 'cmo-evidence-labels.js'));
 
@@ -100,6 +102,60 @@ test('selected-unit sections appear before export and force report sections', ()
   assert.ok(chain < timeline);
   assert.ok(timeline < snapshot);
   assert.ok(snapshot < report);
+});
+
+test('scenario-level evidence is rehomed outside Unit Status at runtime', () => {
+  function rehomeList(source) {
+    const match = source.match(/var SCENARIO_EVIDENCE_BLOCK_IDS = \[([\s\S]*?)\];/);
+    assert.ok(match, 'missing SCENARIO_EVIDENCE_BLOCK_IDS declaration');
+    return match[1];
+  }
+  const mainRehomeList = rehomeList(panelSource);
+  const offlineRehomeList = rehomeList(offlinePanelSource);
+  [
+    panelSource,
+    offlinePanelSource
+  ].forEach((source, i) => {
+    const label = i === 0 ? 'main' : 'offline';
+    assert.ok(source.includes('SCENARIO_EVIDENCE_BLOCK_IDS'), label + ' missing rehome block list');
+    assert.ok(source.includes("panel.id = 'scenario-evidence-panel'"), label + ' missing scenario panel creation');
+    assert.ok(source.includes("panel.className = 'unit-status-panel scenario-evidence-panel'"), label + ' missing scenario panel class');
+    assert.ok(source.includes('body.appendChild(block)'), label + ' does not move blocks to scenario body');
+    assert.ok(source.indexOf('ensureScenarioEvidencePanel();') < source.indexOf('populateCommanderBrief(unit)'), label + ' rehome must happen before scenario renderers populate');
+  });
+  [
+    'usp-commander-brief-block',
+    'usp-scenario-completeness-block',
+    'usp-objective-health-block',
+    'usp-review-queue-block',
+    'usp-repair-plan-block',
+    'usp-manual-fix-block',
+    'usp-review-closeout-block',
+    'usp-review-audit-block',
+    'usp-handoff-package-block',
+    'usp-evidence-quality-block',
+    'usp-evidence-alerts-block',
+    'usp-evidence-coverage-block',
+    'usp-evidence-matrix-block',
+    'usp-blocker-remediation-block',
+    'usp-force-feed-block',
+    'usp-force-report-block'
+  ].forEach((id) => {
+    assert.ok(mainRehomeList.includes("'" + id + "'"), 'main rehome list missing ' + id);
+    assert.ok(offlineRehomeList.includes("'" + id + "'"), 'offline rehome list missing ' + id);
+  });
+  [
+    'usp-contact-evidence-block',
+    'usp-engagement-evidence-block',
+    'usp-chain-evidence-block',
+    'usp-evidence-recommendations-block',
+    'usp-alternative-shooters-block',
+    'usp-evidence-timeline-block',
+    'usp-evidence-export-block'
+  ].forEach((id) => {
+    assert.ok(!mainRehomeList.includes("'" + id + "'"), 'selected-unit evidence should stay in Unit Status: ' + id);
+    assert.ok(!offlineRehomeList.includes("'" + id + "'"), 'offline selected-unit evidence should stay in Unit Status: ' + id);
+  });
 });
 
 test('shared status labels are available for polished scan states', () => {

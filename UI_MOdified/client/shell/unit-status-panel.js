@@ -162,6 +162,72 @@
         } catch (_) { return false; }
     }
 
+    var SCENARIO_EVIDENCE_BLOCK_IDS = [
+        'usp-commander-brief-block',
+        'usp-scenario-completeness-block',
+        'usp-objective-health-block',
+        'usp-review-queue-block',
+        'usp-repair-plan-block',
+        'usp-manual-fix-block',
+        'usp-review-closeout-block',
+        'usp-review-audit-block',
+        'usp-handoff-package-block',
+        'usp-evidence-quality-block',
+        'usp-evidence-alerts-block',
+        'usp-evidence-coverage-block',
+        'usp-evidence-matrix-block',
+        'usp-blocker-remediation-block',
+        'usp-force-feed-block',
+        'usp-force-report-block'
+    ];
+
+    function ensureScenarioEvidencePanel() {
+        var panel = $('scenario-evidence-panel');
+        var body = $('scenario-evidence-body');
+        if (!panel) {
+            panel = document.createElement('aside');
+            panel.id = 'scenario-evidence-panel';
+            panel.className = 'unit-status-panel scenario-evidence-panel';
+            panel.setAttribute('hidden', '');
+            panel.innerHTML = ''
+                + '<header class="usp-header scenario-evidence-header">'
+                + '<span class="usp-header-title">Scenario Evidence / &#1571;&#1583;&#1604;&#1577; &#1575;&#1604;&#1587;&#1610;&#1606;&#1575;&#1585;&#1610;&#1608;</span>'
+                + '<button id="scenario-evidence-close" class="usp-close-btn" aria-label="Close scenario evidence panel">&#x2715;</button>'
+                + '</header>'
+                + '<div class="usp-empty scenario-evidence-empty" id="scenario-evidence-empty">'
+                + '<div class="usp-empty-icon">&#x25C8;</div>'
+                + '<p>Scenario evidence workspace.<br>&#1605;&#1587;&#1575;&#1581;&#1577; &#1593;&#1605;&#1604; &#1571;&#1583;&#1604;&#1577; &#1575;&#1604;&#1587;&#1610;&#1606;&#1575;&#1585;&#1610;&#1608;.</p>'
+                + '</div>'
+                + '<div class="usp-body scenario-evidence-body" id="scenario-evidence-body" hidden></div>';
+            var unitPanel = $('unit-status-panel');
+            if (unitPanel && unitPanel.parentNode) unitPanel.parentNode.insertBefore(panel, unitPanel);
+            else document.body.appendChild(panel);
+            var close = $('scenario-evidence-close');
+            if (close) close.addEventListener('click', closeScenarioEvidencePanel);
+            body = $('scenario-evidence-body');
+        }
+        if (!body) return panel;
+        SCENARIO_EVIDENCE_BLOCK_IDS.forEach(function (id) {
+            var block = $(id);
+            if (block && block.parentNode !== body) body.appendChild(block);
+        });
+        return panel;
+    }
+
+    function openScenarioEvidencePanel() {
+        var panel = ensureScenarioEvidencePanel();
+        var body = $('scenario-evidence-body');
+        var empty = $('scenario-evidence-empty');
+        if (panel) panel.removeAttribute('hidden');
+        if (body) body.removeAttribute('hidden');
+        if (empty) empty.setAttribute('hidden', '');
+    }
+
+    function closeScenarioEvidencePanel() {
+        var panel = $('scenario-evidence-panel');
+        if (panel) panel.setAttribute('hidden', '');
+    }
+
     // ── Panel open/close ──────────────────────────────────────────────
     function openPanel() {
         var p = $('unit-status-panel');
@@ -175,6 +241,7 @@
     function closePanel() {
         var p = $('unit-status-panel');
         if (p) p.setAttribute('hidden', '');
+        closeScenarioEvidencePanel();
         // Show reopen tab only if we had a unit (operator deliberately closed)
         var tab = $('usp-reopen-tab');
         if (tab && currentUnit) tab.removeAttribute('hidden');
@@ -184,6 +251,7 @@
     function _showEmpty() {
         currentUnit = null;
         openPanel();
+        closeScenarioEvidencePanel();
         var e = $('empty-state'), b = $('usp-body');
         if (b) b.setAttribute('hidden', '');
         if (e) e.removeAttribute('hidden');
@@ -237,11 +305,13 @@
     function populatePanel(unit, selectedAt) {
         if (!unit) { _showEmpty(); return; }
         currentUnit = unit;
+        ensureScenarioEvidencePanel();
         var enriched = enrichUnitForDisplay(unit);
         var ident = resolvePanelIdentity(unit, enriched);
         if (ident) unit.identity = ident;
         var eventLog = getEventLog();
         _showBody();
+        openScenarioEvidencePanel();
         populateHero(unit, enriched);
         populateIdentity(unit, enriched, selectedAt);
         populateCoreStats(unit, enriched, eventLog);

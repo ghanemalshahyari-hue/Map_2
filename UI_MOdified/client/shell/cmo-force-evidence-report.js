@@ -96,15 +96,16 @@
 
     function buildReport(worldStateOrProvider, opts) {
         opts = opts || {};
+        var generatedAt = opts.generated_at || new Date().toISOString();
         var ws = (typeof worldStateOrProvider === 'function') ? worldStateOrProvider() : worldStateOrProvider;
         var MX = matrixApi();
         var AL = alertsApi();
         var FF = feedApi();
         var matrix = opts.matrix || (MX && typeof MX.buildMatrix === 'function'
-            ? MX.buildMatrix(ws, { limit: opts.limit || 80, generated_at: opts.generated_at })
+            ? MX.buildMatrix(ws, { limit: opts.limit || 80, generated_at: generatedAt })
             : { counts: { Ready: 0, Blocked: 0, Unknown: 0 }, rows: [], top_blockers: [] });
         var alerts = opts.alerts || (AL && typeof AL.buildAlerts === 'function'
-            ? AL.buildAlerts(matrix, { generated_at: opts.generated_at })
+            ? AL.buildAlerts(matrix, { generated_at: generatedAt })
             : { no_contact_count: 0, top_blocker: null });
         var feedEvents = opts.feed_events || (FF && typeof FF.get === 'function' ? FF.get() : []);
         var selected = selectedUnitSummary(opts.selected_unit);
@@ -114,15 +115,15 @@
             : null;
         var SEV = completenessApi();
         var completeness = (SEV && typeof SEV.buildCompleteness === 'function')
-            ? SEV.buildCompleteness(ws, { matrix: matrix })
+            ? SEV.buildCompleteness(ws, { matrix: matrix, generated_at: generatedAt })
             : null;
         var RQ = reviewQueueApi();
         var reviewQueue = opts.review_queue || (RQ && typeof RQ.buildReviewQueue === 'function'
-            ? RQ.buildReviewQueue(ws, { matrix: matrix, completeness: completeness })
+            ? RQ.buildReviewQueue(ws, { matrix: matrix, completeness: completeness, generated_at: generatedAt })
             : null);
         var RPP = repairPlannerApi();
         var repairPlan = (RPP && typeof RPP.buildRepairPlan === 'function')
-            ? RPP.buildRepairPlan(ws, { matrix: matrix, review_queue: reviewQueue })
+            ? RPP.buildRepairPlan(ws, { matrix: matrix, review_queue: reviewQueue, generated_at: generatedAt })
             : null;
         var FS = fixStatusApi();
         var manualReview = (FS && typeof FS.summarize === 'function')
@@ -130,15 +131,15 @@
             : null;
         var CO = closeoutApi();
         var closeout = opts.review_closeout || (CO && typeof CO.buildCloseout === 'function'
-            ? CO.buildCloseout(reviewQueue, { world_state: ws, generated_at: opts.generated_at })
+            ? CO.buildCloseout(reviewQueue, { world_state: ws, generated_at: generatedAt })
             : null);
         var AU = auditApi();
         var auditTrail = opts.audit_trail || (AU && typeof AU.exportTrail === 'function'
-            ? AU.exportTrail(obj(manualReview && manualReview.session).scenario_fingerprint || ws, { generated_at: opts.generated_at })
+            ? AU.exportTrail(obj(manualReview && manualReview.session).scenario_fingerprint || ws, { generated_at: generatedAt })
             : null);
         return {
             version: CMO_FORCE_EVIDENCE_REPORT_VERSION,
-            generated_at: opts.generated_at || new Date().toISOString(),
+            generated_at: generatedAt,
             scenario: obj(opts.scenario),
             counts: {
                 Ready: obj(matrix.counts).Ready || 0,

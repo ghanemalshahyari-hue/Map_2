@@ -6967,6 +6967,35 @@
         .unit-status-panel { width: 400px; }
         @media (max-width: 1200px) { .unit-status-panel { width: 360px; } }
         @media (max-width: 768px)  { .unit-status-panel { width: 100%; } }
+        .scenario-evidence-panel {
+            right: 410px;
+            border-left-color: #37536f;
+            border-right: 1px solid #1c3046;
+        }
+        .scenario-evidence-panel .usp-header {
+            background: #101923;
+            border-bottom-color: #25415f;
+        }
+        .scenario-evidence-panel .usp-header-title {
+            color: #98d7f0;
+            letter-spacing: 0.08em;
+        }
+        .scenario-evidence-body {
+            overflow-y: auto;
+        }
+        @media (max-width: 1200px) {
+            .scenario-evidence-panel { right: 370px; }
+        }
+        @media (max-width: 900px) {
+            .scenario-evidence-panel {
+                right: 0;
+                width: 100%;
+                z-index: 890;
+            }
+            #unit-status-panel {
+                z-index: 900;
+            }
+        }
 
         /* ── Sans stack for dense BODY prose (numbers/codes/tables stay mono) ─ */
         .usp-quality-warnings, .usp-quality-warning-btn, .usp-quality-empty, .usp-quality-source,

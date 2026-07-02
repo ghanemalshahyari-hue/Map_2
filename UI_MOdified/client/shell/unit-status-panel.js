@@ -252,6 +252,7 @@
         populateScenarioCompleteness(unit);
         populateObjectiveHealth(unit);
         populateScenarioReviewQueue(unit);
+        populateScenarioRepairPlan(unit);
         populateEvidenceQualityGate(unit);
         populateEvidenceAlerts(unit);
         populateEvidenceCoverage(unit);
@@ -1348,6 +1349,25 @@
                 }
             });
         }
+        block.removeAttribute('hidden');
+    }
+
+    // QA-36..40: read-only evidence repair planner (guidance + export; no auto-fix).
+    function populateScenarioRepairPlan(unit) {
+        var block = $('usp-repair-plan-block');
+        var body = $('usp-repair-plan-body');
+        if (!block || !body) return;
+        var RPP = root.RmoozScenarioEvidenceRepairPlanner;
+        if (!RPP || typeof RPP.buildRepairPlan !== 'function' || typeof RPP.renderRepairHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var plan = RPP.buildRepairPlan(_getCurrentWorldState, {
+            generated_at: new Date().toISOString()
+        });
+        body._scenarioRepairPlan = plan;
+        body.innerHTML = RPP.renderRepairHtml(plan, { lang: 'ar' });
+        if (typeof RPP.bindRepairActions === 'function') RPP.bindRepairActions(body, plan);
         block.removeAttribute('hidden');
     }
 

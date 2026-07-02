@@ -3616,6 +3616,14 @@
                         <div class="usp-section-body" id="usp-review-queue-body"></div>
                     </div>
 
+                    <!-- RMOOZ-QA-36: read-only scenario evidence repair planner -->
+                    <div class="usp-tasking-block usp-repair-plan-block" id="usp-repair-plan-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">Repair Planner / &#1605;&#1582;&#1591;&#1591; &#1575;&#1604;&#1573;&#1589;&#1604;&#1575;&#1581;</span>
+                        </div>
+                        <div class="usp-section-body" id="usp-repair-plan-body"></div>
+                    </div>
+
                     <!-- RMOOZ-CMO-12: read-only evidence quality gate -->
                     <div class="usp-tasking-block usp-evidence-quality-block" id="usp-evidence-quality-block" hidden>
                         <div class="usp-section-hdr">
@@ -4677,11 +4685,12 @@
     <script src="shell/scenario-evidence-normalizer.js?v=1"></script>
     <script src="shell/objective-x-evidence-health.js?v=1"></script>
     <script src="shell/scenario-evidence-review-queue.js?v=1"></script>
+    <script src="shell/scenario-evidence-repair-planner.js?v=1"></script>
     <script src="shell/cmo-force-evidence-feed.js?v=1"></script>
-    <script src="shell/cmo-force-evidence-report.js?v=qa-33-queue"></script>
+    <script src="shell/cmo-force-evidence-report.js?v=qa-41-repair"></script>
     <script src="shell/evidence-map-overlays.js?v=1"></script>
     <script src="shell/cmo-evidence-export.js?v=cmo-22-drilldown"></script>
-    <script src="shell/unit-status-panel.js?v=qa-batch-30-35"></script>
+    <script src="shell/unit-status-panel.js?v=qa-batch-36-43"></script>
     <script src="shell/objective-evidence-panel.js?v=3"></script>
     <!-- L3-B-1: read-only Why-Not display panel in the Scenario Workspace.
          Paints #wn-body from AppActionFeasibility.evaluateAction. No controls. -->
@@ -7140,6 +7149,45 @@
         .usp-queue-reason-ar { margin-inline-start:auto; font-size:0.7rem; color:#8fb8d8; }
         .usp-queue-empty { padding:9px 0.8rem; color:#8fd6a3; font-size:0.76rem; }
         .usp-queue-source { padding:4px 0.8rem 7px; color:#8298ac; font-size:0.72rem; border-top:1px solid #0d1420; }
+
+        /* ── RMOOZ-QA-36: scenario evidence repair planner ─────────────────── */
+        .usp-repair-plan-block { background:#060d10; border-bottom:2px solid #14263a; }
+        .usp-repair-actions { display:flex; gap:6px; flex-wrap:wrap; padding:7px 0.8rem; border-bottom:1px solid #142033; }
+        .usp-repair-btn { border:1px solid #25415c; background:#0f1a27; color:#bcd6ee; font-size:0.72rem; padding:5px 8px; border-radius:4px; cursor:pointer; font-family:inherit; }
+        .usp-repair-btn:hover { background:#16263a; color:#e2eefa; }
+        .usp-repair-btn:focus-visible { outline:2px solid #6ec0e0; outline-offset:1px; }
+        .usp-repair-summary { display:flex; flex-wrap:wrap; gap:6px; align-items:center; padding:7px 0.8rem 4px; }
+        .usp-repair-total { font-family:'Consolas','Courier New',monospace; font-size:0.75rem; font-weight:700; color:#a8c4dd; }
+        .usp-repair-chip { font-size:0.68rem; padding:1px 6px; border-radius:3px; background:#0d1a28; color:#a8c4dd; font-family:'Consolas','Courier New',monospace; }
+        .usp-repair-chip--critical { color:#f08a8a; } .usp-repair-chip--high { color:#f0ad7a; }
+        .usp-repair-chip--medium { color:#e8c97a; } .usp-repair-chip--low { color:#8fb8d8; }
+        .usp-repair-objective { display:flex; align-items:baseline; gap:8px; margin:4px 0.8rem 6px; padding:5px 8px; border-radius:5px; border:1px solid #1a3050; background:#0a1424; }
+        .usp-repair-objective--ready { border-color:#25543a; }
+        .usp-repair-obj-en { font-size:0.72rem; color:#8fb8d8; flex:1; }
+        .usp-repair-obj-pct { font-family:'Consolas','Courier New',monospace; font-size:0.8rem; font-weight:700; color:#8fd6a3; }
+        .usp-repair-objective--notready .usp-repair-obj-pct { color:#e8c97a; }
+        .usp-repair-obj-state { font-size:0.7rem; color:#a8c4dd; }
+        .usp-repair-objective--ready .usp-repair-obj-state { color:#8fd6a3; }
+        .usp-repair-card { margin:5px 0.6rem; border:1px solid #1a2c40; border-left-width:3px; border-radius:5px; background:#0c1622; overflow:hidden; }
+        .usp-repair-card--critical { border-left-color:#e05a5a; }
+        .usp-repair-card--high { border-left-color:#e0894a; }
+        .usp-repair-card--medium { border-left-color:#c9a227; }
+        .usp-repair-card--low { border-left-color:#3a6a90; }
+        .usp-repair-card-hdr { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; padding:5px 8px; border-bottom:1px solid #0d1420; }
+        .usp-repair-prio { font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:1px 6px; border-radius:3px; background:#0d1a28; }
+        .usp-repair-card--critical .usp-repair-prio { color:#f08a8a; }
+        .usp-repair-card--high .usp-repair-prio { color:#f0ad7a; }
+        .usp-repair-card--medium .usp-repair-prio { color:#e8c97a; }
+        .usp-repair-card--low .usp-repair-prio { color:#8fb8d8; }
+        .usp-repair-who { font-family:'Consolas','Courier New',monospace; font-size:0.74rem; font-weight:600; color:#bcd6ee; }
+        .usp-repair-reason { font-family:'Consolas','Courier New',monospace; font-size:0.7rem; color:#8fa8c0; }
+        .usp-repair-steps { margin:0; padding:5px 1.4rem 6px 1.8rem; color:#c4dcf0; font-size:0.75rem; line-height:1.5; font-family:'Segoe UI',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif; }
+        .usp-repair-steps li { margin:3px 0; }
+        .usp-repair-step-en { display:block; color:#d0e4f6; }
+        .usp-repair-step-ar { display:block; color:#8fb8d8; font-size:0.72rem; }
+        .usp-repair-empty { padding:9px 0.8rem; color:#8fd6a3; font-size:0.76rem; }
+        .usp-repair-disclaimer { padding:5px 0.8rem; color:#8298ac; font-size:0.7rem; border-top:1px solid #0d1420; }
+        .usp-repair-source { padding:2px 0.8rem 7px; color:#8298ac; font-size:0.7rem; }
 
         /* Unit status panel — extend the drawer down to cover the empty band below
            it, but STOP just above the footer stack. The footer bars

@@ -33,6 +33,7 @@
     function coverageApi() { return localApi('RmoozCmoEvidenceCoverage', 'cmo-evidence-coverage.js'); }
     function completenessApi() { return localApi('RmoozScenarioEvidenceCompleteness', 'scenario-evidence-completeness.js'); }
     function reviewQueueApi()  { return localApi('RmoozScenarioEvidenceReviewQueue',   'scenario-evidence-review-queue.js'); }
+    function repairPlannerApi(){ return localApi('RmoozScenarioEvidenceRepairPlanner', 'scenario-evidence-repair-planner.js'); }
 
     function reasonLabel(code, lang) {
         var labels = labelsApi();
@@ -116,6 +117,10 @@
         var reviewQueue = (RQ && typeof RQ.buildReviewQueue === 'function')
             ? RQ.buildReviewQueue(ws, { matrix: matrix, completeness: completeness })
             : null;
+        var RPP = repairPlannerApi();
+        var repairPlan = (RPP && typeof RPP.buildRepairPlan === 'function')
+            ? RPP.buildRepairPlan(ws, { matrix: matrix, review_queue: reviewQueue })
+            : null;
         return {
             version: CMO_FORCE_EVIDENCE_REPORT_VERSION,
             generated_at: opts.generated_at || new Date().toISOString(),
@@ -138,6 +143,7 @@
             coverage: coverage,
             completeness: completeness,
             review_queue: reviewQueue,
+            repair_plan: repairPlan,
             selected_unit: selected,
             source: 'Readiness matrix + force evidence feed'
         };
@@ -186,6 +192,20 @@
                 });
             });
             if (rq.total_issues > 0) lines.push('  (' + rq.total_issues + ' issue(s) total)');
+            lines.push('');
+        }
+        var rp = obj(report.repair_plan);
+        if (arr(rp.plans).length) {
+            var bp = obj(rp.by_priority);
+            lines.push('Scenario Evidence Repair Plan:');
+            lines.push('  ' + (rp.total_repairs || 0) + ' repair(s) — critical ' + (bp.critical || 0) +
+                ' / high ' + (bp.high || 0) + ' / medium ' + (bp.medium || 0) + ' / low ' + (bp.low || 0));
+            var orr = obj(rp.objective_readiness);
+            lines.push('  Objective X readiness: ' + (orr.health_pct == null ? 'unknown' : orr.health_pct + '%') +
+                (orr.ready ? ' (ready)' : ' (' + (orr.failing_count || 0) + ' to repair)'));
+            arr(rp.plans).slice(0, 6).forEach(function (p) {
+                lines.push('  - [' + p.priority_label_en + '] ' + (p.uid || p.label || 'Objective') + ' — ' + p.reason);
+            });
             lines.push('');
         }
         if (report.selected_unit) {
@@ -249,6 +269,20 @@
                 '<div><span>No-contact</span><strong>' + esc(report.no_contact_count || 0) + '</strong></div>' +
                 '<div><span>Selected unit</span><strong>' + esc(selected.label || selected.uid || 'None') + '</strong></div>' +
             '</section>' +
+            (function () {
+                var rp = obj(report.repair_plan);
+                if (!arr(rp.plans).length) return '';
+                var out = '<section class="cmo-print-section">' +
+                    '<h2>Scenario Evidence Repair Plan / خطة إصلاح أدلة السيناريو</h2>' +
+                    '<ol class="cmo-print-list">';
+                arr(rp.plans).slice(0, 12).forEach(function (p) {
+                    out += '<li><strong>[' + esc(p.priority_label_en) + ']</strong> ' +
+                        esc(p.uid || p.label || 'Objective') + ' &mdash; ' + esc(p.reason) +
+                        (arr(p.steps).length ? ': ' + esc(p.steps[0].en) : '') + '</li>';
+                });
+                out += '</ol></section>';
+                return out;
+            }()) +
             (function () {
                 var rq = obj(report.review_queue);
                 if (!arr(rq.groups).length) return '';

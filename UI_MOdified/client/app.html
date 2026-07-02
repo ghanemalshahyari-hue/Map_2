@@ -7142,12 +7142,15 @@
         .usp-queue-source { padding:4px 0.8rem 7px; color:#8298ac; font-size:0.72rem; border-top:1px solid #0d1420; }
 
         /* Unit status panel — extend the drawer down to cover the empty band below
-           it (the "down part"), overriding the shell-safe-area bottom inset which
-           otherwise stops the panel well above the footer. A ~28px bottom inset is
-           kept so the bottom classification banner stays visible. Main build only. */
+           it, but STOP just above the footer stack. The footer bars
+           (#timeline-strip 36 + #event-log 30 + .app-statusbar 28 +
+           .classification-bar--bottom 22 = 116px) sit at z-index 1040-1200, above
+           the panel's z-index 900, so any overlap renders BEHIND them. Pin the
+           bottom to 120px (footer height + a small gap) so the whole panel stays
+           visible and clears the timeline card. Main build only. */
         .unit-status-panel {
-            bottom: 28px !important;
-            max-height: calc(100vh - var(--rmooz-shell-top-safe, 74px) - 28px) !important;
+            bottom: 120px !important;
+            max-height: calc(100vh - var(--rmooz-shell-top-safe, 74px) - 120px) !important;
         }
 
     </style>

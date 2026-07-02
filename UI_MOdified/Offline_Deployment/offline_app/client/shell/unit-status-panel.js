@@ -249,6 +249,7 @@
         populateMagazines(enriched);
         populateFuelAmmo(unit, enriched);
         populateAssignment(unit);
+        syncScenarioReviewSession();
         populateCommanderBrief(unit);
         populateScenarioCompleteness(unit);
         populateObjectiveHealth(unit);
@@ -1203,6 +1204,12 @@
         block.removeAttribute('hidden');
     }
 
+    function syncScenarioReviewSession() {
+        var FS = root.RmoozScenarioEvidenceFixStatus;
+        if (!FS || typeof FS.setScenarioContext !== 'function') return null;
+        try { return FS.setScenarioContext(_getCurrentWorldState); } catch (_) { return null; }
+    }
+
     function populateCommanderBrief(unit) {
         var block = $('usp-commander-brief-block');
         var body = $('usp-commander-brief-body');
@@ -1317,6 +1324,7 @@
             block.setAttribute('hidden', '');
             return;
         }
+        syncScenarioReviewSession();
         var queue = RQ.buildReviewQueue(_getCurrentWorldState, {
             generated_at: new Date().toISOString()
         });
@@ -1368,6 +1376,7 @@
             block.setAttribute('hidden', '');
             return;
         }
+        syncScenarioReviewSession();
         var plan = RPP.buildRepairPlan(_getCurrentWorldState, {
             generated_at: new Date().toISOString()
         });
@@ -1394,22 +1403,25 @@
             block.setAttribute('hidden', '');
             return;
         }
+        var session = syncScenarioReviewSession();
         var RPP = root.RmoozScenarioEvidenceRepairPlanner;
         var plan = RPP && typeof RPP.buildRepairPlan === 'function'
             ? RPP.buildRepairPlan(_getCurrentWorldState, { generated_at: new Date().toISOString() })
             : null;
-        var workspace = MF.buildWorkspace(currentManualFixIssue, { repair_plan: plan });
+        var workspace = MF.buildWorkspace(currentManualFixIssue, { repair_plan: plan, session: session });
         body._scenarioManualFixWorkspace = workspace;
         body.innerHTML = MF.renderWorkspaceHtml(workspace, { lang: 'ar' });
         if (typeof MF.bindWorkspaceInteractions === 'function') {
+            var refreshManualReviewSurfaces = function () {
+                populateScenarioReviewQueue(unit || currentUnit);
+                populateScenarioRepairPlan(unit || currentUnit);
+                populateCommanderBrief(unit || currentUnit);
+                populateForceEvidenceReport(unit || currentUnit);
+                populateScenarioManualFix(unit || currentUnit);
+            };
             MF.bindWorkspaceInteractions(body, workspace, {
-                onStatusChange: function () {
-                    populateScenarioReviewQueue(unit || currentUnit);
-                    populateScenarioRepairPlan(unit || currentUnit);
-                    populateCommanderBrief(unit || currentUnit);
-                    populateForceEvidenceReport(unit || currentUnit);
-                    populateScenarioManualFix(unit || currentUnit);
-                }
+                onStatusChange: refreshManualReviewSurfaces,
+                onSessionChange: refreshManualReviewSurfaces
             });
         }
         block.removeAttribute('hidden');

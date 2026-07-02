@@ -27,6 +27,7 @@
 
     function statusApi() { return localApi('RmoozScenarioEvidenceFixStatus', 'scenario-evidence-fix-status.js'); }
     function plannerApi() { return localApi('RmoozScenarioEvidenceRepairPlanner', 'scenario-evidence-repair-planner.js'); }
+    function sessionApi() { return localApi('RmoozScenarioEvidenceReviewSession', 'scenario-evidence-review-session.js'); }
 
     var REQUIRED_FIELDS = {
         no_contact_evidence: ['contact source', 'detecting unit', 'last seen / freshness'],
@@ -80,6 +81,7 @@
             issue: normalized,
             required_fields: fields,
             recommended_steps: stepsFor(normalized, opts.repair_plan),
+            session: opts.session || (FS && typeof FS.getSessionMeta === 'function' ? FS.getSessionMeta() : null),
             source: 'Review queue / repair planner issue'
         };
     }
@@ -90,11 +92,13 @@
         workspace = workspace || buildWorkspace(null);
         if (!workspace.active) {
             return '<div class="usp-manual-empty">Select a review-queue or repair-plan issue to track manual evidence review.<br>' +
-                '&#1575;&#1582;&#1578;&#1585; &#1605;&#1588;&#1603;&#1604;&#1577; &#1605;&#1606; &#1602;&#1575;&#1574;&#1605;&#1577; &#1575;&#1604;&#1605;&#1585;&#1575;&#1580;&#1593;&#1577; &#1604;&#1578;&#1578;&#1576;&#1593; &#1575;&#1604;&#1605;&#1585;&#1575;&#1580;&#1593;&#1577; &#1575;&#1604;&#1610;&#1583;&#1608;&#1610;&#1577;.</div>';
+                '&#1575;&#1582;&#1578;&#1585; &#1605;&#1588;&#1603;&#1604;&#1577; &#1605;&#1606; &#1602;&#1575;&#1574;&#1605;&#1577; &#1575;&#1604;&#1605;&#1585;&#1575;&#1580;&#1593;&#1577; &#1604;&#1578;&#1578;&#1576;&#1593; &#1575;&#1604;&#1605;&#1585;&#1575;&#1580;&#1593;&#1577; &#1575;&#1604;&#1610;&#1583;&#1608;&#1610;&#1577;.</div>' +
+                renderSessionControls(workspace);
         }
         var issue = obj(workspace.issue);
         var status = issue.manual_status || 'needs_review';
         var who = issue.uid || issue.label || 'Objective';
+        var session = obj(workspace.session);
         var html = '<div class="usp-manual-card" data-manual-issue-id="' + esc(issue.issue_id || '') + '">' +
             '<div class="usp-manual-summary">' +
                 '<span class="usp-manual-kicker">Manual Evidence Fix / &#1573;&#1589;&#1604;&#1575;&#1581; &#1575;&#1604;&#1571;&#1583;&#1604;&#1577; &#1575;&#1604;&#1610;&#1583;&#1608;&#1610;</span>' +
@@ -126,9 +130,48 @@
             '<button type="button" data-manual-status="fixed_externally">Fixed Externally</button>' +
             '</div>' +
             '<label class="usp-manual-note">Local note <textarea data-manual-note rows="2">' + esc(issue.manual_note || '') + '</textarea></label>' +
+            renderSessionControls(workspace) +
+            (session.stale ? '<div class="usp-manual-stale">Review session fingerprint differs from the current scenario. Verify before briefing.</div>' : '') +
             '<div class="usp-manual-disclaimer">Local review status only. Does not modify scenario evidence, doctrine, or combat state.</div>' +
             '</div>';
         return html;
+    }
+
+    function renderSessionControls(workspace) {
+        var session = obj(obj(workspace).session);
+        var fp = session.scenario_fingerprint || 'not-set';
+        return '<div class="usp-manual-session">' +
+            '<div class="usp-manual-session-meta">Review session: <code>' + esc(fp) + '</code>' +
+                (session.updated_at ? ' · updated ' + esc(session.updated_at) : '') + '</div>' +
+            '<div class="usp-manual-session-actions">' +
+                '<button type="button" data-manual-session-action="copy">Copy Session JSON</button>' +
+                '<button type="button" data-manual-session-action="download">Download Session JSON</button>' +
+                '<button type="button" data-manual-session-action="import">Import Session JSON</button>' +
+                '<button type="button" data-manual-session-action="clear">Clear Session</button>' +
+            '</div>' +
+            '<textarea data-manual-session-import rows="2" placeholder="Paste review-session JSON to import"></textarea>' +
+            '</div>';
+    }
+
+    function copyText(text) {
+        if (!root.navigator || !root.navigator.clipboard || typeof root.navigator.clipboard.writeText !== 'function') {
+            return Promise.resolve(false);
+        }
+        return root.navigator.clipboard.writeText(String(text == null ? '' : text)).then(function () { return true; });
+    }
+
+    function downloadJson(payload, filename) {
+        if (!root.document || typeof root.Blob !== 'function' || !root.URL || typeof root.URL.createObjectURL !== 'function') return false;
+        var blob = new root.Blob([JSON.stringify(payload || {}, null, 2)], { type: 'application/json' });
+        var url = root.URL.createObjectURL(blob);
+        var a = root.document.createElement('a');
+        a.href = url;
+        a.download = filename || 'rmooz-evidence-review-session.json';
+        root.document.body.appendChild(a);
+        a.click();
+        root.document.body.removeChild(a);
+        setTimeout(function () { root.URL.revokeObjectURL(url); }, 0);
+        return true;
     }
 
     function bindWorkspaceInteractions(container, workspace, opts) {
@@ -143,6 +186,33 @@
                 var rec = FS.setStatus(issue, btn.getAttribute('data-manual-status'), noteEl ? noteEl.value : '');
                 if (opts.onStatusChange && typeof opts.onStatusChange === 'function') {
                     try { opts.onStatusChange(rec); } catch (_) {}
+                }
+            });
+        });
+        Array.prototype.forEach.call(container.querySelectorAll('[data-manual-session-action]'), function (btn) {
+            var declaredAction = btn.getAttribute && btn.getAttribute('data-manual-session-action');
+            if (['copy', 'download', 'import', 'clear'].indexOf(declaredAction) === -1) return;
+            btn.addEventListener('click', function () {
+                var action = btn.getAttribute('data-manual-session-action');
+                var RS = sessionApi();
+                if (!RS) return;
+                var session = FS.getSessionMeta && FS.getSessionMeta();
+                var fp = session && session.scenario_fingerprint;
+                if (action === 'copy' && RS.exportSession) {
+                    copyText(JSON.stringify(RS.exportSession(fp || 'unknown'), null, 2));
+                } else if (action === 'download' && RS.exportSession) {
+                    downloadJson(RS.exportSession(fp || 'unknown'));
+                } else if (action === 'import' && RS.importSession) {
+                    var importEl = container.querySelector('[data-manual-session-import]');
+                    if (importEl && importEl.value) {
+                        var imported = RS.importSession(importEl.value, { current_fingerprint: fp || 'unknown' });
+                        if (FS.setScenarioContext) FS.setScenarioContext(imported.scenario_fingerprint || fp || 'unknown');
+                        else if (FS.importRecords) FS.importRecords(imported.records, { replace: true });
+                        if (opts.onSessionChange) opts.onSessionChange(imported);
+                    }
+                } else if (action === 'clear') {
+                    FS.reset();
+                    if (opts.onSessionChange) opts.onSessionChange(FS.getSessionMeta && FS.getSessionMeta());
                 }
             });
         });

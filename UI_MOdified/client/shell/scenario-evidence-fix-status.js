@@ -1,9 +1,10 @@
 /* ============================================================================
  * scenario-evidence-fix-status.js - RMOOZ-QA-45 manual evidence fix status
  * ----------------------------------------------------------------------------
- * Bounded in-memory review-status ledger for scenario evidence issues.
+ * Bounded review-status ledger for scenario evidence issues. By default this
+ * is in memory; Batch 5 can attach browser-local review-session persistence.
  * This tracks operator review progress only. It never mutates world state,
- * scenario truth, doctrine, combat state, or backend storage.
+ * scenario truth, doctrine, combat state, backend routes, or a database.
  * ========================================================================== */
 (function (root) {
     'use strict';
@@ -36,9 +37,21 @@
     var STATUS_ORDER = ['needs_review', 'reviewed', 'deferred', 'fixed_externally'];
     var records = {};
     var order = [];
+    var currentFingerprint = null;
+    var currentSessionMeta = null;
 
     function obj(v) { return v && typeof v === 'object' ? v : {}; }
     function arr(v) { return Array.isArray(v) ? v : []; }
+    function localApi(globalName, moduleName) {
+        if (root[globalName]) return root[globalName];
+        if (typeof require === 'function') {
+            try { return require('./' + moduleName); } catch (_) {}
+        }
+        return null;
+    }
+    function sessionApi() {
+        return localApi('RmoozScenarioEvidenceReviewSession', 'scenario-evidence-review-session.js');
+    }
 
     function normalizeStatus(status) {
         var s = String(status || 'needs_review').trim();
@@ -97,6 +110,56 @@
         return records[id] ? Object.assign({}, records[id]) : defaultRecord(issue);
     }
 
+    function importRecords(list, opts) {
+        opts = opts || {};
+        if (opts.replace !== false) {
+            records = {};
+            order = [];
+        }
+        arr(list).forEach(function (rec) {
+            rec = obj(rec);
+            var issue = normalizeIssue(rec);
+            var out = Object.assign(defaultRecord(issue), rec, {
+                issue_id: issue.issue_id,
+                uid: issue.uid,
+                label: issue.label,
+                side: issue.side,
+                code: rec.code || rec.reason || issue.code,
+                status: normalizeStatus(rec.status || rec.manual_status),
+                note: rec.note || rec.manual_note || '',
+                timestamp: rec.timestamp || rec.manual_timestamp || null
+            });
+            records[out.issue_id] = out;
+            touch(out.issue_id);
+        });
+        return all();
+    }
+
+    function persist(opts) {
+        opts = opts || {};
+        if (!currentFingerprint) return null;
+        var RS = sessionApi();
+        if (!RS || typeof RS.saveRecords !== 'function') return null;
+        currentSessionMeta = RS.saveRecords(currentFingerprint, all(), opts);
+        return currentSessionMeta;
+    }
+
+    function setScenarioContext(worldStateOrFingerprint, opts) {
+        opts = opts || {};
+        var RS = sessionApi();
+        if (!RS || typeof RS.computeFingerprint !== 'function') return null;
+        var fp = RS.computeFingerprint(worldStateOrFingerprint, opts);
+        currentFingerprint = fp;
+        var session = RS.loadSession(fp);
+        currentSessionMeta = session;
+        importRecords(session.records, { replace: true });
+        return session;
+    }
+
+    function getSessionMeta() {
+        return currentSessionMeta ? Object.assign({}, currentSessionMeta) : null;
+    }
+
     function setStatus(issue, status, note, opts) {
         opts = opts || {};
         var normalized = normalizeIssue(issue);
@@ -110,12 +173,17 @@
         rec.timestamp = opts.timestamp || new Date().toISOString();
         records[normalized.issue_id] = rec;
         touch(normalized.issue_id);
+        persist({ generated_at: rec.timestamp });
         return Object.assign({}, rec);
     }
 
     function reset() {
         records = {};
         order = [];
+        if (currentFingerprint) {
+            var RS = sessionApi();
+            if (RS && typeof RS.clearSession === 'function') currentSessionMeta = RS.clearSession(currentFingerprint);
+        }
     }
 
     function all() {
@@ -155,6 +223,7 @@
             counts: counts,
             records: issues.map(enrichIssue),
             stored_records: all(),
+            session: getSessionMeta(),
             source: 'Client-side manual evidence review status'
         };
     }
@@ -176,6 +245,10 @@
         normalizeIssue: normalizeIssue,
         getStatus: getStatus,
         setStatus: setStatus,
+        setScenarioContext: setScenarioContext,
+        getSessionMeta: getSessionMeta,
+        importRecords: importRecords,
+        persist: persist,
         enrichIssue: enrichIssue,
         summarize: summarize,
         exportStatus: exportStatus,

@@ -150,6 +150,7 @@
             review_queue: reviewQueue,
             repair_plan: repairPlan,
             manual_review: manualReview,
+            review_session: manualReview && manualReview.session ? manualReview.session : null,
             selected_unit: selected,
             source: 'Readiness matrix + force evidence feed'
         };
@@ -218,6 +219,10 @@
         var mrc = obj(mr.counts);
         if (mrc.total != null) {
             lines.push('Evidence Manual Review:');
+            if (mr.session && mr.session.scenario_fingerprint) {
+                lines.push('  Session: ' + mr.session.scenario_fingerprint +
+                    (mr.session.stale ? ' (stale scenario fingerprint)' : ''));
+            }
             lines.push('  Reviewed: ' + (mrc.reviewed || 0));
             lines.push('  Deferred: ' + (mrc.deferred || 0));
             lines.push('  Fixed Externally: ' + (mrc.fixed_externally || 0));

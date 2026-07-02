@@ -1,0 +1,1946 @@
+/**
+ * unit-status-panel.js — Commander Unit Status Panel (UI-Unit-1-C visual redesign)
+ *
+ * Military-tactical read-only right-slide panel.
+ *
+ * Data sources (precedence order):
+ *   1. window.RmoozScenario   — scenario baseline (authored values always win)
+ *   2. window.AppAppliedState — readiness/supply overlay (STATE_DELTA events)
+ *   3. window.AppWorldStateDB — DB-Lite catalog / DB1 (single capability source)
+ *   4. window.AppEventLog     — STATE_DELTA history for delta display
+ *   5. milsymbol              — unit symbol rendering if SIDC present
+ *
+ * D5 (2026-06-09): middle-east-platform-loader.js + platforms.json DELETED.
+ * DB1 (AppWorldStateDB) is the single source of truth for capability data.
+ *
+ * DESIGN: Read-only display only. No edit controls, no mutations,
+ * no simulation calls. Empty-state labels for unavailable fields.
+ */
+(function (root) {
+    'use strict';
+
+    var $ = function(id) { return document.getElementById(id); };
+    var currentUnit = null;
+    var currentMatrixFilter = { status: 'All', reason_code: null };
+
+    // ── i18n helper ───────────────────────────────────────────────────
+    function tr(key, fallback) {
+        if (typeof root.t === 'function') {
+            var v = root.t(key);
+            if (typeof v === 'string' && v && v !== key) return v;
+        }
+        return fallback;
+    }
+
+    function setText(id, text) {
+        var el = $(id);
+        if (el) el.textContent = text;
+    }
+
+    function esc(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    // RMOOZ-UNIT-IDENTITY-CONTRACT-A: the ONE shared identity contract. The panel,
+    // the map marker, the AI/COA path, and the event log must all derive a unit's name
+    // the same way. Delegate to the shared resolver when present; keep a thin fallback
+    // for the rare case the resolver script has not loaded. Read-only — never mutates.
+    function resolveIdentity(unit) {
+        if (root.RmoozUnitIdentity && typeof root.RmoozUnitIdentity.resolveUnitIdentity === 'function') {
+            try { return root.RmoozUnitIdentity.resolveUnitIdentity(unit); } catch (_) {}
+        }
+        return null;
+    }
+    function displayUnitName(unit) {
+        if (!unit) return '—';
+        if (unit.identity && unit.identity.display_name) return unit.identity.display_name;
+        var id = resolveIdentity(unit);
+        if (id && id.display_name) return id.display_name;
+        return unit.label || unit.name || unit.name_en || unit.name_ar ||
+            unit.unit_name || unit.callsign || unit.code || unit.uid ||
+            unit.unit_uid || unit.id || unit.base_id || '—';
+    }
+
+    // ── Magazine stock formatter ──────────────────────────────────────
+    function formatMagStock(stock) {
+        if (stock == null) return '';
+        if (typeof stock === 'number') return String(Math.round(stock));
+        if (typeof stock === 'object') {
+            return Object.keys(stock).map(function(k) {
+                return k.replace(/_/g, ' ') + ': ' + stock[k];
+            }).join(', ');
+        }
+        return String(stock);
+    }
+
+    // ── DB1 enrichment ────────────────────────────────────────────────
+    function enrichUnitForDisplay(unit) {
+        if (!unit) return unit;
+        if (root.AppWorldStateDB && typeof root.AppWorldStateDB.enrichUnit === 'function') {
+            try { return root.AppWorldStateDB.enrichUnit(unit); } catch (_) {}
+        }
+        return Object.assign({}, unit);
+    }
+
+    function getPlatformLabel(enrichedUnit) {
+        if (!root.AppWorldStateDB || !enrichedUnit) return null;
+        try {
+            var cap = root.AppWorldStateDB.capabilityFor(enrichedUnit);
+            return (cap && cap.label) ? cap.label : null;
+        } catch (_) { return null; }
+    }
+
+    function getCapabilitySourceLabel(rawUnit, enrichedUnit, field) {
+        var rawArr = rawUnit && rawUnit[field];
+        if (Array.isArray(rawArr) && rawArr.length) return 'Scenario Baseline';
+        var enrichedArr = enrichedUnit && enrichedUnit[field];
+        if (!Array.isArray(enrichedArr) || !enrichedArr.length) return null;
+        if (root.AppWorldStateDB) {
+            try {
+                var cap = root.AppWorldStateDB.capabilityFor(enrichedUnit);
+                if (cap && cap.label) return 'DB-Lite — ' + cap.label;
+                var kind = enrichedUnit.kind || root.AppWorldStateDB.classifyKind(enrichedUnit);
+                return 'DB-Lite — ' + kind + ' (default)';
+            } catch (_) {}
+        }
+        return 'DB-Lite';
+    }
+
+    function getDataSource(unit, field) {
+        if (!unit) return '';
+        if (unit[field] !== undefined && unit[field] !== null) return 'Scenario Baseline';
+        if (root.AppWorldStateDB) {
+            try {
+                var cap = root.AppWorldStateDB.capabilityFor(unit);
+                if (cap && cap[field] !== undefined) {
+                    if (cap.label) return 'DB-Lite — ' + cap.label;
+                    var kind = root.AppWorldStateDB.classifyKind(unit);
+                    return 'DB-Lite — ' + kind + ' (default)';
+                }
+            } catch (_) {}
+        }
+        return 'DB-Lite Default';
+    }
+
+    // ── Event log / applied state ─────────────────────────────────────
+    function getEventLog() {
+        if (root.AppEventLog && typeof root.AppEventLog.getRows === 'function') {
+            return root.AppEventLog.getRows();
+        }
+        return [];
+    }
+
+    function getAppliedState(unit, eventLog) {
+        if (root.AppAppliedState && typeof root.AppAppliedState.getAppliedState === 'function') {
+            return root.AppAppliedState.getAppliedState(unit, eventLog);
+        }
+        return { readiness: unit.readiness || 'ready', supply: unit.supply || 0.8 };
+    }
+
+    function extractDeltasForUnit(eventLog, unitUid) {
+        if (root.AppAppliedState && typeof root.AppAppliedState.extractDeltasForUnit === 'function') {
+            return root.AppAppliedState.extractDeltasForUnit(eventLog, unitUid);
+        }
+        return eventLog
+            .filter(function(e) {
+                return e && e.payload && e.payload.event_type === 'STATE_DELTA'
+                    && e.payload.unit_uid === unitUid;
+            })
+            .map(function(e) { return e.payload; });
+    }
+
+    // ── Scenario guard ────────────────────────────────────────────────
+    function isOperationalScenarioSelection(unit) {
+        if (unit && unit._scenario) return true;
+        try {
+            return !!(root.AppAdjudicatorMap
+                && typeof root.AppAdjudicatorMap.isScenarioDrawn === 'function'
+                && root.AppAdjudicatorMap.isScenarioDrawn());
+        } catch (_) { return false; }
+    }
+
+    // ── Panel open/close ──────────────────────────────────────────────
+    function openPanel() {
+        var p = $('unit-status-panel');
+        if (p) p.removeAttribute('hidden');
+        // Refresh the shared shell safe-area so this fixed drawer is bounded to the content band.
+        try { if (window.RmoozShellSafeArea && window.RmoozShellSafeArea.measure) window.RmoozShellSafeArea.measure(); } catch (_) {}
+        var tab = $('usp-reopen-tab');
+        if (tab) tab.setAttribute('hidden', '');
+    }
+
+    function closePanel() {
+        var p = $('unit-status-panel');
+        if (p) p.setAttribute('hidden', '');
+        // Show reopen tab only if we had a unit (operator deliberately closed)
+        var tab = $('usp-reopen-tab');
+        if (tab && currentUnit) tab.removeAttribute('hidden');
+        currentUnit = null;
+    }
+
+    function _showEmpty() {
+        currentUnit = null;
+        openPanel();
+        var e = $('empty-state'), b = $('usp-body');
+        if (b) b.setAttribute('hidden', '');
+        if (e) e.removeAttribute('hidden');
+        var tab = $('usp-reopen-tab');
+        if (tab) tab.setAttribute('hidden', '');
+    }
+
+    function _showBody() {
+        var e = $('empty-state'), b = $('usp-body');
+        if (e) e.setAttribute('hidden', '');
+        if (b) b.removeAttribute('hidden');
+    }
+
+    function _formatReadiness(val) {
+        var map = { ready: 'Ready', limited: 'Limited', not_ready: 'Not Ready' };
+        return map[(val || 'ready').toLowerCase()] || val;
+    }
+
+    function _capitalise(s) {
+        return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '';
+    }
+
+    // ── Main populate ─────────────────────────────────────────────────
+    // RMOOZ-UNIT-IDENTITY-CONTRACT-A: resolve ONE identity for this selection, injecting
+    // the DB-Lite *specific* platform label (a named entry, never a generic default) so
+    // displayName upgrades to e.g. "F-16C Fighting Falcon" when known — while authored
+    // names still win. Attaching it to the unit makes every downstream displayUnitName()
+    // (hero, fuel/ammo, fuel-section, image alt) show the same name.
+    function resolvePanelIdentity(unit, enriched) {
+        var base = (unit && unit.identity) ? unit.identity
+            : (root.RmoozUnitIdentity && root.RmoozUnitIdentity.resolveUnitIdentity ? root.RmoozUnitIdentity.resolveUnitIdentity(unit) : null);
+        if (!base) return null;
+        // DB-Lite *named* platform (capabilityFor returns a label only for named entries,
+        // never a generic default). Use it ONLY to upgrade a type-derived name — an
+        // authored scenario name always wins, so DB-Lite never overwrites real identity.
+        var lbl = null;
+        try { lbl = getPlatformLabel(enriched); } catch (_) {}
+        if (!lbl) return base;
+        var generic = base.warnings && base.warnings.indexOf('display_name_from_type') >= 0;
+        if (!generic) return base;
+        var up = Object.assign({}, base);
+        up.displayName = lbl; up.display_name = lbl;
+        up.platformLabel = lbl; up.platform_name = lbl;
+        up.platform_provenance = 'db_lite_exact';
+        up.confidence = 'medium';
+        up.warnings = (base.warnings || []).filter(function (w) { return w !== 'display_name_from_type' && w !== 'platform_unknown'; });
+        up.source = Object.assign({}, base.source, { display_name_source: 'db_lite_exact', platform_source: 'db_lite_exact' });
+        return up;
+    }
+
+    function populatePanel(unit, selectedAt) {
+        if (!unit) { _showEmpty(); return; }
+        currentUnit = unit;
+        var enriched = enrichUnitForDisplay(unit);
+        var ident = resolvePanelIdentity(unit, enriched);
+        if (ident) unit.identity = ident;
+        var eventLog = getEventLog();
+        _showBody();
+        populateHero(unit, enriched);
+        populateIdentity(unit, enriched, selectedAt);
+        populateCoreStats(unit, enriched, eventLog);
+        populateSystems(unit, enriched, eventLog);
+        populateMagazines(enriched);
+        populateFuelAmmo(unit, enriched);
+        populateAssignment(unit);
+        populateCommanderBrief(unit);
+        populateScenarioCompleteness(unit);
+        populateObjectiveHealth(unit);
+        populateScenarioReviewQueue(unit);
+        populateEvidenceQualityGate(unit);
+        populateEvidenceAlerts(unit);
+        populateEvidenceCoverage(unit);
+        populateEvidenceReadinessMatrix(unit);
+        populateBlockerRemediation(unit);
+        populateForceEvidenceFeed(unit);
+        populateContactEvidence(unit);
+        populateEngagementEvidence(unit);
+        populateDecisionChainEvidence(unit);
+        populateEvidenceRecommendations(unit);
+        populateAlternativeShooters(unit);
+        populateEvidenceTimeline(unit);
+        populateEvidenceExport(unit);
+        populateForceEvidenceReport(unit);
+        populateSensors(enriched, getCapabilitySourceLabel(unit, enriched, 'sensors'));
+        populateWeapons(enriched, getCapabilitySourceLabel(unit, enriched, 'weapons'));
+        populateSpeed(unit);
+        populateFuelSection(unit, enriched);
+        populateEMCON(enriched);
+        populateDeltas(unit, eventLog);
+        setupSectionToggles();
+    }
+
+    // ── Hero ──────────────────────────────────────────────────────────
+    function populateHero(unit, enriched) {
+        setText('unit-label', displayUnitName(unit));
+        var badge = $('usp-status-badge');
+        if (badge) {
+            var txt = unit.veteran ? tr('usp-badge-veteran','VETERAN')
+                : unit.elite   ? tr('usp-badge-elite','ELITE')
+                : unit.status  ? String(unit.status).toUpperCase().slice(0, 12)
+                : '';
+            badge.textContent = txt;
+            badge.style.display = txt ? 'inline-block' : 'none';
+        }
+        _renderSymbol(unit, enriched, $('unit-symbol'));
+    }
+
+    /* ── Unit silhouette SVGs (inline, no external files) ─────────────── */
+    var _SVG = (function() {
+        var BG  = '<rect width="280" height="100" fill="#080c14"/>';
+        var GRD = '<g stroke="#14202e" stroke-width="0.5" opacity="0.5">'
+                + '<line x1="0" y1="25" x2="280" y2="25"/>'
+                + '<line x1="0" y1="50" x2="280" y2="50"/>'
+                + '<line x1="0" y1="75" x2="280" y2="75"/>'
+                + '<line x1="70" y1="0" x2="70" y2="100"/>'
+                + '<line x1="140" y1="0" x2="140" y2="100"/>'
+                + '<line x1="210" y1="0" x2="210" y2="100"/>'
+                + '</g>';
+        var OPEN = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 100" '
+                 + 'style="width:100%;height:100%;display:block">';
+        var CLOSE = '</svg>';
+
+        function make(body) { return OPEN + BG + GRD + body + CLOSE; }
+
+        // ── Fighter jet (top-down silhouette) ────────────────────────────
+        var FIGHTER = make(
+            '<g transform="translate(140,50)" fill="#2a5080" stroke="#4a80b8" stroke-width="0.8">'
+          + '<ellipse cx="0" cy="0" rx="5" ry="36"/>'   // fuselage
+          + '<path d="M0,-18 L-36,12 L-28,16 L0,2 L28,16 L36,12 Z"/>'  // main wings
+          + '<path d="M0,27 L-15,38 L-11,40 L0,32 L11,40 L15,38 Z"/>'  // tail fins
+          + '<ellipse cx="0" cy="-22" rx="3" ry="7" fill="#6aaae0" opacity="0.7"/>' // canopy
+          + '<circle cx="0" cy="-36" r="2.5" fill="#6aaae0"/>'          // nose
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#3a6080" '
+          + 'font-size="7" font-family="Consolas,monospace">FIGHTER / STRIKE</text>'
+        );
+
+        // ── AWACS (top-down + rotodome disc) ────────────────────────────
+        var AWACS = make(
+            '<g transform="translate(140,50)" fill="#2a5080" stroke="#4a80b8" stroke-width="0.8">'
+          + '<ellipse cx="0" cy="0" rx="5" ry="40"/>'    // long fuselage
+          + '<path d="M0,-10 L-32,18 L-25,22 L0,6 L25,22 L32,18 Z"/>'  // wings
+          + '<ellipse cx="0" cy="-5" rx="22" ry="7" fill="#1a3060" stroke="#4a80b8"/>'  // rotodome
+          + '<line x1="-22" y1="-5" x2="22" y2="-5" stroke="#4a80b8" stroke-width="1"/>'
+          + '<circle cx="0" cy="-5" r="3" fill="#4a80b8"/>'
+          + '<path d="M0,30 L-10,40 L-7,42 L0,36 L7,42 L10,40 Z" fill="#2a5080"/>'
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#3a6080" '
+          + 'font-size="7" font-family="Consolas,monospace">AWACS / AEW</text>'
+        );
+
+        // ── Ship (side silhouette) ───────────────────────────────────────
+        var SHIP = make(
+            '<g transform="translate(140,50)" fill="#1a4a6a" stroke="#3a7aa0" stroke-width="0.8">'
+          + '<path d="M-70,18 L-60,0 L-30,-5 L30,-5 L60,0 L70,18 L60,22 L-60,22 Z"/>'  // hull
+          + '<rect x="-20" y="-24" width="40" height="22" rx="2"/>'  // superstructure
+          + '<rect x="-8" y="-36" width="16" height="15"/>'           // bridge top
+          + '<line x1="0" y1="-36" x2="0" y2="-50" stroke="#3a7aa0" stroke-width="1.5"/>'  // mast
+          + '<rect x="-6" y="-28" width="12" height="8" fill="#12304a"/>'  // window
+          + '<line x1="-60" y1="0" x2="-70" y2="0" stroke="#3a7aa0" stroke-width="1"/>'  // bow
+          + '<rect x="20" y="-15" width="8" height="12" rx="1" fill="#12304a"/>'  // funnel
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#3a6080" '
+          + 'font-size="7" font-family="Consolas,monospace">NAVAL COMBATANT</text>'
+        );
+
+        // ── Patrol boat (smaller than ship) ─────────────────────────────
+        var PATROL = make(
+            '<g transform="translate(140,55)" fill="#1a4a6a" stroke="#3a7aa0" stroke-width="0.8">'
+          + '<path d="M-45,12 L-38,-2 L-10,-8 L10,-8 L38,-2 L45,12 L38,16 L-38,16 Z"/>'
+          + '<rect x="-10" y="-20" width="20" height="14" rx="2"/>'
+          + '<line x1="0" y1="-20" x2="0" y2="-34" stroke="#3a7aa0" stroke-width="1.5"/>'
+          + '<line x1="-20" y1="-5" x2="-30" y2="-14" stroke="#3a7aa0" stroke-width="1.5"/>'
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#3a6080" '
+          + 'font-size="7" font-family="Consolas,monospace">PATROL CRAFT</text>'
+        );
+
+        // ── Tank (side silhouette) ───────────────────────────────────────
+        var TANK = make(
+            '<g transform="translate(140,52)" fill="#2a4a18" stroke="#4a8030" stroke-width="0.8">'
+          + '<rect x="-42" y="8" width="84" height="20" rx="4"/>'  // hull
+          + '<rect x="-24" y="-12" width="40" height="22" rx="3"/>'  // turret
+          + '<rect x="14" y="-5" width="34" height="5" rx="2"/>'    // barrel
+          + '<ellipse cx="-38" cy="26" rx="10" ry="6" fill="#1a3010"/>'  // track L
+          + '<ellipse cx="38" cy="26" rx="10" ry="6" fill="#1a3010"/>'   // track R
+          + '<rect x="-42" y="20" width="84" height="12" rx="2" fill="#1a3010"/>'  // track body
+          + '<circle cx="-28" cy="26" r="5" fill="#2a4a18" stroke="#3a6020"/>'  // wheel L
+          + '<circle cx="28" cy="26" r="5" fill="#2a4a18" stroke="#3a6020"/>'   // wheel R
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#3a6030" '
+          + 'font-size="7" font-family="Consolas,monospace">MAIN BATTLE TANK</text>'
+        );
+
+        // ── SAM launcher (side view, missiles upward) ────────────────────
+        var SAM = make(
+            '<g transform="translate(140,55)" fill="#1a3a6a" stroke="#3a6ab0" stroke-width="0.8">'
+          + '<rect x="-50" y="10" width="100" height="14" rx="3"/>'    // vehicle hull
+          + '<rect x="-44" y="16" width="90" height="10" rx="2" fill="#0e2448"/>  '  // tracks
+          // Launcher arm elevated
+          + '<rect x="-5" y="-30" width="10" height="44" rx="2" transform="rotate(-5,-5,-30)"/>'
+          // Missiles
+          + '<g fill="#2a5090" stroke="#4a80c0">'
+          + '<rect x="-22" y="-38" width="7" height="28" rx="3"/>'   // missile 1
+          + '<polygon points="-22,-38 -15,-38 -18.5,-46"/>'           // tip 1
+          + '<rect x="-12" y="-42" width="7" height="30" rx="3"/>'   // missile 2
+          + '<polygon points="-12,-42 -5,-42 -8.5,-50"/>'             // tip 2
+          + '<rect x="5" y="-42" width="7" height="30" rx="3"/>'     // missile 3
+          + '<polygon points="5,-42 12,-42 8.5,-50"/>'                // tip 3
+          + '<rect x="15" y="-38" width="7" height="28" rx="3"/>'    // missile 4
+          + '<polygon points="15,-38 22,-38 18.5,-46"/>'              // tip 4
+          + '</g>'
+          // Radar dish
+          + '<ellipse cx="36" cy="-20" rx="16" ry="8" fill="none" stroke="#4a80c0" stroke-width="1.5"/>'
+          + '<line x1="36" y1="-20" x2="36" y2="5" stroke="#4a80c0" stroke-width="1.5"/>'
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#2a4880" '
+          + 'font-size="7" font-family="Consolas,monospace">SAM BATTERY</text>'
+        );
+
+        // ── SHORAD / AAA (short-range air defense) ───────────────────────
+        var SHORAD = make(
+            '<g transform="translate(140,55)" fill="#1a3a6a" stroke="#3a6ab0" stroke-width="0.8">'
+          + '<rect x="-40" y="8" width="80" height="14" rx="3"/>'
+          + '<rect x="-36" y="14" width="72" height="10" rx="2" fill="#0e2448"/>'
+          + '<rect x="-5" y="-5" width="10" height="20" rx="2"/>'
+          // Twin barrels
+          + '<rect x="-10" y="-28" width="6" height="30" rx="2"/>'
+          + '<rect x="4" y="-28" width="6" height="30" rx="2"/>'
+          // Radar
+          + '<ellipse cx="28" cy="-10" rx="12" ry="5" fill="none" stroke="#4a80c0" stroke-width="1.2"/>'
+          + '<line x1="28" y1="-10" x2="28" y2="5" stroke="#4a80c0" stroke-width="1.2"/>'
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#2a4880" '
+          + 'font-size="7" font-family="Consolas,monospace">SHORAD / AAA</text>'
+        );
+
+        // ── Radar / EW site ──────────────────────────────────────────────
+        var RADAR = make(
+            '<g transform="translate(140,55)" fill="#1a3060" stroke="#3a6090" stroke-width="0.8">'
+          // Rotating dish
+          + '<ellipse cx="0" cy="-28" rx="32" ry="14" fill="#0e2040" stroke="#3a6090" stroke-width="1.5"/>'
+          + '<line x1="-32" y1="-28" x2="32" y2="-28" stroke="#4a80a0" stroke-width="0.8"/>'
+          + '<line x1="0" y1="-42" x2="0" y2="-14" stroke="#4a80a0" stroke-width="0.8"/>'
+          + '<ellipse cx="0" cy="-28" rx="10" ry="5" fill="none" stroke="#4a80a0" stroke-width="0.5"/>'
+          // Support mast
+          + '<line x1="0" y1="-14" x2="0" y2="12" stroke="#3a6090" stroke-width="2"/>'
+          // Platform / bunker
+          + '<rect x="-36" y="8" width="72" height="14" rx="2"/>'
+          + '<rect x="-20" y="0" width="40" height="12" rx="2" fill="#0e2040"/>'
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#2a4060" '
+          + 'font-size="7" font-family="Consolas,monospace">RADAR / EW SITE</text>'
+        );
+
+        // ── MLRS (rocket artillery) ──────────────────────────────────────
+        var MLRS = make(
+            '<g transform="translate(140,55)" fill="#2a4018" stroke="#4a7028" stroke-width="0.8">'
+          // Vehicle
+          + '<rect x="-44" y="8" width="88" height="16" rx="3"/>'
+          + '<rect x="-40" y="16" width="80" height="10" rx="2" fill="#1a2c10"/>'
+          // Rocket pod
+          + '<rect x="-30" y="-20" width="60" height="32" rx="2" fill="#1e3414"/>'
+          // Rocket tubes (12)
+          + '<g fill="#0c1c08" stroke="#2a4018">'
+          + '<rect x="-27" y="-17" width="10" height="26" rx="1"/>'
+          + '<rect x="-15" y="-17" width="10" height="26" rx="1"/>'
+          + '<rect x="-3" y="-17" width="10" height="26" rx="1"/>'
+          + '<rect x="9" y="-17" width="10" height="26" rx="1"/>'
+          + '<rect x="21" y="-17" width="8" height="26" rx="1"/>'
+          + '</g>'
+          // Elevation
+          + '<rect x="-6" y="-24" width="12" height="10" fill="#2a4018"/>'
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#3a5020" '
+          + 'font-size="7" font-family="Consolas,monospace">MLRS BATTERY</text>'
+        );
+
+        // ── Infantry ─────────────────────────────────────────────────────
+        var INFANTRY = make(
+            '<g transform="translate(140,50)" fill="#2a4018" stroke="#4a7028" stroke-width="0.8">'
+          // Crossed rifles
+          + '<line x1="-28" y1="-28" x2="28" y2="28" stroke="#5a8030" stroke-width="4" stroke-linecap="round"/>'
+          + '<line x1="28" y1="-28" x2="-28" y2="28" stroke="#5a8030" stroke-width="4" stroke-linecap="round"/>'
+          // Rifle stocks and barrels
+          + '<rect x="-30" y="-32" width="8" height="16" rx="2" fill="#3a5820"/>'
+          + '<rect x="22" y="-32" width="8" height="16" rx="2" fill="#3a5820"/>'
+          + '<rect x="-8" y="20" width="8" height="16" rx="2" fill="#3a5820"/>'
+          + '<rect x="0" y="20" width="8" height="16" rx="2" fill="#3a5820"/>'
+          // Helmet silhouette
+          + '<ellipse cx="0" cy="-8" rx="18" ry="14" fill="#2a4018" stroke="#4a7028"/>'
+          + '<ellipse cx="0" cy="-10" rx="12" ry="10" fill="#1a3010"/>'
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#3a5020" '
+          + 'font-size="7" font-family="Consolas,monospace">INFANTRY UNIT</text>'
+        );
+
+        // ── Logistics / supply truck ──────────────────────────────────────
+        var LOGISTICS = make(
+            '<g transform="translate(140,55)" fill="#3a3020" stroke="#6a5830" stroke-width="0.8">'
+          // Cargo body
+          + '<rect x="-40" y="-18" width="60" height="30" rx="2"/>'
+          // Cab
+          + '<rect x="20" y="-10" width="28" height="22" rx="3"/>'
+          + '<rect x="22" y="-8" width="24" height="14" rx="2" fill="#0e0c08"/>'  // windshield
+          // Chassis
+          + '<rect x="-44" y="12" width="88" height="8" rx="2"/>'
+          // Wheels
+          + '<circle cx="-32" cy="22" r="9" fill="#1a1808" stroke="#4a4020"/>'
+          + '<circle cx="-32" cy="22" r="5" fill="#2a2810"/>'
+          + '<circle cx="16" cy="22" r="9" fill="#1a1808" stroke="#4a4020"/>'
+          + '<circle cx="16" cy="22" r="5" fill="#2a2810"/>'
+          + '<circle cx="36" cy="22" r="9" fill="#1a1808" stroke="#4a4020"/>'
+          + '<circle cx="36" cy="22" r="5" fill="#2a2810"/>'
+          // Supply boxes in cargo
+          + '<rect x="-36" y="-14" width="18" height="12" rx="1" fill="#2a2010"/>'
+          + '<rect x="-14" y="-14" width="18" height="12" rx="1" fill="#2a2010"/>'
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#504020" '
+          + 'font-size="7" font-family="Consolas,monospace">LOGISTICS / SUPPORT</text>'
+        );
+
+        // ── Frigate (more detailed than generic ship) ─────────────────────
+        var FRIGATE = make(
+            '<g transform="translate(140,52)" fill="#1a4060" stroke="#3a7090" stroke-width="0.8">'
+          + '<path d="M-68,16 L-58,-2 L-35,-8 L35,-8 L58,-2 L68,16 L56,20 L-56,20 Z"/>'  // hull
+          + '<rect x="-18" y="-28" width="36" height="24" rx="2"/>'  // main superstructure
+          + '<rect x="-10" y="-40" width="20" height="16"/>'          // bridge
+          + '<rect x="10" y="-26" width="12" height="20" fill="#102030"/>'  // hangar
+          + '<line x1="0" y1="-40" x2="0" y2="-55" stroke="#3a7090" stroke-width="1.5"/>'  // main mast
+          + '<line x1="-4" y1="-48" x2="4" y2="-48" stroke="#3a7090" stroke-width="1"/>'  // yardarm
+          // Gun
+          + '<rect x="-28" y="-20" width="16" height="8" rx="2"/>'
+          + '<rect x="-30" y="-17" width="20" height="5" rx="2"/>'
+          // VLS
+          + '<rect x="-48" y="-14" width="22" height="18" rx="1" fill="#0e2438"/>'
+          // Sonar dome
+          + '<ellipse cx="0" cy="24" rx="10" ry="5" fill="#102030"/>'
+          + '</g>'
+          + '<text x="140" y="94" text-anchor="middle" fill="#2a5070" '
+          + 'font-size="7" font-family="Consolas,monospace">FRIGATE / CORVETTE</text>'
+        );
+
+        // ── Generic (domain-based) ────────────────────────────────────────
+        function generic(unit) {
+            var d = unit.domain || '';
+            var colors = {
+                air: { bg:'#0e1828', stroke:'#4a80b0', text:'#2a4860', label:'AIR UNIT' },
+                sea: { bg:'#0a1820', stroke:'#3a7090', text:'#1a4060', label:'NAVAL UNIT' },
+                ground: { bg:'#0e1408', stroke:'#4a7030', text:'#2a4018', label:'GROUND UNIT' },
+                strategic: { bg:'#180e08', stroke:'#7050a0', text:'#402060', label:'STRATEGIC' }
+            };
+            var c = colors[d] || { bg:'#0e1220', stroke:'#405070', text:'#2a3848', label:'UNIT' };
+            var initial = (unit.label || unit.name || '?').charAt(0).toUpperCase();
+            return OPEN
+                + '<rect width="280" height="100" fill="' + c.bg + '"/>'
+                + GRD
+                + '<circle cx="140" cy="46" r="28" fill="none" stroke="' + c.stroke + '" stroke-width="1.5" opacity="0.6"/>'
+                + '<circle cx="140" cy="46" r="18" fill="none" stroke="' + c.stroke + '" stroke-width="1" opacity="0.4"/>'
+                + '<text x="140" y="54" text-anchor="middle" fill="' + c.stroke + '" '
+                + 'font-size="22" font-weight="bold" font-family="Consolas,monospace">' + initial + '</text>'
+                + '<text x="140" y="82" text-anchor="middle" fill="' + c.text + '" '
+                + 'font-size="7" font-family="Consolas,monospace">' + (d.toUpperCase() || c.label) + '</text>'
+                + CLOSE;
+        }
+
+        return {
+            FIGHTER:   FIGHTER,
+            AWACS:     AWACS,
+            SHIP:      SHIP,
+            PATROL:    PATROL,
+            TANK:      TANK,
+            SAM:       SAM,
+            SHORAD:    SHORAD,
+            RADAR:     RADAR,
+            MLRS:      MLRS,
+            INFANTRY:  INFANTRY,
+            LOGISTICS: LOGISTICS,
+            FRIGATE:   FRIGATE,
+            generic:   generic
+        };
+    })();
+
+    /* Returns the appropriate SVG illustration for a unit */
+    function _unitSvg(unit, enriched) {
+        var kind = enriched && enriched.kind;
+        if (!kind && root.AppWorldStateDB) {
+            try { kind = root.AppWorldStateDB.classifyKind(unit); } catch (_) {}
+        }
+        switch (kind) {
+            // ── Air ──
+            case 'f16c': case 'f15e': case 'mirage2000':
+            case 'mig29': case 'gripen': case 'tornado':
+            case 'air_unit':
+                return _SVG.FIGHTER;
+            case 'awacs':
+                return _SVG.AWACS;
+            // ── Naval ──
+            case 'meko': case 'corvette':
+            case 'naval_combatant':
+                return _SVG.FRIGATE;
+            case 'patrol_boat':
+                return _SVG.PATROL;
+            // ── Ground maneuver ──
+            case 'armor_company':
+                return _SVG.TANK;
+            case 'infantry_bn': case 'ground_maneuver':
+                return _SVG.INFANTRY;
+            case 'mlrs':
+                return _SVG.MLRS;
+            case 'logistics':
+                return _SVG.LOGISTICS;
+            // ── Air defense ──
+            case 'patriot': case 'sam_s300': case 'sam_s75': case 'air_defense':
+                return _SVG.SAM;
+            case 'tor_aads': case 'mistral': case 's1_aaa':
+            case 'aaa_zsu': case 'aaa_23mm':
+                return _SVG.SHORAD;
+            // ── EW / Radar ──
+            case 'ew_site': case 'radar_p37':
+                return _SVG.RADAR;
+            // ── Fallback ──
+            default:
+                return _SVG.generic(unit);
+        }
+    }
+
+    /**
+     * Render the hero symbol area.
+     *
+     * Priority order (real images beat milsymbol):
+     *   1. unit.image_url       — scenario/unit-level real image (explicit field)
+     *   2. enriched.image_asset — DB1 catalog-level locally cached image
+     *   3. milsymbol canvas     — when unit.sidc is valid (no real image available)
+     *   4. SVG silhouette       — final fallback (no real image, no valid SIDC)
+     *
+     * All real images MUST be locally cached paths (offline-safe).
+     * Image load errors fall back silently through the chain to SVG.
+     */
+    function _renderSymbol(unit, enriched, container) {
+        if (!container) return;
+        container.innerHTML = '';
+
+        // 1 + 2. Real cached image — unit-level or DB1 catalog-level
+        var imgSrc = (unit.image_url)
+            || (enriched && enriched.image_asset)
+            || null;
+        if (imgSrc) {
+            _renderRealImage(imgSrc, unit, enriched, container);
+            return;
+        }
+
+        // 3. milsymbol — only when no real image is available
+        if (root.ms && typeof root.ms.Symbol === 'function' && unit.sidc) {
+            try {
+                var sym = new root.ms.Symbol(unit.sidc, { size: 42 });
+                var canvas = sym.getCanvas();
+                if (canvas) {
+                    container.style.background = '#0a1018';
+                    container.appendChild(canvas);
+                    return;
+                }
+            } catch (_) {}
+        }
+
+        // 4. SVG silhouette fallback
+        container.innerHTML = _unitSvg(unit, enriched);
+    }
+
+    /**
+     * Render a real (locally cached) image in the hero container.
+     * Applies a subtle military filter (desaturate + slight darken).
+     * On any load error, silently falls back to the SVG silhouette.
+     * Shows a small attribution line from enriched.image_credit.
+     *
+     * @param {string}  src       - Local asset path e.g. /client/assets/units/xxx.jpg
+     * @param {object}  unit      - Raw unit object
+     * @param {object}  enriched  - DB1-enriched unit (may carry image_credit)
+     * @param {Element} container - #unit-symbol element
+     */
+    function _renderRealImage(src, unit, enriched, container) {
+        // Wrapper keeps position:relative for attribution overlay
+        container.style.position = 'relative';
+        container.style.overflow = 'hidden';
+
+        var img = document.createElement('img');
+        img.alt  = displayUnitName(unit) === '—' ? '' : displayUnitName(unit);
+        img.style.cssText = [
+            'width:100%', 'height:100%',
+            'object-fit:cover', 'object-position:center top',
+            'filter:brightness(0.85) contrast(1.1) saturate(0.65)',
+            'display:block'
+        ].join(';');
+        img.setAttribute('loading', 'lazy');
+        img.setAttribute('decoding', 'async');
+
+        // Graceful degradation — if image fails to load (offline, path wrong, etc.)
+        // fall back to the SVG silhouette without any console noise
+        img.onerror = function() {
+            container.innerHTML = _unitSvg(unit, enriched);
+            container.style.position = '';
+            container.style.overflow = '';
+        };
+
+        img.src = src;
+        container.appendChild(img);
+
+        // Small attribution overlay (bottom-right, non-intrusive)
+        var credit = (enriched && enriched.image_credit) || (unit.image_credit) || '';
+        if (credit) {
+            var attr = document.createElement('div');
+            attr.style.cssText = [
+                'position:absolute', 'bottom:3px', 'right:5px',
+                'font-size:0.52rem', 'font-family:Consolas,monospace',
+                'color:rgba(255,255,255,0.55)',
+                'background:rgba(0,0,0,0.35)', 'padding:1px 4px',
+                'pointer-events:none', 'line-height:1.4',
+                'max-width:90%', 'text-align:right',
+                'white-space:nowrap', 'overflow:hidden', 'text-overflow:ellipsis'
+            ].join(';');
+            attr.textContent = credit;
+            container.appendChild(attr);
+        }
+    }
+
+    // ── Identity ──────────────────────────────────────────────────────
+    // RMOOZ-UNIT-IDENTITY-CONTRACT-A (v2): map the resolver's display_name_source to a
+    // short human label for the "Identity" provenance row.
+    function identitySourceLabel(id) {
+        if (!id) return null;
+        switch (id.source && id.source.display_name_source) {
+            case 'display_name':
+            case 'name_en':
+            case 'name':
+            case 'name_ar':         return tr('usp-identity-authored', 'scenario name');
+            case 'authored':
+            case 'platform_name':
+            case 'platform':        return tr('usp-identity-platform', 'scenario platform');
+            case 'db_lite_exact':
+            case 'db_lite_platform':return tr('usp-identity-dblite-platform', 'DB-Lite platform');
+            case 'document_extracted': return tr('usp-identity-doc', 'document equipment');
+            case 'catalog':         return tr('usp-identity-catalog', 'unit catalog');
+            case 'db_lite_class':   return tr('usp-identity-dblite-class', 'DB-Lite class (fallback)');
+            case 'capability_label':
+            case 'role_capability':
+            case 'generic_fallback':return tr('usp-identity-capability', 'capability (by role)');
+            case 'type_label':      return tr('usp-identity-type', 'type (by role)');
+            case 'tactical_code':   return tr('usp-identity-code', 'tactical code (fallback)');
+            case 'canonical_id':    return tr('usp-identity-id', 'id (fallback)');
+            default:                return tr('usp-identity-unknown', 'unknown');
+        }
+    }
+
+    function populateIdentity(unit, enriched, selectedAt) {
+        var id = (unit && unit.identity) ? unit.identity : resolveIdentity(unit);
+        // A "generic" display name (derived from role/type, no authored or named platform)
+        // is reviewable — the operator should know the name is type-derived, not authored.
+        var generic = !!(id && id.warnings && id.warnings.indexOf('display_name_from_type') >= 0);
+
+        // Platform ID line: canonicalId (stable authored id) + echelon
+        var pidEl = $('usp-platform-id');
+        if (pidEl) {
+            var canon = id ? id.canonicalId : (unit.canonical_id || unit.uid);
+            var parts = [canon, unit.echelon].filter(Boolean).join(' · ');
+            pidEl.textContent = parts || canon || '—';
+        }
+
+        // Platform / type line: domain + the best capability/platform label. typeLabel /
+        // capabilityLabel guarantee this never degrades to a bare UNIT/role token.
+        var ptEl = $('usp-platform-type');
+        if (ptEl) {
+            var domain = unit.domain ? unit.domain.toUpperCase() : '';
+            var label = id
+                ? (id.platformLabel || id.capabilityLabel || id.typeLabel)
+                : (unit.role ? unit.role.replace(/_/g, ' ') : '');
+            ptEl.textContent = (domain ? domain + ' – ' : '') + (label || tr('usp-platform-review', 'unknown — requires review'));
+        }
+
+        // Identity provenance row + (when the name is type-derived) a review chip.
+        var isrcEl = $('usp-identity-source');
+        if (isrcEl) {
+            var srcTxt = identitySourceLabel(id);
+            if (srcTxt) {
+                var chip = generic
+                    ? ' <span class="usp-identity-warn">' + esc(tr('usp-identity-review', 'generic — review')) + '</span>'
+                    : '';
+                isrcEl.innerHTML = '<span class="usp-identity-key">'
+                    + esc(tr('usp-identity-label-key', 'Identity')) + ':</span> '
+                    + esc(srcTxt) + chip;
+                isrcEl.style.display = '';
+            } else {
+                isrcEl.textContent = '';
+                isrcEl.style.display = 'none';
+            }
+        }
+
+        // Canonical id row (stable authored identity, advanced/debug).
+        setText('unit-uid', (id && id.canonicalId) || unit.canonical_id || unit.uid || '—');
+
+        // SIDC (monospace, shown when present)
+        var sidcEl = $('usp-sidc');
+        if (sidcEl) {
+            sidcEl.textContent = (unit.sidc && String(unit.sidc).trim()) || '—';
+            sidcEl.style.display = '';
+        }
+
+        // Tactical / debug code (the R-/B-style registration code) — secondary.
+        var codeEl = $('usp-code');
+        if (codeEl) {
+            var codeVal = (id && id.tacticalCode) || unit.tactical_code || unit.code || '';
+            codeEl.textContent = codeVal || '—';
+            codeEl.style.display = codeVal ? '' : 'none';
+        }
+
+        // MGRS + Lat/Lng position
+        var lat = parseFloat(unit.lat), lng = parseFloat(unit.lng);
+        // Try marker for live position
+        try {
+            if (root.AppAdjudicatorMap && typeof root.AppAdjudicatorMap.getScenarioMarkers === 'function') {
+                var ms = root.AppAdjudicatorMap.getScenarioMarkers();
+                var want = String(unit.id || unit.code || '');
+                var all = [].concat((ms && ms.red) || [], (ms && ms.blue) || []);
+                for (var i = 0; i < all.length; i++) {
+                    var m = all[i];
+                    var uid = m && (m._unitId || (m._unitData && m._unitData.id));
+                    if (uid && String(uid) === want && typeof m.getLatLng === 'function') {
+                        var ll = m.getLatLng();
+                        if (ll) { lat = ll.lat; lng = ll.lng; }
+                        break;
+                    }
+                }
+            }
+        } catch (_) {}
+
+        var mgrsEl = $('usp-mgrs');
+        var latlngEl = $('usp-latlng');
+        if (isFinite(lat) && isFinite(lng)) {
+            // MGRS
+            if (mgrsEl) {
+                try {
+                    if (root.mgrs && typeof root.mgrs.forward === 'function') {
+                        var s = root.mgrs.forward([lng, lat], 5);
+                        var mm = s && s.match(/^(\d{1,2}[A-Z])([A-Z]{2})(\d+)$/);
+                        if (mm) {
+                            var half = mm[3].length / 2;
+                            mgrsEl.textContent = mm[1] + ' ' + mm[2] + ' ' + mm[3].slice(0, half) + ' ' + mm[3].slice(half);
+                        } else {
+                            mgrsEl.textContent = s || '—';
+                        }
+                    } else { mgrsEl.textContent = '—'; }
+                } catch (_) { mgrsEl.textContent = '—'; }
+            }
+            // Lat/Lng
+            if (latlngEl) {
+                var latStr = Math.abs(lat).toFixed(4) + '°' + (lat >= 0 ? 'N' : 'S');
+                var lngStr = Math.abs(lng).toFixed(4) + '°' + (lng >= 0 ? 'E' : 'W');
+                latlngEl.textContent = latStr + '  ' + lngStr;
+            }
+        } else {
+            if (mgrsEl)   mgrsEl.textContent = '—';
+            if (latlngEl) latlngEl.textContent = '—';
+        }
+
+        // Selected at timestamp
+        var selatEl = $('usp-selat');
+        if (selatEl) {
+            try {
+                var _ts = (selectedAt != null && Number.isFinite(+selectedAt)) ? +selectedAt : null;
+                var d   = _ts !== null ? new Date(_ts) : null;
+                if (d && !isNaN(d.getTime())) {
+                    selatEl.textContent = (root.AppShellClock && typeof root.AppShellClock.formatZuluDtg === 'function')
+                        ? root.AppShellClock.formatZuluDtg(d) : d.toISOString();
+                } else {
+                    selatEl.textContent = '—';
+                }
+            } catch (_) { selatEl.textContent = '—'; }
+        }
+    }
+
+    // ── Core stats ────────────────────────────────────────────────────
+    function populateCoreStats(unit, enriched, eventLog) {
+        setText('unit-side', unit.side || '—');
+        setText('usp-course', unit.course != null ? unit.course + '°' : '—');
+        setText('usp-speed',
+            (unit.speed != null ? unit.speed + ' kts' : '—')
+            + (unit.throttle ? ' (' + _capitalise(unit.throttle) + ')' : ''));
+
+        var appliedState = getAppliedState(unit, eventLog);
+        var baselineRead = unit.readiness || 'ready';
+        var appliedRead  = appliedState.readiness;
+        var hasReadDelta = baselineRead !== appliedRead;
+
+        var chip = $('readiness-value');
+        if (chip) {
+            chip.textContent = _formatReadiness(appliedRead);
+            chip.className   = 'usp-readiness-chip ' + appliedRead;
+        }
+        setText('readiness-source',
+            hasReadDelta ? 'Applied (was: ' + _formatReadiness(baselineRead) + ')' : 'Baseline');
+        setText('readiness-data-source', hasReadDelta ? '' : getDataSource(unit, 'readiness'));
+
+        var fillEl = $('usp-readiness-fill');
+        if (fillEl) {
+            var pctMap = { ready: 100, limited: 50, not_ready: 10 };
+            var pct = pctMap[appliedRead] != null ? pctMap[appliedRead] : 0;
+            fillEl.style.width = pct + '%';
+            fillEl.className = 'usp-bar-fill usp-readiness-fill ' + appliedRead;
+        }
+    }
+
+    // ── Systems / supply ──────────────────────────────────────────────
+    function populateSystems(unit, enriched, eventLog) {
+        var appliedState   = getAppliedState(unit, eventLog);
+        var baselineSupply = unit.supply != null ? unit.supply : 0.8;
+        var appliedSupply  = appliedState.supply;
+        var hasSupplyDelta = Math.abs(baselineSupply - appliedSupply) > 0.01;
+        var pct = Math.round(appliedSupply * 100);
+
+        var fillEl = $('supply-fill');
+        if (fillEl) {
+            fillEl.style.width = pct + '%';
+            fillEl.textContent = '';
+            fillEl.classList.remove('supply-amber', 'supply-red');
+            if (pct < 40)      fillEl.classList.add('supply-red');
+            else if (pct < 70) fillEl.classList.add('supply-amber');
+        }
+        setText('supply-pct', pct + '%');
+        setText('supply-source',
+            hasSupplyDelta ? 'Applied (was: ' + Math.round(baselineSupply * 100) + '%)' : 'Baseline');
+        setText('supply-data-source', hasSupplyDelta ? '' : getDataSource(unit, 'supply'));
+    }
+
+    // ── Magazines ─────────────────────────────────────────────────────
+    function populateMagazines(enriched) {
+        var magazines = enriched.magazines || [];
+        var list  = $('magazine-list');
+        var block = $('usp-magazines-block');
+        if (!list) return;
+        list.innerHTML = '';
+        if (!magazines.length) { if (block) block.style.display = 'none'; return; }
+        if (block) block.style.display = '';
+        magazines.forEach(function(mag) {
+            var li = document.createElement('li');
+            var stockStr = formatMagStock(mag.stock);
+            var mount = mag.mount || 'Magazine';
+            li.innerHTML = '<strong>' + mount + '</strong>'
+                + (stockStr ? ' <span style="color:#3a6080;font-size:0.65rem">' + stockStr + '</span>' : '');
+            list.appendChild(li);
+        });
+    }
+
+    // ── Fuel and Ammo ─────────────────────────────────────────────────
+    function populateFuelAmmo(unit, enriched) {
+        var supplyPct = Math.round((unit.supply != null ? unit.supply : 0.8) * 100);
+        var nameEl = $('usp-fuelammo-name');
+        if (nameEl) nameEl.textContent = displayUnitName(unit);
+        var fuelFill = $('usp-fuel-fill');
+        if (fuelFill) fuelFill.style.width = supplyPct + '%';
+        var detail = $('usp-fuelammo-detail');
+        if (detail) {
+            var tags = enriched.doctrine_tags ? enriched.doctrine_tags.slice(0, 3).join(', ') : '';
+            detail.textContent = tags ? '(' + tags + ')' : '';
+        }
+    }
+
+    // ── TASK1-B: unit tasking accessor ────────────────────────────────
+    /**
+     * Look up the current-step tasking record for a unit uid from the
+     * world state derived by AppAdjudicatorMap.
+     *
+     * Priority chain (read-only, no side effects):
+     *   AppAdjudicatorMap.getWorldState()
+     *     → ws.derived.unit_tasking[uid]    (DERIVATIONS['unit_tasking'])
+     *
+     * Returns null when:
+     *   - AppAdjudicatorMap is not loaded (e.g. no scenario on map)
+     *   - No world state projected yet (getWorldState() returns null)
+     *   - Unit has no actor record in the current step
+     *
+     * Callers must treat null as "no tasking available" and fall through
+     * to scenario fields or '—'.
+     *
+     * @param {string} uid - unit.uid
+     * @returns {{ action_what, action_component, component_label, ... }|null}
+     */
+    function _getUnitTasking(uid) {
+        if (!uid) return null;
+        try {
+            var map = root.AppAdjudicatorMap;
+            if (!map || typeof map.getWorldState !== 'function') return null;
+            var ws = map.getWorldState();
+            if (!ws || !ws.derived || !ws.derived.unit_tasking) return null;
+            return ws.derived.unit_tasking[uid] || null;
+        } catch (_) { return null; }
+    }
+
+    // G-4-D: read-only overlay preview indicator source.
+    // Reads only the explicit G-4-C preview path; never writes baseline tasking.
+    function _getUnitTaskingOverlayPreview(uid) {
+        if (!uid) return null;
+        try {
+            var map = root.AppAdjudicatorMap;
+            if (!map || typeof map.getWorldState !== 'function') return null;
+            var ws = map.getWorldState();
+            if (!ws || !ws.derived || !ws.derived.unit_tasking_overlay_preview) return null;
+            return ws.derived.unit_tasking_overlay_preview[uid] || null;
+        } catch (_) { return null; }
+    }
+
+    // G-4-E: read-only dry-run diff viewer source.
+    // The diff must already exist in derived state; this panel never builds,
+    // approves, applies, or persists tasking overlay changes.
+    function _getUnitTaskingOverlayDryRunDiff(uid) {
+        if (!uid) return null;
+        try {
+            var map = root.AppAdjudicatorMap;
+            if (!map || typeof map.getWorldState !== 'function') return null;
+            var ws = map.getWorldState();
+            var derived = ws && ws.derived;
+            if (!derived) return null;
+            var src = derived.unit_tasking_overlay_dry_run_diff
+                || derived.tasking_overlay_dry_run_diff
+                || null;
+            if (!src) return null;
+            if (Array.isArray(src)) {
+                for (var i = 0; i < src.length; i++) {
+                    if (src[i] && (src[i].unit_uid === uid || src[i].uid === uid)) return src[i];
+                }
+                return null;
+            }
+            if (src[uid]) return src[uid];
+            if (src.unit_uid === uid || src.uid === uid) return src;
+            return null;
+        } catch (_) { return null; }
+    }
+
+    // ── Assignment ────────────────────────────────────────────────────
+    // RMOOZ-CMO-1: read-only engagement "why not" evidence accessor.
+    // Reads already-derived World State engagement records only.
+    function _getUnitEngagementWhyNot(uid) {
+        if (!uid) return null;
+        try {
+            var EE = root.AppEngagementEvidence;
+            var map = root.AppAdjudicatorMap;
+            if (!EE || typeof EE.getUnitEngagementWhyNot !== 'function') return null;
+            if (!map || typeof map.getWorldState !== 'function') return null;
+            return EE.getUnitEngagementWhyNot(function () { return map.getWorldState(); }, uid);
+        } catch (_) { return null; }
+    }
+
+    function populateEngagementEvidence(unit) {
+        var block = $('usp-engagement-evidence-block');
+        var body = $('usp-engagement-evidence-body');
+        if (!block || !body) return;
+        var EE = root.AppEngagementEvidence;
+        if (!EE || typeof EE.renderEngagementEvidenceHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var uid = unit && (unit.uid || unit.id || unit.unit_uid);
+        var evidence = _getUnitEngagementWhyNot(uid);
+        body.innerHTML = EE.renderEngagementEvidenceHtml(evidence, { lang: 'ar' });
+        try {
+            if (root.RmoozCmoEvidenceTimeline && typeof root.RmoozCmoEvidenceTimeline.observeEngagement === 'function') {
+                root.RmoozCmoEvidenceTimeline.observeEngagement(uid, evidence);
+            }
+        } catch (_) {}
+        block.removeAttribute('hidden');
+    }
+
+    // RMOOZ-CMO-2: read-only contact freshness evidence.
+    // Reads existing World State contacts only; never computes or changes detection.
+    function _getUnitContactEvidence(uid) {
+        if (!uid) return null;
+        try {
+            var CE = root.AppContactEvidence;
+            var map = root.AppAdjudicatorMap;
+            if (!CE || typeof CE.getUnitContactEvidence !== 'function') return null;
+            if (!map || typeof map.getWorldState !== 'function') return null;
+            return CE.getUnitContactEvidence(function () { return map.getWorldState(); }, uid);
+        } catch (_) { return null; }
+    }
+
+    function _getCurrentWorldState() {
+        var map = root.AppAdjudicatorMap;
+        return map && typeof map.getWorldState === 'function' ? map.getWorldState() : null;
+    }
+
+    function populateEvidenceAlerts(unit) {
+        var block = $('usp-evidence-alerts-block');
+        var body = $('usp-evidence-alerts-body');
+        if (!block || !body) return;
+        var MX = root.RmoozCmoEvidenceReadinessMatrix;
+        var AL = root.RmoozCmoEvidenceAlerts;
+        if (!MX || !AL || typeof MX.buildMatrix !== 'function' || typeof AL.buildAlerts !== 'function' || typeof AL.renderAlertsHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var matrix = MX.buildMatrix(_getCurrentWorldState, { limit: 24 });
+        var alerts = AL.buildAlerts(matrix);
+        body._cmoEvidenceAlerts = alerts;
+        body.innerHTML = AL.renderAlertsHtml(alerts, { lang: 'ar' });
+        if (typeof AL.bindAlertInteractions === 'function') {
+            AL.bindAlertInteractions(body, alerts, {
+                onFilter: function (filter) {
+                    currentMatrixFilter = filter || { status: 'All', reason_code: null };
+                    populateEvidenceReadinessMatrix(unit || currentUnit);
+                }
+            });
+        }
+        block.removeAttribute('hidden');
+    }
+
+    function selectEvidenceUnit(rowOrEvent, source) {
+        if (!rowOrEvent || !root.document || typeof root.document.dispatchEvent !== 'function') return;
+        var unit = rowOrEvent.unit || {
+            uid: rowOrEvent.uid,
+            label: rowOrEvent.unit_label,
+            side: rowOrEvent.side
+        };
+        root.document.dispatchEvent(new CustomEvent('rmooz:unit-selected', {
+            detail: { unit: unit, selectedAt: Date.now(), source: source || 'cmo-evidence' }
+        }));
+    }
+
+    function populateEvidenceQualityGate(unit) {
+        var block = $('usp-evidence-quality-block');
+        var body = $('usp-evidence-quality-body');
+        if (!block || !body) return;
+        var QG = root.RmoozCmoEvidenceQualityGate;
+        if (!QG || typeof QG.buildQualityGate !== 'function' || typeof QG.renderQualityGateHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var quality = QG.buildQualityGate(_getCurrentWorldState, {
+            selected_unit: unit || currentUnit,
+            generated_at: new Date().toISOString()
+        });
+        body._cmoEvidenceQualityGate = quality;
+        body.innerHTML = QG.renderQualityGateHtml(quality);
+        if (typeof QG.bindQualityInteractions === 'function') {
+            QG.bindQualityInteractions(body, quality, {
+                onFilter: function (filter) {
+                    currentMatrixFilter = filter || { status: 'All', reason_code: null };
+                    populateEvidenceReadinessMatrix(unit || currentUnit);
+                }
+            });
+        }
+        block.removeAttribute('hidden');
+    }
+
+    function populateEvidenceReadinessMatrix(unit) {
+        var block = $('usp-evidence-matrix-block');
+        var body = $('usp-evidence-matrix-body');
+        if (!block || !body) return;
+        var MX = root.RmoozCmoEvidenceReadinessMatrix;
+        if (!MX || typeof MX.buildMatrix !== 'function' || typeof MX.renderMatrixHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var matrix = MX.buildMatrix(function () {
+            return _getCurrentWorldState();
+        }, { limit: 24 });
+        body._cmoEvidenceReadinessMatrix = matrix;
+        try {
+            if (root.RmoozCmoForceEvidenceFeed && typeof root.RmoozCmoForceEvidenceFeed.observeMatrix === 'function') {
+                root.RmoozCmoForceEvidenceFeed.observeMatrix(matrix);
+            }
+        } catch (_) {}
+        body.innerHTML = MX.renderMatrixHtml(matrix, { lang: 'ar', filter: currentMatrixFilter });
+        if (typeof MX.bindMatrixInteractions === 'function') {
+            MX.bindMatrixInteractions(body, matrix, {
+                filter: currentMatrixFilter,
+                onFilter: function (filter) { currentMatrixFilter = filter || { status: 'All', reason_code: null }; },
+                onSelectUnit: function (row) { selectEvidenceUnit(row, 'cmo-readiness-matrix'); }
+            });
+        }
+        block.removeAttribute('hidden');
+    }
+
+    function populateForceEvidenceFeed(unit) {
+        var block = $('usp-force-feed-block');
+        var body = $('usp-force-feed-body');
+        if (!block || !body) return;
+        var FF = root.RmoozCmoForceEvidenceFeed;
+        if (!FF || typeof FF.renderFeedHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        body.innerHTML = FF.renderFeedHtml({ lang: 'ar', limit: 7 });
+        if (typeof FF.bindFeedInteractions === 'function') {
+            FF.bindFeedInteractions(body, {
+                onSelectUnit: function (event) { selectEvidenceUnit(event, 'cmo-force-evidence-feed'); }
+            });
+        }
+        block.removeAttribute('hidden');
+    }
+
+    function populateForceEvidenceReport(unit) {
+        var block = $('usp-force-report-block');
+        var body = $('usp-force-report-body');
+        if (!block || !body) return;
+        var RP = root.RmoozCmoForceEvidenceReport;
+        if (!RP || typeof RP.buildReport !== 'function' || typeof RP.renderReportHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var report = RP.buildReport(_getCurrentWorldState, {
+            selected_unit: unit || currentUnit,
+            generated_at: new Date().toISOString()
+        });
+        body._cmoForceEvidenceReport = report;
+        body.innerHTML = RP.renderReportHtml(report);
+        if (typeof RP.bindReportActions === 'function') RP.bindReportActions(body, report);
+        block.removeAttribute('hidden');
+    }
+
+    function populateCommanderBrief(unit) {
+        var block = $('usp-commander-brief-block');
+        var body = $('usp-commander-brief-body');
+        if (!block || !body) return;
+        var CB = root.RmoozCmoCommanderBrief;
+        if (!CB || typeof CB.buildBrief !== 'function' || typeof CB.renderBriefHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var brief = CB.buildBrief(_getCurrentWorldState, unit || currentUnit, {
+            generated_at: new Date().toISOString()
+        });
+        body._cmoCommanderBrief = brief;
+        body.innerHTML = CB.renderBriefHtml(brief, { lang: 'ar' });
+        block.removeAttribute('hidden');
+    }
+
+    function populateEvidenceCoverage(unit) {
+        var block = $('usp-evidence-coverage-block');
+        var body = $('usp-evidence-coverage-body');
+        if (!block || !body) return;
+        var COV = root.RmoozCmoEvidenceCoverage;
+        if (!COV || typeof COV.buildCoverage !== 'function' || typeof COV.renderCoverageHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var coverage = COV.buildCoverage(_getCurrentWorldState, {
+            selected_unit: unit || currentUnit
+        });
+        body._cmoEvidenceCoverage = coverage;
+        body.innerHTML = COV.renderCoverageHtml(coverage, { lang: 'ar' });
+        block.removeAttribute('hidden');
+    }
+
+    function populateBlockerRemediation(unit) {
+        var block = $('usp-blocker-remediation-block');
+        var body = $('usp-blocker-remediation-body');
+        if (!block || !body) return;
+        var REM = root.RmoozCmoBlockerRemediation;
+        if (!REM || typeof REM.buildRemediation !== 'function' || typeof REM.renderRemediationHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var remediation = REM.buildRemediation(_getCurrentWorldState, {
+            selected_unit: unit || currentUnit
+        });
+        body._cmoBlockerRemediation = remediation;
+        body.innerHTML = REM.renderRemediationHtml(remediation, { lang: 'ar' });
+        block.removeAttribute('hidden');
+    }
+
+    function populateAlternativeShooters(unit) {
+        var block = $('usp-alternative-shooters-block');
+        var body = $('usp-alternative-shooters-body');
+        if (!block || !body) return;
+        var ALT = root.RmoozCmoAlternativeShooters;
+        if (!ALT || typeof ALT.buildAlternatives !== 'function' || typeof ALT.renderAlternativesHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var uid = unit && (unit.uid || unit.id || unit.unit_uid);
+        var result = ALT.buildAlternatives(_getCurrentWorldState, uid, {
+            selected_unit: unit || currentUnit
+        });
+        body._cmoAlternativeShooters = result;
+        body.innerHTML = ALT.renderAlternativesHtml(result, { lang: 'ar' });
+        block.removeAttribute('hidden');
+    }
+
+    function populateScenarioCompleteness(unit) {
+        var block = $('usp-scenario-completeness-block');
+        var body = $('usp-scenario-completeness-body');
+        if (!block || !body) return;
+        var SEV = root.RmoozScenarioEvidenceCompleteness;
+        if (!SEV || typeof SEV.buildCompleteness !== 'function' || typeof SEV.renderCompletenessHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var completeness = SEV.buildCompleteness(_getCurrentWorldState, {
+            generated_at: new Date().toISOString()
+        });
+        body._scenarioCompleteness = completeness;
+        body.innerHTML = SEV.renderCompletenessHtml(completeness, { lang: 'ar' });
+        block.removeAttribute('hidden');
+    }
+
+    function populateObjectiveHealth(unit) {
+        var block = $('usp-objective-health-block');
+        var body = $('usp-objective-health-body');
+        if (!block || !body) return;
+        var OH = root.RmoozObjectiveXEvidenceHealth;
+        if (!OH || typeof OH.buildObjectiveHealth !== 'function' || typeof OH.renderObjectiveHealthHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var health = OH.buildObjectiveHealth(_getCurrentWorldState, {
+            generated_at: new Date().toISOString()
+        });
+        body._objectiveHealth = health;
+        body.innerHTML = OH.renderObjectiveHealthHtml(health, { lang: 'ar' });
+        block.removeAttribute('hidden');
+    }
+
+    // QA-30/31: scenario evidence review queue with one-click drilldown that
+    // reuses the panel's existing unit-selection + matrix-filter flows.
+    function populateScenarioReviewQueue(unit) {
+        var block = $('usp-review-queue-block');
+        var body = $('usp-review-queue-body');
+        if (!block || !body) return;
+        var RQ = root.RmoozScenarioEvidenceReviewQueue;
+        if (!RQ || typeof RQ.buildReviewQueue !== 'function' || typeof RQ.renderQueueHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var queue = RQ.buildReviewQueue(_getCurrentWorldState, {
+            generated_at: new Date().toISOString()
+        });
+        body._scenarioReviewQueue = queue;
+        body.innerHTML = RQ.renderQueueHtml(queue, { lang: 'ar' });
+        if (typeof RQ.bindQueueInteractions === 'function') {
+            RQ.bindQueueInteractions(body, queue, {
+                onSelectIssue: function (issue, intent) {
+                    intent = intent || (typeof RQ.resolveDrilldownIntent === 'function'
+                        ? RQ.resolveDrilldownIntent(issue && issue.reason)
+                        : {});
+                    intent = intent || {};
+                    // 1. Prime the matrix filter (module-scoped, honoured on repopulate).
+                    if (intent.matrix_filter) {
+                        currentMatrixFilter = intent.matrix_filter;
+                    }
+                    // 2. Focus the affected unit — reuses the existing selection event,
+                    //    which repopulates the whole panel (matrix included, filter applied).
+                    if (intent.select_unit && issue && issue.uid) {
+                        selectEvidenceUnit({ uid: issue.uid, unit_label: issue.label, side: issue.side }, 'scenario-review-queue');
+                    } else if (intent.matrix_filter) {
+                        populateEvidenceReadinessMatrix(unit || currentUnit);
+                    }
+                    // 3. Bring the relevant evidence section into view.
+                    if (intent.scroll_to) {
+                        var target = $(intent.scroll_to);
+                        if (target && typeof target.scrollIntoView === 'function') {
+                            try { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+                            catch (_) { target.scrollIntoView(); }
+                        }
+                    }
+                }
+            });
+        }
+        block.removeAttribute('hidden');
+    }
+
+    function populateContactEvidence(unit) {
+        var block = $('usp-contact-evidence-block');
+        var body = $('usp-contact-evidence-body');
+        if (!block || !body) return;
+        var CE = root.AppContactEvidence;
+        if (!CE || typeof CE.renderContactEvidenceHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var uid = unit && (unit.uid || unit.id || unit.unit_uid);
+        var evidence = _getUnitContactEvidence(uid);
+        body.innerHTML = CE.renderContactEvidenceHtml(evidence, { lang: 'ar' });
+        try {
+            if (root.RmoozCmoEvidenceTimeline && typeof root.RmoozCmoEvidenceTimeline.observeContact === 'function') {
+                root.RmoozCmoEvidenceTimeline.observeContact(uid, evidence);
+            }
+        } catch (_) {}
+        block.removeAttribute('hidden');
+    }
+
+    // RMOOZ-CMO-3: read-only sensor-to-shooter decision chain.
+    // Aggregates existing CMO-1/CMO-2 evidence only.
+    function _getUnitDecisionChainEvidence(uid) {
+        if (!uid) return null;
+        try {
+            var DC = root.AppDecisionChainEvidence;
+            var map = root.AppAdjudicatorMap;
+            if (!DC || typeof DC.getUnitDecisionChainEvidence !== 'function') return null;
+            if (!map || typeof map.getWorldState !== 'function') return null;
+            return DC.getUnitDecisionChainEvidence(function () { return map.getWorldState(); }, uid);
+        } catch (_) { return null; }
+    }
+
+    function populateDecisionChainEvidence(unit) {
+        var block = $('usp-chain-evidence-block');
+        var body = $('usp-chain-evidence-body');
+        if (!block || !body) return;
+        var DC = root.AppDecisionChainEvidence;
+        if (!DC || typeof DC.renderDecisionChainEvidenceHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var uid = unit && (unit.uid || unit.id || unit.unit_uid);
+        var evidence = _getUnitDecisionChainEvidence(uid);
+        body.innerHTML = DC.renderDecisionChainEvidenceHtml(evidence, { lang: 'ar' });
+        try {
+            if (root.RmoozCmoEvidenceTimeline && typeof root.RmoozCmoEvidenceTimeline.observeDecision === 'function') {
+                root.RmoozCmoEvidenceTimeline.observeDecision(uid, evidence);
+            }
+        } catch (_) {}
+        block.removeAttribute('hidden');
+    }
+
+    function populateEvidenceRecommendations(unit) {
+        var block = $('usp-evidence-recommendations-block');
+        var body = $('usp-evidence-recommendations-body');
+        if (!block || !body) return;
+        var REC = root.RmoozCmoEvidenceRecommendations;
+        if (!REC || typeof REC.buildRecommendations !== 'function' || typeof REC.renderRecommendationsHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var uid = unit && (unit.uid || unit.id || unit.unit_uid);
+        var evidence = _getUnitDecisionChainEvidence(uid);
+        var recommendations = REC.buildRecommendations(evidence);
+        body._cmoEvidenceRecommendations = recommendations;
+        body.innerHTML = REC.renderRecommendationsHtml(recommendations, { lang: 'ar' });
+        block.removeAttribute('hidden');
+    }
+
+    function populateEvidenceTimeline(unit) {
+        var block = $('usp-evidence-timeline-block');
+        var body = $('usp-evidence-timeline-body');
+        if (!block || !body) return;
+        var TL = root.RmoozCmoEvidenceTimeline;
+        if (!TL || typeof TL.renderTimelineHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var uid = unit && (unit.uid || unit.id || unit.unit_uid);
+        body.innerHTML = TL.renderTimelineHtml(uid, { lang: 'ar', limit: 6 });
+        block.removeAttribute('hidden');
+    }
+
+    function populateEvidenceExport(unit) {
+        var block = $('usp-evidence-export-block');
+        var body = $('usp-evidence-export-body');
+        if (!block || !body) return;
+        var EX = root.RmoozCmoEvidenceExport;
+        if (!EX || typeof EX.buildSnapshot !== 'function' || typeof EX.renderExportHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var map = root.AppAdjudicatorMap;
+        var snapshot = EX.buildSnapshot(function () {
+            return map && typeof map.getWorldState === 'function' ? map.getWorldState() : null;
+        }, unit);
+        body._cmoEvidenceSnapshot = snapshot;
+        body.innerHTML = EX.renderExportHtml(snapshot, { lang: 'ar' });
+        bindEvidenceExportActions(body, snapshot);
+        block.removeAttribute('hidden');
+    }
+
+    function bindEvidenceExportActions(body, snapshot) {
+        if (!body || !body.querySelectorAll) return;
+        var buttons = body.querySelectorAll('[data-cmo-export-action]');
+        Array.prototype.forEach.call(buttons, function (btn) {
+            btn.addEventListener('click', function () {
+                var action = btn.getAttribute('data-cmo-export-action');
+                if (!root.RmoozCmoEvidenceExport) return;
+                if (action === 'json' && typeof root.RmoozCmoEvidenceExport.copyJson === 'function') {
+                    root.RmoozCmoEvidenceExport.copyJson(snapshot);
+                } else if (action === 'summary' && typeof root.RmoozCmoEvidenceExport.copySummary === 'function') {
+                    root.RmoozCmoEvidenceExport.copySummary(snapshot);
+                } else if (action === 'download' && typeof root.RmoozCmoEvidenceExport.downloadJson === 'function') {
+                    root.RmoozCmoEvidenceExport.downloadJson(snapshot);
+                } else if (action === 'print' && typeof root.RmoozCmoEvidenceExport.printSnapshot === 'function') {
+                    root.RmoozCmoEvidenceExport.printSnapshot(snapshot);
+                }
+            });
+        });
+    }
+
+    function populateAssignment(unit) {
+        // Read current-step tasking record (null = no actor for this unit this step)
+        var uid = unit.uid || unit.id;
+        var tasking = _getUnitTasking(uid);
+        var overlayPreview = _getUnitTaskingOverlayPreview(uid);
+        var overlayDiff = _getUnitTaskingOverlayDryRunDiff(uid);
+
+        setText('unit-domain',  unit.domain  || '—');
+        setText('unit-role',    unit.role ? unit.role.replace(/_/g, ' ') : '—');
+        setText('unit-echelon', unit.echelon || '—');
+
+        // Assigned base: unit-level override → BLS reference → 'None'
+        setText('usp-assigned-base',
+            unit.assigned_base || unit.base || unit.bls || 'None');
+
+        // Status row: component label from tasking → unit.status → unit.posture → '—'
+        setText('usp-unit-status',
+            (tasking && (tasking.component_label || tasking.action_component))
+            || unit.status || unit.posture || '—');
+
+        // Mission row: action_what from tasking → unit.mission → unit.objective → '—'
+        var missionText = (tasking && tasking.action_what)
+            || unit.mission || unit.objective || '—';
+        var mEl = $('usp-mission');
+        if (mEl) {
+            mEl.textContent = missionText;
+            mEl.className = 'usp-arow-val'
+                + (missionText !== '—' ? ' usp-link' : '');
+            if (tasking && tasking.action_what) {
+                mEl.title = (tasking.phase ? '[' + tasking.phase + '] ' : '')
+                           + 'Step ' + (tasking.step_index != null ? tasking.step_index + 1 : '?');
+            } else {
+                mEl.title = '';
+            }
+        }
+
+        // ── TASK1-C: populate Current Orders detail block ────────────────
+        _populateTaskingDetails(tasking, overlayPreview, overlayDiff);
+    }
+
+    /**
+     * Populate the collapsible "CURRENT ORDERS" detail block.
+     * Shows: step/phase label, action_why, action_intended_effect,
+     *        action_doctrine_cited[] (joined with ' · ').
+     * Hides the entire block when tasking, overlayPreview, and overlayDiff are null.
+     * Each row shown only when its value is a non-empty string.
+     * Read-only; never mutates tasking or any scenario data.
+     *
+     * @param {{action_why, action_intended_effect, action_doctrine_cited[],
+     *           step_index, phase}|null} tasking
+     * @param {{source, read_only, overlay_only, baseline_mutation}|null} overlayPreview
+     * @param {{before, after, blocked_reasons, step_index, phase}|null} overlayDiff
+     */
+    function _populateTaskingDetails(tasking, overlayPreview, overlayDiff) {
+        var block = $('usp-tasking-block');
+        if (!block) return;
+
+        if (!tasking && !overlayPreview && !overlayDiff) {
+            block.setAttribute('hidden', '');
+            return;
+        }
+
+        // Step / phase label in section header
+        var stepLabel = '';
+        if (tasking && tasking.phase) {
+            stepLabel = tasking.phase;
+            if (tasking.step_index != null) {
+                stepLabel = 'Step ' + (tasking.step_index + 1) + ' \xb7 ' + stepLabel;
+            }
+        } else if (tasking && tasking.step_index != null) {
+            stepLabel = 'Step ' + (tasking.step_index + 1);
+        }
+        setText('usp-tasking-step', stepLabel ? ' – ' + stepLabel : '');
+
+        _populateTaskingOverlayPreview(overlayPreview);
+        _populateTaskingOverlayDryRunDiff(overlayDiff);
+
+        // Why row
+        _setTaskingRow('usp-tasking-why-row', 'usp-tasking-why', tasking && tasking.action_why);
+
+        // Intended Effect row
+        _setTaskingRow('usp-tasking-effect-row', 'usp-tasking-effect', tasking && tasking.action_intended_effect);
+
+        // Doctrine row — join array cleanly with ' · '
+        var docArr = tasking && Array.isArray(tasking.action_doctrine_cited)
+            ? tasking.action_doctrine_cited.filter(function(d) { return d && String(d).trim(); })
+            : [];
+        var docText = docArr.length ? docArr.join(' \xb7 ') : null;
+        _setTaskingRow('usp-tasking-doctrine-row', 'usp-tasking-doctrine', docText);
+
+        // Show block only if at least one row is visible
+        var anyVisible = !!(
+            overlayPreview ||
+            overlayDiff ||
+            (tasking && tasking.action_why && String(tasking.action_why).trim()) ||
+            (tasking && tasking.action_intended_effect && String(tasking.action_intended_effect).trim()) ||
+            docArr.length
+        );
+        if (anyVisible) {
+            block.removeAttribute('hidden');
+        } else {
+            block.setAttribute('hidden', '');
+        }
+    }
+
+    function _populateTaskingOverlayPreview(overlayPreview) {
+        var row = $('usp-tasking-overlay-row');
+        var val = $('usp-tasking-overlay');
+        if (!row) return;
+        if (!overlayPreview) {
+            row.setAttribute('hidden', '');
+            if (val) val.textContent = '';
+            return;
+        }
+        var source = overlayPreview.source || {};
+        var sourceLabel = source.kind || 'g4_tasking_overlay';
+        var baselineMutation = (overlayPreview.baseline_mutation === false || source.baseline_mutation === false)
+            ? 'false' : String(overlayPreview.baseline_mutation);
+        var readOnly = (overlayPreview.read_only === true || source.read_only === true);
+        var overlayOnly = (overlayPreview.overlay_only === true || source.overlay_only === true);
+        if (val) {
+            val.textContent = 'Overlay preview available · source: ' + sourceLabel
+                + ' · baseline_mutation:' + baselineMutation
+                + (readOnly ? ' · read_only:true' : '')
+                + (overlayOnly ? ' · overlay_only:true' : '');
+        }
+        row.removeAttribute('hidden');
+    }
+
+    var _G4_TASKING_DIFF_FIELDS = [
+        'action_component',
+        'action_what',
+        'action_why',
+        'action_intended_effect',
+        'action_doctrine_cited'
+    ];
+
+    function _formatTaskingDiffValue(value) {
+        if (Array.isArray(value)) {
+            var list = value.map(function (v) { return String(v == null ? '' : v).trim(); })
+                .filter(Boolean);
+            return list.length ? list.join(' / ') : '-';
+        }
+        if (value == null || String(value).trim() === '') return '-';
+        return String(value);
+    }
+
+    function _formatTaskingDiffLine(field, before, after) {
+        return field + ': ' + _formatTaskingDiffValue(before && before[field])
+            + ' -> ' + _formatTaskingDiffValue(after && after[field]);
+    }
+
+    function _forbiddenTaskingDiffWarnings(diff) {
+        var warnings = [];
+        var reasons = Array.isArray(diff && diff.blocked_reasons) ? diff.blocked_reasons : [];
+        reasons.forEach(function (reason) {
+            var text = String(reason || '');
+            if (text.indexOf('forbidden_field:') === 0) warnings.push(text);
+        });
+        var fields = Array.isArray(diff && diff.forbidden_fields) ? diff.forbidden_fields : [];
+        fields.forEach(function (field) {
+            var text = String(field || '').trim();
+            if (text) warnings.push('forbidden_field:' + text);
+        });
+        return warnings;
+    }
+
+    function _populateTaskingOverlayDryRunDiff(diff) {
+        var row = $('usp-tasking-diff-row');
+        var val = $('usp-tasking-diff');
+        if (!row) return;
+        if (!diff) {
+            row.setAttribute('hidden', '');
+            if (val) val.textContent = '';
+            return;
+        }
+
+        var before = diff.before || {};
+        var after = diff.after || {};
+        var lines = [
+            'Dry-run diff viewer',
+            'read_only:true / overlay_only:true / baseline_mutation:false'
+        ];
+        _G4_TASKING_DIFF_FIELDS.forEach(function (field) {
+            lines.push(_formatTaskingDiffLine(field, before, after));
+        });
+        lines.push('step_index: ' + _formatTaskingDiffValue(diff.step_index));
+        lines.push('phase: ' + _formatTaskingDiffValue(diff.phase));
+        var warnings = _forbiddenTaskingDiffWarnings(diff);
+        if (warnings.length) lines.push('Forbidden-field warnings: ' + warnings.join(' / '));
+
+        if (val) val.textContent = lines.join('\n');
+        row.removeAttribute('hidden');
+    }
+    /**
+     * Show/hide a single tasking detail row.
+     * @param {string} rowId  - element id of the row div
+     * @param {string} valId  - element id of the value span
+     * @param {string|null} text - value to display (null/empty → hide row)
+     */
+    function _setTaskingRow(rowId, valId, text) {
+        var row = $(rowId), val = $(valId);
+        if (!row) return;
+        var trimmed = text && String(text).trim();
+        if (trimmed) {
+            if (val) val.textContent = trimmed;
+            row.removeAttribute('hidden');
+        } else {
+            row.setAttribute('hidden', '');
+        }
+    }
+
+    // ── Sensors tab ───────────────────────────────────────────────────
+    function populateSensors(unit, sourceLabel) {
+        var sensors    = unit.sensors || [];
+        var list       = $('sensor-list');
+        var emptyState = $('sensors-empty');
+        var countEl    = $('sensor-count');
+        if (countEl) countEl.textContent = sensors.length ? '[' + sensors.length + ']' : '';
+        if (!list) return;
+        list.innerHTML = '';
+        if (!sensors.length) {
+            if (emptyState) emptyState.removeAttribute('hidden');
+            return;
+        }
+        if (emptyState) emptyState.setAttribute('hidden', '');
+        sensors.forEach(function(sensor) {
+            var li = document.createElement('li');
+            var emconPart = sensor.emcon ? ' · emcon: ' + sensor.emcon : '';
+            var detailParts = sensor.label
+                ? [sensor.class].filter(Boolean)
+                : [sensor.type, sensor.class].filter(Boolean);
+            var detail = detailParts.join(' · ') + emconPart;
+            li.innerHTML = '<strong>' + (sensor.label || sensor.id || '—') + '</strong>'
+                + (detail ? '<br><span>' + detail + '</span>' : '');
+            list.appendChild(li);
+        });
+        if (sourceLabel) {
+            var src = document.createElement('li');
+            src.className = 'capability-source';
+            src.textContent = 'Source: ' + sourceLabel;
+            list.appendChild(src);
+        }
+    }
+
+    // ── Weapons tab ───────────────────────────────────────────────────
+    function populateWeapons(unit, sourceLabel) {
+        var weapons    = unit.weapons || [];
+        var list       = $('weapon-list');
+        var emptyState = $('weapons-empty');
+        var countEl    = $('weapon-count');
+        if (countEl) countEl.textContent = weapons.length ? '[' + weapons.length + ']' : '';
+        if (!list) return;
+        list.innerHTML = '';
+        if (!weapons.length) {
+            if (emptyState) emptyState.removeAttribute('hidden');
+            return;
+        }
+        if (emptyState) emptyState.setAttribute('hidden', '');
+        weapons.forEach(function(weapon) {
+            var li = document.createElement('li');
+            var mountPart = weapon.mount ? ' · ' + weapon.mount : '';
+            li.innerHTML = '<strong>' + (weapon.label || weapon.id || '—') + '</strong>'
+                + (weapon.class ? '<br><span>' + weapon.class + mountPart + '</span>' : '');
+            list.appendChild(li);
+        });
+        if (sourceLabel) {
+            var src = document.createElement('li');
+            src.className = 'capability-source';
+            src.textContent = 'Source: ' + sourceLabel;
+            list.appendChild(src);
+        }
+    }
+
+    // ── Speed / Throttle ─────────────────────────────────────────────
+    function populateSpeed(unit) {
+        var alt = unit.altitude != null
+            ? unit.altitude + (unit.altitude_unit || ' ft')
+            : (unit.domain === 'air' ? 'Airborne' : '—');
+        setText('usp-altitude', alt);
+        setText('usp-speed-val', unit.speed != null ? unit.speed + ' kts' : '—');
+        var throttleState = (unit.throttle || '').toLowerCase();
+        var btns = document.querySelectorAll('#usp-throttle-btns .usp-throttle-btn');
+        btns.forEach(function(btn) {
+            var t = btn.getAttribute('data-throttle');
+            btn.classList.toggle('usp-throttle-btn--active',
+                throttleState ? t === throttleState : t === 'cruise');
+        });
+    }
+
+    // ── Fuel section ─────────────────────────────────────────────────
+    function populateFuelSection(unit, enriched) {
+        var nameEl = $('usp-fuel-unit-name');
+        if (nameEl) nameEl.textContent = displayUnitName(unit);
+        var fuelPct = unit.fuel != null
+            ? Math.round(Math.min(1, Math.max(0, unit.fuel)) * 100)
+            : Math.round((unit.supply != null ? unit.supply : 0.8) * 100);
+        var fuelBar = $('usp-fuel-bar');
+        if (fuelBar) fuelBar.style.width = fuelPct + '%';
+        var fuelTextEl = $('usp-fuel-text');
+        if (fuelTextEl) {
+            var remaining = unit.fuel_remaining
+                ? unit.fuel_remaining + ' fuel units remaining'
+                : fuelPct + '% fuel remaining';
+            var fuelType = unit.fuel_type || (unit.domain === 'air' ? 'AvGas' : 'DieselFuel');
+            fuelTextEl.innerHTML = remaining
+                + '<br><span style="color:#253848">' + fuelType + '</span>';
+        }
+    }
+
+    // ── EMCON ─────────────────────────────────────────────────────────
+    function populateEMCON(enriched) {
+        var stateEl = $('usp-emcon-state');
+        if (!stateEl) return;
+        var sensors = enriched.sensors || [];
+        var active  = sensors.filter(function(s) {
+            return s.emcon === 'active' || s.emcon === 'always';
+        });
+        stateEl.textContent = !sensors.length ? '' :
+            active.length === sensors.length
+                ? 'All sensors ACTIVE (' + sensors.length + ')'
+                : active.length + ' / ' + sensors.length + ' sensors active';
+    }
+
+    // ── State deltas ──────────────────────────────────────────────────
+    function populateDeltas(unit, eventLog) {
+        var deltas  = extractDeltasForUnit(eventLog, unit.uid);
+        var section = $('deltas-section');
+        var list    = $('delta-list');
+        var empty   = $('deltas-empty');
+        var countEl = $('delta-count');
+        var recent  = deltas.slice(-5).reverse();
+        if (!recent.length) { if (section) section.setAttribute('hidden', ''); return; }
+        if (section) section.removeAttribute('hidden');
+        if (countEl) countEl.textContent = '[' + recent.length + ']';
+        if (!list) return;
+        list.innerHTML = '';
+        recent.forEach(function(delta) {
+            var li = document.createElement('li');
+            var before = delta.value_before !== undefined ? String(delta.value_before) : '?';
+            var after  = delta.value_after  !== undefined ? String(delta.value_after)  : '?';
+            var ts     = delta.timestamp || delta.time || '';
+            li.innerHTML = '<strong>' + (delta.delta_type || '?') + ':</strong> '
+                + before + ' → ' + after
+                + (ts ? '<span class="delta-timestamp">' + ts + '</span>' : '');
+            list.appendChild(li);
+        });
+        if (empty) empty.setAttribute('hidden', '');
+    }
+
+    // ── Tabs ──────────────────────────────────────────────────────────
+    function setupTabs() {
+        var panel = $('unit-status-panel');
+        if (!panel) return;
+        panel.querySelectorAll('.usp-tab').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var tabId = btn.getAttribute('data-tab');
+                if (!tabId) return;
+                panel.querySelectorAll('.usp-tab').forEach(function(b) {
+                    b.classList.remove('usp-tab--active');
+                });
+                panel.querySelectorAll('.usp-tab-pane').forEach(function(p) {
+                    p.classList.remove('usp-tab-pane--active');
+                });
+                btn.classList.add('usp-tab--active');
+                var pane = document.getElementById(tabId);
+                if (pane) pane.classList.add('usp-tab-pane--active');
+            });
+        });
+    }
+
+    // ── Collapsible toggles ───────────────────────────────────────────
+    function setupSectionToggles() {
+        document.querySelectorAll('.usp-collapse-btn').forEach(function(btn) {
+            var fresh = btn.cloneNode(true);
+            if (btn.parentNode) btn.parentNode.replaceChild(fresh, btn);
+            fresh.addEventListener('click', function(e) {
+                e.preventDefault();
+                var cid = fresh.getAttribute('aria-controls');
+                var target = cid ? document.getElementById(cid) : null;
+                if (!target) return;
+                var expanded = fresh.getAttribute('aria-expanded') === 'true';
+                fresh.setAttribute('aria-expanded', !expanded);
+                target.setAttribute('data-collapsed', expanded ? 'true' : 'false');
+            });
+        });
+    }
+
+    // ── Event listeners ───────────────────────────────────────────────
+    // ── Collapse / reopen tab ─────────────────────────────────────────
+    function _showReopenTab(show) {
+        var tab = $('usp-reopen-tab');
+        if (!tab) return;
+        if (show) tab.removeAttribute('hidden');
+        else      tab.setAttribute('hidden', '');
+    }
+
+    function collapsePanel() {
+        var p = $('unit-status-panel');
+        if (p) p.setAttribute('hidden', '');
+        _showReopenTab(!!currentUnit);   // show reopen only when a unit was selected
+    }
+
+    function expandPanel() {
+        var p = $('unit-status-panel');
+        if (p) p.removeAttribute('hidden');
+        _showReopenTab(false);
+    }
+
+    function setupListeners() {
+        var closeBtn = $('panel-close');
+        if (closeBtn) closeBtn.addEventListener('click', closePanel);
+
+        var collapseTab = $('usp-collapse-tab');
+        if (collapseTab) collapseTab.addEventListener('click', function() {
+            var p = $('unit-status-panel');
+            if (p && !p.hasAttribute('hidden')) {
+                collapsePanel();
+            } else {
+                expandPanel();
+                if (currentUnit) {
+                    var b = $('usp-body'), e = $('empty-state');
+                    if (b) b.removeAttribute('hidden');
+                    if (e) e.setAttribute('hidden', '');
+                }
+            }
+        });
+
+        var reopenTab = $('usp-reopen-tab');
+        if (reopenTab) reopenTab.addEventListener('click', function() {
+            expandPanel();
+            if (currentUnit) {
+                var b = $('usp-body'), e = $('empty-state');
+                if (b) b.removeAttribute('hidden');
+                if (e) e.setAttribute('hidden', '');
+            }
+        });
+
+        document.addEventListener('rmooz:unit-selected', function(e) {
+            var unit = e.detail && e.detail.unit;
+            var selectedAt = (e.detail && e.detail.selectedAt) || Date.now();
+            if (unit) {
+                populatePanel(unit, selectedAt);
+                expandPanel();   // expand (show panel, hide reopen tab)
+            }
+        });
+    }
+
+    // ── Init ──────────────────────────────────────────────────────────
+    function init() {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                setupListeners(); setupTabs();
+            });
+        } else {
+            setupListeners(); setupTabs();
+        }
+    }
+
+    root.AppUnitStatusPanel = {
+        openPanel: openPanel,
+        closePanel: closePanel,
+        populatePanel: populatePanel,
+        displayUnitName: displayUnitName,   // FIX-B (D): exposed for tests / reuse
+        getCurrentUnit: function() { return currentUnit; }
+    };
+    init();
+
+})(window);

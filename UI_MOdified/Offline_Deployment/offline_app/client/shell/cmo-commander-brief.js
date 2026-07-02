@@ -8,7 +8,7 @@
 (function (root) {
     'use strict';
 
-    var CMO_COMMANDER_BRIEF_VERSION = '1.0.0-rmooz-cmo-21';
+    var CMO_COMMANDER_BRIEF_VERSION = '1.1.0-rmooz-cmo-21-qa32';
 
     var HEADLINE_STATUS = {
         ready_for_review: {
@@ -58,6 +58,8 @@
     function alertsApi()     { return localApi('RmoozCmoEvidenceAlerts',         'cmo-evidence-alerts.js'); }
     function coverageApi()   { return localApi('RmoozCmoEvidenceCoverage',       'cmo-evidence-coverage.js'); }
     function remediationApi(){ return localApi('RmoozCmoBlockerRemediation',     'cmo-blocker-remediation.js'); }
+    function reviewQueueApi(){ return localApi('RmoozScenarioEvidenceReviewQueue','scenario-evidence-review-queue.js'); }
+    function objectiveApi()  { return localApi('RmoozObjectiveXEvidenceHealth',    'objective-x-evidence-health.js'); }
 
     function resolveHeadlineStatus(coverage, quality, alertCount, readyCount, totalCount) {
         var coveragePct = coverage && coverage.coverage_pct != null ? coverage.coverage_pct : 0;
@@ -101,6 +103,18 @@
             ? REM.buildRemediation(ws, { matrix: matrix })
             : { total_blocked: 0, top_blocker: null, groups: [] });
 
+        // QA-32: fold scenario QA (review queue + Objective X health) into the brief.
+        var RQ = reviewQueueApi();
+        var OH = objectiveApi();
+        var objHealth = opts.objective_health || (OH && typeof OH.buildObjectiveHealth === 'function'
+            ? OH.buildObjectiveHealth(ws, { matrix: matrix })
+            : null);
+        // Reuse the already-built matrix + objective health so buildReviewQueue
+        // doesn't recompute Objective X health a second time per brief.
+        var reviewQueue = opts.review_queue || (RQ && typeof RQ.buildReviewQueue === 'function'
+            ? RQ.buildReviewQueue(ws, { matrix: matrix, objective_health: objHealth })
+            : null);
+
         var alertList = arr(alerts.alerts || []);
         var alertCount = alertList.length;
         var counts = obj(matrix.counts || coverage);
@@ -143,8 +157,14 @@
                 label_ar: topBlocker.label_ar || null
             } : null,
             remediation_groups: arr(remediation.groups).length,
+            scenario_qa: {
+                needs_review: reviewQueue ? (reviewQueue.total_issues > 0 || reviewQueue.needs_review > 0) : false,
+                evidence_issues: reviewQueue ? (reviewQueue.total_issues || 0) : 0,
+                units_flagged: reviewQueue ? (reviewQueue.units_flagged || 0) : 0,
+                objective_health_pct: objHealth ? (objHealth.health_score == null ? null : objHealth.health_score) : null
+            },
             selected_unit: selectedSummary,
-            source: 'Coverage + quality-gate + alerts + matrix — commander summary'
+            source: 'Coverage + quality-gate + alerts + matrix + scenario QA — commander summary'
         };
     }
 
@@ -174,6 +194,16 @@
         }
         if (brief.remediation_groups > 0) {
             html += '<div class="usp-brief-cell"><dt>Blocker Groups</dt><dd>' + esc(brief.remediation_groups) + '</dd></div>';
+        }
+        var qa = obj(brief.scenario_qa);
+        if (brief.scenario_qa) {
+            var qaCls = qa.needs_review ? 'usp-brief-fail' : 'usp-brief-pass';
+            html += '<div class="usp-brief-cell"><dt>Scenario QA</dt><dd class="' + qaCls + '">' +
+                (qa.needs_review ? 'Needs Review' : 'Clear') +
+                ' &mdash; ' + esc(qa.evidence_issues || 0) + ' issue' + ((qa.evidence_issues === 1) ? '' : 's') + '</dd></div>';
+            if (qa.objective_health_pct != null) {
+                html += '<div class="usp-brief-cell"><dt>Objective X Health</dt><dd>' + esc(qa.objective_health_pct) + '%</dd></div>';
+            }
         }
         html += '</dl>';
 

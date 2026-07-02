@@ -3483,7 +3483,7 @@
                         <div class="usp-hero-symbol" id="unit-symbol"></div>
                     </div>
 
-                    <div class="usp-identity-block">
+                    <div class="usp-identity-block" id="usp-identity-block">
                         <div class="usp-platform-id" id="usp-platform-id"></div>
                         <div class="usp-platform-type" id="usp-platform-type"></div>
                         <div class="usp-uid" id="unit-uid"></div>
@@ -3568,6 +3568,14 @@
                             <span class="usp-section-label">Objective X Health / &#1589;&#1581;&#1577; &#1575;&#1604;&#1607;&#1583;&#1601;</span>
                         </div>
                         <div class="usp-section-body" id="usp-objective-health-body"></div>
+                    </div>
+
+                    <!-- RMOOZ-QA-30: read-only scenario evidence review queue -->
+                    <div class="usp-tasking-block usp-review-queue-block" id="usp-review-queue-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">Evidence Review Queue / &#1602;&#1575;&#1574;&#1605;&#1577; &#1575;&#1604;&#1605;&#1585;&#1575;&#1580;&#1593;&#1577;</span>
+                        </div>
+                        <div class="usp-section-body" id="usp-review-queue-body"></div>
                     </div>
 
                     <!-- RMOOZ-CMO-12: read-only evidence quality gate -->
@@ -4612,15 +4620,16 @@
     <script src="shell/cmo-evidence-coverage.js?v=1"></script>
     <script src="shell/cmo-blocker-remediation.js?v=1"></script>
     <script src="shell/cmo-alternative-shooters.js?v=1"></script>
-    <script src="shell/cmo-commander-brief.js?v=1"></script>
+    <script src="shell/cmo-commander-brief.js?v=qa-32-scenario"></script>
     <script src="shell/scenario-evidence-completeness.js?v=1"></script>
     <script src="shell/scenario-evidence-normalizer.js?v=1"></script>
     <script src="shell/objective-x-evidence-health.js?v=1"></script>
+    <script src="shell/scenario-evidence-review-queue.js?v=1"></script>
     <script src="shell/cmo-force-evidence-feed.js?v=1"></script>
-    <script src="shell/cmo-force-evidence-report.js?v=cmo-28-completeness"></script>
+    <script src="shell/cmo-force-evidence-report.js?v=qa-33-queue"></script>
     <script src="shell/evidence-map-overlays.js?v=1"></script>
     <script src="shell/cmo-evidence-export.js?v=cmo-22-drilldown"></script>
-    <script src="shell/unit-status-panel.js?v=cmo-batch-25-29"></script>
+    <script src="shell/unit-status-panel.js?v=qa-batch-30-35"></script>
     <script src="shell/objective-evidence-panel.js?v=3"></script>
     <!-- L3-B-1: read-only Why-Not display panel in the Scenario Workspace.
          Paints #wn-body from AppActionFeasibility.evaluateAction. No controls. -->
@@ -6786,6 +6795,30 @@
         .usp-code-line { font-size: 0.72rem; color: #8fa8c0; }
         .usp-pos-selat { font-size: 0.72rem; color: #7f9ec0; }
         .capability-source { color: #7f9ec0 !important; font-size: 0.72rem !important; }
+
+        /* ── RMOOZ-QA-30: scenario evidence review queue ───────────────────── */
+        .usp-review-queue-block { background:#060d10; border-bottom:2px solid #14263a; }
+        .usp-queue-header { display:flex; flex-wrap:wrap; align-items:baseline; gap:6px; padding:8px 0.8rem; border-bottom:1px solid #142033; }
+        .usp-queue-title-en { font-size:0.75rem; font-weight:600; color:#a8c4dd; }
+        .usp-queue-title-ar { font-size:0.7rem; color:#8fb8d8; }
+        .usp-queue-count { margin-inline-start:auto; font-family:'Consolas','Courier New',monospace; font-size:0.74rem; font-weight:700; color:#e8c97a; }
+        .usp-queue-group { border-bottom:1px solid #0d1420; }
+        .usp-queue-group:last-of-type { border-bottom:none; }
+        .usp-queue-group-hdr { display:flex; align-items:baseline; gap:8px; padding:6px 0.8rem 3px; }
+        .usp-queue-group-en { font-size:0.72rem; font-weight:600; color:#8fb8d8; text-transform:uppercase; letter-spacing:0.04em; }
+        .usp-queue-group-ar { font-size:0.68rem; color:#7fa0b8; }
+        .usp-queue-group-count { margin-inline-start:auto; font-family:'Consolas','Courier New',monospace; font-size:0.7rem; color:#8fa8c0; background:#0d1a28; border-radius:3px; padding:0 6px; }
+        .usp-queue-list { list-style:none; margin:0; padding:2px 0.6rem 5px; }
+        .usp-queue-list li { margin:3px 0; }
+        .usp-queue-issue { display:flex; align-items:baseline; gap:8px; width:100%; text-align:start; cursor:pointer;
+            background:#0c1622; border:1px solid #1a2c40; border-radius:5px; padding:5px 8px; color:#c4dcf0; font-family:inherit; }
+        .usp-queue-issue:hover { background:#122236; border-color:#2a4a64; }
+        .usp-queue-issue:focus-visible { outline:2px solid #6ec0e0; outline-offset:1px; }
+        .usp-queue-uid { font-family:'Consolas','Courier New',monospace; font-size:0.74rem; color:#bcd6ee; font-weight:600; min-width:92px; }
+        .usp-queue-reason { font-family:'Consolas','Courier New',monospace; font-size:0.72rem; color:#f0ad7a; }
+        .usp-queue-reason-ar { margin-inline-start:auto; font-size:0.7rem; color:#8fb8d8; }
+        .usp-queue-empty { padding:9px 0.8rem; color:#8fd6a3; font-size:0.76rem; }
+        .usp-queue-source { padding:4px 0.8rem 7px; color:#8298ac; font-size:0.72rem; border-top:1px solid #0d1420; }
 
     </style>
     <script>

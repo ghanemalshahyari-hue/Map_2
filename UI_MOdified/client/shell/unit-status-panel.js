@@ -251,6 +251,7 @@
         populateCommanderBrief(unit);
         populateScenarioCompleteness(unit);
         populateObjectiveHealth(unit);
+        populateScenarioReviewQueue(unit);
         populateEvidenceQualityGate(unit);
         populateEvidenceAlerts(unit);
         populateEvidenceCoverage(unit);
@@ -1299,6 +1300,54 @@
         });
         body._objectiveHealth = health;
         body.innerHTML = OH.renderObjectiveHealthHtml(health, { lang: 'ar' });
+        block.removeAttribute('hidden');
+    }
+
+    // QA-30/31: scenario evidence review queue with one-click drilldown that
+    // reuses the panel's existing unit-selection + matrix-filter flows.
+    function populateScenarioReviewQueue(unit) {
+        var block = $('usp-review-queue-block');
+        var body = $('usp-review-queue-body');
+        if (!block || !body) return;
+        var RQ = root.RmoozScenarioEvidenceReviewQueue;
+        if (!RQ || typeof RQ.buildReviewQueue !== 'function' || typeof RQ.renderQueueHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var queue = RQ.buildReviewQueue(_getCurrentWorldState, {
+            generated_at: new Date().toISOString()
+        });
+        body._scenarioReviewQueue = queue;
+        body.innerHTML = RQ.renderQueueHtml(queue, { lang: 'ar' });
+        if (typeof RQ.bindQueueInteractions === 'function') {
+            RQ.bindQueueInteractions(body, queue, {
+                onSelectIssue: function (issue, intent) {
+                    intent = intent || (typeof RQ.resolveDrilldownIntent === 'function'
+                        ? RQ.resolveDrilldownIntent(issue && issue.reason)
+                        : {});
+                    intent = intent || {};
+                    // 1. Prime the matrix filter (module-scoped, honoured on repopulate).
+                    if (intent.matrix_filter) {
+                        currentMatrixFilter = intent.matrix_filter;
+                    }
+                    // 2. Focus the affected unit — reuses the existing selection event,
+                    //    which repopulates the whole panel (matrix included, filter applied).
+                    if (intent.select_unit && issue && issue.uid) {
+                        selectEvidenceUnit({ uid: issue.uid, unit_label: issue.label, side: issue.side }, 'scenario-review-queue');
+                    } else if (intent.matrix_filter) {
+                        populateEvidenceReadinessMatrix(unit || currentUnit);
+                    }
+                    // 3. Bring the relevant evidence section into view.
+                    if (intent.scroll_to) {
+                        var target = $(intent.scroll_to);
+                        if (target && typeof target.scrollIntoView === 'function') {
+                            try { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+                            catch (_) { target.scrollIntoView(); }
+                        }
+                    }
+                }
+            });
+        }
         block.removeAttribute('hidden');
     }
 

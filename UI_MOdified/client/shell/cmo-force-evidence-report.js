@@ -32,6 +32,7 @@
     function feedApi() { return localApi('RmoozCmoForceEvidenceFeed', 'cmo-force-evidence-feed.js'); }
     function coverageApi() { return localApi('RmoozCmoEvidenceCoverage', 'cmo-evidence-coverage.js'); }
     function completenessApi() { return localApi('RmoozScenarioEvidenceCompleteness', 'scenario-evidence-completeness.js'); }
+    function reviewQueueApi()  { return localApi('RmoozScenarioEvidenceReviewQueue',   'scenario-evidence-review-queue.js'); }
 
     function reasonLabel(code, lang) {
         var labels = labelsApi();
@@ -111,6 +112,10 @@
         var completeness = (SEV && typeof SEV.buildCompleteness === 'function')
             ? SEV.buildCompleteness(ws, { matrix: matrix })
             : null;
+        var RQ = reviewQueueApi();
+        var reviewQueue = (RQ && typeof RQ.buildReviewQueue === 'function')
+            ? RQ.buildReviewQueue(ws, { matrix: matrix, completeness: completeness })
+            : null;
         return {
             version: CMO_FORCE_EVIDENCE_REPORT_VERSION,
             generated_at: opts.generated_at || new Date().toISOString(),
@@ -132,6 +137,7 @@
             force_events: compactEvents(feedEvents),
             coverage: coverage,
             completeness: completeness,
+            review_queue: reviewQueue,
             selected_unit: selected,
             source: 'Readiness matrix + force evidence feed'
         };
@@ -168,6 +174,18 @@
             if (comp.missing_side > 0)     lines.push('  Missing side assignment: ' + comp.missing_side);
             if (comp.missing_coordinates > 0) lines.push('  Missing coordinates: ' + comp.missing_coordinates);
             lines.push('  Verdict: ' + (comp.verdict || 'unknown'));
+            lines.push('');
+        }
+        var rq = obj(report.review_queue);
+        if (arr(rq.groups).length) {
+            lines.push('Scenario Evidence Review Queue:');
+            arr(rq.groups).forEach(function (g) {
+                arr(g.issues).slice(0, 8).forEach(function (issue) {
+                    var who = issue.uid || issue.label || 'Objective';
+                    lines.push('- ' + who + ' — ' + issue.reason);
+                });
+            });
+            if (rq.total_issues > 0) lines.push('  (' + rq.total_issues + ' issue(s) total)');
             lines.push('');
         }
         if (report.selected_unit) {
@@ -231,6 +249,21 @@
                 '<div><span>No-contact</span><strong>' + esc(report.no_contact_count || 0) + '</strong></div>' +
                 '<div><span>Selected unit</span><strong>' + esc(selected.label || selected.uid || 'None') + '</strong></div>' +
             '</section>' +
+            (function () {
+                var rq = obj(report.review_queue);
+                if (!arr(rq.groups).length) return '';
+                var out = '<section class="cmo-print-section">' +
+                    '<h2>Scenario Evidence Review Queue / قائمة مراجعة أدلة السيناريو</h2>' +
+                    '<ul class="cmo-print-list">';
+                arr(rq.groups).forEach(function (g) {
+                    arr(g.issues).slice(0, 10).forEach(function (issue) {
+                        out += '<li>' + esc(issue.uid || issue.label || 'Objective') + ' &mdash; ' + esc(issue.reason) +
+                            (issue.reason_label_ar ? ' - <span dir="rtl">' + esc(issue.reason_label_ar) + '</span>' : '') + '</li>';
+                    });
+                });
+                out += '</ul></section>';
+                return out;
+            }()) +
             (function () {
                 var comp = obj(report.completeness);
                 if (comp.total_checked == null) return '';

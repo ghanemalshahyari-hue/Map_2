@@ -3648,6 +3648,14 @@
                         <div class="usp-section-body" id="usp-review-audit-body"></div>
                     </div>
 
+                    <!-- RMOOZ-QA-75: browser-local scenario evidence handoff package -->
+                    <div class="usp-tasking-block usp-handoff-package-block" id="usp-handoff-package-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">Evidence Handoff Package / &#1581;&#1586;&#1605;&#1577; &#1578;&#1587;&#1604;&#1610;&#1605; &#1575;&#1604;&#1571;&#1583;&#1604;&#1577;</span>
+                        </div>
+                        <div class="usp-section-body" id="usp-handoff-package-body"></div>
+                    </div>
+
                     <!-- RMOOZ-CMO-12: read-only evidence quality gate -->
                     <div class="usp-tasking-block usp-evidence-quality-block" id="usp-evidence-quality-block" hidden>
                         <div class="usp-section-hdr">
@@ -4713,6 +4721,7 @@
     <script src="shell/scenario-evidence-fix-status.js?v=1"></script>
     <script src="shell/scenario-evidence-manual-fix.js?v=1"></script>
     <script src="shell/scenario-evidence-review-closeout.js?v=1"></script>
+    <script src="shell/scenario-evidence-handoff-package.js?v=1"></script>
     <script src="shell/scenario-evidence-review-queue.js?v=1"></script>
     <script src="shell/scenario-evidence-repair-planner.js?v=1"></script>
     <script src="shell/cmo-force-evidence-feed.js?v=1"></script>
@@ -7268,6 +7277,32 @@
         .usp-audit-list li { border:1px solid #173044; border-radius:4px; background:#071019; padding:5px 6px; line-height:1.35; }
         .usp-audit-list li span { display:block; color:#6f8496; font-size:0.65rem; font-family:'Consolas','Courier New',monospace; }
         .usp-audit-list li strong { display:block; color:#d7edf8; font-size:0.72rem; font-weight:700; }
+        .usp-handoff-package-block { background:#0b0b13; border-bottom:2px solid #35305b; }
+        .usp-handoff-card { padding:8px 0.8rem 9px; color:#dce8f4; font-size:0.74rem; }
+        .usp-handoff-header { display:grid; grid-template-columns:1fr auto; gap:4px 8px; align-items:center; border-bottom:1px solid #2c2850; padding-bottom:6px; margin-bottom:7px; }
+        .usp-handoff-header span { color:#b9b6ff; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.04em; }
+        .usp-handoff-header strong { color:#f1d48f; }
+        .usp-handoff-card--ready .usp-handoff-header strong { color:#8fd6a3; }
+        .usp-handoff-card--mismatch .usp-handoff-header strong,
+        .usp-handoff-card--needs .usp-handoff-header strong,
+        .usp-handoff-card--invalid .usp-handoff-header strong { color:#f09b87; }
+        .usp-handoff-meta, .usp-handoff-source { color:#8f9dac; font-size:0.68rem; margin:5px 0; }
+        .usp-handoff-meta code, .usp-handoff-preview code { color:#d7edf8; font-family:'Consolas','Courier New',monospace; }
+        .usp-handoff-counts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px; margin:6px 0; }
+        .usp-handoff-counts span { border:1px solid #2c2850; border-radius:4px; background:#080813; padding:4px 6px; font-family:'Consolas','Courier New',monospace; font-size:0.68rem; }
+        .usp-handoff-includes span { display:block; color:#b9b6ff; font-size:0.7rem; margin:6px 0 2px; }
+        .usp-handoff-includes ul { margin:0 0 4px 1.2rem; padding:0; line-height:1.45; }
+        .usp-handoff-actions { display:flex; gap:6px; flex-wrap:wrap; margin-top:7px; }
+        .usp-handoff-actions button { border:1px solid #4b4580; background:#111029; color:#d8d5ff; font-size:0.66rem; padding:4px 7px; border-radius:4px; cursor:pointer; font-family:inherit; }
+        .usp-handoff-actions button:hover { background:#1a1840; }
+        .usp-handoff-card textarea { box-sizing:border-box; width:100%; margin-top:6px; border:1px solid #2c2850; border-radius:4px; background:#060711; color:#d7edf8; font-family:inherit; font-size:0.72rem; padding:5px; resize:vertical; }
+        .usp-handoff-preview { border:1px solid #2c2850; border-radius:4px; background:#080813; margin-top:7px; padding:6px; }
+        .usp-handoff-preview strong { display:block; color:#b9b6ff; margin-bottom:5px; }
+        .usp-handoff-preview dl { display:grid; gap:4px; margin:0; }
+        .usp-handoff-preview dl div { display:grid; grid-template-columns:1fr; gap:2px; }
+        .usp-handoff-preview dt { color:#8f9dac; font-size:0.66rem; }
+        .usp-handoff-preview dd { margin:0; color:#dce8f4; }
+        .usp-handoff-preview ul { margin:5px 0 0 1.2rem; padding:0; color:#f0b397; }
 
         /* Unit status panel — extend the drawer down to cover the empty band below
            it, but STOP just above the footer stack. The footer bars

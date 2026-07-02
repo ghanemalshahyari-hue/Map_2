@@ -163,6 +163,7 @@
             review_session: manualReview && manualReview.session ? manualReview.session : null,
             review_closeout: closeout,
             review_audit_trail: auditTrail,
+            handoff_package_manifest: opts.handoff_package ? obj(opts.handoff_package.manifest || opts.handoff_package) : null,
             selected_unit: selected,
             source: 'Readiness matrix + force evidence feed'
         };
@@ -261,6 +262,16 @@
             arr(audit.events).slice(-8).forEach(function (event) {
                 lines.push('  - ' + (event.summary || event.type || 'review_event'));
             });
+            lines.push('');
+        }
+        var handoff = obj(report.handoff_package_manifest);
+        if (handoff.package_type) {
+            var hc = obj(handoff.record_counts);
+            lines.push('Evidence Handoff Package:');
+            lines.push('  Scenario fingerprint: ' + (handoff.scenario_fingerprint || 'unknown'));
+            lines.push('  Manual statuses: ' + (hc.manual_statuses || 0));
+            lines.push('  Audit events: ' + (hc.audit_events || 0));
+            lines.push('  Review issues: ' + (hc.review_issues || 0));
             lines.push('');
         }
         if (report.selected_unit) {

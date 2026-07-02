@@ -181,7 +181,10 @@
                 objective_health_pct: objHealth ? (objHealth.health_score == null ? null : objHealth.health_score) : null,
                 manual_review: manualReview,
                 closeout: closeout,
-                last_review_activity: lastAudit
+                last_review_activity: lastAudit,
+                handoff_package_status: opts.handoff_package
+                    ? (opts.handoff_package.status_label_en || opts.handoff_package.status || null)
+                    : null
             },
             selected_unit: selectedSummary,
             source: 'Coverage + quality-gate + alerts + matrix + scenario QA — commander summary'
@@ -244,6 +247,10 @@
             if (act.type) {
                 html += '<div class="usp-brief-cell"><dt>Last Review Activity</dt><dd>' +
                     esc(act.summary || act.type) + '</dd></div>';
+            }
+            if (qa.handoff_package_status) {
+                html += '<div class="usp-brief-cell"><dt>Handoff Package</dt><dd>' +
+                    esc(qa.handoff_package_status) + '</dd></div>';
             }
         }
         html += '</dl>';

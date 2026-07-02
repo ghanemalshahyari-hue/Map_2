@@ -258,6 +258,7 @@
         populateScenarioManualFix(unit);
         populateScenarioReviewCloseout(unit);
         populateScenarioReviewAuditTrail(unit);
+        populateScenarioHandoffPackage(unit);
         populateEvidenceQualityGate(unit);
         populateEvidenceAlerts(unit);
         populateEvidenceCoverage(unit);
@@ -1422,6 +1423,7 @@
                 populateScenarioManualFix(unit || currentUnit);
                 populateScenarioReviewCloseout(unit || currentUnit);
                 populateScenarioReviewAuditTrail(unit || currentUnit);
+                populateScenarioHandoffPackage(unit || currentUnit);
             };
             MF.bindWorkspaceInteractions(body, workspace, {
                 onStatusChange: refreshManualReviewSurfaces,
@@ -1476,6 +1478,46 @@
         var trail = AU.getTrail(fp || _getCurrentWorldState);
         body._scenarioReviewAuditTrail = trail;
         body.innerHTML = AU.renderAuditTrailHtml(trail, { lang: 'ar', limit: 8 });
+        block.removeAttribute('hidden');
+    }
+
+    function populateScenarioHandoffPackage(unit, preview) {
+        var block = $('usp-handoff-package-block');
+        var body = $('usp-handoff-package-body');
+        if (!block || !body) return;
+        var HP = root.RmoozScenarioEvidenceHandoffPackage;
+        if (!HP || typeof HP.buildPackage !== 'function' || typeof HP.renderPackageHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        syncScenarioReviewSession();
+        var pkg = HP.buildPackage(_getCurrentWorldState, {
+            selected_unit: unit || currentUnit,
+            generated_at: new Date().toISOString()
+        });
+        body._scenarioEvidenceHandoffPackage = pkg;
+        body.innerHTML = HP.renderPackageHtml(pkg, { lang: 'ar', preview: preview });
+        if (typeof HP.bindPackageActions === 'function') {
+            var rerenderWithPreview = function (nextPreview) {
+                populateScenarioHandoffPackage(unit || currentUnit, nextPreview);
+            };
+            var refreshAfterImport = function () {
+                syncScenarioReviewSession();
+                populateScenarioReviewQueue(unit || currentUnit);
+                populateScenarioRepairPlan(unit || currentUnit);
+                populateScenarioManualFix(unit || currentUnit);
+                populateScenarioReviewCloseout(unit || currentUnit);
+                populateScenarioReviewAuditTrail(unit || currentUnit);
+                populateCommanderBrief(unit || currentUnit);
+                populateForceEvidenceReport(unit || currentUnit);
+                populateScenarioHandoffPackage(unit || currentUnit);
+            };
+            HP.bindPackageActions(body, pkg, {
+                world_state: _getCurrentWorldState,
+                onPreview: rerenderWithPreview,
+                onImport: refreshAfterImport
+            });
+        }
         block.removeAttribute('hidden');
     }
 

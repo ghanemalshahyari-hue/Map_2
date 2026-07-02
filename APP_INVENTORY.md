@@ -120,6 +120,17 @@ scenario-evidence v13 Scenario Status Header Cluster (Batch 13):
                       Evidence Coverage, or Handoff Acceptance. Display/navigation
                       only: no backend route, database, auto-fix, combat/action,
                       doctrine, scenario-contract, or DOCX-staging change.
+scenario-evidence v14 Header Status Details + Accessibility Polish (Batch 14):
+                      main-app header HUD enhancement only. Hover/focus on Release,
+                      Closeout, Coverage, and Handoff chips opens a compact
+                      read-only details popover explaining the current status
+                      (release blockers/checks, closeout counts, coverage evidence
+                      counts, handoff fingerprint/receipt state). Adds keyboard
+                      focus styling, Escape dismissal, ARIA detail linkage, and
+                      severity metadata without adding backend routes, database
+                      writes, auto-fix behavior, combat/action mutation, doctrine
+                      mutation, scenario-contract changes, or DOCX staging.
+                      Offline sync/testing: pending by user instruction.
 ```
 
 Active Scenario-QA scripts mirrored between main and offline app shells:

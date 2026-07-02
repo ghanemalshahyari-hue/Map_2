@@ -302,6 +302,25 @@ Coverage -> Scenario Evidence drawer -> Evidence Coverage
 Handoff  -> Scenario Evidence drawer -> Handoff Acceptance
 ```
 
+Header Status Details (Batch 14) makes the same four chips explain themselves
+before the operator opens the drawer. Hover or keyboard-focus a chip to show a
+compact details popover:
+
+```text
+Release  -> status reasons: unresolved issues, handoff acceptance, fingerprint checks
+Closeout -> needs-review/deferred/fixed-externally counts and verification-note state
+Coverage -> contact, engagement, and decision-chain evidence counts
+Handoff  -> package fingerprint match/mismatch, decision, latest receipt availability
+```
+
+Keyboard behavior:
+
+```text
+Tab / Shift+Tab -> focus each chip and show details
+Enter / Space   -> open the matching Scenario Evidence drawer section
+Escape          -> dismiss the details popover
+```
+
 The cluster is display/navigation only. It does not add backend routes, database
 state, auto-fix behavior, combat/action mutation, doctrine mutation, scenario
 contract changes, or DOCX staging.

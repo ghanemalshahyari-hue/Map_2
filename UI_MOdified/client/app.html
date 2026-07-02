@@ -4753,6 +4753,251 @@
     <script src="shell/evidence-map-overlays.js?v=1"></script>
     <script src="shell/cmo-evidence-export.js?v=cmo-22-drilldown"></script>
     <script src="shell/unit-status-panel.js?v=qa-batch-36-43"></script>
+    <script>
+        // RMOOZ-SCENARIO-QA-BATCH-14: main-only header status details.
+        // Wraps the browser-local HUD renderer to add hover/focus explanations.
+        (function (root) {
+            'use strict';
+
+            var VERSION = '1.0.0-rmooz-scenario-qa-batch-14';
+            var TARGET_LABELS = {
+                release: 'Release',
+                closeout: 'Closeout',
+                coverage: 'Coverage',
+                handoff: 'Handoff'
+            };
+            var SEVERITY_RANK = { 'not-ready': 1, warnings: 2, incomplete: 3, ready: 4 };
+
+            function obj(v) { return v && typeof v === 'object' ? v : {}; }
+            function arr(v) { return Array.isArray(v) ? v : []; }
+            function num(v, fallback) {
+                var n = Number(v);
+                return isFinite(n) ? n : (fallback || 0);
+            }
+            function esc(s) {
+                return String(s == null ? '' : s)
+                    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+            }
+            function cleanLine(s) { return String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); }
+            function uniqueLines(lines) {
+                var seen = {};
+                return arr(lines).map(cleanLine).filter(function (line) {
+                    if (!line || seen[line]) return false;
+                    seen[line] = true;
+                    return true;
+                }).slice(0, 5);
+            }
+            function statusTitle(target, label) {
+                return (TARGET_LABELS[target] || 'Scenario status') + ': ' + (label || 'Unknown');
+            }
+            function detail(target, label, cls, kicker, lines) {
+                return {
+                    target: target,
+                    title: statusTitle(target, label),
+                    cls: cls || 'incomplete',
+                    severity_rank: SEVERITY_RANK[cls] || 9,
+                    kicker: kicker || 'Why this status?',
+                    lines: uniqueLines(lines).length ? uniqueLines(lines) : ['Open Scenario Evidence for full details.']
+                };
+            }
+            function checkLine(check) {
+                check = obj(check);
+                var actual = cleanLine(check.actual || '');
+                switch (check.key) {
+                    case 'unresolved_issues': return (actual || '0') + ' unresolved issue' + (actual === '1' ? '' : 's');
+                    case 'handoff_acceptance': return actual && actual !== 'No decision yet'
+                        ? 'Handoff package not accepted: ' + actual
+                        : 'Handoff package not accepted';
+                    case 'fingerprint_match': return actual && /mismatch/i.test(actual)
+                        ? 'Fingerprint mismatch'
+                        : (actual || 'Fingerprint not verified');
+                    case 'closeout_status': return 'Closeout status: ' + (actual || 'not ready');
+                    case 'deferred_justified': return actual || 'Deferred issues need justification';
+                    case 'fixed_externally_verified': return actual || 'Fixed externally needs verification';
+                    default: return (check.label_en ? check.label_en + ': ' : '') + (actual || check.status || 'Review required');
+                }
+            }
+            function releaseDetail(gate, chip) {
+                gate = obj(gate);
+                chip = obj(chip);
+                var lines = arr(gate.checks)
+                    .filter(function (check) { return check && (check.status === 'fail' || check.status === 'warn'); })
+                    .map(checkLine);
+                if (!lines.length) lines = arr(gate.blockers).map(function (b) { return b.label || b.code; });
+                if (!lines.length) lines = arr(gate.warnings).map(function (w) { return w.label || w.code; });
+                if (!lines.length && gate.releasable) lines.push('Release gate checks are pass or warning only');
+                return detail('release', gate.status_label_en || chip.label_en, chip.cls, 'Reason:', lines);
+            }
+            function closeoutDetail(closeout, chip) {
+                closeout = obj(closeout);
+                chip = obj(chip);
+                var counts = obj(closeout.counts);
+                var deferred = num(counts.deferred, arr(closeout.deferred).length);
+                var fixed = num(counts.fixed_externally, arr(closeout.fixed_externally).length);
+                var fixedMissing = arr(closeout.fixed_externally_without_note).length;
+                var deferredMissing = arr(closeout.deferred_without_note).length;
+                var needs = num(counts.needs_review, arr(closeout.unresolved).length);
+                var lines = [
+                    'Deferred issues: ' + deferred,
+                    'Fixed externally: ' + fixed,
+                    fixed ? ('Verification notes: ' + (fixedMissing ? fixedMissing + ' missing' : 'present')) : 'Verification notes: not required'
+                ];
+                if (needs) lines.unshift('Needs review: ' + needs);
+                if (deferredMissing) lines.push('Deferred justification notes missing: ' + deferredMissing);
+                return detail('closeout', closeout.status_label_en || chip.label_en, chip.cls, 'Why this status?', lines);
+            }
+            function currentMatrix() {
+                var MX = root.RmoozCmoEvidenceReadinessMatrix;
+                var map = root.AppAdjudicatorMap;
+                if (!MX || typeof MX.buildMatrix !== 'function' || !map || typeof map.getWorldState !== 'function') return null;
+                try {
+                    return MX.buildMatrix(function () { return map.getWorldState(); }, { limit: 80 });
+                } catch (_) {
+                    return null;
+                }
+            }
+            function coverageBreakdown(coverage) {
+                coverage = obj(coverage);
+                var src = obj(coverage.hud_details || coverage.details || coverage.coverage_details);
+                if (src.total) return {
+                    total: num(src.total),
+                    contact: num(obj(src.contact_evidence).present == null ? src.contact_evidence : obj(src.contact_evidence).present),
+                    engagement: num(obj(src.engagement_evidence).present == null ? src.engagement_evidence : obj(src.engagement_evidence).present),
+                    decision: num(obj(src.decision_chain).present == null ? src.decision_chain : obj(src.decision_chain).present),
+                    needs: num(src.needs_review)
+                };
+                var matrix = currentMatrix();
+                var rows = arr(matrix && matrix.rows);
+                var total = num(coverage.total, num(matrix && matrix.total_units, rows.length));
+                var counts = obj(matrix && matrix.counts);
+                return {
+                    total: total,
+                    contact: rows.filter(function (r) { return r && r.contact_status && r.contact_status !== 'Unknown'; }).length || num(coverage.with_evidence),
+                    engagement: rows.filter(function (r) { return r && r.engagement_status && r.engagement_status !== 'Unknown'; }).length || num(coverage.with_evidence),
+                    decision: rows.filter(function (r) { return r && r.final_status && r.final_status !== 'Unknown'; }).length || num(coverage.ready) + num(coverage.blocked),
+                    needs: num(coverage.needs_review, num(coverage.blocked, num(counts.Blocked)))
+                };
+            }
+            function coverageDetail(coverage, chip) {
+                coverage = obj(coverage);
+                chip = obj(chip);
+                var d = coverageBreakdown(coverage);
+                var total = d.total || num(coverage.total);
+                return detail('coverage', chip.label_en || (num(coverage.coverage_pct) + '%'), chip.cls, 'Evidence coverage:', [
+                    'Contact evidence: ' + d.contact + '/' + total,
+                    'Engagement evidence: ' + d.engagement + '/' + total,
+                    'Decision chain: ' + d.decision + '/' + total,
+                    'Needs review: ' + d.needs
+                ]);
+            }
+            function handoffDetail(acceptance, chip) {
+                acceptance = obj(acceptance);
+                chip = obj(chip);
+                var record = obj(acceptance.decision_record || acceptance.record || acceptance.receipt);
+                var decision = acceptance.decision || record.decision || 'pending';
+                var fpMatch = acceptance.fingerprint_match;
+                if (fpMatch == null) fpMatch = record.fingerprint_match;
+                var lines = [
+                    'Package fingerprint: ' + (record.package_fingerprint || acceptance.package_fingerprint ? (fpMatch ? 'match' : 'mismatch') : 'pending'),
+                    'Decision: ' + decision,
+                    (acceptance.receipt || acceptance.decision_record || record.receipt_type) ? 'Latest receipt available' : 'Latest receipt unavailable'
+                ];
+                if (arr(record.warnings || acceptance.warnings).length) lines.push('Warnings: ' + arr(record.warnings || acceptance.warnings).length);
+                return detail('handoff', acceptance.decision_label_en || chip.label_en, chip.cls, 'Why this status?', lines);
+            }
+            function normalizeInput(input) {
+                input = obj(input);
+                if (input.release_gate || input.closeout || input.coverage || input.acceptance) return input;
+                return {};
+            }
+            function buildDetail(target, raw, chip) {
+                raw = normalizeInput(raw);
+                chip = obj(chip);
+                if (target === 'release') return releaseDetail(raw.release_gate, chip);
+                if (target === 'closeout') return closeoutDetail(raw.closeout, chip);
+                if (target === 'coverage') return coverageDetail(raw.coverage, chip);
+                if (target === 'handoff') return handoffDetail(raw.acceptance, chip);
+                return detail(target, chip.label_en, chip.cls, 'Why this status?', []);
+            }
+            function renderDetailHtml(info) {
+                info = obj(info);
+                return '<div class="release-hud-detail-title">' + esc(info.title || 'Scenario status') + '</div>' +
+                    '<div class="release-hud-detail-kicker">' + esc(info.kicker || 'Why this status?') + '</div>' +
+                    '<ul>' + arr(info.lines).map(function (line) { return '<li>' + esc(line) + '</li>'; }).join('') + '</ul>';
+            }
+            function ensurePopover(mount) {
+                if (!mount || !root.document) return null;
+                var pop = mount.querySelector ? mount.querySelector('#release-hud-detail') : null;
+                if (pop) return pop;
+                pop = root.document.createElement('div');
+                pop.id = 'release-hud-detail';
+                pop.className = 'release-hud-detail';
+                pop.setAttribute('role', 'tooltip');
+                pop.setAttribute('hidden', '');
+                mount.appendChild(pop);
+                return pop;
+            }
+            function showDetail(pop, info) {
+                if (!pop) return;
+                pop.className = 'release-hud-detail release-hud-detail--' + esc(info.cls || 'incomplete');
+                pop.innerHTML = renderDetailHtml(info);
+                pop.removeAttribute('hidden');
+            }
+            function hideDetail(pop) {
+                if (pop) pop.setAttribute('hidden', '');
+            }
+            function enhance(mount, statusInput) {
+                var RH = root.RmoozScenarioEvidenceReleaseHud;
+                if (!mount || !RH || typeof RH.buildCluster !== 'function') return null;
+                var cluster = statusInput && statusInput.chips ? statusInput : RH.buildCluster(statusInput || {});
+                var pop = ensurePopover(mount);
+                var buttons = mount.querySelectorAll ? mount.querySelectorAll('[data-scenario-status-open]') : [];
+                Array.prototype.forEach.call(buttons, function (btn) {
+                    var target = btn.getAttribute('data-scenario-status-open') || 'release';
+                    var chip = cluster[target] || cluster.release || {};
+                    var info = buildDetail(target, statusInput, chip);
+                    btn.setAttribute('aria-describedby', 'release-hud-detail');
+                    btn.setAttribute('aria-keyshortcuts', 'Enter Space');
+                    btn.setAttribute('data-scenario-status-severity', chip.cls || 'incomplete');
+                    btn.setAttribute('data-scenario-status-rank', String(info.severity_rank || 9));
+                    btn.setAttribute('title', info.title + '\n' + info.lines.join('\n'));
+                    btn.addEventListener('mouseenter', function () { showDetail(pop, info); });
+                    btn.addEventListener('focus', function () { showDetail(pop, info); });
+                    btn.addEventListener('mouseleave', function () { hideDetail(pop); });
+                    btn.addEventListener('blur', function () { hideDetail(pop); });
+                    btn.addEventListener('keydown', function (ev) {
+                        if (ev && ev.key === 'Escape') {
+                            hideDetail(pop);
+                            if (typeof ev.stopPropagation === 'function') ev.stopPropagation();
+                        }
+                    });
+                });
+                return cluster;
+            }
+            function install() {
+                var RH = root.RmoozScenarioEvidenceReleaseHud;
+                if (!RH || typeof RH.update !== 'function' || RH._scenarioStatusDetailsBatch14) return false;
+                var original = RH.update;
+                RH.update = function (mount, statusInput, opts) {
+                    var ret = original.call(RH, mount, statusInput, opts);
+                    try { enhance(mount, statusInput); } catch (_) {}
+                    return ret;
+                };
+                RH._scenarioStatusDetailsBatch14 = true;
+                return true;
+            }
+
+            root.RmoozScenarioStatusHudDetails = {
+                VERSION: VERSION,
+                buildDetail: buildDetail,
+                renderDetailHtml: renderDetailHtml,
+                enhance: enhance,
+                install: install
+            };
+            install();
+        })(window);
+    </script>
     <script src="shell/objective-evidence-panel.js?v=3"></script>
     <!-- L3-B-1: read-only Why-Not display panel in the Scenario Workspace.
          Paints #wn-body from AppActionFeasibility.evaluateAction. No controls. -->
@@ -7440,10 +7685,11 @@
 
         /* ── RMOOZ-QA-BATCH-13: top-level scenario status cluster ── */
         .release-hud[hidden] { display:none !important; }
-        .release-hud { flex:0 1 360px; width:min(36vw, 360px); min-width:220px; max-width:360px; align-self:center; }
+        .release-hud { flex:0 1 360px; width:min(36vw, 360px); min-width:220px; max-width:360px; align-self:center; position:relative; }
         .release-hud-cluster { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); align-items:stretch; gap:4px; }
         .release-hud-chip { width:100%; min-width:0; display:inline-flex; align-items:center; gap:4px; min-height:23px; border:1px solid #4b4580; border-radius:6px; background:#12112b; color:#d8d5ff; font-family:inherit; font-size:0.63rem; padding:2px 5px; cursor:pointer; line-height:1.05; overflow:hidden; }
         .release-hud-chip:hover { background:#1c1a44; }
+        .release-hud-chip:focus-visible { outline:2px solid #b9b6ff; outline-offset:2px; background:#1c1a44; }
         .release-hud-chip::before { content:''; width:6px; height:6px; border-radius:50%; background:#8f9dac; flex:0 0 auto; }
         .release-hud-chip--ready::before { background:#8fd6a3; }
         .release-hud-chip--warnings::before { background:#f1d48f; }
@@ -7464,6 +7710,18 @@
             .release-hud { width:min(44vw, 260px); min-width:180px; max-width:260px; }
             .release-hud-key-ar, .release-hud-status-ar { display:none; }
         }
+        .release-hud-detail[hidden] { display:none !important; }
+        .release-hud-detail { position:absolute; top:calc(100% + 8px); right:0; z-index:1300; width:min(340px, 78vw); border:1px solid #4b4580; border-radius:6px; background:#090917; color:#dce8f4; box-shadow:0 14px 36px rgba(0,0,0,0.38); padding:9px 10px; font-size:0.72rem; line-height:1.35; text-align:left; direction:ltr; }
+        .release-hud-detail-title { display:flex; align-items:center; gap:6px; color:#f2f0ff; font-weight:700; margin-bottom:3px; }
+        .release-hud-detail-title::before { content:''; width:7px; height:7px; border-radius:50%; background:#8f9dac; flex:0 0 auto; }
+        .release-hud-detail--ready .release-hud-detail-title::before { background:#8fd6a3; }
+        .release-hud-detail--warnings .release-hud-detail-title::before { background:#f1d48f; }
+        .release-hud-detail--not-ready .release-hud-detail-title::before { background:#f09b87; }
+        .release-hud-detail--incomplete .release-hud-detail-title::before { background:#8f9dac; }
+        .release-hud-detail-kicker { color:#b9b6ff; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px; }
+        .release-hud-detail ul { margin:0; padding-left:1rem; }
+        .release-hud-detail li { margin:2px 0; color:#dce8f4; }
+        .release-hud-detail code { color:#d7edf8; font-family:'Consolas','Courier New',monospace; }
 
         /* Unit status panel — extend the drawer down to cover the empty band below
            it, but STOP just above the footer stack. The footer bars

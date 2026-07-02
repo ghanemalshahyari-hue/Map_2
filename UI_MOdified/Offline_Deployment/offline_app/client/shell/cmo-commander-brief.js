@@ -61,6 +61,7 @@
     function reviewQueueApi(){ return localApi('RmoozScenarioEvidenceReviewQueue','scenario-evidence-review-queue.js'); }
     function objectiveApi()  { return localApi('RmoozObjectiveXEvidenceHealth',    'objective-x-evidence-health.js'); }
     function fixStatusApi()  { return localApi('RmoozScenarioEvidenceFixStatus',   'scenario-evidence-fix-status.js'); }
+    function closeoutApi()   { return localApi('RmoozScenarioEvidenceReviewCloseout','scenario-evidence-review-closeout.js'); }
 
     function resolveHeadlineStatus(coverage, quality, alertCount, readyCount, totalCount) {
         var coveragePct = coverage && coverage.coverage_pct != null ? coverage.coverage_pct : 0;
@@ -119,6 +120,10 @@
         var manualReview = opts.manual_review || (FS && typeof FS.summarize === 'function'
             ? FS.summarize(reviewQueue || [])
             : { counts: { total: reviewQueue ? (reviewQueue.total_issues || 0) : 0, needs_review: reviewQueue ? (reviewQueue.total_issues || 0) : 0, reviewed: 0, deferred: 0, fixed_externally: 0 } });
+        var CO = closeoutApi();
+        var closeout = opts.closeout || (CO && typeof CO.buildCloseout === 'function'
+            ? CO.buildCloseout(reviewQueue, { world_state: ws, generated_at: opts.generated_at })
+            : null);
 
         var alertList = arr(alerts.alerts || []);
         var alertCount = alertList.length;
@@ -167,7 +172,8 @@
                 evidence_issues: reviewQueue ? (reviewQueue.total_issues || 0) : 0,
                 units_flagged: reviewQueue ? (reviewQueue.units_flagged || 0) : 0,
                 objective_health_pct: objHealth ? (objHealth.health_score == null ? null : objHealth.health_score) : null,
-                manual_review: manualReview
+                manual_review: manualReview,
+                closeout: closeout
             },
             selected_unit: selectedSummary,
             source: 'Coverage + quality-gate + alerts + matrix + scenario QA — commander summary'
@@ -218,6 +224,14 @@
                 ' / Fixed externally ' + esc(mrc.fixed_externally || 0) +
                 ' / Needs review ' + esc(mrc.needs_review || 0) +
                 '</dd></div>';
+            var co = obj(qa.closeout);
+            if (co.status) {
+                html += '<div class="usp-brief-cell"><dt>Review Closeout</dt><dd class="' +
+                    (co.status === 'ready_for_handoff' ? 'usp-brief-pass' : 'usp-brief-fail') + '">' +
+                    esc(co.status_label_en || co.status) +
+                    (co.status_label_ar ? ' <span dir="rtl">' + esc(co.status_label_ar) + '</span>' : '') +
+                    '</dd></div>';
+            }
         }
         html += '</dl>';
 

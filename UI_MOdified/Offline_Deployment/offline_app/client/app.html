@@ -3594,6 +3594,14 @@
                         <div class="usp-section-body" id="usp-manual-fix-body"></div>
                     </div>
 
+                    <!-- RMOOZ-QA-59: read-only scenario evidence review closeout gate -->
+                    <div class="usp-tasking-block usp-review-closeout-block" id="usp-review-closeout-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">Evidence Review Closeout / &#1573;&#1594;&#1604;&#1575;&#1602; &#1605;&#1585;&#1575;&#1580;&#1593;&#1577; &#1575;&#1604;&#1571;&#1583;&#1604;&#1577;</span>
+                        </div>
+                        <div class="usp-section-body" id="usp-review-closeout-body"></div>
+                    </div>
+
                     <!-- RMOOZ-CMO-12: read-only evidence quality gate -->
                     <div class="usp-tasking-block usp-evidence-quality-block" id="usp-evidence-quality-block" hidden>
                         <div class="usp-section-hdr">
@@ -4643,6 +4651,7 @@
     <script src="shell/scenario-evidence-review-session.js?v=1"></script>
     <script src="shell/scenario-evidence-fix-status.js?v=1"></script>
     <script src="shell/scenario-evidence-manual-fix.js?v=1"></script>
+    <script src="shell/scenario-evidence-review-closeout.js?v=1"></script>
     <script src="shell/scenario-evidence-review-queue.js?v=1"></script>
     <script src="shell/scenario-evidence-repair-planner.js?v=1"></script>
     <script src="shell/cmo-force-evidence-feed.js?v=1"></script>
@@ -6906,6 +6915,21 @@
         .usp-manual-note { display:block; color:#8dbbb1; font-size:0.7rem; }
         .usp-manual-note textarea { box-sizing:border-box; width:100%; margin-top:3px; border:1px solid #204842; border-radius:4px; background:#071315; color:#d7edf0; font-family:inherit; font-size:0.74rem; padding:5px; resize:vertical; }
         .usp-manual-disclaimer { margin-top:6px; color:#8298ac; font-size:0.69rem; }
+        .usp-review-closeout-block { background:#100d06; border-bottom:2px solid #463412; }
+        .usp-closeout-card { padding:8px 0.8rem 9px; color:#dce8f4; font-size:0.74rem; }
+        .usp-closeout-header { display:grid; grid-template-columns:1fr auto; gap:4px 8px; align-items:center; border-bottom:1px solid #3a2b12; padding-bottom:6px; margin-bottom:7px; }
+        .usp-closeout-title, .usp-closeout-title-ar { color:#e4c677; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.04em; }
+        .usp-closeout-card--ready .usp-closeout-header strong { color:#8fd6a3; }
+        .usp-closeout-card--exceptions .usp-closeout-header strong { color:#f2d07d; }
+        .usp-closeout-card--needs .usp-closeout-header strong, .usp-closeout-card--incomplete .usp-closeout-header strong { color:#f09b87; }
+        .usp-closeout-counts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px; margin:6px 0; }
+        .usp-closeout-counts span { border:1px solid #3a2b12; border-radius:4px; background:#120f08; padding:4px 6px; font-family:'Consolas','Courier New',monospace; font-size:0.68rem; }
+        .usp-closeout-blockers span, .usp-closeout-prompt strong { display:block; color:#e4c677; font-size:0.7rem; margin:6px 0 2px; }
+        .usp-closeout-blockers ul, .usp-closeout-prompt ul { margin:0 0 4px 1.2rem; padding:0; line-height:1.45; }
+        .usp-closeout-actions { display:flex; gap:6px; flex-wrap:wrap; margin-top:7px; }
+        .usp-closeout-actions button { border:1px solid #5f4618; background:#171107; color:#f0d38b; font-size:0.66rem; padding:4px 7px; border-radius:4px; cursor:pointer; font-family:inherit; }
+        .usp-closeout-actions button:hover { background:#241a0a; }
+        .usp-closeout-source { margin-top:6px; color:#8f9dac; font-size:0.68rem; }
 
     </style>
     <script>

@@ -256,6 +256,7 @@
         populateScenarioReviewQueue(unit);
         populateScenarioRepairPlan(unit);
         populateScenarioManualFix(unit);
+        populateScenarioReviewCloseout(unit);
         populateEvidenceQualityGate(unit);
         populateEvidenceAlerts(unit);
         populateEvidenceCoverage(unit);
@@ -1418,12 +1419,39 @@
                 populateCommanderBrief(unit || currentUnit);
                 populateForceEvidenceReport(unit || currentUnit);
                 populateScenarioManualFix(unit || currentUnit);
+                populateScenarioReviewCloseout(unit || currentUnit);
             };
             MF.bindWorkspaceInteractions(body, workspace, {
                 onStatusChange: refreshManualReviewSurfaces,
                 onSessionChange: refreshManualReviewSurfaces
             });
         }
+        block.removeAttribute('hidden');
+    }
+
+    // QA-59..65: read-only review completion / handoff gate.
+    function populateScenarioReviewCloseout(unit) {
+        var block = $('usp-review-closeout-block');
+        var body = $('usp-review-closeout-body');
+        if (!block || !body) return;
+        var CO = root.RmoozScenarioEvidenceReviewCloseout;
+        var RQ = root.RmoozScenarioEvidenceReviewQueue;
+        if (!CO || typeof CO.buildCloseout !== 'function' || typeof CO.renderCloseoutHtml !== 'function' ||
+            !RQ || typeof RQ.buildReviewQueue !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        syncScenarioReviewSession();
+        var queue = RQ.buildReviewQueue(_getCurrentWorldState, {
+            generated_at: new Date().toISOString()
+        });
+        var closeout = CO.buildCloseout(queue, {
+            world_state: _getCurrentWorldState,
+            generated_at: new Date().toISOString()
+        });
+        body._scenarioReviewCloseout = closeout;
+        body.innerHTML = CO.renderCloseoutHtml(closeout, { lang: 'ar' });
+        if (typeof CO.bindCloseoutActions === 'function') CO.bindCloseoutActions(body, closeout);
         block.removeAttribute('hidden');
     }
 

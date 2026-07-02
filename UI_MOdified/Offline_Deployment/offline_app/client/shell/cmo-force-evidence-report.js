@@ -35,6 +35,7 @@
     function reviewQueueApi()  { return localApi('RmoozScenarioEvidenceReviewQueue',   'scenario-evidence-review-queue.js'); }
     function repairPlannerApi(){ return localApi('RmoozScenarioEvidenceRepairPlanner', 'scenario-evidence-repair-planner.js'); }
     function fixStatusApi()    { return localApi('RmoozScenarioEvidenceFixStatus',     'scenario-evidence-fix-status.js'); }
+    function closeoutApi()     { return localApi('RmoozScenarioEvidenceReviewCloseout','scenario-evidence-review-closeout.js'); }
 
     function reasonLabel(code, lang) {
         var labels = labelsApi();
@@ -115,9 +116,9 @@
             ? SEV.buildCompleteness(ws, { matrix: matrix })
             : null;
         var RQ = reviewQueueApi();
-        var reviewQueue = (RQ && typeof RQ.buildReviewQueue === 'function')
+        var reviewQueue = opts.review_queue || (RQ && typeof RQ.buildReviewQueue === 'function'
             ? RQ.buildReviewQueue(ws, { matrix: matrix, completeness: completeness })
-            : null;
+            : null);
         var RPP = repairPlannerApi();
         var repairPlan = (RPP && typeof RPP.buildRepairPlan === 'function')
             ? RPP.buildRepairPlan(ws, { matrix: matrix, review_queue: reviewQueue })
@@ -126,6 +127,10 @@
         var manualReview = (FS && typeof FS.summarize === 'function')
             ? FS.summarize(reviewQueue || [])
             : null;
+        var CO = closeoutApi();
+        var closeout = opts.review_closeout || (CO && typeof CO.buildCloseout === 'function'
+            ? CO.buildCloseout(reviewQueue, { world_state: ws, generated_at: opts.generated_at })
+            : null);
         return {
             version: CMO_FORCE_EVIDENCE_REPORT_VERSION,
             generated_at: opts.generated_at || new Date().toISOString(),
@@ -151,6 +156,7 @@
             repair_plan: repairPlan,
             manual_review: manualReview,
             review_session: manualReview && manualReview.session ? manualReview.session : null,
+            review_closeout: closeout,
             selected_unit: selected,
             source: 'Readiness matrix + force evidence feed'
         };
@@ -231,6 +237,15 @@
                 lines.push('- ' + (issue.uid || issue.label || 'Objective') + ' — ' +
                     (issue.reason || issue.code || 'unknown') + ' — ' +
                     (issue.manual_status_label_en || issue.manual_status || 'Needs Review'));
+            });
+            lines.push('');
+        }
+        var co = obj(report.review_closeout);
+        if (co.status) {
+            lines.push('Evidence Review Closeout:');
+            lines.push('  Status: ' + (co.status_label_en || co.status));
+            arr(co.blockers).forEach(function (b) {
+                lines.push('  - ' + b.label);
             });
             lines.push('');
         }

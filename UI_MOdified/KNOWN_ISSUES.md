@@ -20,17 +20,26 @@ docker compose --env-file UI_MOdified/Offline_Deployment/.env.offline -f UI_MOdi
 docker compose --env-file UI_MOdified/Offline_Deployment/.env.offline -f UI_MOdified/Offline_Deployment/docker-compose.offline.yml up -d
 ```
 
-## scenario_overrides.json is tracked but is app-written runtime state
+## scenario_overrides.json runtime state untracked (RESOLVED 2026-07-02)
 
-`UI_MOdified/TestingAI/WarGamingGEN/inputs/scenario_overrides.json` is committed to the repo
-but is rewritten by the app at runtime (operator Objective-X overrides with timestamps). The
-working tree is therefore perpetually dirty, and the file collides on every pull/fast-forward
-(it did on 2026-07-02). Keep local changes out of feature commits. Pending owner ruling:
+RUNTIME-OVERRIDES-CLEANUP-1 (owner ruling: keep runtime override state untracked).
+`scenario_overrides.json` was committed but rewritten by the app at runtime
+(`writeObjectiveOverride` in `wargame-sim-bridge.js` on operator save), so the worktree stayed
+perpetually dirty and the file collided on every pull/fast-forward.
 
-```text
-Option A: gitignore it + git rm --cached (app must tolerate the file being absent)
-Option B: keep a committed default seed and stop the app writing to the tracked path
-```
+Fix (Option A — safe because both readers tolerate absence):
+- `git rm --cached` the runtime file and added it to `.gitignore` (it stays on disk locally).
+- Committed the canonical default as `scenario_overrides.example.json` (copy it to bootstrap a
+  fixed default objective).
+- No code change: Node `readObjectiveOverride` returns null when absent → default objective;
+  Python `apply_json_objective_override` returns the scenario unchanged when absent. Absence
+  simply means "no operator override yet," which is the correct default behavior. The canonical
+  write/read path (`inputs/scenario_overrides.json`) is unchanged, so the Python WarGamingGEN
+  pipeline (which only reads that name) is unaffected.
+
+Note: a fresh clone/deploy starts with no override file (uses the default objective) until an
+operator saves one, or until `scenario_overrides.example.json` is copied to
+`scenario_overrides.json`.
 
 ## NET-8640-REMOTE-1 public endpoint exposure (network/admin-side)
 

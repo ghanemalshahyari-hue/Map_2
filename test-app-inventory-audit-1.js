@@ -1,4 +1,5 @@
 const assert = require('assert');
+const cp = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -57,6 +58,10 @@ function test(name, fn) {
 
 function read(file) {
   return fs.readFileSync(file, 'utf8');
+}
+
+function git(args) {
+  return cp.execFileSync('git', args, { cwd: ROOT, encoding: 'utf8' });
 }
 
 function scriptNames(html) {
@@ -151,6 +156,17 @@ test('release docs document env-file compose command, LAN URL, and public NAT is
   assert.ok(docs.includes('http://172.16.29.157:8640'), 'docs missing LAN demo URL');
   assert.ok(docs.includes('155.140.70.51:8640'), 'docs missing public endpoint note');
   assert.ok(docs.includes('network/admin-side') || docs.includes('network/admin'), 'docs missing network/admin classification');
+});
+
+test('runtime user plan GeoJSON files stay untracked', () => {
+  const tracked = git(['ls-files', 'UI_MOdified/data/users/**/*.geojson'])
+    .split(/\r?\n/)
+    .filter(Boolean);
+  assert.deepStrictEqual(tracked, [], 'tracked runtime user plan files: ' + tracked.join(', '));
+  assert.ok(
+    read(path.join(ROOT, '.gitignore')).includes('UI_MOdified/data/users/*/plans/*.geojson'),
+    '.gitignore must ignore runtime user plan GeoJSON files'
+  );
 });
 
 test('current release tags and baselines are documented', () => {

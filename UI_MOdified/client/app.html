@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&family=Alexandria:wght@400;700;800&family=Noto+Kufi+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../lib/leaflet.css">
-    <link rel="stylesheet" href="style.css?v=102c">
+    <link rel="stylesheet" href="style.css?v=102e-spatialcluster">
 </head>
 
 <body>
@@ -4692,7 +4692,7 @@
     <script src="shell/world-state.js?v=3"></script>
     <!-- L3-A: "Why-Not" action feasibility evaluator (pure; reads ENG1 + evidence ledger). -->
     <script src="shell/action-feasibility.js?v=1"></script>
-    <script src="wargame/adjudicator-map.js?v=45"></script>
+    <script src="wargame/adjudicator-map.js?v=47-spatialcluster"></script>
     <!-- Canonical scenario RUN dispatcher + single client PREVIEW playback engine.
          Loaded before movement-playback / timeline / scenario-workspace so it owns
          the bottom-transport listener and the others defer to it (kills the
@@ -5677,11 +5677,11 @@
     <!-- RMOOZ-STEP1-COA-PREPARATION-GATE-AE: pure unit-taskability resolver (Step-1 review-only units are
          not taskable for movement). Loaded BEFORE free-fight-demo.js so window.RmoozTaskability is present. -->
     <script src="shell/unit-taskability.js?v=scenario-control-center-ak"></script>
-    <script src="shell/free-fight-demo.js?v=behavior-path-required-a"></script>
+    <script src="shell/free-fight-demo.js?v=operator-clean-entry-merge-a"></script>
     <!-- RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF: the new operator window (hard replacement for the old
          Free Fight control window). Drives the engine via window.RmoozFreeFightDemo.engine. The old
          right-side reasoning panel is disconnected; the old COA-card and V2 renderers are unreachable. -->
-    <script src="shell/scenario-control-center.js?v=dual-layer-conflict-a"></script>
+    <script src="shell/scenario-control-center.js?v=operator-clean-entry-merge-a"></script>
     <script src="shell/free-fight-demo-ai-panel.js?v=1"></script>
     <!-- DEMO-ACTUAL-1: AI Decision-Making Scenario Preview. Isolated preview
          layer — never touches RmoozScenario.stepIndex, proposed_units, or any

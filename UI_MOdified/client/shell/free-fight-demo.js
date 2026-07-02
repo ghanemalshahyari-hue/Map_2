@@ -85,6 +85,7 @@
     // FREEFIGHT-AI-CONTINUOUS-COMMANDER-LOOP-A: continuous AI commander loop state
     var _turnNumber = 0;
     var _activeSide = 'RED';
+    var _missionRoleContract = null;     // RMOOZ-MISSION-ROLE-CONTRACT-A: derived from scenario JSON
     var _loopRunning = false, _loopPaused = false;
     var _freeFightSpeed = 'x1';
     var _lastCommanderDecision = null; // { turn, side, coa_id, coa_title, source, moved, rationale[], expected[], summary }
@@ -1592,7 +1593,7 @@
             }).length;
         }
 
-        var units = [];
+        var units = [], hadScenarioUnits = false;
 
         // Priority A: window.RmoozScenario.scenario units (real loaded scenario)
         var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
@@ -1600,6 +1601,7 @@
             var rawA = (Array.isArray(sc.red_units) ? sc.red_units : []).concat(
                        Array.isArray(sc.blue_units_initial) ? sc.blue_units_initial : []);
             if (rawA.length) {
+                hadScenarioUnits = true;   // RMOOZ-AI-FREE-FIGHT-FORCE-POOL-PRESENT-A: a scenario IS loaded with units — never substitute brief/demo units
                 tallyRaw(rawA);
                 units = rawA.map(normUnit).filter(Boolean);
                 dMovable = units.length;
@@ -1607,8 +1609,9 @@
             }
         }
 
-        // Priority B: operational_brief.proposed_units
-        if (!units.length) {
+        // Priority B: operational_brief.proposed_units (ONLY when NO scenario is loaded — never substitute
+        // brief units for a loaded scenario, else the COA tasks units absent from window.RmoozScenario)
+        if (!units.length && !hadScenarioUnits) {
             var ob = (_payload && _payload.brief && _payload.brief.operational_brief) || (_payload && _payload.operational_brief) || {};
             var rawB = Array.isArray(ob.proposed_units) ? ob.proposed_units : [];
             if (rawB.length) {
@@ -1619,8 +1622,8 @@
             }
         }
 
-        // Priority C: _allGroups anchor positions
-        if (!units.length) {
+        // Priority C: _allGroups anchor positions (ONLY when NO scenario is loaded)
+        if (!units.length && !hadScenarioUnits) {
             var grps = _allGroups.filter(function(g) { return g && g.anchor && finiteLL(g.anchor); });
             if (grps.length) {
                 dTotal = grps.length; dWithId = grps.length; dWithCoords = grps.length;
@@ -1722,7 +1725,10 @@
         var w = W();
         if (!w || typeof w.fetch !== 'function') return Promise.resolve(_routeHealth);
         return _fetchJsonSafe('/api/wargame-sim/free-fight/plan-coas/health', { method: 'GET' })
-            .then(function (h) { _routeHealth = h; updatePanel(); return h; })
+            .then(function (h) {
+                _routeHealth = (h && h.ok === true) ? Object.assign({}, _routeHealth || {}, h) : h;
+                updatePanel(); return _routeHealth;
+            })
             .catch(function (e) {
                 if (!_routeHealth || _routeHealth.allow_sim_run == null) {
                     _routeHealth = { ok: false, reason: 'probe_failed', error: (e && e.message) || 'error' };
@@ -2625,22 +2631,29 @@
         // RMOOZ-SIDE-ROLE-A: role assignment and target positions are side-specific.
         // RED (attacker from NE): recon→probe NE, support→fire support ENE, screen→flank SE, assault→assault NE, reserve→rear SW.
         // BLUE (defender facing NE): recon→observe NE, screen→screen line NE, intercept→block axis NE, defend→perimeter NNE, reserve→rear SW.
+        // COA_ACTION_BUDGET_AND_ROLE_GATE: task only a realistic subset; non-selected units hold.
+        var _ssSel = _selectMovers(u, obj, { fraction: 0.15, min: 5, max: 12 });
+        var _moverIds = {}; _ssSel.movers.forEach(function (mu) { _moverIds[String(mu.id)] = 1; });
+        var _nMovers = _ssSel.movers.length, _mi = -1;
         var assigns = u.map(function (unit, i) {
-            var role, n = u.length;
+            var uid = String(unit.id || unit.uid || unit.unit_uid);
+            if (!_moverIds[uid]) return { uid: uid, role: 'hold', i: i };
+            _mi++; var m = _mi;
+            var role, n = _nMovers;
             if (isRed) {
-                if (n >= 5) role = (i === 0 ? 'recon' : i === 1 ? 'support' : i === 2 ? 'screen' : (i === n - 1 ? 'reserve' : 'assault'));
-                else if (n === 4) role = (i === 0 ? 'support' : i === 1 ? 'screen' : i === 2 ? 'assault' : 'reserve');
-                else if (n === 3) role = (i === 0 ? 'support' : i === 1 ? 'screen' : 'assault');
-                else if (n === 2) role = (i === 0 ? 'support' : 'assault');
+                if (n >= 5) role = (m === 0 ? 'recon' : m === 1 ? 'support' : m === 2 ? 'screen' : (m === n - 1 ? 'reserve' : 'assault'));
+                else if (n === 4) role = (m === 0 ? 'support' : m === 1 ? 'screen' : m === 2 ? 'assault' : 'reserve');
+                else if (n === 3) role = (m === 0 ? 'support' : m === 1 ? 'screen' : 'assault');
+                else if (n === 2) role = (m === 0 ? 'support' : 'assault');
                 else role = 'assault';
             } else {
-                if (n >= 5) role = (i === 0 ? 'recon' : i === 1 ? 'screen' : i === 2 ? 'intercept' : (i === n - 1 ? 'reserve' : 'defend'));
-                else if (n === 4) role = (i === 0 ? 'screen' : i === 1 ? 'intercept' : i === 2 ? 'defend' : 'reserve');
-                else if (n === 3) role = (i === 0 ? 'screen' : i === 1 ? 'defend' : 'reserve');
-                else if (n === 2) role = (i === 0 ? 'screen' : 'defend');
+                if (n >= 5) role = (m === 0 ? 'recon' : m === 1 ? 'screen' : m === 2 ? 'intercept' : (m === n - 1 ? 'reserve' : 'defend'));
+                else if (n === 4) role = (m === 0 ? 'screen' : m === 1 ? 'intercept' : m === 2 ? 'defend' : 'reserve');
+                else if (n === 3) role = (m === 0 ? 'screen' : m === 1 ? 'defend' : 'reserve');
+                else if (n === 2) role = (m === 0 ? 'screen' : 'defend');
                 else role = 'defend';
             }
-            return { uid: String(unit.id || unit.uid || unit.unit_uid), role: role, i: i };
+            return { uid: uid, role: role, i: i };
         });
         // RMOOZ-MOVEMENT-INTELLIGENCE-A: behavior-engine target positions (threat-axis aware).
         // Falls back to ring placement when engine not loaded (staff_safe_no_ai).
@@ -2995,6 +3008,10 @@
             }
             var _aiCheck = _freeFightAiReady();
             if (!_aiCheck.ok) {
+                if (_aiCheck.code === 'health_pending') {
+                    _coaLoading = false; _stopCoaLoadingTicker(); updatePanel();
+                    return;
+                }
                 _coaPlan = { ok: false, _ai_precheck_blocked: true, _requestedVia: 'manual_generate',
                     _error: 'AI COA not generated — ' + (_aiCheck.reason || _aiCheck.code || 'AI not ready') +
                         '. ' + (_aiCheck.msg || 'Use Staff-Safe (deterministic) if you need a plan now.') };
@@ -3010,6 +3027,21 @@
         // RMOOZ-STEP1-COA-PREPARATION-GATE-AE: only TASKABLE units are sent to the planner — blocked Step-1
         // placeholders are held back so the AI/deterministic builder cannot task them with movement.
         body.units = arr(body.units).filter(function (u) { return _isUnitTaskable(u.id); });
+        // RMOOZ-AI-FREE-FIGHT-FORCE-POOL-PRESENT-A: the planner may ONLY task units that EXIST in the active
+        // loaded scenario (window.RmoozScenario.scenario) — _findRealUnit validates each COA action against
+        // it, so an absent (brief-only / unplaced) unit blocks execution with "unit missing". Lock the force
+        // pool to the present set and keep allowed_unit_ids in lockstep. force_pool_count then reports the
+        // present taskable count, never brief-only units.
+        (function () {
+            var sc2 = w && w.RmoozScenario && w.RmoozScenario.scenario; if (!sc2) return;
+            var present = {};
+            (Array.isArray(sc2.red_units) ? sc2.red_units : []).concat(Array.isArray(sc2.blue_units_initial) ? sc2.blue_units_initial : [])
+                .forEach(function (u) { var id = u && (u.id || u.uid || u.unit_uid); if (id) present[String(id)] = true; });
+            var before = arr(body.units).length;
+            body.units = arr(body.units).filter(function (u) { return present[String(u.id || u.uid)]; });
+            if (body.opts) body.opts.allowed_unit_ids = body.units.map(function (u) { return u.id; });
+            if (body.units.length !== before) { try { _appendToEventLog('Force pool locked to ' + body.units.length + ' present scenario unit(s) (dropped ' + (before - body.units.length) + ' absent/brief-only).'); } catch (_) {} }
+        })();
         // RMOOZ-AI-COMMANDER-DEMO-PACING-C: shape the request by planner mode.
         if (_planningMode === 'staff_safe') {
             // Staff-Safe = FAST deterministic. useLlm:false → the capability analyst uses deterministic
@@ -3027,10 +3059,39 @@
             // show parse/schema/repair/fallback honesty (incl. the failing raw output on invalid_json).
             body.opts.capture_raw_llm = true;
         }
+        // RMOOZ-MISSION-ROLE-CONTRACT-A: derive and cache the mission role contract before
+        // sending the COA request so active_side + defending_side are data-driven, not guessed.
+        _missionRoleContract = _buildMissionRoleContract();
+        try {
+            _recordDecision({ role: 'white', action: 'MISSION_ROLE_RESOLVED', called_llm: false,
+                source: 'mission-role-contract',
+                reason: 'derived from ' + _missionRoleContract.objective_source + ' (confidence: ' + _missionRoleContract.confidence + ')',
+                result_summary: 'attacker=' + _missionRoleContract.attacker_side +
+                    ' / defender=' + _missionRoleContract.defender_side +
+                    ' / objective_owner=' + _missionRoleContract.objective_owner_side +
+                    ' / initial_actor=' + _missionRoleContract.initial_actor +
+                    ' / mission_type=' + _missionRoleContract.mission_type });
+        } catch (_) {}
+        try {
+            _appendToEventLog('MISSION_ROLE_RESOLVED: attacker=' + _missionRoleContract.attacker_side +
+                ' / defender=' + _missionRoleContract.defender_side +
+                ' / objective_owner=' + _missionRoleContract.objective_owner_side +
+                ' / initial_actor=' + _missionRoleContract.initial_actor +
+                ' / mission_type=' + _missionRoleContract.mission_type +
+                ' / source=' + _missionRoleContract.objective_source);
+        } catch (_) {}
         var _genT0 = _nowMs();   // RMOOZ-AI-SCHEDULER-DECISION-LOG-S: measure the commander call duration
         _fetchJsonSafe('/api/wargame-sim/free-fight/plan-coas', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ units: body.units, objectives: body.objectives, context: { commander_mode: body.opts.commander_mode, ai_depth: body.opts.ai_depth }, opts: body.opts }),
+            body: JSON.stringify({ units: body.units, objectives: body.objectives,
+                context: {
+                    commander_mode: body.opts.commander_mode,
+                    ai_depth: body.opts.ai_depth,
+                    active_side: _missionRoleContract.active_coa_side,
+                    defending_side: _missionRoleContract.defender_side,
+                    mission_role_contract: _missionRoleContract
+                },
+                opts: body.opts }),
         }).then(function (plan) {
             if (_isRouteUnavailable(plan)) {
                 _routeUnavailableMsg = _routeUnavailableText(plan);
@@ -3045,10 +3106,12 @@
                 if (_coaPlan && typeof _coaPlan === 'object') _coaPlan._step1_report = _lastStep1Report;
                 // RMOOZ-SCC-STEP1-TRAINING-APPROVAL-AK: mark a plan built on training-approved review-only units.
                 if (_coaPlan && typeof _coaPlan === 'object') _coaPlan._simulation_only = _isSimulationOnly();
-                // RMOOZ-AI-COA-HONESTY-A: defense-in-depth — if the commander AI path returned ok:true
-                // with a non-LLM plan_source (server now returns ok:false, but guard old behavior too).
+                // RMOOZ-AI-COA-HONESTY-A: defense-in-depth — if the commander AI path actually called
+                // the LLM and then fell back, block it instead of dressing it as an AI plan. A deterministic
+                // no-LLM planner response is still allowed through so the SCC can label it honestly.
                 if (_planningMode !== 'staff_safe' && _coaPlan && _coaPlan.ok === true &&
-                        _coaPlan.plan_source && _coaPlan.plan_source !== 'llm') {
+                        _coaPlan.plan_source && _coaPlan.plan_source !== 'llm' &&
+                        (_coaPlan.llm_called === true || _coaPlan.fallback_reason || /fallback/.test(String(_coaPlan.llm_status || '')))) {
                     _coaPlan = { ok: false, _ai_fallback_blocked: true, _requestedVia: 'manual_generate',
                         llm_called: _coaPlan.llm_called, llm_status: _coaPlan.llm_status,
                         fallback_reason: _coaPlan.fallback_reason,
@@ -3065,6 +3128,14 @@
             if (_coaPlan && _coaPlan.ok && _coaPlan.plan_source === 'llm') { try { _normalizeBehaviorIntentForPlan(_coaPlan); } catch (_) {} }
             // RMOOZ-WARGAMINGGEN-MOVEMENT-ARCHITECTURE-A: AI COA uses behavior assignments — no ring normalization.
             // _normalizeActionTargets is staff-safe-only; do NOT apply to AI-generated plans.
+            // RMOOZ-MISSION-ROLE-CONTRACT-A: log which side the initial COA was generated for.
+            try {
+                var _coaSide = (_missionRoleContract && _missionRoleContract.active_coa_side) ||
+                    (plan && plan.active_side) || 'RED';
+                _recordDecision({ role: 'white', action: 'COA_SIDE_SELECTED', called_llm: false,
+                    source: 'mission-role-contract', result_summary: 'active_coa_side=' + _coaSide });
+                _appendToEventLog('COA_SIDE_SELECTED: active_coa_side=' + _coaSide);
+            } catch (_) {}
             _coaLoading = false; _coaApplied = false; _stopCoaLoadingTicker();
             updatePanel();
             // RMOOZ-GREEN-WORLD-UI-R + RMOOZ-GREEN-WHITE-SCORING-T: refresh Green, then score it onto the
@@ -3321,7 +3392,7 @@
             // silently fall to the legacy target-only path — log as blocked and skip execution.
             if (_coaPlan && _coaPlan.plan_source === 'llm' && !behavior) {
                 if (!Array.isArray(_domainBlockedRecords)) _domainBlockedRecords = [];
-                _domainBlockedRecords.push({ uid: act.unit_uid, role: act.role || '', tick: _coaTick || 0,
+                _domainBlockedRecords.push({ uid: act.unit_uid, role: act.role || '', tick: (_coaExec && _coaExec.ticks) || 0,
                     domain: act.domain || 'unknown', reason: 'AI_NO_BEHAVIOR_INTENT', source: 'llm_no_behavior' });
                 return;
             }
@@ -3712,6 +3783,66 @@
         return { lat: from.lat + dx * t, lon: from.lon + dy * t };
     }
 
+    // RMOOZ-MISSION-ROLE-CONTRACT-A: derive mission roles from the loaded scenario JSON.
+    // Mirrors server/ai/mission-role-contract.js (client copy avoids a round-trip before
+    // the initial COA call). Priority: generation.template → role analysis → default.
+    function _deriveObjOwner(sc) {
+        var obj = sc.obj;
+        if (!obj || !obj.coord || !isFinite(+obj.coord[0]) || !isFinite(+obj.coord[1])) return 'uncontrolled';
+        var oLon = +obj.coord[0], oLat = +obj.coord[1];
+        function centroid(units) {
+            var n = 0, sLat = 0, sLon = 0;
+            (units || []).forEach(function (u) {
+                var c = u.coord;
+                if (c && c.length >= 2 && isFinite(+c[0]) && isFinite(+c[1])) { sLon += +c[0]; sLat += +c[1]; n++; }
+            });
+            return n ? { lat: sLat / n, lon: sLon / n } : null;
+        }
+        var rc = centroid(sc.red_units), bc = centroid(sc.blue_units_initial || sc.blue_units);
+        if (!rc || !bc) return 'uncontrolled';
+        var dR = (oLat - rc.lat) * (oLat - rc.lat) + (oLon - rc.lon) * (oLon - rc.lon);
+        var dB = (oLat - bc.lat) * (oLat - bc.lat) + (oLon - bc.lon) * (oLon - bc.lon);
+        return dB < dR ? 'BLUE' : 'RED';
+    }
+    function _buildMissionRoleContract() {
+        var w = (typeof window !== 'undefined') ? window : null;
+        var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        if (!sc) {
+            return { attacker_side: 'RED', defender_side: 'BLUE', objective_owner_side: 'uncontrolled',
+                     initial_actor: 'RED', active_coa_side: 'RED', reaction_side: 'BLUE',
+                     mission_type: 'attack', objective_source: 'provisional', confidence: 'low' };
+        }
+        var objOwner = _deriveObjOwner(sc);
+        var tpl = String((sc.generation && sc.generation.template) || '').toLowerCase().trim();
+        if (tpl === 'attack_objective' || tpl === 'attack') {
+            return { attacker_side: 'RED', defender_side: 'BLUE', objective_owner_side: objOwner,
+                     initial_actor: 'RED', active_coa_side: 'RED', reaction_side: 'BLUE',
+                     mission_type: 'attack', objective_source: 'file_explicit', confidence: 'high' };
+        }
+        if (tpl === 'defend_objective' || tpl === 'defend') {
+            return { attacker_side: 'BLUE', defender_side: 'RED', objective_owner_side: objOwner,
+                     initial_actor: 'BLUE', active_coa_side: 'BLUE', reaction_side: 'RED',
+                     mission_type: 'defend', objective_source: 'file_explicit', confidence: 'high' };
+        }
+        var offRoles = ['armor', 'mech_infantry', 'fires', 'assault', 'attack', 'armored', 'mechanized', 'artillery'];
+        function countOff(units) {
+            return (units || []).filter(function (u) {
+                var r = String(u.role || u.type || '').toLowerCase();
+                return offRoles.some(function (o) { return r.indexOf(o) !== -1; });
+            }).length;
+        }
+        var redOff = countOff(sc.red_units), blueOff = countOff(sc.blue_units_initial || sc.blue_units);
+        if (redOff > 0 || blueOff > 0) {
+            var atk = redOff >= blueOff ? 'RED' : 'BLUE', def = atk === 'RED' ? 'BLUE' : 'RED';
+            return { attacker_side: atk, defender_side: def, objective_owner_side: objOwner,
+                     initial_actor: atk, active_coa_side: atk, reaction_side: def,
+                     mission_type: 'attack', objective_source: 'role_inferred', confidence: 'medium' };
+        }
+        return { attacker_side: 'RED', defender_side: 'BLUE', objective_owner_side: objOwner,
+                 initial_actor: 'RED', active_coa_side: 'RED', reaction_side: 'BLUE',
+                 mission_type: 'attack', objective_source: 'provisional', confidence: 'low' };
+    }
+
     // Build the plan-coas request body for the active side, with loop context.
     function _buildLoopRequestBody() {
         var base = _buildAiRequestBody(); // units + objectives + opts (preferSide RED)
@@ -3732,7 +3863,8 @@
                 // RMOZ-INTEL-CAPABILITY-TERRAIN-ZONE-A: feed recent COA families so the
                 // intel layer's COA-variation engine avoids repeating the same family.
                 previous_coa_families: _coaFamilyHistory.slice(-3),
-                defending_side: 'BLUE',
+                // RMOOZ-MISSION-ROLE-CONTRACT-A: use derived defender, not hardcoded BLUE.
+                defending_side: (_missionRoleContract && _missionRoleContract.defender_side) || 'BLUE',
                 // RMOOZ-AI-COMMANDER-FREEDOM-A: commander mode + a per-turn variation seed
                 // so high-variation rotates the recommended approach across cycles.
                 commander_mode: _commanderMode,
@@ -5261,10 +5393,45 @@
         arr(units).forEach(function (u) { var la = num(u.lat), lo = num(u.lon); if (isFinite(la) && isFinite(lo)) { sx += lo; sy += la; n++; } });
         return n ? { lat: round5(sy / n), lon: round5(sx / n) } : null;
     }
+    // ── COA_ACTION_BUDGET_AND_ROLE_GATE ───────────────────────────────────────
+    // A normal attack/reaction phase must MOVE only a realistic SUBSET of the present
+    // force — never all of it. The per-turn deterministic maneuvers below previously
+    // ordered EVERY present unit to move each turn (red.forEach / blue.map), which is
+    // why a continuous run showed movedTasked ≈ 65/77. _selectMovers picks the budget.
+    var COA_RED_MOVE_FRACTION = 0.13, COA_RED_MOVE_MIN = 3, COA_RED_MOVE_MAX = 12;   // 77 RED → ~10
+    var COA_BLUE_MOVE_FRACTION = 0.12, COA_BLUE_MOVE_MIN = 2, COA_BLUE_MOVE_MAX = 6;  // reaction → 2–6
+    // Hold-role gate: units that must NOT move as an assault/reaction element (air defense,
+    // bases, logistics/support/admin, radar, C2/HQ) unless explicitly repositioning.
+    function _moverHoldRole(u) {
+        var r = String((u && (u.role || u.domain || u.class || u.type)) || '').toLowerCase();
+        return /air[_ -]?def|\bsam\b|missile.?def|\bbase\b|logist|\bsupport\b|admin|depot|\bradar\b|\bc2\b|head.?quarter|\bhq\b/.test(r);
+    }
+    // Pick the realistic MOVE subset for one phase: drop hold-role units, then take the
+    // NEAREST `budget` to the focal point (objective/intercept). budget = clamp(round(taskable
+    // * fraction), min, max). The rest HOLD. → { movers, held, considered, taskable, maxAllowed }.
+    function _selectMovers(units, focal, opts) {
+        opts = opts || {};
+        var all = arr(units).filter(function (u) { return u && u.id != null; });
+        var eligible = all.filter(function (u) { return !_moverHoldRole(u); });
+        var pool = eligible.length ? eligible : all;   // never freeze the fight if EVERY unit is hold-role
+        var budget = Math.max(opts.min || 1, Math.min(opts.max || 12, Math.round(pool.length * (opts.fraction || 0.15))));
+        var sorted = pool.slice();
+        if (focal && Number.isFinite(+focal.lat) && Number.isFinite(+focal.lon)) {
+            sorted.sort(function (a, b) {
+                var da = (a.lat - focal.lat) * (a.lat - focal.lat) + (a.lon - focal.lon) * (a.lon - focal.lon);
+                var db = (b.lat - focal.lat) * (b.lat - focal.lat) + (b.lon - focal.lon) * (b.lon - focal.lon);
+                return da - db;
+            });
+        }
+        var movers = sorted.slice(0, budget);
+        var moverIds = {}; movers.forEach(function (u) { moverIds[String(u.id)] = 1; });
+        var held = all.filter(function (u) { return !moverIds[String(u.id)]; });
+        return { movers: movers, held: held, considered: all.length, taskable: pool.length, maxAllowed: budget };
+    }
     function _autoDirectorBuildCoa(outcome) {
         var obj = getObjective();
-        var blue = _taskableSideUnits('BLUE');   // AE: only taskable units receive movement orders
-        if (!blue.length) return null;                          // nothing to order (all blocked / none present)
+        var blueAll = _taskableSideUnits('BLUE');   // AE: only taskable units receive movement orders
+        if (!blueAll.length) return null;                       // nothing to order (all blocked / none present)
         var posture, title;
         if (!obj) { posture = 'consolidate'; title = 'Consolidate (no objective)'; }
         else if (outcome.blue_total > 0 && outcome.blue_total < outcome.units_missing) { posture = 'consolidate'; title = 'Consolidate / hold (Blue weak)'; }
@@ -5284,21 +5451,29 @@
         // RMOOZ-AUTO-SCENARIO-FORMATION-REALISM-AC: assign DETERMINISTIC ring positions (per unit index)
         // instead of the exact objective coordinate, so units never stack. Last unit holds back as support;
         // hold_screen spreads onto the support ring; consolidate/weak holds in place.
+        // COA_ACTION_BUDGET_AND_ROLE_GATE: a reaction MOVES only the nearest suitable subset to the
+        // intercept/objective — never all BLUE. The rest hold (omitted from the order = no move).
+        var _blueSel = _selectMovers(blueAll, _ringCenter, { fraction: COA_BLUE_MOVE_FRACTION, min: COA_BLUE_MOVE_MIN, max: COA_BLUE_MOVE_MAX });
+        var _movers = (posture === 'consolidate') ? [] : _blueSel.movers;
         var rings = [];
-        // assault element holds the inner (control) ring; the trailing unit screens from the support ring —
-        // so a held objective keeps Blue INSIDE the control radius (no retreat to the support ring).
-        var actions = blue.map(function (u, i) {
-            if (posture === 'consolidate') { rings.push('hold'); return { unit_uid: u.id, action_type: 'HOLD_POSITION', role: 'reserve' }; }
-            var isSupport = (blue.length > 1 && i === blue.length - 1);
-            // RMOOZ-SIDE-ROLE-A: BLUE is the DEFENDER — use intercept/blocking positions, not assault ring.
-            var tgt = isSupport ? _supportRing(_ringCenter, i) : _blockingRing(_ringCenter, i);
-            rings.push(isSupport ? 'reinforce' : 'intercept');
-            return { unit_uid: u.id, action_type: 'MOVE', role: (isSupport ? 'reinforce' : 'intercept'), target: tgt };   // capped + teleport-guarded at execution
-        });
+        var actions;
+        if (!_movers.length) {
+            // consolidate / weak: hold a single small element in place (no advance).
+            actions = [{ unit_uid: (blueAll[0] && blueAll[0].id), action_type: 'HOLD_POSITION', role: 'reserve' }];
+            rings.push('hold');
+        } else {
+            // BLUE is the defender: selected movers intercept/block the RED axis; the trailing mover reinforces.
+            actions = _movers.map(function (u, i) {
+                var isSupport = (_movers.length > 1 && i === _movers.length - 1);
+                var tgt = isSupport ? _supportRing(_ringCenter, i) : _blockingRing(_ringCenter, i);
+                rings.push(isSupport ? 'reinforce' : 'intercept');
+                return { unit_uid: u.id, action_type: 'MOVE', role: (isSupport ? 'reinforce' : 'intercept'), target: tgt };   // capped + teleport-guarded at execution
+            });
+        }
         // RMOOZ-REAL-COA-COMMANDER-QUALITY-AD: carry the commander structure so the auto order is
         // commander-quality (passes the quality gate), not a shallow move-to-objective order.
-        var assaultIds = blue.filter(function (u, i) { return !(posture !== 'consolidate' && blue.length > 1 && i === blue.length - 1); }).map(function (u) { return u.id; });
-        var supIds = (posture !== 'consolidate' && blue.length > 1) ? [blue[blue.length - 1].id] : [];
+        var assaultIds = _movers.filter(function (u, i) { return !(_movers.length > 1 && i === _movers.length - 1); }).map(function (u) { return u.id; });
+        var supIds = (_movers.length > 1) ? [_movers[_movers.length - 1].id] : [];
         var _moveCount = actions.filter(function (a) { return a.action_type === 'MOVE'; }).length;
         return { plan_id: 'AUTO-T' + (_scenario ? _scenario.scenario_turn : 1), title: title + (_intercept ? ' — intercept RED axis' : ''), side: 'BLUE',
             recommended: true, risk: 'low', confidence: 'medium', source_type: 'staff_safe_auto_director', posture: posture,
@@ -5311,11 +5486,15 @@
             risk_mitigation: 'Support-by-fire overwatch + screened flank; deterministic capped movement.',
             expected_enemy_reaction: ['Red counters toward the objective'],
             formation_rings: rings, phases: [{ name: title, actions: actions }],
+            _budget: { considered: _blueSel.considered, taskable: _blueSel.taskable, selected: _moveCount, max_allowed: _blueSel.maxAllowed, held: _blueSel.considered - _moveCount },
             _reaction: _intercept ? { intercept: _intercept, red_centroid: _redC, move_count: _moveCount } : null };
     }
     function _autoDirectorNextBlueOrder(outcome) {
+        // RMOOZ-FREE-FIGHT-CONTINUITY: specific, operator-visible failure codes (no silent stop).
+        if (!_taskableSideUnits('BLUE').length) return { ok: false, code: 'no_taskable_blue_units', reason: 'No taskable BLUE units available for a reaction.' };
+        if (!getObjective()) return { ok: false, code: 'invalid_objective', reason: 'No valid objective set — BLUE cannot orient a reaction.' };
         var coa = _autoDirectorBuildCoa(outcome);
-        if (!coa || !arr(coa.phases[0].actions).length) return { ok: false, reason: 'No safe deterministic Blue order available — operator decision needed.' };
+        if (!coa || !arr(coa.phases[0].actions).length) return { ok: false, code: 'no_safe_blue_order', reason: 'No safe deterministic BLUE order available — operator decision needed.' };
         coa._quality = _coaQualityGate(coa);   // AD: grade the auto order (role-separated → passes)
         // a deterministic, honestly-labelled Staff-Safe plan (NOT an LLM plan, never hits /plan-coas)
         _coaPlan = { ok: true, plan_source: 'deterministic', planning_mode: 'staff_safe', recommended_plan_id: coa.plan_id,
@@ -5324,13 +5503,13 @@
         try { _recordQualityGate(_coaPlan._coa_quality.verdict, _coaPlan._coa_quality.score, _coaPlan._coa_quality.reasons); } catch (_) {}
         _coaSelectedIdx = 0;
         var ex = _commitCoa(0);   // builds _coaExec (pending) — deterministic, no LLM, no /plan-coas
-        if (!ex) return { ok: false, reason: 'Auto-director order could not be committed — operator decision needed.' };
+        if (!ex) return { ok: false, code: 'blocked_replan', reason: 'Auto-director order could not be committed (replan blocked) — operator decision needed.' };
         var ringsLabel = (function () { var seen = {}, out = []; arr(coa.formation_rings).forEach(function (r) { if (!seen[r]) { seen[r] = 1; out.push(r); } }); return out.join('/') || coa.posture; })();
         if (_scenario) _scenario.last_formation_order = 'Blue ' + coa.posture + ' → ' + ringsLabel + (ringsLabel === 'hold' ? '' : ' ring');
         try { _recordDecision({ role: 'performance', action: 'formation_assignment', called_llm: false, source: 'staff_safe_auto_director',
             reason: 'Blue ' + coa.posture + ' formation', result_summary: 'Blue → ' + ringsLabel + ' positions (' + arr(coa.phases[0].actions).length + ' units)' }); } catch (_) {}
         try { _appendToEventLog('BLUE DEFENSE COA generated to defend Objective X — ' + esc(ringsLabel) + ' formation (turn ' + (_scenario ? _scenario.scenario_turn : '?') + ').'); } catch (_) {}
-        return { ok: true, coa_id: coa.plan_id, posture: coa.posture, rings: ringsLabel, source: 'staff_safe_auto_director', reaction: coa._reaction || null };
+        return { ok: true, coa_id: coa.plan_id, posture: coa.posture, rings: ringsLabel, source: 'staff_safe_auto_director', reaction: coa._reaction || null, budget: coa._budget || null };
     }
     // Deterministic Red maneuver — actually MOVES Red units through the SAME safe/teleport-guarded path
     // as Blue (_resolveCoaMoves → _writeMoveFrame). NO LLM. Returns {posture, moved, summary}.
@@ -5338,15 +5517,19 @@
         var posture = _redReaction(outcome).posture;
         var obj = getObjective();
         var red = _scenarioSideUnits('RED');
-        // RMOOZ-AUTO-SCENARIO-FORMATION-REALISM-AC: Red moves to a RING, never the exact objective center.
-        // RMOOZ-SIDE-ROLE-A: RED is the ATTACKER — counter/block → assault approach ring (NE of obj); withdraw → away.
-        var actions = [], ring = null;
+        // RMOOZ-AUTO-SCENARIO-FORMATION-REALISM-AC: Red moves to a RING (blocking/screen), never the exact
+        // objective center. counter/block → blocking ring; withdraw → away; hold/none → keep current posture.
+        // COA_ACTION_BUDGET_AND_ROLE_GATE: only a realistic SUBSET maneuvers per turn (the nearest units to
+        // the objective), role-gated — NOT the whole present force every turn (the old red.forEach moved all).
+        var actions = [], ring = null, sel = null;
         if ((posture === 'counter' || posture === 'block') && obj) {
-            ring = 'assault';
-            red.forEach(function (u, i) { actions.push({ unit_uid: u.id, action_type: 'MOVE', role: 'assault', target: _blockingRing(obj, i) }); });
+            ring = 'blocking';
+            sel = _selectMovers(red, obj, { fraction: COA_RED_MOVE_FRACTION, min: COA_RED_MOVE_MIN, max: COA_RED_MOVE_MAX });
+            sel.movers.forEach(function (u, i) { actions.push({ unit_uid: u.id, action_type: 'MOVE', role: posture, target: _blockingRing(obj, i) }); });
         } else if (posture === 'withdraw' && obj) {
             ring = 'reserve';
-            red.forEach(function (u) {
+            sel = _selectMovers(red, obj, { fraction: COA_RED_MOVE_FRACTION, min: COA_RED_MOVE_MIN, max: COA_RED_MOVE_MAX });
+            sel.movers.forEach(function (u) {
                 var dLat = (u.lat - obj.lat), dLon = (u.lon - obj.lon);
                 var mag = Math.sqrt(dLat * dLat + dLon * dLon) || 1;
                 actions.push({ unit_uid: u.id, action_type: 'MOVE', role: 'withdraw', target: { lat: u.lat + (dLat / mag) * 0.2, lon: u.lon + (dLon / mag) * 0.2 } });
@@ -5361,9 +5544,11 @@
             if (moved && mapReady()) { try { _triggerScenarioRedraw(); syncMarkers(); } catch (_) {} }
         }
         var ringTxt = ring ? (' → ' + ring + ' ring') : '';
-        try { _appendToEventLog('RED ATTACK COA — ' + posture + ringTxt + (moved ? ', moved ' + moved + ' unit(s) toward Objective X' : ', held position') + ' (turn ' + (_scenario ? _scenario.scenario_turn : '?') + ').'); } catch (_) {}
+        var _considered = red.length, _selected = sel ? sel.movers.length : 0, _maxAllowed = sel ? sel.maxAllowed : 0, _held = sel ? sel.held.length : red.length;
+        try { _appendToEventLog('RED ATTACK COA — ' + posture + ringTxt + (moved ? ', moved ' + moved + '/' + _considered + ' unit(s) toward Objective X' : ', held position') + ' (turn ' + (_scenario ? _scenario.scenario_turn : '?') + ').'); } catch (_) {}
         return { posture: posture, moved: moved, ring: ring, target: firstTarget,
-            summary: 'Red ' + posture + ringTxt + (moved ? ' — moved ' + moved + ' unit(s)' : ' — held') + ' (deterministic, no LLM)' };
+            considered: _considered, selected: _selected, max_allowed: _maxAllowed, held: _held,
+            summary: 'Red ' + posture + ringTxt + (moved ? ' — moved ' + moved + '/' + _considered + ' (budget ' + _maxAllowed + ', ' + _held + ' hold)' : ' — held') + ' (deterministic, no LLM)' };
     }
     function _scenarioEndCondition(outcome) {
         if (outcome.blue_success) return { code: 'objective_secured', summary: 'Objective secured by Blue — scenario complete.' };
@@ -5384,6 +5569,42 @@
             return _coaExecTick();   // deterministic; llm_called_this_tick:false; no /plan-coas
         }
         return _scenarioTransition();
+    }
+    // RMOOZ-FREE-FIGHT-CONTINUITY: commit the deterministic auto-director BLUE order and continue. Shared by
+    // the Auto-Continue turn loop AND the operator "Continue (BLUE Reaction)" button. On success → status
+    // running + BLUE_REACTION + BLUE_REACTION_AUTO_COMMITTED; on failure → blocked + the exact code/reason.
+    function _commitAutoBlueOrder(outcome) {
+        var blue = _autoDirectorNextBlueOrder(outcome);
+        if (blue.ok) {
+            _scenario.last_auto_order_source = blue.source;
+            _scenario.scenario_status = 'running'; _scenario.current_actor = 'unit-controller';
+            _scenario.pending_replan_reason = null; _scenario.updated_at = _nowISO();
+            try { _recordDecision({ role: 'performance', action: 'auto_director_next_blue_order', called_llm: false, source: 'staff_safe_auto_director', reason: 'deterministic next Blue order (' + blue.posture + ')', result_summary: blue.coa_id + ' · ' + blue.posture }); } catch (_) {}
+            try { _appendToEventLog('BLUE_REACTION_AUTO_COMMITTED (turn ' + _scenario.scenario_turn + '): Staff-Safe Blue order (' + esc(blue.posture) + ') committed — scenario continues, no AI.'); } catch (_) {}
+            if (blue.reaction && blue.reaction.intercept) {
+                var _bb = blue.budget || {};
+                try { _recordDecision({ role: 'blue', action: 'BLUE_REACTION', called_llm: false, source: 'staff_safe_auto_director',
+                    reason: 'intercept RED axis (deterministic, no LLM) — nearest ' + blue.reaction.move_count + ' of ' + (_bb.considered != null ? _bb.considered : '?') + ' BLUE (budget ' + (_bb.max_allowed != null ? _bb.max_allowed : '?') + ')',
+                    result_summary: blue.reaction.move_count + ' unit(s) -> intercept RED axis @ ' + Number(blue.reaction.intercept.lat).toFixed(2) + ',' + Number(blue.reaction.intercept.lon).toFixed(2) + (_bb.held != null ? ' · ' + _bb.held + ' hold' : '') }); } catch (_) {}
+                try { _appendToEventLog('BLUE REACTION (turn ' + _scenario.scenario_turn + '): ' + blue.reaction.move_count + ' unit(s) (of ' + (_bb.considered != null ? _bb.considered : '?') + ' considered, budget ' + (_bb.max_allowed != null ? _bb.max_allowed : '?') + ', ' + (_bb.held != null ? _bb.held : '?') + ' hold) ordered to intercept the RED axis (commits + executes next tick).'); } catch (_) {}
+            }
+            if (!_scenarioTimer) _startScenarioTimer();   // keep the fight ticking
+        } else {
+            _scenario.scenario_status = 'blocked'; _scenario.pending_replan_reason = (blue.code ? '[' + blue.code + '] ' : '') + blue.reason;
+            _scenario.current_actor = 'blue'; _scenario.updated_at = _nowISO();
+            _stopScenarioTimer();
+            try { _appendToEventLog('Auto Director could not continue (turn ' + _scenario.scenario_turn + '): ' + esc(blue.code || 'no_safe_blue_order') + ' — ' + esc(blue.reason)); } catch (_) {}
+        }
+        return blue;
+    }
+    // Operator "Continue (BLUE Reaction)" — force one deterministic BLUE reaction + continue from a manual
+    // pause, WITHOUT permanently enabling Auto-Continue. Returns { ok, code?, reason? }.
+    function _continueWithBlueReaction() {
+        if (!_scenarioActive()) return { ok: false, code: 'no_active_scenario', reason: 'No active scenario.' };
+        if (_scenario.scenario_status !== 'paused' && _scenario.scenario_status !== 'blocked') return { ok: false, code: 'not_paused', reason: 'Scenario is not paused.' };
+        var blue = _commitAutoBlueOrder(_whiteScenarioOutcome());
+        updatePanel();
+        return blue.ok ? { ok: true, posture: blue.posture, reaction: blue.reaction || null } : { ok: false, code: blue.code || 'no_safe_blue_order', reason: blue.reason };
     }
     // White → Green → (Red maneuver) → next Blue order. All deterministic, no LLM, no /plan-coas.
     // Manual: pauses "needs new Blue orders". Auto: the Auto Director commits a Staff-Safe next order and
@@ -5409,6 +5630,8 @@
         _scenario.blue_presence = outcome.blue_presence;
         _scenario.red_contest = outcome.red_contest;
         // RMOOZ-AI-FREE-FIGHT-EVENT-MILESTONES-A: per-turn White adjudication, named milestone.
+        try { _recordDecision({ role: 'white', action: 'scenario_outcome_check', called_llm: false, source: 'scenario',
+            reason: outcome.reason, result_summary: 'turn ' + _scenario.scenario_turn + ' · ' + outcome.summary + ' · contested ' + outcome.objective_contested }); } catch (_) {}
         try { _recordDecision({ role: 'white', action: 'WHITE_ADJUDICATION', called_llm: false, source: 'scenario',
             reason: outcome.reason, result_summary: 'turn ' + _scenario.scenario_turn + ' · ' + outcome.summary + ' · contested ' + outcome.objective_contested }); } catch (_) {}
         try { _recordDecision({ role: 'white', action: 'objective_control_check', called_llm: false, source: 'scenario',
@@ -5440,39 +5663,25 @@
         // AC: record the Red maneuver WITH its formation target (ring), not just a log line.
         try { _recordDecision({ role: 'red', action: 'red_maneuver_order', called_llm: false, source: 'scenario', reason: red.reason,
             result_summary: maneuver.summary + (maneuver.ring ? ' · target ' + maneuver.ring + ' ring' : '') }); } catch (_) {}
-        try { _appendToEventLog('Red maneuver (turn ' + _scenario.scenario_turn + '): ' + (maneuver.ring ? esc(maneuver.ring) + ' ring around objective' : esc(maneuver.posture)) + (maneuver.moved ? ' — moved ' + maneuver.moved + ' unit(s)' : ' — held') + '.'); } catch (_) {}
+        try { _appendToEventLog('Red maneuver (turn ' + _scenario.scenario_turn + '): ' + (maneuver.ring ? esc(maneuver.ring) + ' ring around objective' : esc(maneuver.posture)) + ' — considered ' + maneuver.considered + ', selected ' + maneuver.selected + '/' + (maneuver.max_allowed || 0) + ' (budget), moved ' + maneuver.moved + ', held ' + maneuver.held + '.'); } catch (_) {}
         _scenario.blue_cycle++; _scenario.red_cycle++;
         _scenario.scenario_turn++;
         // 4) next Blue order
         if (auto) {
-            var blue = _autoDirectorNextBlueOrder(outcome);
-            if (blue.ok) {
-                _scenario.last_auto_order_source = blue.source;   // 'staff_safe_auto_director'
-                _scenario.scenario_status = 'running'; _scenario.current_actor = 'unit-controller';
-                _scenario.pending_replan_reason = null; _scenario.updated_at = _nowISO();
-                try { _recordDecision({ role: 'performance', action: 'auto_director_next_blue_order', called_llm: false, source: 'staff_safe_auto_director', reason: 'deterministic next Blue order (' + blue.posture + ')', result_summary: blue.coa_id + ' · ' + blue.posture }); } catch (_) {}
-                try { _appendToEventLog('Auto Director: generated Staff-Safe Blue next order (' + esc(blue.posture) + ') — turn ' + _scenario.scenario_turn + ', no AI.'); } catch (_) {}
-                // RMOOZ-AI-FREE-FIGHT-BLUE-REACTION-A: named BLUE_REACTION milestone when the Blue order is a
-                // genuine intercept of RED's live axis (deterministic; the committed order executes next tick).
-                if (blue.reaction && blue.reaction.intercept) {
-                    try { _recordDecision({ role: 'blue', action: 'BLUE_REACTION', called_llm: false, source: 'staff_safe_auto_director',
-                        reason: 'intercept RED axis (deterministic, no LLM)',
-                        result_summary: blue.reaction.move_count + ' unit(s) -> intercept RED axis @ ' + Number(blue.reaction.intercept.lat).toFixed(2) + ',' + Number(blue.reaction.intercept.lon).toFixed(2) }); } catch (_) {}
-                    try { _appendToEventLog('BLUE REACTION (turn ' + _scenario.scenario_turn + '): ' + blue.reaction.move_count + ' unit(s) ordered to intercept the RED axis (commits + executes next tick).'); } catch (_) {}
-                }
-                if (!_scenarioTimer) _startScenarioTimer();   // keep the fight ticking
-            } else {
-                _scenario.scenario_status = 'blocked'; _scenario.pending_replan_reason = blue.reason;
-                _scenario.current_actor = 'blue'; _scenario.updated_at = _nowISO();
-                _stopScenarioTimer();
-                try { _appendToEventLog('Auto Director could not continue safely (turn ' + _scenario.scenario_turn + '): ' + esc(blue.reason)); } catch (_) {}
-            }
+            // Auto-Continue: the director MUST generate + commit the next BLUE reaction and continue
+            // (it only blocks on a specific failure — no_taskable_blue_units / invalid_objective /
+            // no_safe_blue_order / blocked_replan — surfaced with its exact code).
+            _commitAutoBlueOrder(outcome);
         } else {
-            _scenario.scenario_status = 'paused';   // manual — the fight continues, but Blue needs new orders (no LLM on ticks)
+            // Manual: pause for the operator. Named BLUE_ORDER_REQUIRED ledger event + a clear next action
+            // ("Continue (BLUE Reaction)" button / enable Auto-Continue). NOT a dead-end, NOT a block.
+            _scenario.scenario_status = 'paused';
             _scenario.pending_replan_reason = outcome.replan_reason || 'Scenario continues — Blue needs new orders for the next turn.';
             _scenario.current_actor = 'blue'; _scenario.updated_at = _nowISO();
             _stopScenarioTimer();
-            try { _appendToEventLog('Scenario needs new Blue orders (turn ' + _scenario.scenario_turn + '): ' + esc(_scenario.pending_replan_reason)); } catch (_) {}
+            try { _recordDecision({ role: 'blue', action: 'BLUE_ORDER_REQUIRED', called_llm: false, source: 'scenario',
+                reason: _scenario.pending_replan_reason, result_summary: 'turn ' + _scenario.scenario_turn + ' · manual pause · operator: Continue (BLUE Reaction) or enable Auto-Continue' }); } catch (_) {}
+            try { _appendToEventLog('BLUE_ORDER_REQUIRED (turn ' + _scenario.scenario_turn + '): ' + esc(_scenario.pending_replan_reason) + ' — press “Continue (BLUE Reaction)” or enable Auto-Continue.'); } catch (_) {}
         }
         updatePanel();
         return _scenario;
@@ -5536,7 +5745,7 @@
         try { _appendToEventLog('Scenario stopped by operator.'); } catch (_) {}
         updatePanel();
     }
-    function _resetScenario() { _stopScenarioTimer(); _scenario = null; _step1HeldUids = {}; _coaLoading = false; _missingUnitRecords = []; _heldMovementRecords = []; _domainBlockedRecords = []; _movedMovementRecords = []; }
+    function _resetScenario() { _stopScenarioTimer(); _scenario = null; _step1HeldUids = {}; _missionRoleContract = null; _coaLoading = false; _missingUnitRecords = []; _heldMovementRecords = []; _domainBlockedRecords = []; _movedMovementRecords = []; }
     // ── operator-card stale-commit guard (consumed by the Scenario Control Center engine facade) ────────
     // RMOOZ-FREE-FIGHT-V2-COA-TO-SCENARIO-BUGFIX-AB1: is the committed COA STALE relative to what the
     // operator is now looking at? True when (a) a DIFFERENT (newer) plan object is loaded than the one we
@@ -5715,20 +5924,29 @@
         approveTrainingSimulation: function () { _approveTrainingSimulation(); },
         clearTrainingApproval: function () { _clearTrainingApproval(); },
         // ── COA preparation (Panel 2) — Step-1 + taskability + quality requirements then generate ──
-        // Always re-probe route health before generating so a stale cached state never silently blocks the
-        // button (e.g. after a server restart the browser may still hold a pair_incoherent snapshot).
+        // Generate immediately when readiness is already confirmed. If health/model state is pending or
+        // blocked, re-probe once before generating so the operator is not trapped behind stale readiness.
         prepareCoa: function () {
             setPlanningMode('commander'); _resetScenario();
+            try {
+                var _prep = _step1PreparationReport();
+                if (_prep && !_prep.executable) { _generateCoaPlan(); return; }
+            } catch (_) {}
+            try { if (_freeFightAiReady().ok) { _generateCoaPlan(); return; } } catch (_) {}
             _probeRouteHealth().then(function () { _generateCoaPlan(); }).catch(function () { _generateCoaPlan(); });
         },
         // RMOOZ-PREPARE-COA-PRODUCT-FLOW-A: smart prepare — tries AI, falls back to Staff-Safe
         // immediately if AI is not ready. The result is badged honestly (plan_source=llm vs
         // staff_safe_commander_template) — no silent rebranding.
         prepareCoaSmart: function () {
+            try {
+                var _prep = _step1PreparationReport();
+                if (_prep && !_prep.executable) { setPlanningMode('commander'); _resetScenario(); _generateCoaPlan(); return; }
+            } catch (_) {}
             var _ar = null; try { _ar = _freeFightAiReady(); } catch (_) {}
             if (_ar && _ar.ok) {
                 setPlanningMode('commander'); _resetScenario();
-                _probeRouteHealth().then(function () { _generateCoaPlan(); }).catch(function () { _generateCoaPlan(); });
+                _generateCoaPlan();
             } else {
                 var why = (_ar && (_ar.reason || _ar.code)) || 'AI not ready';
                 try { _appendToEventLog('AI COA unavailable (' + why + ') — generating Staff-Safe COA instead.'); } catch (_) {}
@@ -5782,6 +6000,13 @@
         runCommittedOnce: function () { return _runCommittedCoa(); },
         pauseScenario: function () { return _pauseScenario(); },
         stopScenario: function () { return _stopScenario(); },
+        // RMOOZ-FREE-FIGHT-CONTINUITY: operator-exposed continuity controls (no dead-end at a manual pause).
+        continueWithBlueReaction: function () { return _continueWithBlueReaction(); },
+        setAutoContinue: function (v) { _scenarioAutoContinue = !!v; if (_scenario) _scenario.auto_continue = _scenarioAutoContinue;
+            try { _appendToEventLog('Auto-Continue ' + (_scenarioAutoContinue ? 'ENABLED — deterministic Staff-Safe BLUE reactions each turn, no AI on normal ticks.' : 'disabled — manual orders (operator continues each turn).')); } catch (_) {}
+            if (_scenarioAutoContinue && _scenario && _scenario.scenario_status === 'paused') { _runScenario(); }
+            try { updatePanel(); } catch (_) {} return _scenarioAutoContinue; },
+        autoContinueEnabled: function () { return _scenarioAutoContinue; },
         replan: function () { return _replanCoa(); },
         clearAll: function () { _resetScenario(); _resetCoaExec(); },
         whiteOutcome: function () { try { return _scenario ? _whiteScenarioOutcome() : null; } catch (_) { return null; } },
@@ -6020,6 +6245,15 @@
         _modelFlowHtmlForTest:     function (rh, info, open) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; if (open !== undefined) _modelPickerOpen = !!open; return _modelFlowHtml(); },
         _advancedDiagnosticsHtmlForTest: function (rh, info) { if (rh !== undefined) _routeHealth = rh; if (info !== undefined) _modelInfo = info; return _advancedDiagnosticsHtml(); },
         _benchHtmlForTest:         function (warmup, bench) { if (warmup !== undefined) _warmupResult = warmup; if (bench !== undefined) _benchResult = bench; return _benchHtml(); },   // RMOOZ-OFFLINE-AGENT-ARCHITECTURE-P
+        // COA_ACTION_BUDGET_AND_ROLE_GATE test seam: verify the move-subset selector directly.
+        _selectMoversForTest: function (units, focal, opts) {
+            var r = _selectMovers(units, focal, opts);
+            return { considered: r.considered, taskable: r.taskable, maxAllowed: r.maxAllowed,
+                selected: r.movers.length, held: r.held.length,
+                moverIds: r.movers.map(function (u) { return u.id; }),
+                heldHoldRoleExcluded: r.considered - r.taskable };
+        },
+        _autoDirectorBuildCoaForTest: function (o) { return _autoDirectorBuildCoa(o || _whiteScenarioOutcome()); },
         // RMOOZ-GREEN-WORLD-UI-R test seams
         _refreshGreenWorldForTest: function (reason)        { return _refreshGreenWorld(reason); },
         _getGreenWorldForTest:     function ()              { return _greenWorld; },

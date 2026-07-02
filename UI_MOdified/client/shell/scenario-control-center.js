@@ -350,18 +350,22 @@
         if (rb) inner += '<div data-scc="run-blocked" style="margin-bottom:6px;padding:6px 9px;border:1px solid ' + C.bad + ';border-radius:5px;background:#1f0d0d;color:' + C.bad + ';font-size:10px;font-weight:700;">⛔ ' + esc(rb) + '</div>';
         // controls per state
         var controls = '';
+        // RMOOZ-FREE-FIGHT-CONTINUITY: Auto-Continue toggle + an explicit "Continue (BLUE Reaction)" so a
+        // manual pause is never a dead-end.
+        var autoOn = false; try { autoOn = !!(eng.autoContinueEnabled && eng.autoContinueEnabled()); } catch (_) {}
+        var autoBtn = btnSec('scc-auto-continue', '🔁 Auto-Continue: ' + (autoOn ? 'ON' : 'OFF'), 'Auto-commit a deterministic BLUE reaction each turn (no AI on normal ticks) so the fight does not pause for orders.');
+        var contBlueBtn = btnPri('scc-continue-blue', '→ Continue (BLUE Reaction)', 'Force one deterministic BLUE reaction and continue this turn (no AI).');
         if (state === 'committed') {
-            // RMOOZ-PREPARE-COA-UX-UNBLOCK-A: primary button uses auto-continue so the fight runs
-            // continuously — no per-turn "Blue needs new orders" pause. "Run Plan once" stays for single-turn.
-            controls = btnPri('scc-run-continuous', '🎬 Run Scenario', 'Auto-director: continuous fight — Blue orders generated each turn; stops only on end condition or max turns') +
-                ' ' + btnSec('scc-run-once', '▶ Run Plan once', 'Execute the committed COA a single turn then pause') + ' ' + btnWarn('scc-clear', '✕ Clear');
+            // RMOOZ-PREPARE-COA-UX-UNBLOCK-A + RMOOZ-FREE-FIGHT-CONTINUITY:
+            // primary button runs continuously, while Run Plan once and Auto-Continue remain explicit controls.
+            controls = btnPri('scc-run', '🎬 Run Scenario', 'Auto-director: continuous fight — Blue orders generated each turn; stops only on end condition or max turns') +
+                ' ' + btnSec('scc-run-once', '▶ Run Plan once', 'Execute the committed COA a single turn then pause') + ' ' + autoBtn + ' ' + btnWarn('scc-clear', '✕ Clear');
         } else if (state === 'scenario_running') {
-            controls = btnPri('scc-pause', '⏸ Pause') + ' ' + btnWarn('scc-stop', '■ Stop') + ' ' + btnWarn('scc-clear', '✕ Clear');
+            controls = btnPri('scc-pause', '⏸ Pause') + ' ' + autoBtn + ' ' + btnWarn('scc-stop', '■ Stop') + ' ' + btnWarn('scc-clear', '✕ Clear');
         } else if (state === 'scenario_paused') {
-            // RMOOZ-PREPARE-COA-UX-UNBLOCK-A: add auto-continue option so "Blue needs new orders" is actionable
-            controls = btnPri('scc-run', '▶ Resume (manual)') + ' ' + btnSec('scc-auto-continue', '▶▶ Auto Continue (Staff-Safe)', 'Let the auto-director generate deterministic Blue orders each turn — no AI needed') + ' ' + btnWarn('scc-stop', '■ Stop') + ' ' + btnWarn('scc-clear', '✕ Clear');
+            controls = contBlueBtn + ' ' + autoBtn + ' ' + btnSec('scc-run', '▶ Resume (manual)') + ' ' + btnWarn('scc-stop', '■ Stop') + ' ' + btnWarn('scc-clear', '✕ Clear');
         } else if (state === 'scenario_blocked') {
-            controls = btnSec('scc-run', '▶ Continue anyway') + ' ' + btnSec('scc-replan', '↻ Replan with AI') + ' ' + btnWarn('scc-clear', '✕ Clear');
+            controls = contBlueBtn + ' ' + btnSec('scc-run', '▶ Continue anyway') + ' ' + btnSec('scc-replan', '↻ Replan with AI') + ' ' + autoBtn + ' ' + btnWarn('scc-clear', '✕ Clear');
         } else if (state === 'scenario_complete') {
             controls = btnSec('scc-run', '🎬 Run Scenario again') + ' ' + btnWarn('scc-clear', '✕ Clear');
         }
@@ -624,17 +628,26 @@
         bindFn('scc-place-obj', function () { eng.placeObjective(); });
         bindFn('scc-clear-obj', function () { eng.clearObjectiveX(); (eng.repaint || function () {})(); });
         bindFn('scc-commit', function () { eng.commit(eng.selectedIdx()); });
-        bindFn('scc-run', function () { eng.runScenario(); });
+        bindFn('scc-run', function () {
+            if (state() === 'committed' && typeof eng.runScenarioContinuous === 'function') eng.runScenarioContinuous();
+            else eng.runScenario();
+        });
         bindFn('scc-run-once', function () { eng.runCommittedOnce(); });
         bindFn('scc-pause', function () { eng.pauseScenario(); });
         bindFn('scc-stop', function () { eng.stopScenario(); });
+        // RMOOZ-FREE-FIGHT-CONTINUITY: operator continue + Auto-Continue toggle (no dead-end at a pause).
+        bindFn('scc-continue-blue', function () { (eng.continueWithBlueReaction || function () {})(); (eng.repaint || function () {})(); });
+        bindFn('scc-auto-continue', function () {
+            if (eng.setAutoContinue) eng.setAutoContinue(!(eng.autoContinueEnabled && eng.autoContinueEnabled()));
+            else if (typeof eng.enableAutoScenario === 'function') eng.enableAutoScenario();
+            (eng.repaint || function () {})();
+        });
         bindFn('scc-clear', function () { eng.clearAll(); });
         bindFn('scc-replan', function () { eng.replan(); });
         // RMOOZ-PREPARE-COA-UX-UNBLOCK-A: provider-switch, continuous run, auto-continue bindings
         bindFn('scc-run-continuous', function () { if (typeof eng.runScenarioContinuous === 'function') eng.runScenarioContinuous(); else eng.runScenario(); });
         bindFn('scc-use-local-model', function () { if (typeof eng.switchToLocalModel === 'function') eng.switchToLocalModel(); });
         bindFn('scc-use-openrouter', function () { if (typeof eng.switchToOpenRouter === 'function') eng.switchToOpenRouter(); });
-        bindFn('scc-auto-continue', function () { if (typeof eng.enableAutoScenario === 'function') eng.enableAutoScenario(); });
         bindFn('scc-evidence-toggle', function () { evidenceOpen = !evidenceOpen; (eng.repaint || function () {})(); });
         for (var i = 0; i < 8; i++) { (function (idx) { bindFn('scc-select-' + idx, function () { eng.selectCoa(idx); }); })(i); }
     }

@@ -35,6 +35,7 @@ const CONTRACT   = require('./rmooz-ai-tool-contract');            // RMOZ-AI-TO
 const TACTICS    = require('./tactical-action-library');           // RMOOZ-AI-COMMANDER-FREEDOM-A
 const TERRAIN_CTX = require('./tactical-terrain-context');         // GIS terrain-aware tactics
 const PREFILTER  = require('./candidate-prefilter');               // RMOOZ-AI-FREE-FIGHT-CANDIDATE-PREFILTER-A
+const MRC        = require('./mission-role-contract');              // RMOOZ-MISSION-ROLE-CONTRACT-A
 // Optional REAL elevation (DEM). Lazy + guarded: returns null off-coverage (e.g. Libya-only
 // dataset) so high-ground / route-cost gracefully fall back to inferred geometry.
 var _demFn = null;
@@ -73,7 +74,7 @@ var ALLOWED_ROLES = ['assault', 'support', 'screen', 'reserve', 'recon', 'hold',
                      'defend', 'intercept', 'reinforce'];
 var ALLOWED_RISK        = ['low', 'medium', 'high'];
 var ALLOWED_CONFIDENCE  = ['low', 'medium', 'high'];
-var REMOTE_PROVIDERS_BLOCKED = ['claude', 'zen', 'openai', 'auto'];
+var REMOTE_PROVIDERS_BLOCKED = ['claude', 'openai', 'auto'];   // RMOOZ-OPENCODE-ZEN-COA-A: zen moved to a gated allowance (zenReady) below
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function arr(v) { return Array.isArray(v) ? v : []; }
@@ -127,10 +128,11 @@ function resolveLocalProvider() {
 }
 function isRemoteProvider(name) {
     name = String(name || '').toLowerCase().trim();
-    // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A: openrouter is an EXPLICIT cloud mode — allowed ONLY
-    // when the owner enabled it (RMOOZ_ALLOW_CLOUD_AI=1 + OPENROUTER_API_KEY). Otherwise it is
-    // blocked like any remote provider. zen/claude/openai/auto stay blocked unconditionally.
+    // RMOOZ-OPENROUTER-QWEN35-CLOUD-MODE-A + RMOOZ-OPENCODE-ZEN-COA-A: openrouter AND opencode/zen are
+    // EXPLICIT cloud modes — allowed ONLY when the owner enabled cloud (RMOOZ_ALLOW_CLOUD_AI=1 + the
+    // provider's API key). Otherwise blocked. claude/openai/auto stay blocked unconditionally.
     if (name === 'openrouter') return !LLM_CFG.openrouterReady();
+    if (name === 'zen' || name === 'opencode') return !LLM_CFG.zenReady();
     return REMOTE_PROVIDERS_BLOCKED.indexOf(name) !== -1;
 }
 function resolveLocalModel() {
@@ -270,6 +272,57 @@ function bestObjective(objectives) {
  *   COA-2 "Flank / Fix"     — recommended:true,  risk:medium
  *   COA-3 "Probe / Recon"   — recommended:false, risk:low
  */
+// ── COA_ACTION_BUDGET_AND_ROLE_GATE (server) ───────────────────────────────────
+// A normal attack/reaction COA must MOVE only a realistic subset of the present taskable
+// force — never all of it. _enforceCoaActionBudget caps each phase to _moveBudgetFor(taskable)
+// MOVE actions (≤15%, hard max 12), converting the lowest-priority overflow to HOLD_POSITION.
+// Applied to BOTH the deterministic-side builders (via buildCoasForSide) and the LLM's
+// normalized COAs, so neither path can task the whole force. Mirrors the client maneuver
+// budget in free-fight-demo.js (_selectMovers).
+var COA_MOVE_MAX = 12, COA_MOVE_FRACTION = 0.15, COA_MOVE_MIN = 3;
+var _COA_KEEP_PRIORITY = { assault: 0, intercept: 0, main_effort: 0, breach: 0,
+    support: 1, support_by_fire: 1, fires: 1, block: 1, counter: 1, screen: 2, recon: 3 };
+// Hold-role gate: a unit whose role/domain marks it air-defense / base / logistics / support /
+// radar / C2 must NOT be tasked as an assault element (it holds/covers unless repositioning).
+function _serverHoldRole(u) {
+    var r = String((u && (u.role || u.domain || u.class || u.type)) || '').toLowerCase();
+    return /air[_ -]?def|\bsam\b|missile.?def|\bbase\b|logist|\bsupport\b|admin|depot|\bradar\b|\bc2\b|head.?quarter|\bhq\b/.test(r);
+}
+function _moveBudgetFor(taskableCount) {
+    var n = Number.isFinite(taskableCount) ? taskableCount : 0;
+    return Math.max(COA_MOVE_MIN, Math.min(COA_MOVE_MAX, Math.round(n * COA_MOVE_FRACTION)));
+}
+function _enforceCoaActionBudget(coas, taskableCount) {
+    var budget = _moveBudgetFor(taskableCount);
+    return arr(coas).map(function (coa) {
+        if (!coa || !Array.isArray(coa.phases)) return coa;
+        var selected = 0;
+        coa.phases.forEach(function (ph) {
+            var acts = arr(ph && ph.actions);
+            var movers = acts.filter(function (a) { return a && a.action_type && a.action_type !== 'HOLD_POSITION'; });
+            if (movers.length <= budget) { selected += movers.length; return; }
+            var ranked = movers.slice().sort(function (a, b) {
+                var pa = _COA_KEEP_PRIORITY[String(a.role || '').toLowerCase()]; if (pa == null) pa = 5;
+                var pb = _COA_KEEP_PRIORITY[String(b.role || '').toLowerCase()]; if (pb == null) pb = 5;
+                return pa - pb;
+            });
+            var keep = {};
+            ranked.slice(0, budget).forEach(function (a) { keep[a.unit_uid] = 1; });
+            ph.actions = acts.map(function (a) {
+                if (a && a.action_type && a.action_type !== 'HOLD_POSITION' && !keep[a.unit_uid]) {
+                    return Object.assign({}, a, { action_type: 'HOLD_POSITION', role: 'reserve',
+                        reason: 'Held in reserve — action budget reached (max ' + budget + ' moving units this phase).' });
+                }
+                return a;
+            });
+            selected += budget;
+        });
+        coa.action_budget = { max_moving_allowed: budget, selected_action_units: selected, considered: taskableCount };
+        coa.units_selected_count = selected;
+        return coa;
+    });
+}
+
 function buildDeterministicCoas(redUnits, obj) {
     var units = arr(redUnits).filter(unitHasCoord);
     var total = units.length;
@@ -280,6 +333,10 @@ function buildDeterministicCoas(redUnits, obj) {
             return dist({ lat: a.lat, lon: a.lon }, obj) - dist({ lat: b.lat, lon: b.lon }, obj);
         });
     }
+    // COA_ACTION_BUDGET_AND_ROLE_GATE: stable-sort hold-role units (AD/base/support/logistics)
+    // to the back so the nearest MANEUVER units fill the assault/support slots; hold-role units
+    // fall into the HOLD remainder instead of being tasked as assault.
+    units = units.slice().sort(function (a, b) { return (_serverHoldRole(a) ? 1 : 0) - (_serverHoldRole(b) ? 1 : 0); });
 
     var objName = (obj && (obj.name || obj.label)) || 'Objective X';
     var objLat = obj ? obj.lat : 0;
@@ -684,12 +741,16 @@ function buildDiverseCoas(units, obj, side, situation, capContext, mode, seed, i
  * intercept/defense builders. FREEFIGHT-BLUE-THREAT-AWARE-MOVEMENT-A + COMMANDER-FREEDOM-A.
  */
 function buildCoasForSide(units, obj, side, situation, capContext, mode, seed, intel, elevationFn) {
+    var coas;
     if (mode === 'free' || mode === 'high_variation') {
-        return buildDiverseCoas(units, obj, side, situation, capContext, mode, seed, intel, elevationFn);
+        coas = buildDiverseCoas(units, obj, side, situation, capContext, mode, seed, intel, elevationFn);
+    } else {
+        coas = String(side || 'RED').toUpperCase() === 'BLUE'
+            ? buildBlueCoas(units, obj, situation, capContext)
+            : buildDeterministicCoas(units, obj);
     }
-    return String(side || 'RED').toUpperCase() === 'BLUE'
-        ? buildBlueCoas(units, obj, situation, capContext)
-        : buildDeterministicCoas(units, obj);
+    // COA_ACTION_BUDGET_AND_ROLE_GATE: cap every deterministic-side COA to the move budget.
+    return _enforceCoaActionBudget(coas, arr(units).length);
 }
 
 // ── LLM normalizers ───────────────────────────────────────────────────────────
@@ -1160,6 +1221,9 @@ async function _callLlm(units, objectives, context, opts, _providerOverride) {
         // (below the teleport guard) and identical to how the deterministic builder + the apply layer step.
         // The model's tactical CHOICE (unit / action / direction) is preserved; only the step is capped.
         _clampLlmTargets(normalized, units);
+        // COA_ACTION_BUDGET_AND_ROLE_GATE: cap the LLM's COAs to the move budget too — the model must
+        // not task the whole force; overflow movers become HOLD_POSITION (reserve). Same gate as deterministic.
+        normalized = _enforceCoaActionBudget(normalized, arr(units).length);
         if (normalized.length < 2) {
             lastFail = { ok: false, llm_status: 'invalid_schema', fallback_reason: 'llm_returned_fewer_than_2_valid_coas (' + normalized.length + ', attempt ' + attempt + '/' + maxAttempts + ')', partial: normalized,
                 raw_response: str(result.response || '', 8000) };   // AI: carry the failing raw output for SCC Evidence
@@ -1301,13 +1365,22 @@ function _coaOutputSchema() {
 // (_precomputed_profiles) so the analyst is never run twice for the same units/context.
 async function _buildPlanningContext(units, objectives, context, opts, depth, timer) {
     var obj = bestObjective(arr(objectives));
-    // Active side: loop context wins, then opts.preferSide, then RED.
-    var activeSide = String(context.active_side || opts.preferSide || 'RED').toUpperCase();
+    // RMOOZ-MISSION-ROLE-CONTRACT-A: use the derived contract when present; fall back to
+    // loop context, then opts, then RED/BLUE defaults.
+    var _mrc = context.mission_role_contract || null;
+    // Active side: loop context wins, then contract, then opts.preferSide, then RED.
+    var activeSide = String(context.active_side || (_mrc && _mrc.active_coa_side) || opts.preferSide || 'RED').toUpperCase();
     if (activeSide !== 'RED' && activeSide !== 'BLUE') activeSide = 'RED';
+    var defenderSide = String((_mrc && _mrc.defender_side) || context.defending_side || 'BLUE').toUpperCase();
     // RMOOZ-AI-COMMANDER-FREEDOM-A: AI Commander Mode — controlled (doctrine-guided),
     // free (free tactical reasoning), high_variation (creative / rotates).
     var commanderMode = String(opts.commander_mode || context.commander_mode || 'controlled').toLowerCase().trim();
     if (['controlled', 'free', 'high_variation'].indexOf(commanderMode) === -1) commanderMode = 'controlled';
+    // Staff-Safe MUST use doctrine-guided building regardless of operator commander_mode.
+    // free/high_variation → buildDiverseCoas with screen/avoid_contact targets that point
+    // the attacker AWAY from the objective; controlled → buildDeterministicCoas with proper
+    // MOVE_TOWARD_OBJECTIVE ring targets. (RMOOZ-STAFF-SAFE-CONTROLLED-MODE-RULE)
+    if (String((opts && opts.planning_mode) || 'commander').toLowerCase() === 'staff_safe') commanderMode = 'controlled';
     var diverseMode = (commanderMode === 'free' || commanderMode === 'high_variation');
     var allUnits = arr(units).filter(function (u) { return unitHasCoord(u) && String(u.side || 'RED').toUpperCase() === activeSide; });
     if (!allUnits.length) {
@@ -1324,7 +1397,7 @@ async function _buildPlanningContext(units, objectives, context, opts, depth, ti
     try {
         intel = timer.sync('build_scenario_intel_ms', function () {
             return INTEL.buildScenarioIntel(units, objectives,
-                Object.assign({}, context, { defending_side: 'BLUE', active_side: activeSide }));
+                Object.assign({}, context, { defending_side: defenderSide, active_side: activeSide }));
         });
     } catch (_) { intel = null; }
 
@@ -1359,7 +1432,7 @@ async function _buildPlanningContext(units, objectives, context, opts, depth, ti
         var capKey = _capCacheKey(units, activeSide, capOpts.useLlm, obj);
         var capRes = await timer.async('analyze_unit_capabilities_ms', function () {
             return _capCacheGet(capKey, function () {
-                return ANALYST.analyzeUnitCapabilities(units, Object.assign({}, context, { defending_side: 'BLUE', active_side: activeSide }), capOpts);
+                return ANALYST.analyzeUnitCapabilities(units, Object.assign({}, context, { defending_side: defenderSide, active_side: activeSide }), capOpts);
             });
         });
         capProfiles = (capRes && capRes.value) || [];
@@ -1619,7 +1692,7 @@ async function _assemblePlan(P, variationSeed, timer, light) {
         return { selected_coa_family: (intel && intel.recommended_coa_family) || 'air_intercept', unit_assignments: assigns };
     }
 
-    var llmCalled = false, llmStatus = null, fallbackReason = null, fallbackMessage = null, providerUsed = null, modelUsed = null;
+    var llmCalled = false, llmStatus = null, fallbackReason = null, fallbackMessage = null, providerUsed = null, modelUsed = resolveLocalModel();
     var llmRawResponse = null; // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A: raw model output (when captured)
     var _llmContractRejection = null; // set when the LLM COA is rejected by the tool contract
 
@@ -1754,6 +1827,8 @@ async function _assemblePlan(P, variationSeed, timer, light) {
             repaired_violations: (repairInfo && repairInfo.repaired_violations) || null,
             planning_trace: light ? null : _buildPlanningTrace(planSource, coas, validation, repaired,
                 (repairInfo && repairInfo.repair_attempts) || 0, pProvider, pModel),
+            // RMOOZ-MISSION-ROLE-CONTRACT-A: echo the derived contract so the client can log COA_SIDE_SELECTED.
+            mission_role_contract: (context && context.mission_role_contract) || null,
         };
         // RMOOZ-AI-FREE-FIGHT-REAL-AI-TEST-A: expose the raw model output only when the caller asks
         // (opts.capture_raw_llm) — proof for the real-LLM E2E; omitted from normal/light payloads.
@@ -1842,12 +1917,12 @@ async function _assemblePlan(P, variationSeed, timer, light) {
             if (/timeout|timed.out|unavailable|error|remote_blocked/i.test(String(llmStatus || ''))) {
                 // Slow/unreachable model — re-prompting won't help; drop to Staff-Safe with an honest message.
                 fallbackReason = llmResult.fallback_reason || 'llm_failed';
-                var _mLabel = model ? (' (' + model + ')') : '';
-                var _isEmbedModel = /bge|embed|nomic-embed|all-minilm|mxbai-embed/i.test(String(model || ''));
+                var _mLabel = modelUsed ? (' (' + modelUsed + ')') : '';
+                var _isEmbedModel = /bge|embed|nomic-embed|all-minilm|mxbai-embed/i.test(String(modelUsed || ''));
                 fallbackMessage = /timeout|timed.out/i.test(String(llmStatus || ''))
                     ? ('Local AI' + _mLabel + ' timed out. Raise RMOOZ_FREE_FIGHT_TIMEOUT_MS or use a faster model.')
                     : (_isEmbedModel
-                        ? ('Model "' + model + '" is an embedding model — it cannot generate COAs. Pull a chat model (e.g. qwen2.5:7b) and select it in the model picker.')
+                        ? ('Model "' + modelUsed + '" is an embedding model — it cannot generate COAs. Pull a chat model (e.g. qwen2.5:7b) and select it in the model picker.')
                         : ('Local AI' + _mLabel + ' unavailable or returned an error. Check Ollama is running and the model is loaded.'));
                 break;
             }

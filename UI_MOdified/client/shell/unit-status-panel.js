@@ -173,6 +173,7 @@
         'usp-review-audit-block',
         'usp-handoff-package-block',
         'usp-handoff-acceptance-block',
+        'usp-release-gate-block',
         'usp-evidence-quality-block',
         'usp-evidence-alerts-block',
         'usp-evidence-coverage-block',
@@ -331,6 +332,7 @@
         populateScenarioReviewAuditTrail(unit);
         populateScenarioHandoffPackage(unit);
         populateScenarioHandoffAcceptance(unit);
+        populateScenarioReleaseGate(unit);
         populateEvidenceQualityGate(unit);
         populateEvidenceAlerts(unit);
         populateEvidenceCoverage(unit);
@@ -1496,6 +1498,7 @@
                 populateScenarioReviewCloseout(unit || currentUnit);
                 populateScenarioReviewAuditTrail(unit || currentUnit);
                 populateScenarioHandoffPackage(unit || currentUnit);
+                populateScenarioReleaseGate(unit || currentUnit);
             };
             MF.bindWorkspaceInteractions(body, workspace, {
                 onStatusChange: refreshManualReviewSurfaces,
@@ -1584,6 +1587,7 @@
                 populateForceEvidenceReport(unit || currentUnit);
                 populateScenarioHandoffPackage(unit || currentUnit);
                 populateScenarioHandoffAcceptance(unit || currentUnit);
+                populateScenarioReleaseGate(unit || currentUnit);
             };
             HP.bindPackageActions(body, pkg, {
                 world_state: _getCurrentWorldState,
@@ -1628,9 +1632,31 @@
                     populateForceEvidenceReport(unit || currentUnit);
                     populateScenarioHandoffPackage(unit || currentUnit);
                     populateScenarioHandoffAcceptance(unit || currentUnit);
+                    populateScenarioReleaseGate(unit || currentUnit);
                 }
             });
         }
+        block.removeAttribute('hidden');
+    }
+
+    // RMOOZ-QA-92..100: release-decision gate — closeout + acceptance +
+    // fingerprint synthesized into a deterministic release verdict + certificate.
+    function populateScenarioReleaseGate(unit) {
+        var block = $('usp-release-gate-block');
+        var body = $('usp-release-gate-body');
+        if (!block || !body) return;
+        var RG = root.RmoozScenarioEvidenceReleaseGate;
+        if (!RG || typeof RG.buildReleaseGate !== 'function' || typeof RG.renderReleaseGateHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        syncScenarioReviewSession();
+        var gate = RG.buildReleaseGate(_getCurrentWorldState, {
+            generated_at: new Date().toISOString()
+        });
+        body._scenarioEvidenceReleaseGate = gate;
+        body.innerHTML = RG.renderReleaseGateHtml(gate);
+        if (typeof RG.bindReleaseGateActions === 'function') RG.bindReleaseGateActions(body, gate);
         block.removeAttribute('hidden');
     }
 

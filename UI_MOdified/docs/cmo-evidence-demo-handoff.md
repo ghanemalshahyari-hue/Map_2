@@ -87,13 +87,14 @@ Scenario Evidence drawer panel order:
 8. Evidence Review Audit Trail
 9. Evidence Handoff Package
 10. Handoff Acceptance
-11. Evidence Quality
-12. Evidence Alerts
-13. Coverage
-14. Readiness Matrix
-15. Blocker Remediation
-16. Force Feed
-17. Force Report
+11. Evidence Release Gate
+12. Evidence Quality
+13. Evidence Alerts
+14. Coverage
+15. Readiness Matrix
+16. Blocker Remediation
+17. Force Feed
+18. Force Report
 ```
 
 ## Demo Flow

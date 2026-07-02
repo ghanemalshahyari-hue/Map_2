@@ -8,7 +8,7 @@
 (function (root) {
     'use strict';
 
-    var CMO_COMMANDER_BRIEF_VERSION = '1.2.0-rmooz-cmo-21-qa88';
+    var CMO_COMMANDER_BRIEF_VERSION = '1.3.0-rmooz-cmo-21-qa97';
 
     var HEADLINE_STATUS = {
         ready_for_review: {
@@ -64,6 +64,7 @@
     function closeoutApi()   { return localApi('RmoozScenarioEvidenceReviewCloseout','scenario-evidence-review-closeout.js'); }
     function auditApi()      { return localApi('RmoozScenarioEvidenceReviewAuditTrail','scenario-evidence-review-audit-trail.js'); }
     function acceptanceApi() { return localApi('RmoozScenarioEvidenceHandoffAcceptance','scenario-evidence-handoff-acceptance.js'); }
+    function releaseGateApi(){ return localApi('RmoozScenarioEvidenceReleaseGate','scenario-evidence-release-gate.js'); }
 
     function resolveHeadlineStatus(coverage, quality, alertCount, readyCount, totalCount) {
         var coveragePct = coverage && coverage.coverage_pct != null ? coverage.coverage_pct : 0;
@@ -137,6 +138,12 @@
         var acceptance = opts.handoff_acceptance || (HA && typeof HA.getDecision === 'function'
             ? HA.getDecision(obj(manualReview.session).scenario_fingerprint || ws)
             : null);
+        // QA-97: fold the release-gate verdict into the brief (reuse the closeout +
+        // acceptance already computed above so the gate doesn't recompute them).
+        var RG = releaseGateApi();
+        var releaseGate = opts.release_gate || (RG && typeof RG.buildReleaseGate === 'function'
+            ? RG.buildReleaseGate(ws, { closeout: closeout, acceptance: acceptance, generated_at: opts.generated_at })
+            : null);
 
         var alertList = arr(alerts.alerts || []);
         var alertCount = alertList.length;
@@ -201,6 +208,16 @@
                 } : null,
                 handoff_acceptance_status: acceptance
                     ? (acceptance.decision_label_en || acceptance.decision || null)
+                    : null,
+                release_gate: releaseGate ? {
+                    status: releaseGate.status || null,
+                    label_en: releaseGate.status_label_en || releaseGate.status || null,
+                    label_ar: releaseGate.status_label_ar || null,
+                    releasable: !!releaseGate.releasable,
+                    blocker_count: arr(releaseGate.blockers).length
+                } : null,
+                release_status: releaseGate
+                    ? (releaseGate.status_label_en || releaseGate.status || null)
                     : null
             },
             selected_unit: selectedSummary,
@@ -275,6 +292,15 @@
                     (ha.decision === 'rejected' ? 'usp-brief-fail' : 'usp-brief-pass') + '">' +
                     esc(qa.handoff_acceptance_status) +
                     (ha.label_ar ? ' <span dir="rtl">' + ha.label_ar + '</span>' : '') +
+                    '</dd></div>';
+            }
+            if (qa.release_status) {
+                var rg = obj(qa.release_gate);
+                html += '<div class="usp-brief-cell"><dt>Evidence Release</dt><dd class="' +
+                    (rg.releasable ? 'usp-brief-pass' : 'usp-brief-fail') + '">' +
+                    esc(qa.release_status) +
+                    (rg.label_ar ? ' <span dir="rtl">' + rg.label_ar + '</span>' : '') +
+                    (rg.blocker_count ? ' &mdash; ' + esc(rg.blocker_count) + ' blocker' + (rg.blocker_count === 1 ? '' : 's') : '') +
                     '</dd></div>';
             }
         }

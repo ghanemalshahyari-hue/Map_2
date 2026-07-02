@@ -5,6 +5,7 @@
 Use this runbook for the current release-candidate baseline:
 
 ```text
+scenario-evidence-v10  -> feat(scenario): add evidence release gate
 scenario-evidence-v9   -> feat(scenario): add evidence handoff acceptance workflow
 cmo-evidence-rehome-v1 -> 764d260f style(cmo): rehome scenario evidence from unit status
 scenario-evidence-v8   -> 941aa275 feat(scenario): add evidence handoff package
@@ -12,7 +13,7 @@ cmo-evidence-v14 -> 6f310c00 feat(cmo): add evidence actionability commander pac
 cmo-evidence-rc1 -> 4314f16c test(cmo): lock evidence release candidate
 ```
 
-This baseline includes the full CMO evidence workflow, print-ready evidence reports, the release-candidate static/runtime gate, actionability guidance, recommendations, Scenario Evidence completeness/review/repair/manual-fix/closeout/audit-trail, the handoff package + Handoff Acceptance workflow, and main/offline parity checks.
+This baseline includes the full CMO evidence workflow, print-ready evidence reports, the release-candidate static/runtime gate, actionability guidance, recommendations, Scenario Evidence completeness/review/repair/manual-fix/closeout/audit-trail, the handoff package + Handoff Acceptance workflow, the Evidence Release Gate (final release decision + certificate), and main/offline parity checks.
 
 ## UI Layout — Scenario Evidence Drawer
 
@@ -27,7 +28,31 @@ Scenario Evidence drawer / أدلة السيناريو
 = scenario-level QA, commander evidence, force evidence, handoff workflow
   (Commander Brief, Completeness, Objective X Health, Review Queue, Repair Planner,
    Manual Fix, Closeout, Audit Trail, Handoff Package, Handoff Acceptance,
-   Quality, Alerts, Coverage, Readiness Matrix, Blocker Remediation, Force Feed, Force Report)
+   Evidence Release Gate, Quality, Alerts, Coverage, Readiness Matrix,
+   Blocker Remediation, Force Feed, Force Report)
+```
+
+Scenario Evidence drawer panel order (after Batch 10):
+
+```text
+1. Commander Brief
+2. Scenario Completeness
+3. Objective X Health
+4. Scenario Evidence Review Queue
+5. Evidence Repair Planner
+6. Manual Evidence Fix
+7. Evidence Review Closeout
+8. Evidence Review Audit Trail
+9. Evidence Handoff Package
+10. Handoff Acceptance
+11. Evidence Release Gate
+12. Evidence Quality
+13. Evidence Alerts
+14. Coverage
+15. Readiness Matrix
+16. Blocker Remediation
+17. Force Feed
+18. Force Report
 ```
 
 Every step below that touches a scenario-level panel happens in the Scenario Evidence drawer, not in Unit Status.
@@ -137,6 +162,55 @@ Receiving operator:
 -> Copy/Download the acceptance receipt (JSON)
 ```
 
+## Evidence Release Gate (Batch 10)
+
+The Evidence Release Gate is the final "can this evidence package be released for
+demo / handoff / review?" decision. It is read-only — it does not release, mutate,
+or authorize anything; it reports a deterministic verdict from state already produced
+by the closeout, handoff-acceptance, and fingerprint layers.
+
+Deterministic release statuses:
+
+```text
+Ready for Release   جاهز للاعتماد
+Ready with Warnings جاهز مع تنبيهات
+Not Ready           غير جاهز
+Incomplete          غير مكتمل
+```
+
+Required checks (all must pass for Ready for Release):
+
+```text
+- Closeout status: Ready for Handoff
+- Handoff acceptance: Accepted or Accepted with Warnings
+- Scenario fingerprint: Match (and unchanged since acceptance)
+- Unresolved issues: 0
+- Deferred issues: all justified (have a note)
+- Fixed externally: all verified (have a note)
+```
+
+Status rules:
+
+```text
+Incomplete          -> review closeout not started/complete
+Not Ready           -> any required check fails (lists blockers)
+Ready with Warnings -> all required checks pass, but closeout has exceptions
+                       or acceptance was "Accepted with Warnings"
+Ready for Release   -> all required checks pass with no warnings
+```
+
+Operator flow (Scenario Evidence drawer, after Handoff Acceptance):
+
+```text
+-> Evidence Release Gate panel
+-> read Release status + the Required checklist (pass/warn/fail/na per line)
+-> read Blockers (what is preventing release) and Warnings
+-> Copy Release Certificate (human-readable) / Copy Release JSON / Download Release JSON
+```
+
+The release status also appears as a row in the Commander Brief and a section in the
+Force Evidence Report.
+
 ## Print Preview Smoke Checklist
 
 Manual browser print-preview smoke is still required for final demo confidence.
@@ -176,6 +250,7 @@ node test-scenario-evidence-review-closeout-batch-1.js
 node test-scenario-evidence-review-audit-trail-batch-1.js
 node test-scenario-evidence-handoff-package-batch-1.js
 node test-scenario-evidence-handoff-acceptance-batch-1.js
+node test-scenario-evidence-release-gate-batch-1.js
 node test-cmo-evidence-print-layout-ui-1.js
 node test-cmo-demo-flow-gate-1.js
 node test-cmo-evidence-quality-drilldown-ui-1.js
@@ -246,7 +321,8 @@ External `8080` is optional because tiles are proxied through `8640` in the norm
 Use these rollback/demo points:
 
 ```text
-scenario-evidence-v9 - handoff acceptance workflow (this baseline)
+scenario-evidence-v10 - evidence release gate (this baseline)
+scenario-evidence-v9 - handoff acceptance workflow
 scenario-evidence-v8 - handoff package export/import
 cmo-evidence-rehome-v1 - Scenario Evidence drawer split from Unit Status
 cmo-evidence-v13 - print-ready CMO evidence layout

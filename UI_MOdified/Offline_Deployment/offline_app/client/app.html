@@ -3626,6 +3626,14 @@
                         <div class="usp-section-body" id="usp-handoff-acceptance-body"></div>
                     </div>
 
+                    <!-- RMOOZ-QA-92: browser-local scenario evidence release gate -->
+                    <div class="usp-tasking-block usp-release-gate-block" id="usp-release-gate-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">Evidence Release Gate / &#1576;&#1608;&#1575;&#1576;&#1577; &#1575;&#1593;&#1578;&#1605;&#1575;&#1583; &#1575;&#1604;&#1571;&#1583;&#1604;&#1577;</span>
+                        </div>
+                        <div class="usp-section-body" id="usp-release-gate-body"></div>
+                    </div>
+
                     <!-- RMOOZ-CMO-12: read-only evidence quality gate -->
                     <div class="usp-tasking-block usp-evidence-quality-block" id="usp-evidence-quality-block" hidden>
                         <div class="usp-section-hdr">
@@ -4679,6 +4687,7 @@
     <script src="shell/scenario-evidence-review-closeout.js?v=1"></script>
     <script src="shell/scenario-evidence-handoff-package.js?v=1"></script>
     <script src="shell/scenario-evidence-handoff-acceptance.js?v=1"></script>
+    <script src="shell/scenario-evidence-release-gate.js?v=1"></script>
     <script src="shell/scenario-evidence-review-queue.js?v=1"></script>
     <script src="shell/scenario-evidence-repair-planner.js?v=1"></script>
     <script src="shell/cmo-force-evidence-feed.js?v=1"></script>
@@ -7047,6 +7056,31 @@
         .usp-acceptance-diff dd { margin:0; color:#dce8f4; }
         .usp-acceptance-changes { margin:5px 0 0 1.2rem; padding:0; color:#d7edf8; }
         .usp-acceptance-warnings { margin:5px 0 0 1.2rem; padding:0; color:#f0b397; }
+
+        /* ── RMOOZ-QA-92: scenario evidence release gate ───────────────────── */
+        .usp-release-gate-block { background:#0b0b13; border-bottom:2px solid #35305b; }
+        .usp-release-card { padding:8px 0.8rem 9px; color:#dce8f4; font-size:0.74rem; }
+        .usp-release-header { display:grid; grid-template-columns:1fr auto; gap:4px 8px; align-items:center; border-bottom:1px solid #2c2850; padding-bottom:6px; margin-bottom:7px; }
+        .usp-release-header span { color:#b9b6ff; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.04em; }
+        .usp-release-header strong { color:#b9b6ff; }
+        .usp-release-card--ready .usp-release-header strong { color:#8fd6a3; }
+        .usp-release-card--warnings .usp-release-header strong { color:#f1d48f; }
+        .usp-release-card--not-ready .usp-release-header strong { color:#f09b87; }
+        .usp-release-card--incomplete .usp-release-header strong { color:#9aa3ad; }
+        .usp-release-meta, .usp-release-source { color:#8f9dac; font-size:0.68rem; margin:5px 0; }
+        .usp-release-meta code { color:#d7edf8; font-family:'Consolas','Courier New',monospace; }
+        .usp-release-checks span, .usp-release-blockers span, .usp-release-warnings span { display:block; color:#b9b6ff; font-size:0.7rem; margin:6px 0 2px; }
+        .usp-release-checks ul, .usp-release-blockers ul, .usp-release-warnings ul { margin:0 0 4px 1.1rem; padding:0; line-height:1.5; }
+        .usp-release-check-mark { display:inline-block; width:1em; font-weight:bold; }
+        .usp-release-check--pass .usp-release-check-mark { color:#8fd6a3; }
+        .usp-release-check--warn .usp-release-check-mark { color:#f1d48f; }
+        .usp-release-check--fail .usp-release-check-mark { color:#f09b87; }
+        .usp-release-check--na .usp-release-check-mark { color:#8f9dac; }
+        .usp-release-blockers ul { color:#f0b397; }
+        .usp-release-warnings ul { color:#f1d48f; }
+        .usp-release-actions { display:flex; gap:6px; flex-wrap:wrap; margin-top:7px; }
+        .usp-release-actions button { border:1px solid #4b4580; background:#111029; color:#d8d5ff; font-size:0.66rem; padding:4px 7px; border-radius:4px; cursor:pointer; font-family:inherit; }
+        .usp-release-actions button:hover { background:#1a1840; }
 
     </style>
     <script>

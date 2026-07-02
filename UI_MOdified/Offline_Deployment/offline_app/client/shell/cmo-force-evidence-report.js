@@ -8,7 +8,7 @@
 (function (root) {
     'use strict';
 
-    var CMO_FORCE_EVIDENCE_REPORT_VERSION = '1.1.0-rmooz-cmo-11-qa89';
+    var CMO_FORCE_EVIDENCE_REPORT_VERSION = '1.2.0-rmooz-cmo-11-qa98';
 
     function obj(v) { return v && typeof v === 'object' ? v : {}; }
     function arr(v) { return Array.isArray(v) ? v : []; }
@@ -38,6 +38,7 @@
     function closeoutApi()     { return localApi('RmoozScenarioEvidenceReviewCloseout','scenario-evidence-review-closeout.js'); }
     function auditApi()        { return localApi('RmoozScenarioEvidenceReviewAuditTrail','scenario-evidence-review-audit-trail.js'); }
     function acceptanceApi()   { return localApi('RmoozScenarioEvidenceHandoffAcceptance','scenario-evidence-handoff-acceptance.js'); }
+    function releaseGateApi()  { return localApi('RmoozScenarioEvidenceReleaseGate','scenario-evidence-release-gate.js'); }
 
     function reasonLabel(code, lang) {
         var labels = labelsApi();
@@ -143,6 +144,12 @@
         var acceptance = opts.handoff_acceptance || (HA && typeof HA.getDecision === 'function'
             ? HA.getDecision(obj(manualReview && manualReview.session).scenario_fingerprint || ws)
             : null);
+        // QA-98: fold the release-gate verdict into the report (reuse the closeout +
+        // acceptance already resolved above so the gate doesn't recompute them).
+        var RG = releaseGateApi();
+        var releaseGate = opts.release_gate || (RG && typeof RG.buildReleaseGate === 'function'
+            ? RG.buildReleaseGate(ws, { closeout: closeout, acceptance: acceptance, generated_at: generatedAt })
+            : null);
         return {
             version: CMO_FORCE_EVIDENCE_REPORT_VERSION,
             generated_at: generatedAt,
@@ -172,6 +179,7 @@
             review_audit_trail: auditTrail,
             handoff_package_manifest: opts.handoff_package ? obj(opts.handoff_package.manifest || opts.handoff_package) : null,
             handoff_acceptance: acceptance ? obj(acceptance) : null,
+            release_gate: releaseGate ? obj(releaseGate) : null,
             selected_unit: selected,
             source: 'Readiness matrix + force evidence feed'
         };
@@ -294,6 +302,21 @@
                 lines.push('  Statuses added ' + (ac.added || 0) + ' / changed ' + (ac.changed || 0));
             }
             if (acceptance.decided_at) lines.push('  Decided: ' + acceptance.decided_at);
+            lines.push('');
+        }
+        var release = obj(report.release_gate);
+        if (release.status) {
+            lines.push('Evidence Release Gate:');
+            lines.push('  Release status: ' + (release.status_label_en || release.status));
+            lines.push('  Releasable: ' + (release.releasable ? 'yes' : 'no'));
+            arr(release.checks).forEach(function (c) {
+                var mark = c.status === 'pass' ? 'PASS' : c.status === 'warn' ? 'WARN' : c.status === 'na' ? 'N/A' : 'FAIL';
+                lines.push('  [' + mark + '] ' + c.label_en + ': ' + c.actual);
+            });
+            if (arr(release.blockers).length) {
+                lines.push('  Blockers:');
+                arr(release.blockers).forEach(function (b) { lines.push('  - ' + b.label); });
+            }
             lines.push('');
         }
         if (report.selected_unit) {

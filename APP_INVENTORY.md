@@ -92,6 +92,11 @@ scenario-evidence v9  Handoff Acceptance (QA-83..91): package diff vs local sess
                       Accept / Reject / Accept with Warnings, acceptance receipt export,
                       audit-trail + commander-brief + force-report integration,
                       runbook/handoff docs updated for the Scenario Evidence drawer
+scenario-evidence v10 Evidence Release Gate (QA-92..100): deterministic release verdict
+                      (Ready for Release / Ready with Warnings / Not Ready / Incomplete)
+                      synthesizing closeout + handoff acceptance + fingerprint; release
+                      blockers summary; release certificate JSON/text export;
+                      commander-brief + force-report release status
 ```
 
 Active Scenario-QA scripts mirrored between main and offline app shells:
@@ -109,9 +114,10 @@ scenario-evidence-review-closeout.js
 scenario-evidence-review-audit-trail.js
 scenario-evidence-handoff-package.js
 scenario-evidence-handoff-acceptance.js
+scenario-evidence-release-gate.js
 ```
 
-Gate tests (root, run individually): `test-scenario-evidence-{completeness,review-queue,repair-plan,manual-fix,review-session,review-closeout,review-audit-trail,handoff-package,handoff-acceptance}-batch-1.js`.
+Gate tests (root, run individually): `test-scenario-evidence-{completeness,review-queue,repair-plan,manual-fix,review-session,review-closeout,review-audit-trail,handoff-package,handoff-acceptance,release-gate}-batch-1.js`.
 Boundary note: the whole stack is browser-local (localStorage + in-memory fallback) — no backend routes, no scenario/world-state mutation; package/acceptance import restores review-session UI state only.
 
 ### Runtime and release baselines
@@ -139,6 +145,7 @@ localhost:8640 works
 Current relevant tags:
 
 ```text
+scenario-evidence-v10 -> evidence release gate (Batch 10)
 scenario-evidence-v9 -> evidence handoff acceptance workflow (Batch 9)
 cmo-evidence-rehome-v1 -> 764d260f Scenario Evidence drawer split from Unit Status
 scenario-evidence-v8 -> 941aa275 evidence handoff package

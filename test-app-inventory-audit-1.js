@@ -117,6 +117,20 @@ test('expected evidence script files exist in main and offline static trees', ()
   });
 });
 
+test('every shared main/offline shell module is byte-identical (OFFLINE-PARITY-D6)', () => {
+  // The offline app shell is a subset of main: any shell/*.js present in BOTH
+  // trees must be byte-identical, or the offline build can silently demo
+  // different behavior. This gate closes Drift D6 (scenario-import-wizard.js
+  // had drifted ~407 lines because no gate compared file *content*).
+  const offlineFiles = fs.readdirSync(OFFLINE_SHELL).filter((f) => f.endsWith('.js'));
+  const shared = offlineFiles.filter((f) => fs.existsSync(path.join(MAIN_SHELL, f)));
+  assert.ok(shared.length > 0, 'expected shared shell modules');
+  const drifted = shared.filter((f) => read(path.join(MAIN_SHELL, f)) !== read(path.join(OFFLINE_SHELL, f)));
+  assert.deepStrictEqual(drifted, [], 'offline shell modules drifted from main: ' + drifted.join(', '));
+  // scenario-import-wizard.js is the specific D6 regression — assert it is covered.
+  assert.ok(shared.includes('scenario-import-wizard.js'), 'scenario-import-wizard.js must be parity-checked');
+});
+
 test('main and offline evidence script order matches for the audited modules', () => {
   const mainOrder = expectedEvidenceScripts.map((s) => mainScripts.indexOf(s));
   const offlineOrder = expectedEvidenceScripts.map((s) => offlineScripts.indexOf(s));

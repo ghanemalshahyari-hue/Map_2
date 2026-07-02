@@ -1,19 +1,23 @@
 # Known Issues
 
-## D6 — offline scenario-import-wizard.js is stale (main/offline drift)
+## D6 — offline scenario-import-wizard.js was stale (RESOLVED 2026-07-02)
 
-Found by RMOOZ-AUDIT-APP-2 (2026-07-02). The offline app shell loads its own copy of
-`scenario-import-wizard.js` (offline `app.html:4848`), and that copy is ~407 lines behind the
-main client copy — it is missing the DOC-UNDERSTANDING-1 Phase E "AI Understanding review"
-screen, the FIX-B Objective-X source-of-truth indicator, and the package-import copy rewrite.
+Found by RMOOZ-AUDIT-APP-2 and resolved the same day (OFFLINE-PARITY-D6, owner ruling: sync,
+not intentional divergence). The offline copy of `scenario-import-wizard.js` had drifted ~407
+lines behind main (missing the DOC-UNDERSTANDING-1 Phase E review screen, the FIX-B Objective-X
+source indicator, and the package-import copy rewrite) and offline `app.html:4848` loaded it.
 
-No parity gate covers this module (the byte-parity tests only cover the CMO/Scenario-QA
-evidence lists), so the drift accumulated silently. Pending owner ruling:
+Fix: synced main → offline (now byte-identical) and added a parity gate in
+`test-app-inventory-audit-1.js` that byte-compares **every** shared `shell/*.js` between the
+main and offline trees — not just the CMO/Scenario-QA lists — so any shared module drift now
+fails the gate.
 
-```text
-Option A: copy main -> offline, re-verify the offline import flow, rebuild the offline
-          image, and add the module to a parity gate
-Option B: record the divergence as intentional for the offline runtime
+Operator runtime step (not done in-session, no Docker): rebuild the offline image so the
+running container picks up the synced wizard:
+
+```bash
+docker compose --env-file UI_MOdified/Offline_Deployment/.env.offline -f UI_MOdified/Offline_Deployment/docker-compose.offline.yml build --no-cache
+docker compose --env-file UI_MOdified/Offline_Deployment/.env.offline -f UI_MOdified/Offline_Deployment/docker-compose.offline.yml up -d
 ```
 
 ## scenario_overrides.json is tracked but is app-written runtime state

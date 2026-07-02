@@ -66,9 +66,10 @@
             '<div class="sw-src-subcard-hdr">' +
               '<span class="sw-src-subcard-title" style="color:#7fd6a0;font-size:14px;">Import Scenario</span>' +
               '<span class="sw-src-subcard-sub" style="display:block;font-size:11px;color:#9aa3ad;margin-top:2px;">' +
-                'Upload the red &amp; blue team documents, then Start. RMOOZ generates the wargame, ' +
-                'tracks progress, and opens the scenario automatically. You don\'t need to deal with GeoJSON, ' +
-                'publishing, or folders.</span>' +
+                'Import one scenario package (JSON). RMOOZ extracts RED/BLUE units, objectives, and ' +
+                'locations, resolves missing coordinates for your review, then you choose Scenario without AI ' +
+                'or Scenario with AI. — استورد حزمة سيناريو واحدة (JSON): يستخرج RMOOZ وحدات الأحمر/الأزرق ' +
+                'والأهداف والمواقع، ويحل الإحداثيات الناقصة للمراجعة، ثم تختار سيناريو بدون أو مع الذكاء الاصطناعي.</span>' +
             '</div>' +
             '<div class="wg-wz-body">' +
               // Scenario name (optional) — set/edit before Start. Sent to the
@@ -89,6 +90,9 @@
                   '<div id="wg-wz-obj-override-status" style="margin-bottom:8px;padding:4px;border-radius:3px;color:#e8eaed;display:none;background:#1a2a24;">' +
                     '<span>Override: </span><span id="wg-wz-obj-override-text"></span>' +
                   '</div>' +
+                  // FIX-B (B): single visible source-of-truth indicator — is Objective X the
+                  // server default or an operator override? This is the value Generate uses.
+                  '<div id="wg-wz-obj-source" style="margin-bottom:8px;font-size:11px;color:#9aa3ad;"></div>' +
                   '<div id="wg-wz-obj-map" style="width:100%;height:240px;border:1px solid #4a5a6a;border-radius:3px;margin-bottom:8px;background:#0a0e12;"></div>' +
                   '<div style="font-size:10px;color:#6a7a8a;margin-bottom:8px;">Drag the marker on the map or enter coordinates below</div>' +
                   '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">' +
@@ -232,11 +236,357 @@
             objDefault: card.querySelector('#wg-wz-obj-default'),
             objOverrideStatus: card.querySelector('#wg-wz-obj-override-status'),
             objOverrideText: card.querySelector('#wg-wz-obj-override-text'),
+            objSource: card.querySelector('#wg-wz-obj-source'),
             objLon: card.querySelector('#wg-wz-lon'),
             objLat: card.querySelector('#wg-wz-lat'),
             objSave: card.querySelector('#wg-wz-obj-save'),
             objReset: card.querySelector('#wg-wz-obj-reset'),
         };
+
+        // ── DOC-UNDERSTANDING-1 / Phase E: AI Understanding review screen ──
+        // A read-only "what the AI understood" panel shown BEFORE generation.
+        // Calls the offline JS-gate /analyze (classify + dedupe + side-separate
+        // + seed the Operational Brief) and renders it with four operator
+        // actions. No generation happens until Generate is clicked.
+        (function buildReviewUi() {
+            var actionRow = el.start.parentNode;
+            var analyzeBtn = document.createElement('button');
+            analyzeBtn.type = 'button';
+            analyzeBtn.id = 'wg-wz-analyze';
+            analyzeBtn.style.cssText = 'font:inherit;cursor:pointer;border:1px solid #4a7bb8;background:#22303f;color:#cfe6ff;border-radius:6px;padding:7px 14px;display:none;';
+            analyzeBtn.textContent = 'Review AI Understanding — مراجعة فهم الذكاء الاصطناعي';
+            actionRow.appendChild(analyzeBtn);
+            var review = document.createElement('div');
+            review.id = 'wg-wz-review';
+            review.style.cssText = 'display:none;margin-top:10px;border:1px solid #2e5d7d;border-radius:8px;background:#0e1620;padding:12px;';
+            actionRow.parentNode.insertBefore(review, actionRow.nextSibling);
+            // RMOOZ-IMPORT-OBJECTIVE-UNITSTATUS-FIX-B (A): explain the review gate, plus a
+            // dynamic hint shown when only ONE DOCX is staged (review needs Red + Blue).
+            var analyzeHint = document.createElement('div');
+            analyzeHint.id = 'wg-wz-analyze-hint';
+            analyzeHint.style.cssText = 'font-size:11px;color:#9aa3ad;margin-top:4px;line-height:1.5;';
+            analyzeHint.innerHTML = 'JSON and MDMP review are available before generation.';
+            actionRow.parentNode.insertBefore(analyzeHint, review);
+            el.analyze = analyzeBtn;
+            el.analyzeHint = analyzeHint;
+            el.review = review;
+            analyzeBtn.addEventListener('click', runAnalyze);
+
+            // ── IMPORT-SCENARIO-JSON-LOSS-FIX-A: stage one operational JSON ──
+            // This is the lossless Step 1 / multi-country / operational_brief JSON
+            // path. It posts the parsed object directly to /analyze, never through
+            // the full live-scenario steps[] loader.
+            st.jsonImport = null;
+            var jsonRow = document.createElement('div');
+            jsonRow.id = 'wg-wz-json-row';
+            jsonRow.style.cssText = 'margin:10px 0 4px;padding:8px;border:1px dashed #2e7d54;border-radius:6px;background:#101b16;';
+            jsonRow.innerHTML =
+                '<div style="font-size:13px;font-weight:700;color:#7fd6a0;margin-bottom:4px;" dir="auto">① Import scenario package (JSON) — استيراد حزمة السيناريو (JSON)</div>' +
+                '<div style="font-size:11px;color:#9aa3ad;margin-bottom:6px;" dir="auto">RMOOZ extracts RED/BLUE units, objectives, and locations and resolves missing coordinates for review. Works for multi-country Step 1, operational_brief, or scenario-understanding JSON. It does not require steps[]. After staging, click “Review AI Understanding” to resolve coordinates and choose Scenario without AI / with AI. — يستخرج RMOOZ الوحدات والأهداف والمواقع ويحل الإحداثيات الناقصة للمراجعة؛ لا يتطلب steps[].</div>' +
+                '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
+                  '<label class="wg-wz-file-btn" for="wg-wz-json" style="margin:0;">' +
+                    '<span>Choose Step 1 JSON</span>' +
+                    '<input type="file" id="wg-wz-json" class="wg-wz-file-input" accept=".json,application/json">' +
+                  '</label>' +
+                  '<span id="wg-wz-json-name" dir="auto" style="font-size:11px;color:#9aa3ad;">No Step 1 JSON staged</span>' +
+                  '<button type="button" id="wg-wz-json-clear" style="display:none;font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#cfd6dd;border-radius:4px;padding:2px 8px;font-size:11px;">Clear</button>' +
+                '</div>';
+            actionRow.parentNode.insertBefore(jsonRow, actionRow);
+            el.jsonInput = jsonRow.querySelector('#wg-wz-json');
+            el.jsonName = jsonRow.querySelector('#wg-wz-json-name');
+            el.jsonClear = jsonRow.querySelector('#wg-wz-json-clear');
+            function arrLen(v) { return Array.isArray(v) ? v.length : 0; }
+            function collectRawJsonCounts(obj) {
+                obj = (obj && typeof obj === 'object' && !Array.isArray(obj)) ? obj : {};
+                var ob = (obj.operational_brief && typeof obj.operational_brief === 'object') ? obj.operational_brief : obj;
+                var p = obj.participants && typeof obj.participants === 'object' ? obj.participants : {};
+                var ef = obj.enemy_forces && typeof obj.enemy_forces === 'object' ? obj.enemy_forces : {};
+                var ff = obj.friendly_forces && typeof obj.friendly_forces === 'object' ? obj.friendly_forces : {};
+                var nestedCountryUnits = 0, nestedCountryBases = 0;
+                arrLen(obj.countries) && obj.countries.forEach(function (c) {
+                    ['bases', 'air_bases', 'naval_bases', 'land_bases'].forEach(function (k) {
+                        (Array.isArray(c && c[k]) ? c[k] : []).forEach(function (b) {
+                            nestedCountryBases++;
+                            nestedCountryUnits += arrLen(b && b.units);
+                        });
+                    });
+                });
+                return {
+                    top_level_keys: Object.keys(obj),
+                    participants: arrLen(p.red) + arrLen(p.blue) + arrLen(p.neutral),
+                    countries: arrLen(obj.countries) + arrLen(ff.countries),
+                    enemy_forces: arrLen(ef.units) + arrLen(ef.bases) + arrLen(ef.air_bases) + arrLen(ef.naval_bases) + arrLen(ef.land_bases),
+                    friendly_forces_countries: arrLen(ff.countries),
+                    proposed_units: arrLen(obj.proposed_units) || arrLen(ob.proposed_units) || nestedCountryUnits,
+                    placement_candidates: arrLen(obj.placement_candidates) || arrLen(ob.placement_candidates) || nestedCountryBases,
+                    bases: arrLen(obj.country_bases) || arrLen(ob.country_bases) || nestedCountryBases || arrLen(ef.bases) + arrLen(ef.air_bases) + arrLen(ef.naval_bases) + arrLen(ef.land_bases),
+                    objectives: arrLen(obj.objectives) || arrLen(ob.objectives),
+                };
+            }
+            function paintJsonStaged() {
+                if (!st.jsonImport) {
+                    el.jsonName.textContent = 'No Step 1 JSON staged';
+                    el.jsonName.style.color = '#9aa3ad';
+                    el.jsonClear.style.display = 'none';
+                } else {
+                    el.jsonName.textContent = st.jsonImport.filename + ' staged: ' +
+                        st.jsonImport.rawCounts.proposed_units + ' proposed units, ' +
+                        st.jsonImport.rawCounts.placement_candidates + ' anchors';
+                    el.jsonName.style.color = '#7fc07f';
+                    el.jsonClear.style.display = '';
+                }
+                updateStartEnabled();
+            }
+            function clearJsonImport() {
+                st.jsonImport = null;
+                if (el.jsonInput) el.jsonInput.value = '';
+                paintJsonStaged();
+            }
+            el.jsonInput.addEventListener('change', function () {
+                var file = el.jsonInput.files && el.jsonInput.files[0];
+                if (!file) return;
+                file.text().then(function (text) {
+                    var parsed;
+                    try { parsed = JSON.parse(text); }
+                    catch (e) { throw new Error('JSON parse error: ' + e.message); }
+                    st.jsonImport = { filename: file.name, text: text, parsed: parsed, rawCounts: collectRawJsonCounts(parsed) };
+                    st.mdmpFiles = [];
+                    if (el.mdmpInput) el.mdmpInput.value = '';
+                    if (typeof paintMdmpStaged === 'function') paintMdmpStaged();
+                    paintJsonStaged();
+                    setStatus('Step 1 / operational JSON staged — click "Review AI Understanding".', '#7fc07f');
+                }).catch(function (e) {
+                    clearJsonImport();
+                    setStatus('Could not read Step 1 JSON: ' + e.message, '#e05252');
+                });
+            });
+            el.jsonClear.addEventListener('click', clearJsonImport);
+
+            // ── MDMP-EXTERNAL-1 / G-3 wiring: stage external MDMP JSON files ──
+            // The G-2 server adapter accepts { bundle: [{ filename, content }] }
+            // on /analyze, but the wizard previously had no way to feed it —
+            // the COA Review Panel (G-3) was reachable only from the devtools
+            // fixture page. This row lets the operator pick the step 3/4/5
+            // JSON/JSONC files; runAnalyze() then posts them as the bundle.
+            // Files are read client-side only — no staging endpoint, no writes.
+            st.mdmpFiles = [];
+            var mdmpRow = document.createElement('div');
+            mdmpRow.id = 'wg-wz-mdmp-row';
+            mdmpRow.style.cssText = 'margin:10px 0 4px;padding:8px;border:1px dashed #4a7bb8;border-radius:6px;background:#101a24;';
+            mdmpRow.innerHTML =
+                '<div style="font-size:12px;color:#8fb8e0;margin-bottom:4px;">External MDMP files (steps 3/4/5, JSON) — ملفات MDMP خارجية <span style="color:#6a7a8a;">(optional)</span></div>' +
+                '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
+                  '<label class="wg-wz-file-btn" for="wg-wz-mdmp" style="margin:0;">' +
+                    '<span>Choose MDMP JSON</span>' +
+                    '<input type="file" id="wg-wz-mdmp" class="wg-wz-file-input" accept=".json,.jsonc" multiple>' +
+                  '</label>' +
+                  '<span id="wg-wz-mdmp-names" style="font-size:11px;color:#9aa3ad;">No MDMP files staged</span>' +
+                  '<button type="button" id="wg-wz-mdmp-clear" style="display:none;font:inherit;cursor:pointer;border:1px solid #5a6270;background:#2a2f37;color:#cfd6dd;border-radius:4px;padding:2px 8px;font-size:11px;">Clear</button>' +
+                '</div>';
+            actionRow.parentNode.insertBefore(mdmpRow, actionRow);
+            el.mdmpInput = mdmpRow.querySelector('#wg-wz-mdmp');
+            el.mdmpNames = mdmpRow.querySelector('#wg-wz-mdmp-names');
+            el.mdmpClear = mdmpRow.querySelector('#wg-wz-mdmp-clear');
+            function paintMdmpStaged() {
+                var n = st.mdmpFiles.length;
+                el.mdmpNames.textContent = n
+                    ? (n + ' staged: ' + st.mdmpFiles.map(function (f) { return f.filename; }).join(', '))
+                    : 'No MDMP files staged';
+                el.mdmpNames.style.color = n ? '#7fc07f' : '#9aa3ad';
+                el.mdmpClear.style.display = n ? '' : 'none';
+                updateStartEnabled();
+            }
+            el.mdmpInput.addEventListener('change', function () {
+                var files = Array.prototype.slice.call(el.mdmpInput.files || []);
+                if (!files.length) return;
+                Promise.all(files.map(function (f) {
+                    return f.text().then(function (text) { return { filename: f.name, content: text }; });
+                })).then(function (loaded) {
+                    st.mdmpFiles = loaded;
+                    clearJsonImport();
+                    paintMdmpStaged();
+                    setStatus(loaded.length + ' MDMP file(s) staged — click "Review AI Understanding".', '#7fc07f');
+                }).catch(function (e) {
+                    setStatus('Could not read MDMP file(s): ' + e.message, '#e05252');
+                });
+            });
+            el.mdmpClear.addEventListener('click', function () {
+                st.mdmpFiles = [];
+                el.mdmpInput.value = '';
+                paintMdmpStaged();
+            });
+        })();
+
+        function showReviewError(msg) {
+            el.review.style.display = 'block';
+            el.review.innerHTML = '<div style="color:#e0a93a;font-size:12px;">⚠ ' + esc(msg) + '</div>';
+            el.review.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        function analyzeCounts(payload) {
+            var ob = payload && payload.brief && payload.brief.operational_brief || {};
+            return {
+                proposed_units: Array.isArray(ob.proposed_units) ? ob.proposed_units.length : 0,
+                placement_candidates: Array.isArray(ob.placement_candidates) ? ob.placement_candidates.length : 0,
+            };
+        }
+        function normToken(s) { return String(s == null ? '' : s).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim(); }
+        function unitBaseIds(u) {
+            return [u && u.assigned_base_id, u && u.base_id, u && u.anchor_id, u && u.placement_candidate_id, u && u.base_location_id]
+                .map(normToken).filter(Boolean);
+        }
+        function anchorBaseIds(a) {
+            return [a && a.base_id, a && a.id, a && a.anchor_id, a && a.placement_candidate_id, a && a.location_id, a && a.assigned_base]
+                .map(normToken).filter(Boolean);
+        }
+        function baseNames(o) {
+            return [o && o.base_name, o && o.base_name_en, o && o.base_name_ar, o && o.assigned_base, o && o.mention, o && o.normalized_name]
+                .map(normToken).filter(Boolean);
+        }
+        function compatibleSideCountry(u, a) {
+            var us = String((u && u.side) || '').toUpperCase();
+            var as = String((a && a.side) || '').toUpperCase();
+            if (us && as && us !== as) return false;
+            var uc = normToken((u && (u.country_key || u.country)) || '');
+            var ac = normToken((a && (a.country_key || a.country)) || '');
+            return !(uc && ac && uc !== ac);
+        }
+        function unitAttachesToAnchor(u, a) {
+            if (!u || !a || !compatibleSideCountry(u, a)) return false;
+            var uids = unitBaseIds(u), aids = anchorBaseIds(a);
+            if (uids.length && aids.some(function (id) { return uids.indexOf(id) !== -1; })) return true;
+            var un = baseNames(u), an = baseNames(a);
+            return un.length && an.some(function (n) { return un.indexOf(n) !== -1; });
+        }
+        function attachDiagnostics(payload, rawCounts) {
+            var ob = payload && payload.brief && payload.brief.operational_brief || {};
+            var units = Array.isArray(ob.proposed_units) ? ob.proposed_units : [];
+            var anchors = []
+                .concat(Array.isArray(ob.placement_candidates) ? ob.placement_candidates : [])
+                .concat(Array.isArray(ob.enemy_bases) ? ob.enemy_bases : [])
+                .concat(Array.isArray(ob.friendly_trial_bases) ? ob.friendly_trial_bases : [])
+                .concat(Array.isArray(ob.country_bases) ? ob.country_bases : []);
+            var attached = 0;
+            units.forEach(function (u) {
+                if (anchors.some(function (a) { return unitAttachesToAnchor(u, a); })) attached++;
+            });
+            payload.import_diagnostics = {
+                raw: rawCounts || {},
+                analyze: analyzeCounts(payload),
+                attached_units: attached,
+                orphaned_units: Math.max(0, units.length - attached),
+            };
+            return payload.import_diagnostics;
+        }
+        function paintImportDiagnostics(payload) {
+            var d = payload && payload.import_diagnostics;
+            if (!d || !el.review) return;
+            var div = document.createElement('div');
+            div.setAttribute('data-el', 'json-import-diagnostics');
+            div.style.cssText = 'margin:8px 0;padding:7px 9px;border:1px dashed #4a7bb8;border-radius:5px;background:#0c141d;color:#9ec2ec;font-size:11px;font-family:Consolas,monospace;direction:ltr;text-align:left;';
+            div.textContent = 'import diagnostics | raw proposed_units ' + (d.raw.proposed_units || 0) +
+                ' | raw placement_candidates ' + (d.raw.placement_candidates || 0) +
+                ' | analyze proposed_units ' + (d.analyze.proposed_units || 0) +
+                ' | analyze placement_candidates ' + (d.analyze.placement_candidates || 0) +
+                ' | units attached ' + d.attached_units +
+                ' | orphaned ' + d.orphaned_units;
+            el.review.insertBefore(div, el.review.firstChild);
+            try { console.log('[json-import-diagnostics]', d); } catch (_) {}
+        }
+        function runAnalyze() {
+            if (!el.analyze) return;
+            el.analyze.disabled = true;
+            var prev = el.analyze.textContent;
+            el.analyze.textContent = 'Analyzing… جارٍ التحليل';
+            var rawCounts = null;
+            var analyzeBody = null;
+            if (st.jsonImport && st.jsonImport.parsed) {
+                rawCounts = st.jsonImport.rawCounts;
+                analyzeBody = JSON.parse(JSON.stringify(st.jsonImport.parsed));
+                analyzeBody.source_payload = analyzeBody.source_payload || {
+                    filename: st.jsonImport.filename,
+                    raw_text_length: st.jsonImport.text.length,
+                    counts: rawCounts,
+                };
+            } else if (st.mdmpFiles && st.mdmpFiles.length) {
+                analyzeBody = { bundle: st.mdmpFiles };
+            }
+            api('POST', '/api/wargame-sim/analyze', analyzeBody).then(function (r) {
+                el.analyze.disabled = false; el.analyze.textContent = prev;
+                if (!r.body) { showReviewError('No response from analyze (is the server running?).'); return; }
+                if (!r.body.ok) { showReviewError((r.body && r.body.error) || ('analyze failed (' + r.status + ')')); return; }
+                if (rawCounts) attachDiagnostics(r.body, rawCounts);
+                attachPlacement(r.body).then(function () {
+                    if (rawCounts) attachDiagnostics(r.body, rawCounts);
+                    renderReview(r.body);
+                    paintImportDiagnostics(r.body);
+                });
+            }).catch(function (e) { el.analyze.disabled = false; el.analyze.textContent = prev; showReviewError(e.message); });
+        }
+        // G-3C: enrich the analyze payload with location placement candidates
+        // (the G-3B resolver, server-side). Read-only + best-effort — a failure
+        // here NEVER blocks the review (the panel just stays empty).
+        function attachPlacement(payload) {
+            var brief = payload && payload.brief;
+            if (!brief) return Promise.resolve(payload);
+            return api('POST', '/api/wargame-sim/placement', { brief: brief, includeTerrain: true }).then(function (pr) {
+                if (pr && pr.body && pr.body.ok) payload.placement = pr.body;
+                return payload;
+            }).catch(function () { return payload; });
+        }
+        // Phase E renderer lives in shell/doc-understanding-review.js (shared
+        // with the standalone verify page) so the rendered UI cannot drift.
+        function renderReview(p) {
+            if (!window.RmoozDocReview || !window.RmoozDocReview.render) {
+                showReviewError('review renderer not loaded (shell/doc-understanding-review.js)');
+                return;
+            }
+            window.RmoozDocReview.render(el.review, p, {
+                onGenerate: function (template) { generateFromReviewedBrief(p, template); },
+                onUploadMore: function () {
+                    el.review.style.display = 'none';
+                    var grid = card.querySelector('.wg-wz-doc-grid');
+                    if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                },
+                onCancel: function () { el.review.style.display = 'none'; },
+            });
+            el.review.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Phase F: "Generate from Reviewed Brief" — RMOOZ generates a DRAFT
+        // scenario from the APPROVED review payload (the brief), never from raw
+        // document chunks or LLM free text. The objective comes from Scenario
+        // Setup; without it the server refuses and we ask the operator to set it.
+        function generateFromReviewedBrief(payload, template) {
+            var lon = parseFloat(el.objLon && el.objLon.value);
+            var lat = parseFloat(el.objLat && el.objLat.value);
+            var objective = (isFinite(lon) && isFinite(lat)) ? { lon: lon, lat: lat } : undefined;
+            var reqBody = {
+                brief: payload && payload.brief,
+                understanding: payload && payload.understanding,
+                template: template || undefined,
+                objective: objective,
+                name: enteredName() || undefined,
+            };
+            setStatus('RMOOZ generating a draft scenario from the reviewed brief…');
+            api('POST', '/api/wargame-sim/generate', reqBody).then(function (r) {
+                if (r.status === 422 && r.body && r.body.requires_objective) {
+                    setStatus('Set the objective position on the map first (open "Scenario Setup"), then Generate.', '#e0a93a');
+                    var setup = card.querySelector('#wg-wz-setup'); if (setup) setup.open = true;
+                    return;
+                }
+                if (!r.body || !r.body.ok) {
+                    setStatus('generate failed: ' + ((r.body && r.body.error) || ('HTTP ' + r.status)), '#e0a93a');
+                    return;
+                }
+                el.review.style.display = 'none';
+                var tplName = (r.body.generation && r.body.generation.template) || 'template';
+                showBadge('Draft from Brief — ' + tplName + (r.body.draft ? ' (review positions)' : ''), true);
+                setStatus('Draft scenario "' + r.body.name + '" generated (RED ' + r.body.red_units + ' / BLUE ' + r.body.blue_units + ', ' + r.body.steps + ' phases) — opening…');
+                openScenario(r.body, false).then(function () {
+                    setStatus('Draft scenario "' + r.body.name + '" opened. Positions are DRAFT — refine on the map.');
+                }).catch(function (e) { setStatus('generated but load failed: ' + e.message, '#e0a93a'); });
+            }).catch(function (e) { setStatus('generate error: ' + e.message, '#e0a93a'); });
+        }
 
         function setStatus(msg, color) { el.status.style.color = color || '#c5ddf0'; el.status.textContent = msg || ''; }
         function setProgress(p, label) {
@@ -372,19 +722,60 @@
                 el.stop.style.display = st.running ? 'inline-flex' : 'none';
                 el.stop.disabled = !!st.stopping;
             }
+            if (el.analyze) {
+                el.analyze.style.display = st.stopped ? 'none' : '';
+                var mdmpReady = !!(st.mdmpFiles && st.mdmpFiles.length);
+                var jsonReady = !!st.jsonImport;
+                el.analyze.disabled = st.running || !(mdmpReady || jsonReady);
+                if (el.analyzeHint) {
+                    el.analyzeHint.innerHTML = 'JSON and MDMP review are available before generation.';
+                    el.analyzeHint.style.color = (mdmpReady || jsonReady) ? '#7fd6a0' : '#9aa3ad';
+                }
+            }
         }
 
         var objMap = null;
         var objMarker = null;
+        // FIX-B (B): Objective X is the single visible source of truth. Label whether
+        // the active value is the server default or an operator override, and PUSH the
+        // effective objective to the Free Fight / review objective so they cannot
+        // silently diverge. (Generate from Reviewed Brief already reads these inputs.)
+        function setObjectiveSourceLabel(source, lon, lat) {
+            if (!el.objSource) return;
+            var isOv = (source === 'override');
+            el.objSource.innerHTML = '<b>Objective X source:</b> ' +
+                (isOv ? 'operator override' : 'server default') +
+                ' (' + lon.toFixed(2) + ', ' + lat.toFixed(2) + ') · used by “Generate from Reviewed Brief”';
+            el.objSource.style.color = isOv ? '#7fd6a0' : '#9aa3ad';
+        }
+        function syncObjectiveToConsumers(lon, lat, source) {
+            // Persist for Free Fight reuse, update it live if already mounted, and
+            // announce the change for any review consumer. Never throws.
+            try { window.__rmoozFreeFightObjective = { lat: lat, lon: lon }; } catch (_) {}
+            try {
+                var FF = window.RmoozFreeFightDemo;
+                if (FF && typeof FF.setObjective === 'function' &&
+                    typeof FF.getGroups === 'function' && (FF.getGroups() || []).length) {
+                    FF.setObjective({ lat: lat, lon: lon });
+                }
+            } catch (_) {}
+            try {
+                document.dispatchEvent(new CustomEvent('rmooz:objective-x-changed', {
+                    detail: { lon: lon, lat: lat, source: source || 'default' }
+                }));
+            } catch (_) {}
+        }
         function loadObjective() {
             api('GET', '/api/wargame-sim/status').then(function (r) {
                 if (!r.body || !r.body.sim || !r.body.sim.objective) return;
                 var obj = r.body.sim.objective;
+                var effLon = null, effLat = null, effSource = 'default';
                 var defObj = obj.default;
                 if (defObj && typeof defObj.lon === 'number' && typeof defObj.lat === 'number') {
                     el.objDefault.textContent = defObj.lon.toFixed(2) + ', ' + defObj.lat.toFixed(2);
                     el.objLon.value = defObj.lon;
                     el.objLat.value = defObj.lat;
+                    effLon = defObj.lon; effLat = defObj.lat; effSource = 'default';
                 }
                 var ovObj = obj.override;
                 if (ovObj && typeof ovObj.lon === 'number' && typeof ovObj.lat === 'number') {
@@ -392,6 +783,14 @@
                     el.objOverrideText.textContent = ovObj.lon.toFixed(2) + ', ' + ovObj.lat.toFixed(2);
                     el.objLon.value = ovObj.lon;
                     el.objLat.value = ovObj.lat;
+                    effLon = ovObj.lon; effLat = ovObj.lat; effSource = 'override';
+                } else if (el.objOverrideStatus) {
+                    el.objOverrideStatus.style.display = 'none';   // no override → hide the override badge
+                }
+                // Label the active source + keep Free Fight / review objective in sync.
+                if (effLon != null && effLat != null) {
+                    setObjectiveSourceLabel(effSource, effLon, effLat);
+                    syncObjectiveToConsumers(effLon, effLat, effSource);
                 }
                 // After inputs are updated, reposition the marker if map is open
                 setTimeout(repositionMarker, 0);
@@ -421,14 +820,8 @@
                 var lon = parseFloat(el.objLon.value) || 19.55;
                 var lat = parseFloat(el.objLat.value) || 29.74;
                 objMap = window.L.map(mapContainer, { attributionControl: false }).setView([lat, lon], 7);
-                // OFFLINE-RUNTIME-FIX-4: Use resolved offline tile URL.
-                // The offline-map-source.js resolver stores the active URL in
-                // window.__RMOOZ_OFFLINE_MAP__.activeTileUrl (set before this script runs).
-                // Falls back to offline-guard-patched tileLayer if resolver not yet ready.
-                var _offlineTileUrl = (window.__RMOOZ_OFFLINE_MAP__ && window.__RMOOZ_OFFLINE_MAP__.activeTileUrl)
-                    ? window.__RMOOZ_OFFLINE_MAP__.activeTileUrl
-                    : 'about:blank';  // blank — offline-leaflet-tile-guard.js will swap it
-                window.L.tileLayer(_offlineTileUrl, { maxZoom: 13, minZoom: 3 }).addTo(objMap);
+                window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    { maxZoom: 13, minZoom: 3 }).addTo(objMap);
                 objMarker = window.L.marker([lat, lon], { draggable: true }).addTo(objMap);
                 objMarker.bindPopup('Objective X — drag to move');
                 // Sync marker drag to inputs
@@ -563,28 +956,8 @@
                     }
                     st.polling = false; clearPollTimer(); st.running = false; st.stopping = false; updateStartEnabled();
                     var exportReady = !!(b.export && b.export.all_phases);
-                    // OFFLINE-GEN-RUN-FIX-1: a generation ERROR must NOT silently reset
-                    // to idle. Surface the failure + error summary + run id so the
-                    // operator can see why (and where error.log lives).
-                    var genFailed = (sim.status === 'error') ||
-                                    (typeof sim.exit_code === 'number' && sim.exit_code !== 0 && !sim.cancelled) ||
-                                    (sim.error && !sim.cancelled);
                     if (sim.status === 'complete' || (sim.exit_code === 0 && exportReady)) {
                         finishSuccess(b);
-                    } else if (genFailed) {
-                        var runId = (b.export && b.export.run_id) || sim.run_name || sim.last_run_id || null;
-                        var rawErr = String(sim.error || sim.message || 'Generation process exited with an error.');
-                        var summary = rawErr.length > 600 ? rawErr.slice(-600) : rawErr;
-                        var hint = runId
-                            ? ('Run: ' + runId + ' — check runs/' + runId + '/error.log inside the container.')
-                            : 'Check the container logs (docker logs rmooz-offline) for details.';
-                        showFailure('Generation failed.', {
-                            status: 'error',
-                            message: summary + '\n\n' + hint
-                        });
-                        setStatus('Generation failed' + (runId ? ' (run ' + runId + ')' : '') +
-                            ' — see error details above.', '#e05252');
-                        updateStartEnabled();
                     } else if (stoppedBelongsToSetup(sim)) {
                         // The run we just watched belongs to this setup (we started
                         // it; its meta matches) — surface Continue / Partial / Restart.
@@ -789,11 +1162,9 @@
 
         function openScenario(body, partial) {
             // PARTIAL-IMPORT-404-1: guard a missing name and SURFACE the server's real
-            // reason instead of the opaque "fetch generated scenario 404". The GET
-            // throws when the loader can't find/validate the file the import just
-            // saved — the server body carries the actual path/cause (e.g. "scenario
-            // not found: <dir>/<name>.json"), which pinpoints a write-vs-read dir or
-            // name mismatch. Without this, every cause looked identical ("404").
+            // reason instead of the opaque "fetch generated scenario 404" — the GET
+            // throws when the loader can't find/validate the file the import just saved;
+            // the server body carries the actual path/cause.
             if (!body || !body.name) {
                 return Promise.reject(new Error('import did not return a scenario name (body.name missing)'));
             }

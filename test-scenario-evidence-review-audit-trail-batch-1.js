@@ -32,7 +32,10 @@ global.localStorage = {
     setItem: function (key, value) { storage[key] = String(value); },
     removeItem: function (key) { delete storage[key]; }
 };
-global.navigator = { clipboard: { writeText: function () { return Promise.resolve(); } } };
+Object.defineProperty(global, 'navigator', {
+    value: { clipboard: { writeText: function () { return Promise.resolve(); } } },
+    configurable: true
+});
 
 function ws(id) {
     return {

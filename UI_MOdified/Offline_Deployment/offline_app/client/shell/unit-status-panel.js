@@ -172,6 +172,7 @@
         'usp-review-closeout-block',
         'usp-review-audit-block',
         'usp-handoff-package-block',
+        'usp-handoff-acceptance-block',
         'usp-evidence-quality-block',
         'usp-evidence-alerts-block',
         'usp-evidence-coverage-block',
@@ -329,6 +330,7 @@
         populateScenarioReviewCloseout(unit);
         populateScenarioReviewAuditTrail(unit);
         populateScenarioHandoffPackage(unit);
+        populateScenarioHandoffAcceptance(unit);
         populateEvidenceQualityGate(unit);
         populateEvidenceAlerts(unit);
         populateEvidenceCoverage(unit);
@@ -1581,11 +1583,52 @@
                 populateCommanderBrief(unit || currentUnit);
                 populateForceEvidenceReport(unit || currentUnit);
                 populateScenarioHandoffPackage(unit || currentUnit);
+                populateScenarioHandoffAcceptance(unit || currentUnit);
             };
             HP.bindPackageActions(body, pkg, {
                 world_state: _getCurrentWorldState,
                 onPreview: rerenderWithPreview,
                 onImport: refreshAfterImport
+            });
+        }
+        block.removeAttribute('hidden');
+    }
+
+    // RMOOZ-QA-83..88: receiving-operator acceptance workflow for a pasted
+    // handoff package — diff, Accept / Accept with Warnings / Reject, receipt.
+    function populateScenarioHandoffAcceptance(unit, diff) {
+        var block = $('usp-handoff-acceptance-block');
+        var body = $('usp-handoff-acceptance-body');
+        if (!block || !body) return;
+        var HA = root.RmoozScenarioEvidenceHandoffAcceptance;
+        if (!HA || typeof HA.buildAcceptance !== 'function' || typeof HA.renderAcceptanceHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        syncScenarioReviewSession();
+        var acceptance = HA.buildAcceptance(_getCurrentWorldState, {
+            generated_at: new Date().toISOString()
+        });
+        body._scenarioEvidenceHandoffAcceptance = acceptance;
+        body.innerHTML = HA.renderAcceptanceHtml(acceptance, { lang: 'ar', diff: diff });
+        if (typeof HA.bindAcceptanceActions === 'function') {
+            HA.bindAcceptanceActions(body, acceptance, {
+                world_state: _getCurrentWorldState,
+                onDiff: function (nextDiff) {
+                    populateScenarioHandoffAcceptance(unit || currentUnit, nextDiff);
+                },
+                onDecide: function () {
+                    syncScenarioReviewSession();
+                    populateScenarioReviewQueue(unit || currentUnit);
+                    populateScenarioRepairPlan(unit || currentUnit);
+                    populateScenarioManualFix(unit || currentUnit);
+                    populateScenarioReviewCloseout(unit || currentUnit);
+                    populateScenarioReviewAuditTrail(unit || currentUnit);
+                    populateCommanderBrief(unit || currentUnit);
+                    populateForceEvidenceReport(unit || currentUnit);
+                    populateScenarioHandoffPackage(unit || currentUnit);
+                    populateScenarioHandoffAcceptance(unit || currentUnit);
+                }
             });
         }
         block.removeAttribute('hidden');

@@ -5,13 +5,32 @@
 Use this runbook for the current release-candidate baseline:
 
 ```text
-cmo-evidence-v13 -> 9dc07bdb feat(cmo): add printable evidence report layout
-cmo-evidence-rc1 -> 4314f16c test(cmo): lock evidence release candidate
+scenario-evidence-v9   -> feat(scenario): add evidence handoff acceptance workflow
+cmo-evidence-rehome-v1 -> 764d260f style(cmo): rehome scenario evidence from unit status
+scenario-evidence-v8   -> 941aa275 feat(scenario): add evidence handoff package
 cmo-evidence-v14 -> 6f310c00 feat(cmo): add evidence actionability commander pack
-03c9113e -> Scenario-QA repair planner and RMOOZ-AUDIT-APP-1 inventory refresh baseline
+cmo-evidence-rc1 -> 4314f16c test(cmo): lock evidence release candidate
 ```
 
-This baseline includes the full CMO evidence workflow, print-ready evidence reports, the release-candidate static/runtime gate, actionability guidance, recommendations, Scenario Evidence completeness/review/repair planning, and main/offline parity checks.
+This baseline includes the full CMO evidence workflow, print-ready evidence reports, the release-candidate static/runtime gate, actionability guidance, recommendations, Scenario Evidence completeness/review/repair/manual-fix/closeout/audit-trail, the handoff package + Handoff Acceptance workflow, and main/offline parity checks.
+
+## UI Layout — Scenario Evidence Drawer
+
+Since `cmo-evidence-rehome-v1`, scenario-level evidence panels are **not** inside Unit Status.
+The split is:
+
+```text
+UNIT STATUS
+= selected-unit evidence only
+
+Scenario Evidence drawer / أدلة السيناريو
+= scenario-level QA, commander evidence, force evidence, handoff workflow
+  (Commander Brief, Completeness, Objective X Health, Review Queue, Repair Planner,
+   Manual Fix, Closeout, Audit Trail, Handoff Package, Handoff Acceptance,
+   Quality, Alerts, Coverage, Readiness Matrix, Blocker Remediation, Force Feed, Force Report)
+```
+
+Every step below that touches a scenario-level panel happens in the Scenario Evidence drawer, not in Unit Status.
 
 ## Start Runtime
 
@@ -66,21 +85,21 @@ Recommended operator flow:
 Open RMOOZ
 -> Operational Scenario
 -> Generate/open scenario
--> Evidence Quality
+-> Scenario Evidence drawer: Evidence Quality
 -> Click quality warning
 -> Matrix filters affected units
 -> Click unit row
--> Review Contact Evidence
+-> Unit Status (selected-unit only): Review Contact Evidence
 -> Review Engagement Evidence
 -> Review Decision Chain
 -> Review Recommended Checks
 -> Confirm map overlay reason matches the panel reason
 -> Review timeline and confirm events do not duplicate on refresh/reselect
--> Review Scenario Evidence Review Queue and Repair Planner when quality gaps exist
+-> Scenario Evidence drawer: Review Queue and Repair Planner when quality gaps exist
 -> Open Evidence Snapshot
 -> Copy JSON or Copy Summary
 -> Download JSON if needed
--> Open Force Evidence Report
+-> Scenario Evidence drawer: Open Force Evidence Report
 -> Copy JSON or Copy Summary
 -> Download JSON if needed
 -> Print Unit Snapshot
@@ -92,6 +111,30 @@ The commander story should read as:
 ```text
 quality warning -> affected units -> unit explanation -> map reason -> timeline -> export/print
 scenario evidence gap -> review queue -> repair plan -> affected unit
+handoff package -> receiving-operator diff -> acceptance decision -> receipt
+```
+
+## Handoff Acceptance Path (Receiving Operator)
+
+Shift-change validation flow, all in the Scenario Evidence drawer:
+
+```text
+Sending operator:
+-> Evidence Handoff Package panel
+-> Copy/Download Package JSON
+
+Receiving operator:
+-> Handoff Acceptance panel
+-> Paste the received handoff-package JSON
+-> Preview Diff
+   - Same scenario? (fingerprint match)
+   - What changed? (added / changed / unchanged / local-only statuses, closeout delta)
+   - Recommendation: Accept / Accept with Warnings / Reject
+-> Decide: Accept, Accept with Warnings, or Reject
+   - Accept applies review-session UI state only; Reject imports nothing
+   - The decision is recorded in the Evidence Review Audit Trail
+   - Commander Brief and Force Report show the acceptance status
+-> Copy/Download the acceptance receipt (JSON)
 ```
 
 ## Print Preview Smoke Checklist
@@ -129,6 +172,10 @@ node test-cmo-actionability-batch-gate-1.js
 node test-scenario-evidence-completeness-batch-1.js
 node test-scenario-evidence-review-queue-batch-1.js
 node test-scenario-evidence-repair-plan-batch-1.js
+node test-scenario-evidence-review-closeout-batch-1.js
+node test-scenario-evidence-review-audit-trail-batch-1.js
+node test-scenario-evidence-handoff-package-batch-1.js
+node test-scenario-evidence-handoff-acceptance-batch-1.js
 node test-cmo-evidence-print-layout-ui-1.js
 node test-cmo-demo-flow-gate-1.js
 node test-cmo-evidence-quality-drilldown-ui-1.js
@@ -199,6 +246,9 @@ External `8080` is optional because tiles are proxied through `8640` in the norm
 Use these rollback/demo points:
 
 ```text
+scenario-evidence-v9 - handoff acceptance workflow (this baseline)
+scenario-evidence-v8 - handoff package export/import
+cmo-evidence-rehome-v1 - Scenario Evidence drawer split from Unit Status
 cmo-evidence-v13 - print-ready CMO evidence layout
 cmo-evidence-rc1 - release-candidate gate for v13
 cmo-evidence-v14 - actionability commander pack

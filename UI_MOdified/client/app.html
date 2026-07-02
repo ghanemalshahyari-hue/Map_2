@@ -3656,6 +3656,14 @@
                         <div class="usp-section-body" id="usp-handoff-package-body"></div>
                     </div>
 
+                    <!-- RMOOZ-QA-83: browser-local scenario evidence handoff acceptance -->
+                    <div class="usp-tasking-block usp-handoff-acceptance-block" id="usp-handoff-acceptance-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">Handoff Acceptance / &#1602;&#1576;&#1608;&#1604; &#1581;&#1586;&#1605;&#1577; &#1575;&#1604;&#1578;&#1587;&#1604;&#1610;&#1605;</span>
+                        </div>
+                        <div class="usp-section-body" id="usp-handoff-acceptance-body"></div>
+                    </div>
+
                     <!-- RMOOZ-CMO-12: read-only evidence quality gate -->
                     <div class="usp-tasking-block usp-evidence-quality-block" id="usp-evidence-quality-block" hidden>
                         <div class="usp-section-hdr">
@@ -4722,6 +4730,7 @@
     <script src="shell/scenario-evidence-manual-fix.js?v=1"></script>
     <script src="shell/scenario-evidence-review-closeout.js?v=1"></script>
     <script src="shell/scenario-evidence-handoff-package.js?v=1"></script>
+    <script src="shell/scenario-evidence-handoff-acceptance.js?v=1"></script>
     <script src="shell/scenario-evidence-review-queue.js?v=1"></script>
     <script src="shell/scenario-evidence-repair-planner.js?v=1"></script>
     <script src="shell/cmo-force-evidence-feed.js?v=1"></script>
@@ -7332,6 +7341,33 @@
         .usp-handoff-preview dt { color:#8f9dac; font-size:0.66rem; }
         .usp-handoff-preview dd { margin:0; color:#dce8f4; }
         .usp-handoff-preview ul { margin:5px 0 0 1.2rem; padding:0; color:#f0b397; }
+
+        /* ── RMOOZ-QA-83: scenario evidence handoff acceptance ─────────────── */
+        .usp-handoff-acceptance-block { background:#0b0b13; border-bottom:2px solid #35305b; }
+        .usp-acceptance-card { padding:8px 0.8rem 9px; color:#dce8f4; font-size:0.74rem; }
+        .usp-acceptance-header { display:grid; grid-template-columns:1fr auto; gap:4px 8px; align-items:center; border-bottom:1px solid #2c2850; padding-bottom:6px; margin-bottom:7px; }
+        .usp-acceptance-header span { color:#b9b6ff; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.04em; }
+        .usp-acceptance-header strong { color:#b9b6ff; }
+        .usp-acceptance-card--accepted .usp-acceptance-header strong { color:#8fd6a3; }
+        .usp-acceptance-card--warnings .usp-acceptance-header strong { color:#f1d48f; }
+        .usp-acceptance-card--rejected .usp-acceptance-header strong { color:#f09b87; }
+        .usp-acceptance-meta, .usp-acceptance-source { color:#8f9dac; font-size:0.68rem; margin:5px 0; }
+        .usp-acceptance-meta code, .usp-acceptance-diff code { color:#d7edf8; font-family:'Consolas','Courier New',monospace; }
+        .usp-acceptance-counts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px; margin:6px 0; }
+        .usp-acceptance-counts span { border:1px solid #2c2850; border-radius:4px; background:#080813; padding:4px 6px; font-family:'Consolas','Courier New',monospace; font-size:0.68rem; }
+        .usp-acceptance-actions { display:flex; gap:6px; flex-wrap:wrap; margin-top:7px; }
+        .usp-acceptance-actions button { border:1px solid #4b4580; background:#111029; color:#d8d5ff; font-size:0.66rem; padding:4px 7px; border-radius:4px; cursor:pointer; font-family:inherit; }
+        .usp-acceptance-actions button:hover { background:#1a1840; }
+        .usp-acceptance-actions button:disabled { opacity:0.45; cursor:not-allowed; }
+        .usp-acceptance-card textarea { box-sizing:border-box; width:100%; margin-top:6px; border:1px solid #2c2850; border-radius:4px; background:#060711; color:#d7edf8; font-family:inherit; font-size:0.72rem; padding:5px; resize:vertical; }
+        .usp-acceptance-diff { border:1px solid #2c2850; border-radius:4px; background:#080813; margin-top:7px; padding:6px; }
+        .usp-acceptance-diff strong { display:block; color:#b9b6ff; margin-bottom:5px; }
+        .usp-acceptance-diff dl { display:grid; gap:4px; margin:0; }
+        .usp-acceptance-diff dl div { display:grid; grid-template-columns:1fr; gap:2px; }
+        .usp-acceptance-diff dt { color:#8f9dac; font-size:0.66rem; }
+        .usp-acceptance-diff dd { margin:0; color:#dce8f4; }
+        .usp-acceptance-changes { margin:5px 0 0 1.2rem; padding:0; color:#d7edf8; }
+        .usp-acceptance-warnings { margin:5px 0 0 1.2rem; padding:0; color:#f0b397; }
 
         /* Unit status panel — extend the drawer down to cover the empty band below
            it, but STOP just above the footer stack. The footer bars

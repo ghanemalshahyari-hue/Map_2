@@ -8,7 +8,7 @@
 (function (root) {
     'use strict';
 
-    var CMO_COMMANDER_BRIEF_VERSION = '1.1.0-rmooz-cmo-21-qa32';
+    var CMO_COMMANDER_BRIEF_VERSION = '1.2.0-rmooz-cmo-21-qa88';
 
     var HEADLINE_STATUS = {
         ready_for_review: {
@@ -63,6 +63,7 @@
     function fixStatusApi()  { return localApi('RmoozScenarioEvidenceFixStatus',   'scenario-evidence-fix-status.js'); }
     function closeoutApi()   { return localApi('RmoozScenarioEvidenceReviewCloseout','scenario-evidence-review-closeout.js'); }
     function auditApi()      { return localApi('RmoozScenarioEvidenceReviewAuditTrail','scenario-evidence-review-audit-trail.js'); }
+    function acceptanceApi() { return localApi('RmoozScenarioEvidenceHandoffAcceptance','scenario-evidence-handoff-acceptance.js'); }
 
     function resolveHeadlineStatus(coverage, quality, alertCount, readyCount, totalCount) {
         var coveragePct = coverage && coverage.coverage_pct != null ? coverage.coverage_pct : 0;
@@ -131,6 +132,11 @@
             : null);
         var auditEvents = arr(obj(auditTrail).events);
         var lastAudit = auditEvents.length ? auditEvents[auditEvents.length - 1] : null;
+        // QA-88: fold the receiving operator's handoff acceptance decision into the brief.
+        var HA = acceptanceApi();
+        var acceptance = opts.handoff_acceptance || (HA && typeof HA.getDecision === 'function'
+            ? HA.getDecision(obj(manualReview.session).scenario_fingerprint || ws)
+            : null);
 
         var alertList = arr(alerts.alerts || []);
         var alertCount = alertList.length;
@@ -184,6 +190,17 @@
                 last_review_activity: lastAudit,
                 handoff_package_status: opts.handoff_package
                     ? (opts.handoff_package.status_label_en || opts.handoff_package.status || null)
+                    : null,
+                handoff_acceptance: acceptance ? {
+                    decision: acceptance.decision || null,
+                    label_en: acceptance.decision_label_en || acceptance.decision || null,
+                    label_ar: acceptance.decision_label_ar || null,
+                    decided_at: acceptance.decided_at || null,
+                    fingerprint_match: !!acceptance.fingerprint_match,
+                    imported: !!acceptance.imported
+                } : null,
+                handoff_acceptance_status: acceptance
+                    ? (acceptance.decision_label_en || acceptance.decision || null)
                     : null
             },
             selected_unit: selectedSummary,
@@ -251,6 +268,14 @@
             if (qa.handoff_package_status) {
                 html += '<div class="usp-brief-cell"><dt>Handoff Package</dt><dd>' +
                     esc(qa.handoff_package_status) + '</dd></div>';
+            }
+            if (qa.handoff_acceptance_status) {
+                var ha = obj(qa.handoff_acceptance);
+                html += '<div class="usp-brief-cell"><dt>Handoff Acceptance</dt><dd class="' +
+                    (ha.decision === 'rejected' ? 'usp-brief-fail' : 'usp-brief-pass') + '">' +
+                    esc(qa.handoff_acceptance_status) +
+                    (ha.label_ar ? ' <span dir="rtl">' + ha.label_ar + '</span>' : '') +
+                    '</dd></div>';
             }
         }
         html += '</dl>';

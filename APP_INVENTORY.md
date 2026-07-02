@@ -73,12 +73,23 @@ unit-status-panel.js
 
 ### Scenario Evidence QA stack
 
-Scenario-evidence v1/v2/v3 is now active as a read-only quality layer over the same selected-unit and force evidence path:
+Scenario-evidence v1..v9 is active as a browser-local quality/workflow layer over the same selected-unit and force evidence path (this section was refreshed 2026-07-02 with Batch 9; v4–v8 rows had been missing — recorded now, statuses verified against the tags):
 
 ```text
 scenario-evidence v1  Scenario Evidence Completeness validation pack
 scenario-evidence v2  Scenario Evidence Review Queue
 scenario-evidence v3  Scenario Evidence Repair Planner
+scenario-evidence v4  Manual Evidence Fix workflow (browser-local statuses)
+scenario-evidence v5  Persistent evidence review sessions (per scenario fingerprint)
+scenario-evidence v6  Evidence Review Closeout gate
+scenario-evidence v7  Evidence Review Audit Trail (browser-local history)
+scenario-evidence v8  Evidence Handoff Package (export/import, fingerprint validation)
+cmo-evidence-rehome-v1  Scenario Evidence drawer split — Unit Status = selected-unit only;
+                        scenario-level panels rehomed to the Scenario Evidence drawer
+scenario-evidence v9  Handoff Acceptance (QA-83..91): package diff vs local session,
+                      Accept / Reject / Accept with Warnings, acceptance receipt export,
+                      audit-trail + commander-brief + force-report integration,
+                      runbook/handoff docs updated for the Scenario Evidence drawer
 ```
 
 Active Scenario-QA scripts mirrored between main and offline app shells:
@@ -89,7 +100,17 @@ scenario-evidence-normalizer.js
 objective-x-evidence-health.js
 scenario-evidence-review-queue.js
 scenario-evidence-repair-planner.js
+scenario-evidence-fix-status.js
+scenario-evidence-manual-fix.js
+scenario-evidence-review-session.js
+scenario-evidence-review-closeout.js
+scenario-evidence-review-audit-trail.js
+scenario-evidence-handoff-package.js
+scenario-evidence-handoff-acceptance.js
 ```
+
+Gate tests (root, run individually): `test-scenario-evidence-{completeness,review-queue,repair-plan,manual-fix,review-session,review-closeout,review-audit-trail,handoff-package,handoff-acceptance}-batch-1.js`.
+Boundary note: the whole stack is browser-local (localStorage + in-memory fallback) — no backend routes, no scenario/world-state mutation; package/acceptance import restores review-session UI state only.
 
 ### Runtime and release baselines
 
@@ -116,6 +137,9 @@ localhost:8640 works
 Current relevant tags:
 
 ```text
+scenario-evidence-v9 -> evidence handoff acceptance workflow (Batch 9)
+cmo-evidence-rehome-v1 -> 764d260f Scenario Evidence drawer split from Unit Status
+scenario-evidence-v8 -> 941aa275 evidence handoff package
 cmo-evidence-v13 -> 9dc07bdb printable evidence report layout
 cmo-evidence-rc1 -> 4314f16c evidence release candidate gate
 cmo-evidence-v14 -> 6f310c00 evidence actionability commander pack

@@ -5,22 +5,26 @@
 Current stable demo and audit baseline:
 
 ```text
-03c9113e feat(scenario): add evidence repair planner
+scenario-evidence-v9  -> feat(scenario): add evidence handoff acceptance workflow
+cmo-evidence-rehome-v1 -> 764d260f style(cmo): rehome scenario evidence from unit status
+scenario-evidence-v8  -> 941aa275 feat(scenario): add evidence handoff package
+scenario-evidence-v7  -> 18d9b110 feat(scenario): add evidence review audit trail
+scenario-evidence-v6  -> 798cea1c feat(scenario): add evidence review closeout gate
+```
+
+Prior baselines:
+
+```text
 cmo-evidence-v14 -> 6f310c00 feat(cmo): add evidence actionability commander pack
 cmo-evidence-v13 -> 9dc07bdb feat(cmo): add printable evidence report layout
 cmo-evidence-rc1 -> 4314f16c test(cmo): lock evidence release candidate
-```
-
-Prior UX baseline:
-
-```text
 cmo-evidence-v12 -> abdbe4a7 style(cmo): polish evidence workflow UX
 ```
 
 Meaning:
 
 ```text
-Full CMO evidence workflow + force report + workflow/demo gates + UX polish + print layout + actionability + recommendations + Scenario-QA completeness/review/repair planning.
+Full CMO evidence workflow + force report + workflow/demo gates + UX polish + print layout + actionability + recommendations + Scenario-QA completeness/review/repair/manual-fix/closeout/audit-trail + handoff package export/import + handoff acceptance (diff, decision, receipt) — rehomed into the Scenario Evidence drawer.
 ```
 
 ## Capability Stack
@@ -45,10 +49,52 @@ CMO-16  Evidence Recommendations
 CMO Actionability Batch
         Evidence coverage, blocker remediation, alternative shooters, commander brief
 Scenario Evidence QA
-        Completeness validation, normalizer, review queue, repair planner
+        Completeness validation, normalizer, review queue, repair planner,
+        manual fix workflow, review sessions, closeout gate, audit trail
+Handoff Workflow (QA-75..91)
+        Handoff package export/import + Handoff Acceptance for the receiving
+        operator: package diff, Accept / Reject / Accept with Warnings,
+        acceptance receipt export, audit-trail integration
 ```
 
 The system is intentionally read-only. It explains existing evidence and renders commander-facing workflow surfaces; it does not add firing logic or change doctrine.
+
+## UI Layout — Scenario Evidence Drawer
+
+Since `cmo-evidence-rehome-v1`, the evidence workflow is split across **two** surfaces.
+Scenario-level panels are **not** inside Unit Status anymore:
+
+```text
+UNIT STATUS
+= selected-unit evidence only
+  (Contact / Engagement / Decision Chain / Recommended Checks / Timeline / Snapshot)
+
+Scenario Evidence drawer / أدلة السيناريو
+= scenario-level QA, commander evidence, force evidence, handoff workflow
+  (opens beside Unit Status when an operational scenario is active)
+```
+
+Scenario Evidence drawer panel order:
+
+```text
+1. Commander Brief
+2. Scenario Completeness
+3. Objective X Health
+4. Scenario Evidence Review Queue
+5. Evidence Repair Planner
+6. Manual Evidence Fix
+7. Evidence Review Closeout
+8. Evidence Review Audit Trail
+9. Evidence Handoff Package
+10. Handoff Acceptance
+11. Evidence Quality
+12. Evidence Alerts
+13. Coverage
+14. Readiness Matrix
+15. Blocker Remediation
+16. Force Feed
+17. Force Report
+```
 
 ## Demo Flow
 
@@ -56,33 +102,30 @@ Recommended live demo path:
 
 ```text
 Generate/open scenario
--> Evidence Quality
+-> Scenario Evidence drawer: Evidence Quality
 -> click a quality warning
 -> readiness matrix filters affected units
 -> click a unit row
--> selected-unit Contact / Engagement / Decision Chain evidence appears
+-> Unit Status: selected-unit Contact / Engagement / Decision Chain evidence appears
 -> map overlay shows range/target/reason
 -> timeline shows deduped evidence changes
 -> copy/download selected-unit Evidence Snapshot
--> copy/download Force Evidence Report
+-> Scenario Evidence drawer: copy/download Force Evidence Report
 -> review Recommended Checks
 -> review repair planner if Scenario-QA flags gaps
+-> export Evidence Handoff Package for the next shift
 ```
 
-Polished panel order:
+Receiving-operator handoff path (Handoff Acceptance panel):
 
 ```text
-1. Evidence Quality
-2. Evidence Alerts
-3. Evidence Readiness Matrix
-4. Force Evidence Feed
-5. Contact Evidence
-6. Engagement Evidence
-7. Decision Chain
-8. Recommended Checks
-9. Evidence Timeline
-10. Evidence Snapshot
-11. Force Evidence Report
+Open the same/next scenario
+-> Scenario Evidence drawer: Handoff Acceptance
+-> paste the received handoff-package JSON
+-> Preview Diff (same scenario? what changed?)
+-> Accept / Accept with Warnings / Reject
+-> acceptance decision lands in the audit trail, commander brief, and force report
+-> Copy/Download the acceptance receipt
 ```
 
 If no unit is selected, the unit panel now points the user to the readiness matrix:
@@ -97,6 +140,10 @@ Select a row from the readiness matrix to inspect evidence.
 Run the complete evidence and offline verification stack:
 
 ```bash
+node test-scenario-evidence-handoff-acceptance-batch-1.js
+node test-scenario-evidence-handoff-package-batch-1.js
+node test-scenario-evidence-review-audit-trail-batch-1.js
+node test-scenario-evidence-review-closeout-batch-1.js
 node test-cmo-evidence-ux-polish-ui-1.js
 node test-cmo-demo-flow-gate-1.js
 node test-cmo-evidence-quality-drilldown-ui-1.js

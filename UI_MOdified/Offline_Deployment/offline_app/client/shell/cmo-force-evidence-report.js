@@ -8,7 +8,7 @@
 (function (root) {
     'use strict';
 
-    var CMO_FORCE_EVIDENCE_REPORT_VERSION = '1.0.0-rmooz-cmo-11';
+    var CMO_FORCE_EVIDENCE_REPORT_VERSION = '1.1.0-rmooz-cmo-11-qa89';
 
     function obj(v) { return v && typeof v === 'object' ? v : {}; }
     function arr(v) { return Array.isArray(v) ? v : []; }
@@ -37,6 +37,7 @@
     function fixStatusApi()    { return localApi('RmoozScenarioEvidenceFixStatus',     'scenario-evidence-fix-status.js'); }
     function closeoutApi()     { return localApi('RmoozScenarioEvidenceReviewCloseout','scenario-evidence-review-closeout.js'); }
     function auditApi()        { return localApi('RmoozScenarioEvidenceReviewAuditTrail','scenario-evidence-review-audit-trail.js'); }
+    function acceptanceApi()   { return localApi('RmoozScenarioEvidenceHandoffAcceptance','scenario-evidence-handoff-acceptance.js'); }
 
     function reasonLabel(code, lang) {
         var labels = labelsApi();
@@ -137,6 +138,11 @@
         var auditTrail = opts.audit_trail || (AU && typeof AU.exportTrail === 'function'
             ? AU.exportTrail(obj(manualReview && manualReview.session).scenario_fingerprint || ws, { generated_at: generatedAt })
             : null);
+        // QA-89: fold the receiving operator's handoff acceptance decision into the report.
+        var HA = acceptanceApi();
+        var acceptance = opts.handoff_acceptance || (HA && typeof HA.getDecision === 'function'
+            ? HA.getDecision(obj(manualReview && manualReview.session).scenario_fingerprint || ws)
+            : null);
         return {
             version: CMO_FORCE_EVIDENCE_REPORT_VERSION,
             generated_at: generatedAt,
@@ -165,6 +171,7 @@
             review_closeout: closeout,
             review_audit_trail: auditTrail,
             handoff_package_manifest: opts.handoff_package ? obj(opts.handoff_package.manifest || opts.handoff_package) : null,
+            handoff_acceptance: acceptance ? obj(acceptance) : null,
             selected_unit: selected,
             source: 'Readiness matrix + force evidence feed'
         };
@@ -273,6 +280,20 @@
             lines.push('  Manual statuses: ' + (hc.manual_statuses || 0));
             lines.push('  Audit events: ' + (hc.audit_events || 0));
             lines.push('  Review issues: ' + (hc.review_issues || 0));
+            lines.push('');
+        }
+        var acceptance = obj(report.handoff_acceptance);
+        if (acceptance.decision) {
+            var ac = obj(acceptance.counts);
+            lines.push('Evidence Handoff Acceptance:');
+            lines.push('  Decision: ' + (acceptance.decision_label_en || acceptance.decision));
+            lines.push('  Package fingerprint: ' + (acceptance.package_fingerprint || 'unknown'));
+            lines.push('  Fingerprint match: ' + (acceptance.fingerprint_match ? 'yes' : 'no'));
+            lines.push('  Review state imported: ' + (acceptance.imported ? 'yes' : 'no'));
+            if (ac.added != null || ac.changed != null) {
+                lines.push('  Statuses added ' + (ac.added || 0) + ' / changed ' + (ac.changed || 0));
+            }
+            if (acceptance.decided_at) lines.push('  Decided: ' + acceptance.decided_at);
             lines.push('');
         }
         if (report.selected_unit) {

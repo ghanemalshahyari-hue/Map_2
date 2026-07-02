@@ -52,6 +52,9 @@
     function sessionApi() {
         return localApi('RmoozScenarioEvidenceReviewSession', 'scenario-evidence-review-session.js');
     }
+    function auditApi() {
+        return localApi('RmoozScenarioEvidenceReviewAuditTrail', 'scenario-evidence-review-audit-trail.js');
+    }
 
     function normalizeStatus(status) {
         var s = String(status || 'needs_review').trim();
@@ -163,6 +166,7 @@
     function setStatus(issue, status, note, opts) {
         opts = opts || {};
         var normalized = normalizeIssue(issue);
+        var before = Object.assign(defaultRecord(normalized), records[normalized.issue_id] || {});
         var rec = Object.assign(defaultRecord(normalized), records[normalized.issue_id] || {});
         rec.uid = normalized.uid;
         rec.label = normalized.label;
@@ -174,6 +178,10 @@
         records[normalized.issue_id] = rec;
         touch(normalized.issue_id);
         persist({ generated_at: rec.timestamp });
+        var AU = auditApi();
+        if (AU && typeof AU.recordStatusChange === 'function') {
+            try { AU.recordStatusChange(normalized, before, rec, { fingerprint: currentFingerprint || opts.fingerprint, timestamp: rec.timestamp }); } catch (_) {}
+        }
         return Object.assign({}, rec);
     }
 
@@ -183,6 +191,10 @@
         if (currentFingerprint) {
             var RS = sessionApi();
             if (RS && typeof RS.clearSession === 'function') currentSessionMeta = RS.clearSession(currentFingerprint);
+            var AU = auditApi();
+            if (AU && typeof AU.recordSessionEvent === 'function') {
+                try { AU.recordSessionEvent('session_reset', currentSessionMeta || { scenario_fingerprint: currentFingerprint }, { fingerprint: currentFingerprint }); } catch (_) {}
+            }
         }
     }
 

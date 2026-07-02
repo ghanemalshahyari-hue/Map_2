@@ -36,6 +36,7 @@
     function repairPlannerApi(){ return localApi('RmoozScenarioEvidenceRepairPlanner', 'scenario-evidence-repair-planner.js'); }
     function fixStatusApi()    { return localApi('RmoozScenarioEvidenceFixStatus',     'scenario-evidence-fix-status.js'); }
     function closeoutApi()     { return localApi('RmoozScenarioEvidenceReviewCloseout','scenario-evidence-review-closeout.js'); }
+    function auditApi()        { return localApi('RmoozScenarioEvidenceReviewAuditTrail','scenario-evidence-review-audit-trail.js'); }
 
     function reasonLabel(code, lang) {
         var labels = labelsApi();
@@ -131,6 +132,10 @@
         var closeout = opts.review_closeout || (CO && typeof CO.buildCloseout === 'function'
             ? CO.buildCloseout(reviewQueue, { world_state: ws, generated_at: opts.generated_at })
             : null);
+        var AU = auditApi();
+        var auditTrail = opts.audit_trail || (AU && typeof AU.exportTrail === 'function'
+            ? AU.exportTrail(obj(manualReview && manualReview.session).scenario_fingerprint || ws, { generated_at: opts.generated_at })
+            : null);
         return {
             version: CMO_FORCE_EVIDENCE_REPORT_VERSION,
             generated_at: opts.generated_at || new Date().toISOString(),
@@ -157,6 +162,7 @@
             manual_review: manualReview,
             review_session: manualReview && manualReview.session ? manualReview.session : null,
             review_closeout: closeout,
+            review_audit_trail: auditTrail,
             selected_unit: selected,
             source: 'Readiness matrix + force evidence feed'
         };
@@ -246,6 +252,14 @@
             lines.push('  Status: ' + (co.status_label_en || co.status));
             arr(co.blockers).forEach(function (b) {
                 lines.push('  - ' + b.label);
+            });
+            lines.push('');
+        }
+        var audit = obj(report.review_audit_trail);
+        if (arr(audit.events).length) {
+            lines.push('Evidence Review Audit Trail:');
+            arr(audit.events).slice(-8).forEach(function (event) {
+                lines.push('  - ' + (event.summary || event.type || 'review_event'));
             });
             lines.push('');
         }

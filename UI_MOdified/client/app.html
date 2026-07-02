@@ -3640,6 +3640,14 @@
                         <div class="usp-section-body" id="usp-review-closeout-body"></div>
                     </div>
 
+                    <!-- RMOOZ-QA-67: browser-local scenario evidence review audit trail -->
+                    <div class="usp-tasking-block usp-review-audit-block" id="usp-review-audit-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">Evidence Review Audit Trail / &#1587;&#1580;&#1604; &#1605;&#1585;&#1575;&#1580;&#1593;&#1577; &#1575;&#1604;&#1571;&#1583;&#1604;&#1577;</span>
+                        </div>
+                        <div class="usp-section-body" id="usp-review-audit-body"></div>
+                    </div>
+
                     <!-- RMOOZ-CMO-12: read-only evidence quality gate -->
                     <div class="usp-tasking-block usp-evidence-quality-block" id="usp-evidence-quality-block" hidden>
                         <div class="usp-section-hdr">
@@ -4701,6 +4709,7 @@
     <script src="shell/scenario-evidence-normalizer.js?v=1"></script>
     <script src="shell/objective-x-evidence-health.js?v=1"></script>
     <script src="shell/scenario-evidence-review-session.js?v=1"></script>
+    <script src="shell/scenario-evidence-review-audit-trail.js?v=1"></script>
     <script src="shell/scenario-evidence-fix-status.js?v=1"></script>
     <script src="shell/scenario-evidence-manual-fix.js?v=1"></script>
     <script src="shell/scenario-evidence-review-closeout.js?v=1"></script>
@@ -7251,6 +7260,14 @@
         .usp-closeout-actions button { border:1px solid #5f4618; background:#171107; color:#f0d38b; font-size:0.66rem; padding:4px 7px; border-radius:4px; cursor:pointer; font-family:inherit; }
         .usp-closeout-actions button:hover { background:#241a0a; }
         .usp-closeout-source { margin-top:6px; color:#8f9dac; font-size:0.68rem; }
+        .usp-review-audit-block { background:#080d12; border-bottom:2px solid #183346; }
+        .usp-audit-card { padding:8px 0.8rem 9px; color:#dce8f4; font-size:0.74rem; }
+        .usp-audit-header { display:flex; gap:8px; flex-wrap:wrap; align-items:center; color:#8cc7e7; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.04em; border-bottom:1px solid #173044; padding-bottom:6px; margin-bottom:6px; }
+        .usp-audit-meta, .usp-audit-source, .usp-audit-empty { color:#8f9dac; font-size:0.68rem; margin:5px 0; }
+        .usp-audit-list { list-style:none; margin:0; padding:0; display:grid; gap:5px; }
+        .usp-audit-list li { border:1px solid #173044; border-radius:4px; background:#071019; padding:5px 6px; line-height:1.35; }
+        .usp-audit-list li span { display:block; color:#6f8496; font-size:0.65rem; font-family:'Consolas','Courier New',monospace; }
+        .usp-audit-list li strong { display:block; color:#d7edf8; font-size:0.72rem; font-weight:700; }
 
         /* Unit status panel — extend the drawer down to cover the empty band below
            it, but STOP just above the footer stack. The footer bars

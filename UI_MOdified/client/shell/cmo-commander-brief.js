@@ -62,6 +62,7 @@
     function objectiveApi()  { return localApi('RmoozObjectiveXEvidenceHealth',    'objective-x-evidence-health.js'); }
     function fixStatusApi()  { return localApi('RmoozScenarioEvidenceFixStatus',   'scenario-evidence-fix-status.js'); }
     function closeoutApi()   { return localApi('RmoozScenarioEvidenceReviewCloseout','scenario-evidence-review-closeout.js'); }
+    function auditApi()      { return localApi('RmoozScenarioEvidenceReviewAuditTrail','scenario-evidence-review-audit-trail.js'); }
 
     function resolveHeadlineStatus(coverage, quality, alertCount, readyCount, totalCount) {
         var coveragePct = coverage && coverage.coverage_pct != null ? coverage.coverage_pct : 0;
@@ -124,6 +125,12 @@
         var closeout = opts.closeout || (CO && typeof CO.buildCloseout === 'function'
             ? CO.buildCloseout(reviewQueue, { world_state: ws, generated_at: opts.generated_at })
             : null);
+        var AU = auditApi();
+        var auditTrail = opts.audit_trail || (AU && typeof AU.getTrail === 'function'
+            ? AU.getTrail(obj(manualReview.session).scenario_fingerprint || ws)
+            : null);
+        var auditEvents = arr(obj(auditTrail).events);
+        var lastAudit = auditEvents.length ? auditEvents[auditEvents.length - 1] : null;
 
         var alertList = arr(alerts.alerts || []);
         var alertCount = alertList.length;
@@ -173,7 +180,8 @@
                 units_flagged: reviewQueue ? (reviewQueue.units_flagged || 0) : 0,
                 objective_health_pct: objHealth ? (objHealth.health_score == null ? null : objHealth.health_score) : null,
                 manual_review: manualReview,
-                closeout: closeout
+                closeout: closeout,
+                last_review_activity: lastAudit
             },
             selected_unit: selectedSummary,
             source: 'Coverage + quality-gate + alerts + matrix + scenario QA — commander summary'
@@ -231,6 +239,11 @@
                     esc(co.status_label_en || co.status) +
                     (co.status_label_ar ? ' <span dir="rtl">' + esc(co.status_label_ar) + '</span>' : '') +
                     '</dd></div>';
+            }
+            var act = obj(qa.last_review_activity);
+            if (act.type) {
+                html += '<div class="usp-brief-cell"><dt>Last Review Activity</dt><dd>' +
+                    esc(act.summary || act.type) + '</dd></div>';
             }
         }
         html += '</dl>';

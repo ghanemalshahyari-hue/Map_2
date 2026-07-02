@@ -257,6 +257,7 @@
         populateScenarioRepairPlan(unit);
         populateScenarioManualFix(unit);
         populateScenarioReviewCloseout(unit);
+        populateScenarioReviewAuditTrail(unit);
         populateEvidenceQualityGate(unit);
         populateEvidenceAlerts(unit);
         populateEvidenceCoverage(unit);
@@ -1420,6 +1421,7 @@
                 populateForceEvidenceReport(unit || currentUnit);
                 populateScenarioManualFix(unit || currentUnit);
                 populateScenarioReviewCloseout(unit || currentUnit);
+                populateScenarioReviewAuditTrail(unit || currentUnit);
             };
             MF.bindWorkspaceInteractions(body, workspace, {
                 onStatusChange: refreshManualReviewSurfaces,
@@ -1449,9 +1451,31 @@
             world_state: _getCurrentWorldState,
             generated_at: new Date().toISOString()
         });
+        var AU = root.RmoozScenarioEvidenceReviewAuditTrail;
+        if (AU && typeof AU.observeCloseout === 'function') {
+            try { AU.observeCloseout(closeout, { timestamp: closeout.generated_at }); } catch (_) {}
+        }
         body._scenarioReviewCloseout = closeout;
         body.innerHTML = CO.renderCloseoutHtml(closeout, { lang: 'ar' });
         if (typeof CO.bindCloseoutActions === 'function') CO.bindCloseoutActions(body, closeout);
+        block.removeAttribute('hidden');
+    }
+
+    function populateScenarioReviewAuditTrail(unit) {
+        var block = $('usp-review-audit-block');
+        var body = $('usp-review-audit-body');
+        if (!block || !body) return;
+        var AU = root.RmoozScenarioEvidenceReviewAuditTrail;
+        if (!AU || typeof AU.getTrail !== 'function' || typeof AU.renderAuditTrailHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var FS = root.RmoozScenarioEvidenceFixStatus;
+        var session = FS && typeof FS.getSessionMeta === 'function' ? FS.getSessionMeta() : syncScenarioReviewSession();
+        var fp = session && session.scenario_fingerprint;
+        var trail = AU.getTrail(fp || _getCurrentWorldState);
+        body._scenarioReviewAuditTrail = trail;
+        body.innerHTML = AU.renderAuditTrailHtml(trail, { lang: 'ar', limit: 8 });
         block.removeAttribute('hidden');
     }
 

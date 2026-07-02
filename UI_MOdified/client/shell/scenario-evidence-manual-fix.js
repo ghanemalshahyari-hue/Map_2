@@ -28,6 +28,7 @@
     function statusApi() { return localApi('RmoozScenarioEvidenceFixStatus', 'scenario-evidence-fix-status.js'); }
     function plannerApi() { return localApi('RmoozScenarioEvidenceRepairPlanner', 'scenario-evidence-repair-planner.js'); }
     function sessionApi() { return localApi('RmoozScenarioEvidenceReviewSession', 'scenario-evidence-review-session.js'); }
+    function auditApi() { return localApi('RmoozScenarioEvidenceReviewAuditTrail', 'scenario-evidence-review-audit-trail.js'); }
 
     var REQUIRED_FIELDS = {
         no_contact_evidence: ['contact source', 'detecting unit', 'last seen / freshness'],
@@ -199,15 +200,23 @@
                 var session = FS.getSessionMeta && FS.getSessionMeta();
                 var fp = session && session.scenario_fingerprint;
                 if (action === 'copy' && RS.exportSession) {
-                    copyText(JSON.stringify(RS.exportSession(fp || 'unknown'), null, 2));
+                    var copied = RS.exportSession(fp || 'unknown');
+                    var AU = auditApi();
+                    if (AU && AU.recordSessionEvent) try { AU.recordSessionEvent('session_exported', copied, { fingerprint: fp || 'unknown' }); } catch (_) {}
+                    copyText(JSON.stringify(copied, null, 2));
                 } else if (action === 'download' && RS.exportSession) {
-                    downloadJson(RS.exportSession(fp || 'unknown'));
+                    var exported = RS.exportSession(fp || 'unknown');
+                    var AUD = auditApi();
+                    if (AUD && AUD.recordSessionEvent) try { AUD.recordSessionEvent('session_exported', exported, { fingerprint: fp || 'unknown' }); } catch (_) {}
+                    downloadJson(exported);
                 } else if (action === 'import' && RS.importSession) {
                     var importEl = container.querySelector('[data-manual-session-import]');
                     if (importEl && importEl.value) {
                         var imported = RS.importSession(importEl.value, { current_fingerprint: fp || 'unknown' });
                         if (FS.setScenarioContext) FS.setScenarioContext(imported.scenario_fingerprint || fp || 'unknown');
                         else if (FS.importRecords) FS.importRecords(imported.records, { replace: true });
+                        var AUI = auditApi();
+                        if (AUI && AUI.recordSessionEvent) try { AUI.recordSessionEvent('session_imported', imported, { fingerprint: imported.scenario_fingerprint || fp || 'unknown' }); } catch (_) {}
                         if (opts.onSessionChange) opts.onSessionChange(imported);
                     }
                 } else if (action === 'clear') {

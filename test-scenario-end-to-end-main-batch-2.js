@@ -78,7 +78,8 @@ function makeBtn(action) {
     };
 }
 function makeReleaseContainer(actions) {
-    return { querySelectorAll: function () { return actions.map(makeBtn); } };
+    var buttons = actions.map(makeBtn);
+    return { querySelectorAll: function () { return buttons; } };
 }
 
 var FIXED_AT = '2026-07-02T21:00:00.000Z';

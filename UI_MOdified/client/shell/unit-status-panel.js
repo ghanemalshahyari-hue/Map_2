@@ -249,6 +249,8 @@
         populateFuelAmmo(unit, enriched);
         populateAssignment(unit);
         populateCommanderBrief(unit);
+        populateScenarioCompleteness(unit);
+        populateObjectiveHealth(unit);
         populateEvidenceQualityGate(unit);
         populateEvidenceAlerts(unit);
         populateEvidenceCoverage(unit);
@@ -1263,6 +1265,40 @@
         });
         body._cmoAlternativeShooters = result;
         body.innerHTML = ALT.renderAlternativesHtml(result, { lang: 'ar' });
+        block.removeAttribute('hidden');
+    }
+
+    function populateScenarioCompleteness(unit) {
+        var block = $('usp-scenario-completeness-block');
+        var body = $('usp-scenario-completeness-body');
+        if (!block || !body) return;
+        var SEV = root.RmoozScenarioEvidenceCompleteness;
+        if (!SEV || typeof SEV.buildCompleteness !== 'function' || typeof SEV.renderCompletenessHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var completeness = SEV.buildCompleteness(_getCurrentWorldState, {
+            generated_at: new Date().toISOString()
+        });
+        body._scenarioCompleteness = completeness;
+        body.innerHTML = SEV.renderCompletenessHtml(completeness, { lang: 'ar' });
+        block.removeAttribute('hidden');
+    }
+
+    function populateObjectiveHealth(unit) {
+        var block = $('usp-objective-health-block');
+        var body = $('usp-objective-health-body');
+        if (!block || !body) return;
+        var OH = root.RmoozObjectiveXEvidenceHealth;
+        if (!OH || typeof OH.buildObjectiveHealth !== 'function' || typeof OH.renderObjectiveHealthHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var health = OH.buildObjectiveHealth(_getCurrentWorldState, {
+            generated_at: new Date().toISOString()
+        });
+        body._objectiveHealth = health;
+        body.innerHTML = OH.renderObjectiveHealthHtml(health, { lang: 'ar' });
         block.removeAttribute('hidden');
     }
 

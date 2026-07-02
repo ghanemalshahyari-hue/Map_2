@@ -31,6 +31,7 @@
     function alertsApi() { return localApi('RmoozCmoEvidenceAlerts', 'cmo-evidence-alerts.js'); }
     function feedApi() { return localApi('RmoozCmoForceEvidenceFeed', 'cmo-force-evidence-feed.js'); }
     function coverageApi() { return localApi('RmoozCmoEvidenceCoverage', 'cmo-evidence-coverage.js'); }
+    function completenessApi() { return localApi('RmoozScenarioEvidenceCompleteness', 'scenario-evidence-completeness.js'); }
 
     function reasonLabel(code, lang) {
         var labels = labelsApi();
@@ -106,6 +107,10 @@
         var coverage = (COV && typeof COV.buildCoverage === 'function')
             ? COV.buildCoverage(ws, { matrix: matrix, alerts: alerts })
             : null;
+        var SEV = completenessApi();
+        var completeness = (SEV && typeof SEV.buildCompleteness === 'function')
+            ? SEV.buildCompleteness(ws, { matrix: matrix })
+            : null;
         return {
             version: CMO_FORCE_EVIDENCE_REPORT_VERSION,
             generated_at: opts.generated_at || new Date().toISOString(),
@@ -126,6 +131,7 @@
             readiness_rows: compactRows(matrix.rows),
             force_events: compactEvents(feedEvents),
             coverage: coverage,
+            completeness: completeness,
             selected_unit: selected,
             source: 'Readiness matrix + force evidence feed'
         };
@@ -148,6 +154,20 @@
         if (top) {
             lines.push('Top blocker:');
             lines.push(top.code + ' x ' + top.count + ' - ' + (top.label_ar || reasonLabel(top.code, 'ar')));
+            lines.push('');
+        }
+        var comp = obj(report.completeness);
+        if (comp.total_checked != null) {
+            lines.push('Scenario Evidence Completeness:');
+            lines.push('  Units checked: ' + (comp.total_checked || 0));
+            lines.push('  Complete evidence: ' + (comp.complete || 0));
+            lines.push('  Needs review: ' + (comp.needs_review || 0));
+            if (comp.no_contact > 0)       lines.push('  No-contact evidence: ' + comp.no_contact);
+            if (comp.missing_weapon > 0)   lines.push('  Missing weapon evidence: ' + comp.missing_weapon);
+            if (comp.missing_range > 0)    lines.push('  Missing range evidence: ' + comp.missing_range);
+            if (comp.missing_side > 0)     lines.push('  Missing side assignment: ' + comp.missing_side);
+            if (comp.missing_coordinates > 0) lines.push('  Missing coordinates: ' + comp.missing_coordinates);
+            lines.push('  Verdict: ' + (comp.verdict || 'unknown'));
             lines.push('');
         }
         if (report.selected_unit) {
@@ -211,6 +231,22 @@
                 '<div><span>No-contact</span><strong>' + esc(report.no_contact_count || 0) + '</strong></div>' +
                 '<div><span>Selected unit</span><strong>' + esc(selected.label || selected.uid || 'None') + '</strong></div>' +
             '</section>' +
+            (function () {
+                var comp = obj(report.completeness);
+                if (comp.total_checked == null) return '';
+                var rows = '<section class="cmo-print-section">' +
+                    '<h2>Scenario Evidence Completeness / اكتمال أدلة السيناريو</h2>' +
+                    '<dl class="cmo-print-dl">' +
+                    '<div><dt>Units checked</dt><dd>' + esc(comp.total_checked || 0) + '</dd></div>' +
+                    '<div><dt>Complete evidence</dt><dd>' + esc(comp.complete || 0) + '</dd></div>' +
+                    '<div><dt>Needs review</dt><dd>' + esc(comp.needs_review || 0) + '</dd></div>' +
+                    '<div><dt>No-contact evidence</dt><dd>' + esc(comp.no_contact || 0) + '</dd></div>' +
+                    '<div><dt>Missing weapon</dt><dd>' + esc(comp.missing_weapon || 0) + '</dd></div>' +
+                    '<div><dt>Missing range</dt><dd>' + esc(comp.missing_range || 0) + '</dd></div>' +
+                    '<div><dt>Verdict</dt><dd>' + esc(comp.verdict || 'unknown') + '</dd></div>' +
+                    '</dl></section>';
+                return rows;
+            }()) +
             '<section class="cmo-print-section">' +
                 '<h2>Top Blockers / أهم أسباب المنع</h2>' +
                 '<ul class="cmo-print-list">';

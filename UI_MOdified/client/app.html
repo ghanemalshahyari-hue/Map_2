@@ -3592,6 +3592,22 @@
                         <div class="usp-section-body" id="usp-commander-brief-body"></div>
                     </div>
 
+                    <!-- RMOOZ-CMO-25: read-only scenario evidence completeness -->
+                    <div class="usp-tasking-block usp-scenario-completeness-block" id="usp-scenario-completeness-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">Scenario Completeness / &#1575;&#1603;&#1578;&#1605;&#1575;&#1604; &#1575;&#1604;&#1587;&#1610;&#1606;&#1575;&#1585;&#1610;&#1608;</span>
+                        </div>
+                        <div class="usp-section-body" id="usp-scenario-completeness-body"></div>
+                    </div>
+
+                    <!-- RMOOZ-CMO-27: read-only objective X evidence health -->
+                    <div class="usp-tasking-block usp-objective-health-block" id="usp-objective-health-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">Objective X Health / &#1589;&#1581;&#1577; &#1575;&#1604;&#1607;&#1583;&#1601;</span>
+                        </div>
+                        <div class="usp-section-body" id="usp-objective-health-body"></div>
+                    </div>
+
                     <!-- RMOOZ-CMO-12: read-only evidence quality gate -->
                     <div class="usp-tasking-block usp-evidence-quality-block" id="usp-evidence-quality-block" hidden>
                         <div class="usp-section-hdr">
@@ -4649,11 +4665,14 @@
     <script src="shell/cmo-blocker-remediation.js?v=1"></script>
     <script src="shell/cmo-alternative-shooters.js?v=1"></script>
     <script src="shell/cmo-commander-brief.js?v=1"></script>
+    <script src="shell/scenario-evidence-completeness.js?v=1"></script>
+    <script src="shell/scenario-evidence-normalizer.js?v=1"></script>
+    <script src="shell/objective-x-evidence-health.js?v=1"></script>
     <script src="shell/cmo-force-evidence-feed.js?v=1"></script>
-    <script src="shell/cmo-force-evidence-report.js?v=cmo-23-coverage"></script>
+    <script src="shell/cmo-force-evidence-report.js?v=cmo-28-completeness"></script>
     <script src="shell/evidence-map-overlays.js?v=1"></script>
     <script src="shell/cmo-evidence-export.js?v=cmo-22-drilldown"></script>
-    <script src="shell/unit-status-panel.js?v=cmo-batch-17-24"></script>
+    <script src="shell/unit-status-panel.js?v=cmo-batch-25-29"></script>
     <script src="shell/objective-evidence-panel.js?v=3"></script>
     <!-- L3-B-1: read-only Why-Not display panel in the Scenario Workspace.
          Paints #wn-body from AppActionFeasibility.evaluateAction. No controls. -->
@@ -6545,6 +6564,51 @@
         .usp-brief-fail { color:#e87a7a; }
         .usp-brief-unit { padding:3px 0.75rem 4px; color:#8fb8d8; font-size:0.67rem; border-top:1px solid #0d1420; }
         .usp-brief-disclaimer { padding:3px 0.75rem 5px; color:#5a7890; font-size:0.62rem; border-top:1px solid #0d1420; }
+        /* RMOOZ-CMO-25: scenario evidence completeness */
+        .usp-scenario-completeness-block { background:#060c10; border-bottom:2px solid #0e2030; }
+        .usp-comp-header { padding:6px 0.75rem; border-bottom:1px solid #142033; }
+        .usp-comp-title-en { display:block; font-size:0.69rem; font-weight:600; color:#8fb8d8; text-transform:uppercase; letter-spacing:0.04em; }
+        .usp-comp-verdict-en { display:inline-block; font-size:0.73rem; font-weight:700; color:#8fd6a3; font-family:'Consolas','Courier New',monospace; margin-top:2px; }
+        .usp-comp--mostly .usp-comp-verdict-en { color:#e8c97a; }
+        .usp-comp--review .usp-comp-verdict-en { color:#e87a7a; }
+        .usp-comp-verdict-ar { display:inline-block; font-size:0.65rem; color:#8fb8d8; margin-right:8px; }
+        .usp-comp-stats { display:flex; flex-wrap:wrap; gap:0; margin:0; padding:4px 0.75rem; }
+        .usp-comp-stat { display:flex; flex-direction:column; padding:3px 10px 3px 0; min-width:90px; }
+        .usp-comp-stat dt { color:#5a7890; font-size:0.61rem; text-transform:uppercase; }
+        .usp-comp-stat dd { color:#a8c8e8; font-size:0.71rem; font-weight:600; margin:0; font-family:'Consolas','Courier New',monospace; }
+        .usp-comp-stat--ok dd { color:#8fd6a3; }
+        .usp-comp-stat--warn dd { color:#e8c97a; }
+        .usp-comp-stat--issue dd { color:#e87a7a; }
+        .usp-comp-source { padding:2px 0.75rem 5px; color:#5a7890; font-size:0.62rem; border-top:1px solid #0d1420; }
+        /* RMOOZ-CMO-26: scenario evidence normalizer */
+        .usp-norm-header { padding:5px 0.75rem; display:flex; gap:10px; align-items:center; border-bottom:1px solid #142033; }
+        .usp-norm-count { color:#e8c97a; font-size:0.71rem; font-weight:600; font-family:'Consolas','Courier New',monospace; }
+        .usp-norm-units { color:#8fb8d8; font-size:0.67rem; }
+        .usp-norm-list { margin:0; padding:4px 0.75rem 6px 1.5rem; color:#a8c8e8; font-size:0.67rem; }
+        .usp-norm-list li { margin:2px 0; display:flex; align-items:baseline; gap:6px; }
+        .usp-norm-field { color:#c8dff2; font-weight:600; min-width:80px; }
+        .usp-norm-badge { background:#1a3050; color:#8fb8d8; border-radius:3px; padding:0 4px; font-size:0.61rem; }
+        .usp-norm-applied { color:#5a7890; font-size:0.64rem; }
+        .usp-norm-empty { padding:8px 0.75rem; color:#8fd6a3; font-size:0.68rem; }
+        /* RMOOZ-CMO-27: objective X evidence health */
+        .usp-objective-health-block { background:#060f16; border-bottom:2px solid #0e2030; }
+        .usp-objh-header { padding:6px 0.75rem; border-bottom:1px solid #142033; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+        .usp-objh-score { font-size:1.05rem; font-weight:700; color:#8fd6a3; font-family:'Consolas','Courier New',monospace; min-width:3em; }
+        .usp-objh--mostly .usp-objh-score { color:#e8c97a; }
+        .usp-objh--partial .usp-objh-score, .usp-objh--unhealthy .usp-objh-score { color:#e87a7a; }
+        .usp-objh-status-en { color:#8fb8d8; font-size:0.68rem; font-weight:600; }
+        .usp-objh-status-badge { background:#1a3050; color:#a8c8e8; border-radius:3px; padding:0 5px; font-size:0.63rem; font-family:'Consolas','Courier New',monospace; }
+        .usp-objh-status-ar { color:#7fa0b8; font-size:0.65rem; }
+        .usp-objh-checks { margin:0; padding:4px 0.75rem 6px; list-style:none; }
+        .usp-objh-check { display:flex; align-items:baseline; gap:6px; padding:2px 0; font-size:0.67rem; border-bottom:1px solid #0d1420; }
+        .usp-objh-check:last-child { border-bottom:none; }
+        .usp-objh-icon { font-size:0.75rem; min-width:1em; }
+        .usp-objh-check--pass .usp-objh-icon { color:#8fd6a3; }
+        .usp-objh-check--fail .usp-objh-icon { color:#e87a7a; }
+        .usp-objh-label-en { color:#c8dff2; flex:1; }
+        .usp-objh-check--fail .usp-objh-label-en { color:#e8a8a8; }
+        .usp-objh-label-ar { color:#8fb8d8; font-size:0.63rem; }
+        .usp-objh-source { padding:2px 0.75rem 5px; color:#5a7890; font-size:0.62rem; border-top:1px solid #0d1420; }
         .usp-evidence-timeline-block { background:#080d14; }
         .usp-timeline-intro {
             padding:5px 0.75rem; font-size:0.66rem; color:#7fa0b8;

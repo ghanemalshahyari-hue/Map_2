@@ -255,6 +255,7 @@
         populateContactEvidence(unit);
         populateEngagementEvidence(unit);
         populateDecisionChainEvidence(unit);
+        populateEvidenceRecommendations(unit);
         populateEvidenceTimeline(unit);
         populateEvidenceExport(unit);
         populateForceEvidenceReport(unit);
@@ -1242,6 +1243,23 @@
                 root.RmoozCmoEvidenceTimeline.observeDecision(uid, evidence);
             }
         } catch (_) {}
+        block.removeAttribute('hidden');
+    }
+
+    function populateEvidenceRecommendations(unit) {
+        var block = $('usp-evidence-recommendations-block');
+        var body = $('usp-evidence-recommendations-body');
+        if (!block || !body) return;
+        var REC = root.RmoozCmoEvidenceRecommendations;
+        if (!REC || typeof REC.buildRecommendations !== 'function' || typeof REC.renderRecommendationsHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        var uid = unit && (unit.uid || unit.id || unit.unit_uid);
+        var evidence = _getUnitDecisionChainEvidence(uid);
+        var recommendations = REC.buildRecommendations(evidence);
+        body._cmoEvidenceRecommendations = recommendations;
+        body.innerHTML = REC.renderRecommendationsHtml(recommendations, { lang: 'ar' });
         block.removeAttribute('hidden');
     }
 

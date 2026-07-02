@@ -17,6 +17,7 @@ const cmoScripts = [
   'engagement-evidence.js',
   'contact-evidence.js',
   'decision-chain-evidence.js',
+  'cmo-evidence-recommendations.js',
   'evidence-map-overlays.js',
   'cmo-evidence-timeline.js',
   'cmo-evidence-readiness-matrix.js',
@@ -35,6 +36,7 @@ const panelSections = [
   'usp-contact-evidence-block',
   'usp-engagement-evidence-block',
   'usp-chain-evidence-block',
+  'usp-evidence-recommendations-block',
   'usp-evidence-timeline-block',
   'usp-evidence-export-block',
   'usp-force-report-block'

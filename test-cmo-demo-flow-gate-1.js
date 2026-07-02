@@ -12,6 +12,7 @@ const moduleFiles = [
   'engagement-evidence.js',
   'contact-evidence.js',
   'decision-chain-evidence.js',
+  'cmo-evidence-recommendations.js',
   'evidence-map-overlays.js',
   'cmo-evidence-timeline.js',
   'cmo-evidence-export.js',

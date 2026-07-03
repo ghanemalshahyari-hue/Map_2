@@ -147,7 +147,7 @@ console.log('\n--- QA-131: quick filters and status context ---');
     var releaseOnly = labels(API.filterCommands(all, '', 'release'));
     assert('T-1  release filter keeps release commands only', releaseOnly.length === 3 && releaseOnly.indexOf('Open Release Gate') !== -1 && releaseOnly.indexOf('Open Coverage') === -1);
     var copyOnly = labels(API.filterCommands(all, '', 'copy'));
-    assert('T-2  copy filter keeps browser-local copy commands only', copyOnly.join('|') === 'Copy Release Summary|Copy Coverage Summary|Copy CMO Readiness Brief|Copy CMO Test Card');
+    assert('T-2  copy filter keeps browser-local copy commands only', copyOnly.join('|') === 'Copy Release Summary|Copy Coverage Summary|Copy CMO Readiness Brief|Copy CMO Test Card|Copy CMO Evidence Package Summary|Copy CMO Evidence Package JSON');
     var reviewCoverage = labels(API.filterCommands(all, 'review', 'coverage'));
     assert('T-3  search combines with filter', reviewCoverage.join('|') === 'Open Review Queue');
 

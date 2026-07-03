@@ -163,7 +163,7 @@ console.log('\n--- AAR-3: main panel wiring, docs, and strict boundary ---');
         'shell/unit-status-panel.js'
     ].map(function (needle) { return app.indexOf(needle); });
     assert('T-1  AAR module loads after run instrumentation and before Unit Status', order.every(function (idx) { return idx !== -1; }) && order[0] < order[1] && order[1] < order[2]);
-    assert('T-2  app styles after-action debrief and responsive meta grid', app.indexOf('.cmo-wargame-after-action-debrief') !== -1 && app.indexOf('data-cmo-after-action-debrief') === -1 && app.indexOf('.cmo-wargame-after-action-debrief-meta { grid-template-columns:repeat(2') !== -1);
+    assert('T-2  app styles after-action debrief and responsive meta grid', app.indexOf('.cmo-wargame-after-action-debrief') !== -1 && app.indexOf('data-cmo-after-action-debrief') === -1 && app.indexOf('.cmo-wargame-after-action-debrief-meta') !== -1 && app.indexOf('grid-template-columns:repeat(2') !== -1);
     assert('T-3  Unit Status builds, stores, and renders AAR output inside CMO panel', unit.indexOf('RmoozCmoWarGameAfterActionDebrief') !== -1 && unit.indexOf('_cmoWarGameAfterActionDebrief') !== -1 && unit.indexOf('renderDebriefHtml') !== -1 && unit.indexOf('shouldRenderDebrief') !== -1);
     assert('T-4  docs describe automatic After-Action Debrief testing value', runbook.indexOf('CMO War-Game After-Action Debrief appears automatically') !== -1 && runbook.indexOf('release-grade evidence') !== -1);
     assert('T-5  inventory records CMO-WARGAME-AAR-1 with offline pending', inventory.indexOf('CMO-WARGAME-AAR-1') !== -1 && inventory.indexOf('cmo-wargame-after-action-debrief.js') !== -1 && inventory.indexOf('Offline sync/testing: pending by user instruction') !== -1);

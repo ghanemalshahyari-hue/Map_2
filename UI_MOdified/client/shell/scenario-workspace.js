@@ -8613,7 +8613,7 @@
         _initExtPreviewSection();            // PR-281: external scenario preview hook (inject once)
         initExternalScenarioCatalogSelector(); // PR-282: wire catalog selector change listener
         initLegacySummaryToggle();           // PR-287C: wire collapsed legacy summary toggle
-        initSecondaryCardsToggle();          // PR-287L2: wire collapsed secondary tools toggle
+        initSecondaryCardsToggle();          // PR-287L2: wire collapsed advanced diagnostics toggle
         initLiveScenarioImport();            // PR-286L0: wire Live Scenario Import button
         initLiveScenarioFolderImport();      // PR-286L1: wire Scenario Folder Intake
         initSourceAdvancedImportsToggle();   // PR-286L1A: wire collapsed advanced-imports toggle
@@ -15429,12 +15429,12 @@
                 body.removeAttribute('hidden');
                 btn.setAttribute('aria-expanded', 'true');
                 btn.textContent = tx('sw-secondary-cards-toggle-hide',
-                                     'Hide secondary tools');
+                                     'Hide advanced diagnostics');
             } else {
                 body.setAttribute('hidden', '');
                 btn.setAttribute('aria-expanded', 'false');
                 btn.textContent = tx('sw-secondary-cards-toggle-show',
-                                     'Show secondary tools');
+                                     'Show advanced diagnostics');
             }
         });
     }

@@ -299,10 +299,10 @@
                 note('Prepare COA is blocked: <b>' + esc(r.message || 'Step 1 review required') + '</b> Complete source / doctrine / commander review (Panel 1), then re-check.', C.warn) +
                 '<div style="margin-top:6px;">' + btnSec('scc-recheck', '↻ Re-check readiness') + '</div>';
         } else {
-            // RMOOZ-PREPARE-COA-PRODUCT-FLOW-A: three-button layout.
-            //   1. "Prepare COA"           — smart, ALWAYS enabled; tries AI, silently falls back to Staff-Safe.
-            //   2. "Generate Real AI COA"  — strict, disabled with exact reason when AI is blocked; never falls back.
-            //   3. "Staff-Safe Now"        — always enabled, always deterministic.
+            // RMOOZ-PREPARE-COA-PRODUCT-FLOW-A: one primary operator action plus
+            // collapsed advanced controls. The strict AI-only and deterministic
+            // Staff-Safe buttons remain real functions, but no longer compete with
+            // the primary visible "Prepare COA" path.
             var _ar = null; try { _ar = (typeof eng.aiReadiness === 'function') ? eng.aiReadiness() : null; } catch (_) {}
             var _mi = null; try { _mi = (typeof eng.aiModelInfo === 'function') ? eng.aiModelInfo() : null; } catch (_) {}
             var _aiOk = !!(_ar && _ar.ok);
@@ -349,15 +349,19 @@
             var _strictBtn = _aiOk
                 ? btnSec('scc-prepare-ai', '⚡ Generate Real AI COA', _strictTitle)
                 : '<button data-act="scc-prepare-ai" disabled title="' + _strictTitle + '" style="font:inherit;cursor:not-allowed;border:1px solid #3a3020;background:#14110a;color:#7a7050;border-radius:6px;padding:7px 13px;font-size:11.5px;opacity:.6;">⚡ Generate Real AI COA</button>';
+            var _advancedControls = '<details data-scc="advanced-planning-controls" style="margin-top:7px;border:1px dashed ' + C.edgeSoft + ';border-radius:6px;padding:6px 8px;background:#080f17;">' +
+                '<summary style="cursor:pointer;color:' + C.dim + ';font-size:10.5px;font-weight:700;">Advanced planning controls</summary>' +
+                '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:7px;">' +
+                _strictBtn + ' ' +
+                btnSec('scc-prepare-staffsafe', '🛡 Staff-Safe Now', 'Deterministic role-separated COA — always works, no AI') +
+                '</div>' +
+                note('<b>Prepare COA</b> always gives a plan (AI when ready, Staff-Safe otherwise). <b>Generate Real AI COA</b> is AI-only — never deterministic. <b>Staff-Safe Now</b> is always fast and deterministic.', C.dim) +
+                '</details>';
             inner = _planErrHtml +
                 _smartBtn +
                 _providerCard +
                 _mismatchHtml + _cloudDisabledHtml + _blockMsgHtml +
-                '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">' +
-                _strictBtn + ' ' +
-                btnSec('scc-prepare-staffsafe', '🛡 Staff-Safe Now', 'Deterministic role-separated COA — always works, no AI') +
-                '</div>' +
-                note('<b>Prepare COA</b> always gives a plan (AI when ready, Staff-Safe otherwise). <b>Generate Real AI COA</b> is AI-only — never deterministic. <b>Staff-Safe Now</b> is always fast and deterministic.', C.dim);
+                _advancedControls;
         }
         return panel('2', 'Prepare COA', inner, state === 'generating_coa' ? C.warn : C.edge);
     }

@@ -11,7 +11,9 @@ var path = require('path');
 var vm = require('vm');
 
 var file = path.join(__dirname, 'UI_MOdified', 'client', 'shell', 'demo-scenario-preview.js');
+var appFile = path.join(__dirname, 'UI_MOdified', 'client', 'app.html');
 var source = fs.readFileSync(file, 'utf8');
+var appSource = fs.readFileSync(appFile, 'utf8');
 var stripped = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
 var passed = 0;
 var failed = 0;
@@ -34,9 +36,12 @@ assert('isActive always false', api.isActive() === false);
 assert('step count always zero', api.getStepCount() === 0);
 assert('retirement code is exposed', api.RETIRED && api.RETIRED.code === 'legacy_ai_decision_scenario_preview_retired');
 assert('no fetch call remains', !/\bfetch\s*\(/.test(stripped));
+assert('no generate-preview endpoint remains', source.indexOf('/api/wargame-sim/generate-preview') < 0 && source.indexOf('generate-preview') < 0);
 assert('no Leaflet layer creation remains', !/layerGroup\s*\(|L\.marker\s*\(|L\.polyline\s*\(/.test(stripped));
 assert('no preview DOM panel remains', !/rmooz-demo-preview-panel|document\.createElement\s*\(\s*['"]div['"]\s*\)/.test(stripped));
 assert('no map mutation/removal remains', !/window\.map|addTo\s*\(|removeLayer\s*\(/.test(stripped));
+assert('app load comment marks demo preview as retired shim', /DEMO-ACTUAL-1 retired[\s\S]*compatibility shim only[\s\S]*demo-scenario-preview\.js/.test(appSource));
+assert('app load comment does not present demo preview as active', appSource.indexOf('AI Decision-Making Scenario Preview. Isolated preview') < 0);
 
 api.build({}).then(function (result) {
     assert('runtime build returns retired disabled result', result && result.disabled === true && result.retired === true);

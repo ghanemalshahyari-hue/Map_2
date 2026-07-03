@@ -605,10 +605,10 @@ check(htmlSrc.indexOf('id="sw-nav-counter"') >= 0,
 check(htmlSrc.indexOf('id="sw-nav-step-info"') >= 0,
       'T55b: #sw-nav-step-info unchanged');
 
-// T56: goToStep behaviour unchanged
+// T56: goToStep behaviour tracks the later PR-287L2 live-workspace coherence.
 var gotoSrc = extractFn(swSrc, 'goToStep');
-check(gotoSrc && gotoSrc.indexOf('paintLiveDecisionActionCard') < 0,
-      'T56: goToStep does not directly call paintLiveDecisionActionCard (refresh() chain handles it)');
+check(gotoSrc && gotoSrc.indexOf('paintLiveDecisionActionCard') >= 0,
+      'T56: goToStep directly repaints paintLiveDecisionActionCard for live step coherence');
 
 // T57: dry-run DOM IDs unchanged
 check(htmlSrc.indexOf('id="sw-drp-section"') >= 0,

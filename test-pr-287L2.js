@@ -100,6 +100,7 @@ console.log('\n─── Section 1: New IDs exist ───');
 console.log('\n─── Section 2: Live cards inside #sw-live-workspace ───');
 
 [
+    ['T08a', 'spt-card'],
     ['T08', 'sw-nav-card'],
     ['T09', 'sw-live-decision-card'],
     ['T10', 'sw-meta-card'],
@@ -144,7 +145,6 @@ check(htmlSrc.indexOf('id="sw-secondary-cards"') >= 0,
       'T25: #sw-secondary-cards present');
 
 [
-    ['T26', 'spt-card'],
     ['T27', 'oid-card'],
     ['T28', 'apc-card'],
     ['T29', 'pra-card'],

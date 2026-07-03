@@ -1,13 +1,16 @@
 /* ============================================================================
- * cmo-wargame-readiness-brief.js - CMO-WARGAME-LIVE-WIRING-1
+ * cmo-wargame-readiness-brief.js - RMOOZ-CMO-WARGAME-READINESS-1
  * ----------------------------------------------------------------------------
- * Read-only CMO war-game readiness decision derived from the scenario evidence
- * flow snapshot. It answers whether the operator can run the war-game now.
+ * Read-only CMO war-game readiness brief. Converts the Scenario Evidence Flow
+ * Snapshot into a concise go/no-go operator brief for testing the CMO war-game:
+ * what is ready, what blocks release, what can still be tested with warnings,
+ * and the next best operator actions. It never mutates scenario truth, world
+ * state, doctrine, combat state, backend routes, or a database.
  * ========================================================================== */
 (function (root) {
     'use strict';
 
-    var CMO_WARGAME_READINESS_BRIEF_VERSION = '1.0.0-cmo-wargame-live-wiring-1';
+    var CMO_WARGAME_READINESS_BRIEF_VERSION = '1.0.0-rmooz-cmo-wargame-readiness-1';
 
     function obj(v) { return v && typeof v === 'object' ? v : {}; }
     function arr(v) { return Array.isArray(v) ? v : []; }
@@ -23,136 +26,257 @@
         }
         return null;
     }
-    function pct(snapshot) {
-        var coverage = obj(snapshot.coverage);
-        var n = Number(coverage.coverage_pct);
-        return isFinite(n) ? Math.max(0, Math.min(100, Math.round(n))) : 0;
+    function snapshotApi() { return localApi('RmoozScenarioEvidenceFlowSnapshot', 'scenario-evidence-flow-snapshot.js'); }
+
+    function isSnapshot(input) {
+        return !!(input && typeof input === 'object' && input.summary && input.checklist && input.release_gate);
     }
-    function snapshotFrom(input, opts) {
-        if (input && input.version && input.scenario && input.coverage) return input;
-        var FS = localApi('RmoozScenarioEvidenceFlowSnapshot', 'scenario-evidence-flow-snapshot.js');
-        return FS && typeof FS.buildSnapshot === 'function' ? FS.buildSnapshot(input, opts) : {};
-    }
-
-    function decisionFor(snapshot) {
-        var coveragePct = pct(snapshot);
-        var counts = obj(snapshot.counts);
-        var release = obj(snapshot.release_gate);
-        var closeout = obj(snapshot.closeout);
-        var handoff = obj(snapshot.handoff_acceptance);
-        var issues = counts.review_issues || 0;
-        var accepted = /accepted/.test(String(handoff.decision || ''));
-        var releaseStatus = String(release.status || '');
-        var closeoutStatus = String(closeout.status || '');
-
-        if (release.releasable === true && coveragePct >= 80 && issues === 0 && accepted) return 'go';
-        if ((releaseStatus === 'ready_with_warnings' || closeoutStatus === 'ready_with_exceptions' || (coveragePct >= 70 && issues <= 2)) && accepted) return 'go_with_warnings';
-        if (snapshot.training_preview_only || coveragePct >= 40 || counts.units > 0) return 'training_preview_only';
-        return 'no_go';
-    }
-
-    var DECISION_META = {
-        go: { label: 'GO', cls: 'go', run_mode: 'release-grade war-game' },
-        go_with_warnings: { label: 'GO with warnings', cls: 'warn', run_mode: 'controlled war-game with CMO watch' },
-        training_preview_only: { label: 'Training preview only', cls: 'training', run_mode: 'training preview only' },
-        no_go: { label: 'NO-GO', cls: 'no-go', run_mode: 'hold / do not run' }
-    };
-
-    function confidenceFor(snapshot, decision) {
-        var coveragePct = pct(snapshot);
-        var issues = obj(snapshot.counts).review_issues || 0;
-        var release = obj(snapshot.release_gate);
-        var handoff = obj(snapshot.handoff_acceptance);
-        var score = coveragePct;
-        if (release.releasable) score += 10;
-        if (/accepted/.test(String(handoff.decision || ''))) score += 8;
-        score -= Math.min(24, issues * 6);
-        if (decision === 'training_preview_only') score = Math.min(score, 68);
-        if (decision === 'no_go') score = Math.min(score, 35);
-        return Math.max(0, Math.min(100, Math.round(score)));
-    }
-
-    function nextActions(snapshot, decision) {
-        var actions = [];
-        var blockers = arr(snapshot.blockers);
-        if (decision === 'go') {
-            actions.push('Run the scenario from the Scenario Control Center.');
-            actions.push('Watch release gate, handoff receipt, and force evidence deltas.');
-        } else if (decision === 'go_with_warnings') {
-            actions.push('Run with CMO monitoring and keep the release blockers visible.');
-            actions.push('Pause if any warning becomes a blocking issue.');
-        } else if (decision === 'training_preview_only') {
-            actions.push('Use training preview mode only; do not treat outcomes as release evidence.');
-            actions.push('Resolve review queue issues before release-grade execution.');
-        } else {
-            actions.push('Do not run the war-game yet.');
-            actions.push('Resolve release blockers and regenerate the handoff package.');
-        }
-        blockers.slice(0, 3).forEach(function (b) { actions.push('Review blocker: ' + b); });
-        return actions.slice(0, 6);
-    }
-
-    function buildBrief(snapshotOrWorldState, opts) {
+    function buildSnapshot(input, opts) {
         opts = opts || {};
-        var snapshot = snapshotFrom(snapshotOrWorldState, opts);
-        var decision = opts.decision || decisionFor(snapshot);
-        var meta = DECISION_META[decision] || DECISION_META.no_go;
+        if (opts.snapshot) return opts.snapshot;
+        if (isSnapshot(input)) return input;
+        var SNAP = snapshotApi();
+        if (SNAP && typeof SNAP.buildSnapshot === 'function') {
+            return SNAP.buildSnapshot(input || null, opts);
+        }
         return {
-            version: CMO_WARGAME_READINESS_BRIEF_VERSION,
-            generated_at: opts.generated_at || snapshot.generated_at || new Date().toISOString(),
-            flow_snapshot: snapshot,
-            decision: decision,
-            decision_label_en: meta.label,
-            decision_label_ar: decision === 'go' ? '&#1575;&#1606;&#1591;&#1604;&#1575;&#1602;' : decision === 'no_go' ? '&#1593;&#1583;&#1605; &#1575;&#1604;&#1575;&#1606;&#1591;&#1604;&#1575;&#1602;' : '&#1605;&#1585;&#1575;&#1580;&#1593;&#1577;',
-            cls: meta.cls,
-            confidence: confidenceFor(snapshot, decision),
-            run_mode: meta.run_mode,
-            next_actions: nextActions(snapshot, decision),
-            blockers: arr(snapshot.blockers),
-            warnings: arr(snapshot.warnings),
-            read_only_disclaimer: 'Read-only CMO readiness brief. It does not authorize, mutate, or auto-run scenario actions.'
+            scenario_fingerprint: opts.fingerprint || 'unknown',
+            summary: {
+                scenario_fingerprint: opts.fingerprint || 'unknown',
+                normalized_fields: 0,
+                units_affected: 0,
+                review_issues: 0,
+                closeout_status: 'incomplete',
+                closeout_label_en: 'Incomplete',
+                handoff_decision: 'pending',
+                handoff_label_en: 'Pending Decision',
+                release_status: 'incomplete',
+                release_label_en: 'Incomplete',
+                releasable: false,
+                blocker_count: 0
+            },
+            checklist: [],
+            release_gate: { blockers: [], warnings: [], checks: [], status: 'incomplete', releasable: false },
+            read_only: true
         };
     }
 
-    function buildSummary(brief) {
-        brief = obj(brief);
-        return [
+    function gate(key, label, status, detail, action) {
+        return {
+            key: key,
+            label: label,
+            status: status,
+            detail: detail || '',
+            action: action || '',
+            read_only: true
+        };
+    }
+    function gateRank(status) {
+        return status === 'fail' ? 0 : status === 'warn' ? 1 : status === 'pass' ? 2 : 1;
+    }
+    function decisionFromGates(gates, opts) {
+        opts = opts || {};
+        var anyFail = gates.some(function (g) { return g.status === 'fail'; });
+        var anyWarn = gates.some(function (g) { return g.status === 'warn'; });
+        if (anyFail && opts.allow_training_preview) return 'training_preview_only';
+        if (anyFail) return 'no_go';
+        if (anyWarn) return 'go_with_warnings';
+        return 'go';
+    }
+    function decisionLabel(decision) {
+        return {
+            go: 'GO for CMO war-game test',
+            go_with_warnings: 'GO with warnings',
+            training_preview_only: 'Training preview only',
+            no_go: 'NO-GO for release-grade test'
+        }[decision] || 'NO-GO for release-grade test';
+    }
+    function decisionArabic(decision) {
+        return {
+            go: 'جاهز لاختبار المناورة',
+            go_with_warnings: 'جاهز مع تنبيهات',
+            training_preview_only: 'معاينة تدريبية فقط',
+            no_go: 'غير جاهز للاختبار النهائي'
+        }[decision] || 'غير جاهز للاختبار النهائي';
+    }
+
+    function releaseBlockerDigest(snapshot) {
+        var rg = obj(snapshot.release_gate);
+        return arr(rg.blockers).map(function (b) {
+            return {
+                code: obj(b).code || 'release_blocker',
+                label: obj(b).label || obj(b).code || 'Release blocker',
+                source: 'release_gate'
+            };
+        });
+    }
+    function checklistDigest(snapshot) {
+        return arr(snapshot.checklist).map(function (step) {
+            step = obj(step);
+            return {
+                key: step.key || 'step',
+                label: step.label || step.key || 'Step',
+                status: step.status || 'warn',
+                detail: step.detail || '',
+                source: 'flow_checklist'
+            };
+        });
+    }
+    function buildGates(snapshot, opts) {
+        opts = opts || {};
+        snapshot = obj(snapshot);
+        var s = obj(snapshot.summary);
+        var rg = obj(snapshot.release_gate);
+        var gates = [];
+        gates.push(gate(
+            'scenario_identity',
+            'Scenario identity',
+            s.scenario_fingerprint && s.scenario_fingerprint !== 'unknown' ? 'pass' : 'warn',
+            'Fingerprint: ' + (s.scenario_fingerprint || snapshot.scenario_fingerprint || 'unknown'),
+            'Confirm scenario setup and Objective X identity.'
+        ));
+        gates.push(gate(
+            'evidence_normalization',
+            'Evidence normalization',
+            (s.normalized_fields || 0) ? 'warn' : 'pass',
+            (s.normalized_fields || 0) + ' field(s) normalized across ' + (s.units_affected || 0) + ' unit(s)',
+            (s.normalized_fields || 0) ? 'Review normalized fields before trusting outcomes.' : 'No normalization action required.'
+        ));
+        gates.push(gate(
+            'review_queue',
+            'Review Queue',
+            (s.review_issues || 0) ? 'warn' : 'pass',
+            (s.review_issues || 0) + ' evidence issue(s)',
+            (s.review_issues || 0) ? 'Open Scenario Evidence Review Queue.' : 'Review queue clear.'
+        ));
+        gates.push(gate(
+            'closeout',
+            'Review Closeout',
+            s.closeout_status === 'ready_for_handoff' ? 'pass' : (s.closeout_status === 'ready_with_exceptions' ? 'warn' : 'fail'),
+            s.closeout_label_en || s.closeout_status || 'Incomplete',
+            'Open Closeout and resolve blockers/deferred notes.'
+        ));
+        gates.push(gate(
+            'handoff',
+            'Handoff Acceptance',
+            s.handoff_decision === 'accepted' ? 'pass' : (s.handoff_decision === 'accepted_with_warnings' ? 'warn' : 'fail'),
+            s.handoff_label_en || s.handoff_decision || 'Pending Decision',
+            'Accept the handoff package or record why it is not accepted.'
+        ));
+        gates.push(gate(
+            'release_gate',
+            'Evidence Release Gate',
+            s.releasable ? 'pass' : 'fail',
+            (s.release_label_en || s.release_status || obj(rg).status || 'Incomplete') + ' — ' + (s.blocker_count || arr(rg.blockers).length || 0) + ' blocker(s)',
+            'Open Release Gate and clear release blockers.'
+        ));
+        return gates;
+    }
+    function nextActionsFromGates(gates) {
+        return arr(gates)
+            .filter(function (g) { return g.status !== 'pass'; })
+            .sort(function (a, b) { return gateRank(a.status) - gateRank(b.status); })
+            .slice(0, 6)
+            .map(function (g) {
+                return {
+                    key: g.key,
+                    label: g.label,
+                    status: g.status,
+                    action: g.action,
+                    detail: g.detail,
+                    read_only: true
+                };
+            });
+    }
+    function confidence(gates) {
+        gates = arr(gates);
+        if (!gates.length) return { score: 0, label: 'Unknown', cls: 'unknown' };
+        var pass = gates.filter(function (g) { return g.status === 'pass'; }).length;
+        var warn = gates.filter(function (g) { return g.status === 'warn'; }).length;
+        var fail = gates.filter(function (g) { return g.status === 'fail'; }).length;
+        var raw = Math.round(((pass * 100) + (warn * 55)) / gates.length);
+        var score = Math.max(0, Math.min(100, raw - fail * 18));
+        var label = score >= 85 ? 'High' : score >= 60 ? 'Medium' : score >= 35 ? 'Low' : 'Blocked';
+        return { score: score, label: label, cls: label.toLowerCase(), pass: pass, warn: warn, fail: fail };
+    }
+
+    function buildBrief(worldStateOrSnapshot, opts) {
+        opts = opts || {};
+        var snapshot = buildSnapshot(worldStateOrSnapshot, opts);
+        var gates = buildGates(snapshot, opts);
+        var decision = decisionFromGates(gates, opts);
+        var conf = confidence(gates);
+        return {
+            version: CMO_WARGAME_READINESS_BRIEF_VERSION,
+            generated_at: opts.generated_at || obj(snapshot).generated_at || new Date().toISOString(),
+            scenario_fingerprint: obj(snapshot.summary).scenario_fingerprint || snapshot.scenario_fingerprint || 'unknown',
+            decision: decision,
+            decision_label_en: decisionLabel(decision),
+            decision_label_ar: decisionArabic(decision),
+            confidence: conf,
+            gates: gates,
+            release_blockers: releaseBlockerDigest(snapshot),
+            checklist: checklistDigest(snapshot),
+            next_actions: nextActionsFromGates(gates),
+            snapshot_summary: obj(snapshot.summary),
+            source: 'Scenario Evidence Flow Snapshot + CMO war-game readiness policy',
+            read_only: true
+        };
+    }
+    function summaryText(brief) {
+        brief = brief && brief.version ? brief : buildBrief(brief || null);
+        var lines = [
             'CMO War-Game Readiness Brief',
-            'Decision: ' + (brief.decision_label_en || brief.decision || 'Unknown'),
-            'Confidence: ' + (brief.confidence == null ? 'unknown' : brief.confidence + '%'),
-            'Run mode: ' + (brief.run_mode || 'unknown'),
             '',
-            'Next actions:',
-            arr(brief.next_actions).map(function (a) { return '- ' + a; }).join('\n') || '- Review scenario evidence.',
+            'Decision: ' + (brief.decision_label_en || brief.decision || 'NO-GO'),
+            'Confidence: ' + obj(brief.confidence).label + ' (' + (obj(brief.confidence).score || 0) + '%)',
+            'Scenario fingerprint: ' + (brief.scenario_fingerprint || 'unknown'),
             '',
-            brief.read_only_disclaimer || 'Read-only.'
-        ].join('\n');
+            'Gates:'
+        ];
+        arr(brief.gates).forEach(function (g) {
+            lines.push('- [' + String(g.status || 'warn').toUpperCase() + '] ' + g.label + ': ' + g.detail);
+        });
+        if (arr(brief.next_actions).length) {
+            lines.push('');
+            lines.push('Next actions:');
+            arr(brief.next_actions).forEach(function (a) { lines.push('- ' + a.action); });
+        }
+        lines.push('');
+        lines.push('Read-only brief. It does not run, commit, release, mutate doctrine, or change scenario state.');
+        return lines.join('\n');
     }
-
-    function renderList(items) {
-        return '<ul>' + arr(items).map(function (item) { return '<li>' + esc(item) + '</li>'; }).join('') + '</ul>';
-    }
-
     function renderBriefHtml(brief) {
-        brief = obj(brief);
-        return '<div class="usp-cmo-readiness-card usp-cmo-readiness-card--' + esc(brief.cls || 'training') + '" id="usp-cmo-wargame-readiness-brief">' +
-            '<div class="usp-cmo-readiness-head">' +
-            '<span class="usp-cmo-readiness-kicker">CMO War-Game Readiness</span>' +
-            '<strong>' + esc(brief.decision_label_en || 'Unknown') + '</strong>' +
-            '<span dir="rtl">' + (brief.decision_label_ar || '') + '</span>' +
+        brief = brief && brief.version ? brief : buildBrief(brief || null);
+        var conf = obj(brief.confidence);
+        var html = '<div class="cmo-wargame-readiness cmo-wargame-readiness--' + esc(brief.decision || 'no_go') + '">' +
+            '<div class="cmo-wargame-readiness-header">' +
+                '<span>CMO War-Game Readiness</span>' +
+                '<span dir="rtl">جاهزية اختبار المناورة</span>' +
+                '<strong>' + esc(brief.decision_label_en || brief.decision || 'NO-GO') + '</strong>' +
+                '<small dir="rtl">' + esc(brief.decision_label_ar || '') + '</small>' +
             '</div>' +
-            '<dl class="usp-cmo-readiness-grid">' +
-            '<div><dt>Confidence</dt><dd>' + esc(brief.confidence == null ? 'unknown' : brief.confidence + '%') + '</dd></div>' +
-            '<div><dt>Run mode</dt><dd>' + esc(brief.run_mode || 'unknown') + '</dd></div>' +
+            '<dl class="cmo-wargame-readiness-meta">' +
+                '<div><dt>Confidence</dt><dd>' + esc(conf.label || 'Unknown') + ' (' + esc(conf.score || 0) + '%)</dd></div>' +
+                '<div><dt>Fingerprint</dt><dd><code>' + esc(brief.scenario_fingerprint || 'unknown') + '</code></dd></div>' +
+                '<div><dt>Release blockers</dt><dd>' + esc(arr(brief.release_blockers).length) + '</dd></div>' +
             '</dl>' +
-            '<div class="usp-cmo-readiness-subhead">Next actions</div>' +
-            renderList(brief.next_actions) +
-            '<div class="usp-cmo-readiness-disclaimer">' + esc(brief.read_only_disclaimer || 'Read-only.') + '</div>' +
-            '</div>';
+            '<ol class="cmo-wargame-readiness-gates">';
+        arr(brief.gates).forEach(function (g) {
+            html += '<li class="cmo-wargame-readiness-gate cmo-wargame-readiness-gate--' + esc(g.status || 'warn') + '">' +
+                '<strong>' + esc(g.label) + '</strong><span>' + esc(g.detail) + '</span></li>';
+        });
+        html += '</ol>';
+        if (arr(brief.next_actions).length) {
+            html += '<div class="cmo-wargame-readiness-next"><strong>Next actions</strong><ul>';
+            arr(brief.next_actions).forEach(function (a) { html += '<li>' + esc(a.action || a.label) + '</li>'; });
+            html += '</ul></div>';
+        }
+        html += '<div class="cmo-wargame-readiness-source">Source: ' + esc(brief.source || '') + '. Read-only.</div></div>';
+        return html;
     }
-
     function copyBrief(brief) {
-        var text = buildSummary(brief);
+        var text = summaryText(brief);
         var nav = root.navigator || {};
         if (nav.clipboard && typeof nav.clipboard.writeText === 'function') return nav.clipboard.writeText(text);
         return text;
@@ -161,7 +285,10 @@
     var api = {
         CMO_WARGAME_READINESS_BRIEF_VERSION: CMO_WARGAME_READINESS_BRIEF_VERSION,
         buildBrief: buildBrief,
-        buildSummary: buildSummary,
+        buildGates: buildGates,
+        nextActionsFromGates: nextActionsFromGates,
+        buildSummary: summaryText,
+        summaryText: summaryText,
         renderBriefHtml: renderBriefHtml,
         copyBrief: copyBrief
     };

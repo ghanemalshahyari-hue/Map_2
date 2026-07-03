@@ -1,88 +1,120 @@
 /* ============================================================================
  * test-cmo-wargame-test-card-main-batch-1.js
- * CMO-WARGAME-LIVE-WIRING-1 - CMO War-Game Operator Test Card
+ * RMOOZ-CMO-WARGAME-TEST-CARD-1 - Main CMO War-Game Test Card Gate
  * ----------------------------------------------------------------------------
- * Main-app-only gate for the read-only operator test card. It validates test
- * steps, observation focus, abort criteria, after-action checks, and copy.
+ * Main-app-only gate for the read-only CMO war-game operator test card. This
+ * test does not touch, inspect, sync, rebuild, or run offline files. Offline
+ * sync/testing is pending by user instruction.
  * ========================================================================== */
 'use strict';
 
+var fs = require('fs');
 var path = require('path');
 
 var ROOT = __dirname;
-var BRIEF = path.join(ROOT, 'UI_MOdified', 'client', 'shell', 'cmo-wargame-readiness-brief.js');
-var CARD = path.join(ROOT, 'UI_MOdified', 'client', 'shell', 'cmo-wargame-test-card.js');
+var SHELL = path.join(ROOT, 'UI_MOdified', 'client', 'shell');
+var CARD_FILE = path.join(SHELL, 'cmo-wargame-test-card.js');
+var BRIEF_FILE = path.join(SHELL, 'cmo-wargame-readiness-brief.js');
 
 var passed = 0, failed = 0;
 function assert(label, cond) {
     if (cond) { console.log('  PASS  ' + label); passed++; }
     else { console.error('  FAIL  ' + label); failed++; }
 }
+function src(file) { return fs.readFileSync(file, 'utf8'); }
+function shell(name) { return require(path.join(SHELL, name)); }
 function arr(v) { return Array.isArray(v) ? v : []; }
-
-delete require.cache[require.resolve(BRIEF)];
-delete require.cache[require.resolve(CARD)];
-var RB = require(BRIEF);
-var TC = require(CARD);
-
-function snapshot() {
+function obj(v) { return v && typeof v === 'object' ? v : {}; }
+function hasAll(text, needles) { return needles.every(function (needle) { return String(text).indexOf(needle) !== -1; }); }
+function cleanSource(text) {
+    return String(text || '')
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .replace(/\/\/.*$/gm, '');
+}
+function brief(decision, fail, warn) {
+    var labels = {
+        go: 'GO for CMO war-game test',
+        go_with_warnings: 'GO with warnings',
+        training_preview_only: 'Training preview only',
+        no_go: 'NO-GO for release-grade test'
+    };
     return {
-        version: 'snapshot-test',
-        generated_at: '2026-07-03T00:00:00.000Z',
-        scenario: { name: 'Operator Card Test', fingerprint: 'fp-card' },
-        counts: { units: 4, ready: 3, blocked: 1, unknown: 0, review_issues: 1 },
-        coverage: { coverage_pct: 76 },
-        release_gate: { status: 'ready_with_warnings', releasable: false },
-        closeout: { status: 'ready_with_exceptions' },
-        handoff_acceptance: { decision: 'accepted_with_warnings' },
-        blockers: ['fingerprint mismatch', 'review queue: 1'],
-        warnings: ['accepted with warnings']
+        version: '1.0.0-rmooz-cmo-wargame-readiness-1',
+        scenario_fingerprint: 'scenario-' + decision,
+        decision: decision,
+        decision_label_en: labels[decision],
+        decision_label_ar: decision === 'training_preview_only' ? 'معاينة تدريبية فقط' : '',
+        confidence: { score: fail ? 35 : (warn ? 70 : 95), label: fail ? 'Low' : (warn ? 'Medium' : 'High'), pass: 6 - fail - warn, warn: warn || 0, fail: fail || 0 },
+        gates: [
+            { key: 'scenario_identity', label: 'Scenario identity', status: 'pass', detail: 'Fingerprint ok' },
+            { key: 'Review Queue', label: 'Review Queue', status: warn ? 'warn' : 'pass', detail: warn ? '2 evidence issue(s)' : '0 evidence issue(s)', action: warn ? 'Open Scenario Evidence Review Queue.' : 'Review queue clear.' },
+            { key: 'Review Closeout', label: 'Review Closeout', status: fail ? 'fail' : 'pass', detail: fail ? 'Needs Review' : 'Ready for Handoff', action: 'Open Closeout and resolve blockers/deferred notes.' },
+            { key: 'Handoff Acceptance', label: 'Handoff Acceptance', status: fail ? 'fail' : 'pass', detail: fail ? 'Pending Decision' : 'Accepted', action: 'Accept the handoff package or record why it is not accepted.' },
+            { key: 'Evidence Release Gate', label: 'Evidence Release Gate', status: fail ? 'fail' : 'pass', detail: fail ? 'Not Ready — 2 blocker(s)' : 'Ready for Release', action: 'Open Release Gate and clear release blockers.' }
+        ],
+        release_blockers: fail ? [{ code: 'unresolved_issues', label: 'Issues still need review' }] : [],
+        next_actions: fail ? [
+            { key: 'closeout', label: 'Review Closeout', status: 'fail', action: 'Open Closeout and resolve blockers/deferred notes.' },
+            { key: 'release_gate', label: 'Evidence Release Gate', status: 'fail', action: 'Open Release Gate and clear release blockers.' }
+        ] : (warn ? [{ key: 'review_queue', label: 'Review Queue', status: 'warn', action: 'Open Scenario Evidence Review Queue.' }] : []),
+        read_only: true
     };
 }
 
-console.log('\n=== CMO-WARGAME-LIVE-WIRING-1 Operator Test Card ===\n');
+console.log('\n=== RMOOZ-CMO-WARGAME-TEST-CARD-1 Main Gate ===\n');
 
-console.log('--- CMO-LW-5: card content ---');
+var CARD = shell('cmo-wargame-test-card.js');
+
+console.log('--- CMO-TC-1: module API and main-only presence ---');
 (function () {
-    assert('T-1  module version exposed', TC.CMO_WARGAME_TEST_CARD_VERSION === '1.0.0-cmo-wargame-live-wiring-1');
-    var snap = snapshot();
-    var brief = RB.buildBrief(snap);
-    var beforeBrief = JSON.stringify(brief);
-    var beforeSnapshot = JSON.stringify(snap);
-    var card = TC.buildTestCard(brief, snap, { generated_at: '2026-07-03T00:00:00.000Z' });
-
-    assert('T-2  card inherits readiness decision and run mode', card.readiness_decision === brief.decision && card.run_mode === brief.run_mode);
-    assert('T-3  operator steps are actionable but read-only', arr(card.operator_steps).length >= 4 && card.operator_steps.join('|').indexOf('Start the run only in the displayed run mode') !== -1);
-    assert('T-4  observation focus includes evidence and blockers', card.observation_focus.join('|').indexOf('Evidence coverage') !== -1 && card.observation_focus.join('|').indexOf('Blocker: fingerprint mismatch') !== -1);
-    assert('T-5  abort criteria guard mutation and fingerprint mismatch', card.abort_criteria.join('|').indexOf('Release fingerprint changes') !== -1 && card.abort_criteria.join('|').indexOf('Doctrine or source-truth fields') !== -1);
-    assert('T-6  after-action checklist covers release/audit/export', card.after_action_checklist.join('|').indexOf('release gate') !== -1 && card.after_action_checklist.join('|').indexOf('audit trail') !== -1);
-    assert('T-7  build does not mutate brief or snapshot', JSON.stringify(brief) === beforeBrief && JSON.stringify(snap) === beforeSnapshot);
+    assert('T-1  test-card module exists', fs.existsSync(CARD_FILE));
+    assert('T-2  readiness brief foundation exists', fs.existsSync(BRIEF_FILE));
+    assert('T-3  API version exposed', CARD.CMO_WARGAME_TEST_CARD_VERSION === '1.0.0-rmooz-cmo-wargame-test-card-1');
+    assert('T-4  public API methods exposed', ['buildTestCard', 'buildRunSteps', 'buildObservationFocus', 'buildAbortCriteria', 'buildAfterActionChecklist', 'summaryText', 'renderCardHtml'].every(function (name) { return typeof CARD[name] === 'function'; }));
 })();
 
-console.log('\n--- CMO-LW-6: no-go, render, and copy ---');
+console.log('\n--- CMO-TC-2: run modes from readiness decisions ---');
 (function () {
-    var snap = snapshot();
-    snap.counts = { units: 0, ready: 0, blocked: 0, unknown: 0, review_issues: 0 };
-    snap.coverage = { coverage_pct: 0 };
-    snap.release_gate = { status: 'incomplete', releasable: false };
-    snap.handoff_acceptance = { decision: 'pending' };
-    var noGoBrief = RB.buildBrief(snap);
-    var card = TC.buildTestCard(noGoBrief, snap);
-    var summary = TC.buildSummary(card);
-    var html = TC.renderTestCardHtml(card);
-    assert('T-1  no-go card blocks scenario start', card.operator_steps[0] === 'Do not start the scenario run.');
-    assert('T-2  summary includes all operator sections', ['Operator steps:', 'Observation focus:', 'Abort / pause criteria:', 'After-action checklist:'].every(function (needle) { return summary.indexOf(needle) !== -1; }));
-    assert('T-3  render emits focusable test-card sections', html.indexOf('id="usp-cmo-wargame-test-card"') !== -1 && html.indexOf('Operator test steps') !== -1 && html.indexOf('Abort / pause criteria') !== -1);
+    var go = CARD.buildTestCard(brief('go', 0, 0));
+    var warn = CARD.buildTestCard(brief('go_with_warnings', 0, 2));
+    var training = CARD.buildTestCard(brief('training_preview_only', 1, 2));
+    var blocked = CARD.buildTestCard(brief('no_go', 2, 1));
+    assert('T-1  GO brief creates release-grade card', go.run_mode.key === 'release_grade' && go.run_mode.allowed === true && arr(go.operator_steps).length === 6);
+    assert('T-2  warning brief creates cautious card', warn.run_mode.key === 'cautious_test' && warn.operator_steps[0].status === 'warn');
+    assert('T-3  training preview brief is not release-grade', training.run_mode.key === 'training_preview' && arr(training.abort_criteria).some(function (a) { return /training preview only/i.test(a.label); }));
+    assert('T-4  NO-GO brief creates blocked card', blocked.run_mode.key === 'blocked' && blocked.run_mode.allowed === false && arr(blocked.operator_steps).length === 3);
+})();
 
-    var copied = [];
-    Object.defineProperty(global, 'navigator', {
-        value: { clipboard: { writeText: function (text) { copied.push(text); return true; } } },
-        configurable: true
-    });
-    TC.copyTestCard(card);
-    assert('T-4  copy uses browser clipboard when available', copied.length === 1 && copied[0].indexOf('CMO War-Game Operator Test Card') === 0);
+console.log('\n--- CMO-TC-3: operator steps, observation focus, and abort criteria ---');
+(function () {
+    var card = CARD.buildTestCard(brief('go_with_warnings', 0, 2));
+    assert('T-1  operator journey includes control-center run path', arr(card.operator_steps).map(function (s) { return s.key; }).join('|') === 'preflight|prepare_coa|commit_order|run_wargame|observe|after_action');
+    assert('T-2  observation focus includes core evidence areas', ['Release Gate', 'Closeout', 'Handoff', 'Force Report'].every(function (label) { return arr(card.observation_focus).some(function (f) { return f.label === label; }); }));
+    assert('T-3  warning gates are added to observation focus', arr(card.observation_focus).some(function (f) { return /^gate_/.test(f.key); }));
+    assert('T-4  abort criteria include blocked/replan/fingerprint/report safety', hasAll(arr(card.abort_criteria).map(function (a) { return a.label; }).join('\n'), ['scenario status becomes blocked', 'fingerprint/package mismatch', 'force report cannot explain']));
+    assert('T-5  after-action checklist includes no-release-override guard', arr(card.after_action_checklist).some(function (a) { return /training-only/.test(a.label); }));
+})();
+
+console.log('\n--- CMO-TC-4: summary and render output ---');
+(function () {
+    var card = CARD.buildTestCard(brief('training_preview_only', 1, 2));
+    var text = CARD.summaryText(card);
+    var html = CARD.renderCardHtml(card);
+    assert('T-1  summary text is operator-readable', hasAll(text, ['CMO War-Game Operator Test Card', 'Run mode:', 'Operator steps:', 'Abort / pause criteria:', 'Read-only test card']));
+    assert('T-2  render includes bilingual heading and sections', hasAll(html, ['CMO War-Game Operator Test Card', 'بطاقة اختبار المناورة', 'cmo-wargame-test-card-steps', 'Observation focus', 'Abort / pause criteria']));
+    assert('T-3  safe fallback from null input renders blocked card', CARD.buildTestCard(null).read_only === true && CARD.renderCardHtml(null).indexOf('CMO War-Game Operator Test Card') !== -1);
+})();
+
+console.log('\n--- CMO-TC-5: strict boundaries ---');
+(function () {
+    var source = cleanSource(src(CARD_FILE));
+    [
+        ['no fetch/network/backend route', /fetch\s*\(|XMLHttpRequest|\/api\//],
+        ['no DOCX/stage-doc/SLOT_FILE path', /stage-doc|SLOT_FILE|docs\.red|docs\.blue|DOCX/i],
+        ['no combat/action/doctrine mutation', /applyAction|commitAction|executeAction|autoFire|auto-fire|applyDoctrine|commitDoctrine|setDoctrine|\/doctrine/i],
+        ['no protected runtime files referenced', /legacy-shim-attack_objective_draft-15\.jsonl|scenario_overrides\.json/]
+    ].forEach(function (pair) { assert('T-boundary  ' + pair[0], !pair[1].test(source)); });
 })();
 
 console.log('\n=== Results: ' + passed + ' passed, ' + failed + ' failed ===');
 if (failed) process.exit(1);
-

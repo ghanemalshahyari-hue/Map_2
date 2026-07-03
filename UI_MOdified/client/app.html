@@ -5101,17 +5101,31 @@
                 var brief = obj(state.brief);
                 var card = obj(state.test_card);
                 var label = brief.decision_label_en || 'CMO readiness pending';
+                function cmoText(item) {
+                    var raw = item;
+                    item = obj(item);
+                    return item.action || item.label || item.title || item.detail || item.key || cleanLine(raw);
+                }
+                function confidenceText(conf) {
+                    if (conf && typeof conf === 'object') {
+                        return (conf.label || 'pending') + (conf.score == null ? '' : ' (' + conf.score + '%)');
+                    }
+                    return conf == null ? 'pending' : conf + '%';
+                }
+                function runModeText(mode) {
+                    if (mode && typeof mode === 'object') return mode.label || mode.key || 'pending';
+                    return mode || 'pending';
+                }
                 var lines;
                 if (action && /cmo-test-card/.test(String(action.key || ''))) {
-                    lines = []
-                        .concat(arr(card.operator_steps).slice(0, 2))
-                        .concat(arr(card.abort_criteria).slice(0, 2));
+                    lines = arr(card.operator_steps).slice(0, 2).map(cmoText)
+                        .concat(arr(card.abort_criteria).slice(0, 2).map(cmoText));
                     return detail('cmo', label, chip && chip.cls || 'incomplete', 'Operator test card:', lines);
                 }
                 lines = [
-                    'Confidence: ' + (brief.confidence == null ? 'pending' : brief.confidence + '%'),
-                    'Run mode: ' + (brief.run_mode || 'pending')
-                ].concat(arr(brief.next_actions).slice(0, 3));
+                    'Confidence: ' + confidenceText(brief.confidence),
+                    'Run mode: ' + runModeText(brief.run_mode)
+                ].concat(arr(brief.next_actions).slice(0, 3).map(cmoText));
                 return detail('cmo', label, chip && chip.cls || 'incomplete', 'Can I run this CMO war-game now?', lines);
             }
             function normalizeInput(input) {
@@ -7411,6 +7425,31 @@
         .usp-cmo-test-card li { margin:2px 0; }
         .usp-cmo-test-card { border-top:1px solid #0d1420; }
         .usp-cmo-readiness-disclaimer { padding:4px 0.75rem 7px; color:#6f8798; font-size:0.62rem; border-top:1px solid #0d1420; }
+        .cmo-wargame-readiness,
+        .cmo-wargame-test-card { padding:7px 0.75rem; border-bottom:1px solid #142033; color:#b8d0e4; }
+        .cmo-wargame-readiness-header,
+        .cmo-wargame-test-card-header { display:flex; flex-wrap:wrap; align-items:baseline; gap:6px; margin-bottom:6px; }
+        .cmo-wargame-readiness-header span,
+        .cmo-wargame-test-card-header span { color:#7fa0b8; font-size:0.62rem; text-transform:uppercase; letter-spacing:.04em; }
+        .cmo-wargame-readiness-header strong,
+        .cmo-wargame-test-card-header strong { color:#d9f4ff; font-size:0.86rem; }
+        .cmo-wargame-readiness-meta,
+        .cmo-wargame-test-card-meta { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:4px; margin:0 0 6px; }
+        .cmo-wargame-readiness-meta div,
+        .cmo-wargame-test-card-meta div { background:#0b1826; border:1px solid #173049; border-radius:4px; padding:4px 6px; }
+        .cmo-wargame-readiness-meta dt,
+        .cmo-wargame-test-card-meta dt { color:#7fa0b8; font-size:0.61rem; text-transform:uppercase; }
+        .cmo-wargame-readiness-meta dd,
+        .cmo-wargame-test-card-meta dd { margin:0; color:#d8e8f4; font-weight:700; }
+        .cmo-wargame-readiness-gates,
+        .cmo-wargame-test-card-steps,
+        .cmo-wargame-test-card-observe ul,
+        .cmo-wargame-test-card-abort ul { margin:0; padding:3px 1.4rem 7px 1.65rem; font-size:0.69rem; line-height:1.45; }
+        .cmo-wargame-readiness-next strong,
+        .cmo-wargame-test-card-observe strong,
+        .cmo-wargame-test-card-abort strong { display:block; color:#8fb8d8; font-size:0.66rem; text-transform:uppercase; margin-top:5px; }
+        .cmo-wargame-readiness-source,
+        .cmo-wargame-test-card-source { padding-top:5px; color:#6f8798; font-size:0.62rem; border-top:1px solid #0d1420; }
         /* RMOOZ-CMO-18: alternative shooters */
         .usp-alt-meta { padding:5px 0.75rem; color:#7fa0b8; font-size:0.67rem; border-bottom:1px solid #142033; }
         .usp-alt-count, .usp-alt-total { color:#8fd6a3; font-weight:600; }

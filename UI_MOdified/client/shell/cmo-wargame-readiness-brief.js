@@ -144,28 +144,28 @@
         ));
         gates.push(gate(
             'review_queue',
-            'Review queue',
+            'Review Queue',
             (s.review_issues || 0) ? 'warn' : 'pass',
             (s.review_issues || 0) + ' evidence issue(s)',
             (s.review_issues || 0) ? 'Open Scenario Evidence Review Queue.' : 'Review queue clear.'
         ));
         gates.push(gate(
             'closeout',
-            'Review closeout',
+            'Review Closeout',
             s.closeout_status === 'ready_for_handoff' ? 'pass' : (s.closeout_status === 'ready_with_exceptions' ? 'warn' : 'fail'),
             s.closeout_label_en || s.closeout_status || 'Incomplete',
             'Open Closeout and resolve blockers/deferred notes.'
         ));
         gates.push(gate(
             'handoff',
-            'Handoff acceptance',
+            'Handoff Acceptance',
             s.handoff_decision === 'accepted' ? 'pass' : (s.handoff_decision === 'accepted_with_warnings' ? 'warn' : 'fail'),
             s.handoff_label_en || s.handoff_decision || 'Pending Decision',
             'Accept the handoff package or record why it is not accepted.'
         ));
         gates.push(gate(
             'release_gate',
-            'Evidence release gate',
+            'Evidence Release Gate',
             s.releasable ? 'pass' : 'fail',
             (s.release_label_en || s.release_status || obj(rg).status || 'Incomplete') + ' — ' + (s.blocker_count || arr(rg.blockers).length || 0) + ' blocker(s)',
             'Open Release Gate and clear release blockers.'

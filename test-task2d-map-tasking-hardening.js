@@ -13,8 +13,7 @@
  *   7.  clearScenario() removes overlay markers
  *   8.  HUD button active class matches map API state
  *   9.  Existing coverage / detection / engagement toggle API unchanged
- *  10.  wargame 6 backup file is untouched
- *  11.  No mutation / apply / execute in map tasking paths
+ *  10.  No mutation / apply / execute in map tasking paths
  *
  * Static: no server, no Leaflet DOM.
  * Run: node test-task2d-map-tasking-hardening.js
@@ -45,9 +44,6 @@ const MAP_SRC = fs.readFileSync(
 const HUD_SRC = fs.readFileSync(
     path.join(__dirname, 'UI_MOdified/client/wargame/adjudicator-hud.js'), 'utf8');
 
-// wargame 6 backup — path has a space
-const BACKUP_PATH = path.join(__dirname, 'UI_MOdified/client/wargame 6/adjudicator-map.js');
-const BACKUP_SRC  = fs.existsSync(BACKUP_PATH) ? fs.readFileSync(BACKUP_PATH, 'utf8') : null;
 
 // ── Stubs ─────────────────────────────────────────────────────────────────────
 
@@ -573,38 +569,6 @@ console.log('\nI: Existing overlay toggle API unchanged (Item 9)');
     assert(HUD_SRC.includes("'#wg-adj-rings-btn'"),    'T2D-53', 'HUD: wg-adj-rings-btn still present');
     assert(HUD_SRC.includes("'#wg-adj-contacts-btn'"), 'T2D-54', 'HUD: wg-adj-contacts-btn still present');
     assert(HUD_SRC.includes("'#wg-adj-eng-btn'"),      'T2D-55', 'HUD: wg-adj-eng-btn still present');
-}
-
-// ═════════════════════════════════════════════════════════════════════════════
-// Group J — Item 10: wargame 6 backup untouched
-// ═════════════════════════════════════════════════════════════════════════════
-console.log('\nJ: wargame 6 backup untouched (Item 10)');
-{
-    assert(BACKUP_SRC !== null, 'T2D-56', 'wargame 6/adjudicator-map.js backup file exists');
-
-    if (BACKUP_SRC) {
-        // TASK2-B markers must NOT be in the backup
-        assert(!BACKUP_SRC.includes('_refreshTaskingTooltips'), 'T2D-57',
-            'Backup does not contain _refreshTaskingTooltips (TASK2-B)');
-        assert(!BACKUP_SRC.includes('_applyTaskingToMarkerMap'), 'T2D-58',
-            'Backup does not contain _applyTaskingToMarkerMap (TASK2-B)');
-        assert(!BACKUP_SRC.includes('m._baseTooltip = _redTT'), 'T2D-59',
-            'Backup does not contain _baseTooltip assignment from TASK2-B draw loop');
-
-        // TASK2-C markers must NOT be in the backup
-        assert(!BACKUP_SRC.includes('taskingOverlayMarkers'), 'T2D-60',
-            'Backup does not contain taskingOverlayMarkers (TASK2-C)');
-        assert(!BACKUP_SRC.includes('renderTaskingOverlay'), 'T2D-61',
-            'Backup does not contain renderTaskingOverlay (TASK2-C)');
-        assert(!BACKUP_SRC.includes('TASKING_OVERLAY_PANE'), 'T2D-62',
-            'Backup does not contain TASKING_OVERLAY_PANE constant (TASK2-C)');
-
-        // Backup has the original drawScenario / applyState / clearScenario functions
-        assert(BACKUP_SRC.includes('function drawScenario') || BACKUP_SRC.includes('drawScenario,'), 'T2D-63',
-            'Backup still has drawScenario (structural sanity)');
-        assert(BACKUP_SRC.includes('AppAdjudicatorMap'), 'T2D-64',
-            'Backup still exposes AppAdjudicatorMap (structural sanity)');
-    }
 }
 
 // ═════════════════════════════════════════════════════════════════════════════

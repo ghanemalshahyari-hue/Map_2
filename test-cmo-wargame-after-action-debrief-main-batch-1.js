@@ -110,10 +110,11 @@ console.log('--- AAR-1: debrief module API and release-grade interpretation ---'
     assert('T-3  completed clean run becomes release-grade evidence candidate', debrief.release_interpretation.key === 'release_grade_candidate' && debrief.release_interpretation.status === 'pass');
     assert('T-4  debrief captures timeline, evidence changes, recommendations, and checklist', debrief.run_timeline.length >= 6 && debrief.evidence_changes.length === 2 && debrief.recommendations.length > 0 && debrief.after_action_checklist.length === 2);
     assert('T-5  completed debrief is visible for automatic panel rendering', debrief.visible === true && AAR.shouldRenderDebrief(debrief) === true);
+    assert('T-6  countByStatus compatibility helper remains deterministic', AAR.countByStatus([{ status: 'pass' }, { status: 'warn' }, { status: 'fail' }]).total === 3);
     var summary = AAR.summaryText(debrief);
     var html = AAR.renderDebriefHtml(debrief);
-    assert('T-6  summary explains outcome, release meaning, blockers, and read-only boundary', /Outcome: Completed/.test(summary) && /Release interpretation: Release-grade evidence candidate/.test(summary) && /Unresolved blockers: 0/.test(summary) && /Read-only debrief/.test(summary));
-    assert('T-7  HTML renderer exposes after-action debrief sections', html.indexOf('data-cmo-after-action-debrief="true"') !== -1 && html.indexOf('Run timeline') !== -1 && html.indexOf('Evidence changes') !== -1 && html.indexOf('After-action checklist') !== -1);
+    assert('T-7  summary explains outcome, release meaning, blockers, and read-only boundary', /Outcome: Completed/.test(summary) && /Release interpretation: Release-grade evidence candidate/.test(summary) && /Unresolved blockers: 0/.test(summary) && /Read-only debrief/.test(summary));
+    assert('T-8  HTML renderer exposes after-action debrief sections', html.indexOf('data-cmo-after-action-debrief="true"') !== -1 && html.indexOf('Run timeline') !== -1 && html.indexOf('Evidence changes') !== -1 && html.indexOf('After-action checklist') !== -1);
 })();
 
 console.log('\n--- AAR-2: training, blocked, and not-authorized outcomes stay distinct ---');

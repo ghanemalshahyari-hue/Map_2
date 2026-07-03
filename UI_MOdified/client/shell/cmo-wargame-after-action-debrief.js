@@ -42,6 +42,16 @@
     function statusClass(prefix, status) {
         return prefix + '--' + esc(status || 'pending');
     }
+    function countByStatus(list) {
+        var counts = { pass: 0, warn: 0, fail: 0, pending: 0, locked: 0, blocked: 0, other: 0, total: 0 };
+        arr(list).forEach(function (item) {
+            var st = String(obj(item).status || 'other');
+            if (counts[st] == null) counts.other++;
+            else counts[st]++;
+            counts.total++;
+        });
+        return counts;
+    }
 
     var OUTCOMES = {
         completed: {
@@ -116,7 +126,7 @@
     function isPausedOrBlocked(state) { return norm(state) === 'scenario_paused' || norm(state) === 'scenario_blocked'; }
     function isReleaseReady(state) {
         var value = norm(state);
-        return value === 'ready' || value === 'release_ready' || value === 'ready_with_exceptions' || value === 'releasable';
+        return value === 'ready' || value === 'release_ready' || value === 'ready_with_exceptions' || value === 'releasable' || value === 'ready_for_release';
     }
     function acceptedHandoff(value) {
         return /accept/.test(norm(value || ''));
@@ -234,7 +244,7 @@
         return items;
     }
     function timelineItem(key, label, detail, status) {
-        return { key: key, label: label, detail: detail || '', status: status || 'pending', read_only: true };
+        return { key: key, label: label, detail: detail || '', value: detail || '', status: status || 'pending', read_only: true };
     }
     function buildRunTimeline(instrumentation) {
         instrumentation = obj(instrumentation);
@@ -327,6 +337,7 @@
         var timeline = buildRunTimeline(instrumentation);
         var recommendations = buildRecommendations(instrumentation, outcome, interpretation, blockers);
         var checklist = buildAfterActionChecklist(instrumentation, outcome);
+        var changes = buildEvidenceChanges(instrumentation);
         return {
             version: CMO_WARGAME_AFTER_ACTION_DEBRIEF_VERSION,
             generated_at: opts.generated_at || instrumentation.generated_at || new Date().toISOString(),
@@ -335,16 +346,25 @@
             visible: shouldRenderOutcome(outcome),
             outcome: outcome,
             release_interpretation: interpretation,
-            evidence_changes: buildEvidenceChanges(instrumentation),
+            release_interpretation_text: interpretation.label || interpretation.key || 'Not release-grade',
+            evidence_changes: changes,
             unresolved_blockers: blockers,
+            unresolved_items: blockers,
             run_timeline: timeline,
+            timeline: timeline,
             recommendations: recommendations,
             after_action_checklist: checklist,
+            observe_counts: countByStatus(instrumentation.observe_checklist),
+            after_action_counts: countByStatus(instrumentation.after_action_checklist),
             source: 'CMO war-game run instrumentation',
             source_instrumentation_version: instrumentation.version || '',
             source_run_mode: obj(instrumentation.run_mode),
             source_control_center: obj(instrumentation.control_center),
-            source_evidence_state: obj(instrumentation.evidence_state)
+            source_evidence_state: obj(instrumentation.evidence_state),
+            run_mode: obj(instrumentation.run_mode),
+            control_center: obj(instrumentation.control_center),
+            operator_step: obj(instrumentation.current_operator_step),
+            instrumentation_summary: obj(instrumentation.evidence_state)
         };
     }
     function shouldRenderDebrief(debrief) {
@@ -432,6 +452,7 @@
         buildDebrief: buildDebrief,
         classifyOutcome: classifyOutcome,
         classifyReleaseInterpretation: classifyReleaseInterpretation,
+        countByStatus: countByStatus,
         buildEvidenceChanges: buildEvidenceChanges,
         buildUnresolvedBlockers: buildUnresolvedBlockers,
         buildRunTimeline: buildRunTimeline,

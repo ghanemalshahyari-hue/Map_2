@@ -194,10 +194,10 @@
                     <span data-i18n="tool-wargame">Operational Scenario</span>
                 </button>
 
-                <!-- PR-42: Scenario Workspace — read-only overview panel -->
+                <!-- PR-42+: Scenario Workspace — live scenario entry and operator workspace -->
                 <button class="tool-rail-btn" data-tool="scenario-workspace" type="button"
                         data-i18n-title="sw-tool-hint"
-                        title="Scenario overview — read-only workspace">
+                        title="Live Scenario Workspace — load, edit, and control scenarios">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="3" width="18" height="18" rx="2"/>
                         <line x1="3" y1="9" x2="21" y2="9"/>
@@ -987,30 +987,30 @@
                 </section>
 
                 <!-- ▸ SCENARIO WORKSPACE PANEL — PR-42 -->
-                <!-- Read-only. No scenario mutation. No backend calls. No file writes.
-                     No Blob / URL.createObjectURL / <a download>.
-                     No localStorage / sessionStorage / IndexedDB.
-                     AI proposes only. Operator approves / rejects / holds.
-                     Event Log categories: UI / OPERATOR / SYSTEM only. -->
+                <!-- Scenario Workspace: primary live operator path. Hosts live scenario
+                     import, Edit Mode, live step navigation, decision context,
+                     evidence/ledger/AAR surfaces, and secondary developer previews.
+                     Legacy AI/demo scenario generation remains retired. -->
                 <section class="tools-section tool-panel context-section hidden"
                          id="scenario-workspace-panel"
                          aria-label="Scenario Workspace">
 
-                    <!-- Read-only lock strip -->
+                    <!-- Live workspace status strip. The legacy class is kept because
+                         Edit Mode mounts relative to this element. -->
                     <div class="sw-readonly-strip">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2" stroke-linecap="round"
                              stroke-linejoin="round" aria-hidden="true">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            <circle cx="12" cy="12" r="9"/>
+                            <path d="M8 12.5l2.5 2.5L16 9"/>
                         </svg>
-                        <span data-i18n="sw-readonly-notice">Read-only workspace. Scenario mutation is disabled.</span>
+                        <span data-i18n="sw-live-workspace-notice">Live workspace. Load or edit a scenario, then use Scenario Control Center for decisions.</span>
                     </div>
 
                     <!-- PR-70: Scenario Briefing Header — static, data-i18n only, no JS -->
                     <div class="sw-briefing-hdr" role="heading" aria-level="2">
                         <span class="sw-briefing-hdr-title" data-i18n="sw-briefing-hdr-title">Scenario Briefing</span>
-                        <span class="sw-briefing-hdr-sub" data-i18n="sw-briefing-hdr-sub">Read-only operational overview from loaded local scenario data.</span>
+                        <span class="sw-briefing-hdr-sub" data-i18n="sw-briefing-hdr-sub">Live operational overview from the loaded scenario; changes happen through Edit Mode.</span>
                     </div>
 
                     <!-- L3-B-1: Why-Not Review (read-only). Painted by shell/why-not-panel.js from
@@ -1766,10 +1766,10 @@
                             <span class="builder-card-title" data-i18n="sw-wt-title">Live Walkthrough</span>
                             <span class="sw-wt-live-badge" data-i18n="sw-wt-live-badge">Live</span>
                         </div>
-                        <!-- PR-76: Preview Controls Subheader — static, data-i18n only, no JS -->
+                        <!-- PR-76: Step inspection subheader — static, data-i18n only, no JS -->
                         <div class="sw-sd-hdr" role="heading" aria-level="4">
-                            <span class="sw-sd-hdr-title" data-i18n="scenarioWorkspace.previewControlsSubheaderKicker">Preview Controls</span>
-                            <span class="sw-sd-hdr-sub" data-i18n="scenarioWorkspace.previewControlsSubheaderTitle">Review preview-only step movement before returning to the live walkthrough.</span>
+                            <span class="sw-sd-hdr-title" data-i18n="scenarioWorkspace.previewControlsSubheaderKicker">Step Inspection</span>
+                            <span class="sw-sd-hdr-sub" data-i18n="scenarioWorkspace.previewControlsSubheaderTitle">Inspect another step without changing the active live scenario step.</span>
                         </div>
                         <!-- PR-53: preview-only step controls — direction:ltr keeps physical order stable in EN and AR -->
                         <div class="sw-wt-controls" id="sw-wt-controls">
@@ -2960,8 +2960,10 @@
                         </div>
                     </div>
 
-                    <!-- PR-283: Scenario Source Section — groups local JSON package and external catalog.
-                         Safety: No apply. No run. No commit. No live scenario. No .scen. No Lua.
+                    <!-- PR-283/286L: Scenario Source Section — groups the primary live
+                         JSON import path with secondary decision-package/catalog tools.
+                         Safety: no run, no commit, no .scen, no Lua. Live scenario
+                         changes only through explicit JSON import or folder intake.
                          #sw-ext-preview-section is injected into #sw-external-catalog-source-card
                          by _initExtPreviewSection() in scenario-workspace.js. -->
                     <div id="sw-scenario-source-section" class="sw-scenario-source-section sw-group" data-sw-group="source">
@@ -2975,7 +2977,7 @@
                                   data-i18n="sw-src-panel-title">Scenario Source</span>
                             <span class="sw-w3-section-hdr-sub"
                                   id="sw-src-panel-subtitle"
-                                  data-i18n="sw-src-panel-subtitle">Choose a local package or an external catalog entry. Preview only — no scenario change.</span>
+                                  data-i18n="sw-src-panel-subtitle">Load a live scenario or open secondary decision-package/catalog tools.</span>
                         </div>
 
                         <!-- PR-286L1A: Scenario Source Hub — primary live import on top,
@@ -3001,10 +3003,10 @@
                             <div class="sw-src-subcard-hdr">
                                 <span class="sw-src-subcard-title"
                                       id="sw-live-scenario-import-title"
-                                      data-i18n="sw-live-scenario-import-title">Legacy / Full Scenario JSON — Load full RMOOZ scenario JSON</span>
+                                      data-i18n="sw-live-scenario-import-title">Full Scenario JSON — Load Live Scenario</span>
                                 <span class="sw-src-subcard-sub"
                                       id="sw-live-scenario-import-subtitle"
-                                      data-i18n="sw-live-scenario-import-subtitle">This loader expects a full RMOOZ scenario with steps[]. Use Review AI Understanding for Step 1 / operational JSON.</span>
+                                      data-i18n="sw-live-scenario-import-subtitle">This loader expects a full RMOOZ scenario with steps[]. Use Import Scenario for Step 1 / operational JSON.</span>
                             </div>
                             <div class="sw-live-scenario-import-row">
                                 <label class="sw-live-scenario-import-label"
@@ -3244,8 +3246,8 @@
 
                     <!-- Invariant footer badges -->
                     <div class="sw-invariants">
-                        <span class="sw-invariant" data-i18n="sw-ai-propose-only">AI proposes only — Operator approves</span>
-                        <span class="sw-invariant" data-i18n="sw-mutation-disabled">Scenario mutation is disabled</span>
+                        <span class="sw-invariant" data-i18n="sw-live-workflow-summary">Live path: load → edit → save → control</span>
+                        <span class="sw-invariant" data-i18n="sw-live-commit-summary">AI proposal Accept/Reject uses live commit</span>
                     </div>
 
                 </section>
@@ -5622,8 +5624,8 @@
          ai-proposal-panel.js so the panel can call
          AppDeltaExtractor.extractDeltas(). -->
     <script src="shell/delta-extractor.js?v=1"></script>
-    <!-- PR-7: AI Proposal Review. UI foundation only — Accept/Reject/Hold
-         log to the PR-6 Event Log but do not mutate scenario state. -->
+    <!-- PR-7: AI Proposal Review. Owns the Accept/Reject/Hold controls and
+         delegates live commit behavior to ai-proposal-commit-bridge.js. -->
     <script src="shell/ai-proposal-panel.js?v=3"></script>
     <!-- PR-9: AI Proposal Inbox. In-memory store between any future
          proposal source and the PR-7 panel. Loads AFTER contract.js
@@ -5635,17 +5637,13 @@
          PR-9 inbox. Sends mockMode:true to keep the server off the
          live AI provider. -->
     <script src="shell/ai-proposal-bridge.js?v=1"></script>
-    <!-- PR-12: AI Proposal Commit Bridge (DRY-RUN). Surface-only
-         module. NEVER calls /api/sim/commit, NEVER mutates scenario
-         state, NEVER writes journal. Just validates the operator's
-         decision + the proposal through PR-8 and logs a UI/NOTICE
-         row. The PR-7 panel calls into this AFTER its existing
-         OPERATOR/NOTICE log. -->
+    <!-- PR-12+: AI Proposal Commit Bridge. ACCEPT/REJECT call
+         /api/sim/commit through the live commit path; HOLD stays deferred.
+         The PR-7 panel calls into this after its operator log. -->
     <script src="shell/ai-proposal-commit-bridge.js?v=1"></script>
-    <!-- PR-13: Local Decision Records (in-memory only). Captures
-         dry-run decisions from the commit bridge. NOT a real journal —
-         no file write, no localStorage, no fetch. The bridge feeds it
-         only after a dryrun-ok return. Renders inside #ai-proposal-section. -->
+    <!-- PR-13: Local Decision Records (in-memory only). Captures commit
+         bridge outcomes for review. NOT a durable journal: no file write,
+         no localStorage, no fetch from this renderer. -->
     <script src="shell/ai-proposal-decision-journal.js?v=1"></script>
     <!-- PR-14: Real Journal Contract Draft (validator only). Pure
          frontend module. NEVER writes files, NEVER persists, NEVER
@@ -5734,15 +5732,15 @@
          NEVER runs a test, NEVER mutates state, NEVER calls backend /
          file / download paths. textContent-only DOM updates. -->
     <script src="shell/safety-regression-badge.js?v=1"></script>
-    <!-- PR-42: Scenario Workspace Shell (read-only).
-         Mirrors safety/service state into the workspace panel.
-         NO scenario mutation. NO backend calls. NO file writes.
-         NO Blob / URL.createObjectURL / <a download>.
-         NO localStorage / sessionStorage / IndexedDB. -->
+    <!-- PR-42+: Scenario Workspace Shell. Hosts the live scenario workspace,
+         live JSON import, operator decision context, and secondary
+         developer-only preview helpers. -->
     <!-- PR-210: Static dry-run fixture data. Pure data only — no DOM, no map, no mutation.
-         Must be loaded before scenario-workspace.js so window.RmoozDryRunFixtures is
-         available when paintDryRunPreview() runs during workspace init. -->
+         Loaded before scenario-workspace.js only for developer/console preview helpers. -->
     <script src="shell/scenario-dry-run-fixtures.js?v=1"></script>
+    <!-- Scenario Workspace live host: loads the live scenario workspace,
+         live JSON import, operator decision context, and secondary
+         developer-only preview helpers. -->
     <script src="shell/scenario-workspace.js?v=review-persist-a"></script>
     <!-- FAST-INT-2: WarGamingGEN GeoJSON Import UI Bridge. Self-mounts a labeled
          card beside the Live Scenario Import card; routes external GeoJSON through
@@ -5801,9 +5799,8 @@
          right-side reasoning panel is disconnected; the old COA-card and V2 renderers are unreachable. -->
     <script src="shell/scenario-control-center.js?v=operator-clean-entry-merge-a"></script>
     <script src="shell/free-fight-demo-ai-panel.js?v=1"></script>
-    <!-- DEMO-ACTUAL-1: AI Decision-Making Scenario Preview. Isolated preview
-         layer — never touches RmoozScenario.stepIndex, proposed_units, or any
-         live scenario state. Loaded after placement-candidates-panel.js. -->
+    <!-- DEMO-ACTUAL-1 retired: compatibility shim only. It does not generate
+         scenarios, call fetch, or draw preview layers. -->
     <script src="shell/demo-scenario-preview.js?v=1"></script>
     <!-- RMOOZ-AI-FREE-FIGHT-OPERATING-1 (Slice 1): canonical resolved-scenario contract.
          Loaded BEFORE doc-understanding-review.js, which uses window.RmoozScenarioPackage
@@ -5820,7 +5817,7 @@
     <!-- Scenario Entry Consolidation: Back to Main Window, Export Scenario JSON,
          and the Developer/Import disclosure that hides scenario-load clutter. -->
     <script src="shell/workspace-consolidation.js?v=1"></script>
-    <!-- Owner ruling 2026-06-01: editable scenario workspace (slice 1: metadata/sides/posture).
+    <!-- Owner ruling 2026-06-01: editable live scenario workspace (slice 1: metadata/sides/posture).
          P0 authoring schema (draft/working-copy engine) must load before edit-mode.
          Edits stay in-memory; commit/journal boundary untouched. -->
     <script src="shell/scenario-authoring-schema.js?v=1"></script>
@@ -5831,8 +5828,8 @@
            scenario-generation controls from the operator screen — single JSON scenario-package
            path only. The DOM nodes remain (the wizard's shared route logic references them at
            scenario-import-wizard.js:254/610/1024) but are not shown to the operator. Keeps
-           visible: JSON import -> Review AI Understanding -> Resolve Missing with AI ->
-           resolver candidates -> Scenario without AI / Scenario with AI - Free Fight. */
+           visible: JSON import -> review parsed understanding -> resolve missing fields ->
+           resolver candidates -> live Scenario Workspace. */
         #wg-wz-setup,            /* old "Scenario Setup / تخطيط السيناريو" block */
         #wg-wz-start,            /* old "Start Scenario Generation" button */
         #wg-wz-mdmp-row,         /* "External MDMP files (steps 3/4/5, JSON)" + "Choose MDMP JSON" */

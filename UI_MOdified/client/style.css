@@ -8229,7 +8229,7 @@ body.orbat-dock-resizing .map-workspace .leaflet-bottom {
 [data-theme="light"] .ba-copy-source-help { color: rgba(71, 85, 105, 0.55); }
 
 /* ═══════════════════════════════════════════════════════════════════
-   PR-42: Scenario Workspace Shell — read-only operator overview
+   PR-42+: Scenario Workspace Shell — live operator workspace
    ═══════════════════════════════════════════════════════════════════ */
 
 .sw-readonly-strip {
@@ -8244,7 +8244,7 @@ body.orbat-dock-resizing .map-workspace .leaflet-bottom {
     font-size: 0.75rem;
     color: var(--text-muted, #94a3b8);
     line-height: 1.4;
-    direction: ltr; /* PR-43: lock icon stays left, text stays left-anchored */
+    direction: ltr; /* PR-43: status icon stays left, text stays left-anchored */
 }
 .sw-readonly-strip svg { flex-shrink: 0; opacity: 0.7; }
 [data-theme="light"] .sw-readonly-strip {

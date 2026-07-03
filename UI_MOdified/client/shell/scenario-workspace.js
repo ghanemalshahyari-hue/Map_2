@@ -1,19 +1,22 @@
 /**
- * scenario-workspace.js — PR-42 + PR-44: Scenario Workspace Shell (read-only).
+ * scenario-workspace.js — PR-42+: Scenario Workspace Shell (live path).
  *
- * PR-42: Read-only operator overview of the current scenario state.
- * PR-44: Scenario Phase Timeline — in-memory placeholder phases, read-only.
+ * Primary operator path:
+ *   Start / Load Scenario -> Edit Mode -> Save draft / Save to server ->
+ *   Live Scenario Workspace -> Scenario Control Center -> Evidence / Ledger / AAR.
+ *
+ * The shell now hosts live JSON import, live step navigation, and operator
+ * decision context. Several cards remain read-only derivations of the loaded
+ * scenario; legacy AI/demo scenario generation stays retired.
  *
  * SAFETY INVARIANTS (enforced by design):
- *   - No scenario mutation (window.units, window.lines, map, adjudicator, app.js)
- *   - No backend API calls, no fetch, no XHR
- *   - No file writes
- *   - No Blob / URL.createObjectURL / <a download>
- *   - No localStorage / sessionStorage / IndexedDB
- *   - Event Log: SYSTEM / UI / OPERATOR categories only
- *   - Commit: dry-run only (not called here at all)
- *   - Proposal Service: NOT_CONNECTED / disabled (read-only mirror)
- *   - AI proposes only — Operator approves / rejects / holds
+ *   - Live import writes only window.RmoozScenario = { scenario, stepIndex: 0 }.
+ *   - Step navigation may update window.RmoozScenario.stepIndex.
+ *   - File ingestion uses FileReader only. No upload/fetch/XHR in this module.
+ *   - No durable journal writes, Blob downloads, localStorage, sessionStorage,
+ *     or IndexedDB.
+ *   - Preview/dry-run helpers are secondary developer paths, hidden from the
+ *     primary operator workspace.
  */
 (function () {
     'use strict';
@@ -15837,7 +15840,7 @@
                 } else {
                     _setStatus(tx('sw-live-import-blocked', 'Import blocked.'), 'error');
                     if (_looksLikeStep1OrOperationalJson(json)) {
-                        _setSummary('This loader expects a full RMOOZ scenario with steps[]. Use Review AI Understanding for Step 1 / operational JSON. — يتوقّع هذا المُحمِّل سيناريو RMOOZ كاملاً يحتوي على steps[]؛ استخدم «مراجعة فهم الذكاء الاصطناعي» لـ JSON الخطوة 1 / العملياتي.');
+                        _setSummary('This loader expects a full RMOOZ scenario with steps[]. Use Import Scenario for Step 1 / operational JSON. — يتوقّع هذا المُحمِّل سيناريو RMOOZ كاملاً يحتوي على steps[]؛ استخدم معالج استيراد السيناريو لـ JSON الخطوة 1 / العملياتي.');
                     } else {
                         _setSummary(result.blockedReasons.join(', '));
                     }
@@ -17430,7 +17433,7 @@
         }
     }
 
-    // ── Public API (read-only) ───────────────────────────────────────────
+    // ── Public API (live workspace + read-only derivations) ───────────────
     window.AppShellScenarioWorkspace = {
         refresh: function () {
             // PR-57/58: compare current live step to last known.

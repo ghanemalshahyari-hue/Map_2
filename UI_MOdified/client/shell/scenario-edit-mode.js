@@ -2312,7 +2312,7 @@
 
         var editor = el('div', { id: EDITOR_ID, class: 'sw-editmode-editor', hidden: 'hidden' });
 
-        // Insert the bar + editor right after the read-only strip (top of panel).
+        // Insert the bar + editor right after the workspace status strip (top of panel).
         var strip = panel.querySelector('.sw-readonly-strip');
         if (strip && strip.parentNode) {
             strip.parentNode.insertBefore(bar, strip.nextSibling);

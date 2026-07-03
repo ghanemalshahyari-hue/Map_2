@@ -24,8 +24,8 @@
         shapes:  { mode: 'pan',    tab: 'geo',     title: 'Shapes',  titleKey: 'tool-shapes',  hint: 'Choose a shape, then click the map',                  hintKey: 'tool-hint-shapes' },
         layers:  { mode: null,     tab: null,      title: 'Layers',   titleKey: 'tool-layers',  hint: 'Organize your map items',                            hintKey: 'tool-hint-layers' },
         wargame: { mode: null,     tab: null,      title: 'Scenario', titleKey: 'tool-wargame', hint: 'Run an operational scenario (turn-based)',          hintKey: 'tool-hint-wargame' },
-        // PR-42: Scenario Workspace Shell — read-only scenario overview
-        'scenario-workspace': { mode: null, tab: null, title: 'Scenario', titleKey: 'sw-tool-label', hint: 'Scenario overview — read-only workspace', hintKey: 'sw-tool-hint' },
+        // PR-42+: Scenario Workspace Shell — live scenario workspace
+        'scenario-workspace': { mode: null, tab: null, title: 'Scenario', titleKey: 'sw-tool-label', hint: 'Live Scenario Workspace — load, edit, and control scenarios', hintKey: 'sw-tool-hint' },
     };
 
     function tx(key, fallback) {

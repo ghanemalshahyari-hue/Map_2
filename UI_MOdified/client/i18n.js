@@ -1402,11 +1402,11 @@
             'tl-ticks-step-events':        'Step {n}: {c} event(s)',
             'tl-ticks-step-none':          'Step {n}: no events',
 
-            // PR-42: Scenario Workspace Shell (read-only)
+            // PR-42+: Scenario Workspace Shell (live operator path)
             'sw-tool-label':             'Scenario',
-            'sw-tool-hint':              'Scenario overview — read-only workspace',
+            'sw-tool-hint':              'Live Scenario Workspace — load, edit, and control scenarios',
             'sw-title':                  'Scenario Workspace',
-            'sw-hint':                   'Read-only overview of the current scenario',
+            'sw-hint':                   'Live workspace for loading, editing, and controlling scenarios',
             'sw-section-scenario':       'Current Scenario',
             'sw-section-operator':       'Operator State',
             'sw-field-name':             'Scenario name',
@@ -1422,9 +1422,9 @@
             'sw-value-idle':             'Idle',
             'sw-value-none':             '—',
             'sw-value-no-decision':      'No decisions recorded',
-            'sw-readonly-notice':        'Read-only workspace. Scenario mutation is disabled.',
-            'sw-ai-propose-only':        'AI proposes only — Operator approves',
-            'sw-mutation-disabled':      'Scenario mutation is disabled',
+            'sw-live-workspace-notice':  'Live workspace. Load or edit a scenario, then use Scenario Control Center for decisions.',
+            'sw-live-workflow-summary':  'Live path: load → edit → save → control',
+            'sw-live-commit-summary':    'AI proposal Accept/Reject uses live commit',
             'elog-evt-sw-rendered':      'Scenario workspace panel rendered',
             // PR-44: Scenario Phase Timeline (read-only)
             'spt-title':                     'Scenario Phase Timeline',
@@ -1559,9 +1559,9 @@
             'sw-wt-field-force':         'Force ratio',
             'sw-wt-field-phaseline':     'Phase line (km)',
             'sw-wt-field-objective':     'Objective',
-            // PR-76: Preview Controls Subheader
-            'scenarioWorkspace.previewControlsSubheaderKicker': 'Preview Controls',
-            'scenarioWorkspace.previewControlsSubheaderTitle':  'Review preview-only step movement before returning to the live walkthrough.',
+            // PR-76: Step inspection subheader
+            'scenarioWorkspace.previewControlsSubheaderKicker': 'Step Inspection',
+            'scenarioWorkspace.previewControlsSubheaderTitle':  'Inspect another step without changing the active live scenario step.',
             // PR-77: Live vs Preview Comparison Subheader
             'scenarioWorkspace.livePreviewComparisonSubheaderKicker': 'Live vs Preview Comparison',
             'scenarioWorkspace.livePreviewComparisonSubheaderTitle':  'Compare the live walkthrough step with the preview-only step before any operator decision.',
@@ -1697,7 +1697,7 @@
             'sw-obj-hdr-sub':            'Read-only objective and BLS information from loaded scenario data.',
             // PR-70: Scenario Briefing Header
             'sw-briefing-hdr-title':     'Scenario Briefing',
-            'sw-briefing-hdr-sub':       'Read-only operational overview from loaded local scenario data.',
+            'sw-briefing-hdr-sub':       'Live operational overview from the loaded scenario; changes happen through Edit Mode.',
             // L3-B-1: Why-Not Review card
             'wn-hdr-title':              'Why-Not Review',
             'wn-hdr-sub':                'Read-only explanation of why the current action is feasible, blocked, or risky.',
@@ -2170,7 +2170,7 @@
             'sw-ext-select-aria':        'Select external scenario for preview',
             // PR-283: Scenario Source Panel Consolidation
             'sw-src-panel-title':       'Scenario Source',
-            'sw-src-panel-subtitle':    'Choose a local package or an external catalog entry. Preview only — no scenario change.',
+            'sw-src-panel-subtitle':    'Load a live scenario or open secondary decision-package/catalog tools.',
             'sw-src-local-title':       'Decision Package Import',
             'sw-src-local-subtitle':    'This imports decision-package data only. It does not replace the live scenario.',
             'sw-src-external-title':    'External Scenario Catalog',
@@ -2321,8 +2321,8 @@
             'wg-adj-import-helper':             'Use this to load operational GeoJSON and draw units/scenario markers on the map.',
             'wg-adj-import-hint':               'Drop all_phases.geojson here, or click to choose a file',
             // PR-286L0: Live Scenario Import (PR-241A: clarified — in-memory, draws on map, no disk write)
-            'sw-live-scenario-import-title':    'Legacy / Full Scenario JSON — Load full RMOOZ scenario JSON',
-            'sw-live-scenario-import-subtitle': 'This loader expects a full RMOOZ scenario with steps[]. Use Review AI Understanding for Step 1 / operational JSON.',
+            'sw-live-scenario-import-title':    'Full Scenario JSON — Load Live Scenario',
+            'sw-live-scenario-import-subtitle': 'This loader expects a full RMOOZ scenario with steps[]. Use Import Scenario for Step 1 / operational JSON.',
             'sw-live-scenario-import-file-label':'Scenario JSON',
             'sw-live-scenario-import-btn':      'Import as Live Scenario',
             'sw-live-scenario-import-note':     'This replaces the current live workspace state in memory only.',
@@ -3818,11 +3818,11 @@
             'tl-ticks-step-events':        'الخطوة {n}: {c} حدث',
             'tl-ticks-step-none':          'الخطوة {n}: لا أحداث',
 
-            // PR-42: مساحة عمل السيناريو (للقراءة فقط)
+            // PR-42+: مساحة عمل السيناريو الحي
             'sw-tool-label':             'السيناريو',
-            'sw-tool-hint':              'نظرة عامة على السيناريو — مساحة عمل للقراءة فقط',
+            'sw-tool-hint':              'مساحة عمل السيناريو الحي — تحميل وتحرير وتحكم',
             'sw-title':                  'مساحة عمل السيناريو',
-            'sw-hint':                   'نظرة عامة للقراءة فقط على السيناريو الحالي',
+            'sw-hint':                   'مساحة عمل حية لتحميل السيناريوهات وتحريرها والتحكم بها',
             'sw-section-scenario':       'السيناريو الحالي',
             'sw-section-operator':       'حالة المشغّل',
             'sw-field-name':             'اسم السيناريو',
@@ -3838,9 +3838,9 @@
             'sw-value-idle':             'خمول',
             'sw-value-none':             '—',
             'sw-value-no-decision':      'لا توجد قرارات مسجّلة',
-            'sw-readonly-notice':        'مساحة عمل للقراءة فقط. تعديل السيناريو معطّل.',
-            'sw-ai-propose-only':        'الذكاء الاصطناعي يقترح فقط — المشغّل يوافق',
-            'sw-mutation-disabled':      'تعديل السيناريو معطّل',
+            'sw-live-workspace-notice':  'مساحة عمل حية. حمّل سيناريو أو حرّره، ثم استخدم مركز التحكم للقرارات.',
+            'sw-live-workflow-summary':  'المسار الحي: تحميل → تحرير → حفظ → تحكم',
+            'sw-live-commit-summary':    'قبول/رفض مقترح الذكاء الاصطناعي يستخدم الالتزام الحي',
             'elog-evt-sw-rendered':      'تم عرض لوحة مساحة عمل السيناريو',
             // PR-44: الجدول الزمني لمراحل السيناريو (للقراءة فقط)
             'spt-title':                     'الجدول الزمني لمراحل السيناريو',
@@ -3975,9 +3975,9 @@
             'sw-wt-field-force':         'نسبة القوة',
             'sw-wt-field-phaseline':     'خط المرحلة (كم)',
             'sw-wt-field-objective':     'الهدف',
-            // PR-76: Preview Controls Subheader
-            'scenarioWorkspace.previewControlsSubheaderKicker': 'عناصر التحكم في المعاينة',
-            'scenarioWorkspace.previewControlsSubheaderTitle':  'راجع حركة الخطوة في وضع المعاينة فقط قبل العودة إلى العرض الحي.',
+            // PR-76: Step inspection subheader
+            'scenarioWorkspace.previewControlsSubheaderKicker': 'فحص الخطوات',
+            'scenarioWorkspace.previewControlsSubheaderTitle':  'افحص خطوة أخرى دون تغيير خطوة السيناريو الحي النشطة.',
             // PR-77: Live vs Preview Comparison Subheader
             'scenarioWorkspace.livePreviewComparisonSubheaderKicker': 'مقارنة العرض الحي بالمعاينة',
             'scenarioWorkspace.livePreviewComparisonSubheaderTitle':  'قارن خطوة العرض الحي بخطوة المعاينة فقط قبل أي قرار من المشغل.',
@@ -4113,7 +4113,7 @@
             'sw-obj-hdr-sub':            'معلومات الهدف ومواقع الإنزال للقراءة فقط من بيانات السيناريو المحمّلة.',
             // PR-70: Scenario Briefing Header
             'sw-briefing-hdr-title':     'موجز السيناريو',
-            'sw-briefing-hdr-sub':       'نظرة تشغيلية للقراءة فقط من بيانات السيناريو المحلية المحمّلة.',
+            'sw-briefing-hdr-sub':       'نظرة تشغيلية حية من السيناريو المحمّل؛ تتم التغييرات عبر وضع التحرير.',
             // L3-B-1: Why-Not Review card
             'wn-hdr-title':              'مراجعة موانع الإجراء',
             'wn-hdr-sub':                'شرح للقراءة فقط يوضّح سبب كون الإجراء الحالي ممكناً أو محظوراً أو محفوفاً بالمخاطر.',
@@ -4586,7 +4586,7 @@
             'sw-ext-select-aria':        'اختر سيناريو خارجيًا للمعاينة',
             // PR-283: Scenario Source Panel Consolidation
             'sw-src-panel-title':       'مصدر السيناريو',
-            'sw-src-panel-subtitle':    'اختر حزمة محلية أو إدخالاً من فهرس خارجي. معاينة فقط — لا تغيير للسيناريو.',
+            'sw-src-panel-subtitle':    'حمّل سيناريو حيًا أو افتح أدوات حزمة القرار/الفهرس الثانوية.',
             'sw-src-local-title':       'استيراد حزمة قرار',
             'sw-src-local-subtitle':    'يستورد هذا الخيار بيانات حزمة القرار فقط، ولا يستبدل السيناريو الحي.',
             'sw-src-external-title':    'فهرس السيناريو الخارجي',
@@ -4737,8 +4737,8 @@
             'wg-adj-import-helper':             'استخدم هذا لتحميل ملفات GeoJSON العملياتية ورسم الوحدات/علامات السيناريو على الخريطة.',
             'wg-adj-import-hint':               'أفلت all_phases.geojson هنا، أو انقر لاختيار ملف',
             // PR-286L0: Live Scenario Import (PR-241A: clarified — in-memory, draws on map, no disk write)
-            'sw-live-scenario-import-title':    'JSON سيناريو كامل / قديم — تحميل سيناريو RMOOZ كامل',
-            'sw-live-scenario-import-subtitle': 'يتوقّع هذا المُحمِّل سيناريو RMOOZ كاملاً يحتوي على steps[]. استخدم «مراجعة فهم الذكاء الاصطناعي» لـ JSON الخطوة 1 / العملياتي.',
+            'sw-live-scenario-import-title':    'JSON سيناريو كامل — تحميل سيناريو حي',
+            'sw-live-scenario-import-subtitle': 'يتوقّع هذا المُحمِّل سيناريو RMOOZ كاملاً يحتوي على steps[]. استخدم معالج استيراد السيناريو لـ JSON الخطوة 1 / العملياتي.',
             'sw-live-scenario-import-file-label':'ملف سيناريو JSON',
             'sw-live-scenario-import-btn':      'استيراد كسيناريو حي',
             'sw-live-scenario-import-note':     'يستبدل هذا الإجراء حالة مساحة العمل الحية الحالية في الذاكرة فقط.',

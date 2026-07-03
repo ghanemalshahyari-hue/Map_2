@@ -391,6 +391,7 @@ actual Scenario Control Center run state:
 ```text
 Open CMO Readiness
 Run or pause the scenario in Scenario Control Center
+Or click CMO Test Guide in Scenario Control Center
 Watch CMO War-Game Live Run:
 - current SCC state and run mode
 - current operator step

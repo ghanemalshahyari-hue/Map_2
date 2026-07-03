@@ -202,6 +202,7 @@
     function btnPri(act, label, title) { return '<button data-act="' + act + '"' + (title ? ' title="' + esc(title) + '"' : '') + ' style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#15301f;color:' + C.good + ';border-radius:6px;padding:8px 15px;font-size:12.5px;font-weight:700;">' + label + '</button>'; }
     function btnSec(act, label, title) { return '<button data-act="' + act + '"' + (title ? ' title="' + esc(title) + '"' : '') + ' style="font:inherit;cursor:pointer;border:1px solid #4a5f75;background:#101b27;color:#9fb8c8;border-radius:6px;padding:7px 12px;font-size:11px;">' + label + '</button>'; }
     function btnWarn(act, label, title) { return '<button data-act="' + act + '"' + (title ? ' title="' + esc(title) + '"' : '') + ' style="font:inherit;cursor:pointer;border:1px solid #7a3030;background:#241414;color:' + C.bad + ';border-radius:6px;padding:7px 12px;font-size:11px;">' + label + '</button>'; }
+    function btnGuide() { return '<button data-act="scc-cmo-guide" title="Open the CMO readiness, test-card, and live-run guide in Scenario Evidence" style="font:inherit;cursor:pointer;border:1px solid #2d5f7c;background:#0d2033;color:#9ec2ec;border-radius:10px;padding:3px 9px;font-size:9.5px;font-weight:800;">CMO Test Guide</button>'; }
     function panel(n, title, inner, accent) {
         var col = accent || C.edge;
         return '<section data-scc-panel="' + n + '" style="margin:8px 0;border:1px solid ' + col + ';border-radius:8px;background:' + C.panel + ';overflow:hidden;">' +
@@ -212,13 +213,25 @@
     }
     function kv(label, val, col) { return '<div style="font-size:10.5px;color:' + C.dim + ';margin:1px 0;">' + esc(label) + ': <span style="color:' + (col || C.ink) + ';font-weight:600;">' + esc(val) + '</span></div>'; }
     function note(txt, col) { return '<div style="margin-top:5px;font-size:10px;color:' + (col || C.dim) + ';line-height:1.5;">' + txt + '</div>'; }
+    function openCmoTestGuide() {
+        var g = (typeof globalThis !== 'undefined' && globalThis) || (typeof global !== 'undefined' && global) || null;
+        var w = (typeof window !== 'undefined' && window) || g;
+        var usp = (w && w.AppUnitStatusPanel) || (g && g.AppUnitStatusPanel);
+        if (usp && typeof usp.openScenarioEvidenceTarget === 'function') {
+            usp.openScenarioEvidenceTarget('cmo');
+            return true;
+        }
+        return false;
+    }
 
     // ── header + flow strip ──────────────────────────────────────────────────────────────────────────────
     function headerHtml(state) {
         var col = STATE_COLOR[state] || C.accent;
         return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">' +
             '<span style="font-size:13px;font-weight:800;color:' + C.accent + ';letter-spacing:.3px;">🎯 Scenario Control Center</span>' +
-            '<span data-scc-state="' + state + '" style="font-size:9.5px;font-weight:700;color:' + col + ';background:#0c1622;border:1px solid ' + C.edge + ';border-radius:10px;padding:2px 9px;">' + esc(STATE_LABEL[state] || state) + '</span></div>';
+            '<span style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end;">' +
+            btnGuide() +
+            '<span data-scc-state="' + state + '" style="font-size:9.5px;font-weight:700;color:' + col + ';background:#0c1622;border:1px solid ' + C.edge + ';border-radius:10px;padding:2px 9px;">' + esc(STATE_LABEL[state] || state) + '</span></span></div>';
     }
     function flowHtml(state) {
         var cur = flowStepFor(state);
@@ -736,6 +749,7 @@
     function bind(bindFn) {
         var eng = engine(); if (!eng || typeof bindFn !== 'function') return;
         // RMOOZ-PREPARE-COA-PRODUCT-FLOW-A: smart (always enabled, AI-or-StaffSafe), strict (AI only), staffsafe.
+        bindFn('scc-cmo-guide', function () { openCmoTestGuide(); });
         bindFn('scc-prepare-smart', function () { if (typeof eng.prepareCoaSmart === 'function') eng.prepareCoaSmart(); else eng.prepareStaffSafe(); });
         bindFn('scc-prepare-ai', function () { eng.prepareCoa(); });
         bindFn('scc-prepare', function () { eng.prepareCoa(); });   // legacy alias (direct AI path)

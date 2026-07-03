@@ -185,6 +185,9 @@ CMO-WARGAME-RUN-INSTRUMENTATION-1:
                       step, observe checklist, pause/abort warning when blocked
                       or pending replan, after-action checklist when complete,
                       and evidence changes detected between visible refreshes.
+                      Adds a visible Scenario Control Center "CMO Test Guide"
+                      button that opens the existing Scenario Evidence CMO
+                      target so operators do not have to hunt through the drawer.
                       This is display-only run awareness: no backend route,
                       database write, combat/action mutation, doctrine mutation,
                       scenario-contract change, DOCX staging, or AI decision

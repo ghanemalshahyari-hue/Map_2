@@ -1408,6 +1408,7 @@
         var RB = root.RmoozCmoWarGameReadinessBrief;
         var TC = root.RmoozCmoWarGameTestCard;
         var RI = root.RmoozCmoWarGameRunInstrumentation;
+        var AD = root.RmoozCmoWarGameAfterActionDebrief;
         if (!FS || typeof FS.buildSnapshot !== 'function' ||
             !RB || typeof RB.buildBrief !== 'function' ||
             !TC || typeof TC.buildTestCard !== 'function') {
@@ -1425,7 +1426,15 @@
                 generated_at: generatedAt
             })
             : null;
-        return { snapshot: snapshot, brief: brief, test_card: testCard, run_instrumentation: runInstrumentation };
+        var afterActionDebrief = AD && runInstrumentation && typeof AD.buildDebrief === 'function'
+            ? AD.buildDebrief(runInstrumentation, {
+                flow_snapshot: snapshot,
+                readiness_brief: brief,
+                test_card: testCard,
+                generated_at: generatedAt
+            })
+            : null;
+        return { snapshot: snapshot, brief: brief, test_card: testCard, run_instrumentation: runInstrumentation, after_action_debrief: afterActionDebrief };
     }
 
     function ensureCmoWarGameRunPolling() {
@@ -1444,6 +1453,7 @@
         var RB = root.RmoozCmoWarGameReadinessBrief;
         var TC = root.RmoozCmoWarGameTestCard;
         var RI = root.RmoozCmoWarGameRunInstrumentation;
+        var AD = root.RmoozCmoWarGameAfterActionDebrief;
         var state = buildCmoWarGameState(unit);
         if (!state || !RB || typeof RB.renderBriefHtml !== 'function' ||
             !TC || typeof TC.renderTestCardHtml !== 'function') {
@@ -1454,10 +1464,15 @@
         body._cmoWarGameReadinessBrief = state.brief;
         body._cmoWarGameTestCard = state.test_card;
         body._cmoWarGameRunInstrumentation = state.run_instrumentation;
+        body._cmoWarGameAfterActionDebrief = state.after_action_debrief;
         var runHtml = state.run_instrumentation && RI && typeof RI.renderRunInstrumentationHtml === 'function'
             ? RI.renderRunInstrumentationHtml(state.run_instrumentation, { lang: 'ar' })
             : '';
-        body.innerHTML = RB.renderBriefHtml(state.brief, { lang: 'ar' }) + TC.renderTestCardHtml(state.test_card, { lang: 'ar' }) + runHtml;
+        var debriefHtml = state.after_action_debrief && AD && typeof AD.renderDebriefHtml === 'function' &&
+            (!AD.shouldRenderDebrief || AD.shouldRenderDebrief(state.after_action_debrief))
+            ? AD.renderDebriefHtml(state.after_action_debrief, { lang: 'ar' })
+            : '';
+        body.innerHTML = RB.renderBriefHtml(state.brief, { lang: 'ar' }) + TC.renderTestCardHtml(state.test_card, { lang: 'ar' }) + runHtml + debriefHtml;
         block.removeAttribute('hidden');
         ensureCmoWarGameRunPolling();
     }

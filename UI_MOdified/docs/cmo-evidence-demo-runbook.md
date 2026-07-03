@@ -406,6 +406,22 @@ and see whether the run is still healthy without hunting through Control Center
 debug panels. If the scenario becomes blocked, the warning is visible beside the
 test card instead of hidden in the run controls.
 
+CMO War-Game After-Action Debrief appears automatically in the same CMO panel
+after the run completes, pauses, or blocks:
+
+```text
+Readiness -> Test Card -> Live Run -> After-Action Debrief
+- outcome: completed / training completed / blocked-paused / not authorized / needs review
+- release interpretation: release-grade candidate / training-only / cautious / not release-grade
+- evidence changes since the visible run refresh
+- unresolved blockers and review queue counts
+- run timeline, recommendations, and after-action checklist
+```
+
+Testing value: after a live CMO war-game, the operator immediately sees whether
+the run can support release-grade evidence or should stay training-only, without
+leaving the Scenario Evidence drawer.
+
 The cluster is display/navigation only. It does not add backend routes, database
 state, auto-fix behavior, combat/action mutation, doctrine mutation, scenario
 contract changes, or DOCX staging.

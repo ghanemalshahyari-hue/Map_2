@@ -192,6 +192,20 @@ CMO-WARGAME-RUN-INSTRUMENTATION-1:
                       database write, combat/action mutation, doctrine mutation,
                       scenario-contract change, DOCX staging, or AI decision
                       override. Offline sync/testing: pending by user instruction.
+CMO-WARGAME-AAR-1:
+                      main-app after-action debrief for CMO war-game tests.
+                      Adds `cmo-wargame-after-action-debrief.js` and wires it
+                      into the existing Commander Overview CMO panel after the
+                      live run strip. When the SCC run is complete, paused, or
+                      blocked, the panel automatically shows outcome,
+                      release interpretation, evidence changes, unresolved
+                      blockers, run timeline, recommendations, after-action
+                      checklist, text summary, and HTML debrief output. This is
+                      read-only post-run guidance for CMO war-game testing: no
+                      backend route, database write, combat/action mutation,
+                      doctrine mutation, scenario-contract change, DOCX staging,
+                      browser-persistent storage, or AI decision override.
+                      Offline sync/testing: pending by user instruction.
 ```
 
 Active Scenario-QA scripts mirrored between main and offline app shells:

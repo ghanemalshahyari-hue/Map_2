@@ -369,6 +369,22 @@ Each result row -> current status context + leading reason or count
 Example: Open Release Gate -> Release: Not Ready -> 2 unresolved issues
 ```
 
+CMO War-Game Live Wiring adds a read-only readiness surface inside Scenario
+Evidence:
+
+```text
+Scenario Evidence -> Commander Overview -> CMO War-Game Readiness
+Open CMO Readiness -> drawer opens at the readiness brief
+Open CMO Test Card -> drawer opens at the operator test card
+Copy CMO Readiness Brief -> clipboard summary
+Copy CMO Test Card -> clipboard summary
+```
+
+The readiness brief answers "can I run this war-game now?" with GO / GO with
+warnings / Training preview only / NO-GO, confidence, run mode, and next actions.
+The operator test card lists steps, observation focus, abort/pause criteria, and
+after-action checks. Both are derived from existing scenario evidence surfaces.
+
 The cluster is display/navigation only. It does not add backend routes, database
 state, auto-fix behavior, combat/action mutation, doctrine mutation, scenario
 contract changes, or DOCX staging.

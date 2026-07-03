@@ -165,6 +165,18 @@ scenario-evidence v17 Command Palette Context + Quick Filters (Batch 17):
                       database writes, auto-fix behavior, combat/action mutation,
                       doctrine mutation, scenario-contract changes, or DOCX
                       staging. Offline sync/testing: pending by user instruction.
+CMO-WARGAME-LIVE-WIRING-1:
+                      main-app live wiring for the CMO war-game readiness flow.
+                      Adds a read-only Scenario Evidence Flow Snapshot module,
+                      CMO War-Game Readiness Brief, and Operator Test Card, then
+                      wires them into the existing Scenario Evidence drawer under
+                      Commander Overview plus the Scenario Actions command palette.
+                      Commands include Open CMO Readiness, Open CMO Test Card,
+                      Copy CMO Readiness Brief, and Copy CMO Test Card. This is
+                      display/navigation/clipboard only: no backend route,
+                      database write, combat/action mutation, doctrine mutation,
+                      scenario-contract change, DOCX staging, or AI decision
+                      override. Offline sync/testing: pending by user instruction.
 ```
 
 Active Scenario-QA scripts mirrored between main and offline app shells:

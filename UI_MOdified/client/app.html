@@ -3601,6 +3601,14 @@
                         <div class="usp-section-body" id="usp-commander-brief-body"></div>
                     </div>
 
+                    <!-- CMO-WARGAME-LIVE-WIRING-1: live war-game readiness + operator test card -->
+                    <div class="usp-tasking-block usp-cmo-wargame-readiness-block" id="usp-cmo-wargame-readiness-block" hidden>
+                        <div class="usp-section-hdr">
+                            <span class="usp-section-label">CMO War-Game Readiness / &#1580;&#1575;&#1607;&#1586;&#1610;&#1577; &#1575;&#1582;&#1578;&#1576;&#1575;&#1585; &#1575;&#1604;&#1605;&#1606;&#1575;&#1608;&#1585;&#1577;</span>
+                        </div>
+                        <div class="usp-section-body" id="usp-cmo-wargame-readiness-body"></div>
+                    </div>
+
                     <!-- RMOOZ-CMO-25: read-only scenario evidence completeness -->
                     <div class="usp-tasking-block usp-scenario-completeness-block" id="usp-scenario-completeness-block" hidden>
                         <div class="usp-section-hdr">
@@ -4757,6 +4765,9 @@
     <script src="shell/cmo-force-evidence-report.js?v=qa-41-repair"></script>
     <script src="shell/evidence-map-overlays.js?v=1"></script>
     <script src="shell/cmo-evidence-export.js?v=cmo-22-drilldown"></script>
+    <script src="shell/scenario-evidence-flow-snapshot.js?v=cmo-wargame-live-1"></script>
+    <script src="shell/cmo-wargame-readiness-brief.js?v=cmo-wargame-live-1"></script>
+    <script src="shell/cmo-wargame-test-card.js?v=cmo-wargame-live-1"></script>
     <script src="shell/unit-status-panel.js?v=qa-batch-36-43"></script>
     <script>
         // RMOOZ-SCENARIO-QA-BATCH-14/15/16/17: main-only header status details/actions/palette.
@@ -4772,7 +4783,8 @@
                 release: 'Release',
                 closeout: 'Closeout',
                 coverage: 'Coverage',
-                handoff: 'Handoff'
+                handoff: 'Handoff',
+                cmo: 'CMO Readiness'
             };
             var SEVERITY_RANK = { 'not-ready': 1, warnings: 2, incomplete: 3, ready: 4 };
             var latestStatusInput = {};
@@ -4834,6 +4846,12 @@
                         { key: 'open-handoff-acceptance', label: 'Open Handoff Acceptance', kind: 'open', target: 'handoff', block: 'usp-handoff-acceptance-block' },
                         { key: 'open-handoff-package', label: 'Open Handoff Package', kind: 'focus', target: 'handoff', block: 'usp-handoff-package-block' },
                         { key: 'copy-handoff-summary', label: 'Copy Handoff Summary', kind: 'copy', target: 'handoff' }
+                    ],
+                    cmo: [
+                        { key: 'open-cmo-readiness', label: 'Open CMO Readiness', kind: 'open', target: 'cmo', block: 'usp-cmo-wargame-readiness-block' },
+                        { key: 'open-cmo-test-card', label: 'Open CMO Test Card', kind: 'focus', target: 'cmo', block: 'usp-cmo-wargame-test-card' },
+                        { key: 'copy-cmo-readiness-brief', label: 'Copy CMO Readiness Brief', kind: 'copy', target: 'cmo' },
+                        { key: 'copy-cmo-test-card', label: 'Copy CMO Test Card', kind: 'copy', target: 'cmo' }
                     ]
                 };
                 return arr(map[target]).map(function (action) { return obj(action); });
@@ -4855,8 +4873,12 @@
                     { key: 'open-review-queue', label: 'Open Review Queue', kind: 'focus', target: 'coverage', block: 'usp-review-queue-block', group: 'Coverage', hint: 'Evidence review queue', keywords: 'review queue coverage needs review' },
                     { key: 'open-handoff-package', label: 'Open Handoff Package', kind: 'focus', target: 'handoff', block: 'usp-handoff-package-block', group: 'Handoff', hint: 'Handoff package', keywords: 'handoff package fingerprint receipt' },
                     { key: 'open-handoff-acceptance', label: 'Open Handoff Acceptance', kind: 'open', target: 'handoff', block: 'usp-handoff-acceptance-block', group: 'Handoff', hint: 'Handoff acceptance', keywords: 'handoff acceptance decision receipt warnings' },
+                    { key: 'open-cmo-readiness', label: 'Open CMO Readiness', kind: 'open', target: 'cmo', block: 'usp-cmo-wargame-readiness-block', group: 'CMO', hint: 'War-game readiness brief', keywords: 'cmo war game readiness go no-go training preview confidence' },
+                    { key: 'open-cmo-test-card', label: 'Open CMO Test Card', kind: 'focus', target: 'cmo', block: 'usp-cmo-wargame-test-card', group: 'CMO', hint: 'Operator test card', keywords: 'cmo test card operator steps observation abort pause after action' },
                     { key: 'copy-release-summary', label: 'Copy Release Summary', kind: 'copy', target: 'release', group: 'Release', hint: 'Copy status summary', keywords: 'copy release summary blockers' },
-                    { key: 'copy-coverage-summary', label: 'Copy Coverage Summary', kind: 'copy', target: 'coverage', group: 'Coverage', hint: 'Copy status summary', keywords: 'copy coverage summary evidence' }
+                    { key: 'copy-coverage-summary', label: 'Copy Coverage Summary', kind: 'copy', target: 'coverage', group: 'Coverage', hint: 'Copy status summary', keywords: 'copy coverage summary evidence' },
+                    { key: 'copy-cmo-readiness-brief', label: 'Copy CMO Readiness Brief', kind: 'copy', target: 'cmo', group: 'CMO', hint: 'Copy readiness brief', keywords: 'copy cmo readiness brief go no-go confidence' },
+                    { key: 'copy-cmo-test-card', label: 'Copy CMO Test Card', kind: 'copy', target: 'cmo', group: 'CMO', hint: 'Copy operator test card', keywords: 'copy cmo test card operator steps abort criteria' }
                 ];
             }
             function commandPaletteFilters() {
@@ -4897,7 +4919,7 @@
                 statusInput = normalizeInput(statusInput || latestStatusInput || {});
                 cluster = cluster || latestCluster || {};
                 var chip = cluster[target] || {};
-                var info = buildDetail(target, statusInput, chip);
+                var info = buildDetail(target, statusInput, chip, command);
                 var detailLine = cleanLine(arr(info.lines)[0] || '');
                 return {
                     title: info.title || statusTitle(target, chip.label_en),
@@ -5058,18 +5080,53 @@
                 if (arr(record.warnings || acceptance.warnings).length) lines.push('Warnings: ' + arr(record.warnings || acceptance.warnings).length);
                 return detail('handoff', acceptance.decision_label_en || chip.label_en, chip.cls, 'Why this status?', lines);
             }
+            function cmoState() {
+                var doc = root.document;
+                var body = doc && typeof doc.getElementById === 'function' ? doc.getElementById('usp-cmo-wargame-readiness-body') : null;
+                if (body && (body._cmoWarGameReadinessBrief || body._cmoWarGameTestCard)) {
+                    return {
+                        brief: body._cmoWarGameReadinessBrief || null,
+                        test_card: body._cmoWarGameTestCard || null,
+                        snapshot: body._scenarioEvidenceFlowSnapshot || null
+                    };
+                }
+                var panel = root.AppUnitStatusPanel;
+                if (panel && typeof panel.buildCmoWarGameState === 'function') {
+                    try { return panel.buildCmoWarGameState(panel.getCurrentUnit && panel.getCurrentUnit()); } catch (_) {}
+                }
+                return {};
+            }
+            function cmoDetail(chip, action) {
+                var state = cmoState();
+                var brief = obj(state.brief);
+                var card = obj(state.test_card);
+                var label = brief.decision_label_en || 'CMO readiness pending';
+                var lines;
+                if (action && /cmo-test-card/.test(String(action.key || ''))) {
+                    lines = []
+                        .concat(arr(card.operator_steps).slice(0, 2))
+                        .concat(arr(card.abort_criteria).slice(0, 2));
+                    return detail('cmo', label, chip && chip.cls || 'incomplete', 'Operator test card:', lines);
+                }
+                lines = [
+                    'Confidence: ' + (brief.confidence == null ? 'pending' : brief.confidence + '%'),
+                    'Run mode: ' + (brief.run_mode || 'pending')
+                ].concat(arr(brief.next_actions).slice(0, 3));
+                return detail('cmo', label, chip && chip.cls || 'incomplete', 'Can I run this CMO war-game now?', lines);
+            }
             function normalizeInput(input) {
                 input = obj(input);
                 if (input.release_gate || input.closeout || input.coverage || input.acceptance) return input;
                 return {};
             }
-            function buildDetail(target, raw, chip) {
+            function buildDetail(target, raw, chip, action) {
                 raw = normalizeInput(raw);
                 chip = obj(chip);
                 if (target === 'release') return releaseDetail(raw.release_gate, chip);
                 if (target === 'closeout') return closeoutDetail(raw.closeout, chip);
                 if (target === 'coverage') return coverageDetail(raw.coverage, chip);
                 if (target === 'handoff') return handoffDetail(raw.acceptance, chip);
+                if (target === 'cmo') return cmoDetail(chip, action);
                 return detail(target, chip.label_en, chip.cls, 'Why this status?', []);
             }
             function renderDetailHtml(info) {
@@ -5177,10 +5234,30 @@
                     return false;
                 }
             }
+            function copyCmoArtifact(action, pop) {
+                var panel = root.AppUnitStatusPanel;
+                var fn = action && action.key === 'copy-cmo-test-card'
+                    ? 'copyCmoWarGameTestCard'
+                    : 'copyCmoWarGameReadinessBrief';
+                if (!panel || typeof panel[fn] !== 'function') return false;
+                try {
+                    var ret = panel[fn]();
+                    if (ret && typeof ret.then === 'function') {
+                        ret.then(function () { setCopyState(pop, 'Copied'); }, function () { setCopyState(pop, 'Copy unavailable'); });
+                    } else {
+                        setCopyState(pop, ret === false ? 'Copy unavailable' : 'Copied');
+                    }
+                    return ret !== false;
+                } catch (_) {
+                    setCopyState(pop, 'Copy unavailable');
+                    return false;
+                }
+            }
             function handleAction(action, info, pop, ev) {
                 action = obj(action);
                 if (ev && typeof ev.preventDefault === 'function') ev.preventDefault();
                 if (ev && typeof ev.stopPropagation === 'function') ev.stopPropagation();
+                if (action.kind === 'copy' && action.target === 'cmo') return copyCmoArtifact(action, pop);
                 if (action.kind === 'copy') return copySummary(info, pop);
                 var target = action.target || (info && info.target) || 'release';
                 openStatusTarget(target);
@@ -5203,7 +5280,7 @@
                 action = obj(action);
                 var target = action.target || 'release';
                 var chip = latestCluster && latestCluster[target] ? latestCluster[target] : {};
-                return buildDetail(target, latestStatusInput || {}, chip);
+                return buildDetail(target, latestStatusInput || {}, chip, action);
             }
             function commandByKey(key, commands) {
                 var found = null;
@@ -7311,6 +7388,29 @@
         .usp-drilldown-check-ar { color:#f0c080; font-size:0.66rem; }
         .usp-drilldown-source { padding:3px 0.75rem 5px; color:#5a7890; font-size:0.62rem; border-top:1px solid #0d1420; }
         .usp-drilldown-empty { padding:8px 0.75rem; color:#5a7890; font-size:0.68rem; }
+        /* CMO-WARGAME-LIVE-WIRING-1: live CMO readiness/test card */
+        .usp-cmo-wargame-readiness-block { background:#071019; border-bottom:2px solid #23486a; }
+        .usp-cmo-readiness-card { padding:7px 0.75rem; border-bottom:1px solid #142033; }
+        .usp-cmo-readiness-head { display:flex; flex-wrap:wrap; align-items:baseline; gap:6px; margin-bottom:6px; }
+        .usp-cmo-readiness-head strong { color:#d9f4ff; font-size:0.86rem; }
+        .usp-cmo-readiness-card--go .usp-cmo-readiness-head strong { color:#8fd6a3; }
+        .usp-cmo-readiness-card--warn .usp-cmo-readiness-head strong,
+        .usp-cmo-readiness-card--training .usp-cmo-readiness-head strong { color:#e8c97a; }
+        .usp-cmo-readiness-card--no-go .usp-cmo-readiness-head strong { color:#e87a7a; }
+        .usp-cmo-readiness-kicker { color:#7fa0b8; font-size:0.62rem; text-transform:uppercase; letter-spacing:.04em; }
+        .usp-cmo-readiness-grid,
+        .usp-cmo-mini-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px; margin:0 0 6px; }
+        .usp-cmo-readiness-grid div,
+        .usp-cmo-mini-grid span { background:#0b1826; border:1px solid #173049; border-radius:4px; padding:4px 6px; color:#a8c8e8; font-size:0.68rem; }
+        .usp-cmo-readiness-grid dt { color:#7fa0b8; font-size:0.61rem; text-transform:uppercase; }
+        .usp-cmo-readiness-grid dd { margin:0; color:#d8e8f4; font-weight:700; }
+        .usp-cmo-readiness-subhead { padding:5px 0.75rem 2px; color:#8fb8d8; font-size:0.66rem; font-weight:700; text-transform:uppercase; }
+        .usp-cmo-readiness-card ul,
+        .usp-cmo-test-card ol { margin:0; padding:3px 1.4rem 7px 1.65rem; color:#b8d0e4; font-size:0.69rem; line-height:1.45; }
+        .usp-cmo-readiness-card li,
+        .usp-cmo-test-card li { margin:2px 0; }
+        .usp-cmo-test-card { border-top:1px solid #0d1420; }
+        .usp-cmo-readiness-disclaimer { padding:4px 0.75rem 7px; color:#6f8798; font-size:0.62rem; border-top:1px solid #0d1420; }
         /* RMOOZ-CMO-18: alternative shooters */
         .usp-alt-meta { padding:5px 0.75rem; color:#7fa0b8; font-size:0.67rem; border-bottom:1px solid #142033; }
         .usp-alt-count, .usp-alt-total { color:#8fd6a3; font-weight:600; }

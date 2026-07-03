@@ -180,6 +180,7 @@
         'usp-evidence-matrix-block',
         'usp-blocker-remediation-block',
         'usp-force-feed-block',
+        'usp-cmo-wargame-readiness-block',
         'usp-force-report-block'
     ];
 
@@ -188,7 +189,7 @@
     // membership union; SCENARIO_EVIDENCE_GROUPS defines grouping + visual order.
     var SCENARIO_EVIDENCE_GROUPS = [
         { key: 'overview', label_en: 'Commander Overview', label_ar: '\u0646\u0638\u0631\u0629 \u0627\u0644\u0642\u0627\u0626\u062f', jump_en: 'Overview', open: true,
-          blocks: ['usp-commander-brief-block', 'usp-release-gate-block', 'usp-evidence-quality-block', 'usp-evidence-alerts-block', 'usp-evidence-coverage-block'] },
+          blocks: ['usp-commander-brief-block', 'usp-cmo-wargame-readiness-block', 'usp-release-gate-block', 'usp-evidence-quality-block', 'usp-evidence-alerts-block', 'usp-evidence-coverage-block'] },
         { key: 'qa', label_en: 'Scenario QA Review', label_ar: '\u0645\u0631\u0627\u062c\u0639\u0629 \u062c\u0648\u062f\u0629 \u0627\u0644\u0633\u064a\u0646\u0627\u0631\u064a\u0648', jump_en: 'QA Review', open: true,
           blocks: ['usp-scenario-completeness-block', 'usp-objective-health-block', 'usp-review-queue-block', 'usp-repair-plan-block', 'usp-manual-fix-block', 'usp-review-closeout-block', 'usp-review-audit-block'] },
         { key: 'handoff', label_en: 'Handoff Workflow', label_ar: '\u0633\u064a\u0631 \u0639\u0645\u0644 \u0627\u0644\u062a\u0633\u0644\u064a\u0645', jump_en: 'Handoff', open: false,
@@ -221,7 +222,8 @@
         release:  { group: 'overview', block: 'usp-release-gate-block' },
         closeout: { group: 'qa',       block: 'usp-review-closeout-block' },
         coverage: { group: 'overview', block: 'usp-evidence-coverage-block' },
-        handoff:  { group: 'handoff',  block: 'usp-handoff-acceptance-block' }
+        handoff:  { group: 'handoff',  block: 'usp-handoff-acceptance-block' },
+        cmo:      { group: 'overview', block: 'usp-cmo-wargame-readiness-block' }
     };
 
     function focusScenarioEvidenceBlock(blockId) {
@@ -244,6 +246,7 @@
         else if (target === 'closeout') populateScenarioReviewCloseout(currentUnit);
         else if (target === 'coverage') populateEvidenceCoverage(currentUnit);
         else if (target === 'handoff') populateScenarioHandoffAcceptance(currentUnit);
+        else if (target === 'cmo') populateCmoWarGameReadiness(currentUnit);
         if (cfg.group) jumpToScenarioEvidenceGroup(cfg.group);
         focusScenarioEvidenceBlock(cfg.block);
     }
@@ -416,6 +419,7 @@
         populateAssignment(unit);
         syncScenarioReviewSession();
         populateCommanderBrief(unit);
+        populateCmoWarGameReadiness(unit);
         populateScenarioCompleteness(unit);
         populateObjectiveHealth(unit);
         populateScenarioReviewQueue(unit);
@@ -1397,6 +1401,70 @@
         block.removeAttribute('hidden');
     }
 
+    function buildCmoWarGameState(unit) {
+        var generatedAt = new Date().toISOString();
+        var FS = root.RmoozScenarioEvidenceFlowSnapshot;
+        var RB = root.RmoozCmoWarGameReadinessBrief;
+        var TC = root.RmoozCmoWarGameTestCard;
+        if (!FS || typeof FS.buildSnapshot !== 'function' ||
+            !RB || typeof RB.buildBrief !== 'function' ||
+            !TC || typeof TC.buildTestCard !== 'function') {
+            return null;
+        }
+        var snapshot = FS.buildSnapshot(_getCurrentWorldState, {
+            selected_unit: unit || currentUnit,
+            generated_at: generatedAt
+        });
+        var brief = RB.buildBrief(snapshot, { generated_at: generatedAt });
+        var testCard = TC.buildTestCard(brief, snapshot, { generated_at: generatedAt });
+        return { snapshot: snapshot, brief: brief, test_card: testCard };
+    }
+
+    function populateCmoWarGameReadiness(unit) {
+        var block = $('usp-cmo-wargame-readiness-block');
+        var body = $('usp-cmo-wargame-readiness-body');
+        if (!block || !body) return;
+        var RB = root.RmoozCmoWarGameReadinessBrief;
+        var TC = root.RmoozCmoWarGameTestCard;
+        var state = buildCmoWarGameState(unit);
+        if (!state || !RB || typeof RB.renderBriefHtml !== 'function' ||
+            !TC || typeof TC.renderTestCardHtml !== 'function') {
+            block.setAttribute('hidden', '');
+            return;
+        }
+        body._scenarioEvidenceFlowSnapshot = state.snapshot;
+        body._cmoWarGameReadinessBrief = state.brief;
+        body._cmoWarGameTestCard = state.test_card;
+        body.innerHTML = RB.renderBriefHtml(state.brief, { lang: 'ar' }) + TC.renderTestCardHtml(state.test_card, { lang: 'ar' });
+        block.removeAttribute('hidden');
+    }
+
+    function copyCmoWarGameReadinessBrief() {
+        var body = $('usp-cmo-wargame-readiness-body');
+        var RB = root.RmoozCmoWarGameReadinessBrief;
+        if (!RB || typeof RB.copyBrief !== 'function') return false;
+        var brief = body && body._cmoWarGameReadinessBrief;
+        if (!brief) {
+            var state = buildCmoWarGameState(currentUnit);
+            brief = state && state.brief;
+        }
+        if (!brief) return false;
+        return RB.copyBrief(brief);
+    }
+
+    function copyCmoWarGameTestCard() {
+        var body = $('usp-cmo-wargame-readiness-body');
+        var TC = root.RmoozCmoWarGameTestCard;
+        if (!TC || typeof TC.copyTestCard !== 'function') return false;
+        var card = body && body._cmoWarGameTestCard;
+        if (!card) {
+            var state = buildCmoWarGameState(currentUnit);
+            card = state && state.test_card;
+        }
+        if (!card) return false;
+        return TC.copyTestCard(card);
+    }
+
     function populateEvidenceCoverage(unit) {
         var block = $('usp-evidence-coverage-block');
         var body = $('usp-evidence-coverage-body');
@@ -1587,6 +1655,7 @@
                 populateScenarioReviewQueue(unit || currentUnit);
                 populateScenarioRepairPlan(unit || currentUnit);
                 populateCommanderBrief(unit || currentUnit);
+                populateCmoWarGameReadiness(unit || currentUnit);
                 populateForceEvidenceReport(unit || currentUnit);
                 populateScenarioManualFix(unit || currentUnit);
                 populateScenarioReviewCloseout(unit || currentUnit);
@@ -1679,6 +1748,7 @@
                 populateScenarioReviewCloseout(unit || currentUnit);
                 populateScenarioReviewAuditTrail(unit || currentUnit);
                 populateCommanderBrief(unit || currentUnit);
+                populateCmoWarGameReadiness(unit || currentUnit);
                 populateForceEvidenceReport(unit || currentUnit);
                 populateScenarioHandoffPackage(unit || currentUnit);
                 populateScenarioHandoffAcceptance(unit || currentUnit);
@@ -1725,6 +1795,7 @@
                     populateScenarioReviewCloseout(unit || currentUnit);
                     populateScenarioReviewAuditTrail(unit || currentUnit);
                     populateCommanderBrief(unit || currentUnit);
+                    populateCmoWarGameReadiness(unit || currentUnit);
                     populateForceEvidenceReport(unit || currentUnit);
                     populateScenarioHandoffPackage(unit || currentUnit);
                     populateScenarioHandoffAcceptance(unit || currentUnit);
@@ -2402,7 +2473,11 @@
         displayUnitName: displayUnitName,   // FIX-B (D): exposed for tests / reuse
         getCurrentUnit: function() { return currentUnit; },
         openScenarioEvidenceTarget: openScenarioEvidenceTarget,
-        openReleaseGate: openReleaseGate
+        openReleaseGate: openReleaseGate,
+        buildCmoWarGameState: buildCmoWarGameState,
+        populateCmoWarGameReadiness: populateCmoWarGameReadiness,
+        copyCmoWarGameReadinessBrief: copyCmoWarGameReadinessBrief,
+        copyCmoWarGameTestCard: copyCmoWarGameTestCard
     };
     init();
 

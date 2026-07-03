@@ -177,6 +177,18 @@ CMO-WARGAME-LIVE-WIRING-1:
                       database write, combat/action mutation, doctrine mutation,
                       scenario-contract change, DOCX staging, or AI decision
                       override. Offline sync/testing: pending by user instruction.
+CMO-WARGAME-RUN-INSTRUMENTATION-1:
+                      main-app CMO war-game testing instrumentation. Adds a
+                      read-only Scenario Control Center run snapshot and a live
+                      CMO run strip under the readiness brief/test card. During
+                      a test run it shows current SCC state, run mode, operator
+                      step, observe checklist, pause/abort warning when blocked
+                      or pending replan, after-action checklist when complete,
+                      and evidence changes detected between visible refreshes.
+                      This is display-only run awareness: no backend route,
+                      database write, combat/action mutation, doctrine mutation,
+                      scenario-contract change, DOCX staging, or AI decision
+                      override. Offline sync/testing: pending by user instruction.
 ```
 
 Active Scenario-QA scripts mirrored between main and offline app shells:

@@ -23,6 +23,7 @@
     var currentUnit = null;
     var currentMatrixFilter = { status: 'All', reason_code: null };
     var currentManualFixIssue = null;
+    var cmoWarGameRunPollTimer = null;
 
     // ── i18n helper ───────────────────────────────────────────────────
     function tr(key, fallback) {
@@ -1406,6 +1407,7 @@
         var FS = root.RmoozScenarioEvidenceFlowSnapshot;
         var RB = root.RmoozCmoWarGameReadinessBrief;
         var TC = root.RmoozCmoWarGameTestCard;
+        var RI = root.RmoozCmoWarGameRunInstrumentation;
         if (!FS || typeof FS.buildSnapshot !== 'function' ||
             !RB || typeof RB.buildBrief !== 'function' ||
             !TC || typeof TC.buildTestCard !== 'function') {
@@ -1417,7 +1419,22 @@
         });
         var brief = RB.buildBrief(snapshot, { generated_at: generatedAt });
         var testCard = TC.buildTestCard(brief, snapshot, { generated_at: generatedAt });
-        return { snapshot: snapshot, brief: brief, test_card: testCard };
+        var runInstrumentation = RI && typeof RI.buildRunInstrumentation === 'function'
+            ? RI.buildRunInstrumentation(testCard, {
+                flow_snapshot: snapshot,
+                generated_at: generatedAt
+            })
+            : null;
+        return { snapshot: snapshot, brief: brief, test_card: testCard, run_instrumentation: runInstrumentation };
+    }
+
+    function ensureCmoWarGameRunPolling() {
+        if (cmoWarGameRunPollTimer || typeof root.setInterval !== 'function') return;
+        cmoWarGameRunPollTimer = root.setInterval(function () {
+            var block = $('usp-cmo-wargame-readiness-block');
+            if (!block || block.hasAttribute('hidden')) return;
+            populateCmoWarGameReadiness(currentUnit);
+        }, 2500);
     }
 
     function populateCmoWarGameReadiness(unit) {
@@ -1426,6 +1443,7 @@
         if (!block || !body) return;
         var RB = root.RmoozCmoWarGameReadinessBrief;
         var TC = root.RmoozCmoWarGameTestCard;
+        var RI = root.RmoozCmoWarGameRunInstrumentation;
         var state = buildCmoWarGameState(unit);
         if (!state || !RB || typeof RB.renderBriefHtml !== 'function' ||
             !TC || typeof TC.renderTestCardHtml !== 'function') {
@@ -1435,8 +1453,13 @@
         body._scenarioEvidenceFlowSnapshot = state.snapshot;
         body._cmoWarGameReadinessBrief = state.brief;
         body._cmoWarGameTestCard = state.test_card;
-        body.innerHTML = RB.renderBriefHtml(state.brief, { lang: 'ar' }) + TC.renderTestCardHtml(state.test_card, { lang: 'ar' });
+        body._cmoWarGameRunInstrumentation = state.run_instrumentation;
+        var runHtml = state.run_instrumentation && RI && typeof RI.renderRunInstrumentationHtml === 'function'
+            ? RI.renderRunInstrumentationHtml(state.run_instrumentation, { lang: 'ar' })
+            : '';
+        body.innerHTML = RB.renderBriefHtml(state.brief, { lang: 'ar' }) + TC.renderTestCardHtml(state.test_card, { lang: 'ar' }) + runHtml;
         block.removeAttribute('hidden');
+        ensureCmoWarGameRunPolling();
     }
 
     function copyCmoWarGameReadinessBrief() {

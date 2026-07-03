@@ -80,6 +80,125 @@
     }
 
     // ── small UI atoms ───────────────────────────────────────────────────────────────────────────────────
+    function safeRead(fn, fallback) {
+        try {
+            if (typeof fn !== 'function') return fallback;
+            var value = fn();
+            return value == null ? fallback : value;
+        } catch (_) { return fallback; }
+    }
+    function lastOf(list) {
+        list = arr(list);
+        return list.length ? list[list.length - 1] : null;
+    }
+    function selectedCoaFromExec(ex) {
+        return (ex && (ex.selected_coa || ex.selectedCoa || ex.coa || ex.plan)) || null;
+    }
+    function currentPhaseName(ex) {
+        var idx = Number(ex && ex.current_phase_index);
+        if (!isFinite(idx) || idx < 0) idx = 0;
+        var coa = selectedCoaFromExec(ex);
+        var phase = arr(coa && coa.phases)[idx] || null;
+        return (phase && (phase.phase || phase.name || phase.title || phase.label || phase.id)) || null;
+    }
+    function selectedCoaId(ex) {
+        var coa = selectedCoaFromExec(ex);
+        return (ex && (ex.selected_coa_id || ex.coa_id || ex.plan_id)) ||
+            (coa && (coa.plan_id || coa.id || coa.name)) || null;
+    }
+    function summarizeMovementDebug(rows) {
+        var out = { total: 0, moved: 0, blocked: 0, ai_behavior: 0, staff_safe: 0 };
+        arr(rows).forEach(function (r) {
+            out.total += 1;
+            if (r && (r.moved || r.moved_this_tick || r.moved_km_this_tick)) out.moved += 1;
+            if (r && r.blocked_reason) out.blocked += 1;
+            var src = String((r && r.source) || '');
+            if (src === 'ai_behavior' || src === 'degraded_behavior_repaired') out.ai_behavior += 1;
+            if (/staff_safe/.test(src)) out.staff_safe += 1;
+        });
+        return out;
+    }
+    function decisionSummary(d) {
+        if (!d) return null;
+        return [d.role || d.actor || '?', d.action || d.decision || '?'].join(' / ') +
+            (d.result_summary || d.reason ? ' - ' + (d.result_summary || d.reason) : '');
+    }
+    function movementSummary(m) {
+        if (!m) return null;
+        var to = m.to ? (' -> ' + [m.to.lat, m.to.lon].filter(function (v) { return v != null; }).join(',')) : '';
+        return String(m.uid || m.unit_uid || '?') + to;
+    }
+    function runSnapshot() {
+        var eng = engine();
+        if (!eng) {
+            return {
+                version: '1.0.0-cmo-wargame-run-instrumentation-1',
+                read_only: true,
+                available: false,
+                state: 'no_scenario',
+                state_label: STATE_LABEL.no_scenario,
+                flow_step: 1,
+                reason: 'Scenario Control Center engine unavailable'
+            };
+        }
+        var state = safeRead(function () { return sccState(eng); }, 'no_scenario');
+        var scn = safeRead(function () { return eng.scenarioRuntime ? eng.scenarioRuntime() : null; }, null) || {};
+        var ex = safeRead(function () { return eng.committedExec ? eng.committedExec() : null; }, null) || {};
+        var readiness = safeRead(function () { return eng.readiness ? eng.readiness() : null; }, null) || {};
+        var trace = arr(safeRead(function () { return eng.executedTrace ? eng.executedTrace() : []; }, []));
+        var movementDebug = arr(safeRead(function () { return eng.movementDebug ? eng.movementDebug() : []; }, []));
+        var decisionLog = arr(safeRead(function () { return eng.decisionLog ? eng.decisionLog() : []; }, []));
+        var networkCalls = arr(safeRead(function () { return eng.networkCalls ? eng.networkCalls() : []; }, []));
+        var runBlockedReason = safeRead(function () { return eng.runBlockedReason ? eng.runBlockedReason() : null; }, null);
+        var whiteOutcome = safeRead(function () { return eng.whiteOutcome ? eng.whiteOutcome() : null; }, null) || {};
+        var greenStatus = safeRead(function () { return eng.greenStatus ? eng.greenStatus() : null; }, null) || {};
+        var latestDecision = lastOf(decisionLog);
+        var latestMovement = lastOf(trace);
+        var pendingReplan = scn.pending_replan_reason || ex.pending_replan_reason ||
+            (ex.replan_required ? 'Committed COA requires replan' : null);
+
+        return {
+            version: '1.0.0-cmo-wargame-run-instrumentation-1',
+            read_only: true,
+            available: true,
+            state: state,
+            state_label: STATE_LABEL[state] || state,
+            flow_step: flowStepFor(state),
+            scenario_active: !!scn.scenario_active,
+            scenario_status: scn.scenario_status || null,
+            scenario_turn: Number(scn.scenario_turn || 0),
+            current_actor: scn.current_actor || null,
+            objective_control: scn.objective_control || null,
+            pending_replan_reason: pendingReplan || null,
+            end_condition: scn.end_condition || null,
+            selected_coa_id: selectedCoaId(ex),
+            current_phase_index: Number(ex.current_phase_index || 0),
+            current_phase_name: currentPhaseName(ex),
+            phase_status: ex.phase_status || null,
+            auto_continue: !!safeRead(function () { return eng.autoContinueEnabled ? eng.autoContinueEnabled() : false; }, false),
+            run_blocked_reason: runBlockedReason || null,
+            white_outcome_summary: whiteOutcome.summary || whiteOutcome.status || whiteOutcome.result || null,
+            green_status_summary: greenStatus.summary || greenStatus.status || greenStatus.label || null,
+            movement_trace_count: trace.length,
+            movement_debug_count: movementDebug.length,
+            movement_summary: summarizeMovementDebug(movementDebug),
+            decision_log_count: decisionLog.length,
+            network_call_count: networkCalls.length,
+            latest_decision_summary: decisionSummary(latestDecision),
+            latest_movement_summary: movementSummary(latestMovement),
+            readiness: {
+                executable: !!readiness.executable,
+                taskable: Number(readiness.taskable || 0),
+                blocked: Number(readiness.blocked || 0),
+                message: readiness.message || null,
+                scenario_name: readiness.scenario_name || null,
+                data_reliability: readiness.data_reliability || null,
+                source_status: readiness.source_status || null,
+                training_approved: !!readiness.training_approved
+            }
+        };
+    }
+
     function btnPri(act, label, title) { return '<button data-act="' + act + '"' + (title ? ' title="' + esc(title) + '"' : '') + ' style="font:inherit;cursor:pointer;border:1px solid #2e7d54;background:#15301f;color:' + C.good + ';border-radius:6px;padding:8px 15px;font-size:12.5px;font-weight:700;">' + label + '</button>'; }
     function btnSec(act, label, title) { return '<button data-act="' + act + '"' + (title ? ' title="' + esc(title) + '"' : '') + ' style="font:inherit;cursor:pointer;border:1px solid #4a5f75;background:#101b27;color:#9fb8c8;border-radius:6px;padding:7px 12px;font-size:11px;">' + label + '</button>'; }
     function btnWarn(act, label, title) { return '<button data-act="' + act + '"' + (title ? ' title="' + esc(title) + '"' : '') + ' style="font:inherit;cursor:pointer;border:1px solid #7a3030;background:#241414;color:' + C.bad + ';border-radius:6px;padding:7px 12px;font-size:11px;">' + label + '</button>'; }
@@ -652,7 +771,7 @@
         for (var i = 0; i < 8; i++) { (function (idx) { bindFn('scc-select-' + idx, function () { eng.selectCoa(idx); }); })(i); }
     }
 
-    var API = { render: render, bind: bind, state: function () { var e = engine(); return e ? sccState(e) : 'no_scenario'; },
+    var API = { render: render, bind: bind, runSnapshot: runSnapshot, state: function () { var e = engine(); return e ? sccState(e) : 'no_scenario'; },
         _setEvidenceOpenForTest: function (v) { evidenceOpen = !!v; } };
     if (typeof module !== 'undefined' && module.exports) module.exports = API;
     if (typeof window !== 'undefined') window.RmoozScenarioControlCenter = API;

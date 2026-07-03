@@ -385,6 +385,26 @@ warnings / Training preview only / NO-GO, confidence, run mode, and next actions
 The operator test card lists steps, observation focus, abort/pause criteria, and
 after-action checks. Both are derived from existing scenario evidence surfaces.
 
+CMO War-Game Run Instrumentation connects that readiness/test-card layer to the
+actual Scenario Control Center run state:
+
+```text
+Open CMO Readiness
+Run or pause the scenario in Scenario Control Center
+Watch CMO War-Game Live Run:
+- current SCC state and run mode
+- current operator step
+- live observe checklist
+- pause/abort warning if blocked or pending replan
+- after-action checklist once complete
+- evidence changes detected during the run
+```
+
+Testing value: during a CMO war-game smoke, the operator can keep the drawer open
+and see whether the run is still healthy without hunting through Control Center
+debug panels. If the scenario becomes blocked, the warning is visible beside the
+test card instead of hidden in the run controls.
+
 The cluster is display/navigation only. It does not add backend routes, database
 state, auto-fix behavior, combat/action mutation, doctrine mutation, scenario
 contract changes, or DOCX staging.

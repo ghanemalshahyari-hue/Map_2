@@ -14,6 +14,7 @@ var path = require('path');
 var file = path.join(__dirname, 'UI_MOdified', 'server', 'ai', 'brief-to-scenario.js');
 var source = fs.readFileSync(file, 'utf8');
 var stripped = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+var mod = require(file);
 var passed = 0;
 var failed = 0;
 function assert(label, cond) {
@@ -23,8 +24,14 @@ function assert(label, cond) {
 
 console.log('\n=== RMOOZ legacy brief scenario generator retirement gate ===\n');
 
+var result = mod.generateScenarioFromBrief({ operational_brief: { area_of_operations: { center: [54, 24] } } }, { objective: { lon: 54, lat: 24 } });
+
 assert('legacy module still exists only as a compatibility boundary', fs.existsSync(file));
+assert('public function still exists so imports do not crash', typeof mod.generateScenarioFromBrief === 'function');
 assert('retirement marker is present', /retired|disabled|legacy_ai_scenario_generator_retired/i.test(source));
+assert('runtime call returns disabled retired result', result && result.disabled === true && result.retired === true);
+assert('runtime call does not return scenario payload', !result.scenario && !result.report);
+assert('runtime call exposes exact retirement code', result.code === 'legacy_ai_scenario_generator_retired');
 assert('generator no longer returns a scenario object', !/return\s*\{\s*scenario\s*,\s*report\s*\}/.test(stripped));
 assert('generator no longer stamps generated_from_brief scenario output', !/generated_from_brief\s*:\s*true/.test(stripped));
 assert('generator no longer ports from brief-to-scenario', !/ported_from\s*:\s*['"]brief-to-scenario\.js['"]/.test(stripped));

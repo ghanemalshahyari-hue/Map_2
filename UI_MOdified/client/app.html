@@ -4770,6 +4770,7 @@
     <script src="shell/cmo-wargame-test-card.js?v=cmo-wargame-live-1"></script>
     <script src="shell/cmo-wargame-run-instrumentation.js?v=cmo-wargame-run-1"></script>
     <script src="shell/cmo-wargame-after-action-debrief.js?v=cmo-wargame-aar-1"></script>
+    <script src="shell/cmo-wargame-evidence-package.js?v=cmo-wargame-package-live-1"></script>
     <script src="shell/unit-status-panel.js?v=qa-batch-36-43"></script>
     <script>
         // RMOOZ-SCENARIO-QA-BATCH-14/15/16/17: main-only header status details/actions/palette.
@@ -4852,8 +4853,11 @@
                     cmo: [
                         { key: 'open-cmo-readiness', label: 'Open CMO Readiness', kind: 'open', target: 'cmo', block: 'usp-cmo-wargame-readiness-block' },
                         { key: 'open-cmo-test-card', label: 'Open CMO Test Card', kind: 'focus', target: 'cmo', block: 'usp-cmo-wargame-test-card' },
+                        { key: 'open-cmo-evidence-package', label: 'Open CMO Evidence Package', kind: 'focus', target: 'cmo', block: 'usp-cmo-evidence-package' },
                         { key: 'copy-cmo-readiness-brief', label: 'Copy CMO Readiness Brief', kind: 'copy', target: 'cmo' },
-                        { key: 'copy-cmo-test-card', label: 'Copy CMO Test Card', kind: 'copy', target: 'cmo' }
+                        { key: 'copy-cmo-test-card', label: 'Copy CMO Test Card', kind: 'copy', target: 'cmo' },
+                        { key: 'copy-cmo-evidence-package-summary', label: 'Copy CMO Evidence Package Summary', kind: 'copy', target: 'cmo' },
+                        { key: 'copy-cmo-evidence-package-json', label: 'Copy CMO Evidence Package JSON', kind: 'copy', target: 'cmo' }
                     ]
                 };
                 return arr(map[target]).map(function (action) { return obj(action); });
@@ -4877,10 +4881,13 @@
                     { key: 'open-handoff-acceptance', label: 'Open Handoff Acceptance', kind: 'open', target: 'handoff', block: 'usp-handoff-acceptance-block', group: 'Handoff', hint: 'Handoff acceptance', keywords: 'handoff acceptance decision receipt warnings' },
                     { key: 'open-cmo-readiness', label: 'Open CMO Readiness', kind: 'open', target: 'cmo', block: 'usp-cmo-wargame-readiness-block', group: 'CMO', hint: 'War-game readiness brief', keywords: 'cmo war game readiness go no-go training preview confidence' },
                     { key: 'open-cmo-test-card', label: 'Open CMO Test Card', kind: 'focus', target: 'cmo', block: 'usp-cmo-wargame-test-card', group: 'CMO', hint: 'Operator test card', keywords: 'cmo test card operator steps observation abort pause after action' },
+                    { key: 'open-cmo-evidence-package', label: 'Open CMO Evidence Package', kind: 'focus', target: 'cmo', block: 'usp-cmo-evidence-package', group: 'CMO', hint: 'Final CMO evidence package', keywords: 'cmo evidence package aar handoff fingerprint json release grade training blockers' },
                     { key: 'copy-release-summary', label: 'Copy Release Summary', kind: 'copy', target: 'release', group: 'Release', hint: 'Copy status summary', keywords: 'copy release summary blockers' },
                     { key: 'copy-coverage-summary', label: 'Copy Coverage Summary', kind: 'copy', target: 'coverage', group: 'Coverage', hint: 'Copy status summary', keywords: 'copy coverage summary evidence' },
                     { key: 'copy-cmo-readiness-brief', label: 'Copy CMO Readiness Brief', kind: 'copy', target: 'cmo', group: 'CMO', hint: 'Copy readiness brief', keywords: 'copy cmo readiness brief go no-go confidence' },
-                    { key: 'copy-cmo-test-card', label: 'Copy CMO Test Card', kind: 'copy', target: 'cmo', group: 'CMO', hint: 'Copy operator test card', keywords: 'copy cmo test card operator steps abort criteria' }
+                    { key: 'copy-cmo-test-card', label: 'Copy CMO Test Card', kind: 'copy', target: 'cmo', group: 'CMO', hint: 'Copy operator test card', keywords: 'copy cmo test card operator steps abort criteria' },
+                    { key: 'copy-cmo-evidence-package-summary', label: 'Copy CMO Evidence Package Summary', kind: 'copy', target: 'cmo', group: 'CMO', hint: 'Copy evidence package summary', keywords: 'copy cmo evidence package summary aar release grade handoff' },
+                    { key: 'copy-cmo-evidence-package-json', label: 'Copy CMO Evidence Package JSON', kind: 'copy', target: 'cmo', group: 'CMO', hint: 'Copy evidence package JSON', keywords: 'copy cmo evidence package json manifest fingerprint validation' }
                 ];
             }
             function commandPaletteFilters() {
@@ -5089,7 +5096,8 @@
                     return {
                         brief: body._cmoWarGameReadinessBrief || null,
                         test_card: body._cmoWarGameTestCard || null,
-                        snapshot: body._scenarioEvidenceFlowSnapshot || null
+                        snapshot: body._scenarioEvidenceFlowSnapshot || null,
+                        evidence_package: body._cmoWarGameEvidencePackage || null
                     };
                 }
                 var panel = root.AppUnitStatusPanel;
@@ -5123,6 +5131,20 @@
                     lines = arr(card.operator_steps).slice(0, 2).map(cmoText)
                         .concat(arr(card.abort_criteria).slice(0, 2).map(cmoText));
                     return detail('cmo', label, chip && chip.cls || 'incomplete', 'Operator test card:', lines);
+                }
+                if (action && /cmo-evidence-package/.test(String(action.key || ''))) {
+                    var pkg = obj(state.evidence_package);
+                    var summary = obj(pkg.summary);
+                    var pkgLabel = summary.outcome || label || 'CMO evidence package pending';
+                    lines = [
+                        'Package: ' + (summary.package_id || 'pending'),
+                        'Release interpretation: ' + (summary.release_interpretation || 'pending'),
+                        'Release-grade candidate: ' + (summary.release_grade_candidate ? 'yes' : 'no'),
+                        'Training-only: ' + (summary.training_only ? 'yes' : 'no'),
+                        'Evidence changes: ' + num(summary.evidence_changes),
+                        'Blockers / warnings: ' + num(summary.unresolved_items)
+                    ];
+                    return detail('cmo', pkgLabel, chip && chip.cls || 'incomplete', 'Final evidence package:', lines);
                 }
                 lines = [
                     'Confidence: ' + confidenceText(brief.confidence),
@@ -5252,9 +5274,12 @@
             }
             function copyCmoArtifact(action, pop) {
                 var panel = root.AppUnitStatusPanel;
-                var fn = action && action.key === 'copy-cmo-test-card'
-                    ? 'copyCmoWarGameTestCard'
-                    : 'copyCmoWarGameReadinessBrief';
+                var map = {
+                    'copy-cmo-test-card': 'copyCmoWarGameTestCard',
+                    'copy-cmo-evidence-package-summary': 'copyCmoWarGameEvidencePackageSummary',
+                    'copy-cmo-evidence-package-json': 'copyCmoWarGameEvidencePackageJson'
+                };
+                var fn = map[action && action.key] || 'copyCmoWarGameReadinessBrief';
                 if (!panel || typeof panel[fn] !== 'function') return false;
                 try {
                     var ret = panel[fn]();
@@ -7514,9 +7539,36 @@
         .cmo-wargame-aar--blocked { color:#e87a7a; }
         .cmo-wargame-aar--locked { color:#6f8798; }
         .cmo-wargame-after-action-debrief-source { padding-top:5px; color:#6f8798; font-size:0.62rem; border-top:1px solid #0d1420; }
+        .cmo-wargame-live-package { padding:7px 0.75rem; border-top:1px solid #23486a; border-bottom:1px solid #142033; color:#b8d0e4; background:#06151d; }
+        .cmo-wargame-live-package:focus { outline:2px solid #6ec0e0; outline-offset:-2px; }
+        .cmo-wargame-live-package-header { display:flex; flex-wrap:wrap; align-items:baseline; gap:6px; margin-bottom:6px; }
+        .cmo-wargame-live-package-header span { color:#7fa0b8; font-size:0.62rem; text-transform:uppercase; letter-spacing:0; }
+        .cmo-wargame-live-package-header strong { color:#d9f4ff; font-size:0.86rem; }
+        .cmo-wargame-live-package--ready .cmo-wargame-live-package-header strong { color:#8fd6a3; }
+        .cmo-wargame-live-package--review .cmo-wargame-live-package-header strong { color:#e8c97a; }
+        .cmo-wargame-live-package--blocked .cmo-wargame-live-package-header strong { color:#e87a7a; }
+        .cmo-wargame-live-package-meta { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; margin:0 0 6px; }
+        .cmo-wargame-live-package-meta div { background:#0b1826; border:1px solid #173049; border-radius:4px; padding:4px 6px; min-width:0; }
+        .cmo-wargame-live-package-meta dt { color:#7fa0b8; font-size:0.61rem; text-transform:uppercase; }
+        .cmo-wargame-live-package-meta dd { margin:0; color:#d8e8f4; font-weight:700; overflow-wrap:anywhere; }
+        .cmo-wargame-live-package-actions { display:flex; flex-wrap:wrap; gap:4px; align-items:center; margin:5px 0; }
+        .cmo-wargame-live-package-actions button { border:1px solid #245070; background:#0b1826; color:#d8e8f4; border-radius:4px; padding:4px 7px; font-size:0.64rem; cursor:pointer; }
+        .cmo-wargame-live-package-actions button:hover,
+        .cmo-wargame-live-package-actions button:focus-visible { border-color:#6ec0e0; background:#10263a; outline:none; }
+        .cmo-wargame-live-package-actions span { color:#8fd6a3; font-size:0.62rem; min-width:42px; }
+        .cmo-wargame-live-package-handoff strong { display:block; color:#8fb8d8; font-size:0.66rem; text-transform:uppercase; margin:6px 0 2px; }
+        .cmo-wargame-live-package-handoff ul { margin:0; padding:3px 1.4rem 7px 1.65rem; font-size:0.69rem; line-height:1.45; }
+        .cmo-wargame-live-package-handoff li { margin:2px 0; }
+        .cmo-wargame-live-package-handoff li b { color:#d8e8f4; margin-right:4px; }
+        .cmo-wargame-live-package-handoff li span { color:#7fa0b8; }
+        .cmo-wargame-live-package--pass { color:#8fd6a3; }
+        .cmo-wargame-live-package--warn { color:#e8c97a; }
+        .cmo-wargame-live-package--fail { color:#e87a7a; }
+        .cmo-wargame-live-package-source { padding-top:5px; color:#6f8798; font-size:0.62rem; border-top:1px solid #0d1420; }
         @media (max-width: 900px) {
             .cmo-wargame-run-instrumentation-meta,
-            .cmo-wargame-after-action-debrief-meta { grid-template-columns:repeat(2,minmax(0,1fr)); }
+            .cmo-wargame-after-action-debrief-meta,
+            .cmo-wargame-live-package-meta { grid-template-columns:repeat(2,minmax(0,1fr)); }
         }
         /* RMOOZ-CMO-18: alternative shooters */
         .usp-alt-meta { padding:5px 0.75rem; color:#7fa0b8; font-size:0.67rem; border-bottom:1px solid #142033; }

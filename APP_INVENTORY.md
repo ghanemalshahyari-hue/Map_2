@@ -206,6 +206,23 @@ CMO-WARGAME-AAR-1:
                       doctrine mutation, scenario-contract change, DOCX staging,
                       browser-persistent storage, or AI decision override.
                       Offline sync/testing: pending by user instruction.
+CMO-WARGAME-EVIDENCE-PACKAGE-1:
+                      main-app read-only CMO war-game evidence package builder.
+                      Adds `cmo-wargame-evidence-package.js` to bundle the
+                      after-action debrief, run outcome, release interpretation,
+                      evidence changes, unresolved blockers/warnings,
+                      recommendations, after-action checklist, handoff
+                      checklist, validation metadata, fingerprint mismatch
+                      detection, JSON text, operator summary, HTML output, and
+                      package comparison. The live wiring now loads the module
+                      after AAR and renders the final Evidence Package section
+                      in the existing CMO panel, with browser-local copy buttons
+                      for package summary, JSON, and handoff checklist plus
+                      Scenario Actions palette entries. Display/export only:
+                      no backend route, database write, browser-persistent
+                      storage write, combat/action mutation, doctrine mutation,
+                      scenario-contract change, DOCX staging, or AI decision
+                      override. Offline sync/testing: pending by user instruction.
 ```
 
 Active Scenario-QA scripts mirrored between main and offline app shells:

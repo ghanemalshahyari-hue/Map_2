@@ -1409,6 +1409,7 @@
         var TC = root.RmoozCmoWarGameTestCard;
         var RI = root.RmoozCmoWarGameRunInstrumentation;
         var AD = root.RmoozCmoWarGameAfterActionDebrief;
+        var EP = root.RmoozCmoWarGameEvidencePackage;
         if (!FS || typeof FS.buildSnapshot !== 'function' ||
             !RB || typeof RB.buildBrief !== 'function' ||
             !TC || typeof TC.buildTestCard !== 'function') {
@@ -1434,7 +1435,134 @@
                 generated_at: generatedAt
             })
             : null;
-        return { snapshot: snapshot, brief: brief, test_card: testCard, run_instrumentation: runInstrumentation, after_action_debrief: afterActionDebrief };
+        var shouldBuildPackage = EP && afterActionDebrief && typeof EP.buildPackage === 'function' &&
+            (!AD || !AD.shouldRenderDebrief || AD.shouldRenderDebrief(afterActionDebrief));
+        var evidencePackage = shouldBuildPackage
+            ? EP.buildPackage(afterActionDebrief, {
+                generated_at: generatedAt,
+                fingerprint: afterActionDebrief.scenario_fingerprint
+            })
+            : null;
+        return {
+            snapshot: snapshot,
+            brief: brief,
+            test_card: testCard,
+            run_instrumentation: runInstrumentation,
+            after_action_debrief: afterActionDebrief,
+            evidence_package: evidencePackage
+        };
+    }
+
+    function yesNo(value) { return value ? 'yes' : 'no'; }
+
+    function renderCmoWarGameEvidencePackageHtml(pkg) {
+        pkg = pkg || {};
+        var summary = pkg.summary || {};
+        var counts = pkg.counts || {};
+        var readiness = pkg.readiness || {};
+        var blocked = summary.blocked || readiness.blocked;
+        var needsReview = summary.needs_review || readiness.needs_review;
+        var stateClass = blocked ? 'blocked' : (needsReview ? 'review' : 'ready');
+        var handoff = Array.isArray(pkg.handoff_checklist) ? pkg.handoff_checklist : [];
+        var html = '<div id="usp-cmo-evidence-package" class="cmo-wargame-live-package cmo-wargame-live-package--' + esc(stateClass) + '" data-cmo-evidence-package="true" tabindex="-1">' +
+            '<div class="cmo-wargame-live-package-header">' +
+                '<span>CMO War-Game Evidence Package</span>' +
+                '<span dir="rtl">&#1581;&#1586;&#1605;&#1577; &#1571;&#1583;&#1604;&#1577; &#1575;&#1604;&#1605;&#1606;&#1575;&#1608;&#1585;&#1577;</span>' +
+                '<strong>' + esc(summary.outcome || 'Unknown') + '</strong>' +
+            '</div>' +
+            '<dl class="cmo-wargame-live-package-meta">' +
+                '<div><dt>Release meaning</dt><dd>' + esc(summary.release_interpretation || readiness.release_interpretation || 'not release-grade evidence') + '</dd></div>' +
+                '<div><dt>Release-grade candidate</dt><dd>' + esc(yesNo(summary.release_grade_candidate || readiness.release_grade_candidate)) + '</dd></div>' +
+                '<div><dt>Training-only</dt><dd>' + esc(yesNo(summary.training_only || readiness.training_only)) + '</dd></div>' +
+                '<div><dt>Evidence changes</dt><dd>' + esc(summary.evidence_changes == null ? (counts.evidence_changes || 0) : summary.evidence_changes) + '</dd></div>' +
+                '<div><dt>Blockers / warnings</dt><dd>' + esc(summary.unresolved_items == null ? (counts.unresolved_items || 0) : summary.unresolved_items) + '</dd></div>' +
+                '<div><dt>Recommendations</dt><dd>' + esc(summary.recommendations == null ? (counts.recommendations || 0) : summary.recommendations) + '</dd></div>' +
+                '<div><dt>Package ID</dt><dd><code>' + esc(summary.package_id || (pkg.manifest && pkg.manifest.package_id) || 'unknown') + '</code></dd></div>' +
+                '<div><dt>Fingerprint</dt><dd><code>' + esc(summary.scenario_fingerprint || pkg.scenario_fingerprint || 'unknown') + '</code></dd></div>' +
+            '</dl>' +
+            '<div class="cmo-wargame-live-package-actions" role="group" aria-label="CMO evidence package copy actions">' +
+                '<button type="button" data-cmo-evidence-package-copy="summary">Copy Evidence Package Summary</button>' +
+                '<button type="button" data-cmo-evidence-package-copy="json">Copy Evidence Package JSON</button>' +
+                '<button type="button" data-cmo-evidence-package-copy="handoff">Copy Handoff Checklist</button>' +
+                '<span data-cmo-evidence-package-copy-state aria-live="polite"></span>' +
+            '</div>' +
+            '<div class="cmo-wargame-live-package-handoff"><strong>Handoff checklist</strong><ul>';
+        handoff.forEach(function (item) {
+            html += '<li class="cmo-wargame-live-package--' + esc(item.status || 'warn') + '"><b>' + esc((item.status || 'warn').toUpperCase()) + '</b><span>' + esc(item.label || item.key || '') + '</span></li>';
+        });
+        if (!handoff.length) html += '<li><b>NA</b><span>No handoff checklist available.</span></li>';
+        html += '</ul></div><div class="cmo-wargame-live-package-source">Read-only package. Browser-local clipboard copy only; no backend export, file write, document staging, storage, or scenario mutation.</div></div>';
+        return html;
+    }
+
+    function getCurrentCmoEvidencePackage() {
+        var body = $('usp-cmo-wargame-readiness-body');
+        if (body && body._cmoWarGameEvidencePackage) return body._cmoWarGameEvidencePackage;
+        var state = buildCmoWarGameState(currentUnit);
+        return state && state.evidence_package;
+    }
+
+    function cmoPackageHandoffText(pkg) {
+        pkg = pkg || {};
+        var lines = [
+            'CMO War-Game Evidence Package Handoff Checklist',
+            'Package: ' + ((pkg.summary && pkg.summary.package_id) || (pkg.manifest && pkg.manifest.package_id) || 'unknown'),
+            'Scenario fingerprint: ' + ((pkg.summary && pkg.summary.scenario_fingerprint) || pkg.scenario_fingerprint || 'unknown'),
+            ''
+        ];
+        (Array.isArray(pkg.handoff_checklist) ? pkg.handoff_checklist : []).forEach(function (item) {
+            lines.push('- [' + String(item.status || 'warn').toUpperCase() + '] ' + (item.label || item.key || ''));
+        });
+        lines.push('', 'Read-only handoff checklist. Browser-local clipboard copy only.');
+        return lines.join('\n');
+    }
+
+    function copyTextToClipboard(text) {
+        var nav = root.navigator || {};
+        if (!nav.clipboard || typeof nav.clipboard.writeText !== 'function') return false;
+        return nav.clipboard.writeText(String(text == null ? '' : text));
+    }
+
+    function copyCmoWarGameEvidencePackageSummary() {
+        var pkg = getCurrentCmoEvidencePackage();
+        var EP = root.RmoozCmoWarGameEvidencePackage;
+        if (!pkg || !EP || typeof EP.summaryText !== 'function') return false;
+        return copyTextToClipboard(EP.summaryText(pkg));
+    }
+
+    function copyCmoWarGameEvidencePackageJson() {
+        var pkg = getCurrentCmoEvidencePackage();
+        var EP = root.RmoozCmoWarGameEvidencePackage;
+        if (!pkg || !EP || typeof EP.toJson !== 'function') return false;
+        return copyTextToClipboard(EP.toJson(pkg));
+    }
+
+    function copyCmoWarGameEvidencePackageHandoffChecklist() {
+        var pkg = getCurrentCmoEvidencePackage();
+        if (!pkg) return false;
+        return copyTextToClipboard(cmoPackageHandoffText(pkg));
+    }
+
+    function setCmoPackageCopyState(body, label) {
+        var node = body && body.querySelector ? body.querySelector('[data-cmo-evidence-package-copy-state]') : null;
+        if (node) node.textContent = label || '';
+    }
+
+    function bindCmoWarGameEvidencePackageActions(body) {
+        var buttons = body && body.querySelectorAll ? body.querySelectorAll('[data-cmo-evidence-package-copy]') : [];
+        Array.prototype.forEach.call(buttons, function (btn) {
+            btn.addEventListener('click', function () {
+                var action = btn.getAttribute('data-cmo-evidence-package-copy') || 'summary';
+                var ret = action === 'json'
+                    ? copyCmoWarGameEvidencePackageJson()
+                    : (action === 'handoff' ? copyCmoWarGameEvidencePackageHandoffChecklist() : copyCmoWarGameEvidencePackageSummary());
+                if (ret && typeof ret.then === 'function') {
+                    ret.then(function () { setCmoPackageCopyState(body, 'Copied'); }, function () { setCmoPackageCopyState(body, 'Copy unavailable'); });
+                } else {
+                    setCmoPackageCopyState(body, ret === false ? 'Copy unavailable' : 'Copied');
+                }
+            });
+        });
     }
 
     function ensureCmoWarGameRunPolling() {
@@ -1454,6 +1582,7 @@
         var TC = root.RmoozCmoWarGameTestCard;
         var RI = root.RmoozCmoWarGameRunInstrumentation;
         var AD = root.RmoozCmoWarGameAfterActionDebrief;
+        var EP = root.RmoozCmoWarGameEvidencePackage;
         var state = buildCmoWarGameState(unit);
         if (!state || !RB || typeof RB.renderBriefHtml !== 'function' ||
             !TC || typeof TC.renderTestCardHtml !== 'function') {
@@ -1465,6 +1594,7 @@
         body._cmoWarGameTestCard = state.test_card;
         body._cmoWarGameRunInstrumentation = state.run_instrumentation;
         body._cmoWarGameAfterActionDebrief = state.after_action_debrief;
+        body._cmoWarGameEvidencePackage = state.evidence_package;
         var runHtml = state.run_instrumentation && RI && typeof RI.renderRunInstrumentationHtml === 'function'
             ? RI.renderRunInstrumentationHtml(state.run_instrumentation, { lang: 'ar' })
             : '';
@@ -1472,7 +1602,11 @@
             (!AD.shouldRenderDebrief || AD.shouldRenderDebrief(state.after_action_debrief))
             ? AD.renderDebriefHtml(state.after_action_debrief, { lang: 'ar' })
             : '';
-        body.innerHTML = RB.renderBriefHtml(state.brief, { lang: 'ar' }) + TC.renderTestCardHtml(state.test_card, { lang: 'ar' }) + runHtml + debriefHtml;
+        var packageHtml = state.evidence_package && EP
+            ? renderCmoWarGameEvidencePackageHtml(state.evidence_package)
+            : '';
+        body.innerHTML = RB.renderBriefHtml(state.brief, { lang: 'ar' }) + TC.renderTestCardHtml(state.test_card, { lang: 'ar' }) + runHtml + debriefHtml + packageHtml;
+        bindCmoWarGameEvidencePackageActions(body);
         block.removeAttribute('hidden');
         ensureCmoWarGameRunPolling();
     }
@@ -2515,7 +2649,10 @@
         buildCmoWarGameState: buildCmoWarGameState,
         populateCmoWarGameReadiness: populateCmoWarGameReadiness,
         copyCmoWarGameReadinessBrief: copyCmoWarGameReadinessBrief,
-        copyCmoWarGameTestCard: copyCmoWarGameTestCard
+        copyCmoWarGameTestCard: copyCmoWarGameTestCard,
+        copyCmoWarGameEvidencePackageSummary: copyCmoWarGameEvidencePackageSummary,
+        copyCmoWarGameEvidencePackageJson: copyCmoWarGameEvidencePackageJson,
+        copyCmoWarGameEvidencePackageHandoffChecklist: copyCmoWarGameEvidencePackageHandoffChecklist
     };
     init();
 

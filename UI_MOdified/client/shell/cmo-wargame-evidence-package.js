@@ -20,6 +20,25 @@
             .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
     }
     function safeKey(v) { return String(v == null ? 'unknown' : v).toLowerCase().replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '') || 'unknown'; }
+    function releaseInterpretationObject(debrief) {
+        var rel = obj(debrief).release_interpretation;
+        return rel && typeof rel === 'object' ? rel : {};
+    }
+    function releaseInterpretationText(debrief) {
+        var rel = obj(debrief).release_interpretation;
+        if (typeof rel === 'string') return rel || 'not release-grade evidence';
+        var rich = releaseInterpretationObject(debrief);
+        return rich.label || rich.key || obj(debrief).release_interpretation_text || 'not release-grade evidence';
+    }
+    function releaseInterpretationKey(debrief) {
+        var rel = obj(debrief).release_interpretation;
+        if (typeof rel === 'string') return safeKey(rel);
+        return releaseInterpretationObject(debrief).key || safeKey(releaseInterpretationText(debrief));
+    }
+    function outcomeSeverity(outcome) {
+        outcome = obj(outcome);
+        return outcome.severity || outcome.status || 'warn';
+    }
     function localApi(globalName, moduleName) {
         if (root[globalName]) return root[globalName];
         if (typeof require === 'function') {
@@ -85,22 +104,24 @@
     }
     function readiness(debrief) {
         var outcome = obj(debrief.outcome);
-        var interp = String(debrief.release_interpretation || '');
-        var releaseCandidate = /release-grade evidence candidate/i.test(interp);
-        var trainingOnly = /training-only/i.test(interp);
+        var interp = releaseInterpretationText(debrief);
+        var interpKey = releaseInterpretationKey(debrief);
+        var severity = outcomeSeverity(outcome);
+        var releaseCandidate = interpKey === 'release_grade_candidate' || /release-grade evidence candidate/i.test(interp);
+        var trainingOnly = interpKey === 'training_only_evidence' || /training-only/i.test(interp);
         var unresolved = arr(debrief.unresolved_items).length;
         return {
             release_grade_candidate: releaseCandidate && unresolved === 0,
             training_only: trainingOnly,
-            needs_review: unresolved > 0 || outcome.severity === 'warn',
-            blocked: outcome.severity === 'fail',
-            release_interpretation: debrief.release_interpretation || 'not release-grade evidence',
+            needs_review: unresolved > 0 || severity === 'warn',
+            blocked: severity === 'fail',
+            release_interpretation: interp,
             read_only: true
         };
     }
     function buildSections(debrief) {
         return [
-            { key: 'outcome', label: 'Outcome', items: [obj(debrief.outcome).label || obj(debrief.outcome).key || 'Unknown', debrief.release_interpretation || 'not release-grade evidence'], read_only: true },
+            { key: 'outcome', label: 'Outcome', items: [obj(debrief.outcome).label || obj(debrief.outcome).key || 'Unknown', releaseInterpretationText(debrief)], read_only: true },
             { key: 'timeline', label: 'Run timeline', items: arr(debrief.timeline).map(function (t) { return (t.label || t.key || 'Step') + ': ' + (t.value || t.detail || ''); }), read_only: true },
             { key: 'evidence_changes', label: 'Evidence changes', items: arr(debrief.evidence_changes).map(function (c) { return (c.label || c.key || 'Change') + ': ' + c.previous + ' -> ' + c.current; }), read_only: true },
             { key: 'unresolved', label: 'Unresolved blockers / warnings', items: arr(debrief.unresolved_items).map(function (u) { return '[' + (u.status || 'warn') + '] ' + (u.label || u.key || 'Item') + (u.detail ? ': ' + u.detail : ''); }), read_only: true },
@@ -151,7 +172,7 @@
             package_id: m.package_id || 'unknown',
             scenario_fingerprint: m.scenario_fingerprint || pkg.scenario_fingerprint || 'unknown',
             outcome: obj(d.outcome).label || obj(d.outcome).key || 'Unknown',
-            release_interpretation: r.release_interpretation || d.release_interpretation || 'not release-grade evidence',
+            release_interpretation: r.release_interpretation || releaseInterpretationText(d),
             release_grade_candidate: !!r.release_grade_candidate,
             training_only: !!r.training_only,
             needs_review: !!r.needs_review,

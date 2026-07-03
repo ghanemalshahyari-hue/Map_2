@@ -422,6 +422,24 @@ Testing value: after a live CMO war-game, the operator immediately sees whether
 the run can support release-grade evidence or should stay training-only, without
 leaving the Scenario Evidence drawer.
 
+CMO War-Game Evidence Package appears after the debrief when a post-run package
+is available:
+
+```text
+Readiness -> Test Card -> Live Run -> After-Action Debrief -> Evidence Package
+- outcome and release interpretation
+- release-grade candidate yes/no
+- training-only yes/no
+- evidence changes and blocker/warning counts
+- package id and scenario fingerprint
+- handoff checklist
+- copy summary / copy JSON / copy handoff checklist
+```
+
+Testing value: the CMO can end a war-game smoke with one package that answers
+what happened, whether it is release-grade, what changed, what remains blocked,
+and whether the package fingerprint matches the tested scenario.
+
 The cluster is display/navigation only. It does not add backend routes, database
 state, auto-fix behavior, combat/action mutation, doctrine mutation, scenario
 contract changes, or DOCX staging.

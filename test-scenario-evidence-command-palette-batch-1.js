@@ -167,11 +167,15 @@ console.log('--- QA-126: header trigger and command catalog ---');
         'Open Review Queue',
         'Open Handoff Package',
         'Open Handoff Acceptance',
+        'Open CMO Readiness',
+        'Open CMO Test Card',
         'Copy Release Summary',
-        'Copy Coverage Summary'
+        'Copy Coverage Summary',
+        'Copy CMO Readiness Brief',
+        'Copy CMO Test Card'
     ];
     var actual = labels(API.commandPaletteActions());
-    assert('T-6  exactly ten command labels are available', expected.length === actual.length && expected.every(function (label) { return actual.indexOf(label) !== -1; }));
+    assert('T-6  fourteen command labels are available including CMO actions', expected.length === actual.length && expected.every(function (label) { return actual.indexOf(label) !== -1; }));
 })();
 
 console.log('\n--- QA-127: search and render behavior ---');

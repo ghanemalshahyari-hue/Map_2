@@ -147,7 +147,7 @@ console.log('\n--- QA-131: quick filters and status context ---');
     var releaseOnly = labels(API.filterCommands(all, '', 'release'));
     assert('T-1  release filter keeps release commands only', releaseOnly.length === 3 && releaseOnly.indexOf('Open Release Gate') !== -1 && releaseOnly.indexOf('Open Coverage') === -1);
     var copyOnly = labels(API.filterCommands(all, '', 'copy'));
-    assert('T-2  copy filter keeps copy commands only', copyOnly.join('|') === 'Copy Release Summary|Copy Coverage Summary');
+    assert('T-2  copy filter keeps browser-local copy commands only', copyOnly.join('|') === 'Copy Release Summary|Copy Coverage Summary|Copy CMO Readiness Brief|Copy CMO Test Card');
     var reviewCoverage = labels(API.filterCommands(all, 'review', 'coverage'));
     assert('T-3  search combines with filter', reviewCoverage.join('|') === 'Open Review Queue');
 
@@ -157,6 +157,8 @@ console.log('\n--- QA-131: quick filters and status context ---');
     var coverageCtx = API.commandContext({ target: 'coverage' }, sampleStatus(), sampleCluster());
     assert('T-6  coverage context includes percent', coverageCtx.title === 'Coverage: 78%');
     assert('T-7  coverage context includes leading evidence count', coverageCtx.detail === 'Contact evidence: 8/10');
+    var cmo = labels(API.filterCommands(all, 'cmo'));
+    assert('T-8  CMO search finds readiness and test-card commands', cmo.indexOf('Open CMO Readiness') !== -1 && cmo.indexOf('Open CMO Test Card') !== -1);
 })();
 
 console.log('\n--- QA-132: decorated rendering and docs/boundaries ---');

@@ -3,7 +3,8 @@
  * ----------------------------------------------------------------------------
  * Headless gate for the Scenario Status Header Cluster: release, closeout,
  * coverage, and handoff chips, chip-to-drawer navigation targets, selected-unit
- * boundary preservation, drawer grouping, parity, and no mutation surfaces.
+ * boundary preservation, drawer grouping, docs, and no mutation surfaces.
+ * Main app only: offline sync/testing is pending by user instruction.
  * ========================================================================== */
 'use strict';
 
@@ -12,9 +13,7 @@ var path = require('path');
 
 var ROOT = __dirname;
 var SHELL = path.join(ROOT, 'UI_MOdified', 'client', 'shell');
-var OFF = path.join(ROOT, 'UI_MOdified', 'Offline_Deployment', 'offline_app', 'client', 'shell');
 var APP = path.join(ROOT, 'UI_MOdified', 'client', 'app.html');
-var OFF_APP = path.join(ROOT, 'UI_MOdified', 'Offline_Deployment', 'offline_app', 'client', 'app.html');
 var DOCS = path.join(ROOT, 'UI_MOdified', 'docs');
 
 var passed = 0, failed = 0;
@@ -130,20 +129,17 @@ console.log('\n--- QA-118: panel routing, grouping, selected-unit boundary ---')
     assert('T-7  Scenario Evidence drawer remains grouped', ['overview', 'qa', 'handoff', 'force'].every(function (k) { return panel.indexOf("key: '" + k + "'") !== -1; }));
 })();
 
-console.log('\n--- QA-119: app shell, docs, parity, boundaries ---');
+console.log('\n--- QA-119: app shell, docs, main-only scope, boundaries ---');
 (function () {
-    [src(APP), src(OFF_APP)].forEach(function (html) {
-        assert('T-1  app shell has scenario status mount', html.indexOf('id="release-hud-mount"') !== -1 && html.indexOf('Scenario evidence status') !== -1);
-        assert('T-2  app shell has cluster CSS', html.indexOf('.release-hud-cluster') !== -1 && html.indexOf('RMOOZ-QA-BATCH-13') !== -1);
-        assert('T-3  app shell loads existing HUD module', html.indexOf('scenario-evidence-release-hud.js') !== -1);
-    });
-    ['scenario-evidence-release-hud.js', 'unit-status-panel.js'].forEach(function (name) {
-        assert('T-4  offline/' + name + ' matches main', src(path.join(SHELL, name)) === src(path.join(OFF, name)));
-    });
+    var html = src(APP);
+    assert('T-1  app shell has scenario status mount', html.indexOf('id="release-hud-mount"') !== -1 && html.indexOf('Scenario evidence status') !== -1);
+    assert('T-2  app shell has cluster CSS', html.indexOf('.release-hud-cluster') !== -1 && html.indexOf('RMOOZ-QA-BATCH-13') !== -1);
+    assert('T-3  app shell loads existing HUD module', html.indexOf('scenario-evidence-release-hud.js') !== -1);
     var inventory = src(path.join(ROOT, 'APP_INVENTORY.md'));
     var runbook = src(path.join(DOCS, 'cmo-evidence-demo-runbook.md'));
     var handoff = src(path.join(DOCS, 'cmo-evidence-demo-handoff.md'));
-    assert('T-5  inventory documents v13 cluster', inventory.indexOf('scenario-evidence v13') !== -1 && inventory.indexOf('Scenario Status Header Cluster') !== -1);
+    assert('T-4  inventory documents v13 cluster', inventory.indexOf('scenario-evidence v13') !== -1 && inventory.indexOf('Scenario Status Header Cluster') !== -1);
+    assert('T-5  inventory records offline sync/testing pending', inventory.indexOf('Offline sync/testing: pending by user instruction') !== -1);
     assert('T-6  runbook documents all chip routes', ['Evidence Release Gate', 'Evidence Review Closeout', 'Evidence Coverage', 'Handoff Acceptance'].every(function (n) { return runbook.indexOf(n) !== -1; }));
     assert('T-7  handoff doc documents display/navigation boundary', handoff.indexOf('display/navigation only') !== -1);
 

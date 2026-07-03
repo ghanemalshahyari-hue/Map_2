@@ -252,9 +252,9 @@ console.log('\n--- ST2-5: release audit history, export receipts, and report sti
 
 console.log('\n--- ST2-6: command palette coverage and strict non-mutation boundaries ---');
 (function () {
-    assert('T-1  command palette has ten operator actions', arr(STATUS.commandPaletteActions()).length === 10);
+    assert('T-1  command palette has fourteen operator actions', arr(STATUS.commandPaletteActions()).length === 14);
     var grouped = arr(STATUS.commandPaletteActions()).reduce(function (acc, command) { acc[command.target] = (acc[command.target] || 0) + 1; return acc; }, {});
-    assert('T-2  command actions cover all four status targets', keys(grouped).join('|') === 'closeout|coverage|handoff|release');
+    assert('T-2  command actions cover scenario status plus CMO readiness targets', keys(grouped).join('|') === 'closeout|cmo|coverage|handoff|release');
     assert('T-3  copy filter remains browser-local only', STATUS.filterCommands(STATUS.commandPaletteActions(), '', 'copy').every(function (command) { return command.kind === 'copy'; }));
     assert('T-4  status context render preserves detail line', STATUS.renderCommandPaletteHtml(STATUS.decorateCommands(STATUS.filterCommands(STATUS.commandPaletteActions(), 'release', 'release'), { release_gate: { status_label_en: 'Not Ready', checks: [{ key: 'unresolved_issues', actual: '2', status: 'fail' }] } }, { release: { label_en: 'Not Ready', cls: 'not-ready' } }), 0).indexOf('2 unresolved issues') !== -1);
     var sources = [

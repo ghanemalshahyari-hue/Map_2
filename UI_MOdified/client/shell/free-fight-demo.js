@@ -3464,6 +3464,57 @@
             recorded_at: _nowISO(),
         };
     }
+    // SCC-REAL-STATE-B: on a successful operator commit, write ONE durable operator record through the
+    // SANCTIONED commit path (/api/sim/propose[mock] -> /api/sim/commit). /api/sim/commit only journals a
+    // proposal the server already holds, so we first register a deterministic, LLM-free MOCK proposal (no
+    // scenario generation, no demo preview, no Ollama) and then ACCEPT-commit it. The durable row is an
+    // operator-attribution record: operator_id + selected COA id + an explicit SCC_COMMIT marker. Real
+    // state/movement stays on Slice 1's WS3 path. Committed operator run only; HOLD/preview never reach here.
+    // Boundary-safe: reads state only, never mutates window.units / scenario / map / lines.
+    function _journalSccCommit(coaExec) {
+        if (!coaExec || !coaExec.active) return;                  // committed operator commit only
+        var w = W();
+        if (!w || typeof w.fetch !== 'function') return;          // inert under Node / jsdom (no fetch)
+        var sc = w.RmoozScenario && w.RmoozScenario.scenario;
+        var scenarioName = (sc && (sc.name || sc.scenario_label || sc.scenario_name)) || null;
+        if (!scenarioName) return;                                // need a scenario to journal against
+        var operatorId = (function () {
+            try {
+                var cu = w.AppConfig && w.AppConfig.CHAT_CONFIG && w.AppConfig.CHAT_CONFIG.currentUser;
+                if (cu && cu.id) return String(cu.id).slice(0, 80);
+            } catch (_) {}
+            return 'operator';
+        })();
+        var coaId = coaExec.selected_coa_id || 'COA';
+        var runId = 'scc-commit-' + scenarioName;
+        var JSONH = { 'Content-Type': 'application/json' };
+        // (1) Register a deterministic, LLM-free MOCK proposal so /api/sim/commit has one to consume.
+        w.fetch('/api/sim/propose', {
+            method: 'POST', credentials: 'include', headers: JSONH,
+            body: JSON.stringify({ scenarioName: scenarioName, stepIndex: 0, mockMode: true, runId: runId })
+        }).then(function (r) { return (r && r.ok && typeof r.json === 'function') ? r.json() : null; })
+          .then(function (prop) {
+              if (!prop || !prop.proposal_id) return null;
+              // (2) Durably commit the operator decision through the sanctioned /api/sim/commit path.
+              return w.fetch('/api/sim/commit', {
+                  method: 'POST', credentials: 'include', headers: JSONH,
+                  body: JSON.stringify({
+                      proposal_id:         prop.proposal_id,
+                      accepted_action_ids: 'ALL',
+                      operator_id:         operatorId,
+                      source:              'deterministic-sim',   // LLM-free (mock) commit — honest provenance
+                      mods: { kind: 'SCC_COMMIT', source: 'scenario-control-center', coa_id: coaId, side: coaExec.side || null }
+                  })
+              }).then(function (r2) { return (r2 && typeof r2.json === 'function') ? r2.json() : null; });
+          })
+          .then(function (res) {
+              try {
+                  if (res && res.ok) _appendToEventLog('SCC commit journaled — ' + esc(coaId) + ' (durable operator record via /api/sim/commit, seq ' + (res.journal_seq != null ? res.journal_seq : '?') + ').');
+              } catch (_) {}
+          })
+          .catch(function () { /* fire-and-forget; the local commit already succeeded + persisted */ });
+    }
+
     function _commitCoa(idx) {
         _clearAiLiteStagedGroups(); // RMOOZ-DUAL-MAP-LAYER-CONFLICT-A
         if (!_coaPlan || !_coaPlan.ok || !Array.isArray(_coaPlan.coas) || !_coaPlan.coas.length) return null;
@@ -3541,6 +3592,7 @@
         updatePanel();
         _whiteAdvisoryLevel = null;   // RMOOZ-WHITE-GREEN-ANNOTATION-T: fresh committed decision → re-advise
         try { _refreshGreenWorld('after_commit'); } catch (_) {}   // RMOOZ-GREEN-WORLD-UI-R (deterministic, no LLM)
+        try { _journalSccCommit(_coaExec); } catch (_) {}   // SCC-REAL-STATE-B: durable operator record via sanctioned /api/sim/commit
         return _coaExec;
     }
     // Deterministic replan-trigger check (req: branch/replan triggers). Returns { fired, reason, code }.

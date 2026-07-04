@@ -64,11 +64,16 @@ ok('determinism: deriveWorldState produces identical contacts on repeated calls'
    contacts0a === contacts0b);
 
 /* 4. Degraded flag gates contacts (null if degraded) ----------------------- */
-// Create a degraded scenario (not W3-rich) by removing schema_variant
-const degradedScenario = Object.assign({}, w3, { schema_variant: undefined });
+// Degraded is CAPABILITY-based (world-state.js:139-141: needs an objective + >=1 unit),
+// NOT schema_variant. Build a genuinely degraded scenario: no objective + no units, so
+// decisionCapable is false and the DERIVATIONS contributors return null.
+const degradedScenario = Object.assign({}, w3, {
+    schema_variant: undefined, obj: null, objectives: [],
+    red_units: [], blue_units_initial: [], units: [],
+});
 const wsD = WS.deriveWorldState(degradedScenario, 0);
-ok('degraded scenario: ws.derived.contacts is null (parity gate)',
-   wsD.derived.contacts === null);
+ok('degraded scenario (no objective + no units): ws.degraded true + ws.derived.contacts null (parity gate)',
+   wsD.degraded === true && wsD.derived.contacts === null);
 
 /* 5. Contacts have valid structure ----------------------------------------- */
 const step5 = WS.deriveWorldState(w3, 5);

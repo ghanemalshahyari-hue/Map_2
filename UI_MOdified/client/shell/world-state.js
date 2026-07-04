@@ -257,6 +257,47 @@
         return ws;
     }
 
+    /* ---- OPTION-C / SLICE-C1: scenario runtime clock helpers ---------------
+     * findStepForElapsedHours(scenario, hours): the authored step IN EFFECT at a
+     * given elapsed-hours time — the highest-index step whose elapsed_hours <= hours
+     * (steps[].elapsed_hours is monotonic), clamped to [0, steps.length-1]. This is
+     * how "current step = f(current_time)" is derived once the runtime clock owns
+     * time; steps become snapshots the clock indexes into (no scenario mutation).
+     * _buildClock(scenario, clock): the transient ws.clock field the committed Run
+     * publishes — H-relative current_time + the in-effect step, plus an absolute Zulu
+     * epoch (current_ms) ONLY when the scenario already carries start_time (C1 does
+     * not add that field; the readout formats DTG when present, else H±HH:MM).
+     * -------------------------------------------------------------------------- */
+    function findStepForElapsedHours(scenario, hours) {
+        var scn = obj(scenario), steps = arr(scn.steps);
+        if (!steps.length) return { index: 0, time_label: null, elapsed_hours: null };
+        var h = +hours; if (!isFinite(h)) h = num(obj(steps[0]).elapsed_hours) || 0;
+        var idx = 0;
+        for (var i = 0; i < steps.length; i++) {
+            var el = num(obj(steps[i]).elapsed_hours);
+            if (el != null && el <= h) idx = i;      // floor: last step reached at time h
+        }
+        var s = obj(steps[idx]);
+        return { index: idx, time_label: s.time_label || null, elapsed_hours: num(s.elapsed_hours) };
+    }
+    function _buildClock(scenario, clock) {
+        var scn = obj(scenario), c = obj(clock);
+        var cur = +c.current_hours;
+        var startH = isFinite(+c.start_hours) ? +c.start_hours : cur;
+        var endH = isFinite(+c.end_hours) ? +c.end_hours : cur;
+        var found = findStepForElapsedHours(scn, cur);
+        var startTime = (typeof scn.start_time === 'string' && scn.start_time) ? scn.start_time : null;
+        var currentMs = null;
+        if (startTime) { var base = Date.parse(startTime); if (isFinite(base)) currentMs = base + cur * 3600000; }
+        return {
+            start_hours: startH, current_hours: cur, end_hours: endH,
+            playing: !!c.playing, speed: isFinite(+c.speed) ? +c.speed : 1,
+            step_index: found.index, time_label: found.time_label,
+            start_time: startTime, current_ms: currentMs,
+            complete: (isFinite(endH) && isFinite(cur) && cur >= endH)
+        };
+    }
+
     /* ---- OPTION-B / SLICE-B1: World State owns committed-Run positions ------
      * deriveWorldStateWithOwned re-uses the PURE deriveWorldState(scenario, step)
      * (UNCHANGED — every WS1/DET1/ENG1 test still exercises it), then overlays the
@@ -268,26 +309,35 @@
      * scenario coord arrays are never mutated (AI/sim boundary safe). Callers pass owned
      * positions only for a committed operator run; otherwise they use the pure form.
      */
-    function deriveWorldStateWithOwned(scenario, stepIndex, ownedPositions) {
+    function deriveWorldStateWithOwned(scenario, stepIndex, ownedPositions, clock) {
         var ws = deriveWorldState(scenario, stepIndex);
-        if (!ownedPositions || typeof ownedPositions !== 'object' || !ws || !Array.isArray(ws.units)) return ws;
-        var overlaid = false;
-        ws.units.forEach(function (u) {
-            if (!u || !u.uid) return;
-            var owned = ownedPositions[u.uid];
-            var p = owned && owned.position;
-            if (Array.isArray(p) && p.length >= 2 && isFinite(+p[0]) && isFinite(+p[1])) {
-                u.kinematics = obj(u.kinematics);
-                u.kinematics.prev = u.position;                 // keep prior for heading/animation
-                u.position = [+p[0], +p[1]];                    // reassign property → scenario coord arrays untouched
-                if (owned.status != null) u.status = owned.status;
-                if (owned.strength != null) u.strength = num(owned.strength);
-                overlaid = true;
+        if (ws && Array.isArray(ws.units) && ownedPositions && typeof ownedPositions === 'object') {
+            var overlaid = false;
+            ws.units.forEach(function (u) {
+                if (!u || !u.uid) return;
+                var owned = ownedPositions[u.uid];
+                var p = owned && owned.position;
+                if (Array.isArray(p) && p.length >= 2 && isFinite(+p[0]) && isFinite(+p[1])) {
+                    u.kinematics = obj(u.kinematics);
+                    u.kinematics.prev = u.position;                 // keep prior for heading/animation
+                    u.position = [+p[0], +p[1]];                    // reassign property → scenario coord arrays untouched
+                    if (owned.status != null) u.status = owned.status;
+                    if (owned.strength != null) u.strength = num(owned.strength);
+                    overlaid = true;
+                }
+            });
+            if (overlaid) {
+                ws.owned_positions_applied = true;                  // marker for renderer/tests
+                applyDerivations(ws);                               // recompute contacts/balance/etc against owned positions
             }
-        });
-        if (overlaid) {
-            ws.owned_positions_applied = true;                  // marker for renderer/tests
-            applyDerivations(ws);                               // recompute contacts/balance/etc against owned positions
+        }
+        // OPTION-C / SLICE-C1: attach the transient scenario runtime clock (current_time)
+        // when a committed Run publishes one. Independent of owned positions (the clock can
+        // be present at tick 0 before any unit has moved). ws.clock is a DERIVED overlay
+        // field only — deriveWorldState(scenario, step) stays pure/byte-identical, and no
+        // caller passing < 4 args (or a null clock) ever sees it (B1 purity preserved).
+        if (ws && clock && typeof clock === 'object' && isFinite(+clock.current_hours)) {
+            ws.clock = _buildClock(scenario, clock);
         }
         return ws;
     }
@@ -1174,7 +1224,11 @@
         DECISION_TYPES: DECISION_TYPES,
         deriveWorldState: deriveWorldState,
         // OPTION-B / SLICE-B1: pure deriveWorldState + committed-Run owned-position overlay (re-derives).
+        // OPTION-C / SLICE-C1: 4th arg = the transient scenario clock → attaches ws.clock (current_time).
         deriveWorldStateWithOwned: deriveWorldStateWithOwned,
+        // OPTION-C / SLICE-C1: the authored step in effect at a given elapsed-hours time
+        // (steps become snapshots the runtime clock indexes into). Pure; no scenario mutation.
+        findStepForElapsedHours: findStepForElapsedHours,
         applyDecision: applyDecision,
         // PR-WS2.5: derived-field rules (Inputs → Rule → Derived Output).
         // applyDerivations re-runs all rules over a snapshot (used live after the

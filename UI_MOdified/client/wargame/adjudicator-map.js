@@ -158,6 +158,11 @@
     // them, so committed-Run moves PERSIST across step navigation instead of snapping back to the scenario
     // baseline. null = pure baseline (unchanged behaviour). Internal override only — never mutates scenario.
     let ownedRunPositions   = null;
+    // OPTION-C / SLICE-C1: transient scenario runtime clock published by the committed SCC run via
+    // setRunClock ({ start_hours, current_hours, end_hours, playing, speed }). When present, applyState
+    // derives World State WITH it (deriveWorldStateWithOwned's 4th arg), attaching a live ws.clock
+    // (current_time). null = no runtime clock (pure baseline). Internal override only — never mutates scenario.
+    let runClock            = null;
 
     // setTimeout handles for the in-flight staggered-death scheduler so a
     // step change can cancel anything still queued from the previous step.
@@ -5782,8 +5787,12 @@
                 // OPTION-B / SLICE-B1: when a committed run has published owned positions, derive World
                 // State WITH them (positions overlaid + derivations re-run) so contacts/balance/BLS are
                 // coherent with where the run moved units; else the pure baseline path (unchanged).
-                const ws = (ownedRunPositions && typeof window.AppWorldState.deriveWorldStateWithOwned === 'function')
-                    ? window.AppWorldState.deriveWorldStateWithOwned(lastAppliedScenario, stepIdx, ownedRunPositions)
+                // OPTION-C / SLICE-C1: the committed run may also publish a scenario clock; when either an
+                // owned-position override OR a runtime clock is present, derive WITH them (the clock rides as
+                // the 4th arg → transient ws.clock). Neither present → the pure baseline path (unchanged).
+                const _wsOverlay = (ownedRunPositions || runClock) && typeof window.AppWorldState.deriveWorldStateWithOwned === 'function';
+                const ws = _wsOverlay
+                    ? window.AppWorldState.deriveWorldStateWithOwned(lastAppliedScenario, stepIdx, ownedRunPositions, runClock)
                     : window.AppWorldState.deriveWorldState(lastAppliedScenario, stepIdx);
                 if (ws) {
                     // PR-WS2.5: project the LIVE inputs the derived-field rules
@@ -6717,6 +6726,37 @@
         const p = o && o.position;
         return (Array.isArray(p) && p.length >= 2 && isFinite(+p[0]) && isFinite(+p[1])) ? [+p[0], +p[1]] : null;
     }
+    // OPTION-C / SLICE-C1: the committed SCC run publishes its scenario runtime clock here so applyState
+    // attaches a live ws.clock (current_time). Boundary-safe: stores an internal override only — no
+    // window.units / scenario mutation. Pass a clock object with a finite current_hours, or null to clear.
+    function setRunClock(clock) {
+        runClock = (clock && typeof clock === 'object' && isFinite(+clock.current_hours)) ? clock : null;
+    }
+    // Human-readable scenario time for the current clock: absolute Zulu DTG when the scenario carries a
+    // start_time, else the H-relative "H±HH:MM". Reads the LIVE published runClock (updated every committed
+    // tick via setRunClock) — NOT lastWorldState.clock, which only refreshes on step-nav (applyState). This
+    // keeps the readout climbing per tick during a run. current_hours→step mapping stays single-sourced via
+    // World State's findStepForElapsedHours; here we only format the value for display.
+    function runClockLabel() {
+        const c = runClock;
+        if (!c || !isFinite(+c.current_hours)) return null;
+        const st = (lastAppliedScenario && typeof lastAppliedScenario.start_time === 'string') ? lastAppliedScenario.start_time : null;
+        if (st && window.AppShellClock && typeof window.AppShellClock.formatZuluDtg === 'function') {
+            const base = Date.parse(st);
+            if (isFinite(base)) { try { return window.AppShellClock.formatZuluDtg(new Date(base + (+c.current_hours) * 3600000)); } catch (_) {} }
+        }
+        return _formatHrel(+c.current_hours);
+    }
+    // H-relative label: "H", "H+6:00", "H-30:00", "H+2:30".
+    function _formatHrel(hours) {
+        if (hours === 0) return 'H';
+        const sign = hours < 0 ? '-' : '+';
+        const abs = Math.abs(hours);
+        let hh = Math.floor(abs);
+        let mm = Math.round((abs - hh) * 60);
+        if (mm === 60) { hh += 1; mm = 0; }
+        return 'H' + sign + hh + ':' + (mm < 10 ? '0' + mm : mm);
+    }
 
     function applyWorldStateUnitDeltas(units) {
         if (!Array.isArray(units)) return 0;
@@ -6900,5 +6940,9 @@
         // OPTION-B / SLICE-B1: committed-run owned-position override (persists run moves across step nav).
         setOwnedRunPositions,
         getOwnedRunPositions: () => ownedRunPositions,
+        // OPTION-C / SLICE-C1: committed-run scenario runtime clock (live current_time in ws.clock).
+        setRunClock,
+        getRunClock: () => runClock,
+        runClockLabel,
     };
 })();

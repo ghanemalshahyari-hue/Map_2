@@ -81,13 +81,21 @@ console.log('\n--- 2. free-fight-demo.js: accumulate + publish + clear + re-publ
     assert('T-4  accumulates owned_positions as { position:[lon,lat] }', /_coaExec\.owned_positions/.test(abody) && /position:\s*\[\+r\.to\.lon,\s*\+r\.to\.lat\]/.test(abody));
     assert('T-5  publishes via the map setter setOwnedRunPositions', ff.indexOf('setOwnedRunPositions') !== -1);
     assert('T-6  publish is gated to an active run (clears to null otherwise)', /setOwnedRunPositions\(\(_coaExec && _coaExec\.active && _coaExec\.owned_positions\) \|\| null\)/.test(ff));
-    assert('T-7  cleared on run reset (_resetCoaExec) + replan', (function () {
-        var ri = ff.indexOf('function _resetCoaExec'); var rp = ff.indexOf('_generateCoaPlan();   // the single LLM call');
-        return ff.slice(ri, ri + 300).indexOf('_publishOwnedPositions()') !== -1 && ff.slice(Math.max(0, rp - 200), rp).indexOf('_publishOwnedPositions()') !== -1;
+    // Scoped to the actual _resetCoaExec / _replanCoa function bodies (robust to later insertions like C1's
+    // sibling _publishRunClock lines) — still asserts each path clears the owned-position override.
+    assert('T-7  cleared on run reset (_resetCoaExec) + replan (_replanCoa)', (function () {
+        var ri = ff.indexOf('function _resetCoaExec');
+        var rpFn = ff.indexOf('function _replanCoa'); var rp = ff.indexOf('_generateCoaPlan();   // the single LLM call', rpFn);
+        return ff.slice(ri, ri + 300).indexOf('_publishOwnedPositions()') !== -1 && rpFn !== -1 && rp !== -1 && ff.slice(rpFn, rp).indexOf('_publishOwnedPositions()') !== -1;
     })());
     assert('T-8  re-published on restore (_restoreCoaExec)', (function () { var i = ff.indexOf('function _restoreCoaExec'); return ff.slice(i, i + 600).indexOf('_publishOwnedPositions()') !== -1; })());
-    assert('T-9  boundary: helpers do not mutate window.units / scenario / steps',
-        !/window\.units|scenarioRef\.[\w.]+\s*=[^=]|\.steps\s*=[^=]/.test(ff.slice(ai, ai + 1400)));
+    // Scoped to exactly the two B1 helper bodies (_accumulateOwnedPositions + _publishOwnedPositions),
+    // ending at _publishOwnedPositions' last statement — so the assertion isn't tripped by the word
+    // "window.units" appearing in a NEIGHBOURING helper's boundary-note comment (e.g. C1's clock helpers).
+    assert('T-9  boundary: helpers do not mutate window.units / scenario / steps', (function () {
+        var b1End = ff.indexOf('MAP.setOwnedRunPositions((_coaExec && _coaExec.active && _coaExec.owned_positions) || null)', ai);
+        return b1End !== -1 && !/window\.units|scenarioRef\.[\w.]+\s*=[^=]|\.steps\s*=[^=]/.test(ff.slice(ai, b1End + 120));
+    })());
 })();
 
 console.log('\n--- 3. adjudicator-map.js: setter + applyState owned-derive + marker overrides, boundary-safe ---');
@@ -95,7 +103,8 @@ console.log('\n--- 3. adjudicator-map.js: setter + applyState owned-derive + mar
     var map = src('UI_MOdified/client/wargame/adjudicator-map.js');
     assert('T-1  defines setOwnedRunPositions + _ownedPosFor', map.indexOf('function setOwnedRunPositions') !== -1 && map.indexOf('function _ownedPosFor') !== -1);
     assert('T-2  exports setOwnedRunPositions in the public API', /setOwnedRunPositions,/.test(map));
-    assert('T-3  applyState derives WITH owned positions when present', /ownedRunPositions && typeof window\.AppWorldState\.deriveWorldStateWithOwned === 'function'/.test(map) && map.indexOf('deriveWorldStateWithOwned(lastAppliedScenario, stepIdx, ownedRunPositions)') !== -1);
+    // C1 extended the overlay derive to a 4th `clock` arg + an "owned OR clock" condition (still strict).
+    assert('T-3  applyState derives WITH owned positions when present (C1: + runClock 4th arg)', /\(ownedRunPositions \|\| runClock\) && typeof window\.AppWorldState\.deriveWorldStateWithOwned === 'function'/.test(map) && map.indexOf('deriveWorldStateWithOwned(lastAppliedScenario, stepIdx, ownedRunPositions, runClock)') !== -1);
     assert('T-4  red marker loop lets the owned position win', map.indexOf('const _ownRed = _ownedPosFor(meta.uid)') !== -1 && map.indexOf('if (_ownRed) lonLat = _ownRed;') !== -1);
     assert('T-5  blue marker loop lets the owned position win', map.indexOf('const _ownBlue = _ownedPosFor(meta.uid)') !== -1 && map.indexOf('if (_ownBlue) lonLat = _ownBlue;') !== -1);
     var si = map.indexOf('function setOwnedRunPositions');

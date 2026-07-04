@@ -3261,6 +3261,7 @@
         _coaExec = blob.state;
         _coaExec.paused = true; _coaExec._restored = true;       // restored = paused until the operator runs
         try { _publishOwnedPositions(); } catch (_) {}           // OPTION-B/B1: re-publish restored owned positions
+        try { _publishRunClock(); } catch (_) {}                 // OPTION-C/C1: re-publish the restored scenario clock
         if (_coaExecTimer) { _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null; }
         try { _appendToEventLog('COA restored from session — ' + esc(_coaExec.selected_coa_id || 'COA-?') + ' (phase ' + (_coaExec.current_phase_index + 1) + (_coaExec.replan_required ? ', replan required' : '') + '). Press Run to resume; the AI is NOT called on resume.'); } catch (_) {}
         updatePanel();
@@ -3574,6 +3575,10 @@
             created_at: _nowISO(), updated_at: _nowISO(),
             last_tick_timing: { coa_commit_ms: _nowMs() - t0, coa_tick_execute_ms: 0, replan_trigger_check_ms: 0, llm_called_this_tick: false },
         };
+        // OPTION-C / SLICE-C1: seed the scenario runtime clock from the authored steps' elapsed-hours span.
+        var _clkB = _clockBoundsFromScenario();
+        _coaExec.clock = { start_hours: _clkB.start, current_hours: _clkB.start, end_hours: _clkB.end, playing: false, speed: _clockSpeedMult() };
+        try { _publishRunClock(); } catch (_) {}
         _committedPlanObj = _coaPlan;   // AB1: remember WHICH plan object this commit came from (identity)
         // RMOOZ-ADVISORY-COMMIT-JOURNAL-V: persist the advisory/ranking decision context with the commit.
         var _ctx = _buildCommitAdvisoryContext(i);
@@ -3667,6 +3672,50 @@
         var w = W(); var MAP = w && w.AppAdjudicatorMap;
         if (!MAP || typeof MAP.setOwnedRunPositions !== 'function') return;
         try { MAP.setOwnedRunPositions((_coaExec && _coaExec.active && _coaExec.owned_positions) || null); } catch (_) {}
+    }
+
+    // OPTION-C / SLICE-C1: scenario runtime clock. The committed Run advances a scenario clock
+    // (current_time) each tick, scaled by the existing FF speed, and publishes it to the map so the World
+    // State carries a live current_time (steps become snapshots the clock indexes into). Transient: rides
+    // on _coaExec (sessionStorage-persisted via _persistCoaExec), cleared on reset/replan, re-published on
+    // restore -- exactly like the B1 owned positions. Boundary-safe: no window.units / scenario mutation,
+    // no backend call; H-relative hours from steps[].elapsed_hours (no scenario schema change).
+    var COA_CLOCK_HOURS_PER_TICK = 0.25;   // scenario-time compression per base tick at x1 (tunable)
+    var FF_CLOCK_SPEED_MULT = { x1: 1, x5: 5, x15: 15, fire: 30, fire2: 60 };
+    function _clockSpeedMult() { return FF_CLOCK_SPEED_MULT[_freeFightSpeed] || 1; }
+    function _clockBoundsFromScenario() {
+        var w = W(); var scn = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        var steps = (scn && Array.isArray(scn.steps)) ? scn.steps : [];
+        var hrs = [];
+        steps.forEach(function (st) { var v = st && st.elapsed_hours; if (typeof v === 'number' && isFinite(v)) hrs.push(v); });
+        if (!hrs.length) return { start: 0, end: 0 };
+        return { start: Math.min.apply(null, hrs), end: Math.max.apply(null, hrs) };
+    }
+    // Advance the committed Run's scenario clock one tick, clamped to [start, end]. Called from _coaExecTick.
+    function _advanceScenarioClock() {
+        if (!_coaExec || !_coaExec.active || !_coaExec.clock) return;
+        var c = _coaExec.clock;
+        c.speed = _clockSpeedMult();
+        if (isFinite(+c.current_hours) && isFinite(+c.end_hours)) {
+            c.current_hours = Math.min(+c.end_hours, +c.current_hours + COA_CLOCK_HOURS_PER_TICK * c.speed);
+        }
+        if (_coaExec.phase_status === 'complete' || (isFinite(+c.end_hours) && +c.current_hours >= +c.end_hours)) c.playing = false;
+        _publishRunClock();
+    }
+    // Push the current scenario clock (or null when no active run) to the map override.
+    function _publishRunClock() {
+        var w = W(); var MAP = w && w.AppAdjudicatorMap;
+        if (!MAP || typeof MAP.setRunClock !== 'function') return;
+        try { MAP.setRunClock((_coaExec && _coaExec.active && _coaExec.clock) || null); } catch (_) {}
+    }
+    // Human-readable scenario time for the run status panel. Prefer the map's single-sourced label
+    // (World State findStepForElapsedHours + start_time DTG); fall back to a plain H-relative value.
+    function _scenarioClockLabel(ex) {
+        var w = W(); var MAP = w && w.AppAdjudicatorMap;
+        if (MAP && typeof MAP.runClockLabel === 'function') { try { var lbl = MAP.runClockLabel(); if (lbl) return lbl; } catch (_) {} }
+        var c = ex && ex.clock;
+        if (c && isFinite(+c.current_hours)) return (+c.current_hours === 0) ? 'H' : ('H' + (c.current_hours < 0 ? '' : '+') + (Math.round(c.current_hours * 10) / 10));
+        return '\u2014';
     }
 
     function _journalRunTickMoves(records) {
@@ -3821,6 +3870,7 @@
             try { _refreshGreenWorld('phase_advance'); } catch (_) {}
         }
         _coaExec.ticks++; _coaExec.updated_at = _nowISO();
+        try { _advanceScenarioClock(); } catch (_) {}   // OPTION-C/C1: advance the scenario runtime clock (current_time) this tick
         var coa_tick_execute_ms = _nowMs() - te0;
         // RMOOZ-COA-COMMIT-LIVE-DELAY-AUDIT-N: instrument the REAL per-tick UI/map/persist costs so the
         // operator can see (in their browser) exactly where any delay is. coa_tick_execute_ms is the
@@ -3874,6 +3924,8 @@
         _coaExec.paused = false; _coaExec.replan_required = false; _coaExec.replan_reason = null; _coaExec.phase_status = 'running';
         _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
         _coaExecIntervalMs = _coaExecTickMs();   // brisk, deterministic — NOT the 6s cinematic LLM pacing
+        if (_coaExec.clock) _coaExec.clock.playing = true;   // OPTION-C/C1: the Run controls the scenario clock
+        try { _publishRunClock(); } catch (_) {}
         _coaExecTick();   // run one immediately
         _coaExecTimer = _setIntervalSafe(_coaExecTick, _coaExecIntervalMs);
         updatePanel();
@@ -3881,6 +3933,7 @@
     function _pauseCommittedCoa() {
         _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
         if (_coaExec) { _coaExec.paused = true; _coaExec.updated_at = _nowISO(); }
+        if (_coaExec && _coaExec.clock) { _coaExec.clock.playing = false; try { _publishRunClock(); } catch (_) {} }   // OPTION-C/C1: Pause stops the clock
         try { _appendToEventLog('COA execution paused by operator.'); } catch (_) {}
         _persistCoaExec();   // RMOOZ-COA-COMMIT-PERSISTENCE-M
         updatePanel();
@@ -3889,6 +3942,7 @@
         _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
         _coaExec = null;
         try { _publishOwnedPositions(); } catch (_) {}   // OPTION-B/B1: clear the owned-position override on reset
+        try { _publishRunClock(); } catch (_) {}   // OPTION-C/C1: clear the scenario clock on reset
         _step1HeldUids = {}; _coaCommitBlockedReason = null;   // AE: fresh start → re-log suppressed units, clear commit block
         _committedPlanObj = null;   // AB1: drop the committed-plan identity so a later plan starts clean
         _persistCoaExec();   // RMOOZ-COA-COMMIT-PERSISTENCE-M: !_coaExec → removes the persisted key (safe clear, req #8)
@@ -3901,6 +3955,7 @@
         try { _appendToEventLog('Replan requested — calling the AI Commander for a fresh plan.'); } catch (_) {}
         _coaExec = null;
         try { _publishOwnedPositions(); } catch (_) {}   // OPTION-B/B1: clear the owned-position override on replan
+        try { _publishRunClock(); } catch (_) {}   // OPTION-C/C1: clear the scenario clock on replan
         _generateCoaPlan();   // the single LLM call (Deep Plan)
     }
     // The COA Commitment Mode control block (Commit / Run / Pause / Replan + live status).
@@ -5331,6 +5386,7 @@
             '<div><span style="color:#8fa5b8;">Active Plan:</span> <b style="color:#e8eaed;">' + esc(ex.selected_coa_id) + '</b></div>' +
             '<div><span style="color:#8fa5b8;">Phase:</span> ' + (ex.phase_status === 'complete' ? 'all done' : ((ex.current_phase_index + 1) + ' / ' + phases.length)) +
             ' · <span style="color:#8fa5b8;">Status:</span> <b style="color:#cfe6ff;">' + word + '</b></div>' +
+            '<div><span style="color:#8fa5b8;">Scenario time:</span> <b style="color:#ffd27f;">' + esc(_scenarioClockLabel(ex)) + '</b></div>' +
             '<div><span style="color:#8fa5b8;">AI calls on normal ticks:</span> <b style="color:#7fd6a0;">OFF</b></div></div>';
     }
     // ══ RMOOZ-FREE-FIGHT-CONTINUOUS-SCENARIO-AA: continuous scenario orchestration ════════════════════

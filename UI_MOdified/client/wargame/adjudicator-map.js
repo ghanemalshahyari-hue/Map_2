@@ -6673,6 +6673,39 @@
         };
     }
 
+    // SCC-REAL-STATE-A: reflect a World State transition on the live map. Called by the
+    // committed Scenario Control Center run (via AppWorldStateTransition) so an operator
+    // decision visibly moves/degrades real units. Boundary-safe: updates ONLY this module's
+    // internal unitRegistry + Leaflet markers — never window.units / scenario / plan state.
+    // units: [{ uid, position:[lon,lat], status?, strength? }] (World State unit shape).
+    function applyWorldStateUnitDeltas(units) {
+        if (!Array.isArray(units)) return 0;
+        var applied = 0;
+        units.forEach(function (u) {
+            if (!u || !u.uid) return;
+            var marker = blueMarkers[u.uid] || redMarkers[u.uid];
+            if (!marker) return;
+            var reg = unitRegistry[u.uid];
+            if (Array.isArray(u.position) && u.position.length >= 2) {
+                var lon = +u.position[0], lat = +u.position[1];
+                if (isFinite(lat) && isFinite(lon)) {
+                    try { marker.setLatLng([lat, lon]); } catch (_) {}
+                    if (reg) { reg.lat = lat; reg.lon = lon; }
+                }
+            }
+            if (u.status === 'DESTROYED') {
+                if (reg) reg.status = 'DESTROYED';
+                try { renderMarkerByStatus(marker, UNIT_STATUS.DESTROYED); } catch (_) {}
+            } else if (u.status === 'DEGRADED') {
+                if (reg) reg.status = 'DEGRADED';
+                try { renderMarkerByStatus(marker, UNIT_STATUS.DEGRADED); } catch (_) {}
+            }
+            if (typeof u.strength === 'number' && reg) reg.strength = u.strength;
+            applied++;
+        });
+        return applied;
+    }
+
     window.AppAdjudicatorMap = {
         drawScenario,
         clearScenario,
@@ -6823,5 +6856,6 @@
         // The first live consumer of WS1 on the client; exposed for tests, 3D
         // parity, and the future formula layer. Null until the first applyState.
         getWorldState: () => lastWorldState,
+        applyWorldStateUnitDeltas,
     };
 })();

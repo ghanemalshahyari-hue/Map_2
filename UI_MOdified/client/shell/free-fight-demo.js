@@ -3580,6 +3580,39 @@
     }
     // One deterministic execution tick — NO LLM. Executes the current phase, advances phases, checks
     // triggers. Returns the per-tick timing (incl. llm_called_this_tick:false). Safe to call directly.
+    // SCC-REAL-STATE-A: route a committed run tick's REAL moves through World State (WS3) so the
+    // operator's decision changes the single source of truth AND the live map. Boundary-safe:
+    // reads AppAdjudicatorMap.getWorldState(), applies pure WS3 MOVE decisions, and reflects the
+    // resulting unit deltas via AppAdjudicatorMap.applyWorldStateUnitDeltas (marker/unitRegistry
+    // only — never window.units / scenario). Committed executor only; preview stays symbolic.
+    function _applyRunMovesToWorldState(records) {
+        if (!Array.isArray(records) || !records.length) return null;
+        if (!_coaExec || !_coaExec.active) return null;   // committed operator run only
+        var W = (typeof window !== 'undefined' && window) || (typeof global !== 'undefined' ? global : this);
+        var WS3 = W && W.AppWorldStateTransition;
+        var MAP = W && W.AppAdjudicatorMap;
+        if (!WS3 || typeof WS3.applyDecisions !== 'function') return null;
+        if (!MAP || typeof MAP.getWorldState !== 'function') return null;
+        var ws = MAP.getWorldState();
+        if (!ws || !Array.isArray(ws.units)) return null;
+        var decisions = records.filter(function (r) {
+            return r && r.uid && r.to && isFinite(+r.to.lon) && isFinite(+r.to.lat);
+        }).map(function (r) { return { type: 'MOVE', actor: r.uid, to: [+r.to.lon, +r.to.lat] }; });
+        if (!decisions.length) return null;
+        var res = WS3.applyDecisions(ws, decisions);
+        var newWs = res && res.worldState;
+        if (!newWs || !Array.isArray(newWs.units)) return null;
+        if (typeof MAP.applyWorldStateUnitDeltas === 'function') {
+            var byUid = {}; newWs.units.forEach(function (u) { if (u && u.uid) byUid[u.uid] = u; });
+            var deltas = decisions.map(function (d) {
+                var u = byUid[d.actor];
+                return u ? { uid: u.uid, position: u.position, status: u.status, strength: u.strength } : null;
+            }).filter(Boolean);
+            try { MAP.applyWorldStateUnitDeltas(deltas); } catch (_) {}
+        }
+        return { decisions: decisions.length, effects: (res && res.effects) || [] };
+    }
+
     function _coaExecTick() {
         if (!_coaExec || !_coaExec.active || _coaExec.paused || _coaExec.replan_required) return null;
         var coa = _coaExec.selected_coa;
@@ -3612,6 +3645,10 @@
                 behavior: m.behavior || null, domain: m.domain || 'ground',
                 from: m.start, to: m.final, waypoint_policy: m.waypoint_policy || null };
         });
+        // SCC-REAL-STATE-A: the committed run now changes the single source of truth. Route this
+        // tick's real moves through World State (WS3) and reflect them on the live map (not just
+        // the symbolic demo layer). Preview/uncommitted paths never reach here.
+        try { _applyRunMovesToWorldState(_movedMovementRecords); } catch (_) {}
         // Held units (moved < 0.5km but not HOLD_POSITION) and domain-blocked units tracked
         // separately so movementDebug() and the map overlay can show WHY they didn't move.
         var holdActions = moves.filter(function (m) { return m.hold; });

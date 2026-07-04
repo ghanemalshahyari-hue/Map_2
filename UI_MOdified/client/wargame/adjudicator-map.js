@@ -152,6 +152,12 @@
     // status is read from it (the first render field sourced from World State).
     // Null when WS1 is absent/throws → render falls back to the legacy `state.*`.
     let lastWorldState      = null;
+    // OPTION-B / SLICE-B1: transient owned run-position override (uid -> { position:[lon,lat], status?,
+    // strength? }) published by the committed SCC run via setOwnedRunPositions. When present, applyState
+    // derives World State WITH these positions (deriveWorldStateWithOwned) and the marker-update loops use
+    // them, so committed-Run moves PERSIST across step navigation instead of snapping back to the scenario
+    // baseline. null = pure baseline (unchanged behaviour). Internal override only — never mutates scenario.
+    let ownedRunPositions   = null;
 
     // setTimeout handles for the in-flight staggered-death scheduler so a
     // step change can cancel anything still queued from the previous step.
@@ -4032,6 +4038,8 @@
                 // (Main effort, Fixing, Recon, Follow-on, Exploitation, …).
                 lonLat = redPositionLonLat(meta, stepIndex, progress);
             }
+            const _ownRed = _ownedPosFor(meta.uid);   // OPTION-B/B1: committed-run owned position wins over baseline
+            if (_ownRed) lonLat = _ownRed;
             if (!lonLat) continue;
             try {
                 // Snapshot the marker's current LatLng BEFORE moving it — the
@@ -4116,6 +4124,8 @@
                 });
                 if (stagger) lonLat = offsetLonLat(lonLat, stagger.eastKm, stagger.northKm);
             }
+            const _ownBlue = _ownedPosFor(meta.uid);   // OPTION-B/B1: owned run position wins over baseline+stagger
+            if (_ownBlue) lonLat = _ownBlue;
             if (!lonLat) continue;
             try {
                 m._wgLastLatLng = m.getLatLng();
@@ -5769,7 +5779,12 @@
         lastWorldState = null;
         if (window.AppWorldState && lastAppliedScenario) {
             try {
-                const ws = window.AppWorldState.deriveWorldState(lastAppliedScenario, stepIdx);
+                // OPTION-B / SLICE-B1: when a committed run has published owned positions, derive World
+                // State WITH them (positions overlaid + derivations re-run) so contacts/balance/BLS are
+                // coherent with where the run moved units; else the pure baseline path (unchanged).
+                const ws = (ownedRunPositions && typeof window.AppWorldState.deriveWorldStateWithOwned === 'function')
+                    ? window.AppWorldState.deriveWorldStateWithOwned(lastAppliedScenario, stepIdx, ownedRunPositions)
+                    : window.AppWorldState.deriveWorldState(lastAppliedScenario, stepIdx);
                 if (ws) {
                     // PR-WS2.5: project the LIVE inputs the derived-field rules
                     // consume (raw objective status + force ratio + losses), then
@@ -6690,6 +6705,19 @@
     // decision visibly moves/degrades real units. Boundary-safe: updates ONLY this module's
     // internal unitRegistry + Leaflet markers — never window.units / scenario / plan state.
     // units: [{ uid, position:[lon,lat], status?, strength? }] (World State unit shape).
+    // OPTION-B / SLICE-B1: the committed SCC run publishes its owned positions here so step navigation
+    // (applyState) keeps run-moved units at their run positions. Boundary-safe: stores an internal override
+    // map only — no window.units / scenario mutation. Pass null/empty to clear (run reset / new scenario).
+    function setOwnedRunPositions(map) {
+        ownedRunPositions = (map && typeof map === 'object' && Object.keys(map).length) ? map : null;
+    }
+    // Owned [lon,lat] for a uid, or null. Used as the position override in the marker-update loops.
+    function _ownedPosFor(uid) {
+        const o = ownedRunPositions && uid && ownedRunPositions[uid];
+        const p = o && o.position;
+        return (Array.isArray(p) && p.length >= 2 && isFinite(+p[0]) && isFinite(+p[1])) ? [+p[0], +p[1]] : null;
+    }
+
     function applyWorldStateUnitDeltas(units) {
         if (!Array.isArray(units)) return 0;
         var applied = 0;
@@ -6869,5 +6897,8 @@
         // parity, and the future formula layer. Null until the first applyState.
         getWorldState: () => lastWorldState,
         applyWorldStateUnitDeltas,
+        // OPTION-B / SLICE-B1: committed-run owned-position override (persists run moves across step nav).
+        setOwnedRunPositions,
+        getOwnedRunPositions: () => ownedRunPositions,
     };
 })();

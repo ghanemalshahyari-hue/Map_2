@@ -257,6 +257,41 @@
         return ws;
     }
 
+    /* ---- OPTION-B / SLICE-B1: World State owns committed-Run positions ------
+     * deriveWorldStateWithOwned re-uses the PURE deriveWorldState(scenario, step)
+     * (UNCHANGED — every WS1/DET1/ENG1 test still exercises it), then overlays the
+     * committed Run's owned positions (uid -> { position:[lon,lat], status?, strength? })
+     * onto the fresh unit objects and RE-RUNS the derivations so contacts / balance /
+     * BLS / objective evidence are coherent with where the run actually moved units,
+     * not the scenario baseline. The overlay reassigns each fresh unit's `position`
+     * property (units come from projectUnit / DB1-enriched clones), so the authored
+     * scenario coord arrays are never mutated (AI/sim boundary safe). Callers pass owned
+     * positions only for a committed operator run; otherwise they use the pure form.
+     */
+    function deriveWorldStateWithOwned(scenario, stepIndex, ownedPositions) {
+        var ws = deriveWorldState(scenario, stepIndex);
+        if (!ownedPositions || typeof ownedPositions !== 'object' || !ws || !Array.isArray(ws.units)) return ws;
+        var overlaid = false;
+        ws.units.forEach(function (u) {
+            if (!u || !u.uid) return;
+            var owned = ownedPositions[u.uid];
+            var p = owned && owned.position;
+            if (Array.isArray(p) && p.length >= 2 && isFinite(+p[0]) && isFinite(+p[1])) {
+                u.kinematics = obj(u.kinematics);
+                u.kinematics.prev = u.position;                 // keep prior for heading/animation
+                u.position = [+p[0], +p[1]];                    // reassign property → scenario coord arrays untouched
+                if (owned.status != null) u.status = owned.status;
+                if (owned.strength != null) u.strength = num(owned.strength);
+                overlaid = true;
+            }
+        });
+        if (overlaid) {
+            ws.owned_positions_applied = true;                  // marker for renderer/tests
+            applyDerivations(ws);                               // recompute contacts/balance/etc against owned positions
+        }
+        return ws;
+    }
+
     /* ---- derived-field rules (Inputs → Rule → Derived Output) -------------
      * Each rule is a PURE (ws) -> value that reads its inputs from the snapshot
      * and returns ONE derived output. World State owns the derivation; consumers
@@ -1138,6 +1173,8 @@
         WS_VERSION: WS_VERSION,
         DECISION_TYPES: DECISION_TYPES,
         deriveWorldState: deriveWorldState,
+        // OPTION-B / SLICE-B1: pure deriveWorldState + committed-Run owned-position overlay (re-derives).
+        deriveWorldStateWithOwned: deriveWorldStateWithOwned,
         applyDecision: applyDecision,
         // PR-WS2.5: derived-field rules (Inputs → Rule → Derived Output).
         // applyDerivations re-runs all rules over a snapshot (used live after the

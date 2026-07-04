@@ -3260,6 +3260,7 @@
         if (blob.scenario_key !== _scenarioKey()) return false;  // different scenario → ignore stale
         _coaExec = blob.state;
         _coaExec.paused = true; _coaExec._restored = true;       // restored = paused until the operator runs
+        try { _publishOwnedPositions(); } catch (_) {}           // OPTION-B/B1: re-publish restored owned positions
         if (_coaExecTimer) { _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null; }
         try { _appendToEventLog('COA restored from session — ' + esc(_coaExec.selected_coa_id || 'COA-?') + ' (phase ' + (_coaExec.current_phase_index + 1) + (_coaExec.replan_required ? ', replan required' : '') + '). Press Run to resume; the AI is NOT called on resume.'); } catch (_) {}
         updatePanel();
@@ -3646,6 +3647,28 @@
     // scenario / map mutation. NOTE: /api/sim/decide re-projects the base World State from the scenario each
     // call, so rows capture each tick's move decisions + target positions, not a cumulative from->to chain
     // (cumulative ownership is Option B). Preview/uncommitted paths never reach here.
+    // OPTION-B / SLICE-B1: accumulate the committed Run's owned unit positions (uid -> {position:[lon,lat]})
+    // and publish them to the map so step navigation keeps run-moved units at their run positions -- World
+    // State owns position for the committed run. Transient: rides on _coaExec (sessionStorage-persisted via
+    // _persistCoaExec), cleared on run reset. Committed operator run only. Boundary-safe: reads records +
+    // calls the map's sanctioned setter; no window.units / scenario mutation, no backend call.
+    function _accumulateOwnedPositions(records) {
+        if (!_coaExec || !_coaExec.active || !Array.isArray(records) || !records.length) return;
+        var op = _coaExec.owned_positions || (_coaExec.owned_positions = {});
+        records.forEach(function (r) {
+            if (r && r.uid && r.to && isFinite(+r.to.lon) && isFinite(+r.to.lat)) {
+                op[r.uid] = { position: [+r.to.lon, +r.to.lat] };
+            }
+        });
+        _publishOwnedPositions();
+    }
+    // Push the current owned positions (or null when no active run) to the map override.
+    function _publishOwnedPositions() {
+        var w = W(); var MAP = w && w.AppAdjudicatorMap;
+        if (!MAP || typeof MAP.setOwnedRunPositions !== 'function') return;
+        try { MAP.setOwnedRunPositions((_coaExec && _coaExec.active && _coaExec.owned_positions) || null); } catch (_) {}
+    }
+
     function _journalRunTickMoves(records) {
         if (!Array.isArray(records) || !records.length) return;
         if (!_coaExec || !_coaExec.active) return;                 // committed operator run only
@@ -3748,6 +3771,7 @@
         // the symbolic demo layer). Preview/uncommitted paths never reach here.
         try { _applyRunMovesToWorldState(_movedMovementRecords); } catch (_) {}
         try { _journalRunTickMoves(_movedMovementRecords); } catch (_) {}   // SCC-REAL-STATE-C: durable per-tick move journal (sanctioned /api/sim/decide)
+        try { _accumulateOwnedPositions(_movedMovementRecords); } catch (_) {}   // OPTION-B/B1: run owns position across step navigation
         // Held units (moved < 0.5km but not HOLD_POSITION) and domain-blocked units tracked
         // separately so movementDebug() and the map overlay can show WHY they didn't move.
         var holdActions = moves.filter(function (m) { return m.hold; });
@@ -3864,6 +3888,7 @@
     function _resetCoaExec() {
         _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
         _coaExec = null;
+        try { _publishOwnedPositions(); } catch (_) {}   // OPTION-B/B1: clear the owned-position override on reset
         _step1HeldUids = {}; _coaCommitBlockedReason = null;   // AE: fresh start → re-log suppressed units, clear commit block
         _committedPlanObj = null;   // AB1: drop the committed-plan identity so a later plan starts clean
         _persistCoaExec();   // RMOOZ-COA-COMMIT-PERSISTENCE-M: !_coaExec → removes the persisted key (safe clear, req #8)
@@ -3875,6 +3900,7 @@
         _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
         try { _appendToEventLog('Replan requested — calling the AI Commander for a fresh plan.'); } catch (_) {}
         _coaExec = null;
+        try { _publishOwnedPositions(); } catch (_) {}   // OPTION-B/B1: clear the owned-position override on replan
         _generateCoaPlan();   // the single LLM call (Deep Plan)
     }
     // The COA Commitment Mode control block (Commit / Run / Pause / Replan + live status).

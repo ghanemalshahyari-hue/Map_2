@@ -71,16 +71,19 @@ ok('B3 generic (sensorless) unit holds no contacts', !generic.some((c) => c.dete
    JSON.stringify(generic));
 
 console.log('\n─── C. capabilities come from the catalog, not the overlay ───');
-ok('C1 catalog classifies an SAM as air_defense', DB1.classifyKind({ role: 'sam_s300', domain: 'ground' }) === 'air_defense');
+ok('C1 catalog classifies the sam_s300 role as sam_s300 (Phase 5D-1 specific SAM)', DB1.classifyKind({ role: 'sam_s300', domain: 'ground' }) === 'sam_s300');
 const ad = DB1.enrichUnit({ role: 'sam_s300', domain: 'ground' });
-ok('C2 enrichment gives it a long_range_3d radar', (ad.sensors || []).some((s) => s.class === 'long_range_3d'));
-ok('C3 detection.js DB-Lite knows that sensor class', !!DET.DEFAULT_DB.sensor_class.long_range_3d);
+ok('C2 enrichment gives it an S300_SEARCH_RADAR radar', (ad.sensors || []).some((s) => s.class === 'S300_SEARCH_RADAR'));
+ok('C3 detection.js DB-Lite knows that sensor class', !!DET.DEFAULT_DB.sensor_class.S300_SEARCH_RADAR);
 
 // The 2D renderer block only (build/clear/render contacts, before clearScenario).
 const fn = MAP.slice(MAP.indexOf('function buildDetectionUnits'), MAP.indexOf('function clearScenario'));
 
 console.log('\n─── D. 2D adjudicator-map.js — engine-driven, off, read-only ───');
-ok('D1 calls the real detection engine', /AppDetection[\s\S]*computeContacts/.test(fn));
+// PR-WS-DET1-A: the map no longer calls AppDetection.computeContacts directly — DET1 runs
+// once per step in the World State DERIVATIONS pipeline and the map reads ws.derived.contacts.
+ok('D1 renders DET1 contacts read from World State derivations (PR-WS-DET1-A)',
+   /lastWorldState[\s\S]*derived[\s\S]*contacts/.test(fn));
 ok('D2 enriches units via the committed DB1 catalog (AppWorldStateDB.enrichUnit)',
    /AppWorldStateDB[\s\S]*enrichUnit/.test(fn));
 ok('D3 OFF by default', /let detectionContactsEnabled = false/.test(MAP));

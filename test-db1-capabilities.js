@@ -38,8 +38,12 @@ ok('authored sensors preserved (no overwrite)', authored.sensors.length === 1 &&
 
 /* 4. THE PAYOFF — real W3 scenario lights up after enrichment */
 const wsRaw = WS.deriveWorldState(w3scn, 4);
-ok('raw W3 units carry NO components (baseline)',
-   wsRaw.units.every(u => (u.sensors || []).length === 0));
+// Architecture: world-state.js deriveWorldState AUTO-enriches via AppWorldStateDB when it is
+// loaded (PR-DB1 coupling) -- and it IS loaded in this test -- so the derived state already
+// carries DB-Lite components. (A truly un-enriched baseline would need a context without
+// AppWorldStateDB loaded; not required for this full-stack payoff test.)
+ok('W3 units auto-enrich via DB1 during deriveWorldState (components present)',
+   wsRaw.units.some(u => (u.sensors || []).length > 0));
 const wsEnriched = DB.enrichWorldState(wsRaw);
 ok('enriched W3 units now carry sensors',
    wsEnriched.units.filter(u => (u.sensors || []).length > 0).length > 0);
@@ -47,18 +51,26 @@ ok('enriched W3 units carry rcs_class', wsEnriched.units.every(u => u.rcs_class)
 
 const contactsRaw = DET.computeContacts(wsRaw);
 const contactsEnriched = DET.computeContacts(wsEnriched);
-ok('raw W3 → 0 contacts; enriched W3 → contacts appear',
-   contactsRaw.length === 0 && contactsEnriched.length > 0);
+ok('DB1-enriched W3 → detection contacts appear',
+   contactsEnriched.length > 0);
 console.log('     (enriched W3 contacts: ' + contactsEnriched.length + ')');
 
 /* 5. full loop on enriched real scenario: an ENGAGE on a detected pair resolves */
-// pick a detected enemy pair from the enriched contacts
-const aContact = contactsEnriched[0];
-const shooter = wsEnriched.units.find(u => u.side === aContact.detected_by_side && (u.weapons || []).length);
+// Pick a detected pair where the shooter actually has a weapon vs the target's domain, so the
+// deterministic engine resolves a real shot (engaged / out_of_range) rather than blocking on
+// no_valid_weapon. (wargame3 is ground-heavy; the first arbitrary contact may pair an air-only
+// SAM against a ground target.)
+const byUid = {}; wsEnriched.units.forEach(u => { if (u && u.uid) byUid[u.uid] = u; });
+const WPN = ENG.DEFAULT_WPN_DB.weapon_class;
 let engagedOnReal = false;
-if (shooter) {
-    const res = WS3.applyDecision(wsEnriched, { type: 'ENGAGE', shooter: shooter.uid, target: aContact.target_uid, force: true });
-    engagedOnReal = res.effects.some(e => e.type === 'engagement' && (e.status === 'engaged' || e.reason === 'out_of_range'));
+for (const c of contactsEnriched) {
+    const tgt = byUid[c.target_uid];
+    const shooter = wsEnriched.units.find(u => u.side === c.detected_by_side && (u.weapons || []).some(w => {
+        const d = WPN[w.class]; return d && (!d.vs.length || d.vs.indexOf(tgt && tgt.domain) >= 0);
+    }));
+    if (!shooter || !tgt) continue;
+    const res = WS3.applyDecision(wsEnriched, { type: 'ENGAGE', shooter: shooter.uid, target: c.target_uid, force: true });
+    if (res.effects.some(e => e.type === 'engagement' && (e.status === 'engaged' || e.reason === 'out_of_range'))) { engagedOnReal = true; break; }
 }
 ok('WS3 ENGAGE runs end-to-end on the enriched real scenario', engagedOnReal);
 

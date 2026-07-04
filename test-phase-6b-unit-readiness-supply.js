@@ -137,8 +137,8 @@ console.log('\nTEST 8: DB-Lite enrichment respects authored supply');
     ok('Authored supply 0.3 survives enrichment',
        unitWithAuthorized.supply === 0.3);
     var unitMissing = DB1.enrichUnit({ role: 'S-300' });
-    ok('Missing S-300 supply gets DB-Lite air_defense default 0.8',
-       unitMissing.supply === 0.8);
+    ok('Missing S-300 supply gets DB-Lite sam_s300 default 0.9',
+       unitMissing.supply === 0.9);
 }
 
 // ── TEST 9: Scenario round-trip (JSON persist) ────────────────────────

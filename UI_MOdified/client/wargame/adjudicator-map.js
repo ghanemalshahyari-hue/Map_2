@@ -5269,18 +5269,30 @@
     // No echelon fudge, no parallel role table. OFF by default; read-only overlay;
     // no scenario mutation; no fabricated combat-state fields.
     const NM_TO_KM = 1.852;
-    // In-sync mirror of the DB-Lite class tables — used only when the live
-    // modules aren't on the page (e.g. Node tests). Keep aligned with
-    // detection.js DEFAULT_DB.sensor_class + engagement.js DEFAULT_WPN_DB.weapon_class.
+    // In-sync mirror of the DB-Lite class tables — used ONLY when the live modules
+    // aren't on the page (e.g. Node tests); the renderer prefers the live tables
+    // (see ringSensorDb/ringWeaponDb below). This MUST stay a complete mirror of
+    // detection.js DEFAULT_DB.sensor_class + engagement.js DEFAULT_WPN_DB.weapon_class
+    // — test-coverage-rings.js (C1/C2) fails if it drifts, so update BOTH here when a
+    // DB-Lite class is added (Phase 5D-1 Soviet AD + D5/DB-COMPLETE air/naval classes).
     const RING_SENSOR_DB_FALLBACK = {
         long_range_3d: { ref_range_nm: 200 }, multifunction: { ref_range_nm: 150 },
         air_search: { ref_range_nm: 160 }, surface_search: { ref_range_nm: 60 },
         fire_control: { ref_range_nm: 90 }, esm_intercept: { ref_range_nm: 0 },
+        S300_SEARCH_RADAR: { ref_range_nm: 108 }, S75_RADAR: { ref_range_nm: 40 },
+        ZSU_RADAR: { ref_range_nm: 21 }, P37_RADAR: { ref_range_nm: 135 }, AAA_RADAR: { ref_range_nm: 8 },
+        sonar_active: { ref_range_nm: 20 }, sonar_passive: { ref_range_nm: 40 }, sonobuoy: { ref_range_nm: 15 },
+        passive_tracking: { ref_range_nm: 30 }, visual: { ref_range_nm: 8 }, identification: { ref_range_nm: 0 },
     };
     const RING_WEAPON_DB_FALLBACK = {
         long_range_sam: { max_range_nm: 80 }, medium_sam: { max_range_nm: 30 },
-        point_defense: { max_range_nm: 5 }, anti_ship: { max_range_nm: 75 },
-        gun: { max_range_nm: 12 },
+        point_defense: { max_range_nm: 5 }, anti_ship: { max_range_nm: 75 }, gun: { max_range_nm: 12 },
+        S300_MISSILE: { max_range_nm: 89 }, S75_MISSILE: { max_range_nm: 19 },
+        ZSU_GUN: { max_range_nm: 1.9 }, AAA_GUN: { max_range_nm: 1.3 },
+        medium_aa_missile: { max_range_nm: 40 }, short_aa_missile: { max_range_nm: 10 },
+        long_aa_missile: { max_range_nm: 80 }, ag_missile: { max_range_nm: 15 },
+        cruise_missile: { max_range_nm: 150 }, asuw_missile: { max_range_nm: 70 },
+        torpedo: { max_range_nm: 15 }, short_range_sam: { max_range_nm: 3.5 },
     };
     function ringSensorDb() {
         return (window.AppDetection && window.AppDetection.DEFAULT_DB && window.AppDetection.DEFAULT_DB.sensor_class)

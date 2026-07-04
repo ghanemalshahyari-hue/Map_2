@@ -49,7 +49,9 @@ ok('A4 weaponless aircraft never shoots back (no blue engaged record)',
 
 console.log('\n─── B. detection + range + WRA gating (every non-shot is explained) ───');
 // Detected (firm) but beyond the weapon's effective range → blocked out_of_range.
-const midNm = 80; const dLon = midNm / (60 * Math.cos(32 * Math.PI / 180));
+// sam_s300's S300_MISSILE reaches 89nm (its S300_SEARCH_RADAR still detects ~128nm),
+// so place the target past 89nm but within sensor reach.
+const midNm = 100; const dLon = midNm / (60 * Math.cos(32 * Math.PI / 180));
 const mid = engagementsFor([RED_AD([10.0, 32.0]), BLUE_AC([10.0 + dLon, 32.0])]);
 const oor = mid.find((r) => r.side === 'red' && r.target === 'BLUE_AC');
 ok('B1 detected-but-far target is blocked, reason out_of_range', !!oor && oor.status === 'blocked' && oor.reason === 'out_of_range', JSON.stringify(mid));
@@ -75,8 +77,13 @@ ok('C2 generic (weaponless) unit produces no engagements', generic.length === 0,
 const fn = MAP.slice(MAP.indexOf('function computeEngagementRecords'), MAP.indexOf('function clearScenario'));
 
 console.log('\n─── D. 2D adjudicator-map.js — engine-driven, off, read-only ───');
-ok('D1 calls the real engagement engine', /AppEngagement[\s\S]*computeEngagements/.test(fn));
-ok('D2 detection-gated: feeds computeEngagements the DET1 contacts', /computeContacts[\s\S]*computeEngagements/.test(fn));
+// PR-WS-ENG1-A: the map no longer calls AppEngagement.computeEngagements directly — ENG1 runs
+// once per decision in the World State DERIVATIONS pipeline (detection-gated there) and the map
+// reads ws.derived.engagement_outcomes. The map still uses buildDetectionUnits for positions.
+ok('D1 renders ENG1 outcomes read from World State derivations (PR-WS-ENG1-A)',
+   /lastWorldState[\s\S]*derived[\s\S]*engagement_outcomes/.test(fn));
+ok('D2 links detection positions to the WS-derived (contact-gated) engagement outcomes',
+   /buildDetectionUnits[\s\S]*engagement_outcomes/.test(fn));
 ok('D3 OFF by default', /let engagementsEnabled = false/.test(MAP));
 ok('D4 no-op when toggle off', /if \(!engagementsEnabled[^\n]*\) return;/.test(fn));
 ok('D5 draws only the "engaged" candidates (firing solutions)', /r\.status !== 'engaged'\) continue;/.test(fn));

@@ -76,13 +76,15 @@ function coverageRingRadiiKm(ud) {
 const km = (nm) => Math.round(nm * NM_TO_KM);
 
 console.log('\n─── A. radii are the DB-Lite ranges (nm→km), via the DB1 catalog ───');
-// air_defense kind: long_range_3d sensor + long_range_sam weapon
+// sam_s300 kind (Phase 5D-1 specific SAM): S300_SEARCH_RADAR sensor + S300_MISSILE weapon.
+// (Before Phase 5D-1 a 'sam_s300' role fell to generic air_defense; the catalog now
+//  resolves it to the specific S-300 profile — expectations track the live DB-Lite class.)
 const s300 = coverageRingRadiiKm({ role: 'sam_s300', domain: 'ground' });
-eq('A1 SAM (air_defense) sensor = long_range_3d (200nm)', s300.sensorKm, km(SDB.long_range_3d.ref_range_nm));
-eq('A1 SAM (air_defense) weapon = long_range_sam (80nm)', s300.threatKm, km(WDB.long_range_sam.max_range_nm));
-eq('A1 sensor class tagged', s300.sensorClass, 'long_range_3d');
-eq('A1 weapon class tagged', s300.weaponClass, 'long_range_sam');
-ok('A1 classified by the catalog as air_defense', DB1.classifyKind({ role: 'sam_s300', domain: 'ground' }) === 'air_defense');
+eq('A1 SAM (sam_s300) sensor = S300_SEARCH_RADAR', s300.sensorKm, km(SDB.S300_SEARCH_RADAR.ref_range_nm));
+eq('A1 SAM (sam_s300) weapon = S300_MISSILE', s300.threatKm, km(WDB.S300_MISSILE.max_range_nm));
+eq('A1 sensor class tagged', s300.sensorClass, 'S300_SEARCH_RADAR');
+eq('A1 weapon class tagged', s300.weaponClass, 'S300_MISSILE');
+ok('A1 classified by the catalog as sam_s300 (Phase 5D-1)', DB1.classifyKind({ role: 'sam_s300', domain: 'ground' }) === 'sam_s300');
 // ground_maneuver kind: surface_search sensor + gun weapon
 const arty = coverageRingRadiiKm({ role: 'artillery_bn', domain: 'ground' });
 eq('A2 ground unit weapon = gun (12nm)', arty.threatKm, km(WDB.gun.max_range_nm));
@@ -115,8 +117,10 @@ eq('B3 multi-weapon unit uses the LONGEST range', multi.threatKm, km(WDB.long_ra
 console.log('\n─── C. the in-file fallback mirror equals the LIVE DB ───');
 function parseMirror(re, key) {
     const out = {};
-    const block = MAP.slice(MAP.indexOf('RING_' + key + '_DB_FALLBACK'), MAP.indexOf('RING_' + key + '_DB_FALLBACK') + 600);
-    const rx = new RegExp('(\\w+):\\s*\\{\\s*' + re + ':\\s*(\\d+)', 'g');
+    // Window must cover the full mirror (now 17 classes each); regex captures decimals
+    // (ZSU_GUN 1.9, AAA_GUN 1.3, short_range_sam 3.5) so the gate compares them correctly.
+    const block = MAP.slice(MAP.indexOf('RING_' + key + '_DB_FALLBACK'), MAP.indexOf('RING_' + key + '_DB_FALLBACK') + 1500);
+    const rx = new RegExp('(\\w+):\\s*\\{\\s*' + re + ':\\s*(\\d+(?:\\.\\d+)?)', 'g');
     let m; while ((m = rx.exec(block))) out[m[1]] = +m[2];
     return out;
 }

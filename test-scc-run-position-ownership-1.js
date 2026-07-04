@@ -88,7 +88,7 @@ console.log('\n--- 2. free-fight-demo.js: accumulate + publish + clear + re-publ
         var rpFn = ff.indexOf('function _replanCoa'); var rp = ff.indexOf('_generateCoaPlan();   // the single LLM call', rpFn);
         return ff.slice(ri, ri + 300).indexOf('_publishOwnedPositions()') !== -1 && rpFn !== -1 && rp !== -1 && ff.slice(rpFn, rp).indexOf('_publishOwnedPositions()') !== -1;
     })());
-    assert('T-8  re-published on restore (_restoreCoaExec)', (function () { var i = ff.indexOf('function _restoreCoaExec'); return ff.slice(i, i + 600).indexOf('_publishOwnedPositions()') !== -1; })());
+    assert('T-8  re-published on restore (_restoreCoaExec)', (function () { var i = ff.indexOf('function _restoreCoaExec'); var e = ff.indexOf('\n    function ', i + 1); return i !== -1 && ff.slice(i, e === -1 ? i + 1200 : e).indexOf('_publishOwnedPositions()') !== -1; })());
     // Scoped to exactly the two B1 helper bodies (_accumulateOwnedPositions + _publishOwnedPositions),
     // ending at _publishOwnedPositions' last statement — so the assertion isn't tripped by the word
     // "window.units" appearing in a NEIGHBOURING helper's boundary-note comment (e.g. C1's clock helpers).

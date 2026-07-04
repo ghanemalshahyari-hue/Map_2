@@ -127,9 +127,10 @@ console.log('\n--- 3. free-fight-demo.js: clock seed + advance + speed + play/pa
     assert('T-9  publish gated to an active run (clears to null otherwise)', /setRunClock\(\(_coaExec && _coaExec\.active && _coaExec\.clock\) \|\| null\)/.test(ff));
     assert('T-10 cleared on reset + replan, re-published on restore', (function () {
         var r = ff.indexOf('function _resetCoaExec'); var rp = ff.indexOf('_generateCoaPlan();   // the single LLM call'); var rs = ff.indexOf('function _restoreCoaExec');
+        var rsEnd = ff.indexOf('\n    function ', rs + 1);   // scope to the _restoreCoaExec body (robust to later inserts)
         return ff.slice(r, r + 400).indexOf('_publishRunClock()') !== -1 &&
             ff.slice(Math.max(0, rp - 300), rp).indexOf('_publishRunClock()') !== -1 &&
-            ff.slice(rs, rs + 700).indexOf('_publishRunClock()') !== -1;
+            ff.slice(rs, rsEnd === -1 ? rs + 1200 : rsEnd).indexOf('_publishRunClock()') !== -1;
     })());
     assert('T-11 live scenario-time readout in the run status panel', ff.indexOf('Scenario time:') !== -1 && ff.indexOf('_scenarioClockLabel(ex)') !== -1);
     assert('T-12 boundary: clock helpers do not mutate window.units / scenario / steps',

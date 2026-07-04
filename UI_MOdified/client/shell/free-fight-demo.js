@@ -3260,6 +3260,7 @@
         if (blob.scenario_key !== _scenarioKey()) return false;  // different scenario → ignore stale
         _coaExec = blob.state;
         _coaExec.paused = true; _coaExec._restored = true;       // restored = paused until the operator runs
+        if (_coaExec.clock) _coaExec.clock.display_step = -1;    // OPTION-C/C2: force a fresh snapshot render on resume
         try { _publishOwnedPositions(); } catch (_) {}           // OPTION-B/B1: re-publish restored owned positions
         try { _publishRunClock(); } catch (_) {}                 // OPTION-C/C1: re-publish the restored scenario clock
         if (_coaExecTimer) { _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null; }
@@ -3577,7 +3578,7 @@
         };
         // OPTION-C / SLICE-C1: seed the scenario runtime clock from the authored steps' elapsed-hours span.
         var _clkB = _clockBoundsFromScenario();
-        _coaExec.clock = { start_hours: _clkB.start, current_hours: _clkB.start, end_hours: _clkB.end, playing: false, speed: _clockSpeedMult() };
+        _coaExec.clock = { start_hours: _clkB.start, current_hours: _clkB.start, end_hours: _clkB.end, playing: false, speed: _clockSpeedMult(), display_step: -1 };   // display_step: OPTION-C/C2 (clock drives the shown snapshot)
         try { _publishRunClock(); } catch (_) {}
         _committedPlanObj = _coaPlan;   // AB1: remember WHICH plan object this commit came from (identity)
         // RMOOZ-ADVISORY-COMMIT-JOURNAL-V: persist the advisory/ranking decision context with the commit.
@@ -3716,6 +3717,84 @@
         var c = ex && ex.clock;
         if (c && isFinite(+c.current_hours)) return (+c.current_hours === 0) ? 'H' : ('H' + (c.current_hours < 0 ? '' : '+') + (Math.round(c.current_hours * 10) / 10));
         return '\u2014';
+    }
+
+    // OPTION-C / SLICE-C2: the runtime clock drives the DISPLAYED snapshot. On each authored-step boundary the
+    // committed Run re-renders the AUTHORED snapshot at the clock-derived step (map overlays: objective /
+    // phase-line / arcs) while units stay at their run (owned) positions and live fields (BLS/contacts/balance)
+    // re-derive against them. _stateFromStep builds the legacy `state` the map reads from steps[i].*_baseline.
+    // Pure/read-only: returns a fresh literal, clones arrays/map -> the authored scenario is never mutated.
+    function _stateFromStep(scenario, stepIndex) {
+        var steps = (scenario && Array.isArray(scenario.steps)) ? scenario.steps : [];
+        var i = (typeof stepIndex === 'number' && stepIndex >= 0) ? Math.min(stepIndex, steps.length - 1) : 0;
+        var st = steps[i] || {};
+        function _ca(a) { return Array.isArray(a) ? a.slice() : null; }
+        function _cm(m) { if (!m || typeof m !== 'object') return {}; var o = {}; for (var k in m) { if (Object.prototype.hasOwnProperty.call(m, k)) o[k] = m[k]; } return o; }
+        return {
+            step_index: i,
+            time_label: st.time_label || null,
+            elapsed_hours: (typeof st.elapsed_hours === 'number') ? st.elapsed_hours : null,
+            phase: st.phase || null,
+            kind_native: st.kind_native || null,
+            phase_line_km: (typeof st.phase_line_km_baseline === 'number') ? st.phase_line_km_baseline : null,
+            objective_status: st.objective_status_baseline || null,
+            force_ratio: (typeof st.force_ratio_baseline === 'string') ? st.force_ratio_baseline : null,
+            force_ratio_local: (typeof st.force_ratio_local === 'number') ? st.force_ratio_local : null,
+            force_ratio_operational: (typeof st.force_ratio_operational === 'number') ? st.force_ratio_operational : null,
+            ew_effect: st.ew_effect_baseline || null,
+            logistics_state: st.logistics_state_baseline || null,
+            decision_point: st.decision_point_baseline || null,
+            phase_name_ar: st.phase_name_ar || null,
+            bls_status: _cm(st.bls_status_baseline),
+            losses_cumulative: {
+                blue_destroyed: (typeof st.blue_destroyed_count_baseline === 'number') ? st.blue_destroyed_count_baseline : 0,
+                blue_total: (typeof st.blue_total === 'number') ? st.blue_total : 0,
+                red_company_equivalent: (typeof st.red_losses_cumulative_baseline === 'number') ? st.red_losses_cumulative_baseline : 0
+            },
+            per_unit_deltas: { blue_destroyed: [], red_degraded: [] },
+            narrative_en: st.narrative_en_fallback || '',
+            narrative_ar: st.narrative_ar_fallback || '',
+            actors: _ca(st.actors),
+            affected: _ca(st.affected),
+            engagement_arcs: _ca(st.engagement_arcs),
+            _snapshot_from_clock: true
+        };
+    }
+    // Re-render the AUTHORED snapshot at the clock-derived step: rebuild the scenario layer (via the existing
+    // redraw wrapper, which suppresses auto-fitBounds -> no pan jump), then applyState in SNAPSHOT mode
+    // (instant, skipUnitPositioning -> owned run positions win; ws.clock attaches via the C1 runClock overlay).
+    function _renderSnapshotAtStep(idx, scenario) {
+        var w = W(); var MAP = w && w.AppAdjudicatorMap;
+        if (!MAP || typeof MAP.applyState !== 'function' || !scenario) return;
+        try { _triggerScenarioRedraw(); } catch (_) {}
+        try { MAP.applyState(_stateFromStep(scenario, idx), scenario, { skipUnitPositioning: true, snapshot: true }); } catch (_) {}
+    }
+    // Boundary detector: map the clock current_hours -> the authored step in effect; on a CHANGE (debounce),
+    // re-render the snapshot at that step and fire rmooz:run-step-changed. Committed-Run only. Returns true iff
+    // it crossed (so the tick skips its redundant per-tick scenario redraw). Owned positions stay authoritative.
+    function _syncDisplayStepToClock() {
+        if (!_coaExec || !_coaExec.active || !_coaExec.clock) return false;
+        var w = W(); var WS = w && w.AppWorldState;
+        var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        if (!WS || typeof WS.findStepForElapsedHours !== 'function' || !sc) return false;
+        var found = WS.findStepForElapsedHours(sc, _coaExec.clock.current_hours);
+        if (!found || found.index === _coaExec.clock.display_step) return false;   // debounce: only on a boundary cross
+        _coaExec.clock.display_step = found.index;
+        _renderSnapshotAtStep(found.index, sc);
+        try {
+            if (w && typeof w.CustomEvent === 'function' && w.document && typeof w.document.dispatchEvent === 'function') {
+                w.document.dispatchEvent(new w.CustomEvent('rmooz:run-step-changed', { detail: { step_index: found.index, time_label: found.time_label || null, current_hours: _coaExec.clock.current_hours } }));
+            }
+        } catch (_) {}
+        return true;
+    }
+    // Run-panel readout: the clock-driven displayed snapshot step ("idx - time_label (phase)").
+    function _snapshotStepLabel(ex) {
+        var c = ex && ex.clock; if (!c || c.display_step == null || c.display_step < 0) return '-';
+        var w = W(); var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        var steps = (sc && Array.isArray(sc.steps)) ? sc.steps : [];
+        var st = steps[c.display_step] || {};
+        return c.display_step + (st.time_label ? (' - ' + st.time_label) : '') + (st.phase ? (' (' + st.phase + ')') : '');
     }
 
     function _journalRunTickMoves(records) {
@@ -3871,12 +3950,13 @@
         }
         _coaExec.ticks++; _coaExec.updated_at = _nowISO();
         try { _advanceScenarioClock(); } catch (_) {}   // OPTION-C/C1: advance the scenario runtime clock (current_time) this tick
+        var _crossed = false; try { _crossed = _syncDisplayStepToClock(); } catch (_) {}   // OPTION-C/C2: clock drives the displayed snapshot step (re-renders on a boundary cross)
         var coa_tick_execute_ms = _nowMs() - te0;
         // RMOOZ-COA-COMMIT-LIVE-DELAY-AUDIT-N: instrument the REAL per-tick UI/map/persist costs so the
         // operator can see (in their browser) exactly where any delay is. coa_tick_execute_ms is the
         // pure phase work; the rest is rendering/persistence the browser pays each tick.
         var _sp0 = _nowMs(); _persistCoaExec(); var storage_persist_ms = _nowMs() - _sp0;
-        var _mp0 = _nowMs(); if (mapReady()) { _triggerScenarioRedraw(); syncMarkers(); _maybePanToMovedCentroid(); } var map_paint_ms = _nowMs() - _mp0;
+        var _mp0 = _nowMs(); if (mapReady()) { if (!_crossed) _triggerScenarioRedraw(); syncMarkers(); _maybePanToMovedCentroid(); } var map_paint_ms = _nowMs() - _mp0;   // OPTION-C/C2: on a boundary cross _renderSnapshotAtStep already redrew the scenario layer
         var _ui0 = _nowMs(); updatePanel(); var ui_update_ms = _nowMs() - _ui0;
         _coaExec.last_tick_timing = {
             coa_tick_execute_ms: coa_tick_execute_ms, replan_trigger_check_ms: replan_trigger_check_ms,
@@ -5387,6 +5467,7 @@
             '<div><span style="color:#8fa5b8;">Phase:</span> ' + (ex.phase_status === 'complete' ? 'all done' : ((ex.current_phase_index + 1) + ' / ' + phases.length)) +
             ' · <span style="color:#8fa5b8;">Status:</span> <b style="color:#cfe6ff;">' + word + '</b></div>' +
             '<div><span style="color:#8fa5b8;">Scenario time:</span> <b style="color:#ffd27f;">' + esc(_scenarioClockLabel(ex)) + '</b></div>' +
+            '<div><span style="color:#8fa5b8;">Snapshot step:</span> <b style="color:#cfe6ff;">' + esc(_snapshotStepLabel(ex)) + '</b></div>' +
             '<div><span style="color:#8fa5b8;">AI calls on normal ticks:</span> <b style="color:#7fd6a0;">OFF</b></div></div>';
     }
     // ══ RMOOZ-FREE-FIGHT-CONTINUOUS-SCENARIO-AA: continuous scenario orchestration ════════════════════
@@ -6397,6 +6478,7 @@
         engine: _engine,   // RMOOZ-SCENARIO-CONTROL-CENTER-REBUILD-AF facade
         mount: mount, init: init, setObjective: setObjective, clearObjective: clearObjective,
         start: start, pause: pause, reset: reset, step: step, replan: replan, clear: clear,
+        pauseCommittedRun: function () { return _pauseCommittedCoa(); },   // OPTION-C/C2: manual step-nav pauses the clock-driven committed run
         setPlannerMode: setPlannerMode,
         getState: getState, getGroups: getGroups, getRed: getRed, getBlue: getBlue,
         getObjective: getObjective, getPlan: getPlan, getLlmStatus: function () { return Object.assign({}, _llmStatus); },

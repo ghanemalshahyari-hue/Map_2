@@ -5763,13 +5763,26 @@
         ensureScenarioGraphicsPane();
         opts = opts || {};
 
+        // OPTION-C / SLICE-C2 ownership rule: a NON-snapshot applyState while a committed run clock is PLAYING
+        // means a manual / adjudicator step-nav (scrubToStep / renderStep) is taking over the display → pause
+        // the clock-driven run so the operator's chosen frame sticks (the clock stops owning the step). The
+        // clock's OWN snapshot re-renders pass opts.snapshot and are excluded; no-op when no run clock is playing.
+        if (!opts.snapshot && runClock && runClock.playing && window.RmoozFreeFightDemo && typeof window.RmoozFreeFightDemo.pauseCommittedRun === 'function') {
+            try { window.RmoozFreeFightDemo.pauseCommittedRun(); } catch (_) { /* best-effort ownership handoff */ }
+        }
+
         // Forward step vs rewind/jump. Forward (newIdx > last) plays the
         // full advance-arrow draw-on + staggered explosion + delayed X
         // choreography. Backward or equal step index snaps to the new
         // cumulative state silently — no replay of past kills.
         const stepIdx = Number.isFinite(state.step_index) ? state.step_index : 0;
         lastRenderStepIndex = stepIdx;   // shared with refreshAllMarkerStatuses
-        const isForward = stepIdx > lastAppliedStepIndex;
+        // OPTION-C / SLICE-C2: a committed-run snapshot re-render (clock-driven step selection) must NOT
+        // replay the forward advance-arrow / staggered-explosion / delayed-X choreography. The run's per-tick
+        // redraw resets lastAppliedStepIndex, so every boundary cross would otherwise read as "forward" and
+        // re-flash past kills. opts.snapshot forces the instant (silent-snap) path; units stay at owned
+        // positions (callers pass skipUnitPositioning:true). Default callers omit snapshot → unchanged.
+        const isForward = opts.snapshot ? false : (stepIdx > lastAppliedStepIndex);
         const instant = !isForward;
         lastAppliedStepIndex = stepIdx;
         lastAppliedState     = state;
@@ -6297,8 +6310,10 @@
             }
         }
 
-        // Sync 3D globe if it's currently visible
-        if (window.AppCesiumView && window.AppCesiumView.isVisible) {
+        // Sync 3D globe if it's currently visible. OPTION-C / SLICE-C2: skip during a committed-run snapshot
+        // re-render — Cesium would receive the AUTHORED-step state (not the run's owned positions), diverging
+        // 3D from 2D. 3D run-position sync is a documented follow-up (C2 stays 2D-scoped).
+        if (!opts.snapshot && window.AppCesiumView && window.AppCesiumView.isVisible) {
             window.AppCesiumView.applyState(state, lastAppliedScenario || scenarioRef);
         }
 

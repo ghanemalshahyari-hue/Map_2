@@ -41,7 +41,19 @@
             S300_MISSILE:    { max_range_nm: 89, pk: 0.70, salvo: 2, autonomous: false, vs: ['air'] },  // ~165 km
             S75_MISSILE:     { max_range_nm: 19, pk: 0.60, salvo: 2, autonomous: false, vs: ['air'] },  // ~35 km
             ZSU_GUN:         { max_range_nm: 1.9, pk: 0.50, salvo: 4, autonomous: true,  vs: ['air','missile'] },  // ~3.5 km
-            AAA_GUN:         { max_range_nm: 1.3, pk: 0.45, salvo: 3, autonomous: true,  vs: ['air','missile'] }   // ~2.5 km
+            AAA_GUN:         { max_range_nm: 1.3, pk: 0.45, salvo: 3, autonomous: true,  vs: ['air','missile'] },  // ~2.5 km
+            // D5-DB-COMPLETE (2026-07-04): air/naval/strike weapon classes referenced by the DB-Lite
+            // catalog (world-state-db.js) but previously UNDEFINED here → wpnDef() fell back to 0 nm,
+            // so every D5 aircraft/ship weapon silently could not fire. Public/illustrative values in
+            // RMOOZ DB-Lite (NOT CMO data), same class-keyed style as above.
+            medium_aa_missile: { max_range_nm: 40,  pk: 0.65, salvo: 2, autonomous: false, vs: ['air'] },           // BVR AAM (AMRAAM / R-27) ~75 km
+            short_aa_missile:  { max_range_nm: 10,  pk: 0.75, salvo: 1, autonomous: false, vs: ['air'] },           // WVR AAM (AIM-9 / R-73) ~18 km
+            long_aa_missile:   { max_range_nm: 80,  pk: 0.55, salvo: 2, autonomous: false, vs: ['air'] },           // long-range AAM (AIM-54 Phoenix / Fakour-90) ~150 km
+            ag_missile:        { max_range_nm: 15,  pk: 0.70, salvo: 1, autonomous: false, vs: ['ground','sea'] },  // air-to-ground (Maverick / HARM / ATGM) ~28 km
+            cruise_missile:    { max_range_nm: 150, pk: 0.75, salvo: 1, autonomous: false, vs: ['ground','sea'] },  // land-attack cruise (Storm Shadow / SCALP) ~280 km
+            asuw_missile:      { max_range_nm: 70,  pk: 0.60, salvo: 2, autonomous: false, vs: ['sea'] },           // anti-ship missile (Harpoon / Exocet) ~130 km
+            torpedo:           { max_range_nm: 15,  pk: 0.65, salvo: 1, autonomous: false, vs: ['sea'] },           // heavyweight torpedo (Mk 48 / Spearfish) ~28 km
+            short_range_sam:   { max_range_nm: 3.5, pk: 0.55, salvo: 1, autonomous: true,  vs: ['air'] }            // MANPADS / point SAM (Mistral / Stinger) ~6.5 km
         }
     };
     var RANGE_MODE_FACTOR = { max: 1.0, '75pct': 0.75, nez: 0.5 };

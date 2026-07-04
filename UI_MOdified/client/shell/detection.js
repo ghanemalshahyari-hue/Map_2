@@ -44,13 +44,22 @@
             S75_RADAR:         { type: 'radar', ref_range_nm: 40  },  // ~75 km tactical SAM search
             ZSU_RADAR:         { type: 'radar', ref_range_nm: 21  },  // ~40 km AAA gun radar
             P37_RADAR:         { type: 'radar', ref_range_nm: 135 },  // ~250 km strategic early-warning
-            AAA_RADAR:         { type: 'radar', ref_range_nm: 8   }   // ~15 km generic AAA search
+            AAA_RADAR:         { type: 'radar', ref_range_nm: 8   },  // ~15 km generic AAA search
+            // D5-DB-COMPLETE (2026-07-04): sensor classes referenced by the DB-Lite catalog
+            // (world-state-db.js) but previously UNDEFINED here → 0 detect range. Public/illustrative.
+            sonar_active:      { type: 'sonar',   ref_range_nm: 20 },   // hull/bow active sonar ~37 km
+            sonar_passive:     { type: 'sonar',   ref_range_nm: 40 },   // passive towed/flank array ~75 km
+            sonobuoy:          { type: 'sonar',   ref_range_nm: 15 },   // MPA sonobuoy / MAD field ~28 km
+            passive_tracking:  { type: 'ir',      ref_range_nm: 30 },   // IRST passive track ~55 km
+            visual:            { type: 'optical', ref_range_nm: 8  },   // optical / Mk-1 eyeball ~15 km
+            identification:    { type: 'iff',     ref_range_nm: 0  }    // IFF interrogator — ident only, no detect range
         },
         rcs_class: {                           // σ in m² (our values)
             very_large: { sigma_m2: 1000 },    // ship / large structure
             large:      { sigma_m2: 100 },
             medium:     { sigma_m2: 10 },       // typical 4th-gen aircraft
             small:      { sigma_m2: 1 },        // small craft / cruise missile
+            very_small: { sigma_m2: 0.2 },      // MANPADS team / periscope / small UAV (D5-DB-COMPLETE)
             stealth:    { sigma_m2: 0.05 }
         },
         // default sensor altitude (ft) by domain, used in the horizon formula

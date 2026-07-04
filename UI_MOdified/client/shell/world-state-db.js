@@ -429,6 +429,103 @@
             sensors: [],
             weapons: [{ id: 'def_mg', label: 'Defensive MG', class: 'gun', mount: 'm1' }],
             magazines: [{ mount: 'm1', stock: { gun: 200 } }]
+        },
+
+        // ── DB-COMPLETE (2026-07-04): submarine, maritime-patrol, and legacy fighters ──
+        // Gaps found during the scenario-import pilot: subs → generic, MPA → air_unit,
+        // F-14/F-4/F-5 had no profile. Source: Jane's / open-source public specifications.
+        attack_submarine: {
+            label: 'Attack Submarine (SSN/SSK)', source: "Jane's Fighting Ships; open-source specifications",
+            rcs_class: 'stealth', readiness: 'ready', supply: 0.85,
+            doctrine_tags: ['undersea', 'anti_submarine', 'anti_ship', 'stealth', 'sea_denial'],
+            sensors: [
+                { id: 'sonar_p', label: 'Passive sonar array', type: 'sonar', class: 'sonar_passive', emcon: 'always' },
+                { id: 'sonar_a', label: 'Active sonar',        type: 'sonar', class: 'sonar_active',  emcon: 'silent' },
+                { id: 'esm',     label: 'ESM mast',            type: 'esm',   class: 'esm_intercept', emcon: 'active' }
+            ],
+            weapons: [
+                { id: 'torpedo', label: 'Heavyweight torpedo',            class: 'torpedo',      mount: 'm1', wra: { mode: 'max', salvo: 1 } },
+                { id: 'asuw',    label: 'Sub-launched anti-ship missile', class: 'asuw_missile', mount: 'm2' }
+            ],
+            magazines: [
+                { mount: 'm1', stock: { torpedo: 20 } },
+                { mount: 'm2', stock: { asuw_missile: 8 } }
+            ]
+        },
+        maritime_patrol: {
+            label: 'Maritime Patrol Aircraft (MPA)', source: "Jane's All the World's Aircraft; open-source specifications",
+            rcs_class: 'large', readiness: 'ready', supply: 0.8,
+            doctrine_tags: ['asw', 'maritime_surveillance', 'anti_ship', 'search'],
+            sensors: [
+                { id: 'search',   label: 'Maritime search radar', type: 'radar', class: 'surface_search', emcon: 'active' },
+                { id: 'sonobuoy', label: 'Sonobuoy / MAD suite',  type: 'sonar', class: 'sonobuoy',       emcon: 'active' },
+                { id: 'esm',      label: 'ESM',                   type: 'esm',   class: 'esm_intercept',  emcon: 'active' }
+            ],
+            weapons: [
+                { id: 'torpedo', label: 'Lightweight ASW torpedo', class: 'torpedo',      mount: 'm1', wra: { mode: 'max', salvo: 1 } },
+                { id: 'asuw',    label: 'Anti-ship missile',       class: 'asuw_missile', mount: 'm2' }
+            ],
+            magazines: [
+                { mount: 'm1', stock: { torpedo: 6 } },
+                { mount: 'm2', stock: { asuw_missile: 2 } }
+            ]
+        },
+        f14: {
+            label: 'F-14 Tomcat', source: "Jane's Fighting Aircraft; public specifications",
+            rcs_class: 'medium', readiness: 'ready', supply: 0.7,
+            doctrine_tags: ['air_superiority', 'fleet_defense', 'long_range_intercept'],
+            sensors: [
+                { id: 'awg9', label: 'AN/AWG-9 long-range radar', type: 'radar',   class: 'long_range_3d', emcon: 'active' },
+                { id: 'tcs',  label: 'TCS optical',               type: 'optical', class: 'visual',        emcon: 'always' }
+            ],
+            weapons: [
+                { id: 'aim54', label: 'AIM-54 Phoenix / Fakour-90', class: 'long_aa_missile',   mount: 'm1', wra: { mode: 'max', salvo: 2 } },
+                { id: 'aim7',  label: 'AIM-7 Sparrow',              class: 'medium_aa_missile', mount: 'm2' },
+                { id: 'aim9',  label: 'AIM-9 Sidewinder',           class: 'short_aa_missile',  mount: 'm3' },
+                { id: 'gun',   label: '20mm M61 Vulcan',            class: 'gun',               mount: 'm4' }
+            ],
+            magazines: [
+                { mount: 'm1', stock: { long_aa_missile: 6 } },
+                { mount: 'm2', stock: { medium_aa_missile: 2 } },
+                { mount: 'm3', stock: { short_aa_missile: 2 } },
+                { mount: 'm4', stock: { gun: 675 } }
+            ]
+        },
+        f4_phantom: {
+            label: 'F-4 Phantom II', source: "Jane's Fighting Aircraft; public specifications",
+            rcs_class: 'medium', readiness: 'ready', supply: 0.7,
+            doctrine_tags: ['multirole', 'strike', 'interdict', 'air_defense'],
+            sensors: [
+                { id: 'apq', label: 'AN/APQ fire-control radar', type: 'radar', class: 'fire_control', emcon: 'active' }
+            ],
+            weapons: [
+                { id: 'aim7', label: 'AIM-7 Sparrow',           class: 'medium_aa_missile', mount: 'm1', wra: { mode: 'max', salvo: 2 } },
+                { id: 'aim9', label: 'AIM-9 Sidewinder',        class: 'short_aa_missile',  mount: 'm2' },
+                { id: 'agm',  label: 'Air-to-ground ordnance',  class: 'ag_missile',        mount: 'm3' },
+                { id: 'gun',  label: '20mm cannon',             class: 'gun',               mount: 'm4' }
+            ],
+            magazines: [
+                { mount: 'm1', stock: { medium_aa_missile: 4 } },
+                { mount: 'm2', stock: { short_aa_missile: 4 } },
+                { mount: 'm3', stock: { ag_missile: 4 } },
+                { mount: 'm4', stock: { gun: 640 } }
+            ]
+        },
+        f5_tiger: {
+            label: 'F-5 Tiger II / Freedom Fighter', source: "Jane's Fighting Aircraft; public specifications",
+            rcs_class: 'small', readiness: 'ready', supply: 0.7,
+            doctrine_tags: ['light_fighter', 'point_defense_intercept', 'day_fighter'],
+            sensors: [
+                { id: 'radar', label: 'Lightweight radar', type: 'radar', class: 'fire_control', emcon: 'active' }
+            ],
+            weapons: [
+                { id: 'aim9', label: 'AIM-9 Sidewinder', class: 'short_aa_missile', mount: 'm1', wra: { mode: 'max', salvo: 1 } },
+                { id: 'gun',  label: '20mm cannon',      class: 'gun',              mount: 'm2' }
+            ],
+            magazines: [
+                { mount: 'm1', stock: { short_aa_missile: 2 } },
+                { mount: 'm2', stock: { gun: 560 } }
+            ]
         }
     };
 
@@ -453,8 +550,11 @@
         if (/p-?37|flatface|barlock/i.test(role)) return 'radar_p37';
 
         // D5: named platform keyword shortcuts (unambiguous platform names only)
-        if (/\bf-?16\b/i.test(role)) return 'f16c';
+        if (/\bf-?16[a-z]?\b|fighting.?falcon/i.test(role)) return 'f16c';   // DB-COMPLETE: was /\bf-?16\b/ which missed "F-16C"
         if (/\bf-?15e\b|strike.eagle/i.test(role)) return 'f15e';
+        if (/\bf-?14\b|tomcat/i.test(role)) return 'f14';
+        if (/\bf-?4[a-z]?\b|phantom/i.test(role)) return 'f4_phantom';
+        if (/\bf-?5[a-z]?\b|tiger.?ii|freedom.?fighter/i.test(role)) return 'f5_tiger';
         if (/mirage.?2000/i.test(role)) return 'mirage2000';
         if (/\bmig.?29\b/i.test(role)) return 'mig29';
         if (/panavia.*tornado|tornado.*strike/i.test(role)) return 'tornado';
@@ -466,6 +566,9 @@
         if (/skyshield/i.test(role)) return 's1_aaa';
         if (/\bmlrs\b|multiple.launch.rocket/i.test(role)) return 'mlrs';
         if (/\bmeko\b|type.f2000|f2000s/i.test(role)) return 'meko';
+        // DB-COMPLETE (2026-07-04): subsurface + maritime patrol (were falling to generic / air_unit)
+        if (/submarine|\bssn\b|\bssk\b|\bssbn\b|\bsub\b|u-?boat|akula|\bvictor\b|\bkilo\b|trafalgar|los.?angeles|virginia|attack.?sub/i.test(role)) return 'attack_submarine';
+        if (/maritime.?patrol|\bmpa\b|nimrod|\borion\b|\bp-?3\b|\bp-?8\b|poseidon|atlantique|bear-?[fd]|tu-?142|il-?38/i.test(role)) return 'maritime_patrol';
 
         // Fallback to generic air-defense for unknown AD systems
         if (/air.?def|sam|\bad\b|s-?\d{3}|missile.?def/.test(role)) return 'air_defense';

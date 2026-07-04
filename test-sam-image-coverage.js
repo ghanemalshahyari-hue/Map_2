@@ -29,7 +29,7 @@
  * SAM-21  panel JS has _renderRealImage function (existing; no regression)
  * SAM-22  panel JS checks unit.image_url before enriched.image_asset
  * SAM-23  unit.image_url (authored) wins over DB1 image_asset
- * REG-1   DB1 catalog still has 29 entries (no regression)
+ * REG-1   DB1 catalog has 34 entries (29 + 5 DB-COMPLETE additions)
  * REG-2   TASK1-E: unit_tasking derivation still works
  */
 
@@ -281,8 +281,8 @@ ok('SAM-32d: manifest.platform_match.sam_s75.image_match is generic',
 // ═══════════════════════════════════════════════════════════════════════════
 // REG-1..2: Regressions
 // ═══════════════════════════════════════════════════════════════════════════
-ok('REG-1: DB1 CAPABILITY_CATALOG still has 29 entries',
-    Object.keys(DB.CAPABILITY_CATALOG).length === 29,
+ok('REG-1: DB1 CAPABILITY_CATALOG has 34 entries (29 + 5 DB-COMPLETE: sub/MPA/F-14/F-4/F-5)',
+    Object.keys(DB.CAPABILITY_CATALOG).length === 34,
     Object.keys(DB.CAPABILITY_CATALOG).length);
 
 ok('REG-2: unit_tasking derivation still in DERIVATIONS',

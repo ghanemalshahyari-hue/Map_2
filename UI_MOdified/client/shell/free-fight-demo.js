@@ -3637,6 +3637,52 @@
     // reads AppAdjudicatorMap.getWorldState(), applies pure WS3 MOVE decisions, and reflects the
     // resulting unit deltas via AppAdjudicatorMap.applyWorldStateUnitDeltas (marker/unitRegistry
     // only — never window.units / scenario). Committed executor only; preview stays symbolic.
+    // SCC-REAL-STATE-C (Option A): durably journal a committed Run TICK's real moves via the sanctioned
+    // deterministic decision path (POST /api/sim/decide -> commitDecisions -> one durable row per MOVE).
+    // Completes "decision -> movement -> durable effect": Slice 1 moves the live map, Slice 2 journals the
+    // commit act, this journals WHAT CHANGED each tick. Reuses the SAME {type:'MOVE',actor,to} decisions as
+    // the map bridge (no new movement logic). Committed operator run only; fire-and-forget (never blocks the
+    // tick or stops the run). Boundary-safe: reads state + posts to the sanctioned path; no window.units /
+    // scenario / map mutation. NOTE: /api/sim/decide re-projects the base World State from the scenario each
+    // call, so rows capture each tick's move decisions + target positions, not a cumulative from->to chain
+    // (cumulative ownership is Option B). Preview/uncommitted paths never reach here.
+    function _journalRunTickMoves(records) {
+        if (!Array.isArray(records) || !records.length) return;
+        if (!_coaExec || !_coaExec.active) return;                 // committed operator run only
+        var w = W();
+        if (!w || typeof w.fetch !== 'function') return;           // inert under Node / jsdom (no fetch)
+        var decisions = records.filter(function (r) {
+            return r && r.uid && r.to && isFinite(+r.to.lon) && isFinite(+r.to.lat);
+        }).map(function (r) { return { type: 'MOVE', actor: r.uid, to: [+r.to.lon, +r.to.lat] }; });
+        if (!decisions.length) return;
+        var sc = w.RmoozScenario && w.RmoozScenario.scenario;
+        var scenarioName = (sc && (sc.name || sc.scenario_label || sc.scenario_name)) || null;
+        if (!scenarioName) return;                                 // need a scenario to journal against
+        var operatorId = (function () {
+            try {
+                var cu = w.AppConfig && w.AppConfig.CHAT_CONFIG && w.AppConfig.CHAT_CONFIG.currentUser;
+                if (cu && cu.id) return String(cu.id).slice(0, 80);
+            } catch (_) {}
+            return 'operator';
+        })();
+        var coaId = _coaExec.selected_coa_id || 'COA';
+        var tick = (_coaExec.ticks != null) ? _coaExec.ticks : 0;
+        var phase = (_coaExec.current_phase_index != null) ? _coaExec.current_phase_index : 0;
+        try {
+            w.fetch('/api/sim/decide', {
+                method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    scenarioName: scenarioName,
+                    operator_id:  operatorId,
+                    stepIndex:    phase,
+                    runId:        'scc-run-' + scenarioName,
+                    decisions:    decisions,
+                    mods: { source: 'scenario-control-center', kind: 'RUN_TICK', coa_id: coaId, tick: tick, phase: phase }
+                })
+            }).catch(function () { /* fire-and-forget; the run already advanced locally */ });
+        } catch (_) {}
+    }
+
     function _applyRunMovesToWorldState(records) {
         if (!Array.isArray(records) || !records.length) return null;
         if (!_coaExec || !_coaExec.active) return null;   // committed operator run only
@@ -3701,6 +3747,7 @@
         // tick's real moves through World State (WS3) and reflect them on the live map (not just
         // the symbolic demo layer). Preview/uncommitted paths never reach here.
         try { _applyRunMovesToWorldState(_movedMovementRecords); } catch (_) {}
+        try { _journalRunTickMoves(_movedMovementRecords); } catch (_) {}   // SCC-REAL-STATE-C: durable per-tick move journal (sanctioned /api/sim/decide)
         // Held units (moved < 0.5km but not HOLD_POSITION) and domain-blocked units tracked
         // separately so movementDebug() and the map overlay can show WHY they didn't move.
         var holdActions = moves.filter(function (m) { return m.hold; });

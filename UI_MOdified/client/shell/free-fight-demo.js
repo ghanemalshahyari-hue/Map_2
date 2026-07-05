@@ -6189,6 +6189,10 @@
         committedExec: function () { return _coaExec; },
         committedIsStale: function () { try { return _coaCommitIsStale(); } catch (_) { return false; } },
         scenarioRuntime: function () { return _scenario; },
+        // OPTION-C: human-readable SCENARIO TIME for the run readout — single-sourced from the C1/C2
+        // World-State clock label (MAP.runClockLabel: findStepForElapsedHours + start_time DTG), H-relative
+        // fallback. "Run means time moves": the primary run panel shows time, not a fixed turn count.
+        scenarioClockLabel: function () { try { return _scenarioClockLabel(_coaExec); } catch (_) { return '—'; } },
         scenarioActive: function () { try { return _scenarioActive(); } catch (_) { return false; } },
         commitBlockedReason: function () { return _coaCommitBlockedReason; },
         // ── readiness / Step-1 gate (Panel 1) ──

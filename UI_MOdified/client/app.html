@@ -853,8 +853,16 @@
                 <section class="tools-section tool-panel wargame-panel context-section hidden" id="wargame-panel" aria-label="Operational scenario battle control">
                     <div class="wargame-panel-topline">
                         <span class="wargame-classification">Training</span>
-                        <span class="wargame-mode-chip">Turn-based</span>
+                        <span class="wargame-mode-chip">Legacy · Diagnostic</span>
                     </div>
+
+                    <!-- RMOOZ-RUN-CONTROLS-CONTRACT-1: "Run means time moves." This legacy turn-based HUD
+                         is a diagnostic review surface, NOT the scenario run. The live scenario run is the
+                         Scenario Control Center (runtime clock -> World State -> map -> journal). IDs kept
+                         for compatibility; not deleted. -->
+                    <div id="wg-legacy-banner" class="wargame-legacy-note"
+                         style="margin:4px 0;padding:5px 8px;border:1px solid #7a5a20;border-radius:5px;background:#1a1408;color:#d9bf7a;font-size:10px;line-height:1.4;"
+                         data-i18n="wg-legacy-banner">⚠ Legacy Turn Review / Diagnostic — not the scenario run. Run the scenario from the Scenario Control Center.</div>
 
                     <div class="wargame-brief-card">
                         <div>
@@ -903,9 +911,9 @@
                             </div>
                             <div id="wg-status" class="wargame-status-block">Not started</div>
                             <div class="wargame-action-row">
-                                <button id="wg-init" class="wargame-action-btn primary" type="button">Start</button>
-                                <button id="wg-next" class="wargame-action-btn success" type="button">Next Turn</button>
-                                <button id="wg-reset" class="wargame-action-btn secondary" type="button">Reset</button>
+                                <button id="wg-init" class="wargame-action-btn primary" type="button" data-i18n="wg-btn-start">Start</button>
+                                <button id="wg-next" class="wargame-action-btn success" type="button" data-i18n="wg-btn-next">Next snapshot</button>
+                                <button id="wg-reset" class="wargame-action-btn secondary" type="button" data-i18n="wg-btn-reset">Reset</button>
                             </div>
                             <div class="wargame-control-footer">
                                 <span id="wg-footer">Step 5 km - slide 800 ms - contact &lt;= 5 km</span>

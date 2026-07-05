@@ -509,7 +509,10 @@
         // live runtime read-out
         if (scn && scn.scenario_active) {
             var w = eng.whiteOutcome();
-            inner += kv('Turn', String(scn.scenario_turn), C.ink) +
+            // "Run means time moves": the primary readout is SCENARIO TIME (C1/C2 World-State clock),
+            // not a fixed turn count. Turn stays as dim internal bookkeeping (drives the end condition).
+            inner += kv('Scenario time', (function () { try { return (eng.scenarioClockLabel && eng.scenarioClockLabel()) || '—'; } catch (_) { return '—'; } })(), C.good) +
+                kv('Turn (internal)', String(scn.scenario_turn), C.dim) +
                 kv('Current actor', String(scn.current_actor || '—'), C.ink) +
                 kv('Phase', (ex && ex.selected_coa && arr(ex.selected_coa.phases)[ex.current_phase_index] && arr(ex.selected_coa.phases)[ex.current_phase_index].name) || (ex ? ('phase ' + ((ex.current_phase_index || 0) + 1)) : '—'), C.ink) +
                 kv('Objective control', String(scn.objective_control || '—'), scn.objective_control === 'Blue' ? C.good : (scn.objective_control === 'Red' ? C.bad : C.warn)) +

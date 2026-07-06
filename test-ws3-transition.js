@@ -7,6 +7,13 @@
 const path = require('path');
 const WS3 = require(path.join(__dirname, 'UI_MOdified/client/shell/world-state-transition.js'));
 const DET = require(path.join(__dirname, 'UI_MOdified/client/shell/detection.js'));
+function contactsOf(worldState) {
+    return (worldState &&
+            worldState.derived &&
+            Array.isArray(worldState.derived.contacts))
+        ? worldState.derived.contacts
+        : (Array.isArray(worldState && worldState.contacts) ? worldState.contacts : []);
+}
 
 let pass = 0, fail = 0;
 function ok(name, cond) { cond ? (pass++, console.log('  ✓ ' + name)) : (fail++, console.log('  ✗ ' + name)); }
@@ -39,9 +46,9 @@ ok('MOVE records prev + effect', air.kinematics.prev && r.effects.some(e => e.ty
 
 /* 2. THE NARRATIVE: turning EMCON ON reveals contacts (decision changes the battle) */
 let silent = WS3.applyDecision(world('silent'), { type: 'NOTE' });   // radar silent → recompute contacts
-let cSilent = (silent.worldState.contacts || []).length;
+let cSilent = contactsOf(silent.worldState).length;
 let lit = WS3.applyDecision(world('silent'), { type: 'SET_EMCON', actor: 'RED-DDG', value: 'active' });
-let cLit = (lit.worldState.contacts || []).length;
+let cLit = contactsOf(lit.worldState).length;
 ok('EMCON silent → no contacts', cSilent === 0);
 ok('SET_EMCON active → contacts appear (decision changed detection)', cLit > cSilent);
 ok('EMCON effect is explainable', lit.effects.some(e => e.type === 'emcon' && e.value === 'active'));

@@ -6,7 +6,8 @@
  *
  * C4a deliberately does NOT execute effects, mutate world state, write journal,
  * touch the map, call a backend, or write storage. It is the "what is due now?"
- * evaluator only. C4b owns effect execution and notification/journal plumbing.
+ * evaluator only. C4b owns firing notification/log plumbing; later slices own
+ * any event effect execution.
  * ========================================================================== */
 (function (root) {
     'use strict';

@@ -996,7 +996,7 @@
 
                 <!-- ▸ SCENARIO WORKSPACE PANEL — PR-42 -->
                 <!-- Scenario Workspace: primary live operator path. Hosts live scenario
-                     import, Edit Mode, live step navigation, decision context,
+                     import, Edit Mode, snapshot review navigation, decision context,
                      evidence/ledger/AAR surfaces, and secondary developer previews.
                      Legacy AI/demo scenario generation remains retired. -->
                 <section class="tools-section tool-panel context-section hidden"
@@ -1408,7 +1408,7 @@
                                         <dd id="sw-status" data-i18n="sw-value-idle">Idle</dd>
                                     </div>
                                     <div class="sw-kv-row">
-                                        <dt data-i18n="sw-field-phase">Current phase</dt>
+                                        <dt data-i18n="sw-field-phase">Legacy current phase</dt>
                                         <dd id="sw-phase" data-i18n="sw-value-none">—</dd>
                                     </div>
                                 </dl>
@@ -1426,7 +1426,7 @@
 
                         <!-- PR-287L2: Live Scenario Header — read-only.
                              Reads window.RmoozScenario only. Painted by paintLiveScenarioHeader().
-                             Shows: scenario title, scenario id, active step counter, phase, source. -->
+                             Shows: scenario title, scenario id, review checkpoint, authored phase, source. -->
                         <div id="sw-live-scenario-header" class="sw-live-scenario-header"
                              role="heading" aria-level="2">
                             <div class="sw-live-scenario-header-row">
@@ -1462,25 +1462,26 @@
                             </div>
                         </div>
 
-                        <!-- PR-287D: Scenario Phase Timeline — promoted into the live workspace.
+                        <!-- PR-287D / C3d: Review checkpoints.
                              Read-only. Rendered by shell/scenario-workspace.js paintPhaseTimeline()
-                             from getScenario().phase_table (distinct phases grouped from the rows);
-                             current/complete/upcoming derived read-only from
+                             from getScenario().phase_table (distinct authored checkpoints grouped from the rows).
+                             Selected/earlier/queued markers are review-only and derived from
                              window.RmoozScenario.stepIndex. No mutation, no backend, no commit. -->
-                        <section class="sw-group" data-sw-group="clock" role="group" aria-label="Clock and Phases">
+                        <section class="sw-group" data-sw-group="clock" role="group" aria-label="Review and Snapshot Checkpoints">
                             <div class="sw-group-banner" role="heading" aria-level="2">
-                                <span class="sw-group-banner-title" data-i18n="swg-clock-title">Clock &amp; Phases</span>
-                                <span class="sw-group-banner-sub" data-i18n="swg-clock-sub">Scenario clock, phases, and live step navigation.</span>
+                                <span class="sw-group-banner-title" data-i18n="swg-clock-title">Review &amp; Snapshot Checkpoints</span>
+                                <span class="sw-group-banner-sub" data-i18n="swg-clock-sub">Authored snapshots for review. Runtime Play stays in Scenario Control Center.</span>
                             </div>
-                        <div class="builder-card sw-card sw-live-phase-timeline-card" id="spt-card">
-                            <div class="builder-card-header">
-                                <span class="builder-card-title" data-i18n="spt-title">Scenario Phase Timeline</span>
-                                <span class="spt-readonly-badge" data-i18n="spt-readonly">Read-only</span>
-                            </div>
-                            <ol class="spt-list" id="spt-phase-list" aria-label="Scenario phases">
+                        <details class="builder-card sw-card sw-live-phase-timeline-card" id="spt-card">
+                            <summary class="builder-card-header">
+                                <span class="builder-card-title" data-i18n="spt-title">Review checkpoints</span>
+                                <span class="spt-readonly-badge" data-i18n="spt-readonly">Snapshot review</span>
+                            </summary>
+                            <p class="sw-nav-live-helper" data-i18n="spt-helper">Runtime is controlled by scenario time. Checkpoints below are authored review snapshots.</p>
+                            <ol class="spt-list" id="spt-phase-list" aria-label="Review checkpoints">
                                 <!-- Rendered by shell/scenario-workspace.js — read-only, no backend -->
                             </ol>
-                        </div>
+                        </details>
 
                         <!-- PR-237/132/134/287L2: Live Step Navigator — moved up under header.
                              Updates window.RmoozScenario.stepIndex only. No scenario mutation. -->
@@ -2227,8 +2228,8 @@
                         </div>
                         <div id="sw-secondary-cards-body" class="sw-secondary-cards-body" hidden>
 
-                    <!-- PR-287D: Scenario Phase Timeline (#spt-card) was promoted into #sw-live-workspace
-                         (now wired to scenario.phase_table). It is no longer a secondary mock card. -->
+                    <!-- PR-287D / C3d: Review checkpoints (#spt-card) live in #sw-live-workspace
+                         as collapsed snapshot review, wired read-only to scenario.phase_table. -->
 
                     <!-- PR-45: Operator Intent Draft Card — read-only in-memory placeholder -->
                     <div class="builder-card sw-card" id="oid-card">

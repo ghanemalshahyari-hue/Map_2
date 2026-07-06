@@ -2208,7 +2208,7 @@
                 + (missionText !== '—' ? ' usp-link' : '');
             if (tasking && tasking.action_what) {
                 mEl.title = (tasking.phase ? '[' + tasking.phase + '] ' : '')
-                           + 'Step ' + (tasking.step_index != null ? tasking.step_index + 1 : '?');
+                           + 'Review checkpoint ' + (tasking.step_index != null ? tasking.step_index + 1 : '?');
             } else {
                 mEl.title = '';
             }
@@ -2220,7 +2220,7 @@
 
     /**
      * Populate the collapsible "CURRENT ORDERS" detail block.
-     * Shows: step/phase label, action_why, action_intended_effect,
+     * Shows: review checkpoint / authored phase label, action_why, action_intended_effect,
      *        action_doctrine_cited[] (joined with ' · ').
      * Hides the entire block when tasking, overlayPreview, and overlayDiff are null.
      * Each row shown only when its value is a non-empty string.
@@ -2240,15 +2240,15 @@
             return;
         }
 
-        // Step / phase label in section header
+        // Review checkpoint / authored phase label in section header
         var stepLabel = '';
         if (tasking && tasking.phase) {
             stepLabel = tasking.phase;
             if (tasking.step_index != null) {
-                stepLabel = 'Step ' + (tasking.step_index + 1) + ' \xb7 ' + stepLabel;
+                stepLabel = 'Review checkpoint ' + (tasking.step_index + 1) + ' \xb7 ' + stepLabel;
             }
         } else if (tasking && tasking.step_index != null) {
-            stepLabel = 'Step ' + (tasking.step_index + 1);
+            stepLabel = 'Review checkpoint ' + (tasking.step_index + 1);
         }
         setText('usp-tasking-step', stepLabel ? ' – ' + stepLabel : '');
 

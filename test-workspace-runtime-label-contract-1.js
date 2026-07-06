@@ -57,6 +57,23 @@ ok('T-6 play button is labelled Preview',
 ok('T-7 speed label is Playback speed',
     HTML.includes('data-i18n="sw-nav-speed-label">Playback speed</label>'));
 
+console.log('\n--- SW-1B: phase_table checkpoints are review snapshots, not runtime progress ---');
+ok('T-1 old Scenario Phase Timeline title removed from active workspace copy',
+    !HTML.includes('Scenario Phase Timeline') &&
+    !I18N.includes('Scenario Phase Timeline') &&
+    !WORKSPACE.includes('Scenario Phase Timeline'));
+ok('T-2 checkpoint card keeps compatibility ids but is collapsed review UI',
+    /<details[^>]+id="spt-card"/i.test(HTML) &&
+    HTML.includes('id="spt-phase-list"') &&
+    !/<details[^>]+id="spt-card"[^>]+\bopen\b/i.test(HTML));
+ok('T-3 checkpoint group points runtime Play back to Scenario Control Center',
+    HTML.includes('data-i18n="swg-clock-title">Review &amp; Snapshot Checkpoints') &&
+    HTML.includes('Runtime Play stays in Scenario Control Center.') &&
+    I18N.includes("'spt-title':                     'Review checkpoints'"));
+ok('T-4 live header labels active package position as review/authored context',
+    WORKSPACE.includes("tx('sw-live-review-checkpoint-prefix', 'Review checkpoint')") &&
+    WORKSPACE.includes("tx('sw-live-authored-phase-prefix', 'Authored phase')"));
+
 console.log('\n--- SW-2: snapshot controls keep ids but use snapshot labels ---');
 ok('T-1 jump buttons preserve ids and use snapshot titles',
     tagById(HTML, 'sw-nav-first').includes('id="sw-nav-first"') &&

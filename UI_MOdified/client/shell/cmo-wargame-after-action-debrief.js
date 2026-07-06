@@ -255,13 +255,13 @@
         var timeline = [
             timelineItem('generated', 'Debrief generated', text(instrumentation.generated_at, 'Current browser time'), 'pass'),
             timelineItem('control_state', 'Scenario Control Center', text(scc.state_label, scc.state || evidence.scc_state || 'Unavailable'), scc.available === false ? 'fail' : 'pass'),
-            timelineItem('operator_step', 'Operator step', text(step.title, step.key || 'Unknown'), step.status || 'pending')
+            timelineItem('operator_step', 'Operator review checkpoint', text(step.title, step.key || 'Unknown'), step.status || 'pending')
         ];
         if (num(evidence.scenario_turn, 0) > 0 || num(scc.scenario_turn, 0) > 0) {
-            timeline.push(timelineItem('turn', 'Turn observed', 'Turn ' + num(evidence.scenario_turn, scc.scenario_turn) + (evidence.current_actor ? ' / ' + evidence.current_actor : ''), 'pass'));
+            timeline.push(timelineItem('turn', 'Internal turn observed', 'Internal turn ' + num(evidence.scenario_turn, scc.scenario_turn) + (evidence.current_actor ? ' / ' + evidence.current_actor : ''), 'pass'));
         }
         if (evidence.current_phase_name || scc.current_phase_name) {
-            timeline.push(timelineItem('phase', 'Current phase', text(evidence.current_phase_name, scc.current_phase_name), 'pass'));
+            timeline.push(timelineItem('phase', 'Review phase', text(evidence.current_phase_name, scc.current_phase_name), 'pass'));
         }
         if (evidence.objective_control || scc.objective_control) {
             timeline.push(timelineItem('objective', 'Objective control', text(evidence.objective_control, scc.objective_control), 'warn'));
@@ -426,11 +426,11 @@
             '<dl class="cmo-wargame-after-action-debrief-meta">' +
                 '<div><dt>Outcome</dt><dd>' + esc(outcome.label || outcome.key || 'Needs review') + '</dd></div>' +
                 '<div><dt>Release meaning</dt><dd>' + esc(interpretation.label || interpretation.key || 'Not release-grade') + '</dd></div>' +
-                '<div><dt>Turn / actor</dt><dd>' + esc(num(evidence.scenario_turn, scc.scenario_turn)) + (evidence.current_actor ? ' / ' + esc(evidence.current_actor) : '') + '</dd></div>' +
+                '<div><dt>Internal turn / actor</dt><dd>' + esc(num(evidence.scenario_turn, scc.scenario_turn)) + (evidence.current_actor ? ' / ' + esc(evidence.current_actor) : '') + '</dd></div>' +
                 '<div><dt>Fingerprint</dt><dd>' + esc(debrief.scenario_fingerprint || 'unknown') + '</dd></div>' +
             '</dl>' +
             '<div class="cmo-wargame-after-action-debrief-note"><strong>' + esc(interpretation.detail || outcome.detail || '') + '</strong><span>' + esc(outcome.detail || '') + '</span></div>' +
-            '<div class="cmo-wargame-aar-section"><strong>Run timeline</strong>' + listHtml(debrief.run_timeline, 'No timeline available.', 'cmo-wargame-aar') + '</div>' +
+            '<div class="cmo-wargame-aar-section"><strong>AAR review timeline</strong>' + listHtml(debrief.run_timeline, 'No review timeline available.', 'cmo-wargame-aar') + '</div>' +
             '<div class="cmo-wargame-aar-section"><strong>Evidence changes</strong>' + renderEvidenceChanges(debrief.evidence_changes) + '</div>' +
             '<div class="cmo-wargame-aar-section"><strong>Unresolved blockers</strong>' + listHtml(debrief.unresolved_blockers, 'No unresolved blockers visible in the debrief.', 'cmo-wargame-aar') + '</div>' +
             '<div class="cmo-wargame-aar-section"><strong>Recommendations</strong>' + listHtml(debrief.recommendations, 'No recommendations available.', 'cmo-wargame-aar') + '</div>' +

@@ -5655,6 +5655,23 @@
         if (pending) h += '<div><span style="color:#8fa5b8;">Pending runtime decisions:</span> <b style="color:#ffd27f;">' + pending + '</b></div>';
         return h;
     }
+    function _runtimeSpeedLabel(ex) {
+        var c = ex && ex.clock;
+        if (c && isFinite(+c.speed)) return 'x' + (Math.round(+c.speed * 10) / 10);
+        return (_ffSpeed() && _ffSpeed().label) || _freeFightSpeed || 'x1';
+    }
+    function _operatorReviewCheckpointsHtml(ex) {
+        var phases = arr(ex && ex.selected_coa && ex.selected_coa.phases);
+        var phaseText = ex && ex.phase_status === 'complete'
+            ? 'all done'
+            : ((ex && isFinite(+ex.current_phase_index) ? (+ex.current_phase_index + 1) : 1) + ' / ' + phases.length);
+        return '<details data-ff-op="review-checkpoints" style="margin-top:4px;border:1px solid #1a3050;border-radius:4px;padding:4px 6px;background:#071421;">' +
+            '<summary style="cursor:pointer;color:#8fa5b8;font-size:10px;font-weight:700;">Review checkpoints / authored snapshots</summary>' +
+            '<div style="margin-top:4px;"><span style="color:#8fa5b8;">COA review phase:</span> <b style="color:#cfe6ff;">' + esc(phaseText) + '</b></div>' +
+            '<div><span style="color:#8fa5b8;">Snapshot pointer:</span> <b style="color:#cfe6ff;">' + esc(_snapshotStepLabel(ex)) + '</b></div>' +
+            '<div style="color:#8fa5b8;">Runtime is controlled by scenario time. These checkpoints are review snapshots.</div>' +
+            '</details>';
+    }
     // RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O: the SIMPLE primary operator flow — ONE primary action per
     // state: Generate AI Plan (slow) → Use Recommended Plan → Run Plan (fast) → Pause, state-driven
     // (no plan → plan → committed → running → blocked → complete). It wires to the EXISTING functions
@@ -5664,15 +5681,14 @@
     // committed-COA Run path keeps the no-LLM guarantee from -L (deterministic ticks,
     // llm_called_this_tick=false, no /plan-coas fetch).
     function _operatorStatusLine(ex) {
-        var phases = arr(ex.selected_coa && ex.selected_coa.phases);
         var word = ex.phase_status === 'complete' ? 'Complete' : (ex.replan_required ? 'Blocked' : (ex.paused ? 'Paused' : (ex.phase_status === 'running' ? 'Running' : 'Ready')));
         return '<div data-ff-op="status" style="margin-top:5px;font-size:10px;color:#cdd8e4;line-height:1.5;">' +
             '<div><span style="color:#8fa5b8;">Active Plan:</span> <b style="color:#e8eaed;">' + esc(ex.selected_coa_id) + '</b></div>' +
-            '<div><span style="color:#8fa5b8;">Phase:</span> ' + (ex.phase_status === 'complete' ? 'all done' : ((ex.current_phase_index + 1) + ' / ' + phases.length)) +
-            ' · <span style="color:#8fa5b8;">Status:</span> <b style="color:#cfe6ff;">' + word + '</b></div>' +
             '<div><span style="color:#8fa5b8;">Scenario time:</span> <b style="color:#ffd27f;">' + esc(_scenarioClockLabel(ex)) + '</b></div>' +
-            '<div><span style="color:#8fa5b8;">Snapshot step:</span> <b style="color:#cfe6ff;">' + esc(_snapshotStepLabel(ex)) + '</b></div>' +
+            '<div><span style="color:#8fa5b8;">Runtime state:</span> <b style="color:#cfe6ff;">' + esc(word) + '</b>' +
+            ' · <span style="color:#8fa5b8;">Speed:</span> <b style="color:#cfe6ff;">' + esc(_runtimeSpeedLabel(ex)) + '</b></div>' +
             _runtimeEventStatusHtml(ex) +
+            _operatorReviewCheckpointsHtml(ex) +
             '<div><span style="color:#8fa5b8;">AI calls on normal ticks:</span> <b style="color:#7fd6a0;">OFF</b></div></div>';
     }
     // ══ RMOOZ-FREE-FIGHT-CONTINUOUS-SCENARIO-AA: continuous scenario orchestration ════════════════════

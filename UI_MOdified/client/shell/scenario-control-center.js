@@ -128,6 +128,44 @@
         var to = m.to ? (' -> ' + [m.to.lat, m.to.lon].filter(function (v) { return v != null; }).join(',')) : '';
         return String(m.uid || m.unit_uid || '?') + to;
     }
+    function runtimeSpeedLabel(ex) {
+        var c = ex && ex.clock;
+        if (c && isFinite(+c.speed)) return 'x' + (Math.round(+c.speed * 10) / 10);
+        return 'x1';
+    }
+    function eventHoursLabel(hours) {
+        if (!isFinite(+hours)) return '—';
+        var h = Math.round(+hours * 10) / 10;
+        return h === 0 ? 'H' : ('H' + (h < 0 ? '' : '+') + h);
+    }
+    function nextRuntimeEventLabel(ex) {
+        var rt = ex && ex.runtime_events;
+        if (rt && isFinite(+rt.next_event_hours)) return eventHoursLabel(+rt.next_event_hours);
+        var due = arr(rt && rt.last_due);
+        var dps = arr(rt && rt.last_due_decision_points);
+        var last = due[0] || dps[0] || null;
+        return last ? ('last: ' + (last.title || last.id || 'runtime event')) : '—';
+    }
+    function runtimeStateLabel(state, scn, ex) {
+        if (scn && scn.scenario_status) return STATE_LABEL[state] || scn.scenario_status;
+        if (ex && ex.replan_required) return 'Blocked';
+        if (ex && ex.paused) return 'Paused';
+        if (ex && ex.phase_status === 'complete') return 'Complete';
+        return STATE_LABEL[state] || state || 'Ready';
+    }
+    function reviewCheckpointsHtml(scn, ex) {
+        var phase = currentPhaseName(ex) || (ex ? ('phase ' + ((Number(ex.current_phase_index) || 0) + 1)) : '—');
+        var c = ex && ex.clock;
+        var pointer = (c && isFinite(+c.display_step) && +c.display_step >= 0) ? ('snapshot ' + (+c.display_step + 1)) : 'clock-derived';
+        return '<details data-scc="review-checkpoints" style="margin-top:7px;border:1px solid ' + C.edgeSoft + ';border-radius:5px;padding:5px 7px;background:#071421;">' +
+            '<summary style="cursor:pointer;color:' + C.dim + ';font-size:10px;font-weight:700;">Review checkpoints / authored snapshots</summary>' +
+            '<div style="margin-top:5px;">' +
+            kv('Internal turn', String((scn && scn.scenario_turn) || 0), C.dim) +
+            kv('COA review phase', phase, C.dim) +
+            kv('Snapshot pointer', pointer, C.dim) +
+            note('Runtime is controlled by scenario time. These checkpoints are authored review snapshots, not the scenario run model.', C.dim) +
+            '</div></details>';
+    }
     function runSnapshot() {
         var eng = engine();
         if (!eng) {
@@ -510,16 +548,18 @@
         if (scn && scn.scenario_active) {
             var w = eng.whiteOutcome();
             // "Run means time moves": the primary readout is SCENARIO TIME (C1/C2 World-State clock),
-            // not a fixed turn count. Turn stays as dim internal bookkeeping (drives the end condition).
+            // runtime state, and speed. Authored turns/phases stay collapsed as review checkpoints.
             inner += kv('Scenario time', (function () { try { return (eng.scenarioClockLabel && eng.scenarioClockLabel()) || '—'; } catch (_) { return '—'; } })(), C.good) +
-                kv('Turn (internal)', String(scn.scenario_turn), C.dim) +
+                kv('Runtime state', runtimeStateLabel(state, scn, ex), STATE_COLOR[state] || C.ink) +
+                kv('Speed', runtimeSpeedLabel(ex), C.accent) +
+                kv('Next runtime event', nextRuntimeEventLabel(ex), C.dim) +
                 kv('Current actor', String(scn.current_actor || '—'), C.ink) +
-                kv('Phase', (ex && ex.selected_coa && arr(ex.selected_coa.phases)[ex.current_phase_index] && arr(ex.selected_coa.phases)[ex.current_phase_index].name) || (ex ? ('phase ' + ((ex.current_phase_index || 0) + 1)) : '—'), C.ink) +
                 kv('Objective control', String(scn.objective_control || '—'), scn.objective_control === 'Blue' ? C.good : (scn.objective_control === 'Red' ? C.bad : C.warn)) +
                 kv('Last outcome (White)', String(scn.last_outcome || (w && w.summary) || '—'), C.ink) +
                 kv('Last movement', String(scn.last_formation_order || '—'), C.dim) +
                 kv('Red reaction', String(scn.last_red_maneuver || '—'), C.dim) +
                 kv('Green status', (function () { var g = eng.greenStatus(); return g && g.collateral_risk ? ('collateral ' + (g.collateral_risk.band || '—')) : 'refreshed'; })(), C.dim);
+            inner += reviewCheckpointsHtml(scn, ex);
             if (scn.pending_replan_reason) {
                 inner += note('⚠ ' + esc(scn.pending_replan_reason), C.bad);
                 if (scn.scenario_status === 'paused') inner += note('<b>▶ Resume (manual)</b> runs one more turn and pauses again. <b>▶▶ Auto Continue</b> generates deterministic Blue orders automatically every turn (no AI required).', C.dim);

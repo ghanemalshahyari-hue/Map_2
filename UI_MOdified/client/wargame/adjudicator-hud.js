@@ -100,7 +100,7 @@
         if (window.AppScenarioState) {
             trial = window.AppScenarioState.create({ scenarioName: SCENARIO_DEFAULT });
         }
-        setStatus('Idle. Click "Adjudicate next step" to begin.', 'idle');
+        setStatus('Idle. Click "Next snapshot" to begin legacy diagnostic playback.', 'idle');
         // Publish the next-step accessor so red-team-controller.js can
         // record approved actions against the right step (todo item #7).
         if (window.AppAdjudicator) {
@@ -346,16 +346,16 @@
                 </details>
             </div>
 
-            <!-- ── Step-by-step adjudication ── -->
+            <!-- ── Legacy snapshot adjudication ── -->
             <div class="wg-adj-section">
-                <div class="wg-adj-section-title">Adjudicate</div>
+                <div class="wg-adj-section-title">Legacy Snapshot Adjudication</div>
                 <div class="wg-adj-btn-row wg-adj-btn-row--3">
-                    <button id="wg-adj-step-btn"  class="wargame-action-btn primary"   type="button">Next step</button>
+                    <button id="wg-adj-step-btn"  class="wargame-action-btn primary"   type="button">Next snapshot</button>
                     <button id="wg-adj-trial-btn" class="wargame-action-btn success"   type="button">Run trial</button>
                     <button id="wg-adj-reset-btn" class="wargame-action-btn secondary" type="button">Reset</button>
                 </div>
                 <div class="wg-adj-form-grid">
-                    <label for="wg-adj-pace-ms" class="wg-adj-label">Step&nbsp;pace</label>
+                    <label for="wg-adj-pace-ms" class="wg-adj-label">Snapshot&nbsp;pace</label>
                     <div class="wg-adj-input-suffix">
                         <input id="wg-adj-pace-ms" class="wg-adj-input" type="number" value="1200" min="0" max="10000" step="100" />
                         <span class="wg-adj-unit">ms</span>
@@ -422,15 +422,16 @@
                 background:var(--panel-2);border-left:3px solid #ffc94a;border-radius:3px;
                 font-size:11px;color:var(--text-main);">
                 <div style="font-size:10px;color:var(--text-muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px;">
-                    Approved actions for next step
+                    Approved actions for next snapshot
                 </div>
                 <div id="wg-adj-approved-list"></div>
             </div>
 
-            <div id="wg-adj-timeline" class="wargame-status-block" style="margin-top:8px; padding:6px 4px; display:none;">
-                <div style="font-size:11px;color:#bbb;margin-bottom:4px;">Operation timeline</div>
+            <details id="wg-adj-timeline" class="wargame-status-block" style="margin-top:8px; padding:6px 4px; display:none;">
+                <summary style="font-size:11px;color:#bbb;margin-bottom:4px;cursor:pointer;">Legacy review checkpoints</summary>
+                <div style="font-size:10px;color:#8fa5b8;margin-bottom:4px;">Scenario runtime is controlled by Scenario Control Center time. These phase cells are diagnostic snapshots.</div>
                 <div id="wg-adj-timeline-strip" style="display:flex;gap:2px;flex-wrap:wrap;"></div>
-            </div>
+            </details>
 
             <div id="wg-adj-step-display" class="wargame-status-block" style="margin-top:8px; display:none;">
                 <div id="wg-adj-step-summary" style="font-size:13px; line-height:1.5;"></div>
@@ -466,7 +467,7 @@
                 <div id="wg-adj-feedback-row" style="margin-top:8px;padding-top:8px;border-top:1px solid #2a3140;
                     display:none;align-items:center;gap:6px;font-size:11px;">
                     <span style="color:#9ab;letter-spacing:.04em;text-transform:uppercase;font-size:10px;">
-                        Was this step right?
+                        Was this snapshot right?
                     </span>
                     <button id="wg-adj-fb-accept" type="button"
                         class="wargame-action-btn success"
@@ -476,7 +477,7 @@
                         style="padding:2px 8px;font-size:11px;background:#7a2a2a;">&#10007; Reject</button>
                     <button id="wg-adj-fb-note" type="button"
                         class="wargame-action-btn secondary"
-                        style="padding:2px 8px;font-size:11px;" title="Add a free-text note about this step">&#9998; Note</button>
+                        style="padding:2px 8px;font-size:11px;" title="Add a free-text note about this snapshot">&#9998; Note</button>
                     <span id="wg-adj-fb-status" style="color:#9ab;margin-left:6px;"></span>
                 </div>
 
@@ -549,7 +550,7 @@
             </div>
 
             <div class="wargame-control-footer">
-                <span>Adjudicator computes losses + force ratio + BLS + EW + Arabic narrative per step.
+                <span>Adjudicator computes losses + force ratio + BLS + EW + Arabic narrative per diagnostic snapshot.
                 Wargame2 scenario default. Mock mode skips Ollama and uses scenario baselines.</span>
             </div>
         `;
@@ -785,7 +786,7 @@
                 if (!res.ok || !body.ok) {
                     throw new Error(body.error || ('HTTP ' + res.status));
                 }
-                setBusy(`Imported <strong>${body.name}</strong> · ${body.steps} steps · `
+                setBusy(`Imported <strong>${body.name}</strong> · ${body.steps} snapshots · `
                       + `${body.red_units} red / ${body.blue_units} blue`, 'ok');
                 // Refresh the scenario dropdown and select the freshly-imported one.
                 await loadScenarios();
@@ -1020,11 +1021,11 @@
         future: 'future',
     };
 
-    // ── Timeline strip: one cell per step. Cells become clickable
-    // once their step has been resolved (i.e. is present in trial.history).
-    // Clicking a past cell scrubs the side panel + map back to that step.
+    // ── Legacy review checkpoints: one cell per authored snapshot. Cells become clickable
+    // once their snapshot has been resolved (i.e. is present in trial.history).
+    // Clicking a past cell scrubs the side panel + map back to that snapshot.
     // Each cell is colored by its run mode (item #3) with a thin mode bar.
-    // Step count + labels come from scenarioCache.phase_table so non-W1/W2
+    // Snapshot count + labels come from scenarioCache.phase_table so non-W1/W2
     // scenarios (4..20 steps) render correctly.
     function renderTimeline(currentStepIndex, currentObjStatus) {
         const wrap = $('wg-adj-timeline');
@@ -1033,7 +1034,7 @@
         wrap.style.display = '';
         const pt = scenarioCache && Array.isArray(scenarioCache.phase_table) ? scenarioCache.phase_table : null;
         const labels = pt
-            ? pt.map(r => r.time_label || `step ${r.index}`)
+            ? pt.map(r => r.time_label || `snapshot ${r.index}`)
             : ['D-3h','H','H+2','H+6','H+12','H+24','H+36','H+48','H+72','H+96','H+120','H+144'];
         const phases = pt
             ? pt.map(r => (r.phase || '').replace(/^PHASE\s+/i, 'P').replace(/^PRE-H$/i, 'PRE').replace(/^RESOLUTION$/i, 'RES'))
@@ -1070,7 +1071,7 @@
             const hoverEffect = isResolved && !isCurrent ? 'opacity:.85;' : '';
             const modeHint = isResolved ? ` \xb7 ${modeLabel}` : '';
             cells.push(`
-                <div data-step="${i}" title="Step ${i} — ${labels[i]} (${phases[i]})${modeHint}${isResolved ? ' — click to scrub' : ''}" style="
+                <div data-step="${i}" title="Review checkpoint ${i} — ${labels[i]} (${phases[i]})${modeHint}${isResolved ? ' — click to scrub' : ''}" style="
                     flex:1;min-width:14px;height:30px;background:${bg};
                     border:${border};border-radius:2px;cursor:${cursor};${hoverEffect}
                     display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -1114,7 +1115,7 @@
         }
         // Now render the side panel from the target frame.
         renderSidePanelOnly(target.state, target.validation, target.meta);
-        setStatus(`Scrubbed to step ${idx} (${target.state.time_label}).`, 'idle');
+        setStatus(`Scrubbed to snapshot ${idx} (${target.state.time_label}).`, 'idle');
     }
 
     // Format the phase string for the HUD step summary. W3-rich scenarios
@@ -1222,7 +1223,7 @@
             .map(([k, v]) => `${k}·${v.slice(0, 3)}`).join(' ');
         const fallback = (validation && validation.fallback) ? ` [${validation.fallback}]` : '';
         $('wg-adj-step-summary').innerHTML = `
-            <strong>Step ${state.step_index} — ${state.time_label} — ${phaseSummary(state)}${fallback}</strong><br>
+            <strong>Snapshot ${state.step_index} — ${state.time_label} — ${phaseSummary(state)}${fallback}</strong><br>
             PL: ${state.phase_line_km} km · FR: ${escapeHtml(state.force_ratio)} · OBJ: ${state.objective_status}<br>
             EW: ${state.ew_effect} · Logistics: ${escapeHtml(state.logistics_state)} · Decision: ${escapeHtml(state.decision_point)}<br>
             Losses: Blue ${state.losses_cumulative.blue_destroyed}/${state.losses_cumulative.blue_total} · Red coy-eq ${state.losses_cumulative.red_company_equivalent}
@@ -1255,7 +1256,7 @@
             .map(([k, v]) => `${k}·${v.slice(0, 3)}`).join(' ');
         const fallback = (validation && validation.fallback) ? ` [${validation.fallback}]` : '';
         $('wg-adj-step-summary').innerHTML = `
-            <strong>Step ${state.step_index} — ${state.time_label} — ${phaseSummary(state)}${fallback}</strong><br>
+            <strong>Snapshot ${state.step_index} — ${state.time_label} — ${phaseSummary(state)}${fallback}</strong><br>
             PL: ${state.phase_line_km} km · FR: ${escapeHtml(state.force_ratio)} · OBJ: ${state.objective_status}<br>
             EW: ${state.ew_effect} · Logistics: ${escapeHtml(state.logistics_state)} · Decision: ${escapeHtml(state.decision_point)}<br>
             Losses: Blue ${state.losses_cumulative.blue_destroyed}/${state.losses_cumulative.blue_total} · Red coy-eq ${state.losses_cumulative.red_company_equivalent}
@@ -1547,7 +1548,7 @@
         rememberActiveCoa(null);
         const banner = $('wg-adj-coa-active-banner');
         if (banner) banner.style.display = 'none';
-        setStatus(`Plan "${name}" deactivated. Adjudicator runs without per-step AI proposals.`, 'idle');
+        setStatus(`Plan "${name}" deactivated. Adjudicator runs without per-snapshot AI proposals.`, 'idle');
     }
 
     // Heuristic mapping from a chosen plan → the existing Reserve hr +
@@ -1612,7 +1613,7 @@
         setBtn('wg-adj-fb-reject', sent);
         setBtn('wg-adj-fb-note',   false);   // notes are stackable
         const st = $('wg-adj-fb-status');
-        if (st) st.textContent = sent ? `Recorded for step ${stepIndex}.` : '';
+        if (st) st.textContent = sent ? `Recorded for snapshot ${stepIndex}.` : '';
     }
     function hideFeedbackRow() {
         const row = $('wg-adj-feedback-row');
@@ -1628,8 +1629,8 @@
         let note = null;
         if (decision === 'note' || decision === 'reject') {
             const msg = decision === 'reject'
-                ? `Why is step ${stepIndex} wrong? (optional, max 500 chars)`
-                : `Add a note about step ${stepIndex} (optional, max 500 chars)`;
+                ? `Why is snapshot ${stepIndex} wrong? (optional, max 500 chars)`
+                : `Add a note about snapshot ${stepIndex} (optional, max 500 chars)`;
             const v = window.prompt(msg, '');
             if (v == null) return;  // operator cancelled
             note = v.trim().slice(0, 500) || null;
@@ -1657,8 +1658,8 @@
             if (r.ok) {
                 if (decision !== 'note') feedbackSentThisSession.add(key);
                 if (st) st.textContent = decision === 'note'
-                    ? `Note recorded for step ${stepIndex}.`
-                    : `${decision === 'accept' ? 'Accepted' : 'Rejected'} step ${stepIndex}.`;
+                    ? `Note recorded for snapshot ${stepIndex}.`
+                    : `${decision === 'accept' ? 'Accepted' : 'Rejected'} snapshot ${stepIndex}.`;
                 // Refresh the accept/reject button state.
                 showFeedbackRow(stepIndex);
             } else {
@@ -1779,7 +1780,7 @@
         const blueHtml = bucket.blue.length
             ? `<div style="margin-top:2px;color:#5da9e8;">Blue (${bucket.blue.length}):</div>${bucket.blue.map(fmt).join('')}`
             : '';
-        list.innerHTML = `<div style="color:#9ab;margin-bottom:3px;">Step ${nextIdx} · ${total} action${total === 1 ? '' : 's'}</div>${redHtml}${blueHtml}`;
+        list.innerHTML = `<div style="color:#9ab;margin-bottom:3px;">Snapshot ${nextIdx} · ${total} action${total === 1 ? '' : 's'}</div>${redHtml}${blueHtml}`;
         wrap.style.display = '';
     }
 
@@ -1791,7 +1792,7 @@
         const nextIndex = (trial.stepIndex || 0) + 1;
         const maxStep = scenarioCache && Array.isArray(scenarioCache.steps) ? scenarioCache.steps.length - 1 : 11;
         if (nextIndex > maxStep) {
-            setStatus(`Trial complete at step ${maxStep}. Click Reset to start a new trial.`, 'idle');
+            setStatus(`Trial complete at snapshot ${maxStep}. Click Reset to start a new trial.`, 'idle');
             return;
         }
 
@@ -1820,7 +1821,7 @@
                     '| live tactical AI =', liveTacticalCoa);
         if (liveTacticalCoa) {
             console.log('[adj-next] entering COA-driven loop for', activeCoa.name);
-            setStatus(`Step ${nextIndex} · "${activeCoa.name}" — AI planning Blue moves…`, 'active');
+            setStatus(`Snapshot ${nextIndex} · "${activeCoa.name}" — AI planning Blue moves…`, 'active');
             try {
                 const blueResult = await window.AppRedTeam.proposeAndExecuteHeadless({
                     side: 'blue',
@@ -1833,7 +1834,7 @@
                 const blueCount = Number.isFinite(blueExec.executed) ? blueExec.executed : (blueResult && blueResult.actions
                     ? blueResult.actions.filter(a => a.validation && a.validation.ok).length : 0);
                 const blueMoves = Number(blueExec.moved) || 0;
-                setStatus(`Step ${nextIndex} · ${blueCount} Blue moves executed — AI planning Red counter…`, 'active');
+                setStatus(`Snapshot ${nextIndex} · ${blueCount} Blue moves executed — AI planning Red counter…`, 'active');
 
                 const redResult = await window.AppRedTeam.proposeAndExecuteHeadless({
                     side: 'red',
@@ -1850,21 +1851,21 @@
                 const heldCount = (Number(blueExec.held) || 0) + (Number(redExec.held) || 0);
                 tacticalMovesAppliedThisStep = moveCount > 0;
                 if ((blueCount + redCount) > 0) await sleep(800);
-                setStatus(`Step ${nextIndex} - ${blueCount} Blue, ${redCount} Red effects (${moveCount} move, ${engageCount} engage, ${heldCount} hold). Adjudicating outcomes...`, 'active');
-                setStatus(`Step ${nextIndex} · ${blueCount} Blue, ${redCount} Red moves executed. Adjudicating outcomes…`, 'active');
-                setStatus(`Step ${nextIndex} - ${blueCount} Blue, ${redCount} Red effects (${moveCount} move, ${engageCount} engage, ${heldCount} hold). Adjudicating outcomes...`, 'active');
+                setStatus(`Snapshot ${nextIndex} - ${blueCount} Blue, ${redCount} Red effects (${moveCount} move, ${engageCount} engage, ${heldCount} hold). Adjudicating outcomes...`, 'active');
+                setStatus(`Snapshot ${nextIndex} · ${blueCount} Blue, ${redCount} Red moves executed. Adjudicating outcomes…`, 'active');
+                setStatus(`Snapshot ${nextIndex} - ${blueCount} Blue, ${redCount} Red effects (${moveCount} move, ${engageCount} engage, ${heldCount} hold). Adjudicating outcomes...`, 'active');
             } catch (e) {
                 // Don't block adjudication on a propose failure; the operator
                 // sees a warning but the step still resolves on the scenario
                 // baseline / previous state.
-                setStatus(`Step ${nextIndex} · AI propose failed (${e && e.message || 'unknown'}), adjudicating anyway…`, 'active');
+                setStatus(`Snapshot ${nextIndex} · AI propose failed (${e && e.message || 'unknown'}), adjudicating anyway…`, 'active');
             }
         } else if (activeCoa) {
             console.log('[adj-next] fast COA path for', activeCoa.name);
             const modeTxt = req.mockMode ? 'baseline' : 'live AI';
-            setStatus(`Step ${nextIndex} - "${escapeHtml(activeCoa.name || 'COA')}" ${modeTxt} adjudication...`, 'active');
+            setStatus(`Snapshot ${nextIndex} - "${escapeHtml(activeCoa.name || 'COA')}" ${modeTxt} adjudication...`, 'active');
         } else {
-            setStatus(`Adjudicating step ${nextIndex}…`, 'active');
+            setStatus(`Adjudicating snapshot ${nextIndex}…`, 'active');
         }
 
         // Pull any approved Red/Blue actions — either from the manual flow
@@ -1894,13 +1895,13 @@
         // BASELINE rather than silently no-op. Retry once forcing mockMode so
         // "Next" always advances (and the map animates / trails accrue).
         if ((!r || !r.state) && !body.mockMode) {
-            setStatus(`Step ${nextIndex}: live adjudication unavailable — resolving on baseline…`, 'active');
+            setStatus(`Snapshot ${nextIndex}: live adjudication unavailable — resolving on baseline…`, 'active');
             const tb = Date.now();
             r = await window.AppAdjudicator.adjudicateStep({ ...body, mockMode: true });
             wall = Date.now() - tb;
         }
         if (!r || !r.state) {
-            setStatus(`Step ${nextIndex} failed: ${r && r.error}`, 'error');
+            setStatus(`Snapshot ${nextIndex} failed: ${r && r.error}`, 'error');
             return;
         }
         // Consume the approved actions — the adjudicator has them now.
@@ -1912,7 +1913,7 @@
         renderApprovedPreview();
         const tag = r.ok ? '' : ` [${r.validation && r.validation.fallback}]`;
         const cls = classifyRun(r);
-        setStatus(`Step ${nextIndex} resolved in ${wall} ms${tag}.`, cls.kind);
+        setStatus(`Snapshot ${nextIndex} resolved in ${wall} ms${tag}.`, cls.kind);
     }
 
     function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
@@ -1932,7 +1933,7 @@
         const modeCounts = { live: 0, mock: 0, fallback: 0, model_error: 0, validation_error: 0, parse_error: 0 };
         const fallbackReasons = {};
         for (let i = 1; i <= lastStep; i++) {
-            setStatus(`Trial step ${i}/${lastStep}…`, 'active');
+            setStatus(`Trial snapshot ${i}/${lastStep}…`, 'active');
             const approved = window.AppApprovedActions
                 ? window.AppApprovedActions.getForStep(i)
                 : { red: [], blue: [] };
@@ -1951,7 +1952,7 @@
             };
             const r = await window.AppAdjudicator.adjudicateStep(body);
             if (!r || !r.state) {
-                setStatus(`Trial aborted at step ${i}: ${r && r.error}`, 'error');
+                setStatus(`Trial aborted at snapshot ${i}: ${r && r.error}`, 'error');
                 return;
             }
             if (window.AppApprovedActions) window.AppApprovedActions.clearForStep(i);
@@ -2013,7 +2014,7 @@
         feedbackSentThisSession.clear();
         hideFeedbackRow();
         clearLastMode();
-        setStatus('Trial reset. Step 0 (D-3h). Map markers restored.', 'idle');
+        setStatus('Trial reset. Snapshot 0 (D-3h). Map markers restored.', 'idle');
     }
 
     // ── Monte Carlo ──────────────────────────────────────────────────
@@ -2050,7 +2051,7 @@
         mcRunSubscription = window.AppAdjudicator.mcSubscribe(r.runId, (evt, data) => {
             if (evt === 'progress') {
                 progress++;
-                $('wg-adj-mc-progress').textContent = `Trial ${data.trial} step ${data.step}/${stepsPerTrial} — PL ${data.phase_line_km} km, OBJ ${data.objective_status} (${progress}/${expected})`;
+                $('wg-adj-mc-progress').textContent = `Trial ${data.trial} snapshot ${data.step}/${stepsPerTrial} — PL ${data.phase_line_km} km, OBJ ${data.objective_status} (${progress}/${expected})`;
             } else if (evt === 'trial-done') {
                 const cls = data.final_objective_status === 'CAPTURED' ? 'CAPTURED'
                           : data.final_objective_status === 'DENIED'    ? 'DENIED'
@@ -2151,7 +2152,7 @@
         // ── Canonical run dispatcher integration ─────────────────────────────
         // The Wargame HUD is the LIVE (server-adjudicated) runner. Register it so
         // runScenarioCanonical({mode:'live'}) routes here, and send the HUD's own
-        // Run trial / Next step buttons through the dispatcher too — so every
+        // Run trial / Next snapshot buttons through the dispatcher too — so every
         // "run the scenario" control shares one entry point.
         function _liveRun(opts) {
             const btn = opts && opts.sourceButton;

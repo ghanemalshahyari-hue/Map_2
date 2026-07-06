@@ -133,6 +133,25 @@
         if (c && isFinite(+c.speed)) return 'x' + (Math.round(+c.speed * 10) / 10);
         return 'x1';
     }
+    function runtimeHoursLabel(hours) {
+        if (!isFinite(+hours)) return '\u2014';
+        var total = Math.max(0, +hours);
+        var whole = Math.floor(total);
+        var minutes = Math.round((total - whole) * 60);
+        if (minutes === 60) { whole += 1; minutes = 0; }
+        if (whole && minutes) return whole + 'h ' + minutes + 'm';
+        if (whole) return whole + 'h';
+        return minutes + 'm';
+    }
+    function runtimeDurationLabel(ex) {
+        var c = ex && ex.clock;
+        if (!c || !isFinite(+c.duration_hours)) return '\u2014';
+        var label = runtimeHoursLabel(+c.duration_hours);
+        if (isFinite(+c.end_hours) && isFinite(+c.current_hours)) {
+            label += ' / remaining ' + runtimeHoursLabel(Math.max(0, +c.end_hours - +c.current_hours));
+        }
+        return label;
+    }
     function eventHoursLabel(hours) {
         if (!isFinite(+hours)) return '—';
         var h = Math.round(+hours * 10) / 10;
@@ -155,17 +174,6 @@
     }
     function reviewCheckpointsHtml(scn, ex) {
         return '';
-        var phase = currentPhaseName(ex) || (ex ? ('phase ' + ((Number(ex.current_phase_index) || 0) + 1)) : '—');
-        var c = ex && ex.clock;
-        var pointer = (c && isFinite(+c.display_step) && +c.display_step >= 0) ? ('frame ' + (+c.display_step + 1)) : 'clock-derived';
-        return '<details data-scc="review-checkpoints" style="margin-top:7px;border:1px solid ' + C.edgeSoft + ';border-radius:5px;padding:5px 7px;background:#071421;">' +
-            '<summary style="cursor:pointer;color:' + C.dim + ';font-size:10px;font-weight:700;">Internal authored frames</summary>' +
-            '<div style="margin-top:5px;">' +
-            kv('Internal frame', String((scn && scn.scenario_turn) || 0), C.dim) +
-            kv('Internal group', phase, C.dim) +
-            kv('Frame pointer', pointer, C.dim) +
-            note('Runtime is controlled by scenario time. These details are internal compatibility data, not the scenario run model.', C.dim) +
-            '</div></details>';
     }
     function runtimeDecisionPointsHtml(eng) {
         var points = arr(safeRead(function () {
@@ -582,6 +590,7 @@
             inner += kv('Scenario time', (function () { try { return (eng.scenarioClockLabel && eng.scenarioClockLabel()) || '—'; } catch (_) { return '—'; } })(), C.good) +
                 kv('Runtime state', runtimeStateLabel(state, scn, ex), STATE_COLOR[state] || C.ink) +
                 kv('Speed', runtimeSpeedLabel(ex), C.accent) +
+                kv('Duration / remaining', runtimeDurationLabel(ex), C.dim) +
                 kv('Next runtime event', nextRuntimeEventLabel(ex), C.dim) +
                 kv('Current actor', String(scn.current_actor || '—'), C.ink) +
                 kv('Objective control', String(scn.objective_control || '—'), scn.objective_control === 'Blue' ? C.good : (scn.objective_control === 'Red' ? C.bad : C.warn)) +

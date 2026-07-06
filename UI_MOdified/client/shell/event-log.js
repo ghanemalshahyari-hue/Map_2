@@ -384,7 +384,7 @@
                 'play':           ['elog-evt-tl-play',         'Review timeline: Preview playback'],
                 'pause':          ['elog-evt-tl-pause',        'Review timeline: Pause preview'],
                 'step-back':      ['elog-evt-tl-step-back',    'Review timeline: Previous snapshot'],
-                'step-forward':   ['elog-evt-tl-step-forward', 'Review timeline: Next snapshot'],
+                'step-forward':   ['elog-evt-tl-step-forward', 'Developer timeline: Next frame'],
                 'speed-changed':  ['elog-evt-tl-speed',        'Review timeline: Playback speed x{0}'],
                 'phase-changed':  ['elog-evt-tl-phase',        'Review timeline phase: {0}'],
             };

@@ -64,7 +64,7 @@
         return 'ready_to_generate';
     }
     var STATE_LABEL = {
-        no_scenario: 'No scenario', step1_review_required: 'Step 1 review required', ready_to_generate: 'Ready to prepare',
+        no_scenario: 'No scenario', step1_review_required: 'Source review required', ready_to_generate: 'Ready to prepare',
         generating_coa: 'Preparing COA…', coa_review: 'COA review', committed: 'Committed',
         scenario_running: 'Running', scenario_paused: 'Paused', scenario_blocked: 'Blocked', scenario_complete: 'Complete',
     };
@@ -157,14 +157,14 @@
         return '';
         var phase = currentPhaseName(ex) || (ex ? ('phase ' + ((Number(ex.current_phase_index) || 0) + 1)) : '—');
         var c = ex && ex.clock;
-        var pointer = (c && isFinite(+c.display_step) && +c.display_step >= 0) ? ('snapshot ' + (+c.display_step + 1)) : 'clock-derived';
+        var pointer = (c && isFinite(+c.display_step) && +c.display_step >= 0) ? ('frame ' + (+c.display_step + 1)) : 'clock-derived';
         return '<details data-scc="review-checkpoints" style="margin-top:7px;border:1px solid ' + C.edgeSoft + ';border-radius:5px;padding:5px 7px;background:#071421;">' +
-            '<summary style="cursor:pointer;color:' + C.dim + ';font-size:10px;font-weight:700;">Review checkpoints / authored snapshots</summary>' +
+            '<summary style="cursor:pointer;color:' + C.dim + ';font-size:10px;font-weight:700;">Internal authored frames</summary>' +
             '<div style="margin-top:5px;">' +
-            kv('Internal turn', String((scn && scn.scenario_turn) || 0), C.dim) +
-            kv('COA review phase', phase, C.dim) +
-            kv('Snapshot pointer', pointer, C.dim) +
-            note('Runtime is controlled by scenario time. These checkpoints are authored review snapshots, not the scenario run model.', C.dim) +
+            kv('Internal frame', String((scn && scn.scenario_turn) || 0), C.dim) +
+            kv('Internal group', phase, C.dim) +
+            kv('Frame pointer', pointer, C.dim) +
+            note('Runtime is controlled by scenario time. These details are internal compatibility data, not the scenario run model.', C.dim) +
             '</div></details>';
     }
     function runSnapshot() {
@@ -301,7 +301,7 @@
             inner += '<div style="margin-top:3px;font-size:9.5px;color:' + C.dim + ';">Blocked by — source ' + r.blocked_by_missing_source + ' · coords ' + r.blocked_by_missing_coordinates + ' · doctrine ' + r.blocked_by_missing_doctrine + ' · commander ' + r.blocked_by_commander_review + '</div>';
             inner += '<div style="margin-top:3px;font-size:9.5px;color:#9fb8c8;">Held (review-only): ' + arr(r.blocked_units).slice(0, 6).map(function (b) { return esc(String(b.id)) + ' (' + esc(b.review_status) + ')'; }).join(' · ') + (r.blocked_units.length > 6 ? ' …' : '') + '</div>';
         }
-        if (!r.executable && r.units_loaded) inner += '<div data-scc="no-exec" style="margin-top:6px;padding:6px 9px;border:1px solid ' + C.bad + ';border-radius:5px;background:#1f0d0d;color:' + C.bad + ';font-size:11px;font-weight:700;">No executable COA. Step 1 review required.</div>';
+        if (!r.executable && r.units_loaded) inner += '<div data-scc="no-exec" style="margin-top:6px;padding:6px 9px;border:1px solid ' + C.bad + ';border-radius:5px;background:#1f0d0d;color:' + C.bad + ';font-size:11px;font-weight:700;">No executable COA. Source review required.</div>';
         if (!r.units_loaded) inner += note('No units loaded — load a scenario / Step-1 ORBAT to begin.', C.dim);
         // RMOOZ-SCC-STEP1-TRAINING-APPROVAL-AK — explicit operator training-simulation approval (Panel 1).
         // Offered ONLY when units are review-only but training-eligible (blocked by source/doctrine/commander,
@@ -332,10 +332,10 @@
         if (state === 'generating_coa') {
             inner = '<div data-scc="generating" style="display:flex;align-items:center;gap:8px;font-size:12px;color:' + C.warn + ';font-weight:700;">' +
                 '<span style="display:inline-block;width:12px;height:12px;border:2px solid ' + C.warn + ';border-top-color:transparent;border-radius:50%;"></span> Preparing COA — running the AI commander…</div>' +
-                note('Step 1 gate · taskability resolver · ROE/doctrine · quality requirements ran first; fast-depth AI (analyst skipped) — ~2–5 min on CPU, ~15–30s with GPU. Switch to llama3.2:1b in the header for faster results.', C.dim);
+                note('Source gate · taskability resolver · ROE/doctrine · quality requirements ran first; fast-depth AI (analyst skipped) — ~2–5 min on CPU, ~15–30s with GPU. Switch to llama3.2:1b in the header for faster results.', C.dim);
         } else if (!r.executable) {
             inner = '<button data-act="scc-prepare" disabled style="font:inherit;cursor:not-allowed;border:1px solid #3a5040;background:#162018;color:#5f8f74;border-radius:6px;padding:8px 15px;font-size:12.5px;opacity:.5;">⚙ Prepare COA</button>' +
-                note('Prepare COA is blocked: <b>' + esc(r.message || 'Step 1 review required') + '</b> Complete source / doctrine / commander review (Panel 1), then re-check.', C.warn) +
+                note('Prepare COA is blocked: <b>' + esc(r.message || 'Source review required') + '</b> Complete source / doctrine / commander review (Panel 1), then re-check.', C.warn) +
                 '<div style="margin-top:6px;">' + btnSec('scc-recheck', '↻ Re-check readiness') + '</div>';
         } else {
             // RMOOZ-PREPARE-COA-PRODUCT-FLOW-A: one primary operator action plus

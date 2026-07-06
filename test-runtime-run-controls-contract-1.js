@@ -1,22 +1,9 @@
 /* ============================================================================
- * test-runtime-run-controls-contract-1.js — RUN CONTROLS CONTRACT (batch 1)
- * ----------------------------------------------------------------------------
- * Owner north-star: "Run means time moves. Step means review."
- * Every button that RUNS a scenario must advance the C1/C2 runtime clock
- * (runtime clock -> World State -> map -> journal). Fixed steps[] are snapshots
- * only, never the engine. Legacy fixed-step surfaces must NOT be presented as a
- * scenario run.  See memory: project_run_means_time_moves.
- *
- * Static gate (no server). Reads the shipped source and asserts the contract.
- * Scope of batch 1 (owner ruling 2026-07-05):
- *   - SCC primary run readout says "Scenario time" (World-State clock), runtime state, and speed.
- *     Authored Turn/Phase details are collapsed review checkpoints, not primary run state.
- *   - Manual step/scrub pauses a playing committed run (C2 ownership guard).
- *   - Legacy "Turn-based" Wargame-HUD relabelled Legacy/Diagnostic, not run.
- *   - DOM ids kept for compatibility; turn-engine.js / steps[] NOT removed.
- *   - Timeline / scenario-workspace playback intentionally OUT of scope here.
+ * test-runtime-run-controls-contract-1.js
+ * Runtime run controls contract: primary Run is the SCC runtime clock.
  * ========================================================================== */
 'use strict';
+
 const fs = require('fs');
 const path = require('path');
 
@@ -24,78 +11,107 @@ const ROOT = __dirname;
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
 const exists = (rel) => fs.existsSync(path.join(ROOT, rel));
 
-const C_SCC   = 'UI_MOdified/client/shell/scenario-control-center.js';
-const C_FF    = 'UI_MOdified/client/shell/free-fight-demo.js';
-const C_MAP   = 'UI_MOdified/client/wargame/adjudicator-map.js';
-const C_HTML  = 'UI_MOdified/client/app.html';
-const C_I18N  = 'UI_MOdified/client/i18n.js';
-const C_WS    = 'UI_MOdified/client/shell/world-state.js';
-const C_TURN  = 'UI_MOdified/client/turn-engine.js';
+const SCC = read('UI_MOdified/client/shell/scenario-control-center.js');
+const FF = read('UI_MOdified/client/shell/free-fight-demo.js');
+const MAP = read('UI_MOdified/client/wargame/adjudicator-map.js');
+const HTML = read('UI_MOdified/client/app.html');
+const I18N = read('UI_MOdified/client/i18n.js');
+const WS = read('UI_MOdified/client/shell/world-state.js');
+const TURN = read('UI_MOdified/client/turn-engine.js');
 
-let passed = 0, failed = 0;
-function ok(name, cond) {
-    if (cond) { passed++; console.log('  PASS  ' + name); }
-    else { failed++; console.log('  FAIL  ' + name); }
+let passed = 0;
+let failed = 0;
+function ok(label, cond) {
+    if (cond) { passed += 1; console.log('  PASS  ' + label); }
+    else { failed += 1; console.error('  FAIL  ' + label); }
 }
 
-const scc  = read(C_SCC);
-const ff   = read(C_FF);
-const map  = read(C_MAP);
-const html = read(C_HTML);
-const i18n = read(C_I18N);
-const ws   = read(C_WS);
+function tagById(html, id) {
+    const re = new RegExp('<[^>]+id="' + id + '"[^>]*>', 'i');
+    const m = html.match(re);
+    return m ? m[0] : '';
+}
 
-/* ── A. Primary run uses the runtime clock, readout is scenario TIME ───────── */
-ok('A1 SCC exposes the primary Run action (scc-run "Run Scenario")',
-    scc.includes("'scc-run'") && scc.includes('Run Scenario'));
-ok('A2 SCC run readout shows "Scenario time"',
-    scc.includes("kv('Scenario time'"));
-ok('A3 SCC time is sourced from the World-State clock label, not fabricated',
-    scc.includes('scenarioClockLabel') &&
-    /scenarioClockLabel:\s*function/.test(ff) &&
-    ff.includes('_scenarioClockLabel') &&
-    ff.includes('runClockLabel'));            // _scenarioClockLabel prefers MAP.runClockLabel (C1)
-ok('A4 SCC primary readout no longer LEADS with a bare "Turn" headline',
-    !scc.includes("kv('Turn', String(scn.scenario_turn)"));
-ok('A5 SCC primary readout shows runtime state and speed',
-    scc.includes("kv('Runtime state'") && scc.includes("kv('Speed'"));
-ok('A6 SCC primary readout no longer exposes Turn/Phase kv rows',
-    !scc.includes("kv('Turn") && !scc.includes("kv('Phase'"));
-ok('A7 authored turn/phase data is retained under collapsed review checkpoints',
-    scc.includes('data-scc="review-checkpoints"') &&
-    scc.includes('Internal turn') &&
-    scc.includes('COA review phase'));
+function tagByDataTool(html, tool) {
+    const re = new RegExp('<button[^>]+data-tool="' + tool + '"[^>]*>', 'i');
+    const m = html.match(re);
+    return m ? m[0] : '';
+}
 
-/* ── B. Manual step/scrub pauses a playing committed run (C2 guard) ────────── */
-ok('B1 adjudicator applyState pauses the run on a non-snapshot apply while playing',
-    map.includes('pauseCommittedRun') &&
-    map.includes('runClock') && map.includes('opts.snapshot'));
+function bodyOfFunction(source, name) {
+    const idx = source.indexOf('function ' + name + '(');
+    if (idx < 0) return '';
+    const open = source.indexOf('{', idx);
+    if (open < 0) return '';
+    let depth = 0;
+    for (let i = open; i < source.length; i += 1) {
+        if (source[i] === '{') depth += 1;
+        else if (source[i] === '}') {
+            depth -= 1;
+            if (depth === 0) return source.slice(open, i + 1);
+        }
+    }
+    return '';
+}
 
-/* ── C. Legacy fixed-step surface not presented as a scenario RUN ──────────── */
-ok('C1 tool tooltip no longer frames the legacy HUD as a scenario run',
-    !i18n.includes('Run an operational scenario'));
-ok('C2 legacy step control renamed away from "Next Turn"',
-    !i18n.includes("'wg-btn-next': 'Next Turn'") &&
-    i18n.includes("'wg-btn-next': 'Next snapshot'"));
-ok('C3 wargame mode chip is Legacy/Diagnostic, not "Turn-based"',
-    !html.includes('wargame-mode-chip">Turn-based') &&
-    html.includes('wargame-mode-chip">Legacy'));
-ok('C4 legacy panel carries an explicit "not the scenario run" banner',
-    html.includes('wg-legacy-banner'));
-ok('C5 tool label marks the surface Legacy',
-    i18n.includes("'tool-wargame': 'Operational Scenario (Legacy)'"));
+const panel5 = bodyOfFunction(SCC, 'panel5Run');
+const wargameButton = tagByDataTool(HTML, 'wargame');
+const wargamePanel = tagById(HTML, 'wargame-panel');
 
-/* ── D. Boundaries preserved: DOM compat + nothing deleted ─────────────────── */
-ok('D1 DOM ids preserved for compatibility (wg-init/next/reset/hud)',
-    html.includes('id="wg-init"') && html.includes('id="wg-next"') &&
-    html.includes('id="wg-reset"') && html.includes('id="wargame-hud"'));
-ok('D2 turn-engine.js NOT deleted', exists(C_TURN));
-ok('D3 steps-as-snapshots mechanism intact (findStepForElapsedHours)',
-    ws.includes('findStepForElapsedHours'));
+console.log('\n=== Runtime run controls contract gate ===\n');
 
-/* ── E. C1/C2 gates still present (run them separately for pass/fail) ──────── */
-ok('E1 C1/C2 gate files still present',
-    exists('test-scc-runtime-clock-1.js') && exists('test-scc-runtime-clock-2.js'));
+ok('A1 SCC exposes primary runtime Run action',
+    panel5.includes("'scc-run'") && panel5.includes('Run Scenario'));
+ok('A2 SCC runtime readout shows Scenario time, Runtime state, Speed, and Next runtime event',
+    panel5.includes("kv('Scenario time'") &&
+    panel5.includes("kv('Runtime state'") &&
+    panel5.includes("kv('Speed'") &&
+    panel5.includes("kv('Next runtime event'"));
+ok('A3 SCC time is sourced from World-State clock plumbing',
+    SCC.includes('scenarioClockLabel') &&
+    /scenarioClockLabel:\s*function/.test(FF) &&
+    FF.includes('_scenarioClockLabel') &&
+    FF.includes('runClockLabel'));
+ok('A4 SCC primary readout does not expose authored Turn/Phase rows',
+    !panel5.includes("kv('Turn") &&
+    !panel5.includes("kv('Phase'") &&
+    !panel5.includes('reviewCheckpointsHtml(scn, ex)'));
+ok('A5 SCC exposes Pause and Stop controls for the same runtime clock',
+    panel5.includes("'scc-pause'") && panel5.includes("'scc-stop'"));
+
+ok('B1 manual map apply still pauses a playing committed run',
+    MAP.includes('pauseCommittedRun') &&
+    MAP.includes('runClock') &&
+    MAP.includes('opts.snapshot'));
+
+ok('C1 legacy wargame rail entry is hidden from normal operators',
+    /\bhidden\b/i.test(wargameButton) &&
+    /aria-hidden="true"/i.test(wargameButton) &&
+    /data-dev-only="legacy-wargame"/i.test(wargameButton));
+ok('C2 legacy wargame panel is hidden, inert, and developer-only',
+    /\bhidden\b/i.test(wargamePanel) &&
+    /\binert\b/i.test(wargamePanel) &&
+    /aria-hidden="true"/i.test(wargamePanel) &&
+    /data-dev-only="legacy-wargame"/i.test(wargamePanel));
+ok('C3 legacy fallback HUD requires explicit developer class',
+    TURN.includes('function legacyDiagnosticsEnabled()') &&
+    TURN.includes("classList.contains('rmooz-dev-legacy-open')"));
+ok('C4 exact legacy visible button/title strings are not shipped as normal copy',
+    !HTML.includes('Legacy Snapshot Adjudication') &&
+    !HTML.includes('Next snapshot') &&
+    !HTML.includes('Run trial') &&
+    !I18N.includes("'wg-btn-next': 'Next snapshot'"));
+
+ok('D1 compatibility DOM ids are preserved inside hidden legacy panel',
+    HTML.includes('id="wg-init"') &&
+    HTML.includes('id="wg-next"') &&
+    HTML.includes('id="wg-reset"') &&
+    HTML.includes('id="wargame-hud"'));
+ok('D2 turn-engine.js is retained but gated',
+    exists('UI_MOdified/client/turn-engine.js') &&
+    TURN.includes('if (!legacyDiagnosticsEnabled()) return null;'));
+ok('D3 authored steps remain internal clock compatibility',
+    WS.includes('findStepForElapsedHours'));
 
 console.log('\n=== Results: ' + passed + ' passed, ' + failed + ' failed ===');
 process.exit(failed ? 1 : 0);

@@ -718,7 +718,7 @@
     // RUNFIX-1: keep the HUD's scenario selector synced to the CANONICAL active
     // scenario. The workspace-side loaders (picker / refresh-restore / launcher)
     // announce rmooz:active-scenario-changed after loading a scenario into
-    // window.RmoozScenario; without this sync, "Run trial" kept adjudicating the
+    // window.RmoozScenario; without this sync, hidden legacy diagnostics kept adjudicating the
     // stale dropdown selection while ▶ Play animated the newly loaded scenario —
     // two different scenarios from two "run" buttons. The loader already
     // persisted /api/scenario/active when appropriate, so this only mirrors

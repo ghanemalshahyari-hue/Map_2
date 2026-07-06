@@ -138,7 +138,7 @@
             checklistItem('control_center', 'Scenario Control Center state', scc.state_label || scc.state || 'Unavailable', scc.available === false ? 'fail' : 'pass'),
             checklistItem('run_mode', 'CMO run mode', runMode.label || 'Blocked', runMode.allowed ? (runMode.key === 'release_grade' ? 'pass' : 'warn') : 'fail'),
             checklistItem('runtime_started', 'Runtime started', scc.scenario_status || scc.phase_status || scc.state_label || 'Not started', running ? 'pass' : (scc.state === 'committed' ? 'warn' : 'pending')),
-            checklistItem('turn_observed', 'Internal turn observed', 'Internal turn ' + num(scc.scenario_turn, 0), num(scc.scenario_turn, 0) > 0 ? 'pass' : (running ? 'warn' : 'pending')),
+            checklistItem('time_observed', 'Runtime time observed', 'Runtime frame ' + num(scc.scenario_turn, 0), num(scc.scenario_turn, 0) > 0 ? 'pass' : (running ? 'warn' : 'pending')),
             checklistItem('movement_evidence', 'Movement evidence', num(scc.movement_trace_count, 0) + ' trace(s), ' + num(movement.moved, 0) + ' moved action(s)', (num(scc.movement_trace_count, 0) > 0 || num(movement.moved, 0) > 0) ? 'pass' : (running ? 'warn' : 'pending')),
             checklistItem('decision_log', 'Decision log', num(scc.decision_log_count, 0) + ' decision(s)', num(scc.decision_log_count, 0) > 0 ? 'pass' : (running ? 'warn' : 'pending')),
             checklistItem('release_gate', 'Evidence release gate', (summary.release_label_en || summary.release_status || releaseGate.status_label_en || releaseGate.status || 'Incomplete') + ' / blockers ' + blockers, blockers > 0 ? 'fail' : (summary.releasable || releaseGate.releasable ? 'pass' : 'warn')),
@@ -226,9 +226,9 @@
     var DIGEST_LABELS = {
         scc_state: 'Run state',
         scenario_status: 'Scenario status',
-        scenario_turn: 'Internal turn',
+        scenario_turn: 'Runtime frame',
         current_actor: 'Current actor',
-        current_phase_name: 'Review phase',
+        current_phase_name: 'Runtime group',
         objective_control: 'Objective control',
         movement_trace_count: 'Movement trace count',
         movement_debug_count: 'Movement debug count',
@@ -302,8 +302,8 @@
             '',
             'Run mode: ' + (obj(instrumentation.run_mode).label || 'Blocked'),
             'Control Center: ' + (scc.state_label || scc.state || 'Unavailable'),
-            'Operator review checkpoint: ' + (step.title || step.key || 'Unknown'),
-            'Internal turn: ' + num(scc.scenario_turn, 0) + (scc.current_actor ? ' / actor ' + scc.current_actor : ''),
+            'Runtime context: ' + (step.title || step.key || 'Unknown'),
+            'Runtime frame: ' + num(scc.scenario_turn, 0) + (scc.current_actor ? ' / actor ' + scc.current_actor : ''),
             'Pause/abort: ' + (warning.label || 'No active warning') + (warning.detail ? ' - ' + warning.detail : ''),
             'Evidence changes: ' + arr(instrumentation.evidence_changes).length,
             '',
@@ -328,9 +328,9 @@
             '</div>' +
             '<dl class="cmo-wargame-run-instrumentation-meta">' +
                 '<div><dt>Run mode</dt><dd>' + esc(mode.label || 'Blocked') + '</dd></div>' +
-                '<div><dt>Operator review checkpoint</dt><dd>' + esc(step.title || step.key || 'Unknown') + '</dd></div>' +
-                '<div><dt>Internal turn / actor</dt><dd>' + esc(num(scc.scenario_turn, 0)) + (scc.current_actor ? ' / ' + esc(scc.current_actor) : '') + '</dd></div>' +
-                '<div><dt>Review phase</dt><dd>' + esc(scc.current_phase_name || scc.phase_status || 'Not committed') + '</dd></div>' +
+                '<div><dt>Runtime context</dt><dd>' + esc(step.title || step.key || 'Unknown') + '</dd></div>' +
+                '<div><dt>Runtime frame / actor</dt><dd>' + esc(num(scc.scenario_turn, 0)) + (scc.current_actor ? ' / ' + esc(scc.current_actor) : '') + '</dd></div>' +
+                '<div><dt>Runtime group</dt><dd>' + esc(scc.current_phase_name || scc.phase_status || 'Not committed') + '</dd></div>' +
             '</dl>' +
             '<div class="cmo-wargame-run-warning ' + statusClass(warning.status) + '"><strong>' + esc(warning.label || 'Pause / abort') + '</strong><span>' + esc(warning.detail || '') + '</span></div>' +
             '<div class="cmo-wargame-run-step"><strong>Current operator review checkpoint</strong><span>' + esc(step.detail || '') + '</span><em>' + esc(step.operator_action || '') + '</em></div>' +

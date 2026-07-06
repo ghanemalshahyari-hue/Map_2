@@ -1,10 +1,6 @@
 /* ============================================================================
  * test-workspace-runtime-label-contract-1.js
- * Scenario Workspace Runtime Label Contract Gate
- * ----------------------------------------------------------------------------
- * The workspace step navigator may review/playback snapshots, but it must not
- * read like the primary scenario runtime Play. Static gate only; does not touch
- * offline or DB-Lite.
+ * Workspace contract: authored-frame navigation is hidden developer UI.
  * ========================================================================== */
 'use strict';
 
@@ -25,103 +21,60 @@ function ok(label, cond) {
     else { failed += 1; console.error('  FAIL  ' + label); }
 }
 
-function around(source, needle, before, after) {
-    const idx = source.indexOf(needle);
-    if (idx < 0) return '';
-    return source.slice(Math.max(0, idx - (before || 500)), idx + (after || 500));
+function tagById(html, id) {
+    const re = new RegExp('<[^>]+id="' + id + '"[^>]*>', 'i');
+    const m = html.match(re);
+    return m ? m[0] : '';
 }
 
-function tagById(html, id) {
-    const re = new RegExp('<button[^>]*id="' + id + '"[^>]*>', 'i');
+function tagByDataGroup(html, group) {
+    const re = new RegExp('<section[^>]+data-sw-group="' + group + '"[^>]*>', 'i');
     const m = html.match(re);
     return m ? m[0] : '';
 }
 
 console.log('\n=== Scenario Workspace runtime label contract gate ===\n');
 
-console.log('--- SW-1: live step navigator copy distinguishes preview playback from runtime Play ---');
-ok('T-1 nav region still exists with compatibility ids',
+const clockGroup = tagByDataGroup(HTML, 'clock');
+ok('A1 workspace authored-frame group is hidden, inert, and developer-only',
+    /\bhidden\b/i.test(clockGroup) &&
+    /\binert\b/i.test(clockGroup) &&
+    /aria-hidden="true"/i.test(clockGroup) &&
+    /data-dev-only="authored-frame-review"/i.test(clockGroup));
+ok('A2 compatibility nav ids remain present inside the hidden group',
+    HTML.includes('id="spt-card"') &&
+    HTML.includes('id="spt-phase-list"') &&
     HTML.includes('id="sw-nav-card"') &&
     HTML.includes('id="sw-nav-play"') &&
     HTML.includes('id="sw-nav-speed"'));
-ok('T-2 section label is step review navigation',
-    HTML.includes('data-i18n="sw-live-nav-section-label">Step review navigation'));
-ok('T-3 warning points runtime Play to Scenario Control Center',
-    HTML.includes('These controls review snapshots; runtime Play stays in Scenario Control Center.'));
-ok('T-4 navigator title says Live Step Review Navigator',
-    HTML.includes('data-i18n="sw-nav-title">Live Step Review Navigator'));
-ok('T-5 helper explains pointer review, not runtime clock ownership',
-    HTML.includes('Step review playback changes the active live step pointer; Scenario Control Center remains the runtime Play.'));
-ok('T-6 play button is labelled Preview',
-    HTML.includes('data-i18n="sw-nav-play">▶ Preview</button>'));
-ok('T-7 speed label is Playback speed',
-    HTML.includes('data-i18n="sw-nav-speed-label">Playback speed</label>'));
+ok('A3 hidden group uses internal frame language',
+    HTML.includes('Internal authored-frame review') &&
+    HTML.includes('Internal authored frames') &&
+    HTML.includes('Internal Frame Navigator') &&
+    HTML.includes('Previous frame') &&
+    HTML.includes('Next frame'));
+ok('A4 old visible step/snapshot labels are absent from shipped workspace HTML/i18n',
+    !HTML.includes('Step review navigation') &&
+    !HTML.includes('Live Step Review Navigator') &&
+    !HTML.includes('Next snapshot') &&
+    !I18N.includes('Step review navigation') &&
+    !I18N.includes('Next snapshot'));
+ok('A5 source-review labels replace Step 1/Step 2 confirmation copy',
+    HTML.includes('Source review complete') &&
+    HTML.includes('Decision gate complete') &&
+    I18N.includes("'sw-conf-step1-label':     'Source review complete'") &&
+    I18N.includes("'sw-conf-step2-label':     'Decision gate complete'"));
 
-console.log('\n--- SW-1B: phase_table checkpoints are review snapshots, not runtime progress ---');
-ok('T-1 old Scenario Phase Timeline title removed from active workspace copy',
-    !HTML.includes('Scenario Phase Timeline') &&
-    !I18N.includes('Scenario Phase Timeline') &&
-    !WORKSPACE.includes('Scenario Phase Timeline'));
-ok('T-2 checkpoint card keeps compatibility ids but is collapsed review UI',
-    /<details[^>]+id="spt-card"/i.test(HTML) &&
-    HTML.includes('id="spt-phase-list"') &&
-    !/<details[^>]+id="spt-card"[^>]+\bopen\b/i.test(HTML));
-ok('T-3 checkpoint group points runtime Play back to Scenario Control Center',
-    HTML.includes('data-i18n="swg-clock-title">Review &amp; Snapshot Checkpoints') &&
-    HTML.includes('Runtime Play stays in Scenario Control Center.') &&
-    I18N.includes("'spt-title':                     'Review checkpoints'"));
-ok('T-4 live header labels active package position as review/authored context',
-    WORKSPACE.includes("tx('sw-live-review-checkpoint-prefix', 'Review checkpoint')") &&
-    WORKSPACE.includes("tx('sw-live-authored-phase-prefix', 'Authored phase')"));
-
-console.log('\n--- SW-2: snapshot controls keep ids but use snapshot labels ---');
-ok('T-1 jump buttons preserve ids and use snapshot titles',
-    tagById(HTML, 'sw-nav-first').includes('id="sw-nav-first"') &&
-    tagById(HTML, 'sw-nav-first').includes('title="First snapshot"') &&
-    tagById(HTML, 'sw-nav-last').includes('id="sw-nav-last"') &&
-    tagById(HTML, 'sw-nav-last').includes('title="Final snapshot"'));
-ok('T-2 previous/next nav buttons preserve ids and snapshot aria labels',
-    tagById(HTML, 'sw-nav-prev').includes('id="sw-nav-prev"') &&
-    tagById(HTML, 'sw-nav-prev').includes('aria-label="Previous snapshot"') &&
-    tagById(HTML, 'sw-nav-next').includes('id="sw-nav-next"') &&
-    tagById(HTML, 'sw-nav-next').includes('aria-label="Next snapshot"'));
-ok('T-3 inspection controls preserve ids and are explicitly inspection snapshots',
-    tagById(HTML, 'sw-wt-ctrl-prev').includes('id="sw-wt-ctrl-prev"') &&
-    tagById(HTML, 'sw-wt-ctrl-prev').includes('Previous inspection snapshot') &&
-    tagById(HTML, 'sw-wt-ctrl-next').includes('id="sw-wt-ctrl-next"') &&
-    tagById(HTML, 'sw-wt-ctrl-next').includes('Next inspection snapshot'));
-ok('T-4 inspection subheader says snapshot without changing active live step',
-    HTML.includes('Inspect another snapshot without changing the active live scenario step.'));
-
-console.log('\n--- SW-3: i18n and JS fallbacks use preview language ---');
-[
-    "'sw-live-nav-section-label':   'Step review navigation'",
-    "'sw-live-nav-warning-note':    'These controls review snapshots; runtime Play stays in Scenario Control Center.'",
-    "'sw-nav-title':              'Live Step Review Navigator'",
-    "'sw-nav-live-helper':        'Step review playback changes the active live step pointer; Scenario Control Center remains the runtime Play.'",
-    "'sw-nav-first':              'First snapshot'",
-    "'sw-nav-last':               'Final snapshot'",
-    "'sw-nav-play':               '▶ Preview'",
-    "'sw-nav-pause':              '⏸ Pause preview'",
-    "'sw-nav-speed-label':        'Playback speed'"
-].forEach((needle) => ok('T-copy  ' + needle, I18N.includes(needle)));
-ok('T-10 paintPlayButton fallback uses Preview/Pause preview',
-    WORKSPACE.includes("tx('sw-nav-pause', '⏸ Pause preview')") &&
-    WORKSPACE.includes("tx('sw-nav-play',  '▶ Preview')"));
-ok('T-11 old focused play/speed labels removed from app/i18n/workspace fallbacks',
-    !HTML.includes('data-i18n="sw-nav-play">▶ Play</button>') &&
-    !I18N.includes("'sw-nav-play':               '▶ Play'") &&
-    !I18N.includes("'sw-nav-speed-label':        'Speed'") &&
-    !WORKSPACE.includes("tx('sw-nav-play',  '▶ Play')"));
-
-console.log('\n--- SW-4: behavior boundaries are preserved ---');
-ok('T-1 workspace still registers goToStep as preview renderer',
+ok('B1 workspace still registers preview renderer for internal compatibility',
     WORKSPACE.includes('window.AppScenarioRunner.registerPreviewRenderer(goToStep)'));
-ok('T-2 workspace preview playback still calls preview runner play/pause',
+ok('B2 workspace preview playback still uses preview runner only',
     WORKSPACE.includes('window.AppScenarioRunner.play()') &&
     WORKSPACE.includes('window.AppScenarioRunner.pause()'));
-ok('T-3 workspace does not call C3b runtime scenario run controls',
+ok('B3 workspace does not call C3b runtime scenario controls',
     !/(runScenarioContinuous|runScenario\s*\(|_setScenarioClockPlaying|scenarioClockLabel|runClock\.playing)/.test(WORKSPACE));
+ok('B4 authored steps and phase_table stay internal data paths',
+    WORKSPACE.includes('Array.isArray(sc.phase_table)') &&
+    WORKSPACE.includes('Array.isArray(sc.steps)'));
 
 console.log('\n=== Results: ' + passed + ' passed, ' + failed + ' failed ===');
-if (failed) process.exit(1);
+process.exit(failed ? 1 : 0);

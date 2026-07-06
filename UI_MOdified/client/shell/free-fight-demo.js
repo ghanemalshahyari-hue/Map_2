@@ -1422,7 +1422,7 @@
         }
         if (rec) {
             h += '<div style="border:1px solid #2a3f55;border-radius:5px;background:#0c141d;padding:7px 9px;font-size:11px;">';
-            h += '<div style="margin-bottom:2px;"><span style="color:#8fa5b8;">Turn:</span> <span style="color:#e0e8f0;font-weight:700;">' + rec.turn + '</span> · <span style="color:#8fa5b8;">Active side:</span> <span style="color:' + sideColor + ';font-weight:700;">' + esc(rec.side) + '</span></div>';
+            h += '<div style="margin-bottom:2px;"><span style="color:#8fa5b8;">Frame:</span> <span style="color:#e0e8f0;font-weight:700;">' + rec.turn + '</span> · <span style="color:#8fa5b8;">Active side:</span> <span style="color:' + sideColor + ';font-weight:700;">' + esc(rec.side) + '</span></div>';
             h += '<div style="margin-bottom:2px;"><span style="color:#8fa5b8;">Selected COA:</span> <span style="color:#7fd6a0;font-weight:700;">' + esc(rec.coa_id) + ' — ' + esc(rec.coa_title) + '</span></div>';
             var srcColor = rec.source === 'llm' ? '#90d090' : '#9ab0c0';
             h += '<div style="margin-bottom:2px;"><span style="color:#8fa5b8;">Decision source:</span> <span style="color:' + srcColor + ';">' + esc(rec.source) + '</span></div>';
@@ -2563,8 +2563,8 @@
         var trainingApproved = _trainingApproved === true;
         var message = !loaded ? 'No units loaded.'
             : !executable ? (training_eligible > 0
-                ? 'COA unavailable — Step 1 data is review-only. Approve for Training Simulation to task ' + training_eligible + ' review-only unit(s) (SIMULATION ONLY — not source-verified), or complete source/commander review.'
-                : 'COA unavailable — Step 1 data requires source/doctrine/commander review.')
+                ? 'COA unavailable — source data is review-only. Approve for Training Simulation to task ' + training_eligible + ' review-only unit(s) (SIMULATION ONLY — not source-verified), or complete source/commander review.'
+                : 'COA unavailable — source data requires source/doctrine/commander review.')
             : (simCount > 0 ? (taskable + ' taskable (' + simCount + ' SIMULATION-ONLY, not source-verified)' + (blocked ? ', ' + blocked + ' still blocked' : '') + '.')
                 : (blocked > 0 ? (taskable + ' taskable, ' + blocked + ' blocked pending source/doctrine review.') : null));
         return { units_loaded: loaded, taskable: taskable, blocked: blocked,
@@ -2585,7 +2585,7 @@
             try { _recordDecision({ role: 'white', action: 'step1_coa_preparation_gate', called_llm: false, source: 'step1-gate' + (phaseTag ? (':' + phaseTag) : ''),
                 reason: r.executable ? 'partial taskability — some Step-1 units blocked' : 'no taskable units — Step-1 review required',
                 result_summary: r.taskable + ' taskable, ' + r.blocked + ' blocked (source ' + r.blocked_by_missing_source + ' / coords ' + r.blocked_by_missing_coordinates + ' / doctrine ' + r.blocked_by_missing_doctrine + ' / commander ' + r.blocked_by_commander_review + ')' }); } catch (_) {}
-            try { _appendToEventLog('Step 1 Gate: ' + r.taskable + ' taskable, ' + r.blocked + ' blocked pending source/doctrine review.'); } catch (_) {}
+            try { _appendToEventLog('Source Gate: ' + r.taskable + ' taskable, ' + r.blocked + ' blocked pending source/doctrine review.'); } catch (_) {}
         }
         return r;
     }
@@ -2740,8 +2740,8 @@
                 expected_enemy_reaction: ['BLUE defends from the SW', 'BLUE counterattacks from the flank'],
                 rationale: ['RED attack template — phased supported assault from NE; recon probes, support-by-fire overwatches, assault seizes.'],
                 phases: [
-                    { name: 'Phase 1 — Recon & establish fire support', actions: phaseActs(['recon', 'support', 'screen']) },
-                    { name: 'Phase 2 — Assault toward Objective X',     actions: phaseActs(['assault']) },
+                    { name: 'Recon & establish fire support', actions: phaseActs(['recon', 'support', 'screen']) },
+                    { name: 'Assault toward Objective X',     actions: phaseActs(['assault']) },
                     { name: 'Phase 3 — Consolidate & hold',             actions: phaseActs(['reserve']) },
                 ],
             };
@@ -2763,8 +2763,8 @@
                 expected_enemy_reaction: ['RED assaults from NE', 'RED flanks the screen line'],
                 rationale: ['BLUE defense template — screen delays RED; intercept blocks axis; defend holds the perimeter.'],
                 phases: [
-                    { name: 'Phase 1 — Screen & observe the RED approach', actions: phaseActs(['recon', 'screen']) },
-                    { name: 'Phase 2 — Intercept & defend Objective X',    actions: phaseActs(['intercept', 'defend']) },
+                    { name: 'Screen & observe the RED approach', actions: phaseActs(['recon', 'screen']) },
+                    { name: 'Intercept & defend Objective X',    actions: phaseActs(['intercept', 'defend']) },
                     { name: 'Phase 3 — Hold & reinforce',                  actions: phaseActs(['reserve', 'reinforce']) },
                 ],
             };
@@ -5667,10 +5667,10 @@
             ? 'all done'
             : ((ex && isFinite(+ex.current_phase_index) ? (+ex.current_phase_index + 1) : 1) + ' / ' + phases.length);
         return '<details data-ff-op="review-checkpoints" style="margin-top:4px;border:1px solid #1a3050;border-radius:4px;padding:4px 6px;background:#071421;">' +
-            '<summary style="cursor:pointer;color:#8fa5b8;font-size:10px;font-weight:700;">Review checkpoints / authored snapshots</summary>' +
-            '<div style="margin-top:4px;"><span style="color:#8fa5b8;">COA review phase:</span> <b style="color:#cfe6ff;">' + esc(phaseText) + '</b></div>' +
-            '<div><span style="color:#8fa5b8;">Snapshot pointer:</span> <b style="color:#cfe6ff;">' + esc(_snapshotStepLabel(ex)) + '</b></div>' +
-            '<div style="color:#8fa5b8;">Runtime is controlled by scenario time. These checkpoints are review snapshots.</div>' +
+            '<summary style="cursor:pointer;color:#8fa5b8;font-size:10px;font-weight:700;">Internal authored frames</summary>' +
+            '<div style="margin-top:4px;"><span style="color:#8fa5b8;">COA internal group:</span> <b style="color:#cfe6ff;">' + esc(phaseText) + '</b></div>' +
+            '<div><span style="color:#8fa5b8;">Frame pointer:</span> <b style="color:#cfe6ff;">' + esc(_snapshotStepLabel(ex)) + '</b></div>' +
+            '<div style="color:#8fa5b8;">Runtime is controlled by scenario time. These details are hidden compatibility data.</div>' +
             '</details>';
     }
     // RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O: the SIMPLE primary operator flow — ONE primary action per

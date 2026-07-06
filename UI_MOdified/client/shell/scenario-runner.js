@@ -29,7 +29,7 @@
  *     and the step cursor. It is NOT adjudicated (no losses / force-ratio /
  *     server outcomes). Used by Play / step / transport / turn-engine Start.
  *   • 'live'    — DELEGATED to the registered live runner (the server-adjudicated
- *     Wargame HUD: Run trial / Next snapshot → applyState). This module never calls
+ *     Hidden legacy diagnostics can still route through applyState). This module never calls
  *     the server itself; it only routes. That keeps the locked AI/sim boundary
  *     intact (the scenario-workspace flow stays client-side).
  *

@@ -122,7 +122,7 @@
     function buildSections(debrief) {
         return [
             { key: 'outcome', label: 'Outcome', items: [obj(debrief.outcome).label || obj(debrief.outcome).key || 'Unknown', releaseInterpretationText(debrief)], read_only: true },
-            { key: 'timeline', label: 'AAR review timeline', items: arr(debrief.timeline).map(function (t) { return (t.label || t.key || 'Review item') + ': ' + (t.value || t.detail || ''); }), read_only: true },
+            { key: 'timeline', label: 'AAR runtime timeline', items: arr(debrief.timeline).map(function (t) { return (t.label || t.key || 'Runtime item') + ': ' + (t.value || t.detail || ''); }), read_only: true },
             { key: 'evidence_changes', label: 'Evidence changes', items: arr(debrief.evidence_changes).map(function (c) { return (c.label || c.key || 'Change') + ': ' + c.previous + ' -> ' + c.current; }), read_only: true },
             { key: 'unresolved', label: 'Unresolved blockers / warnings', items: arr(debrief.unresolved_items).map(function (u) { return '[' + (u.status || 'warn') + '] ' + (u.label || u.key || 'Item') + (u.detail ? ': ' + u.detail : ''); }), read_only: true },
             { key: 'recommendations', label: 'Recommendations', items: arr(debrief.recommendations).map(function (r) { return r.label || String(r); }), read_only: true },

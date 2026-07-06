@@ -1192,12 +1192,12 @@
             }
         }
 
-        // Phase-in-step counter: "Step 3 of 5 in PRE-H"
+        // Hidden compatibility counter: "Frame 3 of 5 in PRE-H"
         if (phaseOfEl && phaseName) {
             var stepsInPhase = steps.filter(function (s) { return s.phase === phaseName; });
             var posInPhase   = stepsInPhase.indexOf(step) + 1;  // 1-based
             var totalInPhase = stepsInPhase.length;
-            phaseOfEl.textContent = tx('sw-nav-phase-of', 'Step {0} of {1} in {2}')
+            phaseOfEl.textContent = tx('sw-nav-phase-of', 'Frame {0} of {1} in group {2}')
                 .replace('{0}', String(posInPhase))
                 .replace('{1}', String(totalInPhase))
                 .replace('{2}', phaseName);
@@ -15840,7 +15840,7 @@
                 } else {
                     _setStatus(tx('sw-live-import-blocked', 'Import blocked.'), 'error');
                     if (_looksLikeStep1OrOperationalJson(json)) {
-                        _setSummary('This loader expects a full RMOOZ scenario with steps[]. Use Import Scenario for Step 1 / operational JSON. — يتوقّع هذا المُحمِّل سيناريو RMOOZ كاملاً يحتوي على steps[]؛ استخدم معالج استيراد السيناريو لـ JSON الخطوة 1 / العملياتي.');
+                        _setSummary('This loader expects a full RMOOZ scenario with internal authored frames. Use Import Scenario for source-review / operational JSON. — يتوقّع هذا المُحمِّل سيناريو RMOOZ كاملاً يحتوي على إطارات داخلية مؤلفة؛ استخدم معالج استيراد السيناريو لملف JSON الخاص بمراجعة المصدر / العمليات.');
                     } else {
                         _setSummary(result.blockedReasons.join(', '));
                     }

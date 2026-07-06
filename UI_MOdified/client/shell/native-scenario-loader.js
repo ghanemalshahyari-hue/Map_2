@@ -97,7 +97,7 @@
     }
     // RUNFIX-1: announce the canonical active scenario to every run surface.
     // The Wargame HUD listens (syncs its #wg-adj-scenario dropdown + default) so
-    // "Run trial" adjudicates the SAME scenario the workspace/Play path renders.
+    // Hidden legacy diagnostics adjudicate the same scenario the workspace path renders.
     // persist=true also records it as the server's active scenario — the single
     // cross-surface arbiter (data/scenarios/_active.json) the HUD reads at init.
     function announceActiveScenario(name, persist) {

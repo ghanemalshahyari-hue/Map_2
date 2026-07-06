@@ -167,6 +167,35 @@
             note('Runtime is controlled by scenario time. These details are internal compatibility data, not the scenario run model.', C.dim) +
             '</div></details>';
     }
+    function runtimeDecisionPointsHtml(eng) {
+        var points = arr(safeRead(function () {
+            return eng.runtimeDecisionPoints ? eng.runtimeDecisionPoints() : [];
+        }, []));
+        if (!points.length) return '';
+        var html = '<div data-scc="runtime-decision-points" style="margin-top:8px;border:1px solid ' + C.warn + ';border-radius:7px;background:#1b1607;padding:7px 9px;color:#e8d68a;">' +
+            '<div style="font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:' + C.warn + ';">Pending decision</div>';
+        points.forEach(function (point, i) {
+            var title = point && (point.title || point.id) || ('Decision ' + (i + 1));
+            var prompt = point && point.prompt || '';
+            var opts = arr(point && point.options);
+            html += '<div data-scc-runtime-decision="' + esc(point && point.id || '') + '" style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(232,214,138,.25);">' +
+                '<div style="font-size:12px;font-weight:800;color:#ffe59a;">' + esc(title) + '</div>' +
+                (prompt ? '<div style="font-size:10px;color:#d6c79a;line-height:1.45;margin-top:2px;">' + esc(prompt) + '</div>' : '') +
+                '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">';
+            if (opts.length) {
+                opts.forEach(function (option, j) {
+                    html += '<button data-act="scc-runtime-decision-' + i + '-' + j + '" type="button" ' +
+                        'style="font:inherit;cursor:pointer;border:1px solid #b98a2d;background:#251b08;color:#ffd27f;border-radius:5px;padding:5px 9px;font-size:10.5px;font-weight:700;">' +
+                        esc(option.label || option.id || ('Option ' + (j + 1))) + '</button>';
+                });
+            } else {
+                html += '<span style="font-size:10px;color:' + C.dim + ';">No operator options available.</span>';
+            }
+            html += '</div></div>';
+        });
+        html += '<div style="margin-top:6px;font-size:9.5px;color:#bda66a;">Choice records a pending runtime proposal only; no unit, map, or combat effect is executed here.</div></div>';
+        return html;
+    }
     function runSnapshot() {
         var eng = engine();
         if (!eng) {
@@ -528,13 +557,13 @@
         // RMOOZ-FREE-FIGHT-CONTINUITY: Auto-Continue toggle + an explicit "Continue (BLUE Reaction)" so a
         // manual pause is never a dead-end.
         var autoOn = false; try { autoOn = !!(eng.autoContinueEnabled && eng.autoContinueEnabled()); } catch (_) {}
-        var autoBtn = btnSec('scc-auto-continue', '🔁 Auto-Continue: ' + (autoOn ? 'ON' : 'OFF'), 'Auto-commit a deterministic BLUE reaction each turn (no AI on normal ticks) so the fight does not pause for orders.');
-        var contBlueBtn = btnPri('scc-continue-blue', '→ Continue (BLUE Reaction)', 'Force one deterministic BLUE reaction and continue this turn (no AI).');
+        var autoBtn = btnSec('scc-auto-continue', '🔁 Auto-Continue: ' + (autoOn ? 'ON' : 'OFF'), 'Auto-commit deterministic BLUE reactions during runtime (no AI on normal ticks) so the fight does not pause for orders.');
+        var contBlueBtn = btnPri('scc-continue-blue', '→ Continue (BLUE Reaction)', 'Force one deterministic BLUE reaction and continue runtime (no AI).');
         if (state === 'committed') {
             // RMOOZ-PREPARE-COA-UX-UNBLOCK-A + RMOOZ-FREE-FIGHT-CONTINUITY:
             // primary button runs continuously, while Run Plan once and Auto-Continue remain explicit controls.
-            controls = btnPri('scc-run', '🎬 Run Scenario', 'Auto-director: continuous fight — Blue orders generated each turn; stops only on end condition or max turns') +
-                ' ' + btnSec('scc-run-once', '▶ Run Plan once', 'Execute the committed COA a single turn then pause') + ' ' + autoBtn + ' ' + btnWarn('scc-clear', '✕ Clear');
+            controls = btnPri('scc-run', '🎬 Run Scenario', 'Auto-director: continuous fight — Blue orders generated during runtime; stops only on end condition or runtime limit') +
+                ' ' + btnSec('scc-run-once', '▶ Run Plan once', 'Execute one runtime cycle for the committed COA, then pause') + ' ' + autoBtn + ' ' + btnWarn('scc-clear', '✕ Clear');
         } else if (state === 'scenario_running') {
             controls = btnPri('scc-pause', '⏸ Pause') + ' ' + autoBtn + ' ' + btnWarn('scc-stop', '■ Stop') + ' ' + btnWarn('scc-clear', '✕ Clear');
         } else if (state === 'scenario_paused') {
@@ -560,9 +589,10 @@
                 kv('Last movement', String(scn.last_formation_order || '—'), C.dim) +
                 kv('Red reaction', String(scn.last_red_maneuver || '—'), C.dim) +
                 kv('Green status', (function () { var g = eng.greenStatus(); return g && g.collateral_risk ? ('collateral ' + (g.collateral_risk.band || '—')) : 'refreshed'; })(), C.dim);
+            inner += runtimeDecisionPointsHtml(eng);
             if (scn.pending_replan_reason) {
                 inner += note('⚠ ' + esc(scn.pending_replan_reason), C.bad);
-                if (scn.scenario_status === 'paused') inner += note('<b>▶ Resume (manual)</b> runs one more turn and pauses again. <b>▶▶ Auto Continue</b> generates deterministic Blue orders automatically every turn (no AI required).', C.dim);
+                if (scn.scenario_status === 'paused') inner += note('<b>▶ Resume (manual)</b> continues runtime once and pauses again. <b>▶▶ Auto Continue</b> generates deterministic Blue orders automatically during runtime (no AI required).', C.dim);
             }
             if (scn.end_condition) inner += note('End condition: ' + esc(scn.end_condition), C.good);
         } else if (state === 'committed') {
@@ -821,6 +851,14 @@
             if (eng.setAutoContinue) eng.setAutoContinue(!(eng.autoContinueEnabled && eng.autoContinueEnabled()));
             else if (typeof eng.enableAutoScenario === 'function') eng.enableAutoScenario();
             (eng.repaint || function () {})();
+        });
+        arr(safeRead(function () { return eng.runtimeDecisionPoints ? eng.runtimeDecisionPoints() : []; }, [])).forEach(function (point, i) {
+            arr(point && point.options).forEach(function (option, j) {
+                bindFn('scc-runtime-decision-' + i + '-' + j, function () {
+                    if (typeof eng.resolveRuntimeDecisionPoint === 'function') eng.resolveRuntimeDecisionPoint(point.id, option.id);
+                    (eng.repaint || function () {})();
+                });
+            });
         });
         bindFn('scc-clear', function () { eng.clearAll(); });
         bindFn('scc-replan', function () { eng.replan(); });

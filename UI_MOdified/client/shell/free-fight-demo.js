@@ -200,6 +200,10 @@
     function W() { return (typeof window !== 'undefined') ? window : root; }
     function mapReady() { var w = W(); return !!(w && w.L && w.map && typeof w.L.layerGroup === 'function'); }
     function arr(v) { return Array.isArray(v) ? v : []; }
+    function _cloneJson(v) {
+        if (v == null) return v;
+        try { return JSON.parse(JSON.stringify(v)); } catch (_) { return v; }
+    }
     // FREE-FIGHT-AI-LITE-A: deterministic planner + injected terrain results.
     function aiPlanner() { var w = W(); if (w && w.RmoozFreeFightAI) return w.RmoozFreeFightAI; try { return require('./free-fight-ai.js'); } catch (_) { return null; } }
     // RMOOZ-COA-REALISM-GATE-A: returns the territory/movement validation gate if loaded.
@@ -3752,6 +3756,7 @@
             fired_count: 0,
             runtime_flags: {},
             open_decision_points: {},
+            operator_decisions: {},
             mission_task_status: {},
             pending_effects: [],
             blocked_effects: [],
@@ -3769,6 +3774,7 @@
         if (!isFinite(+st.fired_count)) st.fired_count = 0;
         if (!st.runtime_flags || typeof st.runtime_flags !== 'object' || Array.isArray(st.runtime_flags)) st.runtime_flags = {};
         if (!st.open_decision_points || typeof st.open_decision_points !== 'object' || Array.isArray(st.open_decision_points)) st.open_decision_points = {};
+        if (!st.operator_decisions || typeof st.operator_decisions !== 'object' || Array.isArray(st.operator_decisions)) st.operator_decisions = {};
         if (!st.mission_task_status || typeof st.mission_task_status !== 'object' || Array.isArray(st.mission_task_status)) st.mission_task_status = {};
         if (!Array.isArray(st.pending_effects)) st.pending_effects = [];
         if (!Array.isArray(st.blocked_effects)) st.blocked_effects = [];
@@ -3800,6 +3806,163 @@
             source: (event && event.source) || 'scenario'
         };
     }
+    function _runtimeDecisionOptionId(option, i) {
+        if (option && option.id != null) return String(option.id);
+        if (option && option.value != null) return String(option.value);
+        if (option && option.key != null) return String(option.key);
+        if (option && option.label != null) return String(option.label).toLowerCase().replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '') || ('option-' + (i + 1));
+        return 'option-' + (i + 1);
+    }
+    function _runtimeDecisionOptionLabel(option, i) {
+        if (option && option.label != null) return String(option.label);
+        if (option && option.title != null) return String(option.title);
+        if (option && option.name != null) return String(option.name);
+        if (option && option.id != null) return String(option.id);
+        return 'Option ' + (i + 1);
+    }
+    function _runtimeDecisionOptions(raw) {
+        return arr(raw).map(function (option, i) {
+            option = (option && typeof option === 'object') ? option : { id: String(option), label: String(option) };
+            return {
+                id: _runtimeDecisionOptionId(option, i),
+                label: _runtimeDecisionOptionLabel(option, i),
+                description: option.description || option.summary || option.effect || '',
+                effects: _cloneJson(option.effects || option.runtime_effects || option.proposed_effects || []),
+                raw: _cloneJson(option)
+            };
+        });
+    }
+    function _openRuntimeDecisionPoint(point, source) {
+        var st = _ensureRuntimeEventSessionState();
+        if (!st || !point) return null;
+        var id = String(point.id || point.decision_point_id || point.effect_id || point.event_id || '');
+        if (!id) return null;
+        if (st.operator_decisions && st.operator_decisions[id]) return st.open_decision_points[id] || null;
+        var existing = st.open_decision_points[id] || {};
+        st.open_decision_points[id] = {
+            status: existing.status === 'resolved' ? 'resolved' : 'open',
+            id: id,
+            title: point.title || existing.title || id,
+            prompt: point.prompt || point.message || existing.prompt || '',
+            options: _runtimeDecisionOptions(point.options || point.choices || existing.options || []),
+            trigger_elapsed_hours: isFinite(+point.trigger_elapsed_hours) ? +point.trigger_elapsed_hours : (isFinite(+point.at_elapsed_hours) ? +point.at_elapsed_hours : existing.trigger_elapsed_hours),
+            at_elapsed_hours: isFinite(+point.at_elapsed_hours) ? +point.at_elapsed_hours : existing.at_elapsed_hours,
+            event_id: point.event_id || existing.event_id || null,
+            effect_id: point.effect_id || existing.effect_id || null,
+            source: source || point.source || existing.source || 'runtime'
+        };
+        return st.open_decision_points[id];
+    }
+    function _runtimeDecisionIdFromEffect(effect) {
+        var p = (effect && effect.payload && typeof effect.payload === 'object') ? effect.payload : {};
+        return String(p.decision_point_id || p.decision_id || p.id || effect.effect_id || effect.id || effect.event_id || '');
+    }
+    function _runtimeDecisionPointsView() {
+        var st = _ensureRuntimeEventSessionState();
+        if (!st) return [];
+        var out = [];
+        var seen = {};
+        Object.keys(st.open_decision_points || {}).forEach(function (id) {
+            var point = st.open_decision_points[id];
+            if (!point || point.status !== 'open' || (st.operator_decisions && st.operator_decisions[id])) return;
+            var item = {
+                id: String(point.id || id),
+                title: point.title || id,
+                prompt: point.prompt || '',
+                options: _runtimeDecisionOptions(point.options || []),
+                source: point.source || 'runtime',
+                at_elapsed_hours: point.at_elapsed_hours,
+                trigger_elapsed_hours: point.trigger_elapsed_hours
+            };
+            out.push(item);
+            seen[item.id] = true;
+        });
+        arr(st.pending_effects).forEach(function (effect) {
+            if (!effect || effect.kind !== 'request_operator_decision' || effect.status !== 'proposed') return;
+            var p = (effect.payload && typeof effect.payload === 'object') ? effect.payload : {};
+            var id = _runtimeDecisionIdFromEffect(effect);
+            if (!id || seen[id] || (st.operator_decisions && st.operator_decisions[id])) return;
+            out.push({
+                id: id,
+                title: p.title || p.label || p.prompt || effect.event_title || id,
+                prompt: p.prompt || p.message || '',
+                options: _runtimeDecisionOptions(p.options || p.choices || []),
+                source: 'runtime-effect',
+                at_elapsed_hours: effect.at_elapsed_hours,
+                trigger_elapsed_hours: effect.at_elapsed_hours
+            });
+            seen[id] = true;
+        });
+        return out;
+    }
+    function _resolveRuntimeDecisionPoint(decisionPointId, optionId) {
+        var st = _ensureRuntimeEventSessionState();
+        if (!st) return { ok: false, reason: 'no_active_runtime_session' };
+        var id = String(decisionPointId || '');
+        if (!id) return { ok: false, reason: 'missing_decision_point_id' };
+        var points = _runtimeDecisionPointsView();
+        var point = points.filter(function (p) { return p.id === id; })[0];
+        if (!point) return { ok: false, reason: 'decision_point_not_open' };
+        var options = _runtimeDecisionOptions(point.options || []);
+        var selected = options.filter(function (o) { return o.id === String(optionId || ''); })[0] || options[0];
+        if (!selected) return { ok: false, reason: 'missing_decision_option' };
+        var now = _nowISO();
+        var hours = (_coaExec && _coaExec.clock && isFinite(+_coaExec.clock.current_hours)) ? +_coaExec.clock.current_hours : null;
+        var record = {
+            decision_point_id: id,
+            title: point.title || id,
+            prompt: point.prompt || '',
+            option_id: selected.id,
+            option_label: selected.label,
+            decided_at: now,
+            at_elapsed_hours: hours,
+            status: 'resolved',
+            source: 'operator'
+        };
+        st.operator_decisions[id] = record;
+        var open = st.open_decision_points[id] || { id: id, title: record.title };
+        open.status = 'resolved';
+        open.resolved_at = now;
+        open.selected_option_id = selected.id;
+        open.selected_option_label = selected.label;
+        st.open_decision_points[id] = open;
+
+        st.pending_effects = arr(st.pending_effects).map(function (effect) {
+            if (effect && effect.kind === 'request_operator_decision' && effect.status === 'proposed' && _runtimeDecisionIdFromEffect(effect) === id) {
+                var done = _cloneJson(effect);
+                done.status = 'resolved_by_operator';
+                done.operator_choice = _cloneJson(record);
+                return done;
+            }
+            return effect;
+        });
+        var proposal = {
+            id: 'operator-decision-' + id + '-' + selected.id + '-' + Date.now(),
+            kind: 'operator_decision',
+            status: 'proposed',
+            decision_point_id: id,
+            option_id: selected.id,
+            option_label: selected.label,
+            source: 'operator',
+            at_elapsed_hours: hours,
+            payload: {
+                decision_point_id: id,
+                option_id: selected.id,
+                option_label: selected.label,
+                title: record.title,
+                prompt: record.prompt,
+                decided_at: now,
+                at_elapsed_hours: hours,
+                proposed_effects: _cloneJson(selected.effects || [])
+            }
+        };
+        st.pending_effects.push(proposal);
+        st.last_effects.push(proposal);
+        try { _appendRuntimeEventLog('Operator decision recorded: ' + record.title + ' -> ' + record.option_label + ' (proposal pending).'); } catch (_) {}
+        try { _recordDecision({ role: 'operator', action: 'runtime_operator_decision', called_llm: false, source: 'runtime-events', result_summary: record.title + ' -> ' + record.option_label }); } catch (_) {}
+        try { updatePanel(); } catch (_) {}
+        return { ok: true, decision: record, proposal: proposal };
+    }
     function _appendRuntimeEventLog(message) {
         if (!message) return null;
         try {
@@ -3819,6 +3982,7 @@
         next = next || {};
         st.runtime_flags = (next.runtime_flags && typeof next.runtime_flags === 'object') ? next.runtime_flags : {};
         st.open_decision_points = (next.open_decision_points && typeof next.open_decision_points === 'object') ? next.open_decision_points : {};
+        st.operator_decisions = (next.operator_decisions && typeof next.operator_decisions === 'object') ? next.operator_decisions : (st.operator_decisions || {});
         st.mission_task_status = (next.mission_task_status && typeof next.mission_task_status === 'object') ? next.mission_task_status : {};
         st.pending_effects = Array.isArray(next.pending_effects) ? next.pending_effects : [];
         st.blocked_effects = Array.isArray(next.blocked_effects) ? next.blocked_effects : [];
@@ -3878,6 +4042,7 @@
             effectTotals.pending += (effects && effects.pending) || 0;
         });
         duePoints.forEach(function (dp) {
+            try { _openRuntimeDecisionPoint(dp, 'decision-point'); } catch (_) {}
             var msg = 'Runtime decision point: ' + ((dp && dp.title) || (dp && dp.id) || 'decision point') + ' at ' + _eventHoursLabel(dp && dp.trigger_elapsed_hours) + '.';
             try { _appendRuntimeEventLog(msg); } catch (_) {}
             try { _recordDecision({ role: 'operator', action: 'runtime_decision_point_due', called_llm: false, source: 'runtime-events', result_summary: msg }); } catch (_) {}
@@ -5647,7 +5812,10 @@
         var last = due[0] || dps[0] || null;
         var effects = arr(rt.last_effects);
         var lastEffect = effects.length ? effects[effects.length - 1] : null;
-        var pending = arr(rt.pending_effects).length;
+        var pending = arr(rt.pending_effects).filter(function (effect) {
+            return effect && effect.status === 'proposed' &&
+                (effect.kind === 'request_operator_decision' || effect.kind === 'operator_decision');
+        }).length;
         var h = '';
         if (last) h += '<div><span style="color:#8fa5b8;">Last runtime event:</span> <b style="color:#cfe6ff;">' + esc(last.title || last.id || 'event') + '</b></div>';
         if (rt.next_event_hours != null && isFinite(+rt.next_event_hours)) h += '<div><span style="color:#8fa5b8;">Next runtime event:</span> <b style="color:#cfe6ff;">' + esc(_eventHoursLabel(+rt.next_event_hours)) + '</b></div>';
@@ -6543,6 +6711,8 @@
         whiteOutcome: function () { try { return _scenario ? _whiteScenarioOutcome() : null; } catch (_) { return null; } },
         greenStatus: function () { return _greenWorld; },
         runBlockedReason: function () { return _coaExec && _coaExec.run_blocked_reason; },
+        runtimeDecisionPoints: function () { return _runtimeDecisionPointsView(); },
+        resolveRuntimeDecisionPoint: function (decisionPointId, optionId) { return _resolveRuntimeDecisionPoint(decisionPointId, optionId); },
         // ── evidence (Panel 6) ──
         decisionLog: function () { return _decisionLog.slice(-20); },
         networkCalls: function () { return _netLog.slice(-20); },
@@ -6914,6 +7084,8 @@
         _advanceScenarioClockForTest: function ()          { return _advanceScenarioClock(); },
         _fireRuntimeEventsFromClockForTest: function ()    { return _fireRuntimeEventsFromClock(); },
         _resetRuntimeEventSessionStateForTest: function () { return _resetRuntimeEventSessionState(); },
+        _runtimeDecisionPointsForTest: function ()          { return _runtimeDecisionPointsView(); },
+        _resolveRuntimeDecisionPointForTest: function (id, optionId) { return _resolveRuntimeDecisionPoint(id, optionId); },
         _runCommittedCoaForTest:   function ()            { return _runCommittedCoa(); },
         _checkReplanTriggersForTest: function ()          { return _checkReplanTriggers(); },
         _pauseCommittedCoaForTest: function ()            { return _pauseCommittedCoa(); },

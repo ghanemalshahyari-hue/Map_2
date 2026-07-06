@@ -168,6 +168,7 @@
         var st = clone(obj(runtimeState));
         if (!st.runtime_flags || typeof st.runtime_flags !== 'object' || Array.isArray(st.runtime_flags)) st.runtime_flags = {};
         if (!st.open_decision_points || typeof st.open_decision_points !== 'object' || Array.isArray(st.open_decision_points)) st.open_decision_points = {};
+        if (!st.operator_decisions || typeof st.operator_decisions !== 'object' || Array.isArray(st.operator_decisions)) st.operator_decisions = {};
         if (!st.mission_task_status || typeof st.mission_task_status !== 'object' || Array.isArray(st.mission_task_status)) st.mission_task_status = {};
         if (!Array.isArray(st.pending_effects)) st.pending_effects = [];
         if (!Array.isArray(st.blocked_effects)) st.blocked_effects = [];
@@ -237,6 +238,8 @@
                         event_id: proposal.event_id,
                         effect_id: proposal.effect_id,
                         title: payload.title || payload.label || null,
+                        prompt: payload.prompt || payload.message || null,
+                        options: arr(payload.options || payload.choices).map(function (option) { return clone(option); }),
                         at_elapsed_hours: proposal.at_elapsed_hours
                     };
                     finalProposal = finalEffectProposal(proposal, 'applied_safe');
@@ -269,6 +272,18 @@
                 }
             } else if (kind === 'request_operator_decision') {
                 var request = finalEffectProposal(proposal, 'proposed');
+                var requestId = firstString(payload, ['decision_point_id', 'decision_id', 'id']) || proposal.effect_id || proposal.event_id;
+                if (requestId) {
+                    state.open_decision_points[requestId] = {
+                        status: 'open',
+                        event_id: proposal.event_id,
+                        effect_id: proposal.effect_id,
+                        title: payload.title || payload.label || payload.prompt || null,
+                        prompt: payload.prompt || payload.message || null,
+                        options: arr(payload.options || payload.choices).map(function (option) { return clone(option); }),
+                        at_elapsed_hours: proposal.at_elapsed_hours
+                    };
+                }
                 state.pending_effects.push(request);
                 finalProposal = request;
             } else {

@@ -95,12 +95,14 @@
     function boot() {
         const root = document.getElementById('wg-adjudicator-card');
         if (!root) return;
+        const legacyHost = root.closest('[data-dev-only="legacy-wargame"]');
+        if (legacyHost && legacyHost.hasAttribute('hidden')) return;
         root.innerHTML = renderShell();
         bindHandlers(root);
         if (window.AppScenarioState) {
             trial = window.AppScenarioState.create({ scenarioName: SCENARIO_DEFAULT });
         }
-        setStatus('Idle. Click "Next snapshot" to begin legacy diagnostic playback.', 'idle');
+        setStatus('Idle. Use developer diagnostics to advance the internal frame sequence.', 'idle');
         // Publish the next-step accessor so red-team-controller.js can
         // record approved actions against the right step (todo item #7).
         if (window.AppAdjudicator) {
@@ -348,14 +350,14 @@
 
             <!-- ── Legacy snapshot adjudication ── -->
             <div class="wg-adj-section">
-                <div class="wg-adj-section-title">Legacy Snapshot Adjudication</div>
+                <div class="wg-adj-section-title">Developer Legacy Diagnostics</div>
                 <div class="wg-adj-btn-row wg-adj-btn-row--3">
-                    <button id="wg-adj-step-btn"  class="wargame-action-btn primary"   type="button">Next snapshot</button>
-                    <button id="wg-adj-trial-btn" class="wargame-action-btn success"   type="button">Run trial</button>
-                    <button id="wg-adj-reset-btn" class="wargame-action-btn secondary" type="button">Reset</button>
+                    <button id="wg-adj-step-btn"  class="wargame-action-btn primary"   type="button">Advance internal frame</button>
+                    <button id="wg-adj-trial-btn" class="wargame-action-btn success"   type="button">Run internal sequence</button>
+                    <button id="wg-adj-reset-btn" class="wargame-action-btn secondary" type="button">Clear internal state</button>
                 </div>
                 <div class="wg-adj-form-grid">
-                    <label for="wg-adj-pace-ms" class="wg-adj-label">Snapshot&nbsp;pace</label>
+                    <label for="wg-adj-pace-ms" class="wg-adj-label">Frame&nbsp;pace</label>
                     <div class="wg-adj-input-suffix">
                         <input id="wg-adj-pace-ms" class="wg-adj-input" type="number" value="1200" min="0" max="10000" step="100" />
                         <span class="wg-adj-unit">ms</span>
@@ -422,14 +424,14 @@
                 background:var(--panel-2);border-left:3px solid #ffc94a;border-radius:3px;
                 font-size:11px;color:var(--text-main);">
                 <div style="font-size:10px;color:var(--text-muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px;">
-                    Approved actions for next snapshot
+                    Approved actions for next internal frame
                 </div>
                 <div id="wg-adj-approved-list"></div>
             </div>
 
             <details id="wg-adj-timeline" class="wargame-status-block" style="margin-top:8px; padding:6px 4px; display:none;">
-                <summary style="font-size:11px;color:#bbb;margin-bottom:4px;cursor:pointer;">Legacy review checkpoints</summary>
-                <div style="font-size:10px;color:#8fa5b8;margin-bottom:4px;">Scenario runtime is controlled by Scenario Control Center time. These phase cells are diagnostic snapshots.</div>
+                <summary style="font-size:11px;color:#bbb;margin-bottom:4px;cursor:pointer;">Developer frame markers</summary>
+                <div style="font-size:10px;color:#8fa5b8;margin-bottom:4px;">Scenario runtime is controlled by Scenario Control Center time. These cells are internal diagnostics.</div>
                 <div id="wg-adj-timeline-strip" style="display:flex;gap:2px;flex-wrap:wrap;"></div>
             </details>
 
@@ -467,7 +469,7 @@
                 <div id="wg-adj-feedback-row" style="margin-top:8px;padding-top:8px;border-top:1px solid #2a3140;
                     display:none;align-items:center;gap:6px;font-size:11px;">
                     <span style="color:#9ab;letter-spacing:.04em;text-transform:uppercase;font-size:10px;">
-                        Was this snapshot right?
+                        Was this internal frame right?
                     </span>
                     <button id="wg-adj-fb-accept" type="button"
                         class="wargame-action-btn success"
@@ -873,12 +875,12 @@
         scenarioCache = r.scenario;
         publishRmoozScenario();   // PR-50B: mirror to scenario-workspace.js slot
         updateCoverageSummary();  // Update coverage summary panel
-        // Keep the Run-trial button honest: show the REAL number of adjudicated
-        // steps for the loaded scenario (was a stale hard-coded "(12)").
+        // Keep the hidden developer sequence button honest: show the real
+        // internal frame count for the loaded scenario.
         try {
             const _tb = $('wg-adj-trial-btn');
             const _n = (scenarioCache && Array.isArray(scenarioCache.steps)) ? scenarioCache.steps.length - 1 : 0;
-            if (_tb && _n > 0) _tb.textContent = 'Run trial (' + _n + ')';
+            if (_tb && _n > 0) _tb.textContent = 'Run internal sequence (' + _n + ')';
         } catch (_) { /* no-op */ }
         return scenarioCache;
     }
@@ -2152,7 +2154,7 @@
         // ── Canonical run dispatcher integration ─────────────────────────────
         // The Wargame HUD is the LIVE (server-adjudicated) runner. Register it so
         // runScenarioCanonical({mode:'live'}) routes here, and send the HUD's own
-        // Run trial / Next snapshot buttons through the dispatcher too — so every
+        // Hidden developer sequence buttons route through the dispatcher too, so every
         // "run the scenario" control shares one entry point.
         function _liveRun(opts) {
             const btn = opts && opts.sourceButton;

@@ -818,7 +818,12 @@ function init() {
     }
 
     // ── HUD ────────────────────────────────────────────────────────────
+    function legacyDiagnosticsEnabled() {
+        return !!(document.body && document.body.classList.contains('rmooz-dev-legacy-open'));
+    }
+
     function ensureHud() {
+        if (!legacyDiagnosticsEnabled()) return null;
         if (hud && document.body.contains(hud)) return hud;
         hud = document.getElementById('wargame-hud');
         if (!hud) {
@@ -886,6 +891,7 @@ function init() {
 
     function showHud() {
         const el = ensureHud();
+        if (!el) return null;
         el.style.display = 'block';
         el.style.visibility = 'visible';
         return el;
@@ -942,6 +948,7 @@ function init() {
 
     function renderHud() {
         const el = ensureHud();
+        if (!el) return;
         const status = el.querySelector('#wg-status');
         if (!state) {
             if (status) status.textContent = wt('wg-status-not-started', 'Not started');
@@ -1039,6 +1046,7 @@ function init() {
     function flashContact(c) {
         showToast(wt('wg-toast-contact', '⚠ Contact: enemy {0} is {1} km from friendly {2}', c.enemy, c.km, c.friendly), 'warn');
         const el = ensureHud();
+        if (!el) return;
         el.classList.add('is-contact-flash');
         setTimeout(() => { el.classList.remove('is-contact-flash'); }, 1500);
     }
@@ -1173,6 +1181,7 @@ function init() {
 
     function bindWarGameButton() {
         const btn = document.querySelector('.tool-rail-btn[data-tool="wargame"]');
+        if (btn && (btn.hidden || btn.getAttribute('aria-hidden') === 'true')) return;
         if (!btn || btn._warGameHudBound) return;
         btn.addEventListener('click', () => {
             showHud();

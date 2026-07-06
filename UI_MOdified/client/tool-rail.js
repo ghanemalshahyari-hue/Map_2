@@ -235,6 +235,8 @@
         updateHeaders(tool);
 
         if (tool === 'wargame') {
+            const wargameBtn = document.querySelector('.tool-rail-btn[data-tool="wargame"]');
+            if (wargameBtn && (wargameBtn.hidden || wargameBtn.getAttribute('aria-hidden') === 'true')) return;
             setVisibleSections(tool);
             if (contextPanel) {
                 contextPanel.style.display = '';

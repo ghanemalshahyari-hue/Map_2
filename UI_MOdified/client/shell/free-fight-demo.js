@@ -5661,6 +5661,7 @@
         return (_ffSpeed() && _ffSpeed().label) || _freeFightSpeed || 'x1';
     }
     function _operatorReviewCheckpointsHtml(ex) {
+        return '';
         var phases = arr(ex && ex.selected_coa && ex.selected_coa.phases);
         var phaseText = ex && ex.phase_status === 'complete'
             ? 'all done'
@@ -5688,7 +5689,6 @@
             '<div><span style="color:#8fa5b8;">Runtime state:</span> <b style="color:#cfe6ff;">' + esc(word) + '</b>' +
             ' · <span style="color:#8fa5b8;">Speed:</span> <b style="color:#cfe6ff;">' + esc(_runtimeSpeedLabel(ex)) + '</b></div>' +
             _runtimeEventStatusHtml(ex) +
-            _operatorReviewCheckpointsHtml(ex) +
             '<div><span style="color:#8fa5b8;">AI calls on normal ticks:</span> <b style="color:#7fd6a0;">OFF</b></div></div>';
     }
     // ══ RMOOZ-FREE-FIGHT-CONTINUOUS-SCENARIO-AA: continuous scenario orchestration ════════════════════

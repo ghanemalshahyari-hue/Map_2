@@ -154,6 +154,7 @@
         return STATE_LABEL[state] || state || 'Ready';
     }
     function reviewCheckpointsHtml(scn, ex) {
+        return '';
         var phase = currentPhaseName(ex) || (ex ? ('phase ' + ((Number(ex.current_phase_index) || 0) + 1)) : '—');
         var c = ex && ex.clock;
         var pointer = (c && isFinite(+c.display_step) && +c.display_step >= 0) ? ('snapshot ' + (+c.display_step + 1)) : 'clock-derived';
@@ -547,8 +548,8 @@
         // live runtime read-out
         if (scn && scn.scenario_active) {
             var w = eng.whiteOutcome();
-            // "Run means time moves": the primary readout is SCENARIO TIME (C1/C2 World-State clock),
-            // runtime state, and speed. Authored turns/phases stay collapsed as review checkpoints.
+            // "Run means time moves": the primary readout is scenario time, runtime state, and speed.
+            // Authored progress rows stay internal and are not rendered in normal operator UI.
             inner += kv('Scenario time', (function () { try { return (eng.scenarioClockLabel && eng.scenarioClockLabel()) || '—'; } catch (_) { return '—'; } })(), C.good) +
                 kv('Runtime state', runtimeStateLabel(state, scn, ex), STATE_COLOR[state] || C.ink) +
                 kv('Speed', runtimeSpeedLabel(ex), C.accent) +
@@ -559,7 +560,6 @@
                 kv('Last movement', String(scn.last_formation_order || '—'), C.dim) +
                 kv('Red reaction', String(scn.last_red_maneuver || '—'), C.dim) +
                 kv('Green status', (function () { var g = eng.greenStatus(); return g && g.collateral_risk ? ('collateral ' + (g.collateral_risk.band || '—')) : 'refreshed'; })(), C.dim);
-            inner += reviewCheckpointsHtml(scn, ex);
             if (scn.pending_replan_reason) {
                 inner += note('⚠ ' + esc(scn.pending_replan_reason), C.bad);
                 if (scn.scenario_status === 'paused') inner += note('<b>▶ Resume (manual)</b> runs one more turn and pauses again. <b>▶▶ Auto Continue</b> generates deterministic Blue orders automatically every turn (no AI required).', C.dim);

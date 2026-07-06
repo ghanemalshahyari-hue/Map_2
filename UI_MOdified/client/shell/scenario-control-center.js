@@ -512,6 +512,8 @@
             // "Run means time moves": the primary readout is SCENARIO TIME (C1/C2 World-State clock),
             // not a fixed turn count. Turn stays as dim internal bookkeeping (drives the end condition).
             inner += kv('Scenario time', (function () { try { return (eng.scenarioClockLabel && eng.scenarioClockLabel()) || '—'; } catch (_) { return '—'; } })(), C.good) +
+                // C3b: steps are review-only — the snapshot in effect is SECONDARY, never the run engine.
+                kv('Snapshot in effect', (function () { try { return (eng.snapshotInEffectLabel && eng.snapshotInEffectLabel()) || '—'; } catch (_) { return '—'; } })(), C.dim) +
                 kv('Turn (internal)', String(scn.scenario_turn), C.dim) +
                 kv('Current actor', String(scn.current_actor || '—'), C.ink) +
                 kv('Phase', (ex && ex.selected_coa && arr(ex.selected_coa.phases)[ex.current_phase_index] && arr(ex.selected_coa.phases)[ex.current_phase_index].name) || (ex ? ('phase ' + ((ex.current_phase_index || 0) + 1)) : '—'), C.ink) +

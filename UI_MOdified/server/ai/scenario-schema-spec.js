@@ -57,6 +57,17 @@ const TOP_LEVEL = Object.freeze({
     model_version:      { required: false, type: 'string',
         desc: 'Producer-defined version tag.' },
 
+    // ── OPTION-C / SLICE-C3a: Runtime Scenario Time Anchor (additive) ──────
+    // All optional; absent on every legacy H-relative scenario (which keep
+    // running from the steps[] elapsed-hours span). Validated pure-additively:
+    // unknown-to-legacy, type-checked when present, never required.
+    type:               { required: false, type: 'string',
+        desc: 'Scenario kind. "runtime_scenario" opts into absolute-time runtime; absent/other = legacy H-relative stepped.' },
+    start_time:         { required: false, type: 'string',
+        desc: 'ISO-8601 / Zulu anchor for elapsed_hours===0 (H-hour). Present ⇒ clock shows absolute Zulu DTG.' },
+    duration_minutes:   { required: false, type: 'number',
+        desc: 'Positive runtime length in minutes measured from H. Present ⇒ authoritatively caps the runtime end bound.' },
+
     map_bbox:           { required: true,  type: 'bbox',
         desc: '[lon_min, lat_min, lon_max, lat_max] of the operation map.' },
 

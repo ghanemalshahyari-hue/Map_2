@@ -3578,7 +3578,7 @@
         };
         // OPTION-C / SLICE-C1: seed the scenario runtime clock from the authored steps' elapsed-hours span.
         var _clkB = _clockBoundsFromScenario();
-        _coaExec.clock = { start_hours: _clkB.start, current_hours: _clkB.start, end_hours: _clkB.end, playing: false, speed: _clockSpeedMult(), display_step: -1 };   // display_step: OPTION-C/C2 (clock drives the shown snapshot)
+        _coaExec.clock = { start_hours: _clkB.start, current_hours: _clkB.start, end_hours: _clkB.end, playing: false, paused: false, completed: false, speed: _clockSpeedMult(), display_step: -1 };   // C1 seed + C3b runtime-state fields (paused/completed); display_step: C2 (clock drives the shown snapshot)
         try { _publishRunClock(); } catch (_) {}
         _committedPlanObj = _coaPlan;   // AB1: remember WHICH plan object this commit came from (identity)
         // RMOOZ-ADVISORY-COMMIT-JOURNAL-V: persist the advisory/ranking decision context with the commit.
@@ -3686,6 +3686,15 @@
     function _clockSpeedMult() { return FF_CLOCK_SPEED_MULT[_freeFightSpeed] || 1; }
     function _clockBoundsFromScenario() {
         var w = W(); var scn = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        // C3a: single-source the runtime end from World State so an authored
+        // duration_minutes (runtime_scenario) actually caps the live Run's advance.
+        // Falls back to the local steps span when World State isn't loaded.
+        if (scn && w && w.AppWorldState && typeof w.AppWorldState.scenarioRuntimeBounds === 'function') {
+            try {
+                var b = w.AppWorldState.scenarioRuntimeBounds(scn);
+                if (b && isFinite(+b.start) && isFinite(+b.end)) return { start: +b.start, end: +b.end };
+            } catch (_) {}
+        }
         var steps = (scn && Array.isArray(scn.steps)) ? scn.steps : [];
         var hrs = [];
         steps.forEach(function (st) { var v = st && st.elapsed_hours; if (typeof v === 'number' && isFinite(v)) hrs.push(v); });
@@ -3695,12 +3704,15 @@
     // Advance the committed Run's scenario clock one tick, clamped to [start, end]. Called from _coaExecTick.
     function _advanceScenarioClock() {
         if (!_coaExec || !_coaExec.active || !_coaExec.clock) return;
-        var c = _coaExec.clock;
-        c.speed = _clockSpeedMult();
-        if (isFinite(+c.current_hours) && isFinite(+c.end_hours)) {
-            c.current_hours = Math.min(+c.end_hours, +c.current_hours + COA_CLOCK_HOURS_PER_TICK * c.speed);
+        var c = _coaExec.clock; c.speed = _clockSpeedMult();
+        var WS = (W() || {}).AppWorldState;   // C3b single-source
+        if (WS && typeof WS.advanceRuntimeClock === 'function') {
+            var nx = WS.advanceRuntimeClock(c, COA_CLOCK_HOURS_PER_TICK);
+            c.current_hours = nx.current_hours; c.playing = nx.playing; c.completed = nx.completed;
+        } else if (isFinite(+c.current_hours) && isFinite(+c.end_hours) && c.playing && !c.paused) {
+            c.current_hours = Math.min(+c.end_hours, +c.current_hours + COA_CLOCK_HOURS_PER_TICK * c.speed);   // C1 fallback (WS not loaded)
         }
-        if (_coaExec.phase_status === 'complete' || (isFinite(+c.end_hours) && +c.current_hours >= +c.end_hours)) c.playing = false;
+        if (_coaExec.phase_status === 'complete') { c.playing = false; c.completed = true; }
         _publishRunClock();
     }
     // Push the current scenario clock (or null when no active run) to the map override.
@@ -3717,6 +3729,48 @@
         var c = ex && ex.clock;
         if (c && isFinite(+c.current_hours)) return (+c.current_hours === 0) ? 'H' : ('H' + (c.current_hours < 0 ? '' : '+') + (Math.round(c.current_hours * 10) / 10));
         return '\u2014';
+    }
+
+    // OPTION-C / SLICE-C3b: the explicit runtime state (stopped/playing/paused/complete) + a
+    // snapshot of the runtime clock, single-sourced from the World State reducer over _coaExec.clock.
+    function _runtimeState() {
+        if (!_coaExec || !_coaExec.active || !_coaExec.clock) return 'stopped';
+        var w = W(); var WS = w && w.AppWorldState;
+        if (WS && typeof WS.runtimeClockState === 'function') { try { return WS.runtimeClockState(_coaExec.clock); } catch (_) {} }
+        var c = _coaExec.clock;
+        if (c.completed) return 'complete';
+        if (c.playing && !c.paused) return 'playing';
+        if (c.paused) return 'paused';
+        return 'stopped';
+    }
+    function _runtimeSnapshot() {
+        var c = (_coaExec && _coaExec.active && _coaExec.clock) || null;
+        if (!c) return { state: 'stopped', current_elapsed_hours: null, start_hours: null, end_hours: null, speed: _clockSpeedMult(), playing: false, paused: false, completed: false };
+        return {
+            state: _runtimeState(),
+            current_elapsed_hours: +c.current_hours, start_hours: +c.start_hours, end_hours: +c.end_hours,
+            speed: isFinite(+c.speed) ? +c.speed : _clockSpeedMult(),
+            playing: !!c.playing, paused: !!c.paused, completed: !!c.completed
+        };
+    }
+    // The authored snapshot in EFFECT at the current runtime time \u2014 review label only (NOT the run engine).
+    function _snapshotInEffectLabel() {
+        try {
+            var c = (_coaExec && _coaExec.clock) || null; if (!c) return '\u2014';
+            var w = W(); var WS = w && w.AppWorldState; var scn = w && w.RmoozScenario && w.RmoozScenario.scenario;
+            if (WS && typeof WS.findStepForElapsedHours === 'function' && scn) {
+                var f = WS.findStepForElapsedHours(scn, c.current_hours);
+                return (f && (f.time_label || ('step ' + f.index))) || '\u2014';
+            }
+        } catch (_) {}
+        return '\u2014';
+    }
+    // Set the runtime speed preset (x1/x5/x15/fire/fire2) \u2014 scales CLOCK progression, not step jumps.
+    function _setRuntimeSpeed(sp) {
+        if (FF_CLOCK_SPEED_MULT[sp] != null) _freeFightSpeed = sp;
+        if (_coaExec && _coaExec.clock) { _coaExec.clock.speed = _clockSpeedMult(); try { _publishRunClock(); } catch (_) {} }
+        try { updatePanel(); } catch (_) {}
+        return _freeFightSpeed;
     }
 
     // OPTION-C / SLICE-C2: the runtime clock drives the DISPLAYED snapshot. On each authored-step boundary the
@@ -4004,7 +4058,7 @@
         _coaExec.paused = false; _coaExec.replan_required = false; _coaExec.replan_reason = null; _coaExec.phase_status = 'running';
         _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
         _coaExecIntervalMs = _coaExecTickMs();   // brisk, deterministic — NOT the 6s cinematic LLM pacing
-        if (_coaExec.clock) _coaExec.clock.playing = true;   // OPTION-C/C1: the Run controls the scenario clock
+        if (_coaExec.clock) { _coaExec.clock.playing = true; _coaExec.clock.paused = false; }   // OPTION-C/C1+C3b: Run plays the clock (truthful state)
         try { _publishRunClock(); } catch (_) {}
         _coaExecTick();   // run one immediately
         _coaExecTimer = _setIntervalSafe(_coaExecTick, _coaExecIntervalMs);
@@ -4013,7 +4067,7 @@
     function _pauseCommittedCoa() {
         _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
         if (_coaExec) { _coaExec.paused = true; _coaExec.updated_at = _nowISO(); }
-        if (_coaExec && _coaExec.clock) { _coaExec.clock.playing = false; try { _publishRunClock(); } catch (_) {} }   // OPTION-C/C1: Pause stops the clock
+        if (_coaExec && _coaExec.clock) { _coaExec.clock.playing = false; _coaExec.clock.paused = true; try { _publishRunClock(); } catch (_) {} }   // OPTION-C/C1+C3b: Pause freezes the clock (truthful state)
         try { _appendToEventLog('COA execution paused by operator.'); } catch (_) {}
         _persistCoaExec();   // RMOOZ-COA-COMMIT-PERSISTENCE-M
         updatePanel();
@@ -6024,6 +6078,8 @@
             try { _appendToEventLog('Run Scenario — continuous fight started. Deterministic ticks; the AI is NOT called on normal ticks.'); } catch (_) {}
         } else { _scenario.scenario_status = 'running'; _scenario.pending_replan_reason = null; }
         if (_coaExec.phase_status !== 'complete') { _coaExec.paused = false; _coaExec.replan_required = false; }
+        // OPTION-C/C3b: primary Play unfreezes the runtime clock (Play = time moves).
+        if (_coaExec && _coaExec.clock) { _coaExec.clock.playing = true; _coaExec.clock.paused = false; try { _publishRunClock(); } catch (_) {} }
         _startScenarioTimer();
         _scenarioTick();   // run one immediately so the operator sees the fight move
         updatePanel();
@@ -6033,6 +6089,8 @@
         if (!_scenarioActive()) return;
         _scenario.scenario_status = 'paused'; _scenario.updated_at = _nowISO();
         _stopScenarioTimer(); _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
+        // OPTION-C/C3b: Pause freezes the runtime clock (state stays truthful, not stale-"playing").
+        if (_coaExec && _coaExec.clock) { _coaExec.clock.playing = false; _coaExec.clock.paused = true; try { _publishRunClock(); } catch (_) {} }
         try { _appendToEventLog('Scenario paused by operator.'); } catch (_) {}
         updatePanel();
     }
@@ -6041,6 +6099,13 @@
         _stopScenarioTimer(); _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
         _scenario.scenario_status = 'complete'; _scenario.end_condition = 'operator_stopped';
         _scenario.last_outcome = 'Operator stopped the scenario.'; _scenario.pending_replan_reason = null; _scenario.updated_at = _nowISO();
+        // OPTION-C/C3b: Stop returns the runtime clock to scenario start (single-source resetRuntimeClock).
+        if (_coaExec && _coaExec.clock) {
+            var w = W(); var WS = w && w.AppWorldState;
+            var rc = (WS && typeof WS.resetRuntimeClock === 'function') ? WS.resetRuntimeClock(_coaExec.clock) : { current_hours: _coaExec.clock.start_hours };
+            _coaExec.clock.current_hours = rc.current_hours; _coaExec.clock.playing = false; _coaExec.clock.paused = false; _coaExec.clock.completed = false; _coaExec.clock.display_step = -1;
+            try { _publishRunClock(); } catch (_) {}
+        }
         try { _appendToEventLog('Scenario stopped by operator.'); } catch (_) {}
         updatePanel();
     }
@@ -6193,6 +6258,11 @@
         // World-State clock label (MAP.runClockLabel: findStepForElapsedHours + start_time DTG), H-relative
         // fallback. "Run means time moves": the primary run panel shows time, not a fixed turn count.
         scenarioClockLabel: function () { try { return _scenarioClockLabel(_coaExec); } catch (_) { return '—'; } },
+        // OPTION-C/C3b: the primary run state is TIME — expose the explicit runtime state + the
+        // (secondary, review-only) authored snapshot in effect at the current runtime time.
+        runtimeState: function () { try { return _runtimeState(); } catch (_) { return 'stopped'; } },
+        runtimeSnapshot: function () { try { return _runtimeSnapshot(); } catch (_) { return null; } },
+        snapshotInEffectLabel: function () { try { return _snapshotInEffectLabel(); } catch (_) { return '—'; } },
         scenarioActive: function () { try { return _scenarioActive(); } catch (_) { return false; } },
         commitBlockedReason: function () { return _coaCommitBlockedReason; },
         // ── readiness / Step-1 gate (Panel 1) ──
@@ -6483,6 +6553,10 @@
         mount: mount, init: init, setObjective: setObjective, clearObjective: clearObjective,
         start: start, pause: pause, reset: reset, step: step, replan: replan, clear: clear,
         pauseCommittedRun: function () { return _pauseCommittedCoa(); },   // OPTION-C/C2: manual step-nav pauses the clock-driven committed run
+        // OPTION-C/C3b: Continuous Runtime Play Model — external/runtime API (Play = time moves).
+        runtimeState: function () { return _runtimeState(); },
+        runtimeSnapshot: function () { return _runtimeSnapshot(); },
+        setRuntimeSpeed: function (sp) { return _setRuntimeSpeed(sp); },
         setPlannerMode: setPlannerMode,
         getState: getState, getGroups: getGroups, getRed: getRed, getBlue: getBlue,
         getObjective: getObjective, getPlan: getPlan, getLlmStatus: function () { return Object.assign({}, _llmStatus); },

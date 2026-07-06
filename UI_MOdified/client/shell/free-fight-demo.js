@@ -3578,7 +3578,7 @@
         };
         // OPTION-C / SLICE-C1: seed the scenario runtime clock from the authored steps' elapsed-hours span.
         var _clkB = _clockBoundsFromScenario();
-        _coaExec.clock = { start_hours: _clkB.start, current_hours: _clkB.start, end_hours: _clkB.end, playing: false, speed: _clockSpeedMult(), display_step: -1 };   // display_step: OPTION-C/C2 (clock drives the shown snapshot)
+        _coaExec.clock = { start_hours: _clkB.start, current_hours: _clkB.start, end_hours: _clkB.end, duration_hours: _clkB.duration_hours, playing: false, speed: _clockSpeedMult(), display_step: -1 };   // display_step: OPTION-C/C2 (clock drives the shown snapshot)
         try { _publishRunClock(); } catch (_) {}
         _committedPlanObj = _coaPlan;   // AB1: remember WHICH plan object this commit came from (identity)
         // RMOOZ-ADVISORY-COMMIT-JOURNAL-V: persist the advisory/ranking decision context with the commit.
@@ -3684,13 +3684,25 @@
     var COA_CLOCK_HOURS_PER_TICK = 0.25;   // scenario-time compression per base tick at x1 (tunable)
     var FF_CLOCK_SPEED_MULT = { x1: 1, x5: 5, x15: 15, fire: 30, fire2: 60 };
     function _clockSpeedMult() { return FF_CLOCK_SPEED_MULT[_freeFightSpeed] || 1; }
+    function _runtimeDurationHours(scn) {
+        var rt = (scn && scn.runtime_scenario && typeof scn.runtime_scenario === 'object') ? scn.runtime_scenario : null;
+        if (rt && isFinite(+rt.duration_hours)) return +rt.duration_hours;
+        if (scn && isFinite(+scn.duration_hours)) return +scn.duration_hours;
+        if (scn && scn.duration && typeof scn.duration === 'object' && isFinite(+scn.duration.hours)) return +scn.duration.hours;
+        return null;
+    }
     function _clockBoundsFromScenario() {
         var w = W(); var scn = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        var rt = (scn && scn.runtime_scenario && typeof scn.runtime_scenario === 'object') ? scn.runtime_scenario : null;
+        var rtStart = rt && isFinite(+rt.start_hours) ? +rt.start_hours : null;
+        var rtEnd = rt && isFinite(+rt.end_hours) ? +rt.end_hours : null;
+        var dur = _runtimeDurationHours(scn);
         var steps = (scn && Array.isArray(scn.steps)) ? scn.steps : [];
         var hrs = [];
         steps.forEach(function (st) { var v = st && st.elapsed_hours; if (typeof v === 'number' && isFinite(v)) hrs.push(v); });
-        if (!hrs.length) return { start: 0, end: 0 };
-        return { start: Math.min.apply(null, hrs), end: Math.max.apply(null, hrs) };
+        var start = (rtStart != null) ? rtStart : (hrs.length ? Math.min.apply(null, hrs) : 0);
+        var end = (rtEnd != null) ? rtEnd : ((dur != null) ? (start + dur) : (hrs.length ? Math.max.apply(null, hrs) : start));
+        return { start: start, end: end, duration_hours: (dur != null ? dur : (end - start)) };
     }
     // Advance the committed Run's scenario clock one tick, clamped to [start, end]. Called from _coaExecTick.
     function _advanceScenarioClock() {
@@ -3708,6 +3720,20 @@
         var w = W(); var MAP = w && w.AppAdjudicatorMap;
         if (!MAP || typeof MAP.setRunClock !== 'function') return;
         try { MAP.setRunClock((_coaExec && _coaExec.active && _coaExec.clock) || null); } catch (_) {}
+    }
+    function _setScenarioClockPlaying(playing) {
+        if (!_coaExec || !_coaExec.active || !_coaExec.clock) return;
+        _coaExec.clock.playing = !!playing;
+        _coaExec.clock.speed = _clockSpeedMult();
+        try { _publishRunClock(); } catch (_) {}
+    }
+    function _resetScenarioClockToStart() {
+        if (!_coaExec || !_coaExec.active || !_coaExec.clock) return;
+        if (isFinite(+_coaExec.clock.start_hours)) _coaExec.clock.current_hours = +_coaExec.clock.start_hours;
+        _coaExec.clock.playing = false;
+        _coaExec.clock.display_step = -1;
+        _coaExec.clock.speed = _clockSpeedMult();
+        try { _publishRunClock(); } catch (_) {}
     }
     // Human-readable scenario time for the run status panel. Prefer the map's single-sourced label
     // (World State findStepForElapsedHours + start_time DTG); fall back to a plain H-relative value.
@@ -5865,6 +5891,7 @@
         var ex = _coaExec;
         if (ex && ex.active && !ex.replan_required && ex.phase_status !== 'complete') {
             _scenario.current_actor = 'unit-controller';
+            _setScenarioClockPlaying(true);
             return _coaExecTick();   // deterministic; llm_called_this_tick:false; no /plan-coas
         }
         return _scenarioTransition();
@@ -5887,6 +5914,7 @@
                     result_summary: blue.reaction.move_count + ' unit(s) -> intercept RED axis @ ' + Number(blue.reaction.intercept.lat).toFixed(2) + ',' + Number(blue.reaction.intercept.lon).toFixed(2) + (_bb.held != null ? ' · ' + _bb.held + ' hold' : '') }); } catch (_) {}
                 try { _appendToEventLog('BLUE REACTION (turn ' + _scenario.scenario_turn + '): ' + blue.reaction.move_count + ' unit(s) (of ' + (_bb.considered != null ? _bb.considered : '?') + ' considered, budget ' + (_bb.max_allowed != null ? _bb.max_allowed : '?') + ', ' + (_bb.held != null ? _bb.held : '?') + ' hold) ordered to intercept the RED axis (commits + executes next tick).'); } catch (_) {}
             }
+            _setScenarioClockPlaying(true);
             if (!_scenarioTimer) _startScenarioTimer();   // keep the fight ticking
         } else {
             _scenario.scenario_status = 'blocked'; _scenario.pending_replan_reason = (blue.code ? '[' + blue.code + '] ' : '') + blue.reason;
@@ -6019,11 +6047,12 @@
             }
             _coaExec.run_blocked_reason = null;
         }
-        if (!_scenarioActive()) {
+        if (!_scenarioActive() || (_scenario && _scenario.scenario_status === 'complete')) {
             _scenario = _newScenario();
             try { _appendToEventLog('Run Scenario — continuous fight started. Deterministic ticks; the AI is NOT called on normal ticks.'); } catch (_) {}
         } else { _scenario.scenario_status = 'running'; _scenario.pending_replan_reason = null; }
         if (_coaExec.phase_status !== 'complete') { _coaExec.paused = false; _coaExec.replan_required = false; }
+        _setScenarioClockPlaying(true);
         _startScenarioTimer();
         _scenarioTick();   // run one immediately so the operator sees the fight move
         updatePanel();
@@ -6033,6 +6062,8 @@
         if (!_scenarioActive()) return;
         _scenario.scenario_status = 'paused'; _scenario.updated_at = _nowISO();
         _stopScenarioTimer(); _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
+        if (_coaExec) { _coaExec.paused = true; _coaExec.updated_at = _nowISO(); }
+        _setScenarioClockPlaying(false);
         try { _appendToEventLog('Scenario paused by operator.'); } catch (_) {}
         updatePanel();
     }
@@ -6041,10 +6072,12 @@
         _stopScenarioTimer(); _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
         _scenario.scenario_status = 'complete'; _scenario.end_condition = 'operator_stopped';
         _scenario.last_outcome = 'Operator stopped the scenario.'; _scenario.pending_replan_reason = null; _scenario.updated_at = _nowISO();
+        if (_coaExec) { _coaExec.paused = true; _coaExec.updated_at = _nowISO(); }
+        _resetScenarioClockToStart();
         try { _appendToEventLog('Scenario stopped by operator.'); } catch (_) {}
         updatePanel();
     }
-    function _resetScenario() { _stopScenarioTimer(); _scenario = null; _step1HeldUids = {}; _missionRoleContract = null; _coaLoading = false; _missingUnitRecords = []; _heldMovementRecords = []; _domainBlockedRecords = []; _movedMovementRecords = []; }
+    function _resetScenario() { _stopScenarioTimer(); _resetScenarioClockToStart(); _scenario = null; _step1HeldUids = {}; _missionRoleContract = null; _coaLoading = false; _missingUnitRecords = []; _heldMovementRecords = []; _domainBlockedRecords = []; _movedMovementRecords = []; }
     // ── operator-card stale-commit guard (consumed by the Scenario Control Center engine facade) ────────
     // RMOOZ-FREE-FIGHT-V2-COA-TO-SCENARIO-BUGFIX-AB1: is the committed COA STALE relative to what the
     // operator is now looking at? True when (a) a DIFFERENT (newer) plan object is loaded than the one we

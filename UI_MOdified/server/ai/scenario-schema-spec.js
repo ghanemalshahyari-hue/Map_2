@@ -102,6 +102,18 @@ const TOP_LEVEL = Object.freeze({
     nominal_throughput: { required: false, type: 'object',
         desc: 'Optional per-BLS nominal capacities. Defaults to bls_template[i].throughput.' },
 
+    // Runtime-time metadata. Optional for authored/static scenarios; used by
+    // the continuous scenario runtime when Play owns time and steps are review
+    // snapshots.
+    start_time:         { required: false, type: 'string',
+        desc: 'Optional scenario H-time anchor as ISO/Zulu timestamp. Runtime labels can render absolute DTG from it.' },
+    duration_hours:     { required: false, type: 'number',
+        desc: 'Optional continuous runtime duration in scenario hours.' },
+    duration:           { required: false, type: 'object',
+        desc: 'Optional duration object, e.g. { hours }. Alternative to duration_hours.' },
+    runtime_scenario:   { required: false, type: 'object',
+        desc: 'Optional runtime contract: { start_time?, start_hours?, end_hours?, duration_hours?, clock_model? }.' },
+
     // Provenance metadata — optional, kept by the port scripts so we
     // know where a scenario came from when debugging.
     blue_units_source:  { required: false, type: 'string', desc: 'Source path for provenance.' },

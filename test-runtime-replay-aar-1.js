@@ -108,6 +108,12 @@ const decisionHistory = Replay.filterRuntimeReplay(extracted.records, { categori
 const safeHistory = Replay.filterRuntimeReplay(extracted.records, { kinds: ['runtime_effect_applied_safe'] });
 const blockedHistory = Replay.filterRuntimeReplay(extracted.records, { kinds: ['runtime_effect_blocked'] });
 const moduleSource = read('UI_MOdified/client/shell/runtime-replay.js');
+const clockSource = read('UI_MOdified/client/shell/free-fight-demo.js');
+const scenarioTimeTest = read('test-scenario-time-contract-1.js');
+const clockBoundsBlock = clockSource.slice(
+    clockSource.indexOf('function _runtimeDurationHours'),
+    clockSource.indexOf('// Advance the committed Run')
+);
 
 ok('T-1 extracts only rows with mods.runtime_journal',
     extracted.records.length === 6 && extracted.ignored_count === 1);
@@ -155,6 +161,13 @@ ok('T-14 facade exposes the C4g pure API',
     typeof Replay.buildRuntimeAarSummary === 'function' &&
     typeof Replay.groupRuntimeReplayByTime === 'function' &&
     typeof Replay.filterRuntimeReplay === 'function');
+ok('T-15 preserves scenario duration contract before C4g replay',
+    /duration_minutes = 90 produces end_hours = start \+ 1\.5/.test(scenarioTimeTest) &&
+    /scn\.runtime_scenario/.test(clockBoundsBlock) &&
+    /rt\.duration_minutes/.test(clockBoundsBlock) &&
+    /duration\.minutes/.test(clockBoundsBlock) &&
+    /dur != null/.test(clockBoundsBlock) &&
+    !/steps\.length\s*[-+*/]/.test(clockBoundsBlock));
 
 console.log('\n=== Results: ' + passed + ' passed, ' + failed + ' failed ===');
 process.exit(failed ? 1 : 0);

@@ -3,7 +3,8 @@
  * C4b Runtime Event Firing Integration Gate
  * ----------------------------------------------------------------------------
  * Runtime clock tick -> C4a evaluator -> transient fired IDs -> operator log.
- * No event effects, unit/map mutation, backend call, or scenario JSON mutation.
+ * C4f allows fire-and-forget audit journaling, but no unsafe effect execution,
+ * unit/map mutation, or scenario JSON mutation.
  * ========================================================================== */
 'use strict';
 
@@ -170,11 +171,12 @@ ok('T-8 operator-visible event log notification is appended for due events',
     logs.some((entry) => entry && entry.category === 'OPERATOR' && entry.severity === 'notice' &&
         entry.source === 'runtime-events' && /Runtime event: First contact at H\+0\.5/.test(entry.message || '')));
 
-ok('T-9 no event effects execute on units, map state, backend, or journal in the firing path',
+ok('T-9 no event effects execute on units/map/combat; only audit journal hook is allowed',
     JSON.stringify(global.units) === JSON.stringify(unitsBefore) &&
     mapCalls.applyState === 0 &&
     mapCalls.applyWorldStateUnitDeltas === 0 &&
-    !/(fetch\s*\(|XMLHttpRequest|applyState|applyWorldStateUnitDeltas|window\.units|global\.units|journal|executeEffect|moveUnit|destroyUnit|mutateUnit)/.test(fireBlock));
+    /_journalRuntimeRecord\('runtime_event_fired'/.test(fireBlock) &&
+    !/(XMLHttpRequest|applyState|applyWorldStateUnitDeltas|window\.units|global\.units|executeEffect|moveUnit|destroyUnit|mutateUnit|\/api\/sim\/decide|\/api\/ai\/adjudicate)/.test(fireBlock));
 
 global.RmoozScenario.scenario = scenario();
 FF._setCoaExecForTest(execState(0.49));

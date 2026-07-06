@@ -174,6 +174,9 @@
         if (!Array.isArray(st.applied_effects)) st.applied_effects = [];
         if (!Array.isArray(st.blocked_effects)) st.blocked_effects = [];
         if (!Array.isArray(st.last_effects)) st.last_effects = [];
+        if (!st.journaled_ids || typeof st.journaled_ids !== 'object' || Array.isArray(st.journaled_ids)) st.journaled_ids = {};
+        if (!Array.isArray(st.pending_journal_records)) st.pending_journal_records = [];
+        if (st.last_journal_error === undefined) st.last_journal_error = null;
         return st;
     }
     function firstString(payload, keys) {

@@ -3743,8 +3743,8 @@
     }
     // C4b: runtime-event firing integration. This consumes the pure C4a evaluator
     // and records due/read-only events against the transient run session only.
-    // It does not execute event effects, mutate units, mutate scenario JSON,
-    // write journals, or call the backend.
+    // It does not execute unsafe effects, mutate units, or mutate scenario JSON.
+    // C4f adds fire-and-forget audit journaling through the existing sim commit path.
     function _newRuntimeEventSessionState() {
         return {
             fired_ids: {},
@@ -3761,7 +3761,10 @@
             pending_effects: [],
             applied_effects: [],
             blocked_effects: [],
-            last_effects: []
+            last_effects: [],
+            journaled_ids: {},
+            pending_journal_records: [],
+            last_journal_error: null
         };
     }
     function _ensureRuntimeEventSessionState() {
@@ -3781,6 +3784,9 @@
         if (!Array.isArray(st.applied_effects)) st.applied_effects = [];
         if (!Array.isArray(st.blocked_effects)) st.blocked_effects = [];
         if (!Array.isArray(st.last_effects)) st.last_effects = [];
+        if (!st.journaled_ids || typeof st.journaled_ids !== 'object' || Array.isArray(st.journaled_ids)) st.journaled_ids = {};
+        if (!Array.isArray(st.pending_journal_records)) st.pending_journal_records = [];
+        if (st.last_journal_error === undefined) st.last_journal_error = null;
         return st;
     }
     function _resetRuntimeEventSessionState() {
@@ -3797,6 +3803,142 @@
         if (h === 0) return 'H';
         var rounded = Math.round(h * 100) / 100;
         return 'H' + (rounded < 0 ? '' : '+') + rounded;
+    }
+    function _runtimeJournalScenarioInfo() {
+        var w = W();
+        var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        var name = (sc && (sc.name || sc.scenario_label || sc.scenario_name)) || null;
+        return {
+            scenario: sc || null,
+            scenarioName: name,
+            scenario_id: (sc && (sc.scenario_id || sc.id || sc.name || sc.scenario_label || sc.scenario_name)) || name
+        };
+    }
+    function _runtimeJournalOperatorId() {
+        var w = W();
+        try {
+            var cu = w && w.AppConfig && w.AppConfig.CHAT_CONFIG && w.AppConfig.CHAT_CONFIG.currentUser;
+            if (cu && cu.id) return String(cu.id).slice(0, 80);
+        } catch (_) {}
+        return 'operator';
+    }
+    function _runtimeJournalRunId(info) {
+        if (!_coaExec || !_coaExec.active) return null;
+        if (_coaExec.runtime_journal_run_id) return _coaExec.runtime_journal_run_id;
+        var name = (info && info.scenarioName) || 'scenario';
+        var coa = _coaExec.selected_coa_id || 'COA';
+        _coaExec.runtime_journal_run_id = 'runtime-events-' + name + '-' + coa;
+        return _coaExec.runtime_journal_run_id;
+    }
+    function _runtimeJournalEffectShape(effect) {
+        effect = effect || {};
+        return {
+            event_id: effect.event_id || null,
+            effect_id: effect.effect_id || effect.id || null,
+            kind: effect.kind || 'effect',
+            status: effect.status || null,
+            reason: effect.reason || null,
+            payload: _cloneJson(effect.payload || {})
+        };
+    }
+    function _runtimeJournalRecord(kind, data) {
+        data = data || {};
+        var info = _runtimeJournalScenarioInfo();
+        var operatorId = data.operator_id || _runtimeJournalOperatorId();
+        var hours = data.elapsed_hours;
+        if (hours == null && _coaExec && _coaExec.clock && isFinite(+_coaExec.clock.current_hours)) hours = +_coaExec.clock.current_hours;
+        return {
+            schema_version: 'runtime-events-journal-v1',
+            source: 'runtime-events',
+            kind: kind,
+            action: data.action || kind,
+            scenario_id: data.scenario_id || info.scenario_id || null,
+            scenarioName: data.scenarioName || info.scenarioName || null,
+            run_id: data.run_id || _runtimeJournalRunId(info),
+            event_id: data.event_id || null,
+            decision_point_id: data.decision_point_id || null,
+            operator_id: operatorId,
+            elapsed_hours: (hours != null && isFinite(+hours)) ? +hours : null,
+            scenario_time_label: data.scenario_time_label || _scenarioClockLabel(_coaExec),
+            decision: data.decision ? _cloneJson(data.decision) : null,
+            safe_effects_applied: arr(data.safe_effects_applied).map(_runtimeJournalEffectShape),
+            blocked_effects: arr(data.blocked_effects).map(_runtimeJournalEffectShape),
+            detail: data.detail ? _cloneJson(data.detail) : null,
+            recorded_at: _nowISO()
+        };
+    }
+    function _runtimeJournalRememberPending(st, key, record, err) {
+        if (!st) return;
+        var msg = (err && (err.message || err.statusText)) || String(err || 'journal unavailable');
+        st.last_journal_error = msg;
+        var exists = arr(st.pending_journal_records).some(function (row) { return row && row.id === key; });
+        if (!exists) {
+            st.pending_journal_records.push({
+                id: key,
+                status: 'pending',
+                error: msg,
+                failed_at: _nowISO(),
+                record: _cloneJson(record)
+            });
+        }
+        st.journaled_ids[key] = { status: 'pending_failed', kind: record && record.kind, error: msg };
+    }
+    function _runtimeJournalMarkSent(st, key, seq) {
+        if (!st) return;
+        st.journaled_ids[key] = { status: 'journaled', journal_seq: seq != null ? seq : null, journaled_at: _nowISO() };
+        st.pending_journal_records = arr(st.pending_journal_records).filter(function (row) { return row && row.id !== key; });
+        st.last_journal_error = null;
+    }
+    function _journalRuntimeRecord(kind, data, key) {
+        var st = _ensureRuntimeEventSessionState();
+        if (!st) return null;
+        var fallbackKey = data && (data.event_id || data.decision_point_id || data.action);
+        key = String(key || (kind + ':' + (fallbackKey || 'record')));
+        if (st.journaled_ids && st.journaled_ids[key]) return st.journaled_ids[key];
+        var record = _runtimeJournalRecord(kind, data || {});
+        st.journaled_ids[key] = { status: 'pending', kind: kind, queued_at: _nowISO() };
+        var w = W();
+        if (!record.scenarioName || !record.run_id || !w || typeof w.fetch !== 'function') {
+            _runtimeJournalRememberPending(st, key, record, 'runtime_journal_transport_unavailable');
+            return st.journaled_ids[key];
+        }
+        var headers = { 'Content-Type': 'application/json' };
+        try {
+            w.fetch('/api/sim/propose', {
+                method: 'POST',
+                credentials: 'include',
+                headers: headers,
+                body: JSON.stringify({ scenarioName: record.scenarioName, stepIndex: 0, mockMode: true, runId: record.run_id })
+            }).then(function (r) {
+                if (!r || !r.ok || typeof r.json !== 'function') throw new Error('runtime journal propose failed');
+                return r.json();
+            }).then(function (prop) {
+                if (!prop || !prop.proposal_id) throw new Error('runtime journal proposal missing');
+                return w.fetch('/api/sim/commit', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: headers,
+                    body: JSON.stringify({
+                        proposal_id: prop.proposal_id,
+                        accepted_action_ids: 'ALL',
+                        operator_id: record.operator_id,
+                        source: 'runtime-events',
+                        mods: { kind: 'RUNTIME_EVENT_JOURNAL', source: 'runtime-events', runtime_journal: record }
+                    })
+                });
+            }).then(function (r2) {
+                if (!r2 || !r2.ok || typeof r2.json !== 'function') throw new Error('runtime journal commit failed');
+                return r2.json();
+            }).then(function (res) {
+                if (!res || res.ok === false) throw new Error((res && res.error) || 'runtime journal rejected');
+                _runtimeJournalMarkSent(st, key, res.journal_seq);
+            }).catch(function (err) {
+                _runtimeJournalRememberPending(st, key, record, err);
+            });
+        } catch (err) {
+            _runtimeJournalRememberPending(st, key, record, err);
+        }
+        return st.journaled_ids[key];
     }
     function _copyRuntimeEventSummary(event) {
         return {
@@ -3997,6 +4139,19 @@
                 pending: effectSummary.pending
             };
         }
+        _journalRuntimeRecord('operator_decision_selected', {
+            decision_point_id: id,
+            decision: { option_id: selected.id, option_label: selected.label, title: record.title },
+            safe_effects_applied: effectSummary.effects.filter(function (effect) { return effect && effect.status === 'applied_safe'; }),
+            blocked_effects: effectSummary.effects.filter(function (effect) { return effect && effect.status === 'blocked'; }),
+            detail: { pending_effect_count: effectSummary.pending }
+        }, 'operator_decision_selected:' + id);
+        _journalRuntimeRecord('runtime_decision_resolved', {
+            decision_point_id: id,
+            decision: { option_id: selected.id, option_label: selected.label, title: record.title },
+            safe_effects_applied: effectSummary.effects.filter(function (effect) { return effect && effect.status === 'applied_safe'; }),
+            blocked_effects: effectSummary.effects.filter(function (effect) { return effect && effect.status === 'blocked'; })
+        }, 'runtime_decision_resolved:' + id);
         try { _appendRuntimeEventLog('Operator decision recorded: ' + record.title + ' -> ' + record.option_label + ' (safe effects applied: ' + effectSummary.applied + ', blocked: ' + effectSummary.blocked + ', pending: ' + effectSummary.pending + ').'); } catch (_) {}
         try { _recordDecision({ role: 'operator', action: 'runtime_operator_decision', called_llm: false, source: 'runtime-events', result_summary: record.title + ' -> ' + record.option_label }); } catch (_) {}
         try { updatePanel(); } catch (_) {}
@@ -4021,13 +4176,25 @@
         var p = (effect && effect.payload && typeof effect.payload === 'object') ? effect.payload : {};
         return p.key || p.flag || p.name || p.id || p.task_id || p.mission_task_id || p.decision_point_id || p.decision_id || p.title || '';
     }
+    function _runtimeEffectDecisionPointId(effect) {
+        var p = (effect && effect.payload && typeof effect.payload === 'object') ? effect.payload : {};
+        return p.decision_point_id || p.decision_id || p.id || null;
+    }
     function _logRuntimeEffectOutcome(effect, event, context) {
         if (!effect) return;
         context = context || {};
+        var eventId = (event && event.id) || effect.event_id || null;
+        var effectId = effect.effect_id || effect.id || effect.kind || 'effect';
+        var decisionPointId = context.decision_point_id || _runtimeEffectDecisionPointId(effect);
         if (effect.status === 'blocked') {
             var bmsg = 'Runtime effect blocked: ' + (effect.kind || 'unsupported') + ' (' + (effect.reason || 'blocked') + ')';
             try { _appendRuntimeEventLog(bmsg); } catch (_) {}
             try { _recordDecision({ role: 'operator', action: 'runtime_effect_blocked', called_llm: false, source: 'runtime-events', reason: effect.reason || 'blocked', result_summary: bmsg }); } catch (_) {}
+            _journalRuntimeRecord('runtime_effect_blocked', {
+                event_id: eventId,
+                decision_point_id: decisionPointId,
+                blocked_effects: [effect]
+            }, 'runtime_effect_blocked:' + (eventId || 'decision') + ':' + effectId + ':' + (decisionPointId || 'none'));
             return;
         }
         if (effect.status === 'applied_safe') {
@@ -4035,18 +4202,48 @@
                 var nmsg = _runtimeEffectPayloadMessage(effect) || ((event && event.title) || (event && event.id) || 'Runtime notification');
                 try { _appendRuntimeEventLog('Runtime notification: ' + nmsg); } catch (_) {}
                 try { _recordDecision({ role: 'operator', action: 'runtime_effect_applied_safe', called_llm: false, source: 'runtime-events', result_summary: 'add_notification: ' + nmsg }); } catch (_) {}
+                _journalRuntimeRecord('runtime_effect_applied_safe', {
+                    event_id: eventId,
+                    decision_point_id: decisionPointId,
+                    safe_effects_applied: [effect]
+                }, 'runtime_effect_applied_safe:' + (eventId || 'decision') + ':' + effectId + ':' + (decisionPointId || 'none'));
                 return;
             }
             var label = _runtimeEffectPayloadLabel(effect);
             var msg = 'Runtime effect applied: ' + (effect.kind || 'safe_effect') + (label ? (' (' + label + ')') : '');
             try { _appendRuntimeEventLog(msg); } catch (_) {}
             try { _recordDecision({ role: 'operator', action: 'runtime_effect_applied_safe', called_llm: false, source: 'runtime-events', result_summary: msg }); } catch (_) {}
+            _journalRuntimeRecord('runtime_effect_applied_safe', {
+                event_id: eventId,
+                decision_point_id: decisionPointId,
+                safe_effects_applied: [effect]
+            }, 'runtime_effect_applied_safe:' + (eventId || 'decision') + ':' + effectId + ':' + (decisionPointId || 'none'));
+            if (effect.kind === 'open_decision_point' && decisionPointId) {
+                _journalRuntimeRecord('runtime_decision_opened', {
+                    event_id: eventId,
+                    decision_point_id: decisionPointId,
+                    detail: { opened_by_effect: effectId }
+                }, 'runtime_decision_opened:' + decisionPointId);
+            } else if (effect.kind === 'close_decision_point' && decisionPointId && decisionPointId !== context.decision_point_id) {
+                _journalRuntimeRecord('runtime_decision_resolved', {
+                    event_id: eventId,
+                    decision_point_id: decisionPointId,
+                    detail: { resolved_by_effect: effectId }
+                }, 'runtime_decision_resolved:' + decisionPointId);
+            }
             return;
         }
         if (effect.status === 'proposed' && effect.kind === 'request_operator_decision') {
             var pmsg = _runtimeEffectPayloadMessage(effect) || _runtimeEffectPayloadLabel(effect) || ((event && event.title) || 'Runtime decision requested');
             try { _appendRuntimeEventLog('Runtime decision requested: ' + pmsg); } catch (_) {}
             try { _recordDecision({ role: 'operator', action: 'runtime_effect_pending_decision', called_llm: false, source: 'runtime-events', result_summary: pmsg, reason: context.decision_point_id || null }); } catch (_) {}
+            if (decisionPointId) {
+                _journalRuntimeRecord('runtime_decision_opened', {
+                    event_id: eventId,
+                    decision_point_id: decisionPointId,
+                    detail: { opened_by_effect: effectId, request_operator_decision: true }
+                }, 'runtime_decision_opened:' + decisionPointId);
+            }
         }
     }
     function _syncRuntimeEffectSessionState(st, next) {
@@ -4059,6 +4256,9 @@
         st.applied_effects = Array.isArray(next.applied_effects) ? next.applied_effects : [];
         st.blocked_effects = Array.isArray(next.blocked_effects) ? next.blocked_effects : [];
         st.last_effects = Array.isArray(next.last_effects) ? next.last_effects : [];
+        st.journaled_ids = (next.journaled_ids && typeof next.journaled_ids === 'object') ? next.journaled_ids : (st.journaled_ids || {});
+        st.pending_journal_records = Array.isArray(next.pending_journal_records) ? next.pending_journal_records : (st.pending_journal_records || []);
+        st.last_journal_error = next.last_journal_error !== undefined ? next.last_journal_error : (st.last_journal_error || null);
     }
     function _applyRuntimeEventEffectsForEvent(event, API, st) {
         if (!event || !API || typeof API.applySafeRuntimeEventEffects !== 'function' || !st) {
@@ -4100,6 +4300,11 @@
             var msg = 'Runtime event: ' + ((ev && ev.title) || (ev && ev.id) || 'event') + ' at ' + _eventHoursLabel(ev && ev.at_elapsed_hours) + '.';
             try { _appendRuntimeEventLog(msg); } catch (_) {}
             try { _recordDecision({ role: 'operator', action: 'runtime_event_fired', called_llm: false, source: 'runtime-events', result_summary: msg }); } catch (_) {}
+            _journalRuntimeRecord('runtime_event_fired', {
+                event_id: ev && ev.id,
+                elapsed_hours: ev && ev.at_elapsed_hours,
+                detail: { title: (ev && ev.title) || (ev && ev.id) || 'event' }
+            }, 'runtime_event_fired:' + ((ev && ev.id) || 'event'));
             var effects = null; try { effects = _applyRuntimeEventEffectsForEvent(ev, API, st); } catch (_) {}
             effectTotals.total += (effects && effects.total) || 0;
             effectTotals.blocked += (effects && effects.blocked) || 0;
@@ -4110,6 +4315,11 @@
             var msg = 'Runtime decision point: ' + ((dp && dp.title) || (dp && dp.id) || 'decision point') + ' at ' + _eventHoursLabel(dp && dp.trigger_elapsed_hours) + '.';
             try { _appendRuntimeEventLog(msg); } catch (_) {}
             try { _recordDecision({ role: 'operator', action: 'runtime_decision_point_due', called_llm: false, source: 'runtime-events', result_summary: msg }); } catch (_) {}
+            _journalRuntimeRecord('runtime_decision_opened', {
+                decision_point_id: dp && dp.id,
+                elapsed_hours: dp && dp.trigger_elapsed_hours,
+                detail: { title: (dp && dp.title) || (dp && dp.id) || 'decision point' }
+            }, 'runtime_decision_opened:' + ((dp && dp.id) || 'decision-point'));
         });
         return {
             due_count: dueEvents.length,

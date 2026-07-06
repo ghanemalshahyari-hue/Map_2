@@ -102,6 +102,7 @@ function execState(hours) {
             operator_decisions: {},
             mission_task_status: {},
             pending_effects: [],
+            applied_effects: [],
             blocked_effects: [],
             last_effects: []
         },
@@ -151,7 +152,7 @@ ok('T-2 operator choice is stored under _coaExec.runtime_events.operator_decisio
 ok('T-3 resolved request is closed in runtime session state',
     exec.runtime_events.open_decision_points['dp-request'].status === 'resolved' &&
     exec.runtime_events.open_decision_points['dp-request'].selected_option_id === 'approve-search');
-ok('T-4 operator choice creates a pending proposal only',
+ok('T-4 operator choice creates a pending proposal and applies only safe runtime-session effects',
     exec.runtime_events.pending_effects.some((fx) =>
         fx.kind === 'operator_decision' &&
         fx.status === 'proposed' &&
@@ -159,7 +160,8 @@ ok('T-4 operator choice creates a pending proposal only',
         fx.payload &&
         Array.isArray(fx.payload.proposed_effects) &&
         fx.payload.proposed_effects[0].key === 'search_authorized') &&
-    exec.runtime_events.runtime_flags.search_authorized !== true);
+    exec.runtime_events.runtime_flags.search_authorized === true &&
+    exec.runtime_events.applied_effects.some((fx) => fx.kind === 'set_runtime_flag' && fx.status === 'applied_safe'));
 
 FF._setCoaExecForTest(execState(1.0));
 fire = FF._fireRuntimeEventsFromClockForTest();

@@ -3759,6 +3759,7 @@
             operator_decisions: {},
             mission_task_status: {},
             pending_effects: [],
+            applied_effects: [],
             blocked_effects: [],
             last_effects: []
         };
@@ -3777,6 +3778,7 @@
         if (!st.operator_decisions || typeof st.operator_decisions !== 'object' || Array.isArray(st.operator_decisions)) st.operator_decisions = {};
         if (!st.mission_task_status || typeof st.mission_task_status !== 'object' || Array.isArray(st.mission_task_status)) st.mission_task_status = {};
         if (!Array.isArray(st.pending_effects)) st.pending_effects = [];
+        if (!Array.isArray(st.applied_effects)) st.applied_effects = [];
         if (!Array.isArray(st.blocked_effects)) st.blocked_effects = [];
         if (!Array.isArray(st.last_effects)) st.last_effects = [];
         return st;
@@ -3895,6 +3897,34 @@
         });
         return out;
     }
+    function _applySafeRuntimeDecisionEffects(point, selected, record) {
+        var st = _ensureRuntimeEventSessionState();
+        var effects = arr(selected && selected.effects);
+        if (!st || !effects.length) return { total: 0, applied: 0, blocked: 0, pending: 0, effects: [] };
+        var w = W();
+        var API = w && w.AppRuntimeEvents;
+        if (!API || typeof API.applySafeRuntimeEventEffects !== 'function') {
+            return { total: 0, applied: 0, blocked: 0, pending: 0, effects: [], reason: 'runtime_events_api_unavailable' };
+        }
+        var event = {
+            id: 'operator-decision-' + (record && record.decision_point_id || 'decision') + '-' + (record && record.option_id || 'option'),
+            title: (record && record.title) || (point && point.title) || 'Operator decision',
+            at_elapsed_hours: record && record.at_elapsed_hours,
+            source: 'operator_decision',
+            effects: effects
+        };
+        var res = API.applySafeRuntimeEventEffects(st, event, effects);
+        _syncRuntimeEffectSessionState(st, res && res.state);
+        var summary = { total: 0, applied: 0, blocked: 0, pending: 0, effects: arr(res && res.effects) };
+        summary.effects.forEach(function (effect) {
+            summary.total++;
+            if (effect && effect.status === 'applied_safe') summary.applied++;
+            else if (effect && effect.status === 'blocked') summary.blocked++;
+            else if (effect && effect.status === 'proposed') summary.pending++;
+            try { _logRuntimeEffectOutcome(effect, event, { decision_point_id: record && record.decision_point_id, option_id: record && record.option_id }); } catch (_) {}
+        });
+        return summary;
+    }
     function _resolveRuntimeDecisionPoint(decisionPointId, optionId) {
         var st = _ensureRuntimeEventSessionState();
         if (!st) return { ok: false, reason: 'no_active_runtime_session' };
@@ -3958,10 +3988,19 @@
         };
         st.pending_effects.push(proposal);
         st.last_effects.push(proposal);
-        try { _appendRuntimeEventLog('Operator decision recorded: ' + record.title + ' -> ' + record.option_label + ' (proposal pending).'); } catch (_) {}
+        var effectSummary = _applySafeRuntimeDecisionEffects(point, selected, record);
+        if (st.operator_decisions && st.operator_decisions[id]) {
+            st.operator_decisions[id].safe_effect_summary = {
+                total: effectSummary.total,
+                applied: effectSummary.applied,
+                blocked: effectSummary.blocked,
+                pending: effectSummary.pending
+            };
+        }
+        try { _appendRuntimeEventLog('Operator decision recorded: ' + record.title + ' -> ' + record.option_label + ' (safe effects applied: ' + effectSummary.applied + ', blocked: ' + effectSummary.blocked + ', pending: ' + effectSummary.pending + ').'); } catch (_) {}
         try { _recordDecision({ role: 'operator', action: 'runtime_operator_decision', called_llm: false, source: 'runtime-events', result_summary: record.title + ' -> ' + record.option_label }); } catch (_) {}
         try { updatePanel(); } catch (_) {}
-        return { ok: true, decision: record, proposal: proposal };
+        return { ok: true, decision: st.operator_decisions[id] || record, proposal: proposal, effects: effectSummary };
     }
     function _appendRuntimeEventLog(message) {
         if (!message) return null;
@@ -3978,6 +4017,38 @@
         var p = (effect && effect.payload && typeof effect.payload === 'object') ? effect.payload : {};
         return p.message || p.text || p.title || p.prompt || '';
     }
+    function _runtimeEffectPayloadLabel(effect) {
+        var p = (effect && effect.payload && typeof effect.payload === 'object') ? effect.payload : {};
+        return p.key || p.flag || p.name || p.id || p.task_id || p.mission_task_id || p.decision_point_id || p.decision_id || p.title || '';
+    }
+    function _logRuntimeEffectOutcome(effect, event, context) {
+        if (!effect) return;
+        context = context || {};
+        if (effect.status === 'blocked') {
+            var bmsg = 'Runtime effect blocked: ' + (effect.kind || 'unsupported') + ' (' + (effect.reason || 'blocked') + ')';
+            try { _appendRuntimeEventLog(bmsg); } catch (_) {}
+            try { _recordDecision({ role: 'operator', action: 'runtime_effect_blocked', called_llm: false, source: 'runtime-events', reason: effect.reason || 'blocked', result_summary: bmsg }); } catch (_) {}
+            return;
+        }
+        if (effect.status === 'applied_safe') {
+            if (effect.kind === 'add_notification') {
+                var nmsg = _runtimeEffectPayloadMessage(effect) || ((event && event.title) || (event && event.id) || 'Runtime notification');
+                try { _appendRuntimeEventLog('Runtime notification: ' + nmsg); } catch (_) {}
+                try { _recordDecision({ role: 'operator', action: 'runtime_effect_applied_safe', called_llm: false, source: 'runtime-events', result_summary: 'add_notification: ' + nmsg }); } catch (_) {}
+                return;
+            }
+            var label = _runtimeEffectPayloadLabel(effect);
+            var msg = 'Runtime effect applied: ' + (effect.kind || 'safe_effect') + (label ? (' (' + label + ')') : '');
+            try { _appendRuntimeEventLog(msg); } catch (_) {}
+            try { _recordDecision({ role: 'operator', action: 'runtime_effect_applied_safe', called_llm: false, source: 'runtime-events', result_summary: msg }); } catch (_) {}
+            return;
+        }
+        if (effect.status === 'proposed' && effect.kind === 'request_operator_decision') {
+            var pmsg = _runtimeEffectPayloadMessage(effect) || _runtimeEffectPayloadLabel(effect) || ((event && event.title) || 'Runtime decision requested');
+            try { _appendRuntimeEventLog('Runtime decision requested: ' + pmsg); } catch (_) {}
+            try { _recordDecision({ role: 'operator', action: 'runtime_effect_pending_decision', called_llm: false, source: 'runtime-events', result_summary: pmsg, reason: context.decision_point_id || null }); } catch (_) {}
+        }
+    }
     function _syncRuntimeEffectSessionState(st, next) {
         next = next || {};
         st.runtime_flags = (next.runtime_flags && typeof next.runtime_flags === 'object') ? next.runtime_flags : {};
@@ -3985,6 +4056,7 @@
         st.operator_decisions = (next.operator_decisions && typeof next.operator_decisions === 'object') ? next.operator_decisions : (st.operator_decisions || {});
         st.mission_task_status = (next.mission_task_status && typeof next.mission_task_status === 'object') ? next.mission_task_status : {};
         st.pending_effects = Array.isArray(next.pending_effects) ? next.pending_effects : [];
+        st.applied_effects = Array.isArray(next.applied_effects) ? next.applied_effects : [];
         st.blocked_effects = Array.isArray(next.blocked_effects) ? next.blocked_effects : [];
         st.last_effects = Array.isArray(next.last_effects) ? next.last_effects : [];
     }
@@ -3997,17 +4069,9 @@
         var total = 0, blocked = 0, pending = 0;
         arr(res && res.effects).forEach(function (effect) {
             total++;
-            if (effect && effect.status === 'blocked') {
-                blocked++;
-                var bmsg = 'Runtime effect blocked: ' + (effect.kind || 'unsupported') + ' (' + (effect.reason || 'blocked') + ')';
-                try { _appendRuntimeEventLog(bmsg); } catch (_) {}
-                try { _recordDecision({ role: 'operator', action: 'runtime_effect_blocked', called_llm: false, source: 'runtime-events', reason: effect.reason || 'blocked', result_summary: bmsg }); } catch (_) {}
-            } else if (effect && effect.kind === 'add_notification' && effect.status === 'applied_safe') {
-                var msg = _runtimeEffectPayloadMessage(effect) || ((event && event.title) || (event && event.id) || 'Runtime notification');
-                try { _appendRuntimeEventLog('Runtime notification: ' + msg); } catch (_) {}
-            } else if (effect && effect.kind === 'request_operator_decision' && effect.status === 'proposed') {
-                pending++;
-            }
+            if (effect && effect.status === 'blocked') blocked++;
+            else if (effect && effect.kind === 'request_operator_decision' && effect.status === 'proposed') pending++;
+            try { _logRuntimeEffectOutcome(effect, event); } catch (_) {}
         });
         return { total: total, blocked: blocked, pending: pending };
     }

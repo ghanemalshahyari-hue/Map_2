@@ -171,6 +171,7 @@
         if (!st.operator_decisions || typeof st.operator_decisions !== 'object' || Array.isArray(st.operator_decisions)) st.operator_decisions = {};
         if (!st.mission_task_status || typeof st.mission_task_status !== 'object' || Array.isArray(st.mission_task_status)) st.mission_task_status = {};
         if (!Array.isArray(st.pending_effects)) st.pending_effects = [];
+        if (!Array.isArray(st.applied_effects)) st.applied_effects = [];
         if (!Array.isArray(st.blocked_effects)) st.blocked_effects = [];
         if (!Array.isArray(st.last_effects)) st.last_effects = [];
         return st;
@@ -291,6 +292,7 @@
             }
 
             if (finalProposal.status === 'blocked') state.blocked_effects.push(finalProposal);
+            else if (finalProposal.status === 'applied_safe') state.applied_effects.push(finalProposal);
             state.last_effects.push(finalProposal);
             finalEffects.push(finalProposal);
         });

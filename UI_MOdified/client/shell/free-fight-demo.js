@@ -3264,7 +3264,7 @@
         if (blob.scenario_key !== _scenarioKey()) return false;  // different scenario → ignore stale
         _coaExec = blob.state;
         _coaExec.paused = true; _coaExec._restored = true;       // restored = paused until the operator runs
-        if (_coaExec.clock) _coaExec.clock.display_step = -1;    // internal map-review frame will refresh on resume
+        if (_coaExec.clock) _coaExec.clock.display_step = -1;    // OPTION-C/C2: force a fresh snapshot render on resume
         try { _publishOwnedPositions(); } catch (_) {}           // OPTION-B/B1: re-publish restored owned positions
         try { _publishRunClock(); } catch (_) {}                 // OPTION-C/C1: re-publish the restored scenario clock
         if (_coaExecTimer) { _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null; }
@@ -3580,10 +3580,9 @@
             created_at: _nowISO(), updated_at: _nowISO(),
             last_tick_timing: { coa_commit_ms: _nowMs() - t0, coa_tick_execute_ms: 0, replan_trigger_check_ms: 0, llm_called_this_tick: false },
         };
-        // OPTION-C / SLICE-C1: seed the scenario runtime clock from explicit runtime duration when present;
-        // authored elapsed-hours are compatibility fallback only.
+        // OPTION-C / SLICE-C1: seed the scenario runtime clock from the authored steps' elapsed-hours span.
         var _clkB = _clockBoundsFromScenario();
-        _coaExec.clock = { start_hours: _clkB.start, current_hours: _clkB.start, end_hours: _clkB.end, duration_hours: _clkB.duration_hours, playing: false, speed: _clockSpeedMult(), display_step: -1 };   // display_step is internal map-review compatibility, never operator-facing Play.
+        _coaExec.clock = { start_hours: _clkB.start, current_hours: _clkB.start, end_hours: _clkB.end, duration_hours: _clkB.duration_hours, playing: false, speed: _clockSpeedMult(), display_step: -1 };   // display_step: OPTION-C/C2 (clock drives the shown snapshot)
         _resetRuntimeEventSessionState();   // C4b: per-run fired IDs live on the runtime session, not scenario JSON
         try { _publishRunClock(); } catch (_) {}
         _committedPlanObj = _coaPlan;   // AB1: remember WHICH plan object this commit came from (identity)
@@ -4334,8 +4333,8 @@
             next_event_hours: st.next_event_hours
         };
     }
-    // Human-readable scenario time for the run status panel. Prefer the map's single-sourced runtime
-    // clock label (start_time DTG when available); fall back to a plain H-relative value.
+    // Human-readable scenario time for the run status panel. Prefer the map's single-sourced label
+    // (World State findStepForElapsedHours + start_time DTG); fall back to a plain H-relative value.
     function _scenarioClockLabel(ex) {
         var w = W(); var MAP = w && w.AppAdjudicatorMap;
         if (MAP && typeof MAP.runClockLabel === 'function') { try { var lbl = MAP.runClockLabel(); if (lbl) return lbl; } catch (_) {} }
@@ -4344,10 +4343,10 @@
         return '\u2014';
     }
 
-    // OPTION-C / SLICE-C2: optional map-review compatibility. As scenario time moves, authored
-    // frame overlays can be refreshed for context while units stay at their run-owned positions and
-    // live fields (BLS/contacts/balance) re-derive against them. _stateFromStep builds the legacy
-    // `state` the map reads from steps[i].*_baseline.
+    // OPTION-C / SLICE-C2: the runtime clock drives the DISPLAYED snapshot. On each authored-step boundary the
+    // committed Run re-renders the AUTHORED snapshot at the clock-derived step (map overlays: objective /
+    // phase-line / arcs) while units stay at their run (owned) positions and live fields (BLS/contacts/balance)
+    // re-derive against them. _stateFromStep builds the legacy `state` the map reads from steps[i].*_baseline.
     // Pure/read-only: returns a fresh literal, clones arrays/map -> the authored scenario is never mutated.
     function _stateFromStep(scenario, stepIndex) {
         var steps = (scenario && Array.isArray(scenario.steps)) ? scenario.steps : [];
@@ -4385,8 +4384,8 @@
             _snapshot_from_clock: true
         };
     }
-    // Refresh the authored review frame for the current runtime clock boundary: rebuild the scenario
-    // layer (via the existing redraw wrapper, which suppresses auto-fitBounds -> no pan jump), then applyState in SNAPSHOT mode
+    // Re-render the AUTHORED snapshot at the clock-derived step: rebuild the scenario layer (via the existing
+    // redraw wrapper, which suppresses auto-fitBounds -> no pan jump), then applyState in SNAPSHOT mode
     // (instant, skipUnitPositioning -> owned run positions win; ws.clock attaches via the C1 runClock overlay).
     function _renderSnapshotAtStep(idx, scenario) {
         var w = W(); var MAP = w && w.AppAdjudicatorMap;
@@ -4394,10 +4393,9 @@
         try { _triggerScenarioRedraw(); } catch (_) {}
         try { MAP.applyState(_stateFromStep(scenario, idx), scenario, { skipUnitPositioning: true, snapshot: true }); } catch (_) {}
     }
-    // Boundary detector for internal map-review frames. Runtime time remains authoritative; authored
-    // elapsed-hour rows are only a compatibility source for contextual overlays. On a boundary CHANGE
-    // (debounce), refresh the map review frame and fire the legacy event for surviving listeners.
-    // Committed-Run only. Owned positions stay authoritative.
+    // Boundary detector: map the clock current_hours -> the authored step in effect; on a CHANGE (debounce),
+    // re-render the snapshot at that step and fire rmooz:run-step-changed. Committed-Run only. Returns true iff
+    // it crossed (so the tick skips its redundant per-tick scenario redraw). Owned positions stay authoritative.
     function _syncDisplayStepToClock() {
         if (!_coaExec || !_coaExec.active || !_coaExec.clock) return false;
         var w = W(); var WS = w && w.AppWorldState;
@@ -4414,7 +4412,7 @@
         } catch (_) {}
         return true;
     }
-    // Compatibility readout for retired internal diagnostics.
+    // Run-panel readout: the clock-driven displayed snapshot step ("idx - time_label (phase)").
     function _snapshotStepLabel(ex) {
         var c = ex && ex.clock; if (!c || c.display_step == null || c.display_step < 0) return '-';
         var w = W(); var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
@@ -6109,6 +6107,16 @@
     }
     function _operatorReviewCheckpointsHtml(ex) {
         return '';
+        var phases = arr(ex && ex.selected_coa && ex.selected_coa.phases);
+        var phaseText = ex && ex.phase_status === 'complete'
+            ? 'all done'
+            : ((ex && isFinite(+ex.current_phase_index) ? (+ex.current_phase_index + 1) : 1) + ' / ' + phases.length);
+        return '<details data-ff-op="review-checkpoints" style="margin-top:4px;border:1px solid #1a3050;border-radius:4px;padding:4px 6px;background:#071421;">' +
+            '<summary style="cursor:pointer;color:#8fa5b8;font-size:10px;font-weight:700;">Internal authored frames</summary>' +
+            '<div style="margin-top:4px;"><span style="color:#8fa5b8;">COA internal group:</span> <b style="color:#cfe6ff;">' + esc(phaseText) + '</b></div>' +
+            '<div><span style="color:#8fa5b8;">Frame pointer:</span> <b style="color:#cfe6ff;">' + esc(_snapshotStepLabel(ex)) + '</b></div>' +
+            '<div style="color:#8fa5b8;">Runtime is controlled by scenario time. These details are hidden compatibility data.</div>' +
+            '</details>';
     }
     // RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O: the SIMPLE primary operator flow — ONE primary action per
     // state: Generate AI Plan (slow) → Use Recommended Plan → Run Plan (fast) → Pause, state-driven

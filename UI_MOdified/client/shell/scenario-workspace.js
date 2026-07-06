@@ -1080,11 +1080,11 @@
         if (typeof paintLiveDecisionActionCard === 'function'){ paintLiveDecisionActionCard(); }
     }
 
-    // ── P4 (Wargame3 live): bottom transport bar → step playback bridge ──────────
-    // shell/timeline.js is UI-only — it dispatches rmooz:timeline-ui-action but
-    // nothing advanced the live scenario. Wire play / pause / step / speed to
-    // goToStep so the visible transport bar moves the laydown through the 17
-    // phases. Read-only: only stepIndex + marker positions change (via goToStep).
+    // ── P4 (Wargame3 review): bottom transport bar → step preview bridge ─────────
+    // shell/timeline.js is UI-only — it dispatches rmooz:timeline-ui-action.
+    // This fallback wires preview / pause / snapshot / speed to goToStep so the
+    // visible transport bar reviews the laydown through the 17 phases. Read-only:
+    // only stepIndex + marker positions change (via goToStep).
     // No combat sim, no AI, no decision options, no scenario mutation, no storage.
     var _swPlayTimer = null;
     var _swPlaySpeed = 1;
@@ -1232,8 +1232,8 @@
         btn.disabled = !hasScenario || (atEnd && !_swIsPlaying);
         btn.setAttribute('aria-pressed', _swIsPlaying ? 'true' : 'false');
         btn.textContent = _swIsPlaying
-            ? tx('sw-nav-pause', '⏸ Pause')
-            : tx('sw-nav-play',  '▶ Play');
+            ? tx('sw-nav-pause', '⏸ Pause preview')
+            : tx('sw-nav-play',  '▶ Preview');
         if (sel) sel.disabled = !hasScenario;
     }
 
@@ -7365,7 +7365,7 @@
         });
     }
 
-    // ── PR-136: Playback engine ───────────────────────────────────────────────
+    // ── PR-136: Preview playback engine ───────────────────────────────────────
     // Only mutates: _swPlayIntervalId, _swIsPlaying, window.RmoozScenario.stepIndex
     // No animation. No backend. No storage. No engagement arcs. No combat data.
 
@@ -7386,8 +7386,8 @@
     }
 
     function startPlayback() {
-        // Canonical engine owns playback when present (single timer, shared by
-        // the nav Play button, the bottom transport, and turn-engine Start).
+        // Canonical engine owns preview playback when present (single timer,
+        // shared by the nav Preview button, the bottom transport, and turn-engine Start).
         if (window.AppScenarioRunner) {
             try { window.AppScenarioRunner.play(); } catch (_) { /* no-op */ }
             return; // play-button visual synced via the rmooz:scenario-run listener
@@ -7452,7 +7452,7 @@
         var btnNext  = document.getElementById('sw-nav-next');
         var btnLast  = document.getElementById('sw-nav-last');
 
-        // Play/Pause toggle
+        // Preview/Pause toggle
         if (btnPlay) {
             btnPlay.addEventListener('click', function () {
                 if (_swIsPlaying) {

@@ -381,12 +381,12 @@
             // not in this whitelist is ignored (so a future actor
             // can't smuggle in non-UI semantics).
             const TABLE = {
-                'play':           ['elog-evt-tl-play',         'Timeline: Play'],
-                'pause':          ['elog-evt-tl-pause',        'Timeline: Pause'],
-                'step-back':      ['elog-evt-tl-step-back',    'Timeline: Step Back'],
-                'step-forward':   ['elog-evt-tl-step-forward', 'Timeline: Step Forward'],
-                'speed-changed':  ['elog-evt-tl-speed',        'Timeline: Speed x{0}'],
-                'phase-changed':  ['elog-evt-tl-phase',        'Timeline: Phase {0}'],
+                'play':           ['elog-evt-tl-play',         'Review timeline: Preview playback'],
+                'pause':          ['elog-evt-tl-pause',        'Review timeline: Pause preview'],
+                'step-back':      ['elog-evt-tl-step-back',    'Review timeline: Previous snapshot'],
+                'step-forward':   ['elog-evt-tl-step-forward', 'Review timeline: Next snapshot'],
+                'speed-changed':  ['elog-evt-tl-speed',        'Review timeline: Playback speed x{0}'],
+                'phase-changed':  ['elog-evt-tl-phase',        'Review timeline phase: {0}'],
             };
             const entry = TABLE[action];
             if (!entry) return;

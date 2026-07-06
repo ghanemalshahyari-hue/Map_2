@@ -1,29 +1,29 @@
 /**
  * Operational shell — Timeline / Transport placeholder.
  *
- * PR-5 (Timeline / Transport Placeholder). UI foundation only. The
- * buttons flip local CSS state inside #timeline-strip; nothing
- * outside the strip changes. There is intentionally NO event
+ * PR-5 (Timeline / Transport Placeholder). Review/playback UI only. The
+ * buttons flip local CSS state inside #timeline-strip; the real scenario
+ * runtime remains in the Scenario Control Center. There is intentionally NO event
  * dispatch, NO journal hookup, NO sim/AI/scenario call, NO map
  * mutation — the bridge exposes only readers (getState) and a
  * rerender hook for language change.
  *
  * Behaviors implemented in this PR:
- *   - Play / Pause are mutually exclusive `.is-active` toggles.
- *     Default state: Play active, Pause inactive (matches the
- *     "ready to run" idle look — but nothing actually runs).
+ *   - Preview / Pause Preview are mutually exclusive `.is-active` toggles.
+ *     Default state: Preview inactive, Pause Preview active, so the strip
+ *     does not present itself as the scenario run control.
  *   - Step Back / Step Forward add `.is-pulsed` for ~120 ms, then
  *     remove it. No state changes outside the button.
- *   - Speed (x1 / x4 / x30) is a single-select segmented group.
+ *   - Playback speed (x1 / x4 / x30) is a single-select segmented group.
  *     Default: x1.
  *   - Phase (start / phase1 / phase2 / end) is a single-select
  *     segmented group. Default: start.
- *   - Scenario time is the static placeholder "H+00:00". The clock
+ *   - Review time is the static placeholder "H+00:00". The runtime clock
  *     module is NOT wired to it.
  *   - Re-renders on language change (status pill + labels).
  *   - Idempotent on hot reload (the bridge is replaced each load).
  *
- * Future PRs will wire transport events to the journal/sim tick;
+ * Stable review/playback listeners consume the transport events;
  * the DOM (#tl-play, #tl-pause, #tl-step-back, #tl-step-forward,
  * #tl-speed-group, #tl-phase-group, #tl-scenario-time, #tl-status)
  * is already in place — no further markup changes required.
@@ -84,7 +84,7 @@
     }
     function isPlaying() {
         const playBtn = $('tl-play');
-        return playBtn ? playBtn.classList.contains('is-active') : true;
+        return playBtn ? playBtn.classList.contains('is-active') : false;
     }
 
     // ── Step Back / Step Forward pulse ────────────────────────────
@@ -220,10 +220,10 @@
         bindSegmented('tl-phase-group', 'phase-changed', 'data-tl-phase');
         bindScenarioControls();
         bindLanguageChain();
-        // Default visual state — Play active, x1, start phase. Matches
+        // Default visual state: preview paused, x1, start phase. Matches
         // the markup defaults; this is a defensive re-apply so a future
         // markup tweak can't desync the controller.
-        setPlayState(true);
+        setPlayState(false);
     }
 
     if (document.readyState === 'loading') {

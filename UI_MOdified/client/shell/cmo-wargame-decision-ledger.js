@@ -33,6 +33,10 @@
     function aarApi() { return localApi('RmoozCmoWarGameAfterActionDebrief', 'cmo-wargame-after-action-debrief.js'); }
     function packageApi() { return localApi('RmoozCmoWarGameEvidencePackage', 'cmo-wargame-evidence-package.js'); }
     function reviewBoardApi() { return localApi('RmoozCmoWarGameReviewBoard', 'cmo-wargame-review-board.js'); }
+    function looksReviewablePackage(pkg) {
+        pkg = obj(pkg);
+        return !!(pkg.manifest && pkg.summary && (pkg.debrief || arr(pkg.sections).length));
+    }
 
     function buildWith(api, fn, input, opts, fallback) {
         opts = opts || {};
@@ -51,8 +55,11 @@
         var evidencePackage = opts.package || opts.evidence_package || buildWith(packageApi(), 'buildPackage', aar || run || input, opts, null);
         var reviewBoard = opts.review_board || null;
         var RB = reviewBoardApi();
-        if (!reviewBoard && RB && typeof RB.buildReviewBoard === 'function') {
-            try { reviewBoard = RB.buildReviewBoard(evidencePackage || aar || run || input, opts); } catch (_) {}
+        if (!reviewBoard && RB && looksReviewablePackage(evidencePackage)) {
+            var buildReview = typeof RB.buildReviewBoard === 'function' ? RB.buildReviewBoard : RB.buildReview;
+            if (typeof buildReview === 'function') {
+                try { reviewBoard = buildReview(evidencePackage || aar || run || input, opts); } catch (_) {}
+            }
         }
         return { readiness: readiness, test_card: card, run: run, aar: aar, evidence_package: evidencePackage, review_board: reviewBoard };
     }

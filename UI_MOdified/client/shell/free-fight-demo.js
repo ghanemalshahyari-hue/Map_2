@@ -3682,17 +3682,20 @@
 
     // OPTION-C / SLICE-C1: scenario runtime clock. The committed Run advances a scenario clock
     // (current_time) each tick, scaled by the existing FF speed, and publishes it to the map so the World
-    // State carries a live current_time (steps become snapshots the clock indexes into). Transient: rides
+    // State carries a live current_time (authored frames remain review-only snapshots). Transient: rides
     // on _coaExec (sessionStorage-persisted via _persistCoaExec), cleared on reset/replan, re-published on
     // restore -- exactly like the B1 owned positions. Boundary-safe: no window.units / scenario mutation,
-    // no backend call; H-relative hours from steps[].elapsed_hours (no scenario schema change).
+    // no backend call; explicit runtime durations own the clock, authored elapsed-hours are fallback only.
     var COA_CLOCK_HOURS_PER_TICK = 0.25;   // scenario-time compression per base tick at x1 (tunable)
     var FF_CLOCK_SPEED_MULT = { x1: 1, x5: 5, x15: 15, fire: 30, fire2: 60 };
     function _clockSpeedMult() { return FF_CLOCK_SPEED_MULT[_freeFightSpeed] || 1; }
     function _runtimeDurationHours(scn) {
         var rt = (scn && scn.runtime_scenario && typeof scn.runtime_scenario === 'object') ? scn.runtime_scenario : null;
+        if (rt && isFinite(+rt.duration_minutes)) return +rt.duration_minutes / 60;
         if (rt && isFinite(+rt.duration_hours)) return +rt.duration_hours;
+        if (scn && isFinite(+scn.duration_minutes)) return +scn.duration_minutes / 60;
         if (scn && isFinite(+scn.duration_hours)) return +scn.duration_hours;
+        if (scn && scn.duration && typeof scn.duration === 'object' && isFinite(+scn.duration.minutes)) return +scn.duration.minutes / 60;
         if (scn && scn.duration && typeof scn.duration === 'object' && isFinite(+scn.duration.hours)) return +scn.duration.hours;
         return null;
     }
@@ -3707,7 +3710,7 @@
         steps.forEach(function (st) { var v = st && st.elapsed_hours; if (typeof v === 'number' && isFinite(v)) hrs.push(v); });
         var start = (rtStart != null) ? rtStart : (hrs.length ? Math.min.apply(null, hrs) : 0);
         var end = (rtEnd != null) ? rtEnd : ((dur != null) ? (start + dur) : (hrs.length ? Math.max.apply(null, hrs) : start));
-        return { start: start, end: end, duration_hours: (dur != null ? dur : (end - start)) };
+        return { start: start, end: end, duration_hours: (end - start) };
     }
     // Advance the committed Run's scenario clock one tick, clamped to [start, end]. Called from _coaExecTick.
     function _advanceScenarioClock() {

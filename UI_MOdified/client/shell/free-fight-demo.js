@@ -3749,7 +3749,13 @@
             last_due_decision_points: [],
             last_event_hours: null,
             next_event_hours: null,
-            fired_count: 0
+            fired_count: 0,
+            runtime_flags: {},
+            open_decision_points: {},
+            mission_task_status: {},
+            pending_effects: [],
+            blocked_effects: [],
+            last_effects: []
         };
     }
     function _ensureRuntimeEventSessionState() {
@@ -3761,6 +3767,12 @@
         if (!Array.isArray(st.last_due)) st.last_due = [];
         if (!Array.isArray(st.last_due_decision_points)) st.last_due_decision_points = [];
         if (!isFinite(+st.fired_count)) st.fired_count = 0;
+        if (!st.runtime_flags || typeof st.runtime_flags !== 'object' || Array.isArray(st.runtime_flags)) st.runtime_flags = {};
+        if (!st.open_decision_points || typeof st.open_decision_points !== 'object' || Array.isArray(st.open_decision_points)) st.open_decision_points = {};
+        if (!st.mission_task_status || typeof st.mission_task_status !== 'object' || Array.isArray(st.mission_task_status)) st.mission_task_status = {};
+        if (!Array.isArray(st.pending_effects)) st.pending_effects = [];
+        if (!Array.isArray(st.blocked_effects)) st.blocked_effects = [];
+        if (!Array.isArray(st.last_effects)) st.last_effects = [];
         return st;
     }
     function _resetRuntimeEventSessionState() {
@@ -3799,6 +3811,42 @@
         try { _appendToEventLog(message); } catch (_) {}
         return null;
     }
+    function _runtimeEffectPayloadMessage(effect) {
+        var p = (effect && effect.payload && typeof effect.payload === 'object') ? effect.payload : {};
+        return p.message || p.text || p.title || p.prompt || '';
+    }
+    function _syncRuntimeEffectSessionState(st, next) {
+        next = next || {};
+        st.runtime_flags = (next.runtime_flags && typeof next.runtime_flags === 'object') ? next.runtime_flags : {};
+        st.open_decision_points = (next.open_decision_points && typeof next.open_decision_points === 'object') ? next.open_decision_points : {};
+        st.mission_task_status = (next.mission_task_status && typeof next.mission_task_status === 'object') ? next.mission_task_status : {};
+        st.pending_effects = Array.isArray(next.pending_effects) ? next.pending_effects : [];
+        st.blocked_effects = Array.isArray(next.blocked_effects) ? next.blocked_effects : [];
+        st.last_effects = Array.isArray(next.last_effects) ? next.last_effects : [];
+    }
+    function _applyRuntimeEventEffectsForEvent(event, API, st) {
+        if (!event || !API || typeof API.applySafeRuntimeEventEffects !== 'function' || !st) {
+            return { total: 0, blocked: 0, pending: 0 };
+        }
+        var res = API.applySafeRuntimeEventEffects(st, event, event.effects || []);
+        _syncRuntimeEffectSessionState(st, res && res.state);
+        var total = 0, blocked = 0, pending = 0;
+        arr(res && res.effects).forEach(function (effect) {
+            total++;
+            if (effect && effect.status === 'blocked') {
+                blocked++;
+                var bmsg = 'Runtime effect blocked: ' + (effect.kind || 'unsupported') + ' (' + (effect.reason || 'blocked') + ')';
+                try { _appendRuntimeEventLog(bmsg); } catch (_) {}
+                try { _recordDecision({ role: 'operator', action: 'runtime_effect_blocked', called_llm: false, source: 'runtime-events', reason: effect.reason || 'blocked', result_summary: bmsg }); } catch (_) {}
+            } else if (effect && effect.kind === 'add_notification' && effect.status === 'applied_safe') {
+                var msg = _runtimeEffectPayloadMessage(effect) || ((event && event.title) || (event && event.id) || 'Runtime notification');
+                try { _appendRuntimeEventLog('Runtime notification: ' + msg); } catch (_) {}
+            } else if (effect && effect.kind === 'request_operator_decision' && effect.status === 'proposed') {
+                pending++;
+            }
+        });
+        return { total: total, blocked: blocked, pending: pending };
+    }
     function _fireRuntimeEventsFromClock() {
         if (!_coaExec || !_coaExec.active || !_coaExec.clock) return { due_count: 0, due_decision_point_count: 0 };
         var w = W();
@@ -3819,17 +3867,29 @@
         st.last_due_decision_points = duePoints.map(_copyRuntimeEventSummary);
         st.last_event_hours = isFinite(+_coaExec.clock.current_hours) ? +_coaExec.clock.current_hours : null;
         st.fired_count += dueEvents.length + duePoints.length;
+        var effectTotals = { total: 0, blocked: 0, pending: 0 };
         dueEvents.forEach(function (ev) {
             var msg = 'Runtime event: ' + ((ev && ev.title) || (ev && ev.id) || 'event') + ' at ' + _eventHoursLabel(ev && ev.at_elapsed_hours) + '.';
             try { _appendRuntimeEventLog(msg); } catch (_) {}
             try { _recordDecision({ role: 'operator', action: 'runtime_event_fired', called_llm: false, source: 'runtime-events', result_summary: msg }); } catch (_) {}
+            var effects = null; try { effects = _applyRuntimeEventEffectsForEvent(ev, API, st); } catch (_) {}
+            effectTotals.total += (effects && effects.total) || 0;
+            effectTotals.blocked += (effects && effects.blocked) || 0;
+            effectTotals.pending += (effects && effects.pending) || 0;
         });
         duePoints.forEach(function (dp) {
             var msg = 'Runtime decision point: ' + ((dp && dp.title) || (dp && dp.id) || 'decision point') + ' at ' + _eventHoursLabel(dp && dp.trigger_elapsed_hours) + '.';
             try { _appendRuntimeEventLog(msg); } catch (_) {}
             try { _recordDecision({ role: 'operator', action: 'runtime_decision_point_due', called_llm: false, source: 'runtime-events', result_summary: msg }); } catch (_) {}
         });
-        return { due_count: dueEvents.length, due_decision_point_count: duePoints.length, next_event_hours: st.next_event_hours };
+        return {
+            due_count: dueEvents.length,
+            due_decision_point_count: duePoints.length,
+            runtime_effect_count: effectTotals.total,
+            runtime_effect_blocked_count: effectTotals.blocked,
+            runtime_effect_pending_count: effectTotals.pending,
+            next_event_hours: st.next_event_hours
+        };
     }
     // Human-readable scenario time for the run status panel. Prefer the map's single-sourced label
     // (World State findStepForElapsedHours + start_time DTG); fall back to a plain H-relative value.
@@ -4087,6 +4147,9 @@
             ui_update_ms: ui_update_ms, tick_interval_delay_ms: _coaExecIntervalMs, llm_called_this_tick: false,
             runtime_event_count: (_runtimeEvents && _runtimeEvents.due_count) || 0,
             runtime_decision_point_count: (_runtimeEvents && _runtimeEvents.due_decision_point_count) || 0,
+            runtime_effect_count: (_runtimeEvents && _runtimeEvents.runtime_effect_count) || 0,
+            runtime_effect_blocked_count: (_runtimeEvents && _runtimeEvents.runtime_effect_blocked_count) || 0,
+            runtime_effect_pending_count: (_runtimeEvents && _runtimeEvents.runtime_effect_pending_count) || 0,
         };
         // RMOOZ-AI-SCHEDULER-DECISION-LOG-S: the committed-COA executor is a deterministic unit-controller — no LLM.
         try { _recordDecision({ role: 'unit-controller', action: 'execute_phase_tick', called_llm: false, duration_ms: coa_tick_execute_ms, source: 'coa_commitment', result_summary: 'phase ' + (_coaExec.current_phase_index + 1) + ' · moved ' + movedNow.length }); } catch (_) {}
@@ -5582,9 +5645,14 @@
         var due = arr(rt.last_due);
         var dps = arr(rt.last_due_decision_points);
         var last = due[0] || dps[0] || null;
+        var effects = arr(rt.last_effects);
+        var lastEffect = effects.length ? effects[effects.length - 1] : null;
+        var pending = arr(rt.pending_effects).length;
         var h = '';
         if (last) h += '<div><span style="color:#8fa5b8;">Last runtime event:</span> <b style="color:#cfe6ff;">' + esc(last.title || last.id || 'event') + '</b></div>';
         if (rt.next_event_hours != null && isFinite(+rt.next_event_hours)) h += '<div><span style="color:#8fa5b8;">Next runtime event:</span> <b style="color:#cfe6ff;">' + esc(_eventHoursLabel(+rt.next_event_hours)) + '</b></div>';
+        if (lastEffect) h += '<div><span style="color:#8fa5b8;">Last runtime effect:</span> <b style="color:#cfe6ff;">' + esc((lastEffect.kind || 'effect') + ' / ' + (lastEffect.status || 'proposed')) + '</b></div>';
+        if (pending) h += '<div><span style="color:#8fa5b8;">Pending runtime decisions:</span> <b style="color:#ffd27f;">' + pending + '</b></div>';
         return h;
     }
     // RMOOZ-FREE-FIGHT-SIMPLE-OPERATOR-UX-O: the SIMPLE primary operator flow — ONE primary action per

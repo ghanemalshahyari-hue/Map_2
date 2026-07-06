@@ -6,8 +6,9 @@
  *
  * C4a deliberately does NOT execute effects, mutate world state, write journal,
  * touch the map, call a backend, or write storage. It is the "what is due now?"
- * evaluator only. C4b owns firing notification/log plumbing; later slices own
- * any event effect execution.
+ * evaluator only. C4b owns firing notification/log plumbing. C4c converts
+ * safe effects into explicit runtime-session proposals; later slices own any
+ * world-changing effect execution.
  * ========================================================================== */
 (function (root) {
     'use strict';
@@ -60,6 +61,226 @@
     }
     function normalizeEffects(v) {
         return arr(v).map(function (effect) { return clone(effect); });
+    }
+    var SAFE_RUNTIME_EFFECT_KINDS = {
+        add_notification: true,
+        set_runtime_flag: true,
+        clear_runtime_flag: true,
+        open_decision_point: true,
+        close_decision_point: true,
+        update_mission_task_status: true,
+        request_operator_decision: true
+    };
+    var DANGEROUS_RUNTIME_EFFECT_REASONS = {
+        move_unit: 'direct_unit_mutation_blocked',
+        teleport_unit: 'direct_unit_mutation_blocked',
+        mutate_unit: 'direct_unit_mutation_blocked',
+        update_unit: 'direct_unit_mutation_blocked',
+        destroy_unit: 'direct_unit_mutation_blocked',
+        damage_unit: 'direct_combat_mutation_blocked',
+        kill_unit: 'direct_combat_mutation_blocked',
+        engage_unit: 'direct_combat_mutation_blocked',
+        engage_target: 'direct_combat_mutation_blocked',
+        set_contact: 'direct_detection_or_contact_mutation_blocked',
+        create_contact: 'direct_detection_or_contact_mutation_blocked',
+        update_contact: 'direct_detection_or_contact_mutation_blocked',
+        delete_contact: 'direct_detection_or_contact_mutation_blocked',
+        change_detection: 'direct_detection_or_contact_mutation_blocked',
+        modify_detection: 'direct_detection_or_contact_mutation_blocked',
+        change_weapon_state: 'direct_engagement_or_weapon_mutation_blocked',
+        fire_weapon: 'direct_engagement_or_weapon_mutation_blocked',
+        mutate_map: 'direct_map_mutation_blocked',
+        update_map: 'direct_map_mutation_blocked',
+        apply_map_state: 'direct_map_mutation_blocked'
+    };
+
+    function effectKind(raw) {
+        if (typeof raw === 'string') return String(raw).toLowerCase();
+        raw = obj(raw);
+        return String(raw.kind || raw.type || raw.effect_type || raw.action || 'unsupported').toLowerCase();
+    }
+    function effectPayload(raw) {
+        if (typeof raw === 'string') return {};
+        raw = obj(raw);
+        if (raw.payload && typeof raw.payload === 'object' && !Array.isArray(raw.payload)) return clone(raw.payload);
+        var payload = {};
+        Object.keys(raw).forEach(function (key) {
+            if (/^(id|effect_id|kind|type|effect_type|action|enabled|source)$/.test(key)) return;
+            payload[key] = clone(raw[key]);
+        });
+        return payload;
+    }
+    function normalizeRuntimeEffects(event) {
+        event = obj(event);
+        return arr(event.effects).map(function (raw, idx) {
+            raw = (typeof raw === 'string') ? { kind: raw } : obj(raw);
+            var id = raw.id != null ? raw.id : (raw.effect_id != null ? raw.effect_id : ((event.id || 'runtime-event') + '-effect-' + (idx + 1)));
+            return {
+                id: String(id),
+                index: idx,
+                kind: effectKind(raw),
+                enabled: raw.enabled !== false,
+                payload: effectPayload(raw),
+                source: raw.source || event.source || 'scenario',
+                read_only: true
+            };
+        });
+    }
+    function runtimeEffectProposal(event, effect, status, reason, payload) {
+        event = obj(event);
+        effect = obj(effect);
+        return {
+            event_id: event.id != null ? String(event.id) : null,
+            effect_id: effect.id != null ? String(effect.id) : null,
+            kind: effect.kind || 'unsupported',
+            status: status || 'proposed',
+            reason: reason || null,
+            payload: clone(payload !== undefined ? payload : effect.payload),
+            at_elapsed_hours: firstFinite([event.at_elapsed_hours, event.elapsed_hours, event.trigger_elapsed_hours]),
+            read_only: true
+        };
+    }
+    function unsafeRuntimeEffectReason(kind) {
+        kind = String(kind || 'unsupported').toLowerCase();
+        return DANGEROUS_RUNTIME_EFFECT_REASONS[kind] || 'unsupported_effect_kind';
+    }
+    function blockUnsafeRuntimeEffect(effect, reason, context) {
+        context = obj(context);
+        var event = {
+            id: context.event_id || null,
+            at_elapsed_hours: context.at_elapsed_hours
+        };
+        var normalized = (effect && effect.kind && effect.id !== undefined)
+            ? effect
+            : normalizeRuntimeEffects({ id: event.id || 'runtime-event', effects: [effect] })[0];
+        return runtimeEffectProposal(event, normalized, 'blocked', reason || unsafeRuntimeEffectReason(normalized && normalized.kind), normalized && normalized.payload);
+    }
+    function evaluateRuntimeEventEffects(event, runtimeState) {
+        runtimeState = obj(runtimeState);
+        return normalizeRuntimeEffects(event).filter(function (effect) {
+            return effect && effect.enabled;
+        }).map(function (effect) {
+            if (SAFE_RUNTIME_EFFECT_KINDS[effect.kind]) return runtimeEffectProposal(event, effect, 'proposed', null, effect.payload);
+            return runtimeEffectProposal(event, effect, 'blocked', unsafeRuntimeEffectReason(effect.kind), effect.payload);
+        });
+    }
+    function normalizeRuntimeEffectState(runtimeState) {
+        var st = clone(obj(runtimeState));
+        if (!st.runtime_flags || typeof st.runtime_flags !== 'object' || Array.isArray(st.runtime_flags)) st.runtime_flags = {};
+        if (!st.open_decision_points || typeof st.open_decision_points !== 'object' || Array.isArray(st.open_decision_points)) st.open_decision_points = {};
+        if (!st.mission_task_status || typeof st.mission_task_status !== 'object' || Array.isArray(st.mission_task_status)) st.mission_task_status = {};
+        if (!Array.isArray(st.pending_effects)) st.pending_effects = [];
+        if (!Array.isArray(st.blocked_effects)) st.blocked_effects = [];
+        if (!Array.isArray(st.last_effects)) st.last_effects = [];
+        return st;
+    }
+    function firstString(payload, keys) {
+        payload = obj(payload);
+        for (var i = 0; i < keys.length; i += 1) {
+            var v = payload[keys[i]];
+            if (v != null && String(v)) return String(v);
+        }
+        return null;
+    }
+    function finalEffectProposal(proposal, status, reason, payload) {
+        var out = clone(proposal);
+        out.status = status;
+        out.reason = reason || null;
+        if (payload !== undefined) out.payload = clone(payload);
+        return out;
+    }
+    function blockedFinalProposal(proposal, reason) {
+        return finalEffectProposal(proposal, 'blocked', reason || 'invalid_effect_payload');
+    }
+    function applySafeRuntimeEventEffects(runtimeState, event, effects) {
+        event = clone(obj(event));
+        if (effects !== undefined) event.effects = effects;
+        var state = normalizeRuntimeEffectState(runtimeState);
+        var proposals = evaluateRuntimeEventEffects(event, state);
+        var finalEffects = [];
+
+        proposals.forEach(function (proposal) {
+            var kind = proposal.kind;
+            var payload = obj(proposal.payload);
+            var finalProposal = null;
+
+            if (proposal.status === 'blocked') {
+                finalProposal = proposal;
+                state.blocked_effects.push(finalProposal);
+                state.last_effects.push(finalProposal);
+                finalEffects.push(finalProposal);
+                return;
+            }
+
+            if (kind === 'add_notification') {
+                finalProposal = finalEffectProposal(proposal, 'applied_safe');
+            } else if (kind === 'set_runtime_flag') {
+                var setKey = firstString(payload, ['key', 'flag', 'name', 'id']);
+                if (!setKey) finalProposal = blockedFinalProposal(proposal, 'missing_runtime_flag_key');
+                else {
+                    state.runtime_flags[setKey] = payload.value !== undefined ? clone(payload.value) : true;
+                    finalProposal = finalEffectProposal(proposal, 'applied_safe');
+                }
+            } else if (kind === 'clear_runtime_flag') {
+                var clearKey = firstString(payload, ['key', 'flag', 'name', 'id']);
+                if (!clearKey) finalProposal = blockedFinalProposal(proposal, 'missing_runtime_flag_key');
+                else {
+                    delete state.runtime_flags[clearKey];
+                    finalProposal = finalEffectProposal(proposal, 'applied_safe');
+                }
+            } else if (kind === 'open_decision_point') {
+                var openId = firstString(payload, ['decision_point_id', 'decision_id', 'id']);
+                if (!openId) finalProposal = blockedFinalProposal(proposal, 'missing_decision_point_id');
+                else {
+                    state.open_decision_points[openId] = {
+                        status: 'open',
+                        event_id: proposal.event_id,
+                        effect_id: proposal.effect_id,
+                        title: payload.title || payload.label || null,
+                        at_elapsed_hours: proposal.at_elapsed_hours
+                    };
+                    finalProposal = finalEffectProposal(proposal, 'applied_safe');
+                }
+            } else if (kind === 'close_decision_point') {
+                var closeId = firstString(payload, ['decision_point_id', 'decision_id', 'id']);
+                if (!closeId) finalProposal = blockedFinalProposal(proposal, 'missing_decision_point_id');
+                else {
+                    state.open_decision_points[closeId] = {
+                        status: 'closed',
+                        event_id: proposal.event_id,
+                        effect_id: proposal.effect_id,
+                        at_elapsed_hours: proposal.at_elapsed_hours
+                    };
+                    finalProposal = finalEffectProposal(proposal, 'applied_safe');
+                }
+            } else if (kind === 'update_mission_task_status') {
+                var taskId = firstString(payload, ['mission_task_id', 'task_id', 'id']);
+                var status = firstString(payload, ['status', 'runtime_status']);
+                if (!taskId) finalProposal = blockedFinalProposal(proposal, 'missing_mission_task_id');
+                else if (!status) finalProposal = blockedFinalProposal(proposal, 'missing_mission_task_status');
+                else {
+                    state.mission_task_status[taskId] = {
+                        status: status,
+                        event_id: proposal.event_id,
+                        effect_id: proposal.effect_id,
+                        at_elapsed_hours: proposal.at_elapsed_hours
+                    };
+                    finalProposal = finalEffectProposal(proposal, 'applied_safe');
+                }
+            } else if (kind === 'request_operator_decision') {
+                var request = finalEffectProposal(proposal, 'proposed');
+                state.pending_effects.push(request);
+                finalProposal = request;
+            } else {
+                finalProposal = blockedFinalProposal(proposal, unsafeRuntimeEffectReason(kind));
+            }
+
+            if (finalProposal.status === 'blocked') state.blocked_effects.push(finalProposal);
+            state.last_effects.push(finalProposal);
+            finalEffects.push(finalProposal);
+        });
+
+        return { state: state, effects: finalEffects, read_only: true };
     }
 
     function normalizeFiredState(firedState) {
@@ -294,9 +515,14 @@
         getDueRuntimeEvents: getDueRuntimeEvents,
         markRuntimeEventsFired: markRuntimeEventsFired,
         resetRuntimeEventState: resetRuntimeEventState,
+        normalizeRuntimeEffects: normalizeRuntimeEffects,
+        evaluateRuntimeEventEffects: evaluateRuntimeEventEffects,
+        applySafeRuntimeEventEffects: applySafeRuntimeEventEffects,
+        blockUnsafeRuntimeEffect: blockUnsafeRuntimeEffect,
         _internal: {
             elapsedFromTime: elapsedFromTime,
-            normalizeFiredState: normalizeFiredState
+            normalizeFiredState: normalizeFiredState,
+            normalizeRuntimeEffectState: normalizeRuntimeEffectState
         }
     };
 

@@ -174,7 +174,7 @@ ok('T-9 no event effects execute on units, map state, backend, or journal in the
     JSON.stringify(global.units) === JSON.stringify(unitsBefore) &&
     mapCalls.applyState === 0 &&
     mapCalls.applyWorldStateUnitDeltas === 0 &&
-    !/(fetch\s*\(|XMLHttpRequest|applyState|applyWorldStateUnitDeltas|window\.units|global\.units|journal|effects\s*\.|executeEffect)/.test(fireBlock));
+    !/(fetch\s*\(|XMLHttpRequest|applyState|applyWorldStateUnitDeltas|window\.units|global\.units|journal|executeEffect|moveUnit|destroyUnit|mutateUnit)/.test(fireBlock));
 
 global.RmoozScenario.scenario = scenario();
 FF._setCoaExecForTest(execState(0.49));

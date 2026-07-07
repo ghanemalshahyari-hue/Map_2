@@ -62,6 +62,29 @@
         }
         return pts[pts.length - 1].slice();
     }
+    function trailAtRouteProgress(route, progress) {
+        var pts = arr(route).map(normalizePoint).filter(Boolean);
+        if (!pts.length) return [];
+        if (pts.length === 1) return [pts[0].slice()];
+        progress = Math.max(0, Math.min(1, num(progress, 0)));
+        if (progress <= 0) return [pts[0].slice()];
+        if (progress >= 1) return pts.map(clone);
+        var total = routeDistance(pts);
+        if (total <= 0) return [pts[0].slice(), pts[pts.length - 1].slice()];
+        var target = total * progress, walked = 0;
+        var out = [pts[0].slice()];
+        for (var i = 1; i < pts.length; i++) {
+            var leg = distance(pts[i - 1], pts[i]);
+            if (walked + leg >= target) {
+                var cur = interpolate(pts[i - 1], pts[i], leg > 0 ? ((target - walked) / leg) : 1);
+                if (cur && !samePoint(out[out.length - 1], cur)) out.push(cur);
+                return out;
+            }
+            walked += leg;
+            if (!samePoint(out[out.length - 1], pts[i])) out.push(pts[i].slice());
+        }
+        return out;
+    }
 
     function emptyState() {
         return {
@@ -110,6 +133,32 @@
         }
         return null;
     }
+    function candidateUnit(context, unitId) {
+        var units = arr(context && context.units);
+        for (var i = 0; i < units.length; i++) {
+            var u = units[i];
+            if (!u) continue;
+            var id = u.unit_id || u.unit_uid || u.uid || u.id || u.name;
+            if (String(id) === String(unitId)) return u;
+        }
+        return null;
+    }
+    function resolveMovementSpeed(plan, payload, context, unitId) {
+        var explicit = num(payload && payload.speed, num(payload && payload.speed_per_hour, num(plan && plan.speed, NaN)));
+        if (isFinite(+explicit)) return { speed: +explicit, source: 'effect' };
+        var unitSpeeds = (context && (context.unit_speeds || context.unit_speed_by_id)) || {};
+        var unitSpeed = unitId && unitSpeeds ? num(unitSpeeds[unitId], NaN) : NaN;
+        if (isFinite(+unitSpeed)) return { speed: +unitSpeed, source: 'unit' };
+        var unit = candidateUnit(context, unitId);
+        unitSpeed = unit ? num(unit.speed || unit.speed_per_hour || unit.movement_speed, NaN) : NaN;
+        if (isFinite(+unitSpeed)) return { speed: +unitSpeed, source: 'unit' };
+        var domain = String((payload && (payload.domain || payload.movement_domain)) || (plan && (plan.domain || plan.movement_domain)) || (unit && (unit.domain || unit.movement_domain)) || '').toLowerCase();
+        var domainSpeeds = (context && (context.domain_speeds || context.speed_by_domain)) || {};
+        var domainSpeed = domain && domainSpeeds ? num(domainSpeeds[domain], NaN) : NaN;
+        if (isFinite(+domainSpeed)) return { speed: +domainSpeed, source: 'domain', domain: domain };
+        var fallback = num(context && context.default_speed, 1);
+        return { speed: fallback, source: 'default', domain: domain || null };
+    }
     function movementFromExecutionPlan(plan, context) {
         var p = isObj(plan && plan.payload) ? plan.payload : {};
         var unitId = plan.unit_id || p.unit_id || p.unit_uid || p.uid || p.actor;
@@ -119,7 +168,8 @@
         if (!route.length && start && end) route = [start, end];
         if (route.length && !start) start = route[0];
         if (route.length && !end) end = route[route.length - 1];
-        var speed = num(p.speed, num(p.speed_per_hour, num(plan.speed, num(context && context.default_speed, 1))));
+        var resolvedSpeed = resolveMovementSpeed(plan, p, context || {}, unitId);
+        var speed = resolvedSpeed.speed;
         var started = num(context && context.elapsed_hours, num(plan.planned_at_elapsed_hours, 0));
         var id = movementId(plan);
         var base = {
@@ -130,12 +180,15 @@
             to: end,
             route: route,
             speed: speed,
+            speed_source: resolvedSpeed.source,
+            domain: resolvedSpeed.domain || String((p.domain || p.movement_domain || plan.domain || plan.movement_domain || '') || '').toLowerCase() || null,
             started_at_elapsed_hours: started,
             eta_elapsed_hours: null,
             progress: 0,
             status: 'planned',
             source_execution_plan: clone(plan),
             current_position: start,
+            trail: trailAtRouteProgress(route, 0),
             arrival_fired: false,
             reason: null
         };
@@ -155,6 +208,7 @@
     }
     function syncPosition(st, mv) {
         if (!mv || !mv.unit_id || !mv.current_position) return;
+        mv.trail = trailAtRouteProgress(mv.route, mv.progress);
         st.runtime_positions[mv.unit_id] = clone(mv.current_position);
         st.runtime_world_state.positions[mv.unit_id] = {
             unit_id: mv.unit_id,
@@ -162,7 +216,13 @@
             source: 'runtime_movement',
             movement_id: mv.movement_id,
             progress: mv.progress,
-            status: mv.status
+            status: mv.status,
+            eta_elapsed_hours: mv.eta_elapsed_hours,
+            speed: mv.speed,
+            speed_source: mv.speed_source || null,
+            domain: mv.domain || null,
+            route: clone(mv.route),
+            trail: clone(mv.trail)
         };
     }
     function addJournal(st, kind, mv, elapsed) {
@@ -290,6 +350,10 @@
     return {
         normalizePoint: normalizePoint,
         normalizeMovementState: normalizeMovementState,
+        routeDistance: routeDistance,
+        pointAtRouteProgress: pointAtRouteProgress,
+        trailAtRouteProgress: trailAtRouteProgress,
+        resolveMovementSpeed: resolveMovementSpeed,
         isMovementExecutionPlan: isMovementExecutionPlan,
         movementFromExecutionPlan: movementFromExecutionPlan,
         startMovementExecutionPlans: startMovementExecutionPlans,

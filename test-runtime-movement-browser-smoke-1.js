@@ -71,7 +71,10 @@ console.log('\n=== MOV2b browser smoke: runtime movement map display ===\n');
                         movement_status: mv && mv.status || 'moving',
                         movement_id: mv && mv.movement_id || null,
                         eta_elapsed_hours: mv && mv.eta_elapsed_hours,
-                        progress: mv && mv.progress
+                        progress: mv && mv.progress,
+                        speed: mv && mv.speed,
+                        route: mv && mv.route,
+                        trail: mv && mv.trail
                     };
                 });
                 return out;
@@ -105,11 +108,13 @@ console.log('\n=== MOV2b browser smoke: runtime movement map display ===\n');
                 effect_kind: 'runtime_movement',
                 classification: 'requires_world_state_executor',
                 status: 'requires_executor',
-                payload: { unit_id: 'U1', from: [0, 0], to: [1, 0], route: [[0, 0], [1, 0]], speed: 0.25 }
+                payload: { unit_id: 'U1', from: [0, 0], to: [1, 0], route: [[0, 0], [0.5, 0], [1, 0]], speed: 0.25 }
             };
             var started = window.AppRuntimeMovement.startMovementExecutionPlans(null, [plan], { elapsed_hours: 0 });
             var moving = window.AppRuntimeMovement.updateRuntimeMovementState(started.state, 2, {});
             var afterMove = publish(moving.state);
+            var routeTrailAfterMove = window.AppAdjudicatorMap._getOwnedRunMovementDisplaySummary &&
+                window.AppAdjudicatorMap._getOwnedRunMovementDisplaySummary();
             var sourceAfterMove = marker && marker._rmoozRuntimeOwnedPosition && marker._rmoozRuntimeOwnedPosition.source;
 
             var paused = window.AppRuntimeMovement.updateRuntimeMovementState(moving.state, 3, { paused: true });
@@ -123,6 +128,8 @@ console.log('\n=== MOV2b browser smoke: runtime movement map display ===\n');
 
             window.AppAdjudicatorMap.setOwnedRunPositions(null);
             var afterReset = ll(marker);
+            var routeTrailAfterReset = window.AppAdjudicatorMap._getOwnedRunMovementDisplaySummary &&
+                window.AppAdjudicatorMap._getOwnedRunMovementDisplaySummary();
 
             return {
                 appLoaded: !!(window.AppRuntimeMovement && window.AppAdjudicatorMap && window.L),
@@ -135,6 +142,8 @@ console.log('\n=== MOV2b browser smoke: runtime movement map display ===\n');
                 afterReset: afterReset,
                 arrivalCount: arrived.state.arrival_events.length,
                 markerOwnedSource: sourceAfterMove,
+                routeTrailAfterMove: routeTrailAfterMove,
+                routeTrailAfterReset: routeTrailAfterReset,
                 scenarioUnchanged: JSON.stringify(scenario) === JSON.stringify(scenarioBefore),
                 windowUnitsUnchanged: JSON.stringify(window.units) === JSON.stringify(unitsBefore)
             };
@@ -144,13 +153,14 @@ console.log('\n=== MOV2b browser smoke: runtime movement map display ===\n');
         ok('T-2 a test unit marker exists safely', result.unitExists && result.initial && close(result.initial.lat, 0) && close(result.initial.lng, 0));
         ok('T-3 runtime-owned movement position is published', result.markerOwnedSource === 'runtime_movement');
         ok('T-4 marker LatLng changes from A to B', result.afterMove && result.afterMove.lng > result.initial.lng && close(result.afterMove.lat, 0));
-        ok('T-5 pause keeps marker LatLng unchanged', close(result.afterPause.lng, result.afterMove.lng) && close(result.afterPause.lat, result.afterMove.lat));
-        ok('T-6 resume changes marker LatLng again', result.afterResume.lng > result.afterPause.lng && close(result.afterResume.lat, 0));
-        ok('T-7 arrival leaves marker at final coordinate once', close(result.afterArrival.lng, 1) && close(result.afterArrival.lat, 0) && result.arrivalCount === 1);
-        ok('T-8 reset clears runtime override or restores marker display', result.afterReset && close(result.afterReset.lng, 0) && close(result.afterReset.lat, 0));
-        ok('T-9 window.units is not mutated', result.windowUnitsUnchanged === true);
-        ok('T-10 scenario JSON is not mutated', result.scenarioUnchanged === true);
-        ok('T-11 no browser console/page errors', browserErrors.length === 0, browserErrors.join('; '));
+        ok('T-5 route/trail Leaflet display layers are drawn from runtime ownership', result.routeTrailAfterMove && result.routeTrailAfterMove.layers >= 2);
+        ok('T-6 pause keeps marker LatLng unchanged', close(result.afterPause.lng, result.afterMove.lng) && close(result.afterPause.lat, result.afterMove.lat));
+        ok('T-7 resume changes marker LatLng again', result.afterResume.lng > result.afterPause.lng && close(result.afterResume.lat, 0));
+        ok('T-8 arrival leaves marker at final coordinate once', close(result.afterArrival.lng, 1) && close(result.afterArrival.lat, 0) && result.arrivalCount === 1);
+        ok('T-9 reset clears runtime override and route/trail display', result.afterReset && close(result.afterReset.lng, 0) && close(result.afterReset.lat, 0) && result.routeTrailAfterReset && result.routeTrailAfterReset.layers === 0);
+        ok('T-10 window.units is not mutated', result.windowUnitsUnchanged === true);
+        ok('T-11 scenario JSON is not mutated', result.scenarioUnchanged === true);
+        ok('T-12 no browser console/page errors', browserErrors.length === 0, browserErrors.join('; '));
     } finally {
         await browser.close();
     }

@@ -158,6 +158,7 @@
     // them, so committed-Run moves PERSIST across step navigation instead of snapping back to the scenario
     // baseline. null = pure baseline (unchanged behaviour). Internal override only — never mutates scenario.
     let ownedRunPositions   = null;
+    let ownedRunMovementDisplay = []; // display-only runtime route/trail polylines derived from ownedRunPositions
     // OPTION-C / SLICE-C1: transient scenario runtime clock published by the committed SCC run via
     // setRunClock ({ start_hours, current_hours, end_hours, playing, speed }). When present, applyState
     // derives World State WITH it (deriveWorldStateWithOwned's 4th arg), attaching a live ws.clock
@@ -6735,8 +6736,13 @@
     function setOwnedRunPositions(map) {
         const previous = ownedRunPositions;
         ownedRunPositions = (map && typeof map === 'object' && Object.keys(map).length) ? map : null;
-        if (!ownedRunPositions && previous) return _clearOwnedRunPositionMarkerDisplay(previous);
-        return _applyOwnedRunPositionsToMarkers();
+        if (!ownedRunPositions) {
+            _clearOwnedRunMovementDisplay();
+            return previous ? _clearOwnedRunPositionMarkerDisplay(previous) : 0;
+        }
+        const applied = _applyOwnedRunPositionsToMarkers();
+        _renderOwnedRunMovementDisplay();
+        return applied;
     }
     // Owned [lon,lat] for a uid, or null. Used as the position override in the marker-update loops.
     function _ownedPosFor(uid) {
@@ -6751,6 +6757,54 @@
         const pct = isFinite(+owned.progress) ? (' · ' + Math.round(+owned.progress * 100) + '%') : '';
         const extra = '<br><span style="color:#9ec2ec;">Runtime movement: ' + String(status).toUpperCase() + (eta ? (' · ETA ' + eta) : '') + pct + '</span>';
         return String(base || '') + extra;
+    }
+    function _ownedRunLatLngs(points) {
+        if (!Array.isArray(points)) return [];
+        return points.map(function (p) {
+            if (!Array.isArray(p) || p.length < 2 || !isFinite(+p[0]) || !isFinite(+p[1])) return null;
+            return [+p[1], +p[0]];
+        }).filter(Boolean);
+    }
+    function _clearOwnedRunMovementDisplay() {
+        for (const layer of ownedRunMovementDisplay) {
+            if (layer && layerGroup) { try { layerGroup.removeLayer(layer); } catch (_) {} }
+        }
+        ownedRunMovementDisplay = [];
+        return 0;
+    }
+    function _renderOwnedRunMovementDisplay() {
+        _clearOwnedRunMovementDisplay();
+        if (!ownedRunPositions || !window.L || !layerGroup) return 0;
+        let drawn = 0;
+        Object.keys(ownedRunPositions).forEach(function (uid) {
+            const owned = ownedRunPositions[uid] || {};
+            if (owned.source !== 'runtime_movement') return;
+            const route = _ownedRunLatLngs(owned.route);
+            const trail = _ownedRunLatLngs(owned.trail);
+            if (route.length >= 2) {
+                try {
+                    const runtime_route = window.L.polyline(route, {
+                        color: '#9ec2ec', weight: 2, opacity: 0.45, dashArray: '6 6',
+                        interactive: false, className: 'wg-runtime-route', pane: SCENARIO_GRAPHICS_PANE,
+                    });
+                    runtime_route.addTo(layerGroup);
+                    ownedRunMovementDisplay.push(runtime_route);
+                    drawn++;
+                } catch (_) {}
+            }
+            if (trail.length >= 2) {
+                try {
+                    const runtime_trail = window.L.polyline(trail, {
+                        color: '#7fd6a0', weight: 3, opacity: 0.8,
+                        interactive: false, className: 'wg-runtime-trail', pane: SCENARIO_GRAPHICS_PANE,
+                    });
+                    runtime_trail.addTo(layerGroup);
+                    ownedRunMovementDisplay.push(runtime_trail);
+                    drawn++;
+                } catch (_) {}
+            }
+        });
+        return drawn;
     }
     function _applyOwnedRunPositionsToMarkers() {
         if (!ownedRunPositions) return 0;
@@ -6783,6 +6837,7 @@
         return applied;
     }
     function _clearOwnedRunPositionMarkerDisplay(previous) {
+        _clearOwnedRunMovementDisplay();
         var cleared = 0;
         const prev = previous && typeof previous === 'object' ? previous : {};
         Object.keys(prev).forEach(function (uid) {
@@ -7020,6 +7075,7 @@
         setOwnedRunPositions,
         getOwnedRunPositions: () => ownedRunPositions,
         _applyOwnedRunPositionsToMarkers,
+        _getOwnedRunMovementDisplaySummary: () => ({ layers: ownedRunMovementDisplay.length }),
         // OPTION-C / SLICE-C1: committed-run scenario runtime clock (live current_time in ws.clock).
         setRunClock,
         getRunClock: () => runClock,

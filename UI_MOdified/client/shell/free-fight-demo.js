@@ -4072,7 +4072,11 @@
                 movement_status: (mv && mv.status) || 'moving',
                 movement_id: (mv && mv.movement_id) || null,
                 eta_elapsed_hours: (mv && isFinite(+mv.eta_elapsed_hours)) ? +mv.eta_elapsed_hours : null,
-                progress: (mv && isFinite(+mv.progress)) ? +mv.progress : null
+                progress: (mv && isFinite(+mv.progress)) ? +mv.progress : null,
+                speed: (mv && isFinite(+mv.speed)) ? +mv.speed : null,
+                domain: (mv && mv.domain) || null,
+                route: (mv && Array.isArray(mv.route)) ? JSON.parse(JSON.stringify(mv.route)) : null,
+                trail: (mv && Array.isArray(mv.trail)) ? JSON.parse(JSON.stringify(mv.trail)) : null
             };
         });
         return Object.keys(out).length ? out : null;

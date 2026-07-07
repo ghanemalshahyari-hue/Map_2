@@ -3784,7 +3784,9 @@
             rejected_effects: [],
             doctrine_journaled_ids: {},
             pending_doctrine_journal_records: [],
-            last_doctrine_journal_error: null
+            last_doctrine_journal_error: null,
+            last_doctrine_journal_retry_at: null,
+            doctrine_journal_retry_count: 0
         };
     }
     function _ensureRuntimeEventSessionState() {
@@ -3811,6 +3813,8 @@
         if (!st.doctrine_journaled_ids || typeof st.doctrine_journaled_ids !== 'object' || Array.isArray(st.doctrine_journaled_ids)) st.doctrine_journaled_ids = {};
         if (!Array.isArray(st.pending_doctrine_journal_records)) st.pending_doctrine_journal_records = [];
         if (st.last_doctrine_journal_error === undefined) st.last_doctrine_journal_error = null;
+        if (st.last_doctrine_journal_retry_at === undefined) st.last_doctrine_journal_retry_at = null;
+        if (!isFinite(+st.doctrine_journal_retry_count)) st.doctrine_journal_retry_count = 0;
         return st;
     }
     function _resetRuntimeEventSessionState() {
@@ -3870,6 +3874,8 @@
         st.doctrine_journaled_ids = (next.doctrine_journaled_ids && typeof next.doctrine_journaled_ids === 'object') ? next.doctrine_journaled_ids : {};
         st.pending_doctrine_journal_records = Array.isArray(next.pending_doctrine_journal_records) ? next.pending_doctrine_journal_records : [];
         st.last_doctrine_journal_error = next.last_doctrine_journal_error || null;
+        st.last_doctrine_journal_retry_at = next.last_doctrine_journal_retry_at || null;
+        st.doctrine_journal_retry_count = isFinite(+next.doctrine_journal_retry_count) ? +next.doctrine_journal_retry_count : 0;
     }
     function _runtimeApprovalOptions() {
         var w = W();
@@ -3914,6 +3920,32 @@
             try { _appendRuntimeEventLog(msg); } catch (_) {}
             try { _recordDecision({ role: 'operator', action: 'runtime_doctrine_' + verb, called_llm: false, source: 'runtime-events', reason: rec.reason || verb, result_summary: msg }); } catch (_) {}
         }
+        try { updatePanel(); } catch (_) {}
+        return res;
+    }
+    function _runtimeApprovalHistory() {
+        var st = _ensureRuntimeEventSessionState();
+        var API = W() && W().AppRuntimeEvents;
+        if (!st || !API || typeof API.buildDoctrineApprovalHistory !== 'function') return [];
+        return API.buildDoctrineApprovalHistory(st);
+    }
+    function _runtimeApprovalSummary() {
+        var st = _ensureRuntimeEventSessionState();
+        var API = W() && W().AppRuntimeEvents;
+        if (!st || !API || typeof API.summarizeDoctrineApprovals !== 'function') {
+            return { pending: 0, approved: 0, rejected: 0, blocked: 0, journal_retry_queue: 0, read_only: true };
+        }
+        return API.summarizeDoctrineApprovals(st);
+    }
+    function _retryPendingDoctrineJournalRecords() {
+        var st = _ensureRuntimeEventSessionState();
+        var API = W() && W().AppRuntimeEvents;
+        if (!st || !API || typeof API.retryPendingDoctrineJournalRecords !== 'function') return null;
+        var res = API.retryPendingDoctrineJournalRecords(st, _runtimeApprovalOptions());
+        _syncRuntimeEffectSessionState(st, res && res.state);
+        try {
+            _appendRuntimeEventLog('Doctrine journal retry: attempted ' + ((res && res.attempted) || 0) + ', queued ' + ((res && res.queued) || 0) + '.');
+        } catch (_) {}
         try { updatePanel(); } catch (_) {}
         return res;
     }
@@ -6569,6 +6601,9 @@
         // OPTION-C/C3b: the primary run state is TIME — expose the explicit runtime state + the
         // (secondary, review-only) authored snapshot in effect at the current runtime time.
         runtimeApprovals: function () { try { return _runtimeApprovalList(); } catch (_) { return []; } },
+        runtimeApprovalHistory: function () { try { return _runtimeApprovalHistory(); } catch (_) { return []; } },
+        runtimeApprovalSummary: function () { try { return _runtimeApprovalSummary(); } catch (_) { return { pending: 0, approved: 0, rejected: 0, blocked: 0, journal_retry_queue: 0, read_only: true }; } },
+        retryPendingDoctrineJournalRecords: function () { return _retryPendingDoctrineJournalRecords(); },
         approveRuntimeApproval: function (approvalId) { return _decideRuntimeApproval(approvalId, 'approve'); },
         rejectRuntimeApproval: function (approvalId) { return _decideRuntimeApproval(approvalId, 'reject'); },
         runtimeState: function () { try { return _runtimeState(); } catch (_) { return 'stopped'; } },

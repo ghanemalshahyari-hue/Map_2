@@ -182,6 +182,8 @@
         if (!st.doctrine_journaled_ids || typeof st.doctrine_journaled_ids !== 'object' || Array.isArray(st.doctrine_journaled_ids)) st.doctrine_journaled_ids = {};
         if (!Array.isArray(st.pending_doctrine_journal_records)) st.pending_doctrine_journal_records = [];
         if (st.last_doctrine_journal_error === undefined) st.last_doctrine_journal_error = null;
+        if (st.last_doctrine_journal_retry_at === undefined) st.last_doctrine_journal_retry_at = null;
+        if (!isFinite(Number(st.doctrine_journal_retry_count))) st.doctrine_journal_retry_count = 0;
         return st;
     }
     function firstString(payload, keys) {
@@ -356,6 +358,18 @@
             record && record.effect_status
         ].map(function (v) { return v == null ? '' : String(v); }).join('|');
     }
+    function normalizePendingDoctrineJournalRecord(record) {
+        record = clone(obj(record));
+        record.schema_version = record.schema_version || 'doctrine-journal-v1';
+        record.source = record.source || 'doctrine';
+        record.kind = record.kind || 'doctrine_effect_allowed';
+        record.matched_rules = arr(record.matched_rules);
+        record.reasons = arr(record.reasons);
+        record.source_layer = record.source_layer || 'doctrine';
+        record.doctrine_decision = record.doctrine_decision || 'allow';
+        record.effect_status = record.effect_status || record.status || null;
+        return record;
+    }
     function browserFetch() {
         if (typeof window === 'undefined' || root !== window) return null;
         return root && typeof root.fetch === 'function' ? root.fetch.bind(root) : null;
@@ -427,6 +441,83 @@
             p.approval_id = p.approval_id || id;
             return p;
         }).filter(function (p) { return p && p.status === 'requires_approval'; });
+    }
+    function historyItem(kind, source, item) {
+        item = obj(item);
+        var d = obj(item.doctrine_decision);
+        return {
+            kind: kind,
+            source: source,
+            approval_id: item.approval_id || item.effect_id || null,
+            effect_id: item.effect_id || null,
+            event_id: item.event_id || null,
+            decision_point_id: item.decision_point_id || d.decision_point_id || null,
+            effect_kind: item.effect_kind || item.kind || null,
+            decision: item.selected_action || item.doctrine_decision || d.doctrine_decision || item.status || null,
+            resulting_status: item.resulting_status || item.status || null,
+            required_authority: item.required_authority || d.required_authority || null,
+            matched_rules: clone(item.matched_rules || d.matched_rules || []),
+            reason: item.reason || arr(item.reasons || d.reasons).join('; ') || null,
+            scenario_time_label: item.scenario_time_label || null,
+            elapsed_hours: item.decided_at_elapsed_hours != null ? item.decided_at_elapsed_hours : (item.at_elapsed_hours != null ? item.at_elapsed_hours : item.elapsed_hours),
+            read_only: true
+        };
+    }
+    function buildDoctrineApprovalHistory(runtimeState) {
+        var st = normalizeRuntimeEffectState(runtimeState);
+        var out = [];
+        Object.keys(st.pending_approvals).forEach(function (id) {
+            var p = clone(st.pending_approvals[id]);
+            p.approval_id = p.approval_id || id;
+            out.push(historyItem('pending_approval', 'pending_approvals', p));
+        });
+        Object.keys(st.approval_decisions).forEach(function (id) {
+            var d = clone(st.approval_decisions[id]);
+            d.approval_id = d.approval_id || id;
+            out.push(historyItem(d.selected_action === 'reject' ? 'rejected' : 'approved', 'approval_decisions', d));
+        });
+        arr(st.doctrine_decisions).forEach(function (d) {
+            out.push(historyItem('doctrine_decision', 'doctrine_decisions', d));
+        });
+        arr(st.blocked_effects).forEach(function (e) {
+            out.push(historyItem('blocked', 'blocked_effects', e));
+        });
+        arr(st.approved_effects).forEach(function (e) {
+            out.push(historyItem('approved_effect', 'approved_effects', e));
+        });
+        arr(st.rejected_effects).forEach(function (e) {
+            out.push(historyItem('rejected_effect', 'rejected_effects', e));
+        });
+        arr(st.pending_doctrine_journal_records).forEach(function (r) {
+            r = normalizePendingDoctrineJournalRecord(r);
+            out.push(historyItem('pending_journal_retry', 'pending_doctrine_journal_records', {
+                effect_id: r.effect_id,
+                event_id: r.event_id,
+                decision_point_id: r.decision_point_id,
+                effect_kind: r.effect_kind,
+                status: r.effect_status,
+                doctrine_decision: r.doctrine_decision,
+                required_authority: r.required_authority,
+                matched_rules: r.matched_rules,
+                reasons: r.reasons,
+                scenario_time_label: r.scenario_time_label,
+                elapsed_hours: r.elapsed_hours
+            }));
+        });
+        return out;
+    }
+    function summarizeDoctrineApprovals(runtimeState) {
+        var st = normalizeRuntimeEffectState(runtimeState);
+        return {
+            pending: pendingApprovalList(st).length,
+            approved: arr(st.approved_effects).length,
+            rejected: arr(st.rejected_effects).length,
+            blocked: arr(st.blocked_effects).length,
+            journal_retry_queue: arr(st.pending_doctrine_journal_records).length,
+            decisions: Object.keys(st.approval_decisions).length,
+            doctrine_decisions: arr(st.doctrine_decisions).length,
+            read_only: true
+        };
     }
     function approvalResultStatus(effect) {
         var kind = effect && effect.kind;
@@ -509,6 +600,49 @@
             try { options.operatorLog(approval, finalEffect); } catch (_) {}
         }
         return { state: state, approval: approval, effect: finalEffect, status: 'recorded', read_only: true };
+    }
+    function retryPendingDoctrineJournalRecords(runtimeState, options) {
+        var state = normalizeRuntimeEffectState(runtimeState);
+        options = obj(options);
+        var writer = typeof options.journalDoctrineDecision === 'function'
+            ? options.journalDoctrineDecision
+            : commitDoctrineJournalViaSim;
+        var queued = arr(state.pending_doctrine_journal_records).map(normalizePendingDoctrineJournalRecord);
+        var remaining = [];
+        var attempted = 0;
+        var succeeded = 0;
+        var failed = 0;
+        state.last_doctrine_journal_retry_at = new Date().toISOString();
+        state.doctrine_journal_retry_count += 1;
+        queued.forEach(function (record) {
+            var id = doctrineJournalId(record);
+            if (state.doctrine_journaled_ids[id]) return;
+            attempted += 1;
+            try {
+                var result = writer(record, options);
+                if (result && typeof result.then === 'function') {
+                    remaining.push(record);
+                    result.then(function () {
+                        state.doctrine_journaled_ids[id] = true;
+                        state.pending_doctrine_journal_records = arr(state.pending_doctrine_journal_records).filter(function (r) {
+                            return doctrineJournalId(normalizePendingDoctrineJournalRecord(r)) !== id;
+                        });
+                    }).catch(function (err) {
+                        state.last_doctrine_journal_error = err && err.message ? err.message : String(err || 'doctrine_journal_retry_failed');
+                    });
+                } else {
+                    state.doctrine_journaled_ids[id] = true;
+                    succeeded += 1;
+                }
+            } catch (err) {
+                failed += 1;
+                state.last_doctrine_journal_error = err && err.message ? err.message : String(err || 'doctrine_journal_retry_failed');
+                remaining.push(record);
+            }
+        });
+        state.pending_doctrine_journal_records = remaining;
+        if (!failed) state.last_doctrine_journal_error = null;
+        return { state: state, attempted: attempted, succeeded: succeeded, failed: failed, queued: remaining.length, read_only: true };
     }
     function gateRuntimeEffectWithDoctrine(state, event, proposal, options) {
         var scenario = obj(obj(options).scenario || obj(event).scenario);
@@ -903,6 +1037,10 @@
         applySafeRuntimeEventEffects: applySafeRuntimeEventEffects,
         pendingApprovalList: pendingApprovalList,
         decideRuntimeApproval: decideRuntimeApproval,
+        buildDoctrineApprovalHistory: buildDoctrineApprovalHistory,
+        summarizeDoctrineApprovals: summarizeDoctrineApprovals,
+        normalizePendingDoctrineJournalRecord: normalizePendingDoctrineJournalRecord,
+        retryPendingDoctrineJournalRecords: retryPendingDoctrineJournalRecords,
         blockUnsafeRuntimeEffect: blockUnsafeRuntimeEffect,
         _internal: {
             elapsedFromTime: elapsedFromTime,

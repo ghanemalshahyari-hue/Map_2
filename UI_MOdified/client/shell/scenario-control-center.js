@@ -256,9 +256,20 @@
     function note(txt, col) { return '<div style="margin-top:5px;font-size:10px;color:' + (col || C.dim) + ';line-height:1.5;">' + txt + '</div>'; }
     function approvalSummaryHtml(eng) {
         var approvals = arr(safeRead(function () { return eng.runtimeApprovals ? eng.runtimeApprovals() : []; }, []));
-        if (!approvals.length) return '';
+        var summary = safeRead(function () { return eng.runtimeApprovalSummary ? eng.runtimeApprovalSummary() : null; }, null) || {};
+        var history = arr(safeRead(function () { return eng.runtimeApprovalHistory ? eng.runtimeApprovalHistory() : []; }, []));
+        var hasAudit = approvals.length || summary.approved || summary.rejected || summary.blocked || summary.journal_retry_queue;
+        if (!hasAudit) return '';
         var h = '<div data-scc="doctrine-approvals" style="margin:7px 0;padding:7px 9px;border:1px solid ' + C.warn + ';border-radius:6px;background:#1c1608;">' +
-            '<div style="font-size:10.5px;color:' + C.warn + ';font-weight:800;">Doctrine / ROE / WRA approvals pending (' + approvals.length + ')</div>';
+            '<div style="font-size:10.5px;color:' + C.warn + ';font-weight:800;">Doctrine / ROE / WRA approval audit</div>' +
+            '<div data-scc="doctrine-approval-summary" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:5px;font-size:9.5px;color:' + C.ink + ';">' +
+            '<span>pending <b style="color:#ffd27f;">' + (summary.pending || approvals.length || 0) + '</b></span>' +
+            '<span>approved <b style="color:' + C.good + ';">' + (summary.approved || 0) + '</b></span>' +
+            '<span>rejected <b style="color:' + C.bad + ';">' + (summary.rejected || 0) + '</b></span>' +
+            '<span>blocked <b style="color:' + C.bad + ';">' + (summary.blocked || 0) + '</b></span>' +
+            '<span>journal retry <b style="color:' + ((summary.journal_retry_queue || 0) ? C.warn : C.dim) + ';">' + (summary.journal_retry_queue || 0) + '</b></span>' +
+            ((summary.journal_retry_queue || 0) ? btnSec('scc-retry-doctrine-journal', 'Retry journal', 'Retry queued doctrine journal records; no effects execute') : '') +
+            '</div>';
         approvals.slice(0, 6).forEach(function (p, idx) {
             var d = p && p.doctrine_decision || {};
             var id = p.approval_id || p.effect_id || ('approval-' + idx);
@@ -280,6 +291,18 @@
                 btnWarn('scc-reject-doctrine-' + idx, 'Reject', 'Record rejection and keep the effect from later execution') +
                 '</div></div></div>';
         });
+        var details = history.filter(function (r) { return r && r.kind !== 'pending_approval'; }).slice(-4).reverse();
+        if (details.length) {
+            h += '<div data-scc="doctrine-approval-history" style="margin-top:7px;border-top:1px solid #5c4b1d;padding-top:5px;font-size:9.5px;color:' + C.dim + ';">';
+            details.forEach(function (r) {
+                h += '<div style="line-height:1.45;"><b style="color:' + C.ink + ';">' + esc(r.effect_kind || 'effect') + '</b> ' +
+                    esc(r.decision || r.resulting_status || r.kind) +
+                    ' / authority ' + esc(r.required_authority || 'operator') +
+                    ' / ' + esc(r.reason || 'recorded') +
+                    (r.scenario_time_label ? (' / ' + esc(r.scenario_time_label)) : '') + '</div>';
+            });
+            h += '</div>';
+        }
         return h + '</div>';
     }
     function openCmoTestGuide() {
@@ -862,6 +885,7 @@
         bindFn('scc-use-local-model', function () { if (typeof eng.switchToLocalModel === 'function') eng.switchToLocalModel(); });
         bindFn('scc-use-openrouter', function () { if (typeof eng.switchToOpenRouter === 'function') eng.switchToOpenRouter(); });
         bindFn('scc-evidence-toggle', function () { evidenceOpen = !evidenceOpen; (eng.repaint || function () {})(); });
+        bindFn('scc-retry-doctrine-journal', function () { if (eng.retryPendingDoctrineJournalRecords) eng.retryPendingDoctrineJournalRecords(); });
         arr(safeRead(function () { return eng.runtimeApprovals ? eng.runtimeApprovals() : []; }, [])).slice(0, 6).forEach(function (p, idx) {
             var id = p && (p.approval_id || p.effect_id);
             bindFn('scc-approve-doctrine-' + idx, function () { if (eng.approveRuntimeApproval) eng.approveRuntimeApproval(id); });

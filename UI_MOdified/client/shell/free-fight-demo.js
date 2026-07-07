@@ -3674,7 +3674,17 @@
     function _publishOwnedPositions() {
         var w = W(); var MAP = w && w.AppAdjudicatorMap;
         if (!MAP || typeof MAP.setOwnedRunPositions !== 'function') return;
-        try { MAP.setOwnedRunPositions((_coaExec && _coaExec.active && _coaExec.owned_positions) || null); } catch (_) {}
+        // Legacy B1 gate shape, retained for compatibility:
+        // MAP.setOwnedRunPositions((_coaExec && _coaExec.active && _coaExec.owned_positions) || null)
+        var owned = (_coaExec && _coaExec.active && _coaExec.owned_positions) || null;
+        var runtime = _runtimeMovementOwnedPositions();
+        var merged = null;
+        if (owned || runtime) {
+            merged = {};
+            if (owned) { Object.keys(owned).forEach(function (uid) { merged[uid] = owned[uid]; }); }
+            if (runtime) { Object.keys(runtime).forEach(function (uid) { merged[uid] = runtime[uid]; }); }
+        }
+        try { MAP.setOwnedRunPositions(merged); } catch (_) {}
     }
 
     // OPTION-C / SLICE-C1: scenario runtime clock. The committed Run advances a scenario clock
@@ -4028,6 +4038,7 @@
         var paused = pausedOverride === true || !!(_coaExec && (_coaExec.paused || (_coaExec.clock && _coaExec.clock.paused)));
         var res = MOV.updateRuntimeMovementState(_coaExec.runtime_movement, elapsed, { paused: paused });
         _coaExec.runtime_movement = res && res.state ? res.state : _coaExec.runtime_movement;
+        try { _publishOwnedPositions(); } catch (_) {}
         arr(res && res.arrivals).forEach(function (ev) {
             try { _appendToEventLog('Movement arrived: ' + esc(ev.unit_id || '?') + ' at ' + _eventHoursLabel(ev.at_elapsed_hours) + '.'); } catch (_) {}
             try { _recordDecision({ role: 'unit-controller', action: 'movement_arrival', called_llm: false, source: 'runtime-movement', result_summary: String(ev.unit_id || '?') + ' arrived' }); } catch (_) {}
@@ -4039,6 +4050,32 @@
         var MOV = W() && W().AppRuntimeMovement;
         if (!st || !MOV || typeof MOV.summarizeRuntimeMovement !== 'function') return { planned: 0, moving: 0, arrived: 0, paused: 0, blocked: 0, runtime_position_count: 0, next_eta: null, read_only: true };
         return MOV.summarizeRuntimeMovement(st);
+    }
+    function _runtimeMovementOwnedPositions() {
+        if (!_coaExec || !_coaExec.active || !_coaExec.runtime_movement) return null;
+        var st = _coaExec.runtime_movement;
+        var positions = (st.runtime_positions && typeof st.runtime_positions === 'object') ? st.runtime_positions : {};
+        var movements = (st.movements && typeof st.movements === 'object') ? st.movements : {};
+        var out = {};
+        Object.keys(positions).forEach(function (uid) {
+            var p = positions[uid];
+            if (!Array.isArray(p) || p.length < 2 || !isFinite(+p[0]) || !isFinite(+p[1])) return;
+            var mv = null;
+            Object.keys(movements).some(function (mid) {
+                var cand = movements[mid];
+                if (cand && String(cand.unit_id || '') === String(uid)) { mv = cand; return true; }
+                return false;
+            });
+            out[uid] = {
+                position: [+p[0], +p[1]],
+                source: 'runtime_movement',
+                movement_status: (mv && mv.status) || 'moving',
+                movement_id: (mv && mv.movement_id) || null,
+                eta_elapsed_hours: (mv && isFinite(+mv.eta_elapsed_hours)) ? +mv.eta_elapsed_hours : null,
+                progress: (mv && isFinite(+mv.progress)) ? +mv.progress : null
+            };
+        });
+        return Object.keys(out).length ? out : null;
     }
     function _applyRuntimeEventEffectsForEvent(event, API, st) {
         if (!event || !API || typeof API.applySafeRuntimeEventEffects !== 'function' || !st) {
@@ -6542,6 +6579,7 @@
         if (_coaExec) { _coaExec.paused = true; _coaExec.updated_at = _nowISO(); }
         _resetScenarioClockToStart();
         try { _resetRuntimeMovementState(); } catch (_) {}
+        try { _publishOwnedPositions(); } catch (_) {}
         try { _appendToEventLog('Scenario stopped by operator.'); } catch (_) {}
         updatePanel();
     }

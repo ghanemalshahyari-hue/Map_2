@@ -6733,13 +6733,75 @@
     // (applyState) keeps run-moved units at their run positions. Boundary-safe: stores an internal override
     // map only — no window.units / scenario mutation. Pass null/empty to clear (run reset / new scenario).
     function setOwnedRunPositions(map) {
+        const previous = ownedRunPositions;
         ownedRunPositions = (map && typeof map === 'object' && Object.keys(map).length) ? map : null;
+        if (!ownedRunPositions && previous) return _clearOwnedRunPositionMarkerDisplay(previous);
+        return _applyOwnedRunPositionsToMarkers();
     }
     // Owned [lon,lat] for a uid, or null. Used as the position override in the marker-update loops.
     function _ownedPosFor(uid) {
         const o = ownedRunPositions && uid && ownedRunPositions[uid];
         const p = o && o.position;
         return (Array.isArray(p) && p.length >= 2 && isFinite(+p[0]) && isFinite(+p[1])) ? [+p[0], +p[1]] : null;
+    }
+    function _ownedMovementTooltip(base, owned) {
+        if (!owned || owned.source !== 'runtime_movement') return base;
+        const status = owned.movement_status || 'moving';
+        const eta = isFinite(+owned.eta_elapsed_hours) ? _formatHrel(+owned.eta_elapsed_hours) : null;
+        const pct = isFinite(+owned.progress) ? (' · ' + Math.round(+owned.progress * 100) + '%') : '';
+        const extra = '<br><span style="color:#9ec2ec;">Runtime movement: ' + String(status).toUpperCase() + (eta ? (' · ETA ' + eta) : '') + pct + '</span>';
+        return String(base || '') + extra;
+    }
+    function _applyOwnedRunPositionsToMarkers() {
+        if (!ownedRunPositions) return 0;
+        var applied = 0;
+        Object.keys(ownedRunPositions).forEach(function (uid) {
+            const p = _ownedPosFor(uid);
+            if (!p) return;
+            const marker = blueMarkers[uid] || redMarkers[uid];
+            if (!marker) return;
+            const lon = +p[0], lat = +p[1];
+            try {
+                if (!marker._rmoozRuntimeOwnedBaseLatLng && marker.getLatLng) marker._rmoozRuntimeOwnedBaseLatLng = marker.getLatLng();
+                marker._wgLastLatLng = marker.getLatLng && marker.getLatLng();
+                marker.setLatLng([lat, lon]);
+            } catch (_) {}
+            const reg = unitRegistry[uid];
+            if (reg) { reg.lat = lat; reg.lon = lon; }
+            const owned = ownedRunPositions[uid] || {};
+            marker._rmoozRuntimeOwnedPosition = owned;
+            if (owned.source === 'runtime_movement') {
+                try {
+                    const base = marker._baseTooltip || (marker.getTooltip && marker.getTooltip() && marker.getTooltip().getContent && marker.getTooltip().getContent()) || '';
+                    const next = _ownedMovementTooltip(base, owned);
+                    if (marker.setTooltipContent && marker.getTooltip && marker.getTooltip()) marker.setTooltipContent(next);
+                    else if (marker.bindTooltip) marker.bindTooltip(next, { permanent: false });
+                } catch (_) {}
+            }
+            applied++;
+        });
+        return applied;
+    }
+    function _clearOwnedRunPositionMarkerDisplay(previous) {
+        var cleared = 0;
+        const prev = previous && typeof previous === 'object' ? previous : {};
+        Object.keys(prev).forEach(function (uid) {
+            const marker = blueMarkers[uid] || redMarkers[uid];
+            if (!marker) return;
+            try {
+                if (marker._rmoozRuntimeOwnedBaseLatLng && marker.setLatLng) marker.setLatLng(marker._rmoozRuntimeOwnedBaseLatLng);
+            } catch (_) {}
+            marker._rmoozRuntimeOwnedBaseLatLng = null;
+            marker._rmoozRuntimeOwnedPosition = null;
+            if (marker._baseTooltip) {
+                try {
+                    if (marker.setTooltipContent && marker.getTooltip && marker.getTooltip()) marker.setTooltipContent(marker._baseTooltip);
+                    else if (marker.bindTooltip) marker.bindTooltip(marker._baseTooltip, { permanent: false });
+                } catch (_) {}
+            }
+            cleared++;
+        });
+        return cleared;
     }
     // OPTION-C / SLICE-C1: the committed SCC run publishes its scenario runtime clock here so applyState
     // attaches a live ws.clock (current_time). Boundary-safe: stores an internal override only — no
@@ -6957,6 +7019,7 @@
         // OPTION-B / SLICE-B1: committed-run owned-position override (persists run moves across step nav).
         setOwnedRunPositions,
         getOwnedRunPositions: () => ownedRunPositions,
+        _applyOwnedRunPositionsToMarkers,
         // OPTION-C / SLICE-C1: committed-run scenario runtime clock (live current_time in ws.clock).
         setRunClock,
         getRunClock: () => runClock,

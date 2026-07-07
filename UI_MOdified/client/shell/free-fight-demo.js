@@ -3782,6 +3782,9 @@
             approval_decisions: {},
             approved_effects: [],
             rejected_effects: [],
+            pending_execution_plans: [],
+            blocked_execution_plans: [],
+            execution_plan_history: [],
             doctrine_journaled_ids: {},
             pending_doctrine_journal_records: [],
             last_doctrine_journal_error: null,
@@ -3810,6 +3813,9 @@
         if (!st.approval_decisions || typeof st.approval_decisions !== 'object' || Array.isArray(st.approval_decisions)) st.approval_decisions = {};
         if (!Array.isArray(st.approved_effects)) st.approved_effects = [];
         if (!Array.isArray(st.rejected_effects)) st.rejected_effects = [];
+        if (!Array.isArray(st.pending_execution_plans)) st.pending_execution_plans = [];
+        if (!Array.isArray(st.blocked_execution_plans)) st.blocked_execution_plans = [];
+        if (!Array.isArray(st.execution_plan_history)) st.execution_plan_history = [];
         if (!st.doctrine_journaled_ids || typeof st.doctrine_journaled_ids !== 'object' || Array.isArray(st.doctrine_journaled_ids)) st.doctrine_journaled_ids = {};
         if (!Array.isArray(st.pending_doctrine_journal_records)) st.pending_doctrine_journal_records = [];
         if (st.last_doctrine_journal_error === undefined) st.last_doctrine_journal_error = null;
@@ -3871,6 +3877,9 @@
         st.approval_decisions = (next.approval_decisions && typeof next.approval_decisions === 'object') ? next.approval_decisions : {};
         st.approved_effects = Array.isArray(next.approved_effects) ? next.approved_effects : [];
         st.rejected_effects = Array.isArray(next.rejected_effects) ? next.rejected_effects : [];
+        st.pending_execution_plans = Array.isArray(next.pending_execution_plans) ? next.pending_execution_plans : [];
+        st.blocked_execution_plans = Array.isArray(next.blocked_execution_plans) ? next.blocked_execution_plans : [];
+        st.execution_plan_history = Array.isArray(next.execution_plan_history) ? next.execution_plan_history : [];
         st.doctrine_journaled_ids = (next.doctrine_journaled_ids && typeof next.doctrine_journaled_ids === 'object') ? next.doctrine_journaled_ids : {};
         st.pending_doctrine_journal_records = Array.isArray(next.pending_doctrine_journal_records) ? next.pending_doctrine_journal_records : [];
         st.last_doctrine_journal_error = next.last_doctrine_journal_error || null;
@@ -3920,6 +3929,7 @@
             try { _appendRuntimeEventLog(msg); } catch (_) {}
             try { _recordDecision({ role: 'operator', action: 'runtime_doctrine_' + verb, called_llm: false, source: 'runtime-events', reason: rec.reason || verb, result_summary: msg }); } catch (_) {}
         }
+        try { _planRuntimeExecutions(); } catch (_) {}
         try { updatePanel(); } catch (_) {}
         return res;
     }
@@ -3949,6 +3959,24 @@
         try { updatePanel(); } catch (_) {}
         return res;
     }
+    function _planRuntimeExecutions() {
+        var st = _ensureRuntimeEventSessionState();
+        var API = W() && W().AppRuntimeEvents;
+        if (!st || !API || typeof API.buildRuntimeExecutionPlans !== 'function') return null;
+        var opts = _runtimeApprovalOptions();
+        var res = API.buildRuntimeExecutionPlans(st, {
+            planned_at_elapsed_hours: opts.decided_at_elapsed_hours,
+            scenario_time_label: opts.scenario_time_label
+        });
+        _syncRuntimeEffectSessionState(st, res && res.state);
+        return res;
+    }
+    function _runtimeExecutionSummary() {
+        var st = _ensureRuntimeEventSessionState();
+        var API = W() && W().AppRuntimeEvents;
+        if (!st || !API || typeof API.summarizeRuntimeExecutionPlans !== 'function') return { pending: 0, blocked: 0, history: 0, last_execution_plan: null, read_only: true };
+        return API.summarizeRuntimeExecutionPlans(st);
+    }
     function _applyRuntimeEventEffectsForEvent(event, API, st) {
         if (!event || !API || typeof API.applySafeRuntimeEventEffects !== 'function' || !st) {
             return { total: 0, blocked: 0, pending: 0 };
@@ -3956,6 +3984,7 @@
         var sc = W() && W().RmoozScenario && W().RmoozScenario.scenario;
         var res = API.applySafeRuntimeEventEffects(st, event, event.effects || [], { scenario: sc, doctrine: W() && W().AppDoctrineRules });
         _syncRuntimeEffectSessionState(st, res && res.state);
+        try { _planRuntimeExecutions(); } catch (_) {}
         var total = 0, blocked = 0, pending = 0;
         arr(res && res.effects).forEach(function (effect) {
             total++;
@@ -6604,6 +6633,8 @@
         runtimeApprovalHistory: function () { try { return _runtimeApprovalHistory(); } catch (_) { return []; } },
         runtimeApprovalSummary: function () { try { return _runtimeApprovalSummary(); } catch (_) { return { pending: 0, approved: 0, rejected: 0, blocked: 0, journal_retry_queue: 0, read_only: true }; } },
         retryPendingDoctrineJournalRecords: function () { return _retryPendingDoctrineJournalRecords(); },
+        planRuntimeExecutions: function () { return _planRuntimeExecutions(); },
+        runtimeExecutionSummary: function () { try { return _runtimeExecutionSummary(); } catch (_) { return { pending: 0, blocked: 0, history: 0, last_execution_plan: null, read_only: true }; } },
         approveRuntimeApproval: function (approvalId) { return _decideRuntimeApproval(approvalId, 'approve'); },
         rejectRuntimeApproval: function (approvalId) { return _decideRuntimeApproval(approvalId, 'reject'); },
         runtimeState: function () { try { return _runtimeState(); } catch (_) { return 'stopped'; } },

@@ -179,6 +179,9 @@
         if (!st.approval_decisions || typeof st.approval_decisions !== 'object' || Array.isArray(st.approval_decisions)) st.approval_decisions = {};
         if (!Array.isArray(st.approved_effects)) st.approved_effects = [];
         if (!Array.isArray(st.rejected_effects)) st.rejected_effects = [];
+        if (!Array.isArray(st.pending_execution_plans)) st.pending_execution_plans = [];
+        if (!Array.isArray(st.blocked_execution_plans)) st.blocked_execution_plans = [];
+        if (!Array.isArray(st.execution_plan_history)) st.execution_plan_history = [];
         if (!st.doctrine_journaled_ids || typeof st.doctrine_journaled_ids !== 'object' || Array.isArray(st.doctrine_journaled_ids)) st.doctrine_journaled_ids = {};
         if (!Array.isArray(st.pending_doctrine_journal_records)) st.pending_doctrine_journal_records = [];
         if (st.last_doctrine_journal_error === undefined) st.last_doctrine_journal_error = null;
@@ -516,6 +519,113 @@
             journal_retry_queue: arr(st.pending_doctrine_journal_records).length,
             decisions: Object.keys(st.approval_decisions).length,
             doctrine_decisions: arr(st.doctrine_decisions).length,
+            read_only: true
+        };
+    }
+    function executionPlanId(effect) {
+        effect = obj(effect);
+        return [
+            'exec',
+            effect.effect_id || effect.id || 'effect',
+            effect.status || 'status',
+            effect.kind || effect.effect_kind || 'kind'
+        ].map(function (v) { return String(v); }).join('|');
+    }
+    function classifyRuntimeEffectForExecution(effect) {
+        var kind = String((effect && (effect.kind || effect.effect_kind)) || '').toLowerCase();
+        var safe = {
+            add_notification: true,
+            set_runtime_flag: true,
+            clear_runtime_flag: true,
+            update_mission_task_status: true,
+            open_decision_point: true,
+            close_decision_point: true,
+            request_operator_decision: true
+        };
+        var dangerous = {
+            move_unit: true,
+            destroy_unit: true,
+            mutate_unit: true,
+            update_unit: true,
+            damage_unit: true,
+            kill_unit: true,
+            set_contact: true,
+            create_contact: true,
+            update_contact: true,
+            delete_contact: true,
+            change_detection: true,
+            modify_detection: true,
+            weapon_release: true,
+            fire_weapon: true,
+            engage_unit: true,
+            engage_target: true,
+            mutate_map: true,
+            update_map: true,
+            apply_map_state: true
+        };
+        if (safe[kind]) return { classification: 'safe_session_only', status: 'planned', reason: 'safe runtime session effect planned only' };
+        if (kind === 'weapon_release') return { classification: 'requires_world_state_executor', status: 'requires_executor', reason: 'weapon release requires a future world-state executor' };
+        if (dangerous[kind]) return { classification: 'dangerous_blocked', status: 'blocked', reason: 'dangerous effect remains blocked pending a future executor' };
+        return { classification: 'unsupported', status: 'blocked', reason: 'unsupported runtime effect execution plan' };
+    }
+    function buildRuntimeExecutionPlan(effect, context) {
+        effect = clone(obj(effect));
+        context = obj(context);
+        var cls = classifyRuntimeEffectForExecution(effect);
+        var approval = obj(effect.approval_decision);
+        var doctrine = obj(effect.doctrine_decision);
+        return {
+            execution_id: context.execution_id || executionPlanId(effect),
+            source_effect_id: effect.effect_id || effect.id || null,
+            event_id: effect.event_id || null,
+            decision_point_id: effect.decision_point_id || doctrine.decision_point_id || obj(effect.payload).decision_point_id || obj(effect.payload).decision_id || null,
+            effect_kind: effect.kind || effect.effect_kind || null,
+            classification: cls.classification,
+            status: cls.status,
+            reason: context.reason || cls.reason,
+            payload: clone(effect.payload || {}),
+            approved_by: approval.operator_id || context.approved_by || null,
+            planned_at_elapsed_hours: context.planned_at_elapsed_hours != null ? context.planned_at_elapsed_hours : (approval.decided_at_elapsed_hours != null ? approval.decided_at_elapsed_hours : effect.at_elapsed_hours),
+            scenario_time_label: context.scenario_time_label || approval.scenario_time_label || obj(effect.payload).scenario_time_label || null
+        };
+    }
+    function shouldPlanEffect(effect) {
+        var status = effect && effect.status;
+        return status === 'approved_safe' || status === 'approved_pending_execution' ||
+            status === 'applied_safe' || status === 'pending_effect_execution';
+    }
+    function buildRuntimeExecutionPlans(runtimeState, context) {
+        var state = normalizeRuntimeEffectState(runtimeState);
+        context = obj(context);
+        var existing = {};
+        arr(state.execution_plan_history).concat(arr(state.pending_execution_plans), arr(state.blocked_execution_plans)).forEach(function (p) {
+            if (p && p.execution_id) existing[p.execution_id] = true;
+        });
+        var candidates = []
+            .concat(arr(state.approved_effects))
+            .concat(arr(state.applied_effects))
+            .concat(arr(state.pending_effects));
+        var plans = [];
+        candidates.forEach(function (effect) {
+            if (!effect || !shouldPlanEffect(effect)) return;
+            var plan = buildRuntimeExecutionPlan(effect, context);
+            if (existing[plan.execution_id]) return;
+            existing[plan.execution_id] = true;
+            plans.push(plan);
+            state.execution_plan_history.push(plan);
+            if (plan.status === 'planned' || plan.status === 'requires_executor') state.pending_execution_plans.push(plan);
+            else state.blocked_execution_plans.push(plan);
+        });
+        return { state: state, plans: plans, read_only: true };
+    }
+    function summarizeRuntimeExecutionPlans(runtimeState) {
+        var st = normalizeRuntimeEffectState(runtimeState);
+        var all = arr(st.execution_plan_history);
+        return {
+            pending: arr(st.pending_execution_plans).length,
+            blocked: arr(st.blocked_execution_plans).length,
+            history: all.length,
+            last_execution_plan: all.length ? clone(all[all.length - 1]) : null,
             read_only: true
         };
     }
@@ -1041,6 +1151,10 @@
         summarizeDoctrineApprovals: summarizeDoctrineApprovals,
         normalizePendingDoctrineJournalRecord: normalizePendingDoctrineJournalRecord,
         retryPendingDoctrineJournalRecords: retryPendingDoctrineJournalRecords,
+        classifyRuntimeEffectForExecution: classifyRuntimeEffectForExecution,
+        buildRuntimeExecutionPlan: buildRuntimeExecutionPlan,
+        buildRuntimeExecutionPlans: buildRuntimeExecutionPlans,
+        summarizeRuntimeExecutionPlans: summarizeRuntimeExecutionPlans,
         blockUnsafeRuntimeEffect: blockUnsafeRuntimeEffect,
         _internal: {
             elapsedFromTime: elapsedFromTime,

@@ -305,6 +305,26 @@
         }
         return h + '</div>';
     }
+    function executionPlanSummaryHtml(eng) {
+        var summary = safeRead(function () { return eng.runtimeExecutionSummary ? eng.runtimeExecutionSummary() : null; }, null) || {};
+        var pending = summary.pending || 0;
+        var blocked = summary.blocked || 0;
+        var last = summary.last_execution_plan || null;
+        if (!pending && !blocked && !last) return '';
+        var h = '<div data-scc="runtime-execution-plans" style="margin:7px 0;padding:7px 9px;border:1px solid ' + C.edgeSoft + ';border-radius:6px;background:#08121d;">' +
+            '<div style="font-size:10.5px;color:' + C.accent + ';font-weight:800;">Runtime execution plans</div>' +
+            '<div data-scc="runtime-execution-summary" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:5px;font-size:9.5px;color:' + C.ink + ';">' +
+            '<span>pending executions <b style="color:#ffd27f;">' + pending + '</b></span>' +
+            '<span>blocked executions <b style="color:' + (blocked ? C.bad : C.dim) + ';">' + blocked + '</b></span>' +
+            '</div>';
+        if (last) {
+            h += '<div data-scc="runtime-execution-last" style="margin-top:5px;font-size:9.5px;color:' + C.dim + ';line-height:1.45;">Last execution plan: ' +
+                '<b style="color:' + C.ink + ';">' + esc(last.effect_kind || 'effect') + '</b> / ' +
+                esc(last.classification || 'classification') + ' / ' + esc(last.status || 'planned') +
+                (last.reason ? (' / ' + esc(last.reason)) : '') + '</div>';
+        }
+        return h + '</div>';
+    }
     function openCmoTestGuide() {
         var g = (typeof globalThis !== 'undefined' && globalThis) || (typeof global !== 'undefined' && global) || null;
         var w = (typeof window !== 'undefined' && window) || g;
@@ -598,6 +618,7 @@
             controls = btnSec('scc-run', '🎬 Run Scenario again') + ' ' + btnWarn('scc-clear', '✕ Clear');
         }
         inner += approvalSummaryHtml(eng);
+        inner += executionPlanSummaryHtml(eng);
         inner += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:7px;">' + controls + '</div>';
         // live runtime read-out
         if (scn && scn.scenario_active) {

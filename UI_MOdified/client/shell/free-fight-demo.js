@@ -3580,6 +3580,7 @@
         var _clkB = _clockBoundsFromScenario();
         _coaExec.clock = { start_hours: _clkB.start, current_hours: _clkB.start, end_hours: _clkB.end, duration_hours: _clkB.duration_hours, playing: false, paused: false, completed: false, speed: _clockSpeedMult(), display_step: -1 };   // C1 seed + C3b runtime-state fields; display_step: C2 (clock drives the shown snapshot)
         _resetRuntimeEventSessionState();   // C4b: per-run fired IDs live on the runtime session, not scenario JSON
+        _resetRuntimeMovementState();   // MOV1: movement positions live on the runtime session, never scenario JSON
         try { _publishRunClock(); } catch (_) {}
         _committedPlanObj = _coaPlan;   // AB1: remember WHICH plan object this commit came from (identity)
         // RMOOZ-ADVISORY-COMMIT-JOURNAL-V: persist the advisory/ranking decision context with the commit.
@@ -3969,6 +3970,7 @@
             scenario_time_label: opts.scenario_time_label
         });
         _syncRuntimeEffectSessionState(st, res && res.state);
+        try { _startRuntimeMovementPlans(); } catch (_) {}
         return res;
     }
     function _runtimeExecutionSummary() {
@@ -3976,6 +3978,67 @@
         var API = W() && W().AppRuntimeEvents;
         if (!st || !API || typeof API.summarizeRuntimeExecutionPlans !== 'function') return { pending: 0, blocked: 0, history: 0, last_execution_plan: null, read_only: true };
         return API.summarizeRuntimeExecutionPlans(st);
+    }
+    function _ensureRuntimeMovementState() {
+        if (!_coaExec) return null;
+        var API = W() && W().AppRuntimeMovement;
+        if (API && typeof API.normalizeMovementState === 'function') {
+            _coaExec.runtime_movement = API.normalizeMovementState(_coaExec.runtime_movement);
+        } else if (!_coaExec.runtime_movement || typeof _coaExec.runtime_movement !== 'object') {
+            _coaExec.runtime_movement = { movements: {}, runtime_positions: {}, runtime_world_state: { positions: {} }, arrival_events: [] };
+        }
+        return _coaExec.runtime_movement;
+    }
+    function _resetRuntimeMovementState() {
+        if (!_coaExec) return null;
+        var API = W() && W().AppRuntimeMovement;
+        _coaExec.runtime_movement = (API && typeof API.normalizeMovementState === 'function')
+            ? API.normalizeMovementState(null)
+            : { movements: {}, runtime_positions: {}, runtime_world_state: { positions: {} }, arrival_events: [] };
+        return _coaExec.runtime_movement;
+    }
+    function _movementExecutionPlans() {
+        var ev = _ensureRuntimeEventSessionState();
+        var MOV = W() && W().AppRuntimeMovement;
+        if (!ev || !MOV || typeof MOV.isMovementExecutionPlan !== 'function') return [];
+        return arr(ev.pending_execution_plans).filter(function (p) { return MOV.isMovementExecutionPlan(p); });
+    }
+    function _startRuntimeMovementPlans() {
+        var MOV = W() && W().AppRuntimeMovement;
+        var st = _ensureRuntimeMovementState();
+        if (!MOV || !st || typeof MOV.startMovementExecutionPlans !== 'function') return null;
+        var plans = _movementExecutionPlans();
+        if (!plans.length) return { created: [] };
+        var elapsed = _coaExec && _coaExec.clock && isFinite(+_coaExec.clock.current_hours) ? +_coaExec.clock.current_hours : 0;
+        var res = MOV.startMovementExecutionPlans(st, plans, { elapsed_hours: elapsed, paused: !!(_coaExec && _coaExec.paused) });
+        _coaExec.runtime_movement = res && res.state ? res.state : st;
+        arr(res && res.created).forEach(function (mv) {
+            if (mv && mv.status !== 'blocked') {
+                try { _appendToEventLog('Movement started: ' + esc(mv.unit_id || '?') + ' ETA ' + _eventHoursLabel(mv.eta_elapsed_hours) + '.'); } catch (_) {}
+            }
+        });
+        return res;
+    }
+    function _tickRuntimeMovement(pausedOverride) {
+        var MOV = W() && W().AppRuntimeMovement;
+        var st = _ensureRuntimeMovementState();
+        if (!MOV || !st || typeof MOV.updateRuntimeMovementState !== 'function') return null;
+        try { _startRuntimeMovementPlans(); } catch (_) {}
+        var elapsed = _coaExec && _coaExec.clock && isFinite(+_coaExec.clock.current_hours) ? +_coaExec.clock.current_hours : 0;
+        var paused = pausedOverride === true || !!(_coaExec && (_coaExec.paused || (_coaExec.clock && _coaExec.clock.paused)));
+        var res = MOV.updateRuntimeMovementState(_coaExec.runtime_movement, elapsed, { paused: paused });
+        _coaExec.runtime_movement = res && res.state ? res.state : _coaExec.runtime_movement;
+        arr(res && res.arrivals).forEach(function (ev) {
+            try { _appendToEventLog('Movement arrived: ' + esc(ev.unit_id || '?') + ' at ' + _eventHoursLabel(ev.at_elapsed_hours) + '.'); } catch (_) {}
+            try { _recordDecision({ role: 'unit-controller', action: 'movement_arrival', called_llm: false, source: 'runtime-movement', result_summary: String(ev.unit_id || '?') + ' arrived' }); } catch (_) {}
+        });
+        return res;
+    }
+    function _runtimeMovementSummary() {
+        var st = _ensureRuntimeMovementState();
+        var MOV = W() && W().AppRuntimeMovement;
+        if (!st || !MOV || typeof MOV.summarizeRuntimeMovement !== 'function') return { planned: 0, moving: 0, arrived: 0, paused: 0, blocked: 0, runtime_position_count: 0, next_eta: null, read_only: true };
+        return MOV.summarizeRuntimeMovement(st);
     }
     function _applyRuntimeEventEffectsForEvent(event, API, st) {
         if (!event || !API || typeof API.applySafeRuntimeEventEffects !== 'function' || !st) {
@@ -4335,6 +4398,7 @@
         }
         _coaExec.ticks++; _coaExec.updated_at = _nowISO();
         try { _advanceScenarioClock(); } catch (_) {}   // OPTION-C/C1: advance the scenario runtime clock (current_time) this tick
+        try { _tickRuntimeMovement(false); } catch (_) {}   // MOV1: approved movement plans progress by scenario clock only
         var _runtimeEvents = null; try { _runtimeEvents = _fireRuntimeEventsFromClock(); } catch (_) {}   // C4b: clock -> evaluator -> fired IDs + operator log only (no effects)
         var _crossed = false; try { _crossed = _syncDisplayStepToClock(); } catch (_) {}   // OPTION-C/C2: clock drives the displayed snapshot step (re-renders on a boundary cross)
         var coa_tick_execute_ms = _nowMs() - te0;
@@ -4405,6 +4469,7 @@
         _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
         if (_coaExec) { _coaExec.paused = true; _coaExec.updated_at = _nowISO(); }
         if (_coaExec && _coaExec.clock) { _coaExec.clock.playing = false; _coaExec.clock.paused = true; try { _publishRunClock(); } catch (_) {} }   // OPTION-C/C1+C3b: Pause freezes the clock (truthful state)
+        try { _tickRuntimeMovement(true); } catch (_) {}
         try { _appendToEventLog('COA execution paused by operator.'); } catch (_) {}
         _persistCoaExec();   // RMOOZ-COA-COMMIT-PERSISTENCE-M
         updatePanel();
@@ -6464,6 +6529,7 @@
         // OPTION-C/C3b: Pause freezes the runtime clock (state stays truthful, not stale-"playing").
         if (_coaExec) { _coaExec.paused = true; _coaExec.updated_at = _nowISO(); }
         _setScenarioClockPlaying(false);
+        try { _tickRuntimeMovement(true); } catch (_) {}
         try { _appendToEventLog('Scenario paused by operator.'); } catch (_) {}
         updatePanel();
     }
@@ -6475,6 +6541,7 @@
         // OPTION-C/C3b: Stop returns the runtime clock to scenario start (single-source resetRuntimeClock).
         if (_coaExec) { _coaExec.paused = true; _coaExec.updated_at = _nowISO(); }
         _resetScenarioClockToStart();
+        try { _resetRuntimeMovementState(); } catch (_) {}
         try { _appendToEventLog('Scenario stopped by operator.'); } catch (_) {}
         updatePanel();
     }
@@ -6635,6 +6702,10 @@
         retryPendingDoctrineJournalRecords: function () { return _retryPendingDoctrineJournalRecords(); },
         planRuntimeExecutions: function () { return _planRuntimeExecutions(); },
         runtimeExecutionSummary: function () { try { return _runtimeExecutionSummary(); } catch (_) { return { pending: 0, blocked: 0, history: 0, last_execution_plan: null, read_only: true }; } },
+        runtimeMovementSummary: function () { try { return _runtimeMovementSummary(); } catch (_) { return { planned: 0, moving: 0, arrived: 0, paused: 0, blocked: 0, runtime_position_count: 0, next_eta: null, read_only: true }; } },
+        runtimeMovementState: function () { try { return _ensureRuntimeMovementState(); } catch (_) { return null; } },
+        startRuntimeMovementPlans: function () { return _startRuntimeMovementPlans(); },
+        tickRuntimeMovement: function (paused) { return _tickRuntimeMovement(paused === true); },
         approveRuntimeApproval: function (approvalId) { return _decideRuntimeApproval(approvalId, 'approve'); },
         rejectRuntimeApproval: function (approvalId) { return _decideRuntimeApproval(approvalId, 'reject'); },
         runtimeState: function () { try { return _runtimeState(); } catch (_) { return 'stopped'; } },

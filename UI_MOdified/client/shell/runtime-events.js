@@ -564,6 +564,7 @@
             apply_map_state: true
         };
         if (safe[kind]) return { classification: 'safe_session_only', status: 'planned', reason: 'safe runtime session effect planned only' };
+        if (kind === 'runtime_movement' || kind === 'movement') return { classification: 'requires_world_state_executor', status: 'requires_executor', reason: 'movement requires runtime movement executor' };
         if (kind === 'weapon_release') return { classification: 'requires_world_state_executor', status: 'requires_executor', reason: 'weapon release requires a future world-state executor' };
         if (dangerous[kind]) return { classification: 'dangerous_blocked', status: 'blocked', reason: 'dangerous effect remains blocked pending a future executor' };
         return { classification: 'unsupported', status: 'blocked', reason: 'unsupported runtime effect execution plan' };

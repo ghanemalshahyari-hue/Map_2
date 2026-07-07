@@ -325,6 +325,37 @@
         }
         return h + '</div>';
     }
+    function movementSummaryHtml(eng) {
+        var summary = safeRead(function () { return eng.runtimeMovementSummary ? eng.runtimeMovementSummary() : null; }, null) || {};
+        var active = (summary.moving || 0) + (summary.paused || 0) + (summary.planned || 0);
+        var arrived = summary.arrived || 0;
+        var blocked = summary.blocked || 0;
+        var positions = summary.runtime_position_count || 0;
+        if (!active && !arrived && !blocked && !positions) return '';
+        var next = summary.next_movement || null;
+        var last = summary.last_arrival || null;
+        var h = '<div data-scc="runtime-movement" style="margin:7px 0;padding:7px 9px;border:1px solid ' + C.edgeSoft + ';border-radius:6px;background:#08121d;">' +
+            '<div style="font-size:10.5px;color:' + C.accent + ';font-weight:800;">Scenario movement runtime</div>' +
+            '<div data-scc="runtime-movement-summary" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:5px;font-size:9.5px;color:' + C.ink + ';">' +
+            '<span>moving <b style="color:' + C.good + ';">' + (summary.moving || 0) + '</b></span>' +
+            '<span>paused <b style="color:#ffd27f;">' + (summary.paused || 0) + '</b></span>' +
+            '<span>arrived <b style="color:' + C.ink + ';">' + arrived + '</b></span>' +
+            '<span>blocked <b style="color:' + (blocked ? C.bad : C.dim) + ';">' + blocked + '</b></span>' +
+            '<span>runtime positions <b style="color:' + C.ink + ';">' + positions + '</b></span>' +
+            '</div>';
+        if (next) {
+            h += '<div data-scc="runtime-movement-next" style="margin-top:5px;font-size:9.5px;color:' + C.dim + ';line-height:1.45;">Next ETA: ' +
+                '<b style="color:' + C.ink + ';">' + esc(next.unit_id || '?') + '</b> / ' +
+                esc(eventHoursLabel(next.eta_elapsed_hours)) + ' / ' +
+                Math.round((+next.progress || 0) * 100) + '%</div>';
+        }
+        if (last) {
+            h += '<div data-scc="runtime-movement-last-arrival" style="margin-top:4px;font-size:9.5px;color:' + C.dim + ';line-height:1.45;">Last arrival: ' +
+                '<b style="color:' + C.ink + ';">' + esc(last.unit_id || '?') + '</b> / ' +
+                esc(eventHoursLabel(last.at_elapsed_hours)) + '</div>';
+        }
+        return h + '</div>';
+    }
     function openCmoTestGuide() {
         var g = (typeof globalThis !== 'undefined' && globalThis) || (typeof global !== 'undefined' && global) || null;
         var w = (typeof window !== 'undefined' && window) || g;
@@ -619,6 +650,7 @@
         }
         inner += approvalSummaryHtml(eng);
         inner += executionPlanSummaryHtml(eng);
+        inner += movementSummaryHtml(eng);
         inner += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:7px;">' + controls + '</div>';
         // live runtime read-out
         if (scn && scn.scenario_active) {

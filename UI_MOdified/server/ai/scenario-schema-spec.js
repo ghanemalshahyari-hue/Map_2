@@ -132,6 +132,16 @@ const TOP_LEVEL = Object.freeze({
         desc: 'C4a optional time-based decision points. Each item: { id?, trigger_elapsed_hours?, title?, options?, expires_elapsed_hours?, status? }.' },
     victory_conditions: { required: false, type: 'array',
         desc: 'C4a optional victory/end condition declarations. Read-only/pending in C4a; no destructive evaluation yet.' },
+    doctrine_rules:   { required: false, type: 'array',
+        desc: 'DOC1 optional doctrine constraints. Pure evaluator only: { id?, enabled?, applies_to_side?, condition?, action?, decision?, severity?, reason?, requires_authority?, tags? }.' },
+    roe_rules:        { required: false, type: 'array',
+        desc: 'DOC1 optional Rules of Engagement constraints. Pure evaluator only: { id?, target_domain?, target_status?, hostile_confirmed_required?, collateral_risk_max?, restricted_area_ids?, decision?, reason? }.' },
+    wra_rules:        { required: false, type: 'array',
+        desc: 'DOC1 optional Weapon Release Authority/Authorization constraints. Pure evaluator only: { id?, weapon_class?, target_class?, max_range_nm?, min_confidence?, required_sensor_quality?, salvo_limit?, decision?, reason? }.' },
+    authority_rules:  { required: false, type: 'array',
+        desc: 'DOC1 optional authority declarations for approval gates. Read-only metadata; no runtime approval flow in DOC1.' },
+    escalation_rules: { required: false, type: 'array',
+        desc: 'DOC1 optional escalation-rule declarations. Read-only metadata; no combat/effects execution in DOC1.' },
 
     // Provenance metadata — optional, kept by the port scripts so we
     // know where a scenario came from when debugging.

@@ -191,7 +191,7 @@
                         <line x1="16" y1="17" x2="8"  y2="17"/>
                         <line x1="10" y1="9"  x2="8"  y2="9"/>
                     </svg>
-                    <span data-i18n="tool-wargame">Operational Scenario</span>
+                    <span data-i18n="tool-wargame">Operational Scenario (Legacy)</span>
                 </button>
 
                 <!-- PR-42+: Scenario Workspace — live scenario entry and operator workspace -->
@@ -912,7 +912,7 @@
                             <div id="wg-status" class="wargame-status-block">Not started</div>
                             <div class="wargame-action-row">
                                 <button id="wg-init" class="wargame-action-btn primary" type="button" data-i18n="wg-btn-start">Start</button>
-                                <button id="wg-next" class="wargame-action-btn success" type="button" data-i18n="wg-btn-next">Advance frame</button>
+                                <button id="wg-next" class="wargame-action-btn success" type="button" data-i18n="wg-btn-next">Next snapshot</button>
                                 <button id="wg-reset" class="wargame-action-btn secondary" type="button" data-i18n="wg-btn-reset">Reset</button>
                             </div>
                             <div class="wargame-control-footer">
@@ -4708,6 +4708,9 @@
          objective status through it (parity-proof read seam — World State
          mirrors `state` today; WS4 inverts ownership). -->
     <script src="shell/world-state.js?v=3"></script>
+    <!-- DOC1: pure Doctrine / ROE / WRA evaluator. Read-only facade only:
+         rules-in/decision-out, no combat effects, no journal, no map/unit mutation. -->
+    <script src="shell/doctrine-rules.js?v=doc1"></script>
     <!-- C4a: pure runtime event evaluator. Loaded as a read-only facade only:
          clock-in/events-out, no effect execution, no journal writes, no map/unit mutation. -->
     <script src="shell/runtime-events.js?v=c4a"></script>

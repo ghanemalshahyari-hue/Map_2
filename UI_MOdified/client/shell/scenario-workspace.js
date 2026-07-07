@@ -7389,7 +7389,10 @@
         // Canonical engine owns preview playback when present (single timer,
         // shared by the nav Preview button, the bottom transport, and turn-engine Start).
         if (window.AppScenarioRunner) {
-            try { window.AppScenarioRunner.play(); } catch (_) { /* no-op */ }
+            var played = false;
+            try { played = window.AppScenarioRunner.play(); } catch (_) { /* no-op */ }
+            // If play() returned false (no scenario or at end), ensure button reflects state
+            if (!played) { paintPlayButton(); }
             return; // play-button visual synced via the rmooz:scenario-run listener
         }
         var sc    = getScenario();

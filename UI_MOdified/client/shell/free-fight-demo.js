@@ -3774,7 +3774,10 @@
             mission_task_status: {},
             pending_effects: [],
             blocked_effects: [],
-            last_effects: []
+            last_effects: [],
+            doctrine_decisions: [],
+            pending_approvals: {},
+            applied_effects: []
         };
     }
     function _ensureRuntimeEventSessionState() {
@@ -3792,6 +3795,9 @@
         if (!Array.isArray(st.pending_effects)) st.pending_effects = [];
         if (!Array.isArray(st.blocked_effects)) st.blocked_effects = [];
         if (!Array.isArray(st.last_effects)) st.last_effects = [];
+        if (!Array.isArray(st.doctrine_decisions)) st.doctrine_decisions = [];
+        if (!st.pending_approvals || typeof st.pending_approvals !== 'object' || Array.isArray(st.pending_approvals)) st.pending_approvals = {};
+        if (!Array.isArray(st.applied_effects)) st.applied_effects = [];
         return st;
     }
     function _resetRuntimeEventSessionState() {
@@ -3842,12 +3848,16 @@
         st.pending_effects = Array.isArray(next.pending_effects) ? next.pending_effects : [];
         st.blocked_effects = Array.isArray(next.blocked_effects) ? next.blocked_effects : [];
         st.last_effects = Array.isArray(next.last_effects) ? next.last_effects : [];
+        st.doctrine_decisions = Array.isArray(next.doctrine_decisions) ? next.doctrine_decisions : [];
+        st.pending_approvals = (next.pending_approvals && typeof next.pending_approvals === 'object') ? next.pending_approvals : {};
+        st.applied_effects = Array.isArray(next.applied_effects) ? next.applied_effects : [];
     }
     function _applyRuntimeEventEffectsForEvent(event, API, st) {
         if (!event || !API || typeof API.applySafeRuntimeEventEffects !== 'function' || !st) {
             return { total: 0, blocked: 0, pending: 0 };
         }
-        var res = API.applySafeRuntimeEventEffects(st, event, event.effects || []);
+        var sc = W() && W().RmoozScenario && W().RmoozScenario.scenario;
+        var res = API.applySafeRuntimeEventEffects(st, event, event.effects || [], { scenario: sc, doctrine: W() && W().AppDoctrineRules });
         _syncRuntimeEffectSessionState(st, res && res.state);
         var total = 0, blocked = 0, pending = 0;
         arr(res && res.effects).forEach(function (effect) {
@@ -3862,6 +3872,12 @@
                 try { _appendRuntimeEventLog('Runtime notification: ' + msg); } catch (_) {}
             } else if (effect && effect.kind === 'request_operator_decision' && effect.status === 'proposed') {
                 pending++;
+            } else if (effect && effect.status === 'pending_effect_execution') {
+                pending++;
+            } else if (effect && effect.status === 'requires_approval') {
+                pending++;
+                var amsg = 'Runtime effect requires approval: ' + (effect.kind || 'unsupported') + ' (' + (effect.reason || 'approval required') + ')';
+                try { _appendRuntimeEventLog(amsg); } catch (_) {}
             }
         });
         return { total: total, blocked: blocked, pending: pending };

@@ -69,7 +69,8 @@
         open_decision_point: true,
         close_decision_point: true,
         update_mission_task_status: true,
-        request_operator_decision: true
+        request_operator_decision: true,
+        weapon_release: true
     };
     var DANGEROUS_RUNTIME_EFFECT_REASONS = {
         move_unit: 'direct_unit_mutation_blocked',
@@ -172,6 +173,9 @@
         if (!Array.isArray(st.pending_effects)) st.pending_effects = [];
         if (!Array.isArray(st.blocked_effects)) st.blocked_effects = [];
         if (!Array.isArray(st.last_effects)) st.last_effects = [];
+        if (!Array.isArray(st.doctrine_decisions)) st.doctrine_decisions = [];
+        if (!st.pending_approvals || typeof st.pending_approvals !== 'object' || Array.isArray(st.pending_approvals)) st.pending_approvals = {};
+        if (!Array.isArray(st.applied_effects)) st.applied_effects = [];
         return st;
     }
     function firstString(payload, keys) {
@@ -192,9 +196,124 @@
     function blockedFinalProposal(proposal, reason) {
         return finalEffectProposal(proposal, 'blocked', reason || 'invalid_effect_payload');
     }
-    function applySafeRuntimeEventEffects(runtimeState, event, effects) {
+    function effectActionKind(kind) {
+        return ({
+            add_notification: 'notification',
+            set_runtime_flag: 'runtime_flag',
+            clear_runtime_flag: 'runtime_flag',
+            update_mission_task_status: 'mission_task_update',
+            open_decision_point: 'decision_point',
+            close_decision_point: 'decision_point',
+            request_operator_decision: 'decision_point',
+            weapon_release: 'weapon_release'
+        })[kind] || kind || 'unsupported';
+    }
+    function effectContext(proposal) {
+        var payload = obj(proposal && proposal.payload);
+        return {
+            side: payload.side,
+            actor_unit_id: payload.actor_unit_id || payload.unit_id || payload.shooter_unit_id,
+            action_kind: effectActionKind(proposal && proposal.kind),
+            target_unit_id: payload.target_unit_id,
+            target_domain: payload.target_domain || payload.domain,
+            target_class: payload.target_class || payload.target_domain || payload.domain,
+            target_status: payload.target_status,
+            hostile_confirmed: payload.hostile_confirmed,
+            weapon_class: payload.weapon_class,
+            range_nm: payload.range_nm,
+            confidence: payload.confidence,
+            sensor_quality: payload.sensor_quality,
+            collateral_risk: payload.collateral_risk,
+            area_id: payload.area_id,
+            requested_by: payload.requested_by,
+            current_hours: proposal && proposal.at_elapsed_hours,
+            decision_point_id: payload.decision_point_id || payload.decision_id
+        };
+    }
+    function doctrineApi(options) {
+        options = obj(options);
+        if (options.doctrine && typeof options.doctrine.evaluateDoctrineForAction === 'function') return options.doctrine;
+        return root && root.AppDoctrineRules;
+    }
+    function hasDoctrineInputs(scenario, kind) {
+        var scn = obj(scenario);
+        if (kind === 'wra') return arr(scn.wra_rules).length || arr(obj(scn.runtime_scenario).wra_rules).length;
+        if (kind === 'roe') return arr(scn.roe_rules).length || arr(obj(scn.runtime_scenario).roe_rules).length;
+        return arr(scn.doctrine_rules).length || arr(obj(scn.runtime_scenario).doctrine_rules).length;
+    }
+    function mergeDoctrineResults(results) {
+        var api = root && root.AppDoctrineRules;
+        if (api && typeof api.buildDoctrineDecisionSummary === 'function') return api.buildDoctrineDecisionSummary(results);
+        var rank = { allow: 0, require_approval: 1, block: 2 };
+        var out = { decision: 'allow', reasons: [], matched_rules: [], required_authority: null, severity: 'info' };
+        arr(results).forEach(function (r) {
+            if (!r) return;
+            if (rank[r.decision] > rank[out.decision]) out.decision = r.decision;
+            out.reasons = out.reasons.concat(arr(r.reasons));
+            out.matched_rules = out.matched_rules.concat(arr(r.matched_rules));
+            if (!out.required_authority && r.required_authority) out.required_authority = r.required_authority;
+        });
+        return out;
+    }
+    function doctrineDecisionRecord(event, proposal, decision, source, status) {
+        decision = decision || {};
+        return {
+            effect_id: proposal.effect_id,
+            event_id: proposal.event_id,
+            decision_point_id: obj(proposal.payload).decision_point_id || obj(proposal.payload).decision_id || null,
+            doctrine_decision: decision.decision || 'allow',
+            source: source || 'doctrine',
+            matched_rules: clone(decision.matched_rules || []),
+            reasons: clone(decision.reasons || []),
+            required_authority: decision.required_authority || null,
+            at_elapsed_hours: proposal.at_elapsed_hours,
+            status: status || decision.decision || 'allow'
+        };
+    }
+    function gateRuntimeEffectWithDoctrine(state, event, proposal, options) {
+        var scenario = obj(obj(options).scenario || obj(event).scenario);
+        var api = doctrineApi(options);
+        if (!api || !scenario || (!hasDoctrineInputs(scenario, 'doctrine') && !hasDoctrineInputs(scenario, 'roe') && !hasDoctrineInputs(scenario, 'wra') && proposal.kind !== 'weapon_release')) {
+            return { proposal: proposal, blocked: false, approval: false };
+        }
+        var ctx = effectContext(proposal);
+        var decisions = [];
+        var sources = [];
+        if (typeof api.evaluateDoctrineForAction === 'function') {
+            var d = api.evaluateDoctrineForAction(scenario, ctx, state);
+            if (d && d.matched_rules && d.matched_rules.length) { decisions.push(d); sources.push('doctrine'); }
+        }
+        if ((proposal.kind === 'weapon_release' || hasDoctrineInputs(scenario, 'roe')) && typeof api.evaluateRoeForEngagement === 'function') {
+            var r = api.evaluateRoeForEngagement(scenario, ctx, state);
+            if (r && r.matched_rules && r.matched_rules.length) { decisions.push(r); sources.push('roe'); }
+        }
+        if (proposal.kind === 'weapon_release' && typeof api.evaluateWraForWeaponRelease === 'function') {
+            var w = api.evaluateWraForWeaponRelease(scenario, ctx, state);
+            if (w) { decisions.push(w); sources.push('wra'); }
+        }
+        if (!decisions.length) return { proposal: proposal, blocked: false, approval: false };
+        var decision = mergeDoctrineResults(decisions);
+        var source = sources.indexOf('wra') !== -1 && decision.decision !== 'allow' ? 'wra' : (sources[0] || 'doctrine');
+        var rec = doctrineDecisionRecord(event, proposal, decision, source, decision.decision);
+        state.doctrine_decisions.push(rec);
+        if (decision.decision === 'block') {
+            var blocked = finalEffectProposal(proposal, 'blocked', 'doctrine_gate_blocked: ' + (decision.reasons || []).join('; '));
+            blocked.doctrine_decision = rec;
+            return { proposal: blocked, blocked: true, approval: false };
+        }
+        if (decision.decision === 'require_approval') {
+            var approval = finalEffectProposal(proposal, 'requires_approval', 'doctrine_gate_requires_approval: ' + (decision.reasons || []).join('; '));
+            approval.doctrine_decision = rec;
+            state.pending_approvals[approval.effect_id || ('effect-' + state.doctrine_decisions.length)] = approval;
+            state.pending_effects.push(approval);
+            return { proposal: approval, blocked: false, approval: true };
+        }
+        return { proposal: proposal, blocked: false, approval: false };
+    }
+    function applySafeRuntimeEventEffects(runtimeState, event, effects, options) {
         event = clone(obj(event));
         if (effects !== undefined) event.effects = effects;
+        options = obj(options);
         var state = normalizeRuntimeEffectState(runtimeState);
         var proposals = evaluateRuntimeEventEffects(event, state);
         var finalEffects = [];
@@ -207,6 +326,15 @@
             if (proposal.status === 'blocked') {
                 finalProposal = proposal;
                 state.blocked_effects.push(finalProposal);
+                state.last_effects.push(finalProposal);
+                finalEffects.push(finalProposal);
+                return;
+            }
+
+            var gate = gateRuntimeEffectWithDoctrine(state, event, proposal, options);
+            if (gate.blocked || gate.approval) {
+                finalProposal = gate.proposal;
+                if (gate.blocked) state.blocked_effects.push(finalProposal);
                 state.last_effects.push(finalProposal);
                 finalEffects.push(finalProposal);
                 return;
@@ -271,11 +399,16 @@
                 var request = finalEffectProposal(proposal, 'proposed');
                 state.pending_effects.push(request);
                 finalProposal = request;
+            } else if (kind === 'weapon_release') {
+                var release = finalEffectProposal(proposal, 'pending_effect_execution', 'weapon_release_approved_for_later_execution');
+                state.pending_effects.push(release);
+                finalProposal = release;
             } else {
                 finalProposal = blockedFinalProposal(proposal, unsafeRuntimeEffectReason(kind));
             }
 
             if (finalProposal.status === 'blocked') state.blocked_effects.push(finalProposal);
+            if (finalProposal.status === 'applied_safe') state.applied_effects.push(finalProposal);
             state.last_effects.push(finalProposal);
             finalEffects.push(finalProposal);
         });

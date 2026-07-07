@@ -3758,8 +3758,9 @@
     }
     // C4b: runtime-event firing integration. This consumes the pure C4a evaluator
     // and records due/read-only events against the transient run session only.
-    // It does not execute event effects, mutate units, mutate scenario JSON,
-    // write journals, or call the backend.
+    // It does not execute event effects, mutate units, or mutate scenario JSON.
+    // DOC3 adds fire-and-forget doctrine audit journaling through the sanctioned
+    // runtime journal path; local play/pause never waits for it.
     function _newRuntimeEventSessionState() {
         return {
             fired_ids: {},
@@ -3777,7 +3778,10 @@
             last_effects: [],
             doctrine_decisions: [],
             pending_approvals: {},
-            applied_effects: []
+            applied_effects: [],
+            doctrine_journaled_ids: {},
+            pending_doctrine_journal_records: [],
+            last_doctrine_journal_error: null
         };
     }
     function _ensureRuntimeEventSessionState() {
@@ -3798,6 +3802,9 @@
         if (!Array.isArray(st.doctrine_decisions)) st.doctrine_decisions = [];
         if (!st.pending_approvals || typeof st.pending_approvals !== 'object' || Array.isArray(st.pending_approvals)) st.pending_approvals = {};
         if (!Array.isArray(st.applied_effects)) st.applied_effects = [];
+        if (!st.doctrine_journaled_ids || typeof st.doctrine_journaled_ids !== 'object' || Array.isArray(st.doctrine_journaled_ids)) st.doctrine_journaled_ids = {};
+        if (!Array.isArray(st.pending_doctrine_journal_records)) st.pending_doctrine_journal_records = [];
+        if (st.last_doctrine_journal_error === undefined) st.last_doctrine_journal_error = null;
         return st;
     }
     function _resetRuntimeEventSessionState() {
@@ -3851,6 +3858,9 @@
         st.doctrine_decisions = Array.isArray(next.doctrine_decisions) ? next.doctrine_decisions : [];
         st.pending_approvals = (next.pending_approvals && typeof next.pending_approvals === 'object') ? next.pending_approvals : {};
         st.applied_effects = Array.isArray(next.applied_effects) ? next.applied_effects : [];
+        st.doctrine_journaled_ids = (next.doctrine_journaled_ids && typeof next.doctrine_journaled_ids === 'object') ? next.doctrine_journaled_ids : {};
+        st.pending_doctrine_journal_records = Array.isArray(next.pending_doctrine_journal_records) ? next.pending_doctrine_journal_records : [];
+        st.last_doctrine_journal_error = next.last_doctrine_journal_error || null;
     }
     function _applyRuntimeEventEffectsForEvent(event, API, st) {
         if (!event || !API || typeof API.applySafeRuntimeEventEffects !== 'function' || !st) {

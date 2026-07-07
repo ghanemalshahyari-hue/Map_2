@@ -176,6 +176,9 @@
         if (!Array.isArray(st.doctrine_decisions)) st.doctrine_decisions = [];
         if (!st.pending_approvals || typeof st.pending_approvals !== 'object' || Array.isArray(st.pending_approvals)) st.pending_approvals = {};
         if (!Array.isArray(st.applied_effects)) st.applied_effects = [];
+        if (!st.doctrine_journaled_ids || typeof st.doctrine_journaled_ids !== 'object' || Array.isArray(st.doctrine_journaled_ids)) st.doctrine_journaled_ids = {};
+        if (!Array.isArray(st.pending_doctrine_journal_records)) st.pending_doctrine_journal_records = [];
+        if (st.last_doctrine_journal_error === undefined) st.last_doctrine_journal_error = null;
         return st;
     }
     function firstString(payload, keys) {
@@ -255,6 +258,18 @@
         });
         return out;
     }
+    function strongestDoctrineLayer(layers, decision) {
+        var rank = { allow: 0, require_approval: 1, block: 2 };
+        var desired = decision && decision.decision ? decision.decision : 'allow';
+        var best = null;
+        arr(layers).forEach(function (layer) {
+            if (!layer || !layer.result) return;
+            if (layer.result.decision !== desired) return;
+            if (!best || (rank[layer.result.decision] || 0) > (rank[best.result.decision] || 0)) best = layer;
+        });
+        if (best) return best.source;
+        return (arr(layers)[0] && arr(layers)[0].source) || 'doctrine';
+    }
     function doctrineDecisionRecord(event, proposal, decision, source, status) {
         decision = decision || {};
         return {
@@ -270,6 +285,136 @@
             status: status || decision.decision || 'allow'
         };
     }
+    function scenarioNameForJournal(scenario, options) {
+        scenario = obj(scenario);
+        options = obj(options);
+        return options.scenarioName || options.scenario_name || scenario.name || scenario.scenarioName || scenario.scenario_name || scenario.scenario_label || null;
+    }
+    function scenarioIdForJournal(scenario, options) {
+        scenario = obj(scenario);
+        options = obj(options);
+        return options.scenarioId || options.scenario_id || scenario.id || scenario.scenario_id || scenarioNameForJournal(scenario, options) || null;
+    }
+    function operatorIdForJournal(options) {
+        options = obj(options);
+        if (options.operatorId || options.operator_id) return String(options.operatorId || options.operator_id).slice(0, 80);
+        try {
+            var cu = root && root.AppConfig && root.AppConfig.CHAT_CONFIG && root.AppConfig.CHAT_CONFIG.currentUser;
+            if (cu && cu.id) return String(cu.id).slice(0, 80);
+        } catch (_) {}
+        return 'operator';
+    }
+    function doctrineJournalKind(record) {
+        var layer = record && record.source;
+        var decision = record && record.doctrine_decision;
+        if (layer === 'wra' && decision === 'require_approval') return 'wra_requires_approval';
+        if (layer === 'roe' && decision === 'block') return 'roe_blocked';
+        if (decision === 'block') return 'doctrine_effect_blocked';
+        if (decision === 'require_approval') return 'doctrine_effect_requires_approval';
+        return 'doctrine_effect_allowed';
+    }
+    function doctrineJournalRecord(scenario, event, proposal, decisionRecord, options) {
+        options = obj(options);
+        var payload = obj(proposal && proposal.payload);
+        var scenarioName = scenarioNameForJournal(scenario, options);
+        var runId = options.runId || options.run_id || payload.run_id || ('doctrine-' + (scenarioName || 'runtime'));
+        return {
+            schema_version: 'doctrine-journal-v1',
+            source: 'doctrine',
+            kind: doctrineJournalKind(decisionRecord),
+            scenario_id: scenarioIdForJournal(scenario, options),
+            scenarioName: scenarioName,
+            run_id: runId,
+            event_id: decisionRecord.event_id,
+            effect_id: decisionRecord.effect_id,
+            decision_point_id: decisionRecord.decision_point_id || null,
+            operator_id: operatorIdForJournal(options),
+            elapsed_hours: decisionRecord.at_elapsed_hours,
+            scenario_time_label: options.scenario_time_label || payload.scenario_time_label || null,
+            doctrine_decision: decisionRecord.doctrine_decision,
+            source_layer: decisionRecord.source || 'doctrine',
+            matched_rules: clone(decisionRecord.matched_rules || []),
+            reasons: clone(decisionRecord.reasons || []),
+            required_authority: decisionRecord.required_authority || null,
+            effect_kind: proposal.kind,
+            effect_status: proposal.status
+        };
+    }
+    function doctrineJournalId(record) {
+        return [
+            record && record.schema_version,
+            record && record.run_id,
+            record && record.event_id,
+            record && record.effect_id,
+            record && record.doctrine_decision,
+            record && record.source_layer,
+            record && record.effect_status
+        ].map(function (v) { return v == null ? '' : String(v); }).join('|');
+    }
+    function browserFetch() {
+        if (typeof window === 'undefined' || root !== window) return null;
+        return root && typeof root.fetch === 'function' ? root.fetch.bind(root) : null;
+    }
+    function commitDoctrineJournalViaSim(record, options) {
+        options = obj(options);
+        var f = options.fetch || browserFetch();
+        if (typeof f !== 'function') return null;
+        if (!record || !record.scenarioName) return null;
+        var headers = { 'Content-Type': 'application/json' };
+        return f('/api/sim/propose', {
+            method: 'POST',
+            credentials: 'include',
+            headers: headers,
+            body: JSON.stringify({
+                scenarioName: record.scenarioName,
+                stepIndex: 0,
+                mockMode: true,
+                runId: record.run_id
+            })
+        }).then(function (r) {
+            return (r && r.ok && typeof r.json === 'function') ? r.json() : null;
+        }).then(function (prop) {
+            if (!prop || !prop.proposal_id) throw new Error('doctrine_journal_propose_failed');
+            return f('/api/sim/commit', {
+                method: 'POST',
+                credentials: 'include',
+                headers: headers,
+                body: JSON.stringify({
+                    proposal_id: prop.proposal_id,
+                    accepted_action_ids: 'ALL',
+                    operator_id: record.operator_id,
+                    source: 'deterministic-sim',
+                    mods: { doctrine_journal: record }
+                })
+            }).then(function (r2) {
+                return (r2 && typeof r2.json === 'function') ? r2.json() : null;
+            });
+        });
+    }
+    function rememberDoctrineJournalFailure(state, record, err) {
+        state.last_doctrine_journal_error = err && err.message ? err.message : String(err || 'doctrine_journal_failed');
+        state.pending_doctrine_journal_records.push(clone(record));
+    }
+    function journalDoctrineDecision(state, scenario, event, proposal, decisionRecord, options) {
+        options = obj(options);
+        if (options.doctrineJournal === false) return null;
+        var record = doctrineJournalRecord(scenario, event, proposal, decisionRecord, options);
+        var id = doctrineJournalId(record);
+        if (state.doctrine_journaled_ids[id]) return record;
+        state.doctrine_journaled_ids[id] = true;
+        try {
+            var writer = typeof options.journalDoctrineDecision === 'function'
+                ? options.journalDoctrineDecision
+                : commitDoctrineJournalViaSim;
+            var result = writer(record, options);
+            if (result && typeof result.then === 'function') {
+                result.catch(function (err) { rememberDoctrineJournalFailure(state, record, err); });
+            }
+        } catch (err) {
+            rememberDoctrineJournalFailure(state, record, err);
+        }
+        return record;
+    }
     function gateRuntimeEffectWithDoctrine(state, event, proposal, options) {
         var scenario = obj(obj(options).scenario || obj(event).scenario);
         var api = doctrineApi(options);
@@ -278,27 +423,28 @@
         }
         var ctx = effectContext(proposal);
         var decisions = [];
-        var sources = [];
+        var layers = [];
         if (typeof api.evaluateDoctrineForAction === 'function') {
             var d = api.evaluateDoctrineForAction(scenario, ctx, state);
-            if (d && d.matched_rules && d.matched_rules.length) { decisions.push(d); sources.push('doctrine'); }
+            if (d && d.matched_rules && d.matched_rules.length) { decisions.push(d); layers.push({ source: 'doctrine', result: d }); }
         }
         if ((proposal.kind === 'weapon_release' || hasDoctrineInputs(scenario, 'roe')) && typeof api.evaluateRoeForEngagement === 'function') {
             var r = api.evaluateRoeForEngagement(scenario, ctx, state);
-            if (r && r.matched_rules && r.matched_rules.length) { decisions.push(r); sources.push('roe'); }
+            if (r && r.matched_rules && r.matched_rules.length) { decisions.push(r); layers.push({ source: 'roe', result: r }); }
         }
         if (proposal.kind === 'weapon_release' && typeof api.evaluateWraForWeaponRelease === 'function') {
             var w = api.evaluateWraForWeaponRelease(scenario, ctx, state);
-            if (w) { decisions.push(w); sources.push('wra'); }
+            if (w) { decisions.push(w); layers.push({ source: 'wra', result: w }); }
         }
         if (!decisions.length) return { proposal: proposal, blocked: false, approval: false };
         var decision = mergeDoctrineResults(decisions);
-        var source = sources.indexOf('wra') !== -1 && decision.decision !== 'allow' ? 'wra' : (sources[0] || 'doctrine');
+        var source = strongestDoctrineLayer(layers, decision);
         var rec = doctrineDecisionRecord(event, proposal, decision, source, decision.decision);
         state.doctrine_decisions.push(rec);
         if (decision.decision === 'block') {
             var blocked = finalEffectProposal(proposal, 'blocked', 'doctrine_gate_blocked: ' + (decision.reasons || []).join('; '));
             blocked.doctrine_decision = rec;
+            journalDoctrineDecision(state, scenario, event, blocked, rec, options);
             return { proposal: blocked, blocked: true, approval: false };
         }
         if (decision.decision === 'require_approval') {
@@ -306,9 +452,12 @@
             approval.doctrine_decision = rec;
             state.pending_approvals[approval.effect_id || ('effect-' + state.doctrine_decisions.length)] = approval;
             state.pending_effects.push(approval);
+            journalDoctrineDecision(state, scenario, event, approval, rec, options);
             return { proposal: approval, blocked: false, approval: true };
         }
-        return { proposal: proposal, blocked: false, approval: false };
+        var allowed = clone(proposal);
+        allowed.doctrine_decision = rec;
+        return { proposal: allowed, blocked: false, approval: false };
     }
     function applySafeRuntimeEventEffects(runtimeState, event, effects, options) {
         event = clone(obj(event));
@@ -339,6 +488,7 @@
                 finalEffects.push(finalProposal);
                 return;
             }
+            proposal = gate.proposal || proposal;
 
             if (kind === 'add_notification') {
                 finalProposal = finalEffectProposal(proposal, 'applied_safe');
@@ -409,6 +559,11 @@
 
             if (finalProposal.status === 'blocked') state.blocked_effects.push(finalProposal);
             if (finalProposal.status === 'applied_safe') state.applied_effects.push(finalProposal);
+            if (proposal.doctrine_decision &&
+                (finalProposal.status === 'applied_safe' || finalProposal.status === 'pending_effect_execution' || finalProposal.status === 'proposed')) {
+                finalProposal.doctrine_decision = proposal.doctrine_decision;
+                journalDoctrineDecision(state, options.scenario || obj(event).scenario, event, finalProposal, proposal.doctrine_decision, options);
+            }
             state.last_effects.push(finalProposal);
             finalEffects.push(finalProposal);
         });

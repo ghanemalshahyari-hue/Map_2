@@ -176,6 +176,9 @@
         if (!Array.isArray(st.doctrine_decisions)) st.doctrine_decisions = [];
         if (!st.pending_approvals || typeof st.pending_approvals !== 'object' || Array.isArray(st.pending_approvals)) st.pending_approvals = {};
         if (!Array.isArray(st.applied_effects)) st.applied_effects = [];
+        if (!st.approval_decisions || typeof st.approval_decisions !== 'object' || Array.isArray(st.approval_decisions)) st.approval_decisions = {};
+        if (!Array.isArray(st.approved_effects)) st.approved_effects = [];
+        if (!Array.isArray(st.rejected_effects)) st.rejected_effects = [];
         if (!st.doctrine_journaled_ids || typeof st.doctrine_journaled_ids !== 'object' || Array.isArray(st.doctrine_journaled_ids)) st.doctrine_journaled_ids = {};
         if (!Array.isArray(st.pending_doctrine_journal_records)) st.pending_doctrine_journal_records = [];
         if (st.last_doctrine_journal_error === undefined) st.last_doctrine_journal_error = null;
@@ -309,6 +312,8 @@
         var decision = record && record.doctrine_decision;
         if (layer === 'wra' && decision === 'require_approval') return 'wra_requires_approval';
         if (layer === 'roe' && decision === 'block') return 'roe_blocked';
+        if (decision === 'approval_approve') return 'approval_approved';
+        if (decision === 'approval_reject') return 'approval_rejected';
         if (decision === 'block') return 'doctrine_effect_blocked';
         if (decision === 'require_approval') return 'doctrine_effect_requires_approval';
         return 'doctrine_effect_allowed';
@@ -414,6 +419,96 @@
             rememberDoctrineJournalFailure(state, record, err);
         }
         return record;
+    }
+    function pendingApprovalList(runtimeState) {
+        var st = normalizeRuntimeEffectState(runtimeState);
+        return Object.keys(st.pending_approvals).map(function (id) {
+            var p = clone(st.pending_approvals[id]);
+            p.approval_id = p.approval_id || id;
+            return p;
+        }).filter(function (p) { return p && p.status === 'requires_approval'; });
+    }
+    function approvalResultStatus(effect) {
+        var kind = effect && effect.kind;
+        if (kind === 'add_notification' || kind === 'set_runtime_flag' || kind === 'clear_runtime_flag' ||
+            kind === 'open_decision_point' || kind === 'close_decision_point' || kind === 'update_mission_task_status') {
+            return 'approved_safe';
+        }
+        return 'approved_pending_execution';
+    }
+    function approvalRecordFor(effect, selectedAction, options) {
+        effect = obj(effect);
+        options = obj(options);
+        var rec = obj(effect.doctrine_decision);
+        var payload = obj(effect.payload);
+        var approvalId = effect.approval_id || effect.effect_id || options.approval_id || null;
+        var result = selectedAction === 'approve' ? approvalResultStatus(effect) : 'rejected';
+        return {
+            approval_id: approvalId,
+            effect_id: effect.effect_id || null,
+            event_id: effect.event_id || null,
+            decision_point_id: rec.decision_point_id || payload.decision_point_id || payload.decision_id || null,
+            operator_id: operatorIdForJournal(options),
+            selected_action: selectedAction,
+            decided_at_elapsed_hours: options.decided_at_elapsed_hours != null ? options.decided_at_elapsed_hours : effect.at_elapsed_hours,
+            scenario_time_label: options.scenario_time_label || payload.scenario_time_label || null,
+            reason: effect.reason || arr(rec.reasons).join('; ') || null,
+            required_authority: rec.required_authority || null,
+            matched_rules: clone(rec.matched_rules || []),
+            effect_kind: effect.kind || null,
+            resulting_status: result
+        };
+    }
+    function journalApprovalDecision(state, approvalRecord, effect, options) {
+        options = obj(options);
+        var rec = {
+            effect_id: approvalRecord.effect_id,
+            event_id: approvalRecord.event_id,
+            decision_point_id: approvalRecord.decision_point_id,
+            doctrine_decision: approvalRecord.selected_action === 'approve' ? 'approval_approve' : 'approval_reject',
+            source: obj(effect && effect.doctrine_decision).source || 'doctrine',
+            matched_rules: clone(approvalRecord.matched_rules || []),
+            reasons: [approvalRecord.reason || approvalRecord.selected_action],
+            required_authority: approvalRecord.required_authority || null,
+            at_elapsed_hours: approvalRecord.decided_at_elapsed_hours,
+            status: approvalRecord.resulting_status
+        };
+        var finalEffect = clone(effect || {});
+        finalEffect.status = approvalRecord.resulting_status;
+        finalEffect.reason = approvalRecord.reason;
+        journalDoctrineDecision(state, options.scenario || {}, { id: approvalRecord.event_id, at_elapsed_hours: approvalRecord.decided_at_elapsed_hours }, finalEffect, rec, options);
+    }
+    function decideRuntimeApproval(runtimeState, approvalId, selectedAction, options) {
+        var state = normalizeRuntimeEffectState(runtimeState);
+        var action = selectedAction === 'reject' ? 'reject' : 'approve';
+        var id = approvalId != null ? String(approvalId) : '';
+        var effect = state.pending_approvals[id] || null;
+        if (!effect) {
+            return { state: state, approval: null, status: 'not_found', read_only: true };
+        }
+        if (effect.status === 'blocked') {
+            return { state: state, approval: null, status: 'blocked_not_approvable', read_only: true };
+        }
+        if (state.approval_decisions[id]) {
+            return { state: state, approval: state.approval_decisions[id], status: 'duplicate', read_only: true };
+        }
+        var approval = approvalRecordFor(effect, action, Object.assign({}, obj(options), { approval_id: id }));
+        var finalEffect = clone(effect);
+        finalEffect.status = approval.resulting_status;
+        finalEffect.approval_decision = clone(approval);
+        state.approval_decisions[id] = approval;
+        delete state.pending_approvals[id];
+        state.pending_effects = arr(state.pending_effects).map(function (p) {
+            return p && p.effect_id === finalEffect.effect_id ? clone(finalEffect) : p;
+        });
+        if (action === 'approve') state.approved_effects.push(finalEffect);
+        else state.rejected_effects.push(finalEffect);
+        state.last_effects.push(finalEffect);
+        journalApprovalDecision(state, approval, effect, options);
+        if (typeof obj(options).operatorLog === 'function') {
+            try { options.operatorLog(approval, finalEffect); } catch (_) {}
+        }
+        return { state: state, approval: approval, effect: finalEffect, status: 'recorded', read_only: true };
     }
     function gateRuntimeEffectWithDoctrine(state, event, proposal, options) {
         var scenario = obj(obj(options).scenario || obj(event).scenario);
@@ -806,6 +901,8 @@
         normalizeRuntimeEffects: normalizeRuntimeEffects,
         evaluateRuntimeEventEffects: evaluateRuntimeEventEffects,
         applySafeRuntimeEventEffects: applySafeRuntimeEventEffects,
+        pendingApprovalList: pendingApprovalList,
+        decideRuntimeApproval: decideRuntimeApproval,
         blockUnsafeRuntimeEffect: blockUnsafeRuntimeEffect,
         _internal: {
             elapsedFromTime: elapsedFromTime,

@@ -3779,6 +3779,9 @@
             doctrine_decisions: [],
             pending_approvals: {},
             applied_effects: [],
+            approval_decisions: {},
+            approved_effects: [],
+            rejected_effects: [],
             doctrine_journaled_ids: {},
             pending_doctrine_journal_records: [],
             last_doctrine_journal_error: null
@@ -3802,6 +3805,9 @@
         if (!Array.isArray(st.doctrine_decisions)) st.doctrine_decisions = [];
         if (!st.pending_approvals || typeof st.pending_approvals !== 'object' || Array.isArray(st.pending_approvals)) st.pending_approvals = {};
         if (!Array.isArray(st.applied_effects)) st.applied_effects = [];
+        if (!st.approval_decisions || typeof st.approval_decisions !== 'object' || Array.isArray(st.approval_decisions)) st.approval_decisions = {};
+        if (!Array.isArray(st.approved_effects)) st.approved_effects = [];
+        if (!Array.isArray(st.rejected_effects)) st.rejected_effects = [];
         if (!st.doctrine_journaled_ids || typeof st.doctrine_journaled_ids !== 'object' || Array.isArray(st.doctrine_journaled_ids)) st.doctrine_journaled_ids = {};
         if (!Array.isArray(st.pending_doctrine_journal_records)) st.pending_doctrine_journal_records = [];
         if (st.last_doctrine_journal_error === undefined) st.last_doctrine_journal_error = null;
@@ -3858,9 +3864,58 @@
         st.doctrine_decisions = Array.isArray(next.doctrine_decisions) ? next.doctrine_decisions : [];
         st.pending_approvals = (next.pending_approvals && typeof next.pending_approvals === 'object') ? next.pending_approvals : {};
         st.applied_effects = Array.isArray(next.applied_effects) ? next.applied_effects : [];
+        st.approval_decisions = (next.approval_decisions && typeof next.approval_decisions === 'object') ? next.approval_decisions : {};
+        st.approved_effects = Array.isArray(next.approved_effects) ? next.approved_effects : [];
+        st.rejected_effects = Array.isArray(next.rejected_effects) ? next.rejected_effects : [];
         st.doctrine_journaled_ids = (next.doctrine_journaled_ids && typeof next.doctrine_journaled_ids === 'object') ? next.doctrine_journaled_ids : {};
         st.pending_doctrine_journal_records = Array.isArray(next.pending_doctrine_journal_records) ? next.pending_doctrine_journal_records : [];
         st.last_doctrine_journal_error = next.last_doctrine_journal_error || null;
+    }
+    function _runtimeApprovalOptions() {
+        var w = W();
+        var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        var scenarioName = (sc && (sc.name || sc.scenario_label || sc.scenario_name || sc.id)) || 'runtime';
+        var operatorId = 'operator';
+        try {
+            var cu = w && w.AppConfig && w.AppConfig.CHAT_CONFIG && w.AppConfig.CHAT_CONFIG.currentUser;
+            if (cu && cu.id) operatorId = String(cu.id).slice(0, 80);
+        } catch (_) {}
+        return {
+            scenario: sc,
+            scenarioName: scenarioName,
+            runId: 'doctrine-approval-' + scenarioName,
+            operatorId: operatorId,
+            decided_at_elapsed_hours: _coaExec && _coaExec.clock && isFinite(+_coaExec.clock.current_hours) ? +_coaExec.clock.current_hours : null,
+            scenario_time_label: _coaExec ? _scenarioClockLabel(_coaExec) : null
+        };
+    }
+    function _runtimeApprovalList() {
+        var st = _ensureRuntimeEventSessionState();
+        var API = W() && W().AppRuntimeEvents;
+        if (!st) return [];
+        if (API && typeof API.pendingApprovalList === 'function') return API.pendingApprovalList(st);
+        return Object.keys(st.pending_approvals || {}).map(function (id) {
+            var p = st.pending_approvals[id];
+            if (p && typeof p === 'object') { p.approval_id = p.approval_id || id; return p; }
+            return null;
+        }).filter(Boolean);
+    }
+    function _decideRuntimeApproval(approvalId, action) {
+        var st = _ensureRuntimeEventSessionState();
+        var API = W() && W().AppRuntimeEvents;
+        if (!st || !API || typeof API.decideRuntimeApproval !== 'function') return null;
+        var opts = _runtimeApprovalOptions();
+        var res = API.decideRuntimeApproval(st, approvalId, action, opts);
+        _syncRuntimeEffectSessionState(st, res && res.state);
+        var rec = res && res.approval;
+        if (res && res.status === 'recorded' && rec) {
+            var verb = rec.selected_action === 'approve' ? 'approved' : 'rejected';
+            var msg = 'Runtime doctrine approval ' + verb + ': ' + (rec.effect_kind || 'effect') + ' -> ' + rec.resulting_status + '.';
+            try { _appendRuntimeEventLog(msg); } catch (_) {}
+            try { _recordDecision({ role: 'operator', action: 'runtime_doctrine_' + verb, called_llm: false, source: 'runtime-events', reason: rec.reason || verb, result_summary: msg }); } catch (_) {}
+        }
+        try { updatePanel(); } catch (_) {}
+        return res;
     }
     function _applyRuntimeEventEffectsForEvent(event, API, st) {
         if (!event || !API || typeof API.applySafeRuntimeEventEffects !== 'function' || !st) {
@@ -6513,6 +6568,9 @@
         scenarioClockLabel: function () { try { return _scenarioClockLabel(_coaExec); } catch (_) { return '—'; } },
         // OPTION-C/C3b: the primary run state is TIME — expose the explicit runtime state + the
         // (secondary, review-only) authored snapshot in effect at the current runtime time.
+        runtimeApprovals: function () { try { return _runtimeApprovalList(); } catch (_) { return []; } },
+        approveRuntimeApproval: function (approvalId) { return _decideRuntimeApproval(approvalId, 'approve'); },
+        rejectRuntimeApproval: function (approvalId) { return _decideRuntimeApproval(approvalId, 'reject'); },
         runtimeState: function () { try { return _runtimeState(); } catch (_) { return 'stopped'; } },
         runtimeSnapshot: function () { try { return _runtimeSnapshot(); } catch (_) { return null; } },
         snapshotInEffectLabel: function () { try { return _snapshotInEffectLabel(); } catch (_) { return '—'; } },

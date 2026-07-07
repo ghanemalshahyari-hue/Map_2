@@ -195,6 +195,7 @@
         var latestMovement = lastOf(trace);
         var pendingReplan = scn.pending_replan_reason || ex.pending_replan_reason ||
             (ex.replan_required ? 'Committed COA requires replan' : null);
+        var approvals = arr(safeRead(function () { return eng.runtimeApprovals ? eng.runtimeApprovals() : []; }, []));
 
         return {
             version: '1.0.0-cmo-wargame-run-instrumentation-1',
@@ -223,6 +224,7 @@
             movement_summary: summarizeMovementDebug(movementDebug),
             decision_log_count: decisionLog.length,
             network_call_count: networkCalls.length,
+            pending_approval_count: approvals.length,
             latest_decision_summary: decisionSummary(latestDecision),
             latest_movement_summary: movementSummary(latestMovement),
             readiness: {
@@ -252,6 +254,34 @@
     }
     function kv(label, val, col) { return '<div style="font-size:10.5px;color:' + C.dim + ';margin:1px 0;">' + esc(label) + ': <span style="color:' + (col || C.ink) + ';font-weight:600;">' + esc(val) + '</span></div>'; }
     function note(txt, col) { return '<div style="margin-top:5px;font-size:10px;color:' + (col || C.dim) + ';line-height:1.5;">' + txt + '</div>'; }
+    function approvalSummaryHtml(eng) {
+        var approvals = arr(safeRead(function () { return eng.runtimeApprovals ? eng.runtimeApprovals() : []; }, []));
+        if (!approvals.length) return '';
+        var h = '<div data-scc="doctrine-approvals" style="margin:7px 0;padding:7px 9px;border:1px solid ' + C.warn + ';border-radius:6px;background:#1c1608;">' +
+            '<div style="font-size:10.5px;color:' + C.warn + ';font-weight:800;">Doctrine / ROE / WRA approvals pending (' + approvals.length + ')</div>';
+        approvals.slice(0, 6).forEach(function (p, idx) {
+            var d = p && p.doctrine_decision || {};
+            var id = p.approval_id || p.effect_id || ('approval-' + idx);
+            var rules = arr(d.matched_rules).map(function (r) { return r && (r.id || r.rule_id || r.name || r.source); }).filter(Boolean).join(', ') || 'none';
+            var reasons = p.reason || arr(d.reasons).join('; ') || 'approval required';
+            var dp = d.decision_point_id || (p.payload && (p.payload.decision_point_id || p.payload.decision_id)) || 'none';
+            var ev = p.event_id || 'event';
+            var at = p.at_elapsed_hours != null ? eventHoursLabel(p.at_elapsed_hours) : 'current';
+            h += '<div data-scc-approval="' + esc(id) + '" style="margin-top:7px;padding:7px 8px;border:1px solid #5c4b1d;border-radius:5px;background:#0c141d;">' +
+                '<div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;">' +
+                '<div style="font-size:10px;color:' + C.ink + ';line-height:1.45;">' +
+                '<b style="color:#ffd27f;">' + esc(p.kind || 'effect') + '</b> / ' + esc(p.status || 'requires_approval') +
+                '<br><span style="color:' + C.dim + ';">Reason:</span> ' + esc(reasons) +
+                '<br><span style="color:' + C.dim + ';">Authority:</span> ' + esc(d.required_authority || 'operator') +
+                '<br><span style="color:' + C.dim + ';">Rules:</span> ' + esc(rules) +
+                '<br><span style="color:' + C.dim + ';">Context:</span> event ' + esc(ev) + ' / decision ' + esc(dp) + ' / ' + esc(at) +
+                '</div><div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;">' +
+                btnPri('scc-approve-doctrine-' + idx, 'Approve', 'Record approval only; no combat/unit/map effect executes') +
+                btnWarn('scc-reject-doctrine-' + idx, 'Reject', 'Record rejection and keep the effect from later execution') +
+                '</div></div></div>';
+        });
+        return h + '</div>';
+    }
     function openCmoTestGuide() {
         var g = (typeof globalThis !== 'undefined' && globalThis) || (typeof global !== 'undefined' && global) || null;
         var w = (typeof window !== 'undefined' && window) || g;
@@ -544,6 +574,7 @@
         } else if (state === 'scenario_complete') {
             controls = btnSec('scc-run', '🎬 Run Scenario again') + ' ' + btnWarn('scc-clear', '✕ Clear');
         }
+        inner += approvalSummaryHtml(eng);
         inner += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:7px;">' + controls + '</div>';
         // live runtime read-out
         if (scn && scn.scenario_active) {
@@ -831,6 +862,11 @@
         bindFn('scc-use-local-model', function () { if (typeof eng.switchToLocalModel === 'function') eng.switchToLocalModel(); });
         bindFn('scc-use-openrouter', function () { if (typeof eng.switchToOpenRouter === 'function') eng.switchToOpenRouter(); });
         bindFn('scc-evidence-toggle', function () { evidenceOpen = !evidenceOpen; (eng.repaint || function () {})(); });
+        arr(safeRead(function () { return eng.runtimeApprovals ? eng.runtimeApprovals() : []; }, [])).slice(0, 6).forEach(function (p, idx) {
+            var id = p && (p.approval_id || p.effect_id);
+            bindFn('scc-approve-doctrine-' + idx, function () { if (eng.approveRuntimeApproval) eng.approveRuntimeApproval(id); });
+            bindFn('scc-reject-doctrine-' + idx, function () { if (eng.rejectRuntimeApproval) eng.rejectRuntimeApproval(id); });
+        });
         for (var i = 0; i < 8; i++) { (function (idx) { bindFn('scc-select-' + idx, function () { eng.selectCoa(idx); }); })(i); }
     }
 

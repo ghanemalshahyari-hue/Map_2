@@ -2207,8 +2207,7 @@
             mEl.className = 'usp-arow-val'
                 + (missionText !== '—' ? ' usp-link' : '');
             if (tasking && tasking.action_what) {
-                mEl.title = (tasking.phase ? '[' + tasking.phase + '] ' : '')
-                           + 'Step ' + (tasking.step_index != null ? tasking.step_index + 1 : '?');
+                mEl.title = 'Runtime task context';
             } else {
                 mEl.title = '';
             }
@@ -2220,7 +2219,7 @@
 
     /**
      * Populate the collapsible "CURRENT ORDERS" detail block.
-     * Shows: step/phase label, action_why, action_intended_effect,
+     * Shows: runtime task context, action_why, action_intended_effect,
      *        action_doctrine_cited[] (joined with ' · ').
      * Hides the entire block when tasking, overlayPreview, and overlayDiff are null.
      * Each row shown only when its value is a non-empty string.
@@ -2240,16 +2239,8 @@
             return;
         }
 
-        // Step / phase label in section header
-        var stepLabel = '';
-        if (tasking && tasking.phase) {
-            stepLabel = tasking.phase;
-            if (tasking.step_index != null) {
-                stepLabel = 'Step ' + (tasking.step_index + 1) + ' \xb7 ' + stepLabel;
-            }
-        } else if (tasking && tasking.step_index != null) {
-            stepLabel = 'Step ' + (tasking.step_index + 1);
-        }
+        // Normal operator UI does not expose authored step/phase labels.
+        var stepLabel = tasking ? 'Runtime task context' : '';
         setText('usp-tasking-step', stepLabel ? ' – ' + stepLabel : '');
 
         _populateTaskingOverlayPreview(overlayPreview);

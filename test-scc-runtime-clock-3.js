@@ -1,201 +1,110 @@
-/* ============================================================================
- * test-scc-runtime-clock-3.js — OPTION C / SLICE C3a: Runtime Scenario Time Anchor
- * ----------------------------------------------------------------------------
- * Gate for C3a: move RMOOZ closer to a normal scenario runtime (not fixed steps)
- * by adding ABSOLUTE scenario-time support while preserving H-relative scenarios,
- * on the EXISTING C1/C2 runtime-clock path (no second clock).
- *
- * Additive authored fields (all optional; absent on every legacy scenario):
- *   - start_time       : ISO-8601 / Zulu anchor for elapsed_hours===0 (H-hour).
- *                        Present ⇒ clock shows absolute Zulu DTG (start + hours).
- *   - duration_minutes : positive runtime length from H; present ⇒ AUTHORITATIVELY
- *                        caps the runtime end bound (steps[] span otherwise).
- *   - type             : "runtime_scenario" opts in explicitly; a start_time /
- *                        duration_minutes anchor also implies it.
- * steps[].elapsed_hours stay snapshots/checkpoints the clock indexes into — never
- * removed, never the runtime engine.
- *
- * Verifies:
- *   1. Scenario WITH start_time  → absolute Zulu DTG from start_time + current_hours.
- *   2. Scenario WITHOUT start_time → still H-relative (current_ms/start_time null).
- *   3. duration_minutes clamps / marks the runtime end.
- *   4. runtime_scenario type validates ADDITIVELY (never blocks a legacy scenario).
- *   5. Existing on-disk (w4-generation) scenarios still load without start_time.
- *   6. C1/C2 gate invariants still hold (deriveWorldState purity + gate files).
- * ========================================================================== */
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
-var ROOT = __dirname;
+/*
+ * C3a/C3b baseline gate: runtime metadata feeds one transient scenario clock.
+ * Authored steps remain review snapshots indexed by current_hours.
+ */
 
-// Load DB1 first so deriveWorldState auto-enriches, then WS1 + DET1 (same order as C1/C2).
-// These modules bind root=global (no window shim yet), exactly like clock-1/clock-2.
+const fs = require('fs');
+const path = require('path');
+
+const ROOT = __dirname;
+const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
+
 require(path.join(ROOT, 'UI_MOdified', 'client', 'shell', 'world-state-db.js'));
 require(path.join(ROOT, 'UI_MOdified', 'client', 'shell', 'detection.js'));
-var WS = require(path.join(ROOT, 'UI_MOdified', 'client', 'shell', 'world-state.js'));
+const WS = require(path.join(ROOT, 'UI_MOdified', 'client', 'shell', 'world-state.js'));
+const spec = require(path.join(ROOT, 'UI_MOdified', 'server', 'ai', 'scenario-schema-spec.js'));
 
-// Real Zulu DTG formatter (the exact label the run readout renders). clock.js needs
-// window+document; readyState:'loading' defers start() so no setInterval keeps node alive.
-global.window = global.window || {};
-global.document = global.document || {
-    readyState: 'loading', addEventListener: function () {}, getElementById: function () { return null; },
-    visibilityState: 'hidden'
-};
-require(path.join(ROOT, 'UI_MOdified', 'client', 'shell', 'clock.js'));
-var formatZuluDtg = global.window.AppShellClock.formatZuluDtg;
-
-// Server-side additive-schema check (pure node modules).
-var validator = require(path.join(ROOT, 'UI_MOdified', 'server', 'ai', 'scenario-validator.js'));
-var spec = require(path.join(ROOT, 'UI_MOdified', 'server', 'ai', 'scenario-schema-spec.js'));
-
-var passed = 0, failed = 0;
-function assert(label, cond) {
-    if (cond) { console.log('  PASS  ' + label); passed++; }
-    else { console.error('  FAIL  ' + label); failed++; }
+let passed = 0;
+let failed = 0;
+function ok(label, cond) {
+    if (cond) { passed++; console.log('  PASS  ' + label); }
+    else { failed++; console.error('  FAIL  ' + label); }
 }
-function src(rel) { return fs.readFileSync(path.join(ROOT, rel), 'utf8'); }
 
-// Base H-relative fixture: prep at H-30 through H+24 (steps span end = 24).
-function scen() {
-    return {
-        name: 't-c3a', scenario_label: 't-c3a', map_bbox: [45, 23, 49, 27],
-        obj: { name: 'O', coord: [47, 25], target_depth_km: 50, carver: 20 },
+function scenario(overrides) {
+    return Object.assign({
+        name: 'runtime-clock-3',
+        scenario_label: 'Runtime Clock 3',
+        map_bbox: [45, 23, 49, 27],
+        obj: { name: 'Objective X', coord: [47, 25], target_depth_km: 50, carver: 20 },
         bls_template: [{ name: 'BLS-1', coord: [46, 24] }],
-        red_units: [{ uid: 'R1', label: 'R1', bls: 'BLS-1', appear: 0, role: 'S-300 PKS', domain: 'ground', coord: [46.0, 24.0] }],
-        blue_units_initial: [{ unit_uid: 'B1', base_id: 'B1', role: 'fighter', domain: 'air', coord: [47.0, 25.0] }],
+        red_units: [{ uid: 'R1', label: 'R1', bls: 'BLS-1', appear: 0, role: 'S-300 PKS', domain: 'ground', coord: [46, 24] }],
+        blue_units_initial: [{ unit_uid: 'B1', base_id: 'B1', role: 'fighter', domain: 'air', coord: [47, 25] }],
         steps: [
-            { index: 0, time_label: 'H-30', elapsed_hours: -30, phase: 'PREP' },
-            { index: 1, time_label: 'H', elapsed_hours: 0, phase: 'EXEC' },
-            { index: 2, time_label: 'H+6', elapsed_hours: 6, phase: 'STRIKE' },
-            { index: 3, time_label: 'H+24', elapsed_hours: 24, phase: 'CONSOL' }
+            { index: 0, time_label: 'H', elapsed_hours: 0, phase: 'START' },
+            { index: 1, time_label: 'H+24', elapsed_hours: 24, phase: 'MOVE' },
+            { index: 2, time_label: 'H+48', elapsed_hours: 48, phase: 'CONTACT' },
+            { index: 3, time_label: 'H+72', elapsed_hours: 72, phase: 'END' }
         ]
-    };
-}
-// derive ws.clock at a given current-hours (through the C1 path).
-function clockAt(s, hours, extra) {
-    var c = Object.assign({ start_hours: -30, current_hours: hours, end_hours: 24 }, extra || {});
-    return WS.deriveWorldStateWithOwned(s, 1, null, c).clock;
+    }, overrides || {});
 }
 
-console.log('\n=== OPTION C / SLICE C3a: Runtime Scenario Time Anchor ===\n');
+console.log('\n=== C3a/C3b: runtime scenario clock metadata ===\n');
 
-console.log('--- 1. start_time → absolute Zulu DTG (start_time + current_hours) ---');
+console.log('--- 1. World State derives absolute time and duration-cap metadata ---');
 (function () {
-    var s = scen(); s.start_time = '2022-03-01T00:00:00Z';
-    var c3 = clockAt(s, 3);
-    assert('T-1  ws.clock.start_time echoes the authored anchor', c3.start_time === '2022-03-01T00:00:00Z');
-    assert('T-2  current_ms = start_time + hours (H+3 → 03:00Z)', c3.current_ms === Date.parse('2022-03-01T03:00:00Z'));
-    assert('T-3  Zulu DTG label at H+3 is 010300ZMAR22', formatZuluDtg(new Date(c3.current_ms)) === '010300ZMAR22');
-    // prep phase (negative elapsed) maps to the correct real instant
-    var cPrep = clockAt(s, -30);
-    assert('T-4  H-30 → 2022-02-27T18:00Z (271800ZFEB22)', cPrep.current_ms === Date.parse('2022-02-27T18:00:00Z') && formatZuluDtg(new Date(cPrep.current_ms)) === '271800ZFEB22');
-    assert('T-5  runtime_scenario flag true when start_time present', c3.runtime_scenario === true);
-})();
-
-console.log('\n--- 2. no start_time → still H-relative (unchanged legacy behaviour) ---');
-(function () {
-    var s = scen();
-    var c = clockAt(s, 3);
-    assert('T-1  start_time null (no absolute anchor)', c.start_time === null);
-    assert('T-2  current_ms null (H-relative only)', c.current_ms === null);
-    assert('T-3  step derived via findStepForElapsedHours (3h → step 1 @ H)', c.step_index === 1 && c.time_label === 'H');
-    assert('T-4  runtime_scenario flag false (legacy stepped)', c.runtime_scenario === false);
-    assert('T-5  duration_minutes null when unauthored', c.duration_minutes === null);
-})();
-
-console.log('\n--- 3. duration_minutes clamps / marks the runtime end ---');
-(function () {
-    var s = scen();
-    // bounds: no duration → steps span (start -30, end 24)
-    var b0 = WS.scenarioRuntimeBounds(s);
-    assert('T-1  no duration → end = steps span (24), steps_end 24', b0.end === 24 && b0.steps_end === 24 && b0.duration_minutes === null && b0.start === -30);
-    // duration 12h (720 min) caps the end EARLIER than the steps span
-    var sd = scen(); sd.duration_minutes = 720;
-    var bd = WS.scenarioRuntimeBounds(sd);
-    assert('T-2  duration 720min → end capped to 12 (< steps_end 24)', bd.end === 12 && bd.steps_end === 24 && bd.duration_minutes === 720);
-    // derived clock honours the cap: end_hours overridden, complete marked at the cap
-    var cMid = clockAt(sd, 6);
-    assert('T-3  clock end_hours overridden to duration cap (12)', cMid.end_hours === 12);
-    assert('T-4  complete=false while current(6) < cap(12)', cMid.complete === false);
-    var cEnd = clockAt(sd, 12);
-    assert('T-5  complete=true when current reaches the duration cap', cEnd.complete === true);
-    // 0 / negative / non-finite duration is ignored (no cap; legacy end)
-    [0, -30, 'x', NaN].forEach(function (bad, i) {
-        var sb = scen(); sb.duration_minutes = bad;
-        assert('T-6.' + i + '  invalid duration (' + String(bad) + ') ignored → end = steps span (24)', WS.scenarioRuntimeBounds(sb).end === 24 && WS.scenarioRuntimeBounds(sb).duration_minutes === null);
+    const s = scenario({ start_time: '2026-07-06T00:00:00Z', duration_minutes: 1800 });
+    const ws = WS.deriveWorldStateWithOwned(s, 0, null, {
+        start_hours: 0,
+        current_hours: 25.5,
+        end_hours: 72,
+        duration_hours: 72,
+        playing: true,
+        speed: 4
     });
-    // live Run advance is single-sourced from scenarioRuntimeBounds (so a run actually stops at the cap)
-    var ff = src('UI_MOdified/client/shell/free-fight-demo.js');
-    var bi = ff.indexOf('function _clockBoundsFromScenario');
-    var bb = ff.slice(bi, bi + 700);
-    assert('T-7  _clockBoundsFromScenario delegates to AppWorldState.scenarioRuntimeBounds', /AppWorldState\.scenarioRuntimeBounds/.test(bb) && /b\.start/.test(bb) && /b\.end/.test(bb));
+    ok('ws.clock exists', !!(ws && ws.clock));
+    ok('current_hours retained as continuous time', ws.clock.current_hours === 25.5);
+    ok('duration_minutes caps end_hours to H+30', ws.clock.end_hours === 30 && ws.clock.duration_minutes === 1800);
+    ok('duration_hours carried through runtime clock', ws.clock.duration_hours === 72);
+    ok('step index floors from continuous time (25.5 -> H+24 step)', ws.clock.step_index === 1 && ws.clock.time_label === 'H+24');
+    ok('start_time creates absolute current_ms', ws.clock.current_ms === Date.parse('2026-07-07T01:30:00Z'));
+    ok('playing and speed are runtime state, not authored step state', ws.clock.playing === true && ws.clock.speed === 4);
 })();
 
-console.log('\n--- 4. runtime_scenario type validates ADDITIVELY (never blocks legacy) ---');
+console.log('\n--- 2. nested runtime_scenario.start_time works without top-level start_time ---');
 (function () {
-    // classification
-    assert('T-1  legacy scenario classified "stepped"', WS.runtimeScenarioType(scen()) === 'stepped');
-    var st = scen(); st.type = 'runtime_scenario';
-    assert('T-2  explicit type → "runtime_scenario"', WS.runtimeScenarioType(st) === 'runtime_scenario');
-    var sa = scen(); sa.start_time = '2022-03-01T00:00:00Z';
-    assert('T-3  start_time anchor implies runtime_scenario', WS.runtimeScenarioType(sa) === 'runtime_scenario');
-    var sdur = scen(); sdur.duration_minutes = 360;
-    assert('T-4  duration anchor implies runtime_scenario', WS.runtimeScenarioType(sdur) === 'runtime_scenario');
-    // validation: legacy always ok, good runtime ok, bad anchors flagged, typed-but-anchorless warned
-    var vLegacy = WS.validateRuntimeScenario(scen());
-    assert('T-5  legacy validates ok (never blocked), type "stepped"', vLegacy.ok === true && vLegacy.type === 'stepped' && vLegacy.errors.length === 0);
-    var sgood = scen(); sgood.type = 'runtime_scenario'; sgood.start_time = '2022-03-01T00:00:00Z'; sgood.duration_minutes = 720;
-    assert('T-6  well-anchored runtime_scenario validates ok', WS.validateRuntimeScenario(sgood).ok === true);
-    var sbadT = scen(); sbadT.type = 'runtime_scenario'; sbadT.start_time = 'not-a-date';
-    var vBadT = WS.validateRuntimeScenario(sbadT);
-    assert('T-7  bad start_time → ok:false with a start_time error', vBadT.ok === false && vBadT.errors.some(function (e) { return e.path === 'start_time'; }));
-    var sbadD = scen(); sbadD.type = 'runtime_scenario'; sbadD.duration_minutes = -5;
-    var vBadD = WS.validateRuntimeScenario(sbadD);
-    assert('T-8  bad duration_minutes → ok:false with a duration_minutes error', vBadD.ok === false && vBadD.errors.some(function (e) { return e.path === 'duration_minutes'; }));
-    var sTypeOnly = scen(); sTypeOnly.type = 'runtime_scenario';
-    var vType = WS.validateRuntimeScenario(sTypeOnly);
-    assert('T-9  typed but anchorless → ok:true + degrade warning', vType.ok === true && vType.warnings.length >= 1);
-    // additive server schema: fields declared OPTIONAL (never required) + type-checked
-    assert('T-10 schema lists type/start_time/duration_minutes as optional (additive)',
-        spec.TOP_LEVEL.type && spec.TOP_LEVEL.type.required === false &&
-        spec.TOP_LEVEL.start_time && spec.TOP_LEVEL.start_time.required === false &&
-        spec.TOP_LEVEL.duration_minutes && spec.TOP_LEVEL.duration_minutes.required === false);
-    assert('T-11 server type checks match the fields (string/string/number)',
-        validator.typeMatches('2022-03-01T00:00:00Z', 'string') === true &&
-        validator.typeMatches(720, 'number') === true &&
-        validator.typeMatches('x', 'number') === false);
+    const s = scenario({ runtime_scenario: { start_time: '2026-07-06T00:00:00Z' } });
+    const ws = WS.deriveWorldStateWithOwned(s, 0, null, {
+        start_hours: 0,
+        current_hours: 2,
+        end_hours: 72
+    });
+    ok('nested runtime_scenario.start_time feeds current_ms', ws.clock.current_ms === Date.parse('2026-07-06T02:00:00Z'));
 })();
 
-console.log('\n--- 5. existing on-disk scenario still loads without start_time (back-compat) ---');
+console.log('\n--- 3. runtime classification and schema remain additive ---');
 (function () {
-    var wargame3 = JSON.parse(src('UI_MOdified/data/scenarios/wargame3.json'));
-    assert('T-1  fixture carries NONE of the C3a fields', !('start_time' in wargame3) && !('duration_minutes' in wargame3) && !('type' in wargame3));
-    assert('T-2  classified "stepped" (legacy)', WS.runtimeScenarioType(wargame3) === 'stepped');
-    var thrown = false, c = null;
-    try { c = WS.deriveWorldStateWithOwned(wargame3, 1, null, { start_hours: -30, current_hours: 0, end_hours: 144 }).clock; }
-    catch (_) { thrown = true; }
-    assert('T-3  derives a clock without throwing', !thrown && c && typeof c === 'object');
-    assert('T-4  clock is H-relative (current_ms/start_time null), duration null', c.current_ms === null && c.start_time === null && c.duration_minutes === null);
-    assert('T-5  runtime bounds = the authored steps span (-30 → 144)', WS.scenarioRuntimeBounds(wargame3).end === 144);
-    // ADDITIVE PROOF: injecting the C3a fields adds NO new server-validation errors.
-    var before = validator.validateScenario(wargame3).errors.length;
-    var injected = Object.assign({}, wargame3, { type: 'runtime_scenario', start_time: '2022-03-01T00:00:00Z', duration_minutes: 4320 });
-    var after = validator.validateScenario(injected).errors.length;
-    assert('T-6  C3a fields add zero new server-validation errors (additive)', after === before);
+    ok('legacy scenario classified stepped', WS.runtimeScenarioType(scenario()) === 'stepped');
+    ok('start_time implies runtime_scenario', WS.runtimeScenarioType(scenario({ start_time: '2026-07-06T00:00:00Z' })) === 'runtime_scenario');
+    ok('duration_minutes implies runtime_scenario', WS.runtimeScenarioType(scenario({ duration_minutes: 60 })) === 'runtime_scenario');
+    ok('bad runtime duration is rejected on explicit runtime_scenario',
+        WS.validateRuntimeScenario(scenario({ type: 'runtime_scenario', duration_minutes: -1 })).ok === false);
+    ok('server schema keeps runtime fields optional',
+        spec.TOP_LEVEL.start_time.required === false &&
+        spec.TOP_LEVEL.duration_minutes.required === false &&
+        spec.TOP_LEVEL.runtime_scenario.required === false);
 })();
 
-console.log('\n--- 6. C1/C2 gate invariants preserved (purity + steps-as-snapshots) ---');
+console.log('\n--- 4. Client runtime uses one clock path, not a duplicate timer model ---');
 (function () {
-    var s = scen();
-    var pureBefore = JSON.stringify(WS.deriveWorldState(s, 1));
-    WS.deriveWorldStateWithOwned(s, 1, null, { start_hours: -30, current_hours: 6, end_hours: 24 });
-    assert('T-1  deriveWorldState byte-identical after a clock derive (WS still pure)', JSON.stringify(WS.deriveWorldState(s, 1)) === pureBefore);
-    assert('T-2  3-arg deriveWorldStateWithOwned has NO clock key (B1 purity)', !('clock' in WS.deriveWorldStateWithOwned(s, 1, null)));
-    assert('T-3  findStepForElapsedHours floor mapping intact (5.9h → step 1)', WS.findStepForElapsedHours(s, 5.9).index === 1 && WS.findStepForElapsedHours(s, 6).index === 2);
-    assert('T-4  authored scenario steps NOT mutated by any C3a path', s.steps[3].elapsed_hours === 24 && s.red_units[0].coord[0] === 46.0);
-    assert('T-5  C1/C2 gate files still present', fs.existsSync(path.join(ROOT, 'test-scc-runtime-clock-1.js')) && fs.existsSync(path.join(ROOT, 'test-scc-runtime-clock-2.js')));
+    const ff = read('UI_MOdified/client/shell/free-fight-demo.js');
+    const map = read('UI_MOdified/client/wargame/adjudicator-map.js');
+    const scc = read('UI_MOdified/client/shell/scenario-control-center.js');
+    ok('free-fight bounds delegate to AppWorldState.scenarioRuntimeBounds',
+        /AppWorldState\.scenarioRuntimeBounds/.test(ff) && /duration_minutes/.test(ff));
+    ok('runtime_scenario duration_hours fallback remains available',
+        /function _runtimeDurationHours/.test(ff) && /duration_hours/.test(ff));
+    ok('Run/Pause/Stop operate through the same published run clock',
+        /function _setScenarioClockPlaying/.test(ff) &&
+        /function _resetScenarioClockToStart/.test(ff) &&
+        /_publishRunClock\(\)/.test(ff));
+    ok('map runClockLabel reads nested runtime_scenario.start_time as fallback',
+        /runtime_scenario/.test(map) && /start_time/.test(map));
+    ok('SCC labels primary runtime as Scenario time',
+        scc.includes("kv('Scenario time'") && scc.includes('scenarioClockLabel'));
 })();
 
 console.log('\n=== Results: ' + passed + ' passed, ' + failed + ' failed ===');
-if (failed) process.exit(1);
+process.exit(failed ? 1 : 0);

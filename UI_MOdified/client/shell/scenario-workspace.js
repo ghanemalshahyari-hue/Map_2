@@ -5,7 +5,7 @@
  *   Start / Load Scenario -> Edit Mode -> Save draft / Save to server ->
  *   Live Scenario Workspace -> Scenario Control Center -> Evidence / Ledger / AAR.
  *
- * The shell now hosts live JSON import, live step navigation, and operator
+ * The shell now hosts live JSON import, snapshot review navigation, and operator
  * decision context. Several cards remain read-only derivations of the loaded
  * scenario; legacy AI/demo scenario generation stays retired.
  *
@@ -222,13 +222,13 @@
         }
     }
 
-    // ── PR-44 / PR-287D: Scenario Phase Timeline ─────────────────────────
-    // Read-only. Renders the loaded scenario's phases, grouped from
-    // getScenario().phase_table — a per-time-step grid where many rows share
-    // a phase name. We collapse it to the distinct phases in first-seen order
-    // and show each phase's time-label span.
+    // ── PR-44 / PR-287D / C3d: Review checkpoints ───────────────────────
+    // Read-only. Renders the loaded scenario's authored checkpoints, grouped
+    // from getScenario().phase_table — a per-time-step grid where many rows
+    // share a phase name. We collapse it to the distinct phase/checkpoint names
+    // in first-seen order and show each checkpoint's time-label span.
     //
-    // current / complete / upcoming is derived read-only from the active step's
+    // selected / earlier / queued is derived read-only from the active step's
     // phase (getActiveStep().phase, driven by window.RmoozScenario.stepIndex —
     // the only allowed write, owned by goToStep()). paintPhaseTimeline() is
     // already repainted on every goToStep(), so the highlight tracks step nav.
@@ -248,7 +248,7 @@
             var msg = document.createElement('div');
             msg.className = 'spt-empty-msg';
             msg.setAttribute('data-i18n', 'spt-empty');
-            msg.textContent = tx('spt-empty', 'Load a scenario to see its phase timeline.');
+            msg.textContent = tx('spt-empty', 'Load a scenario to see its review checkpoints.');
             body.appendChild(msg);
             li.appendChild(body);
             list.appendChild(li);
@@ -283,7 +283,7 @@
         });
         if (order.length === 0) { renderEmpty(); return; }
 
-        // Current phase from the active step (read-only). -1 → none resolvable.
+        // Selected authored checkpoint from the active step (read-only). -1 → none resolvable.
         var step = (typeof getActiveStep === 'function') ? getActiveStep() : null;
         var currentPhaseName = (step && step.phase != null) ? String(step.phase) : null;
         var currentPos = (currentPhaseName != null && Object.prototype.hasOwnProperty.call(byName, currentPhaseName))
@@ -1031,7 +1031,7 @@
                           + ((sc && sc.blue_units_initial && sc.blue_units_initial.length) || 0),
                 sample_units: _sample,
                 world_state_projection: false,  // synthetic per-step state; positions from step coord tables
-                preview_or_live: 'live step navigation (NOT adjudicated)',
+                preview_or_live: 'snapshot review navigation (NOT adjudicated)',
                 scenario_source: 'window.RmoozScenario.scenario' +
                     (_ptr && sc && _ptr.name === sc.name ? ' (= localStorage last-loaded pointer "' + _ptr.name + '")' : ' (in-memory)'),
                 ts: Date.now(),
@@ -1080,11 +1080,11 @@
         if (typeof paintLiveDecisionActionCard === 'function'){ paintLiveDecisionActionCard(); }
     }
 
-    // ── P4 (Wargame3 live): bottom transport bar → step playback bridge ──────────
-    // shell/timeline.js is UI-only — it dispatches rmooz:timeline-ui-action but
-    // nothing advanced the live scenario. Wire play / pause / step / speed to
-    // goToStep so the visible transport bar moves the laydown through the 17
-    // phases. Read-only: only stepIndex + marker positions change (via goToStep).
+    // ── P4 (Wargame3 review): bottom transport bar → step preview bridge ─────────
+    // shell/timeline.js is UI-only — it dispatches rmooz:timeline-ui-action.
+    // This fallback wires preview / pause / snapshot / speed to goToStep so the
+    // visible transport bar reviews the laydown through the 17 phases. Read-only:
+    // only stepIndex + marker positions change (via goToStep).
     // No combat sim, no AI, no decision options, no scenario mutation, no storage.
     var _swPlayTimer = null;
     var _swPlaySpeed = 1;
@@ -1232,8 +1232,8 @@
         btn.disabled = !hasScenario || (atEnd && !_swIsPlaying);
         btn.setAttribute('aria-pressed', _swIsPlaying ? 'true' : 'false');
         btn.textContent = _swIsPlaying
-            ? tx('sw-nav-pause', '⏸ Pause')
-            : tx('sw-nav-play',  '▶ Play');
+            ? tx('sw-nav-pause', '⏸ Pause preview')
+            : tx('sw-nav-play',  '▶ Preview');
         if (sel) sel.disabled = !hasScenario;
     }
 
@@ -7365,7 +7365,7 @@
         });
     }
 
-    // ── PR-136: Playback engine ───────────────────────────────────────────────
+    // ── PR-136: Preview playback engine ───────────────────────────────────────
     // Only mutates: _swPlayIntervalId, _swIsPlaying, window.RmoozScenario.stepIndex
     // No animation. No backend. No storage. No engagement arcs. No combat data.
 
@@ -7386,8 +7386,8 @@
     }
 
     function startPlayback() {
-        // Canonical engine owns playback when present (single timer, shared by
-        // the nav Play button, the bottom transport, and turn-engine Start).
+        // Canonical engine owns preview playback when present (single timer,
+        // shared by the nav Preview button, the bottom transport, and turn-engine Start).
         if (window.AppScenarioRunner) {
             try { window.AppScenarioRunner.play(); } catch (_) { /* no-op */ }
             return; // play-button visual synced via the rmooz:scenario-run listener
@@ -7452,7 +7452,7 @@
         var btnNext  = document.getElementById('sw-nav-next');
         var btnLast  = document.getElementById('sw-nav-last');
 
-        // Play/Pause toggle
+        // Preview/Pause toggle
         if (btnPlay) {
             btnPlay.addEventListener('click', function () {
                 if (_swIsPlaying) {
@@ -15291,7 +15291,7 @@
     // ── PR-287L2: Live Scenario Header ──────────────────────────────────
     // Reads window.RmoozScenario only (via existing getScenario / getActiveStepIndex).
     // Paints a compact header strip at the top of #sw-live-workspace that names the
-    // scenario, its id, the active step counter, the phase, and the load source.
+    // scenario, its id, the review checkpoint, the authored phase, and the load source.
     // No backend. No mutation. No storage. No Gate 7. Safely no-ops if DOM missing.
     function paintLiveScenarioHeader() {
         var titleEl  = document.getElementById('sw-live-scenario-title');
@@ -15322,11 +15322,11 @@
                        tx('sw-live-scenario-id-unknown', 'unknown');
         if (idEl) { idEl.textContent = String(sid); }
 
-        // Step counter: "Step N of T"
+        // Review checkpoint counter: "Review checkpoint N of T"
         if (stepEl) {
             if (sc && Array.isArray(sc.steps) && sc.steps.length > 0) {
                 stepEl.textContent =
-                    tx('sw-live-decision-step-prefix', 'Step') + ' ' +
+                    tx('sw-live-review-checkpoint-prefix', 'Review checkpoint') + ' ' +
                     (idx + 1) + ' ' +
                     tx('sw-live-decision-of', 'of') + ' ' +
                     sc.steps.length;
@@ -15335,11 +15335,11 @@
             }
         }
 
-        // Phase: step.phase || step.time_label || step.title || dash
+        // Authored phase/checkpoint label: step.phase || step.time_label || step.title || dash
         if (phaseEl) {
             var phase = step ? (step.phase || step.time_label || step.title ||
                                  step.kind_native) : null;
-            phaseEl.textContent = phase ? String(phase) : '—';
+            phaseEl.textContent = phase ? (tx('sw-live-authored-phase-prefix', 'Authored phase') + ': ' + String(phase)) : '—';
         }
 
         // Source / model

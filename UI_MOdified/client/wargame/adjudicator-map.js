@@ -6755,7 +6755,9 @@
     function runClockLabel() {
         const c = runClock;
         if (!c || !isFinite(+c.current_hours)) return null;
-        const st = (lastAppliedScenario && typeof lastAppliedScenario.start_time === 'string') ? lastAppliedScenario.start_time : null;
+        const sc = lastAppliedScenario || {};
+        const rt = sc.runtime_scenario || {};
+        const st = (typeof sc.start_time === 'string' && sc.start_time) || (typeof rt.start_time === 'string' && rt.start_time) || null;
         if (st && window.AppShellClock && typeof window.AppShellClock.formatZuluDtg === 'function') {
             const base = Date.parse(st);
             if (isFinite(base)) { try { return window.AppShellClock.formatZuluDtg(new Date(base + (+c.current_hours) * 3600000)); } catch (_) {} }

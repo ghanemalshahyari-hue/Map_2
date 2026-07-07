@@ -180,7 +180,7 @@
                     <span>Import</span>
                 </button>
 
-                <button class="tool-rail-btn" data-tool="wargame" type="button" data-i18n-title="tool-hint-wargame" title="Run an operational scenario (turn-based)">
+                <button class="tool-rail-btn" data-tool="wargame" type="button" data-i18n-title="tool-hint-wargame" title="Developer legacy diagnostics" hidden aria-hidden="true" tabindex="-1" data-dev-only="legacy-wargame">
                     <!-- "Operational scenario document" — a file outline with content
                          lines. Replaces the prior shield+check glyph; reads as a
                          structured operational document rather than a combat icon. -->
@@ -850,7 +850,7 @@
 
                 <!-- ▸ SETTINGS PANEL (backward-compat shell — selects moved to utility panel) -->
                 <!-- Operational Scenario command panel (engine still named "wargame" in code) -->
-                <section class="tools-section tool-panel wargame-panel context-section hidden" id="wargame-panel" aria-label="Operational scenario battle control">
+                <section class="tools-section tool-panel wargame-panel context-section hidden" id="wargame-panel" aria-label="Developer legacy diagnostics" hidden aria-hidden="true" inert data-dev-only="legacy-wargame">
                     <div class="wargame-panel-topline">
                         <span class="wargame-classification">Training</span>
                         <span class="wargame-mode-chip">Legacy · Diagnostic</span>
@@ -887,7 +887,7 @@
                                 title="Generate, continue, or import a partial operational scenario using the offline AI engine">Generate / Continue</button>
                     </div>
 
-                    <div class="wargame-phase-track" aria-label="Operational scenario phases">
+                    <div class="wargame-phase-track" aria-label="Internal diagnostic markers">
                         <span id="wg-phase-setup" class="active">Setup</span>
                         <span id="wg-phase-orders">Orders</span>
                         <span id="wg-phase-resolve">Resolve</span>
@@ -904,7 +904,7 @@
                         </div>
                         <div id="wg-body">
                             <div class="wargame-kpi-grid">
-                                <div><span>Turn</span><strong id="wg-turn-value">0</strong></div>
+                                <div><span>Frame</span><strong id="wg-turn-value">0</strong></div>
                                 <div><span>Advance</span><strong id="wg-advance-value">0 km</strong></div>
                                 <div><span>Enemy</span><strong id="wg-enemy-value">-</strong></div>
                                 <div><span>Friendly</span><strong id="wg-friendly-value">-</strong></div>
@@ -912,11 +912,11 @@
                             <div id="wg-status" class="wargame-status-block">Not started</div>
                             <div class="wargame-action-row">
                                 <button id="wg-init" class="wargame-action-btn primary" type="button" data-i18n="wg-btn-start">Start</button>
-                                <button id="wg-next" class="wargame-action-btn success" type="button" data-i18n="wg-btn-next">Next snapshot</button>
+                                <button id="wg-next" class="wargame-action-btn success" type="button" data-i18n="wg-btn-next">Advance frame</button>
                                 <button id="wg-reset" class="wargame-action-btn secondary" type="button" data-i18n="wg-btn-reset">Reset</button>
                             </div>
                             <div class="wargame-control-footer">
-                                <span id="wg-footer">Step 5 km - slide 800 ms - contact &lt;= 5 km</span>
+                                <span id="wg-footer">Frame 5 km - slide 800 ms - contact &lt;= 5 km</span>
                             </div>
                         </div>
                     </div>
@@ -996,7 +996,7 @@
 
                 <!-- ▸ SCENARIO WORKSPACE PANEL — PR-42 -->
                 <!-- Scenario Workspace: primary live operator path. Hosts live scenario
-                     import, Edit Mode, live step navigation, decision context,
+                     import, Edit Mode, snapshot review navigation, decision context,
                      evidence/ledger/AAR surfaces, and secondary developer previews.
                      Legacy AI/demo scenario generation remains retired. -->
                 <section class="tools-section tool-panel context-section hidden"
@@ -1408,7 +1408,7 @@
                                         <dd id="sw-status" data-i18n="sw-value-idle">Idle</dd>
                                     </div>
                                     <div class="sw-kv-row">
-                                        <dt data-i18n="sw-field-phase">Current phase</dt>
+                                        <dt data-i18n="sw-field-phase">Legacy current phase</dt>
                                         <dd id="sw-phase" data-i18n="sw-value-none">—</dd>
                                     </div>
                                 </dl>
@@ -1426,7 +1426,7 @@
 
                         <!-- PR-287L2: Live Scenario Header — read-only.
                              Reads window.RmoozScenario only. Painted by paintLiveScenarioHeader().
-                             Shows: scenario title, scenario id, active step counter, phase, source. -->
+                             Shows: scenario title, scenario id, review checkpoint, authored phase, source. -->
                         <div id="sw-live-scenario-header" class="sw-live-scenario-header"
                              role="heading" aria-level="2">
                             <div class="sw-live-scenario-header-row">
@@ -1462,53 +1462,54 @@
                             </div>
                         </div>
 
-                        <!-- PR-287D: Scenario Phase Timeline — promoted into the live workspace.
+                        <!-- PR-287D / C3d: Review checkpoints.
                              Read-only. Rendered by shell/scenario-workspace.js paintPhaseTimeline()
-                             from getScenario().phase_table (distinct phases grouped from the rows);
-                             current/complete/upcoming derived read-only from
+                             from getScenario().phase_table (distinct authored checkpoints grouped from the rows).
+                             Selected/earlier/queued markers are review-only and derived from
                              window.RmoozScenario.stepIndex. No mutation, no backend, no commit. -->
-                        <section class="sw-group" data-sw-group="clock" role="group" aria-label="Clock and Phases">
+                        <section class="sw-group" data-sw-group="clock" role="group" aria-label="Internal authored-frame review" hidden aria-hidden="true" inert data-dev-only="authored-frame-review">
                             <div class="sw-group-banner" role="heading" aria-level="2">
-                                <span class="sw-group-banner-title" data-i18n="swg-clock-title">Clock &amp; Phases</span>
-                                <span class="sw-group-banner-sub" data-i18n="swg-clock-sub">Scenario clock, phases, and live step navigation.</span>
+                                <span class="sw-group-banner-title" data-i18n="swg-clock-title">Internal authored-frame review</span>
+                                <span class="sw-group-banner-sub" data-i18n="swg-clock-sub">Developer compatibility view. Runtime Play stays in Scenario Control Center.</span>
                             </div>
-                        <div class="builder-card sw-card sw-live-phase-timeline-card" id="spt-card">
-                            <div class="builder-card-header">
-                                <span class="builder-card-title" data-i18n="spt-title">Scenario Phase Timeline</span>
-                                <span class="spt-readonly-badge" data-i18n="spt-readonly">Read-only</span>
-                            </div>
-                            <ol class="spt-list" id="spt-phase-list" aria-label="Scenario phases">
+                        <details class="builder-card sw-card sw-live-phase-timeline-card" id="spt-card">
+                            <summary class="builder-card-header">
+                                <span class="builder-card-title" data-i18n="spt-title">Internal authored frames</span>
+                                <span class="spt-readonly-badge" data-i18n="spt-readonly">Developer review</span>
+                            </summary>
+                            <p class="sw-nav-live-helper" data-i18n="spt-helper">Runtime is controlled by scenario time. This hidden view is for compatibility review only.</p>
+                            <ol class="spt-list" id="spt-phase-list" aria-label="Internal authored frames">
                                 <!-- Rendered by shell/scenario-workspace.js — read-only, no backend -->
                             </ol>
-                        </div>
+                        </details>
 
                         <!-- PR-237/132/134/287L2: Live Step Navigator — moved up under header.
                              Updates window.RmoozScenario.stepIndex only. No scenario mutation. -->
                         <div class="sw-live-nav-hdr">
                             <span class="sw-live-nav-hdr-label"
-                                  data-i18n="sw-live-nav-section-label">Live scenario navigation</span>
+                                  data-i18n="sw-live-nav-section-label">Internal frame navigation</span>
                             <span class="sw-live-nav-hdr-note"
-                                  data-i18n="sw-live-nav-warning-note">These controls may change the live scenario step.</span>
+                                  data-i18n="sw-live-nav-warning-note">Developer compatibility only. Runtime Play stays in Scenario Control Center.</span>
                         </div>
                         <div class="builder-card sw-card sw-nav-card" id="sw-nav-card">
                             <div class="builder-card-header">
-                                <span class="builder-card-title" data-i18n="sw-nav-title">Live Scenario Step Navigator</span>
+                                <span class="builder-card-title" data-i18n="sw-nav-title">Internal Frame Navigator</span>
                                 <span class="sw-nav-counter" id="sw-nav-counter">— / —</span>
                             </div>
                             <p class="sw-nav-live-helper"
-                               data-i18n="sw-nav-live-helper">Changes the active live scenario step and updates live cards and map overlay.</p>
+                               data-i18n="sw-nav-live-helper">Developer-only navigation changes the compatibility pointer; Scenario Control Center remains the runtime Play.</p>
                             <div class="sw-nav-controls" id="sw-nav-controls">
                                 <button type="button" class="sw-nav-btn sw-nav-btn--jump" id="sw-nav-first"
-                                        title="Jump to start" disabled
-                                        aria-label="Jump to start">◀◀</button>
+                                        title="First frame" disabled data-i18n-title="sw-nav-first"
+                                        aria-label="First frame">◀◀</button>
                                 <button type="button" class="sw-nav-btn" id="sw-nav-prev"
-                                        data-i18n="sw-wt-ctrl-prev" disabled aria-label="Previous step">◀</button>
+                                        data-i18n="sw-wt-ctrl-prev" disabled title="Previous frame" aria-label="Previous frame">◀</button>
                                 <span class="sw-nav-step-info" id="sw-nav-step-info">—</span>
                                 <button type="button" class="sw-nav-btn" id="sw-nav-next"
-                                        data-i18n="sw-wt-ctrl-next" disabled aria-label="Next step">▶</button>
+                                        data-i18n="sw-wt-ctrl-next" disabled title="Next frame" aria-label="Next frame">▶</button>
                                 <button type="button" class="sw-nav-btn sw-nav-btn--jump" id="sw-nav-last"
-                                        title="Jump to end" disabled
-                                        aria-label="Jump to end">▶▶</button>
+                                        title="Final frame" disabled data-i18n-title="sw-nav-last"
+                                        aria-label="Final frame">▶▶</button>
                             </div>
                             <div class="sw-nav-phase-row" id="sw-nav-phase-row">
                                 <span class="sw-nav-phase-badge" id="sw-nav-phase-badge">—</span>
@@ -1519,9 +1520,9 @@
                             <div class="sw-nav-play-row" id="sw-nav-play-row">
                                 <button type="button" class="sw-nav-play-btn" id="sw-nav-play"
                                         aria-pressed="false" disabled
-                                        data-i18n="sw-nav-play">▶ Play</button>
+                                        data-i18n="sw-nav-play">▶ Preview</button>
                                 <label class="sw-nav-speed-label" for="sw-nav-speed"
-                                       data-i18n="sw-nav-speed-label">Speed</label>
+                                       data-i18n="sw-nav-speed-label">Playback speed</label>
                                 <select class="sw-nav-speed" id="sw-nav-speed" disabled>
                                     <option value="4000" data-i18n="sw-nav-speed-slow">Slow</option>
                                     <option value="2000" selected data-i18n="sw-nav-speed-normal">Normal</option>
@@ -1777,13 +1778,13 @@
                         <!-- PR-76: Step inspection subheader — static, data-i18n only, no JS -->
                         <div class="sw-sd-hdr" role="heading" aria-level="4">
                             <span class="sw-sd-hdr-title" data-i18n="scenarioWorkspace.previewControlsSubheaderKicker">Step Inspection</span>
-                            <span class="sw-sd-hdr-sub" data-i18n="scenarioWorkspace.previewControlsSubheaderTitle">Inspect another step without changing the active live scenario step.</span>
+                            <span class="sw-sd-hdr-sub" data-i18n="scenarioWorkspace.previewControlsSubheaderTitle">Inspect another snapshot without changing the active live scenario step.</span>
                         </div>
                         <!-- PR-53: preview-only step controls — direction:ltr keeps physical order stable in EN and AR -->
                         <div class="sw-wt-controls" id="sw-wt-controls">
-                            <button type="button" class="sw-wt-ctrl-btn" id="sw-wt-ctrl-prev" data-i18n="sw-wt-ctrl-prev" disabled>◀</button>
+                            <button type="button" class="sw-wt-ctrl-btn" id="sw-wt-ctrl-prev" data-i18n="sw-wt-ctrl-prev" title="Previous inspection snapshot" aria-label="Previous inspection snapshot" disabled>◀</button>
                             <span class="sw-wt-step-badge" id="sw-wt-step-badge" data-tone="live" data-i18n="sw-wt-badge-live">Live step</span>
-                            <button type="button" class="sw-wt-ctrl-btn" id="sw-wt-ctrl-next" data-i18n="sw-wt-ctrl-next" disabled>▶</button>
+                            <button type="button" class="sw-wt-ctrl-btn" id="sw-wt-ctrl-next" data-i18n="sw-wt-ctrl-next" title="Next inspection snapshot" aria-label="Next inspection snapshot" disabled>▶</button>
                             <button type="button" class="sw-wt-ctrl-btn sw-wt-ctrl-btn--reset" id="sw-wt-ctrl-reset" data-i18n="sw-wt-ctrl-reset" disabled>Reset to live</button>
                         </div>
                         <!-- PR-56: Helper note — always visible, explains auto-reset on live step advance -->
@@ -2227,8 +2228,8 @@
                         </div>
                         <div id="sw-secondary-cards-body" class="sw-secondary-cards-body" hidden>
 
-                    <!-- PR-287D: Scenario Phase Timeline (#spt-card) was promoted into #sw-live-workspace
-                         (now wired to scenario.phase_table). It is no longer a secondary mock card. -->
+                    <!-- PR-287D / C3d: Review checkpoints (#spt-card) live in #sw-live-workspace
+                         as collapsed snapshot review, wired read-only to scenario.phase_table. -->
 
                     <!-- PR-45: Operator Intent Draft Card — read-only in-memory placeholder -->
                     <div class="builder-card sw-card" id="oid-card">
@@ -3931,10 +3932,10 @@
              invalidateSize required). Group order follows the natural
              ops-bay sequence: TRANSPORT  · SPEED · SCENARIO TIME ·
              PHASE · STATUS. RTL flips group order automatically. -->
-        <div id="timeline-strip" class="timeline-strip" role="toolbar" aria-label="Timeline transport (placeholder)">
+        <div id="timeline-strip" class="timeline-strip" role="toolbar" aria-label="Developer frame transport" hidden aria-hidden="true" inert data-dev-only="timeline-preview">
             <div class="timeline-group timeline-group--label">
                 <span class="timeline-eyebrow" data-i18n="tl-eyebrow">TL</span>
-                <span class="timeline-title" data-i18n="tl-title">Timeline</span>
+                <span class="timeline-title" data-i18n="tl-title">Developer Timeline</span>
             </div>
 
             <!-- APP-FLOW-2: in-app scenario run controls. One place to see the
@@ -3954,29 +3955,29 @@
 
             <div class="timeline-divider" aria-hidden="true"></div>
 
-            <div class="timeline-group timeline-group--transport" role="group" aria-label="Transport">
-                <button type="button" class="timeline-btn timeline-btn--transport" id="tl-step-back" data-i18n-title="tl-step-back" title="Step Back">
+            <div class="timeline-group timeline-group--transport" role="group" aria-label="Developer transport">
+                <button type="button" class="timeline-btn timeline-btn--transport" id="tl-step-back" data-i18n-title="tl-step-back" title="Previous frame">
                     <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3v10M9 8 4 4v8z" fill="currentColor"/></g></svg>
-                    <span class="sr-only" data-i18n="tl-step-back">Step Back</span>
+                    <span class="sr-only" data-i18n="tl-step-back">Previous frame</span>
                 </button>
-                <button type="button" class="timeline-btn timeline-btn--transport timeline-btn--play is-active" id="tl-play" aria-pressed="false" data-i18n-title="tl-play" title="Play">
+                <button type="button" class="timeline-btn timeline-btn--transport timeline-btn--play" id="tl-play" aria-pressed="false" data-i18n-title="tl-play" title="Preview playback">
                     <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 3v10l9-5z" fill="currentColor"/></svg>
-                    <span class="sr-only" data-i18n="tl-play">Play</span>
+                    <span class="sr-only" data-i18n="tl-play">Preview playback</span>
                 </button>
-                <button type="button" class="timeline-btn timeline-btn--transport timeline-btn--pause" id="tl-pause" aria-pressed="false" data-i18n-title="tl-pause" title="Pause">
+                <button type="button" class="timeline-btn timeline-btn--transport timeline-btn--pause is-active" id="tl-pause" aria-pressed="true" data-i18n-title="tl-pause" title="Pause preview">
                     <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><g fill="currentColor"><rect x="4" y="3" width="3" height="10"/><rect x="9" y="3" width="3" height="10"/></g></svg>
-                    <span class="sr-only" data-i18n="tl-pause">Pause</span>
+                    <span class="sr-only" data-i18n="tl-pause">Pause preview</span>
                 </button>
-                <button type="button" class="timeline-btn timeline-btn--transport" id="tl-step-forward" data-i18n-title="tl-step-forward" title="Step Forward">
+                <button type="button" class="timeline-btn timeline-btn--transport" id="tl-step-forward" data-i18n-title="tl-step-forward" title="Next frame">
                     <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v10M7 8l5-4v8z" fill="currentColor"/></g></svg>
-                    <span class="sr-only" data-i18n="tl-step-forward">Step Forward</span>
+                    <span class="sr-only" data-i18n="tl-step-forward">Next frame</span>
                 </button>
             </div>
 
             <div class="timeline-divider" aria-hidden="true"></div>
 
-            <div class="timeline-group timeline-group--speed" role="group" aria-label="Speed">
-                <span class="timeline-group-label" data-i18n="tl-speed">Speed</span>
+            <div class="timeline-group timeline-group--speed" role="group" aria-label="Playback speed">
+                <span class="timeline-group-label" data-i18n="tl-speed">Playback speed</span>
                 <div class="timeline-segmented" id="tl-speed-group">
                     <button type="button" class="timeline-seg-btn is-active" data-tl-speed="1"  aria-pressed="true">x1</button>
                     <button type="button" class="timeline-seg-btn"           data-tl-speed="4"  aria-pressed="false">x4</button>
@@ -3986,15 +3987,15 @@
 
             <div class="timeline-divider" aria-hidden="true"></div>
 
-            <div class="timeline-group timeline-group--scenario-time" role="group" aria-label="Scenario time">
-                <span class="timeline-group-label" data-i18n="tl-scenario-time">Scenario Time</span>
+            <div class="timeline-group timeline-group--scenario-time" role="group" aria-label="Review time">
+                <span class="timeline-group-label" data-i18n="tl-scenario-time">Frame Time</span>
                 <span id="tl-scenario-time" class="timeline-scenario-time" dir="ltr">H+00:00</span>
             </div>
 
             <div class="timeline-divider" aria-hidden="true"></div>
 
-            <div class="timeline-group timeline-group--phase" role="group" aria-label="Phase">
-                <span class="timeline-group-label" data-i18n="tl-phase">Phase</span>
+            <div class="timeline-group timeline-group--phase" role="group" aria-label="Frame group">
+                <span class="timeline-group-label" data-i18n="tl-phase">Frame Group</span>
                 <div class="timeline-segmented timeline-segmented--phase" id="tl-phase-group">
                     <button type="button" class="timeline-seg-btn is-active" data-tl-phase="start"  aria-pressed="true"  data-i18n="tl-phase-start">Start</button>
                     <button type="button" class="timeline-seg-btn"           data-tl-phase="phase1" aria-pressed="false" data-i18n="tl-phase-1">Phase 1</button>
@@ -4005,7 +4006,7 @@
 
             <div class="timeline-spacer"></div>
 
-            <span id="tl-status" class="timeline-status" data-i18n="tl-status-inactive">Simulation not connected</span>
+            <span id="tl-status" class="timeline-status" data-i18n="tl-status-inactive">Review timeline only - scenario run is controlled by Scenario Control Center</span>
         </div>
 
         <!-- ═══════════ EVENT LOG (BOTTOM) — PR-4 ═══════════ -->
@@ -4707,6 +4708,9 @@
          objective status through it (parity-proof read seam — World State
          mirrors `state` today; WS4 inverts ownership). -->
     <script src="shell/world-state.js?v=3"></script>
+    <!-- C4a: pure runtime event evaluator. Loaded as a read-only facade only:
+         clock-in/events-out, no effect execution, no journal writes, no map/unit mutation. -->
+    <script src="shell/runtime-events.js?v=c4a"></script>
     <!-- PR-WS3 (SCC-REAL-STATE-A): the state-transition engine. Loaded so a COMMITTED
          Scenario Control Center run can route its per-tick moves through World State
          (AppWorldStateTransition.applyDecision) and reflect them on the live map.
@@ -4785,6 +4789,8 @@
     <script src="shell/cmo-wargame-run-instrumentation.js?v=cmo-wargame-run-1"></script>
     <script src="shell/cmo-wargame-after-action-debrief.js?v=cmo-wargame-aar-1"></script>
     <script src="shell/cmo-wargame-evidence-package.js?v=cmo-wargame-package-live-1"></script>
+    <script src="shell/cmo-wargame-review-board.js?v=cmo-wargame-review-board-1"></script>
+    <script src="shell/cmo-wargame-decision-ledger.js?v=cmo-wargame-decision-ledger-1"></script>
     <script src="shell/unit-status-panel.js?v=qa-batch-36-43"></script>
     <script>
         // RMOOZ-SCENARIO-QA-BATCH-14/15/16/17: main-only header status details/actions/palette.

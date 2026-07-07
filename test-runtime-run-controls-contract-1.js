@@ -9,7 +9,8 @@
  *
  * Static gate (no server). Reads the shipped source and asserts the contract.
  * Scope of batch 1 (owner ruling 2026-07-05):
- *   - SCC primary run readout says "Scenario time" (World-State clock), not "Turn".
+ *   - SCC primary run readout says "Scenario time" (World-State clock), runtime state, and speed.
+ *     Authored Turn/Phase details are collapsed review checkpoints, not primary run state.
  *   - Manual step/scrub pauses a playing committed run (C2 ownership guard).
  *   - Legacy "Turn-based" Wargame-HUD relabelled Legacy/Diagnostic, not run.
  *   - DOM ids kept for compatibility; turn-engine.js / steps[] NOT removed.
@@ -56,6 +57,14 @@ ok('A3 SCC time is sourced from the World-State clock label, not fabricated',
     ff.includes('runClockLabel'));            // _scenarioClockLabel prefers MAP.runClockLabel (C1)
 ok('A4 SCC primary readout no longer LEADS with a bare "Turn" headline',
     !scc.includes("kv('Turn', String(scn.scenario_turn)"));
+ok('A5 SCC primary readout shows runtime state and speed',
+    scc.includes("kv('Runtime state'") && scc.includes("kv('Speed'"));
+ok('A6 SCC primary readout no longer exposes Turn/Phase kv rows',
+    !scc.includes("kv('Turn") && !scc.includes("kv('Phase'"));
+ok('A7 authored turn/phase data is retained under collapsed review checkpoints',
+    scc.includes('data-scc="review-checkpoints"') &&
+    scc.includes('Internal turn') &&
+    scc.includes('COA review phase'));
 
 /* ── B. Manual step/scrub pauses a playing committed run (C2 guard) ────────── */
 ok('B1 adjudicator applyState pauses the run on a non-snapshot apply while playing',

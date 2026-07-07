@@ -411,14 +411,20 @@
         // steps-derived end the caller seeded). No duration → legacy end unchanged.
         if (bounds.duration_minutes != null) endH = bounds.end;
         var found = findStepForElapsedHours(scn, cur);
-        var startTime = (typeof scn.start_time === 'string' && scn.start_time) ? scn.start_time : null;
+        var rt = obj(scn.runtime_scenario);
+        var startTime = (typeof scn.start_time === 'string' && scn.start_time)
+            ? scn.start_time
+            : ((typeof rt.start_time === 'string' && rt.start_time) ? rt.start_time : null);
         var currentMs = null;
         if (startTime) { var base = Date.parse(startTime); if (isFinite(base)) currentMs = base + cur * 3600000; }
         // C3b: truthful runtime state (stopped/playing/paused/complete) so the readout can show it.
         var completed = !!c.completed || (isFinite(endH) && isFinite(cur) && endH > startH && cur >= endH);
         var state = runtimeClockState({ start_hours: startH, current_hours: cur, end_hours: endH, playing: !!c.playing, paused: !!c.paused, completed: completed });
+        var durationH = isFinite(+c.duration_hours) ? +c.duration_hours
+            : ((isFinite(endH) && isFinite(startH)) ? (endH - startH) : null);
         return {
             start_hours: startH, current_hours: cur, end_hours: endH,
+            duration_hours: durationH,
             playing: !!c.playing, speed: isFinite(+c.speed) ? +c.speed : 1,
             step_index: found.index, time_label: found.time_label,
             start_time: startTime, current_ms: currentMs,

@@ -3995,7 +3995,7 @@
         if (API && typeof API.normalizeMovementState === 'function') {
             _coaExec.runtime_movement = API.normalizeMovementState(_coaExec.runtime_movement);
         } else if (!_coaExec.runtime_movement || typeof _coaExec.runtime_movement !== 'object') {
-            _coaExec.runtime_movement = { movements: {}, runtime_positions: {}, runtime_world_state: { positions: {} }, arrival_events: [] };
+            _coaExec.runtime_movement = { group_movements: {}, movements: {}, runtime_positions: {}, runtime_world_state: { positions: {} }, arrival_events: [], group_arrival_events: [] };
         }
         return _coaExec.runtime_movement;
     }
@@ -4004,7 +4004,7 @@
         var API = W() && W().AppRuntimeMovement;
         _coaExec.runtime_movement = (API && typeof API.normalizeMovementState === 'function')
             ? API.normalizeMovementState(null)
-            : { movements: {}, runtime_positions: {}, runtime_world_state: { positions: {} }, arrival_events: [] };
+            : { group_movements: {}, movements: {}, runtime_positions: {}, runtime_world_state: { positions: {} }, arrival_events: [], group_arrival_events: [] };
         return _coaExec.runtime_movement;
     }
     function _movementExecutionPlans() {
@@ -4048,7 +4048,7 @@
     function _runtimeMovementSummary() {
         var st = _ensureRuntimeMovementState();
         var MOV = W() && W().AppRuntimeMovement;
-        if (!st || !MOV || typeof MOV.summarizeRuntimeMovement !== 'function') return { planned: 0, moving: 0, arrived: 0, paused: 0, blocked: 0, runtime_position_count: 0, next_eta: null, read_only: true };
+        if (!st || !MOV || typeof MOV.summarizeRuntimeMovement !== 'function') return { planned: 0, moving: 0, arrived: 0, paused: 0, blocked: 0, group_movement_count: 0, group_status_summary: {}, runtime_position_count: 0, next_eta: null, read_only: true };
         return MOV.summarizeRuntimeMovement(st);
     }
     function _runtimeMovementOwnedPositions() {
@@ -4079,6 +4079,11 @@
                 speed_source: (mv && mv.speed_source) || null,
                 distance_km: (mv && isFinite(+mv.distance_km)) ? +mv.distance_km : null,
                 current_segment_index: (mv && isFinite(+mv.current_segment_index)) ? +mv.current_segment_index : null,
+                group_movement_id: (mv && mv.group_movement_id) || null,
+                group_id: (mv && mv.group_id) || null,
+                leader_unit_id: (mv && mv.leader_unit_id) || null,
+                formation: (mv && mv.formation) || null,
+                formation_index: (mv && isFinite(+mv.formation_index)) ? +mv.formation_index : null,
                 domain: (mv && mv.domain) || null,
                 route: (mv && Array.isArray(mv.route)) ? JSON.parse(JSON.stringify(mv.route)) : null,
                 trail: (mv && Array.isArray(mv.trail)) ? JSON.parse(JSON.stringify(mv.trail)) : null
@@ -6749,7 +6754,7 @@
         retryPendingDoctrineJournalRecords: function () { return _retryPendingDoctrineJournalRecords(); },
         planRuntimeExecutions: function () { return _planRuntimeExecutions(); },
         runtimeExecutionSummary: function () { try { return _runtimeExecutionSummary(); } catch (_) { return { pending: 0, blocked: 0, history: 0, last_execution_plan: null, read_only: true }; } },
-        runtimeMovementSummary: function () { try { return _runtimeMovementSummary(); } catch (_) { return { planned: 0, moving: 0, arrived: 0, paused: 0, blocked: 0, runtime_position_count: 0, next_eta: null, read_only: true }; } },
+        runtimeMovementSummary: function () { try { return _runtimeMovementSummary(); } catch (_) { return { planned: 0, moving: 0, arrived: 0, paused: 0, blocked: 0, group_movement_count: 0, group_status_summary: {}, runtime_position_count: 0, next_eta: null, read_only: true }; } },
         runtimeMovementState: function () { try { return _ensureRuntimeMovementState(); } catch (_) { return null; } },
         startRuntimeMovementPlans: function () { return _startRuntimeMovementPlans(); },
         tickRuntimeMovement: function (paused) { return _tickRuntimeMovement(paused === true); },

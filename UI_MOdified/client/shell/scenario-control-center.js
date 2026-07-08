@@ -330,8 +330,10 @@
         var active = (summary.moving || 0) + (summary.paused || 0) + (summary.planned || 0);
         var arrived = summary.arrived || 0;
         var blocked = summary.blocked || 0;
+        var groupMovementCount = summary.group_movement_count || 0;
+        var groupStatusSummary = summary.group_status_summary || {};
         var positions = summary.runtime_position_count || 0;
-        if (!active && !arrived && !blocked && !positions) return '';
+        if (!active && !arrived && !blocked && !positions && !groupMovementCount) return '';
         var next = summary.next_movement || null;
         var last = summary.last_arrival || null;
         var h = '<div data-scc="runtime-movement" style="margin:7px 0;padding:7px 9px;border:1px solid ' + C.edgeSoft + ';border-radius:6px;background:#08121d;">' +
@@ -341,8 +343,16 @@
             '<span>paused <b style="color:#ffd27f;">' + (summary.paused || 0) + '</b></span>' +
             '<span>arrived <b style="color:' + C.ink + ';">' + arrived + '</b></span>' +
             '<span>blocked <b style="color:' + (blocked ? C.bad : C.dim) + ';">' + blocked + '</b></span>' +
+            '<span>group movement <b style="color:' + C.ink + ';">' + groupMovementCount + '</b></span>' +
             '<span>runtime positions <b style="color:' + C.ink + ';">' + positions + '</b></span>' +
             '</div>';
+        if (groupMovementCount) {
+            h += '<div data-scc="runtime-group-movement-status" style="margin-top:5px;font-size:9.5px;color:' + C.dim + ';line-height:1.45;">Group movement status: ' +
+                '<b style="color:' + C.good + ';">moving ' + (groupStatusSummary.moving || 0) + '</b> / ' +
+                '<b style="color:#ffd27f;">paused ' + (groupStatusSummary.paused || 0) + '</b> / ' +
+                '<b style="color:' + C.ink + ';">arrived ' + (groupStatusSummary.arrived || 0) + '</b> / ' +
+                '<b style="color:' + (groupStatusSummary.blocked ? C.bad : C.dim) + ';">blocked ' + (groupStatusSummary.blocked || 0) + '</b></div>';
+        }
         if (next) {
             h += '<div data-scc="runtime-movement-next" style="margin-top:5px;font-size:9.5px;color:' + C.dim + ';line-height:1.45;">Next ETA: ' +
                 '<b style="color:' + C.ink + ';">' + esc(next.unit_id || '?') + '</b> / ' +

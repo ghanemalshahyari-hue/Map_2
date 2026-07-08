@@ -33,8 +33,14 @@
     --panel-w: 340px;
 }
 
-/* Make the HTML hidden attribute authoritative over component display classes. */
+/* Make hidden/dev-only inert surfaces authoritative over component display classes.
+   This keeps compatibility review UI from rendering as visible-but-dead cards. */
 [hidden] {
+    display: none !important;
+}
+
+[data-dev-only][hidden],
+[data-dev-only][inert] {
     display: none !important;
 }
 

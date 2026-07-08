@@ -224,6 +224,7 @@
             if (chatBtn) chatBtn.click();
             return;
         }
+        if (tool === 'wargame') tool = 'scenario-workspace';
 
         const cfg = TOOL_CONFIG[tool];
         if (!cfg) return;

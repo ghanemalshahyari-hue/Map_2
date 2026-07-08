@@ -33,6 +33,11 @@
     --panel-w: 340px;
 }
 
+/* Make the HTML hidden attribute authoritative over component display classes. */
+[hidden] {
+    display: none !important;
+}
+
 /* ── Dark mode override — original palette ──────────────────────────── */
 [data-theme="dark"] {
     --bg: #0f172a;

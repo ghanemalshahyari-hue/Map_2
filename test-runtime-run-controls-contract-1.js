@@ -31,6 +31,8 @@ const C_HTML  = 'UI_MOdified/client/app.html';
 const C_I18N  = 'UI_MOdified/client/i18n.js';
 const C_WS    = 'UI_MOdified/client/shell/world-state.js';
 const C_TURN  = 'UI_MOdified/client/turn-engine.js';
+const C_RAIL  = 'UI_MOdified/client/tool-rail.js';
+const C_STYLE = 'UI_MOdified/client/style.css';
 
 let passed = 0, failed = 0;
 function ok(name, cond) {
@@ -44,6 +46,8 @@ const map  = read(C_MAP);
 const html = read(C_HTML);
 const i18n = read(C_I18N);
 const ws   = read(C_WS);
+const rail = read(C_RAIL);
+const style = read(C_STYLE);
 
 /* ── A. Primary run uses the runtime clock, readout is scenario TIME ───────── */
 ok('A1 SCC exposes the primary Run action (scc-run "Run Scenario")',
@@ -84,6 +88,13 @@ ok('C4 legacy panel carries an explicit "not the scenario run" banner',
     html.includes('wg-legacy-banner'));
 ok('C5 tool label marks the surface Legacy',
     i18n.includes("'tool-wargame': 'Operational Scenario (Legacy)'"));
+ok('C6 legacy wargame rail button and panel are hidden developer-only surfaces',
+    /data-tool="wargame"[\s\S]*hidden[\s\S]*data-dev-only="legacy-wargame"/.test(html) &&
+    /id="wargame-panel"[\s\S]*hidden[\s\S]*data-dev-only="legacy-wargame"/.test(html) &&
+    /(^|\n)\s*\[hidden\]\s*\{\s*display\s*:\s*none\s*!important\s*;\s*\}/.test(style));
+ok('C7 legacy wargame tool activation routes to live Scenario Workspace',
+    /tool\s*===\s*['"]wargame['"][\s\S]*scenario-workspace/.test(rail) &&
+    rail.includes("'scenario-workspace'"));
 
 /* ── D. Boundaries preserved: DOM compat + nothing deleted ─────────────────── */
 ok('D1 DOM ids preserved for compatibility (wg-init/next/reset/hud)',

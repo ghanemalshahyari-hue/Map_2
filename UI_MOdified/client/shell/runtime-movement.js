@@ -240,6 +240,140 @@
         }
         return NaN;
     }
+    function compactText(value) {
+        return value == null ? '' : String(value).trim();
+    }
+    function splitTaskUnitIds(value) {
+        if (Array.isArray(value)) return uniqueStrings(value);
+        var s = compactText(value);
+        if (!s) return [];
+        return uniqueStrings(s.split(/[\s,;]+/));
+    }
+    function parseTaskRoutePoints(value) {
+        if (value == null || value === '') return [];
+        if (Array.isArray(value)) return value.map(normalizePoint).filter(Boolean);
+        var s = compactText(value);
+        if (!s) return [];
+        var parsed = null;
+        try { parsed = JSON.parse(s); } catch (_) { parsed = null; }
+        if (Array.isArray(parsed)) return parsed.map(normalizePoint).filter(Boolean);
+        return s.split(';').map(function (pair) {
+            var parts = compactText(pair).split(',').map(compactText);
+            return parts.length >= 2 ? normalizePoint([parts[0], parts[1]]) : null;
+        }).filter(Boolean);
+    }
+    function taskLonLatPoint(lon, lat) {
+        if (lon == null || lon === '' || lat == null || lat === '') return null;
+        return normalizePoint([lon, lat]);
+    }
+    function taskDestination(input) {
+        return normalizePoint(input.destination || input.to || input.target || input.position) ||
+            taskLonLatPoint(input.destination_lon, input.destination_lat) ||
+            taskLonLatPoint(input.dest_lon, input.dest_lat) ||
+            taskLonLatPoint(input.lon, input.lat);
+    }
+    function taskMovementId(input, unitIds, startElapsed, destination) {
+        var explicit = compactText(input.movement_id || input.execution_id || input.id);
+        if (explicit) return explicit;
+        var idBits = uniqueStrings(unitIds).join('-') || compactText(input.unit_id || input.unit_uid || input.uid) || 'unit';
+        var destBits = destination ? (destination[0] + '-' + destination[1]) : 'route';
+        return 'runtime-task-' + idBits + '-' + round6(startElapsed).toString().replace(/[^0-9a-zA-Z]+/g, '_') + '-' + String(destBits).replace(/[^0-9a-zA-Z_-]+/g, '_');
+    }
+    function addTaskSpeedFields(target, input) {
+        var kph = firstNum(input.speed_kph, input.movement_speed_kph);
+        var knots = firstNum(input.speed_knots, input.movement_speed_knots);
+        if (isFinite(+kph)) target.speed_kph = +kph;
+        if (isFinite(+knots)) target.speed_knots = +knots;
+        var domain = compactText(input.domain || input.movement_domain);
+        if (domain) target.domain = domain.toLowerCase();
+    }
+    function invalidTaskPlan(code, message) {
+        return { ok: false, status: 'invalid', code: code, message: message, read_only: true };
+    }
+    function createRuntimeMovementTaskPlan(input, context) {
+        input = isObj(input) ? input : {};
+        context = context || {};
+        var startElapsed = firstNum(input.start_elapsed_hours, input.start_elapsed, context.elapsed_hours, context.current_elapsed_hours, context.current_hours, 0);
+        if (!isFinite(+startElapsed)) startElapsed = 0;
+
+        var unitIds = splitTaskUnitIds(input.unit_ids || input.units || input.group_unit_ids);
+        var unitId = compactText(input.unit_id || input.unit_uid || input.uid);
+        if (!unitIds.length && unitId) unitIds = [unitId];
+        var requestedKind = compactText(input.kind || input.effect_kind || input.type).toLowerCase();
+        var isGroup = requestedKind === 'runtime_group_movement' || requestedKind === 'group_movement' || unitIds.length > 1;
+        if (!isGroup && !unitId && unitIds.length) unitId = unitIds[0];
+
+        if (isGroup && unitIds.length < 2) return invalidTaskPlan('missing_group_units', 'Enter at least two unit IDs for group movement.');
+        if (!isGroup && !unitId) return invalidTaskPlan('missing_unit', 'Enter a unit ID before starting movement.');
+
+        var leaderId = compactText(input.leader_unit_id || input.leader) || (isGroup ? unitIds[0] : unitId);
+        var route = parseTaskRoutePoints(input.route != null ? input.route : (input.route_points != null ? input.route_points : (input.route_json != null ? input.route_json : input.waypoints)));
+        var destination = taskDestination(input);
+        var start = normalizePoint(input.from || input.start || input.current_position) || candidatePosition(context, isGroup ? leaderId : unitId);
+
+        if (!route.length && start && destination) route = [start, destination];
+        if (route.length === 1 && start && !samePoint(start, route[0])) route = [start, route[0]];
+        if (route.length) {
+            start = route[0];
+            destination = route[route.length - 1];
+        }
+        if (!destination || route.length < 2) return invalidTaskPlan('missing_destination', 'Enter a destination lon/lat or at least two route points.');
+
+        var movementId = taskMovementId(input, isGroup ? unitIds : [unitId], startElapsed, destination);
+        var base = {
+            movement_id: movementId,
+            execution_id: movementId,
+            classification: 'requires_world_state_executor',
+            status: 'requires_executor',
+            start_elapsed_hours: round6(startElapsed),
+            planned_at_elapsed_hours: round6(startElapsed),
+            source: 'scc_movement_tasking'
+        };
+        addTaskSpeedFields(base, input);
+
+        if (isGroup) {
+            var groupPayload = {
+                group_id: compactText(input.group_id) || movementId,
+                unit_ids: clone(unitIds),
+                leader_unit_id: leaderId,
+                route: clone(route),
+                destination: clone(destination),
+                formation: compactText(input.formation || input.formation_type || 'column').toLowerCase().replace(/-/g, '_'),
+                spacing_meters: isFinite(+input.spacing_meters) ? +input.spacing_meters : (isFinite(+input.spacing) ? +input.spacing : 0),
+                start_elapsed_hours: round6(startElapsed)
+            };
+            addTaskSpeedFields(groupPayload, input);
+            var groupPlan = Object.assign({}, base, {
+                kind: 'runtime_group_movement',
+                effect_kind: 'runtime_group_movement',
+                group_id: groupPayload.group_id,
+                unit_ids: clone(unitIds),
+                leader_unit_id: leaderId,
+                route: clone(route),
+                destination: clone(destination),
+                formation: groupPayload.formation,
+                spacing_meters: groupPayload.spacing_meters,
+                payload: groupPayload
+            });
+            return { ok: true, status: 'planned', plan: groupPlan, plan_kind: 'runtime_group_movement', message: 'Group movement task ready.', read_only: true };
+        }
+
+        var payload = {
+            unit_id: unitId,
+            from: clone(start),
+            to: clone(destination),
+            route: clone(route),
+            start_elapsed_hours: round6(startElapsed)
+        };
+        addTaskSpeedFields(payload, input);
+        var plan = Object.assign({}, base, {
+            kind: 'runtime_movement',
+            effect_kind: 'runtime_movement',
+            unit_id: unitId,
+            payload: payload
+        });
+        return { ok: true, status: 'planned', plan: plan, plan_kind: 'runtime_movement', message: 'Movement task ready.', read_only: true };
+    }
     function speedResult(speed, speedKph, source, domain, units, speedKnots) {
         return {
             speed: isFinite(+speed) ? +speed : NaN,
@@ -947,6 +1081,27 @@
         });
         return { state: st, created: created };
     }
+    function addRuntimeMovementPlan(state, plan, context) {
+        var st = normalizeMovementState(state);
+        if (!isMovementExecutionPlan(plan)) {
+            return {
+                state: st,
+                created: [],
+                status: 'invalid',
+                reason: 'not_runtime_movement_plan',
+                plan: clone(plan),
+                read_only: true
+            };
+        }
+        var res = startMovementExecutionPlans(st, [plan], context || {});
+        return {
+            state: res && res.state ? res.state : st,
+            created: arr(res && res.created),
+            status: arr(res && res.created).length ? 'started' : 'unchanged',
+            plan: clone(plan),
+            read_only: true
+        };
+    }
     function updateRuntimeMovementState(state, elapsedHours, options) {
         var st = normalizeMovementState(state);
         var elapsed = num(elapsedHours, 0);
@@ -1062,8 +1217,10 @@
         resolveMovementSpeed: resolveMovementSpeed,
         isGroupMovementExecutionPlan: isGroupMovementExecutionPlan,
         isMovementExecutionPlan: isMovementExecutionPlan,
+        createRuntimeMovementTaskPlan: createRuntimeMovementTaskPlan,
         movementFromExecutionPlan: movementFromExecutionPlan,
         startMovementExecutionPlans: startMovementExecutionPlans,
+        addRuntimeMovementPlan: addRuntimeMovementPlan,
         updateRuntimeMovementState: updateRuntimeMovementState,
         summarizeRuntimeMovement: summarizeRuntimeMovement,
         normalizeMovementJournalRecord: normalizeMovementJournalRecord,

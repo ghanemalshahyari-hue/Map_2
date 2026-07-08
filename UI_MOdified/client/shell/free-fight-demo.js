@@ -75,6 +75,8 @@
     var _coaExec = null;        // active_coa_execution_state (see _commitCoa) | null
     var _committedPlanObj = null;   // RMOOZ-FREE-FIGHT-V2-COA-TO-SCENARIO-BUGFIX-AB1: the _coaPlan object _coaExec was committed from (identity check → a fresh plan / changed selection supersedes a stale commit)
     var _coaExecTimer = null;   // setInterval handle for the committed-COA tick loop
+    var _movementTaskingStatus = null;
+    var _movementTaskingSeq = 0;
     var COA_EXEC_STUCK_TICKS = 4;       // phase makes no progress for this many ticks → replan trigger
     var COA_EXEC_FORCE_LOSS_FRAC = 0.5; // active-side units missing above this fraction → replan trigger
     // RMOOZ-FREE-FIGHT-CONTINUOUS-SCENARIO-AA: continuous scenario runtime (orchestrates committed-COA
@@ -200,6 +202,7 @@
     function W() { return (typeof window !== 'undefined') ? window : root; }
     function mapReady() { var w = W(); return !!(w && w.L && w.map && typeof w.L.layerGroup === 'function'); }
     function arr(v) { return Array.isArray(v) ? v : []; }
+    function clonePlain(v) { return v == null ? v : JSON.parse(JSON.stringify(v)); }
     // FREE-FIGHT-AI-LITE-A: deterministic planner + injected terrain results.
     function aiPlanner() { var w = W(); if (w && w.RmoozFreeFightAI) return w.RmoozFreeFightAI; try { return require('./free-fight-ai.js'); } catch (_) { return null; } }
     // RMOOZ-COA-REALISM-GATE-A: returns the territory/movement validation gate if loaded.
@@ -4007,6 +4010,7 @@
     function _resetRuntimeMovementState() {
         if (!_coaExec) return null;
         var API = W() && W().AppRuntimeMovement;
+        _movementTaskingStatus = null;
         _coaExec.runtime_movement = (API && typeof API.normalizeMovementState === 'function')
             ? API.normalizeMovementState(null)
             : {
@@ -4173,6 +4177,92 @@
             };
         });
         return Object.keys(out).length ? out : null;
+    }
+    function _runtimeMovementTaskUnits() {
+        var w = W();
+        var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        var rs = w && w.RmoozScenario;
+        var out = [];
+        function add(list) { arr(list).forEach(function (u) { if (u) out.push(u); }); }
+        add(sc && sc.red_units);
+        add(sc && (sc.blue_units_initial || sc.blue_units));
+        add(sc && sc.units);
+        add(rs && rs.red_units);
+        add(rs && (rs.blue_units_initial || rs.blue_units));
+        add(rs && rs.units);
+        return out;
+    }
+    function _runtimeMovementTaskContext() {
+        var st = _ensureRuntimeMovementState();
+        var elapsed = _coaExec && _coaExec.clock && isFinite(+_coaExec.clock.current_hours) ? +_coaExec.clock.current_hours : 0;
+        return {
+            elapsed_hours: elapsed,
+            current_elapsed_hours: elapsed,
+            runtime_positions: st && st.runtime_positions,
+            positions: st && st.runtime_positions,
+            units: _runtimeMovementTaskUnits()
+        };
+    }
+    function _rememberMovementTaskingStatus(status) {
+        _movementTaskingStatus = clonePlain(status || {});
+        return _movementTaskingStatus;
+    }
+    function _runtimeMovementTaskingStatus() {
+        return _movementTaskingStatus ? clonePlain(_movementTaskingStatus) : null;
+    }
+    function _createRuntimeMovementTask(input) {
+        var MOV = W() && W().AppRuntimeMovement;
+        if (!_coaExec || !_coaExec.active) {
+            return _rememberMovementTaskingStatus({
+                ok: false,
+                status: 'invalid',
+                message: 'Start or commit a scenario runtime before adding movement.',
+                read_only: true
+            });
+        }
+        var st = _ensureRuntimeMovementState();
+        if (!MOV || !st || typeof MOV.createRuntimeMovementTaskPlan !== 'function' || typeof MOV.addRuntimeMovementPlan !== 'function') {
+            return _rememberMovementTaskingStatus({
+                ok: false,
+                status: 'invalid',
+                message: 'Runtime movement tasking is not available in this build.',
+                read_only: true
+            });
+        }
+        var task = clonePlain(input || {});
+        _movementTaskingSeq += 1;
+        if (!task.movement_id) task.movement_id = 'operator-move-' + _movementTaskingSeq;
+        var context = _runtimeMovementTaskContext();
+        var built = MOV.createRuntimeMovementTaskPlan(task, context);
+        if (!built || built.ok === false || !built.plan) {
+            return _rememberMovementTaskingStatus({
+                ok: false,
+                status: 'invalid',
+                code: built && built.code || 'invalid_movement_task',
+                message: built && built.message || 'Movement task could not be created.',
+                read_only: true
+            });
+        }
+        var started = MOV.addRuntimeMovementPlan(st, built.plan, context);
+        _coaExec.runtime_movement = started && started.state ? started.state : st;
+        try { _publishOwnedPositions(); } catch (_) {}
+        var created = arr(started && started.created);
+        var msg = created.length
+            ? 'Movement task started for ' + created.length + ' unit' + (created.length === 1 ? '.' : 's.')
+            : 'Movement task recorded; no new unit movement was started.';
+        var status = _rememberMovementTaskingStatus({
+            ok: created.length > 0,
+            status: created.length > 0 ? 'started' : 'unchanged',
+            message: msg,
+            movement_id: built.plan.movement_id || null,
+            plan_kind: built.plan.kind || built.plan.effect_kind || null,
+            created_count: created.length,
+            start_elapsed_hours: built.plan.start_elapsed_hours,
+            read_only: true
+        });
+        try { _appendToEventLog(msg + ' ' + (built.plan.movement_id || '')); } catch (_) {}
+        try { updatePanel(); } catch (_) {}
+        return clonePlain(status);
     }
     function _applyRuntimeEventEffectsForEvent(event, API, st) {
         if (!event || !API || typeof API.applySafeRuntimeEventEffects !== 'function' || !st) {
@@ -6841,6 +6931,8 @@
         runtimeMovementState: function () { try { return _ensureRuntimeMovementState(); } catch (_) { return null; } },
         startRuntimeMovementPlans: function () { return _startRuntimeMovementPlans(); },
         tickRuntimeMovement: function (paused) { return _tickRuntimeMovement(paused === true); },
+        runtimeMovementTaskingStatus: function () { try { return _runtimeMovementTaskingStatus(); } catch (_) { return null; } },
+        createRuntimeMovementTask: function (input) { return _createRuntimeMovementTask(input || {}); },
         approveRuntimeApproval: function (approvalId) { return _decideRuntimeApproval(approvalId, 'approve'); },
         rejectRuntimeApproval: function (approvalId) { return _decideRuntimeApproval(approvalId, 'reject'); },
         runtimeState: function () { try { return _runtimeState(); } catch (_) { return 'stopped'; } },

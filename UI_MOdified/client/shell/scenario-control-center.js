@@ -366,6 +366,50 @@
         }
         return h + '</div>';
     }
+    function movementTaskingHtml(eng) {
+        var status = safeRead(function () { return eng.runtimeMovementTaskingStatus ? eng.runtimeMovementTaskingStatus() : null; }, null);
+        var input = 'width:100%;box-sizing:border-box;background:#050d16;border:1px solid ' + C.edgeSoft + ';border-radius:5px;color:' + C.ink + ';padding:5px 7px;font:inherit;font-size:10px;';
+        var label = 'display:block;font-size:9px;color:' + C.dim + ';font-weight:700;margin-bottom:2px;';
+        function field(name, text, placeholder) {
+            return '<label style="' + label + '">' + esc(text) + '</label>' +
+                '<input data-scc-move="' + name + '" placeholder="' + esc(placeholder || '') + '" style="' + input + '">';
+        }
+        function cell(html, basis) {
+            return '<div style="flex:1 1 ' + (basis || '110px') + ';min-width:0;">' + html + '</div>';
+        }
+        var statusHtml = status
+            ? '<div data-scc="movement-tasking-message" style="margin-top:5px;font-size:9.5px;color:' + (status.ok ? C.good : C.warn) + ';line-height:1.35;">' + esc(status.message || status.status || '') + '</div>'
+            : '';
+        var h = '<div data-scc="movement-tasking" style="margin:7px 0;padding:7px 9px;border:1px solid ' + C.edgeSoft + ';border-radius:6px;background:#08121d;">' +
+            '<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;">' +
+            '<div style="font-size:10.5px;color:' + C.accent + ';font-weight:800;">Movement tasking</div>' +
+            '<div style="font-size:9px;color:' + C.dim + ';">scenario time owned</div></div>' +
+            '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">' +
+            cell(field('unit-id', 'Unit ID', 'U1')) +
+            cell(field('unit-ids', 'Group unit IDs', 'U1, U2, U3'), '145px') +
+            cell(field('leader-unit-id', 'Leader', 'U1')) +
+            '</div>' +
+            '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">' +
+            cell(field('destination-lon', 'Dest lon', '18.40')) +
+            cell(field('destination-lat', 'Dest lat', '31.55')) +
+            cell(field('domain', 'Domain', 'ground')) +
+            '</div>' +
+            '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">' +
+            cell(field('speed-kph', 'Speed kph', '40')) +
+            cell(field('speed-knots', 'Speed kt', '30')) +
+            cell(field('formation', 'Formation', 'column')) +
+            cell(field('spacing-meters', 'Spacing m', '500')) +
+            '</div>' +
+            '<div style="margin-top:6px;">' +
+            '<label style="' + label + '">Route points JSON</label>' +
+            '<textarea data-scc-move="route-points" placeholder="[[18.1,31.2],[18.4,31.55]]" rows="2" style="' + input + 'resize:vertical;"></textarea>' +
+            '</div>' +
+            '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:7px;">' +
+            btnPri('scc-movement-start', 'Start movement', 'Create a runtime movement task at current scenario time') +
+            '<span style="font-size:9px;color:' + C.dim + ';">Single unit uses Unit ID; group uses Group unit IDs.</span>' +
+            '</div>' + statusHtml + '</div>';
+        return h;
+    }
     function openCmoTestGuide() {
         var g = (typeof globalThis !== 'undefined' && globalThis) || (typeof global !== 'undefined' && global) || null;
         var w = (typeof window !== 'undefined' && window) || g;
@@ -661,6 +705,7 @@
         inner += approvalSummaryHtml(eng);
         inner += executionPlanSummaryHtml(eng);
         inner += movementSummaryHtml(eng);
+        inner += movementTaskingHtml(eng);
         inner += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:7px;">' + controls + '</div>';
         // live runtime read-out
         if (scn && scn.scenario_active) {
@@ -939,6 +984,30 @@
         bindFn('scc-auto-continue', function () {
             if (eng.setAutoContinue) eng.setAutoContinue(!(eng.autoContinueEnabled && eng.autoContinueEnabled()));
             else if (typeof eng.enableAutoScenario === 'function') eng.enableAutoScenario();
+            (eng.repaint || function () {})();
+        });
+        bindFn('scc-movement-start', function () {
+            var doc = (typeof document !== 'undefined') ? document : null;
+            var root = doc && doc.querySelector('[data-scc="movement-tasking"]');
+            function val(name) {
+                var el = root && root.querySelector('[data-scc-move="' + name + '"]');
+                return el ? String(el.value || '').trim() : '';
+            }
+            if (eng.createRuntimeMovementTask) {
+                eng.createRuntimeMovementTask({
+                    unit_id: val('unit-id'),
+                    unit_ids: val('unit-ids'),
+                    leader_unit_id: val('leader-unit-id'),
+                    destination_lon: val('destination-lon'),
+                    destination_lat: val('destination-lat'),
+                    route_points: val('route-points'),
+                    speed_kph: val('speed-kph'),
+                    speed_knots: val('speed-knots'),
+                    domain: val('domain'),
+                    formation: val('formation'),
+                    spacing_meters: val('spacing-meters')
+                });
+            }
             (eng.repaint || function () {})();
         });
         bindFn('scc-clear', function () { eng.clearAll(); });

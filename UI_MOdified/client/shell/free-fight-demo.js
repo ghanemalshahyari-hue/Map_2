@@ -4074,6 +4074,11 @@
                 eta_elapsed_hours: (mv && isFinite(+mv.eta_elapsed_hours)) ? +mv.eta_elapsed_hours : null,
                 progress: (mv && isFinite(+mv.progress)) ? +mv.progress : null,
                 speed: (mv && isFinite(+mv.speed)) ? +mv.speed : null,
+                speed_kph: (mv && isFinite(+mv.speed_kph)) ? +mv.speed_kph : null,
+                speed_knots: (mv && isFinite(+mv.speed_knots)) ? +mv.speed_knots : null,
+                speed_source: (mv && mv.speed_source) || null,
+                distance_km: (mv && isFinite(+mv.distance_km)) ? +mv.distance_km : null,
+                current_segment_index: (mv && isFinite(+mv.current_segment_index)) ? +mv.current_segment_index : null,
                 domain: (mv && mv.domain) || null,
                 route: (mv && Array.isArray(mv.route)) ? JSON.parse(JSON.stringify(mv.route)) : null,
                 trail: (mv && Array.isArray(mv.trail)) ? JSON.parse(JSON.stringify(mv.trail)) : null

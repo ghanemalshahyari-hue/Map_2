@@ -114,10 +114,17 @@ console.log('\n=== MOV2 runtime movement map display ===\n');
 })();
 
 (function () {
+    const bridge = block(map, 'function setOwnedRunPositions', 'function setRunClock');
+    ok('T-10 route/trail display is display-only when present',
+        /window\.L\.polyline\(route,[\s\S]*interactive:\s*false[\s\S]*className:\s*'wg-runtime-route'/.test(bridge) &&
+        /window\.L\.polyline\(trail,[\s\S]*interactive:\s*false[\s\S]*className:\s*'wg-runtime-trail'/.test(bridge));
+})();
+
+(function () {
     const relevant = clean(block(ff, 'function _runtimeMovementOwnedPositions()', 'function _applyRuntimeEventEffectsForEvent') +
         block(map, 'function setOwnedRunPositions', 'function setRunClock') +
         movementSrc);
-    ok('T-10 no steps[] dependency', !/\bsteps\s*\[|\bsteps\b/.test(relevant));
+    ok('T-11 no steps[] dependency', !/\bsteps\s*\[|\bsteps\b/.test(relevant));
 })();
 
 if (failed) {

@@ -161,9 +161,15 @@
             runtime_world_state: { positions: {} },
             arrival_events: [],
             group_arrival_events: [],
+            movement_runtime_events: [],
+            pending_decision_points: {},
+            runtime_flags: {},
             movement_journal_events: [],
             movement_journaled_ids: {},
-            last_movement_journal_error: null
+            pending_journal_records: [],
+            last_journal_error: null,
+            last_movement_journal_error: null,
+            arrival_triggers_fired: {}
         };
     }
     function normalizeMovementState(state) {
@@ -175,9 +181,15 @@
         st.runtime_world_state.positions = isObj(st.runtime_world_state.positions) ? st.runtime_world_state.positions : {};
         st.arrival_events = arr(st.arrival_events);
         st.group_arrival_events = arr(st.group_arrival_events);
+        st.movement_runtime_events = arr(st.movement_runtime_events);
+        st.pending_decision_points = isObj(st.pending_decision_points) ? st.pending_decision_points : {};
+        st.runtime_flags = isObj(st.runtime_flags) ? st.runtime_flags : {};
         st.movement_journal_events = arr(st.movement_journal_events);
         st.movement_journaled_ids = isObj(st.movement_journaled_ids) ? st.movement_journaled_ids : {};
+        st.pending_journal_records = arr(st.pending_journal_records);
+        st.last_journal_error = st.last_journal_error || null;
         st.last_movement_journal_error = st.last_movement_journal_error || null;
+        st.arrival_triggers_fired = isObj(st.arrival_triggers_fired) ? st.arrival_triggers_fired : {};
         return st;
     }
     function movementId(plan) {
@@ -378,6 +390,7 @@
     }
     function addJournal(st, kind, mv, elapsed) {
         if (!st || !mv || !mv.movement_id) return;
+        if (kind === 'movement_update') return;
         var id = mv.movement_id + ':' + kind + ':' + (kind === 'movement_update' ? String(round6(num(elapsed, 0))) : 'once');
         if (st.movement_journaled_ids[id]) return;
         st.movement_journaled_ids[id] = true;
@@ -393,6 +406,336 @@
             position: clone(mv.current_position),
             eta_elapsed_hours: mv.eta_elapsed_hours
         });
+    }
+    function maybeRound(n) { return isFinite(+n) ? round6(+n) : null; }
+    function scenarioTimeLabel(options, elapsed) {
+        options = isObj(options) ? options : {};
+        if (options.scenario_time_label != null) return String(options.scenario_time_label);
+        if (options.time_label != null) return String(options.time_label);
+        if (!isFinite(+elapsed)) return null;
+        return 'H+' + round6(+elapsed);
+    }
+    function movementRuntimeEventId(event) {
+        return [
+            event && event.kind,
+            event && (event.event_id || event.trigger_id || event.movement_id || event.group_movement_id),
+            event && event.unit_id,
+            event && event.arrived_at_elapsed_hours
+        ].map(function (v) { return v == null ? '' : String(v); }).join('|');
+    }
+    function pushMovementRuntimeEvent(st, event) {
+        if (!st || !event || !event.kind) return null;
+        var ev = clone(event);
+        ev.source = ev.source || 'runtime_movement';
+        ev.read_only = true;
+        ev.event_id = ev.event_id || movementRuntimeEventId(ev);
+        var id = 'runtime_event|' + movementRuntimeEventId(ev);
+        if (st.arrival_triggers_fired[id]) return null;
+        st.arrival_triggers_fired[id] = true;
+        st.movement_runtime_events.push(ev);
+        return ev;
+    }
+    function movementUnitArrivalRecord(mv, elapsed, options) {
+        return {
+            schema_version: 'runtime-movement-arrival-v1',
+            source: 'runtime_movement',
+            kind: 'movement_unit_arrived',
+            movement_id: mv.movement_id || null,
+            group_movement_id: mv.group_movement_id || null,
+            unit_id: mv.unit_id || null,
+            group_id: mv.group_id || null,
+            arrived_at_elapsed_hours: maybeRound(elapsed),
+            scenario_time_label: scenarioTimeLabel(options, elapsed),
+            final_position: clone(normalizePoint(mv.current_position || mv.to)),
+            route_distance_km: maybeRound(mv.distance_km),
+            eta_elapsed_hours: maybeRound(mv.eta_elapsed_hours),
+            status: 'arrived'
+        };
+    }
+    function movementGroupLeader(st, gm) {
+        if (!st || !gm || !gm.unit_movements) return null;
+        var leaderId = gm.leader_unit_id || arr(gm.unit_ids)[0];
+        return leaderId && st.movements ? st.movements[gm.unit_movements[leaderId]] : null;
+    }
+    function movementGroupArrivalRecord(st, gm, elapsed, options) {
+        var leader = movementGroupLeader(st, gm);
+        return {
+            schema_version: 'runtime-movement-arrival-v1',
+            source: 'runtime_movement',
+            kind: 'movement_group_arrived',
+            movement_id: gm.movement_id || gm.group_movement_id || null,
+            group_movement_id: gm.group_movement_id || gm.movement_id || null,
+            unit_id: null,
+            group_id: gm.group_id || null,
+            leader_unit_id: gm.leader_unit_id || null,
+            unit_ids: clone(arr(gm.unit_ids).map(String)),
+            arrived_unit_ids: clone(arr(gm.arrived_unit_ids).map(String)),
+            arrived_at_elapsed_hours: maybeRound(elapsed),
+            scenario_time_label: scenarioTimeLabel(options, elapsed),
+            final_position: clone(normalizePoint(gm.leader_position || (leader && leader.current_position))),
+            route_distance_km: maybeRound((leader && leader.distance_km) || routeDistance(gm.route)),
+            eta_elapsed_hours: maybeRound(gm.group_eta_elapsed_hours),
+            status: 'arrived'
+        };
+    }
+    function movementJournalId(record) {
+        return [
+            record && record.schema_version,
+            record && record.kind,
+            record && record.movement_id,
+            record && record.group_movement_id,
+            record && record.unit_id,
+            record && record.group_id,
+            record && record.arrived_at_elapsed_hours
+        ].map(function (v) { return v == null ? '' : String(v); }).join('|');
+    }
+    function rememberMovementJournalFailure(st, record, err) {
+        var msg = err && err.message ? err.message : String(err || 'movement_journal_failed');
+        st.last_journal_error = msg;
+        st.last_movement_journal_error = msg;
+        var id = movementJournalId(record);
+        var exists = arr(st.pending_journal_records).some(function (r) { return movementJournalId(r) === id; });
+        if (!exists) st.pending_journal_records.push(clone(record));
+    }
+    function notifyMovementJournalFailure(st, record, err, options) {
+        rememberMovementJournalFailure(st, record, err);
+        if (options && typeof options.onMovementJournalFailure === 'function') {
+            try { options.onMovementJournalFailure(clone(record), err); } catch (_) {}
+        }
+    }
+    function movementJournalWriter(options) {
+        options = isObj(options) ? options : {};
+        if (typeof options.journalMovementRecord === 'function') return options.journalMovementRecord;
+        if (typeof options.journal_movement_record === 'function') return options.journal_movement_record;
+        if (typeof options.movementJournalWriter === 'function') return options.movementJournalWriter;
+        return null;
+    }
+    function journalMovementArrivalRecord(st, record, options) {
+        options = isObj(options) ? options : {};
+        if (!st || !record || options.movementJournal === false || options.journalMovement === false) return record || null;
+        var id = movementJournalId(record);
+        if (st.movement_journaled_ids[id]) return record;
+        st.movement_journaled_ids[id] = true;
+        st.movement_journal_events.push(clone(record));
+        var writer = movementJournalWriter(options);
+        if (typeof writer !== 'function') return record;
+        try {
+            var res = writer(clone(record), options);
+            if (res && typeof res.then === 'function') {
+                res.catch(function (err) { notifyMovementJournalFailure(st, record, err, options); });
+            } else if (res && res.ok === false) {
+                notifyMovementJournalFailure(st, record, res.error || res.reason || 'movement_journal_failed', options);
+            }
+        } catch (err) {
+            notifyMovementJournalFailure(st, record, err, options);
+        }
+        return record;
+    }
+    function arrivalTriggersFromPlan(plan) {
+        plan = isObj(plan) ? plan : {};
+        var payload = isObj(plan.payload) ? plan.payload : {};
+        return arr(plan.on_arrival).concat(arr(payload.on_arrival)).filter(function (t) { return t != null; });
+    }
+    function triggerKind(trigger) {
+        if (typeof trigger === 'string') return String(trigger).toLowerCase();
+        trigger = isObj(trigger) ? trigger : {};
+        return String(trigger.kind || trigger.type || trigger.action || '').toLowerCase();
+    }
+    function triggerPayload(trigger) {
+        if (!isObj(trigger)) return {};
+        return isObj(trigger.payload) ? clone(trigger.payload) : {};
+    }
+    function fireMovementArrivalTrigger(st, record, trigger, index) {
+        var kind = triggerKind(trigger);
+        trigger = isObj(trigger) ? trigger : { kind: kind };
+        var triggerId = String(trigger.id || trigger.trigger_id || (kind + '-' + (index + 1)));
+        var owner = record.movement_id || record.group_movement_id || record.group_id || record.unit_id || 'movement';
+        var key = 'arrival_trigger|' + record.kind + '|' + owner + '|' + triggerId;
+        if (st.arrival_triggers_fired[key]) return null;
+        st.arrival_triggers_fired[key] = true;
+        var payload = triggerPayload(trigger);
+        var base = {
+            event_id: key,
+            trigger_id: triggerId,
+            movement_id: record.movement_id || null,
+            group_movement_id: record.group_movement_id || null,
+            unit_id: record.unit_id || null,
+            group_id: record.group_id || null,
+            source_arrival_kind: record.kind,
+            arrived_at_elapsed_hours: record.arrived_at_elapsed_hours,
+            scenario_time_label: record.scenario_time_label || null,
+            payload: clone(payload)
+        };
+        if (kind === 'add_notification') {
+            base.kind = 'add_notification';
+            base.status = 'applied_safe';
+            base.title = trigger.title || payload.title || 'Movement arrived';
+            return pushMovementRuntimeEvent(st, base);
+        }
+        if (kind === 'open_decision_point') {
+            var dpId = String(trigger.decision_point_id || payload.decision_point_id || triggerId);
+            st.pending_decision_points[dpId] = {
+                decision_point_id: dpId,
+                trigger_id: triggerId,
+                title: trigger.title || payload.title || 'Movement decision',
+                status: 'pending',
+                movement_id: record.movement_id || null,
+                group_movement_id: record.group_movement_id || null,
+                unit_id: record.unit_id || null,
+                group_id: record.group_id || null,
+                arrived_at_elapsed_hours: record.arrived_at_elapsed_hours,
+                scenario_time_label: record.scenario_time_label || null,
+                payload: clone(payload),
+                read_only: true
+            };
+            base.kind = 'open_decision_point';
+            base.status = 'pending';
+            base.decision_point_id = dpId;
+            base.title = st.pending_decision_points[dpId].title;
+            return pushMovementRuntimeEvent(st, base);
+        }
+        if (kind === 'set_runtime_flag') {
+            var flag = String(trigger.flag || trigger.key || payload.flag || payload.key || triggerId);
+            st.runtime_flags[flag] = payload.value !== undefined ? clone(payload.value) : true;
+            base.kind = 'set_runtime_flag';
+            base.status = 'applied_safe';
+            base.flag = flag;
+            return pushMovementRuntimeEvent(st, base);
+        }
+        base.kind = kind || 'unsupported_arrival_trigger';
+        base.status = 'blocked';
+        base.reason = 'unsupported_arrival_trigger';
+        return pushMovementRuntimeEvent(st, base);
+    }
+    function recordMovementArrivalContract(st, record, sourcePlan, options) {
+        if (!st || !record) return null;
+        pushMovementRuntimeEvent(st, record);
+        pushMovementRuntimeEvent(st, {
+            event_id: 'movement-route-completed:' + record.kind + ':' + (record.movement_id || record.group_movement_id || record.group_id || record.unit_id || 'movement'),
+            kind: 'movement_route_completed',
+            movement_id: record.movement_id || null,
+            group_movement_id: record.group_movement_id || null,
+            unit_id: record.unit_id || null,
+            group_id: record.group_id || null,
+            arrived_at_elapsed_hours: record.arrived_at_elapsed_hours,
+            scenario_time_label: record.scenario_time_label || null,
+            final_position: clone(record.final_position),
+            route_distance_km: record.route_distance_km,
+            eta_elapsed_hours: record.eta_elapsed_hours,
+            status: 'arrived'
+        });
+        arrivalTriggersFromPlan(sourcePlan).forEach(function (trigger, idx) {
+            fireMovementArrivalTrigger(st, record, trigger, idx);
+        });
+        journalMovementArrivalRecord(st, record, options);
+        return record;
+    }
+    function unwrapMovementJournalRow(row) {
+        row = isObj(row) ? row : {};
+        var mods = isObj(row.mods) ? row.mods : {};
+        if (isObj(mods.movement_journal)) return mods.movement_journal;
+        if (isObj(mods.movement_journal_record)) return mods.movement_journal_record;
+        if (isObj(row.movement_journal)) return row.movement_journal;
+        if (isObj(row.movement_journal_record)) return row.movement_journal_record;
+        if (isObj(row.record)) return row.record;
+        return row;
+    }
+    function isMovementJournalKind(kind) {
+        kind = String(kind || '').toLowerCase();
+        return kind === 'movement_unit_arrived' || kind === 'movement_group_arrived' || kind === 'movement_route_completed';
+    }
+    function normalizeMovementJournalRecord(row) {
+        var r = unwrapMovementJournalRow(row);
+        if (!isObj(r)) return null;
+        var kind = String(r.kind || '').toLowerCase();
+        if (!isMovementJournalKind(kind)) return null;
+        if (r.schema_version && r.schema_version !== 'runtime-movement-arrival-v1' && r.source !== 'runtime_movement') return null;
+        var out = clone(r);
+        out.schema_version = 'runtime-movement-arrival-v1';
+        out.source = 'runtime_movement';
+        out.kind = kind;
+        out.movement_id = out.movement_id != null ? String(out.movement_id) : null;
+        out.group_movement_id = out.group_movement_id != null ? String(out.group_movement_id) : null;
+        out.unit_id = out.unit_id != null ? String(out.unit_id) : null;
+        out.group_id = out.group_id != null ? String(out.group_id) : null;
+        out.arrived_at_elapsed_hours = maybeRound(out.arrived_at_elapsed_hours != null ? out.arrived_at_elapsed_hours : out.elapsed_hours);
+        out.scenario_time_label = out.scenario_time_label != null ? String(out.scenario_time_label) : null;
+        out.final_position = normalizePoint(out.final_position || out.position || out.current_position);
+        out.route_distance_km = maybeRound(out.route_distance_km != null ? out.route_distance_km : out.distance_km);
+        out.eta_elapsed_hours = maybeRound(out.eta_elapsed_hours);
+        out.status = out.status || 'arrived';
+        out.unit_ids = arr(out.unit_ids).map(String);
+        out.arrived_unit_ids = arr(out.arrived_unit_ids).map(String);
+        return out;
+    }
+    function extractMovementJournalRecords(rows) {
+        return arr(rows).map(normalizeMovementJournalRecord).filter(Boolean);
+    }
+    function movementRecordTime(record) {
+        return isFinite(+record.arrived_at_elapsed_hours) ? +record.arrived_at_elapsed_hours : Number.POSITIVE_INFINITY;
+    }
+    function buildMovementReplay(records) {
+        var warnings = [];
+        var normalized = [];
+        arr(records).forEach(function (row, idx) {
+            var rec = normalizeMovementJournalRecord(row);
+            if (!rec) {
+                warnings.push('ignored_movement_record_' + idx);
+                return;
+            }
+            if (!rec.movement_id && !rec.group_movement_id) warnings.push('missing_movement_id_' + idx);
+            if (!rec.final_position) warnings.push('missing_final_position_' + idx);
+            normalized.push(rec);
+        });
+        normalized.sort(function (a, b) {
+            var d = movementRecordTime(a) - movementRecordTime(b);
+            if (d !== 0) return d;
+            return String(a.kind + (a.movement_id || a.group_movement_id || '')).localeCompare(String(b.kind + (b.movement_id || b.group_movement_id || '')));
+        });
+        var unitMovements = {}, groupMovements = {};
+        normalized.forEach(function (rec) {
+            if (rec.kind === 'movement_unit_arrived') unitMovements[rec.movement_id || rec.unit_id || ('unit-' + Object.keys(unitMovements).length)] = clone(rec);
+            if (rec.kind === 'movement_group_arrived') groupMovements[rec.group_movement_id || rec.group_id || ('group-' + Object.keys(groupMovements).length)] = clone(rec);
+        });
+        return {
+            arrivals: clone(normalized),
+            unit_movements: unitMovements,
+            group_movements: groupMovements,
+            warnings: warnings,
+            read_only: true
+        };
+    }
+    function buildMovementAarSummary(records) {
+        var replay = buildMovementReplay(records);
+        var units = {}, groups = {};
+        var unitArrivals = 0, groupArrivals = 0, routeCompleted = 0, distance = 0;
+        replay.arrivals.forEach(function (rec) {
+            if (rec.kind === 'movement_unit_arrived') {
+                unitArrivals++;
+                if (rec.unit_id) units[rec.unit_id] = true;
+            } else if (rec.kind === 'movement_group_arrived') {
+                groupArrivals++;
+                if (rec.group_id || rec.group_movement_id) groups[rec.group_id || rec.group_movement_id] = true;
+                arr(rec.arrived_unit_ids.length ? rec.arrived_unit_ids : rec.unit_ids).forEach(function (uid) { if (uid) units[uid] = true; });
+            } else if (rec.kind === 'movement_route_completed') {
+                routeCompleted++;
+            }
+            if (isFinite(+rec.route_distance_km)) distance += +rec.route_distance_km;
+        });
+        return {
+            total_arrivals: unitArrivals + groupArrivals,
+            unit_arrivals: unitArrivals,
+            group_arrivals: groupArrivals,
+            route_completed: routeCompleted,
+            unit_count: Object.keys(units).length,
+            group_count: Object.keys(groups).length,
+            units: Object.keys(units).sort(),
+            groups: Object.keys(groups).sort(),
+            route_distance_km: round6(distance),
+            ordered_arrivals: clone(replay.arrivals),
+            warnings: clone(replay.warnings),
+            read_only: true
+        };
     }
     function planValue(plan, payload, names) {
         for (var i = 0; i < names.length; i++) {
@@ -475,7 +818,7 @@
             source_group_movement_id: groupId
         };
     }
-    function refreshGroupMovementState(st, gm, elapsed, groupArrivals) {
+    function refreshGroupMovementState(st, gm, elapsed, groupArrivals, options) {
         if (!st || !gm) return null;
         groupArrivals = arr(groupArrivals);
         var unitIds = arr(gm.unit_ids).map(String);
@@ -520,6 +863,7 @@
             };
             st.group_arrival_events.push(ev);
             groupArrivals.push(clone(ev));
+            recordMovementArrivalContract(st, movementGroupArrivalRecord(st, gm, elapsed, options), gm.source_execution_plan, options);
         }
         return gm;
     }
@@ -579,7 +923,7 @@
             if (mv.status === 'moving' || mv.status === 'arrived') addJournal(st, 'movement_start', mv, mv.started_at_elapsed_hours);
             created.push(clone(mv));
         });
-        refreshGroupMovementState(st, gm, started, []);
+        refreshGroupMovementState(st, gm, started, [], {});
         return { created: created };
     }
     function startMovementExecutionPlans(state, executionPlans, context) {
@@ -654,6 +998,7 @@
                     st.arrival_events.push(ev);
                     arrivals.push(clone(ev));
                     addJournal(st, 'movement_arrival', mv, elapsed);
+                    recordMovementArrivalContract(st, movementUnitArrivalRecord(mv, elapsed, options), mv.source_execution_plan, options);
                 }
             } else {
                 addJournal(st, 'movement_update', mv, elapsed);
@@ -662,7 +1007,7 @@
             updates.push(clone(mv));
         });
         Object.keys(st.group_movements).forEach(function (id) {
-            refreshGroupMovementState(st, st.group_movements[id], elapsed, groupArrivals);
+            refreshGroupMovementState(st, st.group_movements[id], elapsed, groupArrivals, options);
         });
         return { state: st, updates: updates, arrivals: arrivals, group_arrivals: groupArrivals };
     }
@@ -699,6 +1044,9 @@
             last_arrival: lastArrival,
             last_group_arrival: st.group_arrival_events.length ? clone(st.group_arrival_events[st.group_arrival_events.length - 1]) : null,
             journal_events: st.movement_journal_events.length,
+            movement_runtime_events: st.movement_runtime_events.length,
+            movement_journal_retry_queue: st.pending_journal_records.length,
+            last_movement_journal_error: st.last_journal_error || st.last_movement_journal_error || null,
             read_only: true
         };
     }
@@ -717,6 +1065,10 @@
         movementFromExecutionPlan: movementFromExecutionPlan,
         startMovementExecutionPlans: startMovementExecutionPlans,
         updateRuntimeMovementState: updateRuntimeMovementState,
-        summarizeRuntimeMovement: summarizeRuntimeMovement
+        summarizeRuntimeMovement: summarizeRuntimeMovement,
+        normalizeMovementJournalRecord: normalizeMovementJournalRecord,
+        extractMovementJournalRecords: extractMovementJournalRecords,
+        buildMovementReplay: buildMovementReplay,
+        buildMovementAarSummary: buildMovementAarSummary
     };
 });

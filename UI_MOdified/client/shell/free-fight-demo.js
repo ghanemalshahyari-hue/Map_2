@@ -3995,7 +3995,12 @@
         if (API && typeof API.normalizeMovementState === 'function') {
             _coaExec.runtime_movement = API.normalizeMovementState(_coaExec.runtime_movement);
         } else if (!_coaExec.runtime_movement || typeof _coaExec.runtime_movement !== 'object') {
-            _coaExec.runtime_movement = { group_movements: {}, movements: {}, runtime_positions: {}, runtime_world_state: { positions: {} }, arrival_events: [], group_arrival_events: [] };
+            _coaExec.runtime_movement = {
+                group_movements: {}, movements: {}, runtime_positions: {}, runtime_world_state: { positions: {} },
+                arrival_events: [], group_arrival_events: [], movement_runtime_events: [], pending_decision_points: {},
+                runtime_flags: {}, movement_journal_events: [], movement_journaled_ids: {}, pending_journal_records: [],
+                last_journal_error: null, last_movement_journal_error: null, arrival_triggers_fired: {}
+            };
         }
         return _coaExec.runtime_movement;
     }
@@ -4004,7 +4009,12 @@
         var API = W() && W().AppRuntimeMovement;
         _coaExec.runtime_movement = (API && typeof API.normalizeMovementState === 'function')
             ? API.normalizeMovementState(null)
-            : { group_movements: {}, movements: {}, runtime_positions: {}, runtime_world_state: { positions: {} }, arrival_events: [], group_arrival_events: [] };
+            : {
+                group_movements: {}, movements: {}, runtime_positions: {}, runtime_world_state: { positions: {} },
+                arrival_events: [], group_arrival_events: [], movement_runtime_events: [], pending_decision_points: {},
+                runtime_flags: {}, movement_journal_events: [], movement_journaled_ids: {}, pending_journal_records: [],
+                last_journal_error: null, last_movement_journal_error: null, arrival_triggers_fired: {}
+            };
         return _coaExec.runtime_movement;
     }
     function _movementExecutionPlans() {
@@ -4029,6 +4039,79 @@
         });
         return res;
     }
+    function _movementJournalOperatorId() {
+        try {
+            var cu = W() && W().AppConfig && W().AppConfig.CHAT_CONFIG && W().AppConfig.CHAT_CONFIG.currentUser;
+            if (cu && cu.id) return String(cu.id).slice(0, 80);
+        } catch (_) {}
+        return 'operator';
+    }
+    function _movementJournalRecordId(record) {
+        return [
+            record && record.schema_version,
+            record && record.kind,
+            record && record.movement_id,
+            record && record.group_movement_id,
+            record && record.unit_id,
+            record && record.group_id,
+            record && record.arrived_at_elapsed_hours
+        ].map(function (v) { return v == null ? '' : String(v); }).join('|');
+    }
+    function _rememberRuntimeMovementJournalFailure(record, err) {
+        var st = _ensureRuntimeMovementState();
+        if (!st || !record) return;
+        var msg = err && err.message ? err.message : String(err || 'movement_journal_failed');
+        st.last_journal_error = msg;
+        st.last_movement_journal_error = msg;
+        var id = _movementJournalRecordId(record);
+        var exists = arr(st.pending_journal_records).some(function (r) { return _movementJournalRecordId(r) === id; });
+        if (!exists) st.pending_journal_records.push(JSON.parse(JSON.stringify(record)));
+    }
+    function _journalRuntimeMovementRecord(record) {
+        if (!record || !_coaExec || !_coaExec.active) return null;
+        var w = W();
+        if (!w || typeof w.fetch !== 'function') return null;
+        var sc = w.RmoozScenario && w.RmoozScenario.scenario;
+        var scenarioName = (sc && (sc.name || sc.scenario_label || sc.scenario_name || sc.id)) || null;
+        if (!scenarioName) return null;
+        var headers = { 'Content-Type': 'application/json' };
+        var runId = 'movement-arrival-' + scenarioName;
+        return w.fetch('/api/sim/propose', {
+            method: 'POST',
+            credentials: 'include',
+            headers: headers,
+            body: JSON.stringify({ scenarioName: scenarioName, stepIndex: 0, mockMode: true, runId: runId })
+        }).then(function (r) {
+            return (r && r.ok && typeof r.json === 'function') ? r.json() : null;
+        }).then(function (prop) {
+            if (!prop || !prop.proposal_id) throw new Error('movement_journal_propose_failed');
+            return w.fetch('/api/sim/commit', {
+                method: 'POST',
+                credentials: 'include',
+                headers: headers,
+                body: JSON.stringify({
+                    proposal_id: prop.proposal_id,
+                    accepted_action_ids: 'ALL',
+                    operator_id: _movementJournalOperatorId(),
+                    source: 'deterministic-sim',
+                    mods: { movement_journal: record }
+                })
+            }).then(function (r2) {
+                return (r2 && typeof r2.json === 'function') ? r2.json() : null;
+            }).then(function (res) {
+                if (res && res.ok === false) throw new Error('movement_journal_commit_failed');
+                return res;
+            });
+        });
+    }
+    function _runtimeMovementOptions(paused) {
+        return {
+            paused: !!paused,
+            scenario_time_label: _coaExec ? _scenarioClockLabel(_coaExec) : null,
+            journalMovementRecord: _journalRuntimeMovementRecord,
+            onMovementJournalFailure: _rememberRuntimeMovementJournalFailure
+        };
+    }
     function _tickRuntimeMovement(pausedOverride) {
         var MOV = W() && W().AppRuntimeMovement;
         var st = _ensureRuntimeMovementState();
@@ -4036,7 +4119,7 @@
         try { _startRuntimeMovementPlans(); } catch (_) {}
         var elapsed = _coaExec && _coaExec.clock && isFinite(+_coaExec.clock.current_hours) ? +_coaExec.clock.current_hours : 0;
         var paused = pausedOverride === true || !!(_coaExec && (_coaExec.paused || (_coaExec.clock && _coaExec.clock.paused)));
-        var res = MOV.updateRuntimeMovementState(_coaExec.runtime_movement, elapsed, { paused: paused });
+        var res = MOV.updateRuntimeMovementState(_coaExec.runtime_movement, elapsed, _runtimeMovementOptions(paused));
         _coaExec.runtime_movement = res && res.state ? res.state : _coaExec.runtime_movement;
         try { _publishOwnedPositions(); } catch (_) {}
         arr(res && res.arrivals).forEach(function (ev) {

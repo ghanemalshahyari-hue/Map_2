@@ -1095,6 +1095,7 @@ const server = http.createServer((req, res) => {
     //   data/journal/<runId>.jsonl. This is the ONLY durable state-
     //   mutation path in the system.
     if (pathname === '/api/sim/propose' && req.method === 'POST') {
+        if (!requireAuthenticatedUser(req, res)) return;
         readJsonBody(req, { maxBytes: 2_000_000 }).then(async (body) => {
             body = body || {};
             const scenarioName = body.scenarioName || scenarios.DEFAULT_NAME;
@@ -1126,8 +1127,15 @@ const server = http.createServer((req, res) => {
     }
 
     if (pathname === '/api/sim/commit' && req.method === 'POST') {
+        const commitUser = requireAuthenticatedUser(req, res);
+        if (!commitUser) return;
         readJsonBody(req, { maxBytes: 200_000 }).then(async (body) => {
             body = body || {};
+            // Identity is server-derived, never client-supplied: a real HTTP
+            // caller is always an authenticated operator, so any client-sent
+            // operator_id/headless claim is discarded in favor of the session.
+            body.operator_id = commitUser.username || commitUser.id;
+            delete body.headless;
             const r = adjudicator.commitStep(body);
             // Don't ship producer artifacts on the commit response either.
             const { _producer, ...wire } = r;
@@ -1146,6 +1154,8 @@ const server = http.createServer((req, res) => {
     //   decision(s) via WS3, and writes durable journal row(s) — the
     //   deterministic-sim commit path (distinct from the LLM /commit above).
     if (pathname === '/api/sim/decide' && req.method === 'POST') {
+        const decideUser = requireAuthenticatedUser(req, res);
+        if (!decideUser) return;
         readJsonBody(req, { maxBytes: 200_000 }).then(async (body) => {
             body = body || {};
             const scenarioName = body.scenarioName || scenarios.DEFAULT_NAME;
@@ -1155,8 +1165,9 @@ const server = http.createServer((req, res) => {
                 scenarioName,
                 stepIndex:   body.stepIndex,
                 decisions:   body.decisions || (body.decision ? [body.decision] : []),
-                operator_id: body.operator_id || null,
-                headless:    body.headless || null,
+                // Identity is server-derived, never client-supplied — see /api/sim/commit.
+                operator_id: decideUser.username || decideUser.id,
+                headless:    null,
                 runId:       body.runId || null,
                 mods:        body.mods || null,
                 engineOpts:  body.engineOpts || null,

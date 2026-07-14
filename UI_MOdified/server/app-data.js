@@ -381,8 +381,16 @@ function writeBootstrapPasswordFile(password) {
 
 function ensureBootstrapUser(db) {
     const username = 'admin';
-    const existing = db.prepare('SELECT id FROM users WHERE username=?').get(username);
-    if (existing) return;
+    const existing = db.prepare('SELECT id, role FROM users WHERE username=?').get(username);
+    if (existing) {
+        // Corrective fixup: the bootstrap account was previously seeded with
+        // role 'planner' (a bug — the fixed username 'admin' is only ever
+        // this bootstrap account, so it's always safe to correct its role).
+        if (existing.role !== 'admin') {
+            db.prepare('UPDATE users SET role=?, updated_at=? WHERE id=?').run('admin', nowIso(), existing.id);
+        }
+        return;
+    }
     const id = genId();
     const t = nowIso();
 
@@ -410,7 +418,7 @@ function ensureBootstrapUser(db) {
 
     db.prepare(
         'INSERT INTO users (id, username, password_hash, display_name, role, created_at, updated_at) VALUES (?,?,?,?,?,?,?)'
-    ).run(id, username, hashPassword(password), 'Administrator', 'planner', t, t);
+    ).run(id, username, hashPassword(password), 'Administrator', 'admin', t, t);
 
     if (envPassword) {
         console.log('[app-data] Created bootstrap user "' + username + '" using RMOOZ_BOOTSTRAP_PASSWORD env var.');
@@ -786,9 +794,12 @@ function handleAuthApi(req, res, pathname, method, sendJson, readJsonBody) {
             if (exists) return sendJson(res, 409, { error: 'Username taken' });
             const id = genId();
             const t = nowIso();
+            // Role is never client-supplied — self-registration always gets the
+            // baseline role. Elevated roles are assigned out-of-band (DB edit /
+            // RMOOZ_ROADMAP_ADMINS-style env override), never via this request.
             db.prepare(
                 'INSERT INTO users (id, username, password_hash, display_name, role, created_at, updated_at) VALUES (?,?,?,?,?,?,?)'
-            ).run(id, username, hashPassword(password), displayName, body.role || 'planner', t, t);
+            ).run(id, username, hashPassword(password), displayName, 'planner', t, t);
             sendJson(res, 201, { id, username, displayName });
         }).catch(() => sendJson(res, 400, { error: 'Invalid JSON' }));
         return true;

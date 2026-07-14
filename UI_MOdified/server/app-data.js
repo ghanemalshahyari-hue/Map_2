@@ -12,6 +12,70 @@ const planMigrate = require('../client/plan-migrate.js');
 
 const SESSION_COOKIE = 'rmooz_session';
 const SESSION_MAX_AGE_SEC = 7 * 24 * 60 * 60;
+
+// Proxy trust gate: by default this server trusts NOTHING from the client
+// about its own network position — `X-Forwarded-Proto/Host/For` are
+// ordinary, fully client-controllable request headers. A direct (non-proxied)
+// client could otherwise send `X-Forwarded-Proto: https` to flip cookie mode,
+// `X-Forwarded-Host` to confuse the CSRF origin check, or `X-Forwarded-For`
+// to pick its own rate-limit identity (and so dodge/frame other clients).
+// Only honor them when the operator explicitly says a trusted reverse proxy
+// sits in front (RMOOZ_TRUST_PROXY=1) — never by default.
+function trustProxyEnabled() {
+    return String(process.env.RMOOZ_TRUST_PROXY || '') === '1';
+}
+function forwardedHeader(req, name) {
+    if (!trustProxyEnabled()) return null;
+    const v = req && req.headers && req.headers[name];
+    return v ? String(v) : null;
+}
+
+// In-memory fixed-window rate limit for login/register — this is a single
+// local server process (no multi-instance/clustered deployment), so
+// per-process memory is a real and simple enough store; no Redis needed.
+// Keyed by client IP; separate windows per endpoint so a burst of registers
+// doesn't also lock out login attempts from the same address (buckets are
+// fully independent — a login success never touches the register bucket,
+// or vice versa; a hit only ever increments its own `${bucket}:${ip}` entry).
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+const RATE_LIMIT_MAX_ATTEMPTS = 20;
+const _rateLimitState = new Map(); // `${bucket}:${ip}` -> { count, windowStart }
+function checkRateLimit(bucket, ip) {
+    const key = bucket + ':' + (ip || 'unknown');
+    const now = Date.now();
+    const entry = _rateLimitState.get(key);
+    if (!entry || now - entry.windowStart >= RATE_LIMIT_WINDOW_MS) {
+        _rateLimitState.set(key, { count: 1, windowStart: now });
+        return { allowed: true, retryAfterSec: 0 };
+    }
+    entry.count += 1;
+    const retryAfterSec = Math.max(1, Math.ceil((entry.windowStart + RATE_LIMIT_WINDOW_MS - now) / 1000));
+    return { allowed: entry.count <= RATE_LIMIT_MAX_ATTEMPTS, retryAfterSec };
+}
+// Unbounded-growth guard: without this, every distinct IP that ever hits
+// login/register leaves a Map entry forever (a real memory leak on a
+// long-lived server, and a trivial way to bloat memory by hitting the
+// endpoint from many source addresses). Sweep entries whose window closed
+// a while ago on an interval, not on every request. `.unref()` so this
+// timer never keeps a test process (or the real server) alive by itself.
+const _rateLimitSweep = setInterval(() => {
+    const now = Date.now();
+    for (const [key, entry] of _rateLimitState) {
+        if (now - entry.windowStart >= RATE_LIMIT_WINDOW_MS * 2) _rateLimitState.delete(key);
+    }
+}, RATE_LIMIT_WINDOW_MS);
+if (_rateLimitSweep.unref) _rateLimitSweep.unref();
+
+function clientIp(req) {
+    const forwarded = forwardedHeader(req, 'x-forwarded-for');
+    if (forwarded) {
+        // Standard form: "client, proxy1, proxy2, ..." — the first entry is
+        // the original client as seen by the nearest trusted hop.
+        const first = forwarded.split(',')[0].trim();
+        if (first) return first;
+    }
+    return (req.socket && req.socket.remoteAddress) || 'unknown';
+}
 // Canonical empty plan — a valid GeoJSON FeatureCollection (v3). All new
 // plans are written to disk in this shape with the .geojson extension.
 const EMPTY_PLAN_JSON = JSON.stringify({
@@ -55,6 +119,18 @@ function verifyPassword(password, stored) {
     }
 }
 
+// Timing-side-channel mitigation: when the username doesn't exist, `login`
+// used to short-circuit before ever calling scryptSync, making "no such
+// user" measurably faster than "wrong password" — an enumeration oracle on
+// top of the (already-honest) `409 Username taken` register response. This
+// runs a real scrypt computation against a fixed dummy hash so the two
+// cases take comparable time, without needing a real user row.
+const DUMMY_PASSWORD_HASH = hashPassword(crypto.randomBytes(24).toString('hex'));
+function verifyPasswordAgainstDummy(password) {
+    verifyPassword(password, DUMMY_PASSWORD_HASH);
+    return false;
+}
+
 function parseCookies(req) {
     const raw = req.headers.cookie || '';
     const out = {};
@@ -70,12 +146,33 @@ function parseCookies(req) {
     return out;
 }
 
-function sessionCookieHeader(sessionId, maxAgeSec = SESSION_MAX_AGE_SEC) {
-    return `${SESSION_COOKIE}=${encodeURIComponent(sessionId)}; Path=/; HttpOnly; Max-Age=${maxAgeSec}; SameSite=Lax`;
+// Environment-aware Secure flag. Default deployment is offline/LAN plain
+// HTTP (this app's primary target — CLAUDE.md's own launch config runs it
+// unencrypted); forcing `Secure` there would make the cookie silently stop
+// being sent at all and break every session. Only add it when we have a
+// positive signal we're actually behind TLS: an explicit operator opt-in
+// (`RMOOZ_FORCE_SECURE_COOKIE=1`, for a real HTTPS deployment) or a
+// `X-Forwarded-Proto: https` header — but ONLY when RMOOZ_TRUST_PROXY=1 is
+// also set, otherwise a direct (non-proxied) client could send that header
+// itself. (Spoofing this specific header only breaks the spoofer's own
+// cookie delivery over their own plain-HTTP connection, not a real
+// exploit — but treating it as trusted-by-default is still the wrong
+// default, so it stays behind the same explicit gate as the other two.)
+function isSecureContext(req) {
+    if (String(process.env.RMOOZ_FORCE_SECURE_COOKIE || '') === '1') return true;
+    const proto = forwardedHeader(req, 'x-forwarded-proto');
+    if (proto && proto.toLowerCase() === 'https') return true;
+    return false;
 }
 
-function clearSessionCookieHeader() {
-    return `${SESSION_COOKIE}=; Path=/; HttpOnly; Max-Age=0; SameSite=Lax`;
+function sessionCookieHeader(sessionId, req, maxAgeSec = SESSION_MAX_AGE_SEC) {
+    const secure = isSecureContext(req) ? '; Secure' : '';
+    return `${SESSION_COOKIE}=${encodeURIComponent(sessionId)}; Path=/; HttpOnly; Max-Age=${maxAgeSec}; SameSite=Lax${secure}`;
+}
+
+function clearSessionCookieHeader(req) {
+    const secure = isSecureContext(req) ? '; Secure' : '';
+    return `${SESSION_COOKIE}=; Path=/; HttpOnly; Max-Age=0; SameSite=Lax${secure}`;
 }
 
 function planDirForUser(userId) {
@@ -530,6 +627,15 @@ function getDb() {
     return _db;
 }
 
+// Expired session rows are already unusable (getSessionUser checks
+// expires_at > now), but nothing ever deleted them — the table would grow
+// forever. Swept opportunistically on login/logout (both already touch the
+// sessions table), not on a timer — this is a low-traffic local server, a
+// cron/interval would be more machinery than the problem needs.
+function cleanupExpiredSessions(db) {
+    try { db.prepare('DELETE FROM sessions WHERE expires_at <= ?').run(Date.now()); } catch {}
+}
+
 function getSessionUser(req) {
     const db = getDb();
     if (!db) return null;
@@ -784,6 +890,12 @@ function handleAuthApi(req, res, pathname, method, sendJson, readJsonBody) {
     if (!db) { sendJson(res, 500, { error: 'Database unavailable' }); return true; }
 
     if (pathname === '/api/auth/register' && method === 'POST') {
+        const registerLimit = checkRateLimit('register', clientIp(req));
+        if (!registerLimit.allowed) {
+            res.setHeader('Retry-After', String(registerLimit.retryAfterSec));
+            sendJson(res, 429, { error: 'Too many attempts — try again later', retryAfterSec: registerLimit.retryAfterSec });
+            return true;
+        }
         readJsonBody(req, { maxBytes: 16000 }).then(body => {
             const username = String(body.username || '').trim().toLowerCase();
             const password = String(body.password || '');
@@ -791,6 +903,12 @@ function handleAuthApi(req, res, pathname, method, sendJson, readJsonBody) {
             if (username.length < 2 || username.length > 64) return sendJson(res, 400, { error: 'Invalid username' });
             if (password.length < 4) return sendJson(res, 400, { error: 'Password too short' });
             const exists = db.prepare('SELECT id FROM users WHERE username=?').get(username);
+            // NOTE (accepted, documented tradeoff — not obscured): this 409
+            // does confirm username existence. Registration UX inherently
+            // needs to tell the user their chosen name is taken so they can
+            // pick another; avoiding that would require an out-of-scope
+            // email-confirmation-based flow. Login below stays fully
+            // ambiguous, which is the classic enumeration attack surface.
             if (exists) return sendJson(res, 409, { error: 'Username taken' });
             const id = genId();
             const t = nowIso();
@@ -806,20 +924,38 @@ function handleAuthApi(req, res, pathname, method, sendJson, readJsonBody) {
     }
 
     if (pathname === '/api/auth/login' && method === 'POST') {
+        const loginLimit = checkRateLimit('login', clientIp(req));
+        if (!loginLimit.allowed) {
+            res.setHeader('Retry-After', String(loginLimit.retryAfterSec));
+            sendJson(res, 429, { error: 'Too many attempts — try again later', retryAfterSec: loginLimit.retryAfterSec });
+            return true;
+        }
         readJsonBody(req, { maxBytes: 16000 }).then(body => {
             const username = String(body.username || '').trim().toLowerCase();
             const password = String(body.password || '');
             const user = db.prepare('SELECT * FROM users WHERE username=?').get(username);
-            if (!user || !verifyPassword(password, user.password_hash)) {
+            // Timing-side-channel mitigation: run a real scrypt computation
+            // on the unknown-user path too, so "no such user" and "wrong
+            // password" take comparable time (see verifyPasswordAgainstDummy).
+            const authOk = user ? verifyPassword(password, user.password_hash) : verifyPasswordAgainstDummy(password);
+            if (!user || !authOk) {
                 return sendJson(res, 401, { error: 'Invalid credentials' });
             }
+            cleanupExpiredSessions(db);
+            // Session rotation: if this request already carried a session
+            // cookie (stale login, or a fixation attempt), invalidate it —
+            // the cookie we're about to issue is always a fresh random ID
+            // regardless, but this also cleans up the old row rather than
+            // leaving it live alongside the new one.
+            const presented = parseCookies(req)[SESSION_COOKIE];
+            if (presented) { try { db.prepare('DELETE FROM sessions WHERE id=?').run(presented); } catch {} }
             const sid = genId();
             const exp = Date.now() + SESSION_MAX_AGE_SEC * 1000;
             const t = nowIso();
             db.prepare('INSERT INTO sessions (id, user_id, expires_at, created_at) VALUES (?,?,?,?)').run(sid, user.id, exp, t);
             res.writeHead(200, {
                 'Content-Type': 'application/json; charset=utf-8',
-                'Set-Cookie': sessionCookieHeader(sid)
+                'Set-Cookie': sessionCookieHeader(sid, req)
             });
             res.end(JSON.stringify({
                 id: user.id,
@@ -837,9 +973,10 @@ function handleAuthApi(req, res, pathname, method, sendJson, readJsonBody) {
         if (sid) {
             try { db.prepare('DELETE FROM sessions WHERE id=?').run(sid); } catch {}
         }
+        cleanupExpiredSessions(db);
         res.writeHead(200, {
             'Content-Type': 'application/json; charset=utf-8',
-            'Set-Cookie': clearSessionCookieHeader()
+            'Set-Cookie': clearSessionCookieHeader(req)
         });
         res.end(JSON.stringify({ ok: true }));
         return true;
@@ -1043,5 +1180,7 @@ module.exports = {
     handlePrefsApi,
     planFilePath,
     atomicWriteFile,
-    EMPTY_PLAN_JSON
+    EMPTY_PLAN_JSON,
+    trustProxyEnabled,
+    forwardedHeader
 };

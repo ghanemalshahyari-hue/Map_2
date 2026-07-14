@@ -8,6 +8,36 @@
 
 ## Current audit checkpoint - RMOOZ-AUDIT-APP-4
 
+> ⚠️ **Batch A security posture — read before assuming any of this is "secure" (2026-07-14).**
+> Batch A (sim-route auth, identity derivation, capability allow-list, lesson-author fix — see the
+> §E sim-boundary row and `[[project_batch_a_auth_slice_2026-07-14]]` /
+> `[[project_batch_a_remaining_endpoint_audit_2026-07-14]]`) gives RMOOZ an **authenticated barrier,
+> not trusted operational authorization**. Self-registration stays open (an accepted, prior decision,
+> not revisited here) and every self-registered account gets role `planner`, which sits inside
+> `SIM_MUTATION_ROLES` — the exact allow-list that gates the scenario/sim write chain. **Concretely:
+> anyone who can reach the server and register an account can still mutate scenario/sim state.** The
+> capability check stops an *out-of-band-assigned* low-privilege role from mutating state; it does
+> **not** stop the open front door. This is acceptable only as long as open registration + baseline-role
+> auto-grant remains a deliberate, risk-accepted deployment decision — treat this note as the place
+> that decision is recorded, not as something Batch A "fixed." **Do not describe Batch A as closing
+> the sim-mutation risk; describe it as closing the *unauthenticated* and *cross-role* legs of it.**
+>
+> **P1 status (2026-07-14, local checkpoint, NOT pushed):** session/CSRF hardening (strict-origin CSRF
+> check on every state-changing request app-wide, session rotation on login, env-aware `Secure` cookie,
+> expired-session cleanup, login rate-limiting, login timing-side-channel fix) and the test-gate split
+> (`test:fast`/`test:main`/`test:browser` + a signature-based, owner/review-dated known-failure
+> baseline, see §F) are **done and verified** — 46/46 on a final cross-endpoint policy reconfirmation,
+> `npm run test:fast`/`test:main`/`test:browser`/`test` all report `257 passing · 93 quarantined known
+> failures · 0 new failures` (literal, not "all green"). **Owner review of the first P1 pass caught two
+> real gaps, both now fixed**: (1) proxy-trust hardening — `X-Forwarded-*` headers are now only honored
+> behind an explicit `RMOOZ_TRUST_PROXY=1`, closing a direct-client header-spoofing path into cookie
+> mode/Origin checks/rate-limit identity; (2) a genuine **crash bug** in the rate limiter's 429 path
+> (`return sendJson(...)` instead of `sendJson(...); return true;`) that would have taken down the
+> entire server process on the first rate-limited request in production — caught by the new
+> `test-proxy-trust-1.js`, not by inspection. Batch A (P0 + P1) is considered closed pending final owner
+> review of the combined diff before push. Registration/role-escalation risk above is unchanged by P1 — still an
+> accepted, documented, not-revisited decision.
+
 **Last audited:** `0d208487` · 2026-07-14 · by /audit-app (**RMOOZ-AUDIT-APP-4 — scoped refresh after the doctrine/ROE-WRA-approval batch + runtime-movement batch landed via a stalled `map2` merge (45 commits since `0ae2c3eb`)**). HEAD `0d208487` = a merge commit resolving 13 conflict hunks across 5 files (`free-fight-demo.js`, `runtime-events.js`, `scenario-control-center.js`, `scenario-workspace.js`, `test-runtime-run-controls-contract-1.js`) that had stalled mid-merge (`MERGE_HEAD` = `8af4e2db`, the same commit an owner-run external GitHub audit had just analyzed). See `[[project_map2_merge_8af4e2db_resolved]]` for the resolution log. **Smoke test PASS:** verify server `:8001` — `app.html` 200, `/api/auth/me` 200, `/api/ai/scenario/wargame3` 200, zero console errors on load.
 
 **Doctrine / ROE-WRA approval subsystem — NEW, fully wired (see §A rows):** a pure rule evaluator (`shell/doctrine-rules.js`, explicitly NOT named `doctrine-engine.js` per the standing owner ruling that the "engine" name invites behavior creep — `[[project_doctrine_a_evidence_source]]`) feeds a runtime gate + approval/journal/execution-planner chain in `runtime-events.js` and `free-fight-demo.js`, surfaced via two SCC panels (`data-scc="doctrine-approvals"`, `data-scc="runtime-execution-plans"`). Confirmed boundary-safe: approvals/rejections never mutate units/map/scenario; dangerous effect kinds (move/destroy) stay blocked regardless of approval; weapon_release becomes `requires_executor`, not executed. 7 test files green, 90/90 assertions. ⚠️ naming-overlap note (not a duplication): `server/ai/roe-escalation-engine.js` is a pre-existing, functionally distinct "ROE" (zone alert-posture ladder for free-fight) — different concept, same word.
@@ -16,7 +46,7 @@
 
 **New audit findings (honest):**
 - **Duplicate scenario data file** — `UI_MOdified/data/scenarios/gulf_of_sidra_2026_amphibious_assault-2.json` is a near-byte-identical duplicate of `gulf_of_sidra_2026_amphibious_assault.json` (only the internal `name` field and a millisecond-level `ported_at` timestamp differ); no code references either by literal filename (both would just appear as separate catalog entries via directory scan). Looks like an accidental double-port — candidate for deletion, needs an owner call before removing (not done this pass).
-- **Confirmed, then FIXED same session:** `/api/sim/propose`, `/api/sim/commit`, `/api/sim/decide` had no auth guard, `operator_id` was client-supplied, registration accepted `body.role` unchecked, and the bootstrap admin account was itself seeded with role `planner`. This was raised by an owner-run external audit, re-verified directly against the working tree, and then remediated as **Batch A (partial — auth/identity slice)** the same session — see the §E sim-boundary row above and `[[project_multirole_audit_governance_2026-07-14]]` for the full before/after. The capability/unit-function **scope** model (the rest of Batch A) is still open, pending an owner call — it overlaps the parked Team/Cell/Operator/Units schema.
+- **Confirmed, then FIXED across several commits (0d208487..bffdc1f7):** `/api/sim/propose`, `/api/sim/commit`, `/api/sim/decide`, the legacy `/api/ai/adjudicate` shim, `wargame-sim-bridge.js`'s `/run`/`/publish`/`/import`, `/api/scenario/import`, `/api/scenarios`, and `/api/scenario/active` all had no auth guard; `operator_id`/`author` fields were client-supplied; registration accepted `body.role` unchecked; the bootstrap admin account was itself seeded with role `planner`. Raised by an owner-run external audit, re-verified against the working tree, then remediated as **Batch A** — see the §E sim-boundary row + endpoint-audit table above, `[[project_multirole_audit_governance_2026-07-14]]`, `[[project_batch_a_auth_slice_2026-07-14]]`, and `[[project_batch_a_remaining_endpoint_audit_2026-07-14]]` for the full before/after. **Read the security-posture callout at the top of this checkpoint** — this closes the unauthenticated and cross-role legs, not the "anyone can register" leg. Batch A also isn't fully closed yet: session/CSRF hardening and the test-gate split are still in progress (P1), and 6 of the 12 audited endpoint groups remain deliberately deferred (see the endpoint-audit table).
 - **D7 (offline `unit-status-panel.js` drift) still OPEN** — not re-verified this pass (out of scope; deferred per prior audits). The new doctrine/runtime-movement modules are **main-only** and not yet propagated to `Offline_Deployment/offline_app` — this widens D7's main/offline gap rather than resolving it.
 
 **Prior — RMOOZ-AUDIT-APP-3:** `0ae2c3eb` · 2026-07-06 · by /audit-app (**RMOOZ-AUDIT-APP-3 — scoped refresh after SCC runtime clock / World State ownership / Run Controls + CMO war-game batch; 74 commits since `b37f5a83`**). Scope was **main-app only** (no feature/C3/batch-2/SET_EMCON work). **HEAD `0ae2c3eb` = `origin/main`, 0 ahead / 0 behind, tree clean, `git diff --check` clean.** `map2` remote is **absent on this machine — environment-only, `origin` is authoritative and synced** (not a product issue). Offline runtime **not synced** this pass (per scope). **Smoke test PASS:** real server `:8000` — `/api/ai/scenarios` · `/api/wargame-sim/status` · `/api/ai/models` · `app.html` all **200** (the current `web-server.js` serves `app.html` directly — the old "bare server 404s app.html" note no longer holds).
@@ -635,7 +665,20 @@ All endpoints below are ✅ wired with real handlers. Grouped; see web-server.js
 - **AI generation:** `POST /api/ai/generate`, `/api/ai/chat`.
 - **COA / Red / Blue:** `POST /api/ai/coa`, `/api/ai/red-team/propose`, `/api/ai/blue-team/propose`.
 - **Scenarios:** `GET /api/ai/scenarios`, `/api/ai/scenario/:name`; `POST /api/scenario/import` (GeoJSON, ≤25MB); `POST /api/scenarios` (**Edit Mode durable save** — validates via `scenario-validator`, sanitises name, **409 anti-clobber** unless `?overwrite=1`, writes `data/scenarios/{name}.json`, clears cache + sets active; `web-server.js:695`); `GET /api/scenario/events` (SSE reload).
-- **Sim boundary:** `POST /api/sim/propose` (no mutation), `POST /api/sim/commit` (LLM-proposal commit — mutates + journals), `POST /api/sim/decide` (**WS3 deterministic decision commit** — derives World State, applies a WS3 decision, journals `source=deterministic-sim`). D3 unlocked 2026-06-01. ✅ **RESOLVED 2026-07-14 (Batch A, partial — auth/identity slice).** All three routes now call `requireAuthenticatedUser` (401 if no session) — `web-server.js:1097/1128/1148`. `operator_id`/actor identity is derived from the authenticated session user for `/commit` and `/decide`, overriding any client-supplied `operator_id`/`headless` claim (client body is discarded for identity purposes, not trusted) — `web-server.js:1132-1138` (commit), `:1160-1174` (decide). Registration (`app-data.js:791`) no longer honors a client-supplied `role`; every self-registered account gets the fixed baseline role. The bootstrap `admin` account is now actually seeded with role `admin` (was `planner` — a real bug; existing installs self-correct on next boot via a one-shot fixup in `ensureBootstrapUser`). Gate: `test-sim-route-auth-matrix-1.js` — spawns a real server, proves 401-unauthenticated / 200-authenticated / journal-attribution-survives-a-forged-operator_id / role-escalation-rejected / bootstrap-admin-role-correct — **15/15 green**; no regression across the 20 related existing test files. ⏸️ **Still open (Batch A remainder, deliberately NOT built this pass):** a server-side capability + unit/function **scope** model (today any authenticated session may call any of the three routes — there is no 403/authorization-denied case yet, only 401/authentication-required). No role-management endpoint exists at all (roles are set only at registration or by direct DB edit) and this scope model overlaps with the explicitly **parked** Team→Cell→Operator→Units schema (`[[project_team_operator_assignment_parked]]`) — needs an owner call on scope before building, not a unilateral design. Also flagged, not fixed: the legacy `/api/ai/adjudicate` shim route journals commits (`source=legacy-shim`) with the same unauthenticated gap and was out of the three explicitly named routes — candidate for the same fix on a future pass.
+- **Sim boundary:** `POST /api/sim/propose` (no mutation), `POST /api/sim/commit` (LLM-proposal commit — mutates + journals), `POST /api/sim/decide` (**WS3 deterministic decision commit** — derives World State, applies a WS3 decision, journals `source=deterministic-sim`). D3 unlocked 2026-06-01. ✅ **RESOLVED 2026-07-14 (Batch A — auth/identity/capability slice, `e8d03dd5`..`bffdc1f7`, uncommitted-to-remote local checkpoint).** All three routes plus the legacy `/api/ai/adjudicate` shim call `requireAuthenticatedUser` (401 if no session) — `web-server.js:1097/1128/1148`, and `/adjudicate`. `operator_id`/actor identity is derived from the authenticated session user for `/commit` and `/decide`, overriding any client-supplied `operator_id`/`headless` claim. Registration no longer honors a client-supplied `role`; the bootstrap `admin` account is seeded with role `admin` (was `planner` — a real bug, self-corrects on next boot). **Capability check added** (`SIM_MUTATION_ROLES` allow-list: `planner`/`commander`/`admin`) on every mutating route (`/commit`, `/decide`, `/adjudicate`, `wargame-sim-bridge`'s `/run`/`/publish`/`/import`, `/api/scenario/import`, `/api/scenarios`, `/api/scenario/active`) — a role outside the allow-list gets a real 403. `propose` stays auth-only (401), no capability check, since it never mutates state. Gates: `test-sim-route-auth-matrix-1.js` (21/21) + `test-scenario-sim-endpoint-auth-matrix-1.js` (27/27) — spawn a real server, prove 401/403/pass-through + journal-attribution-survives-a-forged-identity across every route above. **Read the security-posture callout at the top of this file** — this is an authenticated + role-allow-listed barrier, not trusted operational authorization, since self-registration grants `planner` and `planner` is in the allow-list. **P1 done (2026-07-14, same local checkpoint):** app-wide strict-origin CSRF check (`rejectIfCrossOrigin`,
+applied once at the top-level dispatcher — covers every state-changing route, not just Batch A's),
+session rotation on login (old cookie dies, DB row deleted), env-aware `Secure` cookie
+(`RMOOZ_FORCE_SECURE_COOKIE=1` or `X-Forwarded-Proto: https` — never forced on the default offline-HTTP
+deployment), expired-session cleanup swept on login/logout, login rate-limiting (20/15min per IP) +
+login timing-side-channel fix (dummy scrypt on unknown-user path). Gate: `test-session-security-hardening-1.js`
+(20/20) + `test-batch-a-final-policy-matrix-1.js` (46/46, a single cross-endpoint reconfirmation of
+every fixed AND deliberately-deferred group). ⏸️ **Still open, deliberately deferred (see the
+endpoint-audit table below):** a real unit/function **scope** model (overlaps the parked
+Team→Cell→Operator→Units schema, `[[project_team_operator_assignment_parked]]` — needs an owner call,
+not a unilateral design); 6 of the 12 audited endpoint groups (wargame-sim-bridge's other routes,
+`/api/wargame-local/import`, AI model select/reset, Monte Carlo start/cancel, `/api/ai/feedback`,
+chat/upload's anonymous-cid identity model) — confirmed still consciously open (not silently drifted
+either direction) by the same 46/46 reconfirmation gate.
 - **WarGamingGEN integration (Wave 7):** `GET /api/wargame-sim/status`, `POST /api/wargame-sim/{stage-doc,run,publish,import}` — DOCX→sim→dated-export→import bridge (`server/wargame-sim-bridge.js`; sim run gated by `RMOOZ_ALLOW_SIM_RUN=1`). GeoJSON path reuses the existing `POST /api/scenario/import`.
 - **Free Fight AI (local-only, via `server/wargame-sim-bridge.js`):** `POST /api/wargame-sim/free-fight/plan-coas` (multi-COA commander planner), `GET|POST /api/wargame-sim/free-fight/plan-coas/health` (`allow_sim_run`·`ai_execution_enabled`·`provider`·`configured_provider`·`provider_blocked`·`model`·`model_available`·`selected_model`·`reason_if_blocked`), `POST /api/wargame-sim/free-fight/llm-plan`, `POST /api/wargame-sim/free-fight/demo-ai-step`, `GET|POST /api/wargame-sim/free-fight/test-llm`. Gated by `RMOOZ_ALLOW_SIM_RUN=1`; **local-only** (remote providers → `remote_blocked`, zero cloud calls). §A rows 98–113, §C census. Other bridge routes: `GET /api/wargame-sim/sources`, `POST /api/wargame-sim/{analyze,placement,generate,generate-preview,regenerate,cancel,objective-override}` (DOC-UNDERSTANDING-1 review→generate pipeline).
 - **Unified Import Wizard (UNIFIED-IMPORT-2, 2026-06-06):** one primary "Import Scenario" flow (`client/shell/scenario-import-wizard.js`): upload DOCX → Start → real checkpoint progress → auto publish/import → opens on the map; on stop → Continue (`/run?resume=1`) / Restart / View Logs / **Import Partial** (≥4 phases). Bridge adds `/status` progress fields (`phases_done/total`, `partial_available`, `partial_import_allowed`, `last_run_id`, `can_resume`, `status`), `POST /api/wargame-sim/regenerate` (replay checkpoints→geojson, **no LLM**), and `/import?partial=1` (partial metadata + anti-clobber 409 unless `?replace=1`). The 3 legacy cards move under collapsed **Advanced Import Tools** (kept). Porter/validator unchanged. Test: `test-unified-import-2-wizard.js` (25/25). Docs: `docs/integration/unified-import-2-wizard-implementation.md`. **Deploy env (DOC-ENV-1, REQUIRED for one-click generation):** `RMOOZ_ALLOW_SIM_RUN=1`, `RMOOZ_TESTINGAI_DIR`, **`RMOOZ_PYTHON`=`…\TestingAI\.venv\Scripts\python.exe`** (the bridge does NOT auto-detect the venv; bare `python` → `ModuleNotFoundError: openai` and the run dies instantly — wizard fails gracefully), `RMOOZ_SIM_MODEL=qwen2.5:7b` (served via Ollama). Documented in `UI_MOdified/.env.example` + the impl doc's Troubleshooting.
@@ -675,14 +718,17 @@ research; this table is the authoritative, decision-bearing version.
 
 **Already correctly guarded** (confirms the fix pattern, no action needed): `/api/sim/{propose,commit,decide}`, `/api/ai/adjudicate`, `/api/units*`, `/api/plans*`, `/api/me/preferences`, `/api/roadmap/status` (derives `updated_by` from the session, the model this table's P0 fixes replicate).
 
-**Important caveat on the P0 fix (documented, not hidden):** since every self-registered account gets
-role `planner` today, and `planner` is inside `SIM_MUTATION_ROLES`, the capability allow-list stops a
-user with an *out-of-band-assigned* non-mutation role, but does **not** stop anyone who can self-register
-from mutating the scenario/sim chain — registration itself is the open door. This is acceptable **only**
-as an explicit, risk-accepted decision (matches the earlier "keep registration open, baseline role only"
-call) — flagged here so it isn't silently forgotten. Closing that gap fully would mean either disabling
-self-registration or narrowing `SIM_MUTATION_ROLES` below the baseline role, neither of which has been
-decided.
+**Important caveat on the P0 fix (documented, not hidden — see the security-posture callout at the top
+of this file):** since every self-registered account gets role `planner` today, and `planner` is inside
+`SIM_MUTATION_ROLES`, the capability allow-list stops a user with an *out-of-band-assigned*
+non-mutation role, but does **not** stop anyone who can self-register from mutating the scenario/sim
+chain — registration itself is the open door. **This makes Batch A an authenticated barrier, not
+trusted operational authorization.** Acceptable **only** as an explicit, risk-accepted decision (matches
+the earlier "keep registration open, baseline role only" call) — flagged here so it isn't silently
+forgotten and so Batch A is never described as having closed the sim-mutation risk (only its
+unauthenticated and cross-role legs). Closing the open-registration gap fully would mean either
+disabling self-registration or narrowing `SIM_MUTATION_ROLES` below the baseline role, neither of which
+has been decided.
 
 ---
 
@@ -693,7 +739,62 @@ decided.
 | `test-pr-*.js` | 60 | Static: source/regex/`new Function()` sandbox; DOM IDs, exports, i18n keys, forbidden-element absence. **No server.** | `node test-pr-<n>.js` | 289L, 288M, 288L, 287L2, 287C, 286L2 |
 | `verify-pr-*.js` | 16 | Browser: Playwright vs `http://localhost:8000/app.html`; clicks, DOM, screenshots → `docs/pr-*-verify/`. **Needs server.** | start server, then `node verify-pr-<n>.js` | 288M, 288L, 287L2, 285A, 284 |
 
-**No unified test runner / npm script / CI** — each file is standalone. Highest PR number present ≈ **289L** (test) / **288M** (verify). **Census 2026-06-16: ≈81 test files total.** The Free Fight / intel / identity / model-selector suites added since live as `test-*-a.js` under **`UI_MOdified/scripts/`** — e.g. `test-free-fight-{repair-loop,candidate-prefilter,zen-blocked,demo-pacing-c,ai-gate-card-d}-a.js`, `test-llm-runtime-config-a.js`, `test-ai-model-selector-a.js`, `test-rmooz-ai-tool-contract-a.js`, `test-tactical-{action-library,terrain-context}-a.js`, `test-intel-{capability-catalog,sovereign-zone,terrain-effects,coalition-posture}-a.js`, `test-unit-identity-contract-a.js`, `test-platform-identity-enrichment-a.js` — plus the **server-dependent** E2E `scripts/verify-ai-free-fight-{prefilter,real-llm}-e2e.js` (need a running server + a pulled local model).
+**✅ Unified test/release gate — NEW 2026-07-14 (Batch A P1).** `scripts/run-all-tests.js` + root
+`package.json` now give this app a real, machine-verifiable test gate:
+- **`npm run test:fast`** — every root `test-*.js` file that does NOT spawn a live server (341 files,
+  the vast majority: static source/regex checks, same style as the `test-pr-*` row above).
+- **`npm run test:main`** — the 8 files that DO spawn a real `web-server.js` child process and hit it
+  over HTTP (auth/session/CSRF matrix, scenario-write chain, `test-api-scenarios-post.js`, etc.) —
+  explicitly listed in `MAIN_INTEGRATION_FILES` (a reviewable set, not an auto-detected heuristic).
+- **`npm run test:browser`** — `verify-canonical-workflow-1.js`, a self-contained Playwright gate
+  (spawns its own server, no auth stub) proving the REAL login → session cookie → app-shell → Scenario
+  Workspace path works end-to-end in an actual browser. **Honestly scoped as a smoke gate** — real
+  login/session + zero unexpected failed requests/JS errors, not yet a full Prepare→Commit→Run
+  journey (that needs deeper SCC-panel UI exploration than this pass covered; tracked as a real gap,
+  not silently claimed). The 16 historical `verify-pr-*.js` PR-snapshots above are unchanged and still
+  individually runnable — `test:browser` targets the one *canonical* workflow, not that whole set.
+- **`npm test`** — `test:fast` + `test:main` together (the default "am I safe to keep going" gate).
+- **Machine-verifiable, SIGNATURE-based known-failure baseline (hardened 2026-07-14, owner review)** —
+  `scripts/test-baseline-known-failures.json` (schema v2) is a checked-in quarantine list of the 93
+  files currently expected to fail *independent of Batch A*. This is deliberately **not** a filename
+  match: each entry carries a normalized failure **signature** (the specific failing-assertion lines,
+  or a crash fingerprint, with run-specific noise — temp paths, random ports/ids — stripped out). The
+  runner recomputes the current signature every run and only treats a quarantined file as "still fine"
+  if its signature is an exact match or *subset* of the recorded one; **any additional or different
+  failing assertion in an already-quarantined file fails the gate** — a filename staying in the
+  baseline can no longer silently absorb a NEW regression underneath it. Each entry also carries
+  `owner` (category-tagged, e.g. "unassigned (DB-Lite/DB1 workstream)" — no real name exists yet, but
+  routed to the right area) and `review_by` (`2026-08-13`, 30 days out): the runner prints a loud
+  warning for any entry past its review date, so quarantine can't quietly become permanent debt. Report
+  format is literal, not "all green" framing — every run prints exactly `<N> passing` /
+  `<M> quarantined known failures` / `<K> new failures`. 21 of the 93 have a specific, evidence-backed
+  reason (offline-parity/D7, DB1-catalog-count drift 29→34, stale-terminology/label-rename drift, one
+  legacy-route-removal); the remaining 72 are honestly tagged "unclassified — pre-existing, not
+  investigated this session" rather than guessed at.
+- **Proxy trust hardening** — `X-Forwarded-Proto`/`X-Forwarded-Host`/`X-Forwarded-For` are only ever
+  honored when the operator sets `RMOOZ_TRUST_PROXY=1` (a real reverse-proxy deployment); by default a
+  direct client's own forwarded-* headers are ignored everywhere they'd otherwise matter — cookie
+  `Secure` mode, the CSRF Origin-vs-host comparison, and rate-limit IP identity. Gate:
+  `test-proxy-trust-1.js` (11/11) spawns two server instances (default vs. `RMOOZ_TRUST_PROXY=1`) and
+  proves both directions, including that `X-Forwarded-Host` can't be used to fake a matching Origin on
+  an untrusted server, and that spoofing a fresh `X-Forwarded-For` on every request doesn't evade the
+  rate limiter. **Caught a real crash bug in review**: the rate-limiter's 429 early-return used
+  `return sendJson(...)` inside `handleAuthApi` (which must return `true`/`false` to its caller, not the
+  `undefined` that pattern produces) — the outer dispatcher saw a falsy "not handled" and fell through
+  to the static-file 404/405 handler, which tried to write a second response onto an already-ended one
+  and crashed the entire process on the very first 429 anyone ever hit. Fixed (`sendJson(...); return
+  true;`, matching this file's own established convention elsewhere) and now covered by a test that
+  makes a follow-up request after triggering rate-limiting to prove the server survives.
+- **Offline scope**: this runner only ever scans repo-**root** `test-*.js` files — the actual
+  `Offline_Deployment` test suite lives under `UI_MOdified/` and `UI_MOdified/scripts/`, never picked
+  up here, so "offline excluded until explicitly requested" is structural, not a new filter. (Some root
+  files carry ONE offline-parity assertion alongside otherwise-unrelated main-app checks — those stay
+  in `test:fast`/`test:main` and are tracked in the baseline with the offline-parity reason, rather than
+  rewriting those files' internals to split the assertion out.)
+
+**No unified test runner / npm script / CI** *(superseded above, kept for history)* — each file was
+standalone as of 2026-06-16. Highest PR number present ≈ **289L** (test) / **288M** (verify). **Census
+2026-06-16: ≈81 test files total.** The Free Fight / intel / identity / model-selector suites added since live as `test-*-a.js` under **`UI_MOdified/scripts/`** — e.g. `test-free-fight-{repair-loop,candidate-prefilter,zen-blocked,demo-pacing-c,ai-gate-card-d}-a.js`, `test-llm-runtime-config-a.js`, `test-ai-model-selector-a.js`, `test-rmooz-ai-tool-contract-a.js`, `test-tactical-{action-library,terrain-context}-a.js`, `test-intel-{capability-catalog,sovereign-zone,terrain-effects,coalition-posture}-a.js`, `test-unit-identity-contract-a.js`, `test-platform-identity-enrichment-a.js` — plus the **server-dependent** E2E `scripts/verify-ai-free-fight-{prefilter,real-llm}-e2e.js` (need a running server + a pulled local model).
 
 Newer feature work uses **`test-p0*` / `test-an*` / `test-sym*` / `test-unit-*`** naming (authoring / animation / symbology) alongside `test-pr-*`, same standalone static-check style. **Wave 1:** `test-p0-authoring-foundation.js` (33/33), `test-an1-attrition-visuals.js` (26/26), `test-p0b-animation-readiness.js` (audit-inventory). **Wave 2** (committed, all green): `test-an-echelon-rollup.js` (20/20), `test-an2-event-pins.js` (25/25), `test-an4-movement-trails.js` (18/18), `test-p5b-selected-unit-readout.js` (19/19), `test-sym1-unit-symbol-fidelity.js` (13/13), `test-sym2-unit-symbol-resolver.js` (21/21), `test-unit-scaling-hover.js` (18/18), `test-an3-arrowheads-legend.js` (legend), and `test-mg1-mission-graphics.js` (27/27, mission graphics) — all committed and green. **Wave 5/6** (committed, green): `test-obj-a.js` (33/33), `test-obj-b.js` (29/29), `test-obj-c.js` (51/51, OBJ-C display panel), `test-ws-eng1-a.js` (13/13, engagement outcome ownership), `test-doctrine-evidence.js` (78/78, DOCTRINE-A), `test-l3a-why-not.js` (80/80, L3-A evaluator), `test-l35a-alternatives.js` (29/29, L3.5-A alternatives). **Wave 7** (integration + Phase 6): `test-fast-int-2-wargame-geojson-import.js` (21/21), `test-fast-doc-1-docx-sim-bridge.js` (30/30), `test-fast-int-3-home-launch-integration.js` (24/24), `test-phase-6f-a-applied-state.js` (50/50) — all green; plus `test-phase-5b/5c/5d-1`, `test-phase-6b/6c-a/6c-c/6e-a*`. **FAST-DOC-2:** `test-fast-doc-2-publish-before-import.js` (37/37 — freshness detection, stale `runs/latest` detected-not-deleted, stale-import 409 guard, no auto-import/no DOCX parse). ⚠️ **`test-db-1-a-middle-east-catalog.js` — 29 FAILING** (data/test schema drift, see Drift **D5**); do not assume Wave 7 is all-green.
 

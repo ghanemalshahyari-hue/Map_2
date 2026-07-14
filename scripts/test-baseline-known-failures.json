@@ -1,0 +1,994 @@
+{
+  "schema": "rmooz.test-baseline/2",
+  "note": "Machine-verifiable quarantine list of test-*.js files known to fail independent of Batch A. Each entry has a normalized failure SIGNATURE (the specific failing-assertion lines or a crash fingerprint) — scripts/run-all-tests.js fails the gate if a quarantined file's CURRENT signature contains anything not in this recorded one (an additional or different failure), not just on a bare filename match. Every entry has owner + review_by so this is a DATED quarantine, not permanent debt — entries past review_by print a loud warning every run. Confirmed pre-existing: identical failing-file set before and after every Batch A P0/P1 change this session (diffed).",
+  "known_failures": {
+    "test-an3-arrowheads-legend.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "A# engagement FALLBACK draws an arrowhead at the TARGET end (start→end)",
+        "A# fallback arrowhead colour matches the fallback arc (status colour)"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-an-echelon-rollup.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "B# click-to-expand drills IN (>= expand zoom, clamped)",
+        "B# renderEchelonRollup + buildEchelonDivisionGroups + parseUnitDivision defined",
+        "C# CSS hides unit symbols (sidc + destroyed diamond), keeps aggregates visible",
+        "C# non-W# no-op guard (needs >=# division groups)"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-cmo-release-gate-1.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-cmo-wargame-after-action-debrief-main-batch-1.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "T-# HTML renderer exposes after-action debrief sections"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-commander-panel-hardening-1.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "DB#-#: CAPABILITY_CATALOG has # entries — #"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-ai-commander-freedom-a.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "FAILED: non-attack COA rejected: [{\"code\":\"missing_behavior_intent\",\"unit_uid\":\"B-#\",\"text\":\"MOVE action for unit \\\"B-#\\\" is missing the behavior field. Output behavior (approach|patrol|orbit|intercep"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-db-1-a-middle-east-catalog.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "catalog file exists",
+        "catalog has metadata",
+        "catalog has platforms object",
+        "catalog is valid JSON"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-ai-scheduler-decision-log-s.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "green record — green refresh recorded, no LLM",
+        "unit-controller tick — unit-controller tick recorded, no LLM"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-doc-review-step1-proposed-units.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "function assert(cond, msg) { if (!cond) throw new Error(msg || 'assertion failed'); }"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-ai-attack-plan-mcp-prompt-a.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "C# manual Generate forces useLlm=true and not fast — Cannot read properties of null (reading 'opts')",
+        "S# planCoas attaches mcp_prompt + mcp_prompt_version + llm_enabled — plan.mcp_prompt attached"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-edit-mode-slice2b.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "edited draft passes Slice #B hard rules — expected true, got false",
+        "valid draft accepted — expected true, got false",
+        "— # pass, # fail"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-edit-mode-slice2c.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "STEPS has # entries",
+        "Sahil — save predicate accepts (hard rules pass) — expected true, got false",
+        "step ids in CMO build-order — expected [\"meta\",\"map\",\"sides\",\"posture\",\"doctrine\",\"time\",\"weather\",\"geom\",\"forces\",\"missions\",\"events\",\"briefing\",\"save\"], got [\"meta\",\"map\",\"sides\",\"posture\",\"objectiv",
+        "— # pass, # fail"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-ai-free-fight-ai-only-a.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "Fast mode → Start blocked — _planFactory is not a function",
+        "_freeFightAiReady predicate — fast → not ready",
+        "real LLM plan moves units — real LLM plan moved units"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-commander-brief-ui-a.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "§# \"Show full brief (copyable)\" toggle present",
+        "§# Commander Brief block present",
+        "§# Copy button present when expanded",
+        "§# GCC + lead nation in the COALITION line",
+        "§# NATO scenario → coalition NATO",
+        "§# _lastBrief set after turn",
+        "§# a COALITION line was logged",
+        "§# brief is for BLUE",
+        "§# coalition shown as GCC",
+        "§# copyable textarea present",
+        "§# lead nation UAE shown",
+        "§# plan has commander_brief",
+        "§# text mentions review-only / commander approval",
+        "§# textarea contains AI Commander Decision text"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-fast-int-3-home-launch-integration.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "GeoJSON button has i#n label + subtitle",
+        "Import WarGamingGEN GeoJSON button present (data-intent=import-geojson)",
+        "import-docx dispatches to openImportCardModal(wg-sim-import-card)",
+        "new buttons are inside the Command Launch action group"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-free-fight-behavior-e2e-a.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "T-#: COA-# ground MOVE action has behavior field",
+        "T-#: COA-# ground MOVE action has behavior field: COA-# present",
+        "T-#: COA-# support action (G#) has behavior fields after normalization",
+        "T-#: COA-# support action (G#) has behavior fields after normalization: COA-# present",
+        "T-#: HOLD_POSITION action (G#) is kept in plan",
+        "T-#: HOLD_POSITION action (G#) is kept in plan: COA-# present",
+        "T-#: aircraft (A#) has domain=air and waypoint_policy≠direct_step",
+        "T-#: aircraft (A#) has domain=air and waypoint_policy≠direct_step: COA-# present",
+        "T-#: no _ai_coa_honest_fail (plan is a genuine LLM result)",
+        "T-#: no _ai_coa_honest_fail (plan is a genuine LLM result): _ai_coa_honest_fail should not be set",
+        "T-#: ok=true",
+        "T-#: ok=true: ok should be true; got: false | AI execution gate is off — set RMOOZ_ALLOW_SIM_RUN=# to enable AI COA.",
+        "T-#: plan_source=llm (normalizer + validator accepted the plan)",
+        "T-#: plan_source=llm (normalizer + validator accepted the plan): plan_source should be llm, got: ai_blocked | error: AI execution gate is off — set RMOOZ_ALLOW_SIM_RUN=# to enable AI COA.",
+        "T-#: repaired actions carry _source=degraded_behavior_repaired",
+        "T-#: repaired actions carry _source=degraded_behavior_repaired: COA-# present",
+        "tests:"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-demo-scenario-preview.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "TypeError: Cannot read properties of undefined (reading 'obj')"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-fast-doc-2-publish-before-import.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "Error: ENOENT: no such file or directory, open '<PATH>'"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-coa-performance-a.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "fast depth: heuristic capability, NO LLM, still produces valid diverse COAs — fast depth echoed",
+        "timeout/fallback: slow/unavailable LLM falls back + sets the honest fallback_message — honest fallback_message set: Local AI (gpt-oss:#b) unavailable or returned an error. Check Ollama is running and "
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-free-fight-step1-coa-preparation-gate-ae.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "AE # Generate blocked when no taskable units — honest block message (training-eligible variant ok)",
+        "AE # readiness banner — Panel # shows \"No executable COA. Step # review required.\"",
+        "— # passed, # failed"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-freefight-action-reaction-map-overlay-a.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "§# BLOCK POINT bilingual (Arabic)",
+        "§# BLOCK POINT label present",
+        "§# RED threat axis labelled",
+        "§# axis runs nearest_red → objective",
+        "§# defended ring labelled review-only",
+        "§# engagement ring labelled review-only",
+        "§# red threat axis polyline drawn",
+        "§# ring radii descend (warning>defended>engagement)",
+        "§# three rings drawn (rings=#)",
+        "§# warning ring labelled review-only"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-freefight-real-scenario-unit-feed-a.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "blue_units_initial[#] has unit_uid or uid",
+        "red_units[#] has coord:[lon,lat]",
+        "red_units[#] has uid or id",
+        "scenario file has red_units + blue_units_initial"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-freefight-ai-continuous-commander-loop-a.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "§# turn incremented to # (turn=#)"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-app-inventory-audit-1.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "AssertionError [ERR_ASSERTION]: offline shell modules drifted from main: unit-status-panel.js"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-freefight-ai-speed-control-a.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "TypeError: Cannot read properties of undefined (reading '#')"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-g4-tasking-overlay-dry-run-diff-viewer.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "- no movement/readiness/placement mutation path added"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-g4-tasking-overlay-preview-indicator.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "- no movement/readiness/placement mutation path added"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-freefight-ai-scenario-agnostic-a.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "§# ROLE_COLORS has defend",
+        "§# ROLE_COLORS has intercept",
+        "§# ROLE_COLORS has reinforce",
+        "§# no \"attack_objective\" literal in client"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-freefight-blue-threat-aware-movement-a.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "§# at least one unit is held (already in position) (held=#)",
+        "§# the already-at-block unit is NOT in moved set",
+        "§# turn line mentions \"already in position\" (AI Commander Turn # (BLUE): COA-# Intercept / Block RED Axis — # units moved [deterministic_coa_fallback])"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-freefight-coa-variety-a.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "§# CAPABILITY line present",
+        "§# INTEL line present",
+        "§# Intel Snapshot block present",
+        "§# ROE line present",
+        "§# TERRAIN line present",
+        "§# family history recorded ([])",
+        "§# shows Best BLUE assets + COA family",
+        "§# shows superiority labels (Air/Naval/Ground/Sensor)",
+        "§# turn-# family differs from turn-# (variation) (undefined → undefined)",
+        "§# turn-# request carries previous_coa_families ([])"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-freefight-capability-driven-coa-a.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "§# CAPABILITY air-intercept line",
+        "§# CAPABILITY ground-held line",
+        "§# CAPABILITY sensor line",
+        "§# Capability Intelligence block present",
+        "§# _lastCapability set",
+        "§# shows Best air intercept",
+        "§# shows Selection logic",
+        "§# shows source review-required"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-import-objective-unitstatus-b.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "[FAIL] analyze gate requires docxReady, with mdmpOnly + jsonOnly single-input exceptions"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-import-base-placement-a.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "# passed, # failed"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-no-objective-ring-red-import-a.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "# passed, # failed"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-p5b-selected-unit-readout.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "Error: ENOENT: no such file or directory, open '<PATH>'"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-mdmp-step1-task-assembly.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "# passed, # failed"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-phase-6e-a-v3-boundary-fix.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "# assertions failed",
+        "#ap-deltas element exists"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-freefight-coa-route-json-guard-a.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "§# _coaPlan flagged route unavailable",
+        "§# _coaPlan has coas",
+        "§# _coaPlan.ok true",
+        "§# _routeUnavailableMsg set",
+        "§# health local_only + provider/model",
+        "§# model defaults to ai-config defaultModel"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-pr-222.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "ReferenceError: isWargame#DecisionOptionSafe is not defined"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-pr-247.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "ReferenceError: isWargame#DecisionOptionSafe is not defined"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-no-visible-step-model-1.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "B# hidden compatibility controls use frame language, not snapshot buttons",
+        "C# exact legacy runner title/buttons are absent from normal static UI"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-freefight-tool-contract-coa-a.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "§# AI TOOL event line",
+        "§# AI TOOL family-selected line",
+        "§# AI VALIDATOR event line",
+        "§# _lastToolContract set",
+        "§# ground recon COA accepted (no doctrine rejection)",
+        "§# naval screen COA accepted",
+        "§# plan ok",
+        "§# plan_source deterministic",
+        "§# repeated family is ACCEPTED (variation not enforced by validator)",
+        "§# tool-contract line in panel",
+        "§# tool_contract present on fallback",
+        "§# well-formed clean decision accepted (extra prose ignored) (missing_behavior_intent)"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-pr-268.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "ReferenceError: _paintW#CoaUnderReviewIndicator is not defined"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-pr-252.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "ReferenceError: isWargame#DecisionOptionSafe is not defined"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-pr-270.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "ReferenceError: _paintW#CoaUnderReviewIndicator is not defined"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-pr-267.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "B# — #sw-drp-selection-review section has no input/button/select/checkbox/radio → interactive control found in section HTML"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-pr-249.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "ReferenceError: isWargame#DecisionOptionSafe is not defined"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-pr-253.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "ReferenceError: isWargame#DecisionOptionSafe is not defined"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-pr-271.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "ReferenceError: _updateW#ScenarioReviewSession is not defined"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-green-world-ui-r.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "normal tick — non-advancing tick did NOT refresh Green"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-pr-254.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "ReferenceError: isWargame#DecisionOptionSafe is not defined"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-pr-286L0.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "ReferenceError: maybeDrawLiveScenarioOnMap is not defined"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-pr-283A.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "# EN sw-nav-live-helper key exists and is non-empty: EN sw-nav-live-helper must mention \"live\"",
+        "# EN sw-nav-title resolves to \"Live Scenario Step Navigator\": EN sw-nav-title: expected \"Live Scenario Step Navigator\", got \"Internal Frame Navigator\""
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-pr-286L1.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "ReferenceError: maybeDrawLiveScenarioOnMap is not defined"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-remove-legacy-adjudication-ui-1.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "A# screenshot strings are gone from shipped HTML"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-runtime-events-evaluator-1.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "T-# no DOM/map/unit/backend/journal effect execution"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-pr-272.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "T# calling handler twice is idempotent",
+        "T# chip hidden after clear when no record",
+        "T# chip text cleared after clear",
+        "T# handler clears _w#CoaReviewRecord via _clearW#CoaReviewRecord",
+        "T# handler does not mutate p beyond deleting operatorSelectionDryRunRecord",
+        "T# handler does not set p.operatorSelectionDryRunRecord",
+        "T# handler hides clearBtn element",
+        "T# handler hides section element",
+        "T# handler removes operatorSelectionDryRunRecord from p",
+        "T# handler runs cleanly with pre-set record",
+        "T# handler with no p does not throw",
+        "T# handler with null p does not throw",
+        "tests:"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-scc-runtime-clock-2.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "T-# run panel shows the Snapshot step readout"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-pr-284.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "Verdict: FAIL ❌"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-rmooz-ai-tool-contract-a.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "§# aircraft with a ground action is ACCEPTED (doctrine removed)",
+        "§# clean decision accepted",
+        "§# ground unit assigned a tactical action is ACCEPTED (validator does not judge doctrine)",
+        "§# naval unit with a non-land action is ACCEPTED (doctrine removed)",
+        "§# repeated COA family is ACCEPTED (doctrine removed)",
+        "§# repeated family is ACCEPTED (doctrine removed)"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-pr-282.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "─────────────────────────────────────────────────────────────────"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-scc-prepare-coa-live-ah.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "# prepare blocked — shows \"No executable COA. Step # review required.\"",
+        "— # passed, # failed"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-scenario-end-to-end-main-batch-2.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "T-# command palette has fourteen operator actions"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-scenario-control-center-af.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "# step# blocks — shows \"No executable COA. Step # review required.\"",
+        "— # passed, # failed"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-pr-287E.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "T#: dead PR-# inline script (map-clutter wiring) removed from app.html"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-scenario-evidence-handoff-acceptance-batch-1.js": {
+      "reason": "offline-parity (D7): offline/unit-status-panel.js does not match main",
+      "signature": [
+        "offline<PATH> matches main"
+      ],
+      "owner": "unassigned (offline-sync workstream, D7)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-scenario-evidence-release-audit-ux-batch-1.js": {
+      "reason": "offline-parity (D7): offline/unit-status-panel.js does not match main",
+      "signature": [
+        "T-# overview group holds release gate + quality",
+        "offline<PATH> matches main"
+      ],
+      "owner": "unassigned (offline-sync workstream, D7)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-scenario-evidence-handoff-package-batch-1.js": {
+      "reason": "offline-parity (D7): offline/unit-status-panel.js does not match main",
+      "signature": [
+        "offline<PATH> matches main"
+      ],
+      "owner": "unassigned (offline-sync workstream, D7)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-scenario-evidence-release-visibility-batch-1.js": {
+      "reason": "offline-parity (D7): offline/unit-status-panel.js does not match main",
+      "signature": [
+        "offline<PATH> matches main"
+      ],
+      "owner": "unassigned (offline-sync workstream, D7)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-scenario-evidence-repair-plan-batch-1.js": {
+      "reason": "offline-parity (D7): offline/unit-status-panel.js does not match main",
+      "signature": [
+        "offline<PATH> matches main"
+      ],
+      "owner": "unassigned (offline-sync workstream, D7)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-scenario-evidence-review-audit-trail-batch-1.js": {
+      "reason": "offline-parity (D7): offline/unit-status-panel.js does not match main",
+      "signature": [
+        "offline<PATH> matches main"
+      ],
+      "owner": "unassigned (offline-sync workstream, D7)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-scenario-evidence-review-closeout-batch-1.js": {
+      "reason": "offline-parity (D7): offline/unit-status-panel.js does not match main",
+      "signature": [
+        "offline<PATH> matches main"
+      ],
+      "owner": "unassigned (offline-sync workstream, D7)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-scenario-evidence-release-gate-batch-1.js": {
+      "reason": "offline-parity (D7): offline/unit-status-panel.js does not match main",
+      "signature": [
+        "offline<PATH> matches main"
+      ],
+      "owner": "unassigned (offline-sync workstream, D7)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-scenario-workspace-live-entry-copy-main-batch-1.js": {
+      "reason": "stale-terminology: \"points to Import Scenario\" assertions predate a copy change",
+      "signature": [
+        "live scenario import fallback points to Import Scenario",
+        "runtime import blocked message points to Import Scenario"
+      ],
+      "owner": "unassigned (terminology/label-rename cleanup)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-scenario-evidence-review-session-batch-1.js": {
+      "reason": "offline-parity (D7): offline/unit-status-panel.js does not match main",
+      "signature": [
+        "offline<PATH> matches main"
+      ],
+      "owner": "unassigned (offline-sync workstream, D7)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-selected-object-panel-a.js": {
+      "reason": "runtime-error: window.openSelectedObjectPanel is not a function (needs investigation)",
+      "signature": [
+        "TypeError: window.openSelectedObjectPanel is not a function"
+      ],
+      "owner": "unassigned (needs root-cause investigation)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-step1-llm-no-template-fallback-a.js": {
+      "reason": "runtime-error: Cannot read properties of undefined (reading 'red_units') (needs investigation)",
+      "signature": [
+        "TypeError: Cannot read properties of undefined (reading 'red_units')"
+      ],
+      "owner": "unassigned (needs root-cause investigation)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-step1-base-type-symbol-a.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "# passed, # failed"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-scenario-evidence-review-queue-batch-1.js": {
+      "reason": "offline-parity (D7): offline/unit-status-panel.js does not match main",
+      "signature": [
+        "offline<PATH> matches main"
+      ],
+      "owner": "unassigned (offline-sync workstream, D7)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-task1c-tasking-details.js": {
+      "reason": "stale-terminology: step/phase label assertions (TC-15..18) predate a label-drift",
+      "signature": [
+        "TC-#: no step/phase → empty label (step label defaults to empty string)",
+        "TC-#: phase only path exists (step conditional)",
+        "TC-#: step_index + phase both used in step label",
+        "TC-#: step_index only path exists (phase conditional)"
+      ],
+      "owner": "unassigned (terminology/label-rename cleanup)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-timeline-runtime-contract-1.js": {
+      "reason": "stale-terminology: \"old preview snapshot labels are absent\" assertion predates a label rename",
+      "signature": [
+        "A# old preview snapshot labels are absent from HTML/i#n/event fallback"
+      ],
+      "owner": "unassigned (terminology/label-rename cleanup)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-ui-unit-1-c.js": {
+      "reason": "DB1-catalog-count-drift: CAPABILITY_CATALOG now has 34 entries (was 29) after the DB-COMPLETE pass",
+      "signature": [
+        "DB#-COUNT: catalog has # entries (got: # — air_defense, naval_combatant, ground_maneuver, air_unit, ew_site, generic, sam_s#, sam_s#, aaa_zsu, aaa_#mm, radar_p#, f#c, mig#, f#e, mirage#, gripen, torna"
+      ],
+      "owner": "unassigned (DB-Lite/DB1 workstream)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-unit-scaling-hover.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "C# CSS reveals peeked units while rolled up"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-task1b-unit-tasking.js": {
+      "reason": "DB1-catalog-count-drift: CAPABILITY_CATALOG now has 34 entries (was 29) after the DB-COMPLETE pass",
+      "signature": [
+        "DB#-T: CAPABILITY_CATALOG still has # entries — #"
+      ],
+      "owner": "unassigned (DB-Lite/DB1 workstream)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-task1e-tasking-integration.js": {
+      "reason": "DB1-catalog-count-drift: CAPABILITY_CATALOG now has 34 entries (was 29) after the DB-COMPLETE pass",
+      "signature": [
+        "E-#: DB# CAPABILITY_CATALOG still has # entries — #"
+      ],
+      "owner": "unassigned (DB-Lite/DB1 workstream)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-workspace-runtime-label-contract-1.js": {
+      "reason": "stale-terminology: \"old visible step/snapshot labels are absent\" assertion predates a label rename",
+      "signature": [
+        "A# old visible step/snapshot labels are absent from shipped workspace HTML/i#n"
+      ],
+      "owner": "unassigned (terminology/label-rename cleanup)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-source-inspector-1.js": {
+      "reason": "runtime-error: Cannot read properties of undefined (reading 'editable') (needs investigation)",
+      "signature": [
+        "#. endpoint returns red_team.docx + blue_team.docx source rows"
+      ],
+      "owner": "unassigned (needs root-cause investigation)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-fast-doc-1-docx-sim-bridge.js": {
+      "reason": "legacy-route-removed: DOCX staging flow was removed by pre-session commit 857b1aef; test not updated",
+      "signature": [
+        "bad slot rejected — expected #, got #",
+        "blue_team.docx staged",
+        "both docx written to import_from_rmooz/",
+        "no docs staged yet",
+        "non-docx (no PK signature) rejected — expected #, got #",
+        "red_team.docx staged",
+        "test threw — Cannot read properties of undefined (reading 'red')"
+      ],
+      "owner": "unassigned (test cleanup after route removal)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-step1-unified-bases-map-anchors.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "# passed, # failed"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-ws2-live-integration.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "non-W# degraded flag is capability-based (objective+units), not schema-based",
+        "non-W# scenario derives without throwing"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-unified-import-2-wizard.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "TypeError: requireAuthenticatedUser is not a function"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-fast-int-2-wargame-geojson-import.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "importer route returns # — expected #, got #",
+        "provenance generated_from_external_pipeline=true — expected true, got undefined",
+        "provenance source=WarGamingGEN — expected \"WarGamingGEN\", got undefined",
+        "provenance source_file preserved — expected \"all_phases.geojson\", got undefined",
+        "response ok:true",
+        "route test threw — ENOENT: no such file or directory, open '<PATH>'",
+        "route: Blue count matches source — expected #, got undefined",
+        "route: Red count matches source — expected #, got undefined",
+        "route: objective imported — expected true, got undefined",
+        "route: phase count matches source — expected #, got undefined",
+        "scenario file written to disk"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    },
+    "test-runtime-surface-no-step-execution-1.js": {
+      "reason": "unclassified — pre-existing, not investigated this session",
+      "signature": [
+        "A# screenshot strings are gone from shipped HTML",
+        "B# exact old visible strings are absent from app/i#n/HUD",
+        "B# hidden compatibility controls use frame language, not snapshot buttons",
+        "C# exact legacy runner title/buttons are absent from normal static UI",
+        "T-# no DOM/map/unit/backend/journal effect execution",
+        "T-pass test-no-visible-step-model-#.js",
+        "T-pass test-remove-legacy-adjudication-ui-#.js",
+        "T-pass test-runtime-events-evaluator-#.js"
+      ],
+      "owner": "unassigned (needs triage)",
+      "quarantined_since": "2026-07-14",
+      "review_by": "2026-08-13"
+    }
+  }
+}

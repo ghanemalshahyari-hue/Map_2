@@ -156,6 +156,52 @@ function requireSimMutationCapability(user, res) {
     return true;
 }
 
+// CSRF mitigation: strict-origin-if-present. Auth here is cookie-based with
+// no CSRF token, so a malicious page could otherwise cause a logged-in
+// browser to fire a cross-origin state-changing request using the victim's
+// session cookie automatically. We reject any request whose Origin (or,
+// failing that, Referer) header names a DIFFERENT host than the one the
+// browser thinks it's talking to (`req.headers.host`). A request with
+// NEITHER header present is allowed through — that's the normal shape of a
+// non-browser API caller (curl, our own test scripts, the WarGamingGEN
+// bridge's own tooling), which isn't subject to the automatic-cookie-attach
+// browser threat this exists to stop; a full CSRF-token scheme would also
+// catch that case but requires client-side plumbing across the whole app,
+// which is out of scope for this hardening pass.
+const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
+function hostFromUrlLike(value) {
+    // Browsers send the literal string "null" for the Origin header in a
+    // handful of cross-origin-adjacent contexts (sandboxed iframes, some
+    // redirect chains, file:// pages). `new URL('null')` already throws
+    // (no scheme, no base) and falls into the catch below, but that's
+    // relying on a parser quirk — make the reject explicit and unconditional
+    // instead of accidental, since this is a well-known CSRF-check bypass
+    // some naive implementations miss.
+    if (value === 'null') return null;
+    try { return new URL(value).host; } catch (_) { return null; }
+}
+function isCrossOriginRequest(req) {
+    if (SAFE_METHODS.has(req.method)) return false;
+    // Only consider X-Forwarded-Host when an operator has explicitly said a
+    // trusted reverse proxy sits in front (RMOOZ_TRUST_PROXY=1) — otherwise
+    // req.headers.host (what this process actually bound/received) is the
+    // only host a direct client cannot forge.
+    const expectedHost = appData.forwardedHeader(req, 'x-forwarded-host') || req.headers.host;
+    if (!expectedHost) return false; // can't compare — don't block on an unrelated missing header
+    const origin = req.headers.origin;
+    if (origin) return hostFromUrlLike(origin) !== expectedHost;
+    const referer = req.headers.referer;
+    if (referer) return hostFromUrlLike(referer) !== expectedHost;
+    return false; // no Origin/Referer at all — non-browser caller, allow through
+}
+function rejectIfCrossOrigin(req, res) {
+    if (isCrossOriginRequest(req)) {
+        sendJson(res, 403, { error: 'Cross-origin request rejected' });
+        return true;
+    }
+    return false;
+}
+
 function nowIso() {
     return new Date().toISOString();
 }
@@ -574,6 +620,10 @@ const server = http.createServer((req, res) => {
     if (pathname.length > 1 && pathname.endsWith('/')) {
         pathname = pathname.slice(0, -1);
     }
+
+    // CSRF mitigation applies to every state-changing request, before any
+    // route handler runs — see rejectIfCrossOrigin's doc comment above.
+    if (rejectIfCrossOrigin(req, res)) return;
 
     if (appData.handleAuthApi(req, res, pathname, req.method, sendJson, readJsonBody)) return;
     if (appData.handlePlansApi(req, res, url, pathname, req.method, sendJson, readJsonBody)) return;

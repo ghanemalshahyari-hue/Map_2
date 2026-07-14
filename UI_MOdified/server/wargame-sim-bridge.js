@@ -1200,7 +1200,7 @@ function buildPreviewFromScenario(scenario, report, brief) {
 
 // ── main router ─────────────────────────────────────────────────────────────
 function handle(req, res, ctx) {
-    const { url, pathname, method, sendJson } = ctx;
+    const { url, pathname, method, sendJson, requireAuthenticatedUser, requireSimMutationCapability } = ctx;
     if (!pathname.startsWith('/api/wargame-sim/')) return false;
     const c = cfg();
 
@@ -1781,6 +1781,9 @@ function handle(req, res, ctx) {
     }
 
     if (pathname === '/api/wargame-sim/run' && method === 'POST') {
+        const runUser = requireAuthenticatedUser(req, res);
+        if (!runUser) return true;
+        if (!requireSimMutationCapability(runUser, res)) return true;
         if (!c.allowRun) {
             sendJson(res, 200, { ok: false, manual: true,
                 reason: 'Local simulation run is disabled (set RMOOZ_ALLOW_SIM_RUN=1 to enable).',
@@ -1970,6 +1973,9 @@ function handle(req, res, ctx) {
 
     // ── publish newest run → dated export folder (no sim) ──
     if (pathname === '/api/wargame-sim/publish' && method === 'POST') {
+        const publishUser = requireAuthenticatedUser(req, res);
+        if (!publishUser) return true;
+        if (!requireSimMutationCapability(publishUser, res)) return true;
         const pub = publishRunToExport(c, latestRunDir(c), []);
         sendJson(res, pub.ok ? 200 : 400, pub);
         return true;
@@ -1977,6 +1983,9 @@ function handle(req, res, ctx) {
 
     // ── import the latest dated export via the EXISTING porter ──
     if (pathname === '/api/wargame-sim/import' && method === 'POST') {
+        const importUser = requireAuthenticatedUser(req, res);
+        if (!importUser) return true;
+        if (!requireSimMutationCapability(importUser, res)) return true;
         const ex = latestExport(c);
         if (!ex || !ex.all_phases_present) {
             sendJson(res, 404, { ok: false, error: 'no published export found — run/publish first', commands: manualCommands(c) });

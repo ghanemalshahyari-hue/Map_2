@@ -67,9 +67,16 @@ function writeAll(lessons) {
  *   tags          (string[], optional)
  *   runId         (string, optional)
  *   stepIndex     (number, optional)
- *   author        (string, optional)
+ *   author        (string, optional — a client-supplied DISPLAY label only,
+ *                  never the authority source; see `authorId` below)
+ *
+ * @param {object} lesson  request body (untrusted — a client field, `author`,
+ *   is stored only as a display snapshot, never as the record of who wrote it)
+ * @param {string} authorId  server-derived identity of the authenticated caller
+ *   (e.g. session username). Required — this, not `lesson.author`, is the
+ *   entry's actual authority field.
  */
-function append(lesson) {
+function append(lesson, authorId) {
     lesson = lesson || {};
     const scenarioName = String(lesson.scenarioName || '').trim();
     if (!scenarioName) return { ok: false, error: 'scenarioName is required' };
@@ -82,7 +89,11 @@ function append(lesson) {
     const tags = Array.isArray(lesson.tags)
         ? lesson.tags.map(t => String(t).trim()).filter(Boolean).slice(0, 10)
         : [];
-    const author = String(lesson.author || '').trim().slice(0, 64) || 'unknown';
+    // Authority: the authenticated caller, never the client body.
+    const author = String(authorId || '').trim().slice(0, 64) || 'unknown';
+    // Display-only snapshot of whatever label the client sent (if any) — not
+    // trusted for identity, just shown alongside `author` if the two differ.
+    const authorDisplayName = String(lesson.author || '').trim().slice(0, 64) || null;
 
     const entry = {
         id: shortId(),
@@ -92,6 +103,7 @@ function append(lesson) {
         narrative,
         tags,
         author,
+        author_display_name: authorDisplayName,
         runId: lesson.runId || null,
         stepIndex: Number.isInteger(lesson.stepIndex) ? lesson.stepIndex : null,
         createdAt: now(),

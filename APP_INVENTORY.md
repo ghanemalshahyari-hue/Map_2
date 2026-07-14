@@ -650,6 +650,40 @@ All endpoints below are ✅ wired with real handlers. Grouped; see web-server.js
 - **Static:** `/`, `/app`, `/app.html`, `*.html|js|css`, `/uploads/*`, `/maps/*`.
 - **Tile server (separate, port 8080, `server/tile-server.js`):** `GET /services/:tileset/:z/:x/:y.:fmt` (MBTiles → PNG/JPEG).
 
+### Audit: state-changing endpoints without an auth guard (2026-07-14)
+
+Follow-up to the Batch A sim-route fix above — a full survey of every remaining state-changing
+(POST/PUT/DELETE, or anything that writes to disk/DB/journal) route. Severity = how consequential an
+unauthenticated call would be; Decision = what happens to it. Verified against the working tree, not
+a stale snapshot. See `[[project_batch_a_remaining_endpoint_audit_2026-07-14]]` for the original
+research; this table is the authoritative, decision-bearing version.
+
+| # | Endpoint(s) | State-changing? | Severity | Decision |
+|---|---|---|---|---|
+| 1 | `POST /api/wargame-sim/run`, `/publish`, `/import` (`wargame-sim-bridge.js`) | **Yes** — spawns WarGamingGEN, writes run dirs, publishes exports, writes+activates scenario JSON | **P0** | **Fix now** |
+| 2 | `POST /api/scenario/import` (`web-server.js:868`) | **Yes** — writes scenario JSON, sets active scenario | **P0** | **Fix now** |
+| 3 | `POST /api/scenarios` (`web-server.js:933`, Edit Mode durable save) | **Yes** — `fs.writeFileSync` to `data/scenarios/<name>.json`, overwrite via `?overwrite=1` | **P0** | **Fix now** |
+| 4 | `POST /api/scenario/active` (`web-server.js:998`) | **Yes** — changes which scenario boots server-wide | **P0** | **Fix now** |
+| 5 | `POST|GET /api/ai/lessons` (`lesson-store.js:85`) | **Yes** — appends a lesson record; `author` taken verbatim from the request body (identity-spoofing repeat of the fixed `operator_id` bug) | **P0** | **Fix now** |
+| 6 | `POST /api/wargame-sim/{regenerate,cancel,objective-override,placement,generate,generate-preview}` (`wargame-sim-bridge.js`) | Yes — same bridge, narrower blast radius than #1 | P1 | Deferred (not in this pass's explicit scope; same fix pattern as #1 when picked up) |
+| 7 | `POST /api/wargame-local/import` (`wargame-local-bridge.js:292`) | Yes — writes a new scenario file from a local run folder | P1 | Deferred |
+| 8 | `POST /api/ai/model/select`, `/model/reset` (`web-server.js:628,669`) | Yes — writes/deletes `runtime/ai-model-selection.json`, mutates `process.env.RMOOZ_LLM_PROVIDER` process-wide | P1 | Deferred |
+| 9 | `POST /api/ai/mc/start`, `/cancel` (`web-server.js:1266,1332`) | Yes — spawns background Monte Carlo trial batches | P1 | Deferred |
+| 10 | `POST /api/ai/feedback` (`web-server.js:1183`) | Yes — unauthenticated disk write, no identity field | P2 | Deferred |
+| 11 | `POST /api/chat/messages` + chat groups/upload/presence (`web-server.js:1387-1389` et al.) | Yes — but identity is an anonymous browser `cid` cookie **by design**, not a login; `userId`/`userName`/`role` come straight from the body | P1 (product ambiguity, not a clear bug) | **Needs a product decision** — is anonymous collaboration intentional? Untouched until answered. |
+| 12 | `POST /api/ai/coa`, `/generate`, `/chat`, `/red-team/propose`, `/blue-team/propose`, `/warmup`, `/benchmark` | **No** — call the LLM, don't appear to persist to disk/DB/journal | Low (compute/cost exposure only) | Deferred |
+
+**Already correctly guarded** (confirms the fix pattern, no action needed): `/api/sim/{propose,commit,decide}`, `/api/ai/adjudicate`, `/api/units*`, `/api/plans*`, `/api/me/preferences`, `/api/roadmap/status` (derives `updated_by` from the session, the model this table's P0 fixes replicate).
+
+**Important caveat on the P0 fix (documented, not hidden):** since every self-registered account gets
+role `planner` today, and `planner` is inside `SIM_MUTATION_ROLES`, the capability allow-list stops a
+user with an *out-of-band-assigned* non-mutation role, but does **not** stop anyone who can self-register
+from mutating the scenario/sim chain — registration itself is the open door. This is acceptable **only**
+as an explicit, risk-accepted decision (matches the earlier "keep registration open, baseline role only"
+call) — flagged here so it isn't silently forgotten. Closing that gap fully would mean either disabling
+self-registration or narrowing `SIM_MUTATION_ROLES` below the baseline role, neither of which has been
+decided.
+
 ---
 
 ## F. Test / verify infrastructure (repo root)

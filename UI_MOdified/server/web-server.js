@@ -587,7 +587,7 @@ const server = http.createServer((req, res) => {
     if (terrainApi.handle(req, res, { url, pathname, method: req.method, sendJson })) return;
 
     // FAST-DOC-1: DOCX → WarGamingGEN → GeoJSON import bridge (staged handoff).
-    if (wargameSimBridge.handle(req, res, { url, pathname, method: req.method, sendJson, scenarios })) return;
+    if (wargameSimBridge.handle(req, res, { url, pathname, method: req.method, sendJson, scenarios, requireAuthenticatedUser, requireSimMutationCapability })) return;
 
     // LOCAL-IMPORT-2: import Wargame outputs copied into data/imports/wargame_outputs.
     if (wargameLocalBridge.handle(req, res, { url, pathname, method: req.method, sendJson, scenarios })) return;
@@ -882,6 +882,9 @@ const server = http.createServer((req, res) => {
     // workflow. The watcher (T4) then re-invalidates the scenario cache and
     // pushes a `scenario-changed` SSE event so open HUDs auto-reload.
     if (pathname === '/api/scenario/import' && req.method === 'POST') {
+        const importUser = requireAuthenticatedUser(req, res);
+        if (!importUser) return;
+        if (!requireSimMutationCapability(importUser, res)) return;
         // 25 MB cap — `all_phases.geojson` for Wargame3 is ≈ 1.6 MB, so this
         // is several orders of magnitude of headroom but still bounded.
         readJsonBody(req, { maxBytes: 25_000_000 }).then((body) => {
@@ -947,6 +950,9 @@ const server = http.createServer((req, res) => {
     //   POST /api/scenarios?overwrite=1 — replace an existing file (else 409).
     // 409 anti-clobber prevents accidentally overwriting wargame3 etc.
     if (pathname === '/api/scenarios' && req.method === 'POST') {
+        const scenariosPostUser = requireAuthenticatedUser(req, res);
+        if (!scenariosPostUser) return;
+        if (!requireSimMutationCapability(scenariosPostUser, res)) return;
         readJsonBody(req, { maxBytes: 25_000_000 }).then((body) => {
             const scenario = body && body.scenario;
             if (!scenario || typeof scenario !== 'object') {
@@ -1012,6 +1018,9 @@ const server = http.createServer((req, res) => {
     // Persist the operator's active-scenario selection so the HUD boots into
     // the same scenario next time, even after a server restart.
     if (pathname === '/api/scenario/active' && req.method === 'POST') {
+        const activeUser = requireAuthenticatedUser(req, res);
+        if (!activeUser) return;
+        if (!requireSimMutationCapability(activeUser, res)) return;
         readJsonBody(req).then((body) => {
             const name = (body && typeof body.name === 'string') ? body.name.trim() : '';
             if (!name) { sendJson(res, 400, { ok: false, error: 'name required' }); return; }
@@ -1231,8 +1240,10 @@ const server = http.createServer((req, res) => {
 
     // AAR lessons (item #5). POST to create, GET to list.
     if (pathname === '/api/ai/lessons' && req.method === 'POST') {
+        const lessonUser = requireAuthenticatedUser(req, res);
+        if (!lessonUser) return;
         readJsonBody(req, { maxBytes: 32_000 }).then(body => {
-            const r = lessonStore.append(body || {});
+            const r = lessonStore.append(body || {}, lessonUser.username || lessonUser.id);
             sendJson(res, r.ok ? 200 : 400, r);
         }).catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
         return;

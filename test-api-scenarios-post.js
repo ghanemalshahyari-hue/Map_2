@@ -37,22 +37,31 @@ function ok(cond, label, detail) {
 }
 function eq(a, b, label) { ok(a === b, label, 'expected ' + JSON.stringify(b) + ', got ' + JSON.stringify(a)); }
 
-function request(method, urlPath, body) {
+function request(method, urlPath, body, cookie) {
     return new Promise(function (resolve, reject) {
         var data = body == null ? null : (typeof body === 'string' ? body : JSON.stringify(body));
+        var headers = data == null ? {} : {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(data)
+        };
+        if (cookie) headers['Cookie'] = cookie;
         var req = http.request({
-            method: method, host: '127.0.0.1', port: PORT, path: urlPath,
-            headers: data == null ? {} : {
-                'Content-Type': 'application/json',
-                'Content-Length': Buffer.byteLength(data)
-            }
+            method: method, host: '127.0.0.1', port: PORT, path: urlPath, headers: headers
         }, function (res) {
             var chunks = [];
             res.on('data', function (c) { chunks.push(c); });
             res.on('end', function () {
                 var raw = Buffer.concat(chunks).toString('utf8');
                 var json = null; try { json = JSON.parse(raw); } catch (_) {}
-                resolve({ status: res.statusCode, body: json, raw: raw });
+                var setCookie = res.headers['set-cookie'];
+                var sessionCookie = null;
+                if (setCookie) {
+                    for (var i = 0; i < setCookie.length; i++) {
+                        var m = /^(rmooz_session=[^;]+)/.exec(setCookie[i]);
+                        if (m) { sessionCookie = m[1]; break; }
+                    }
+                }
+                resolve({ status: res.statusCode, body: json, raw: raw, sessionCookie: sessionCookie });
             });
         });
         req.on('error', reject);
@@ -107,13 +116,21 @@ process.on('exit', teardown);
         await waitForServer(15000);
         console.log('[setup] server up');
 
+        // POST /api/scenarios now requires an authenticated session (Batch A
+        // P0 hardening) — log in as the bootstrap admin account before
+        // exercising the write endpoint.
+        var login = await request('POST', '/api/auth/login', { username: 'admin', password: 'verify' });
+        eq(login.status, 200, 'bootstrap admin login 200');
+        var cookie = login.sessionCookie;
+        ok(!!cookie, 'session cookie obtained');
+
         var sample = JSON.parse(fs.readFileSync(SAMPLE_PATH, 'utf8'));
 
         // ── 1. POST a new scenario ─────────────────────────────────────
         console.log('\n[1] POST /api/scenarios — create');
         var draft = JSON.parse(JSON.stringify(sample));
         draft.name = 'slice-2c-test';
-        var r1 = await request('POST', '/api/scenarios', { scenario: draft });
+        var r1 = await request('POST', '/api/scenarios', { scenario: draft }, cookie);
         eq(r1.status, 200, 'first POST returns 200');
         eq(r1.body && r1.body.ok, true, 'body.ok = true');
         eq(r1.body && r1.body.name, 'slice-2c-test', 'name echoed');
@@ -130,7 +147,7 @@ process.on('exit', teardown);
 
         // ── 3. Second POST without ?overwrite → 409 ────────────────────
         console.log('\n[3] POST again without overwrite — 409');
-        var r3 = await request('POST', '/api/scenarios', { scenario: draft });
+        var r3 = await request('POST', '/api/scenarios', { scenario: draft }, cookie);
         eq(r3.status, 409, '409 when file exists');
         eq(r3.body && r3.body.ok, false, 'body.ok = false');
 
@@ -138,7 +155,7 @@ process.on('exit', teardown);
         console.log('\n[4] POST again with ?overwrite=1 — 200');
         var draft2 = JSON.parse(JSON.stringify(draft));
         draft2.scenario_label = 'edited via overwrite';
-        var r4 = await request('POST', '/api/scenarios?overwrite=1', { scenario: draft2 });
+        var r4 = await request('POST', '/api/scenarios?overwrite=1', { scenario: draft2 }, cookie);
         eq(r4.status, 200, '200 on overwrite');
         eq(r4.body && r4.body.overwritten, true, 'body.overwritten = true');
         var rewritten = JSON.parse(fs.readFileSync(expectedPath, 'utf8'));
@@ -146,7 +163,7 @@ process.on('exit', teardown);
 
         // ── 5. Malformed body — 400 ────────────────────────────────────
         console.log('\n[5] POST malformed body — 400');
-        var r5 = await request('POST', '/api/scenarios', { not_scenario: 1 });
+        var r5 = await request('POST', '/api/scenarios', { not_scenario: 1 }, cookie);
         eq(r5.status, 400, '400 when body.scenario missing');
 
         // ── 6. Invalid scenario fails validator → 400 ──────────────────
@@ -154,7 +171,7 @@ process.on('exit', teardown);
         var bad = JSON.parse(JSON.stringify(sample));
         delete bad.steps;             // required field
         bad.name = 'slice-2c-bad';
-        var r6 = await request('POST', '/api/scenarios', { scenario: bad });
+        var r6 = await request('POST', '/api/scenarios', { scenario: bad }, cookie);
         eq(r6.status, 400, '400 on validator failure');
         ok(r6.body && Array.isArray(r6.body.errors) && r6.body.errors.length > 0,
             'errors array returned');
@@ -163,7 +180,7 @@ process.on('exit', teardown);
         console.log('\n[7] POST with messy name — gets sanitised');
         var messy = JSON.parse(JSON.stringify(sample));
         messy.name = '  Bad Name!! 2026/06/02  ';
-        var r7 = await request('POST', '/api/scenarios', { scenario: messy });
+        var r7 = await request('POST', '/api/scenarios', { scenario: messy }, cookie);
         eq(r7.status, 200, 'sanitised + saved');
         // Expect lowercase + special chars to '_'
         ok(/^[a-z0-9._-]+$/.test(r7.body.name), 'name is safe: ' + r7.body.name);

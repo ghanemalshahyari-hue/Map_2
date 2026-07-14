@@ -7,7 +7,8 @@
     "app": "npm run app --prefix UI_MOdified",
     "start": "npm run start --prefix UI_MOdified",
     "serve": "npm run serve --prefix UI_MOdified",
-    "web": "npm run web --prefix UI_MOdified"
+    "web": "npm run web --prefix UI_MOdified",
+    "test": "node scripts/run-all-tests.js"
   },
   "dependencies": {
     "playwright": "^1.60.0"

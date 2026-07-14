@@ -140,6 +140,22 @@ function requireAuthenticatedUser(req, res) {
     return user;
 }
 
+// Minimal capability policy for the sim mutation boundary (Batch A, deliberately
+// narrow — NOT the parked Team/Cell/Operator/Units scope model). Every
+// self-registered account gets 'planner' today, so this is not yet a real
+// restriction in practice; its purpose is to make "who may mutate sim state"
+// an explicit, closed allow-list instead of an implicit "any authenticated
+// session" — so a future role (e.g. a read-only observer account) is denied
+// by default rather than silently inheriting mutation rights.
+const SIM_MUTATION_ROLES = new Set(['planner', 'commander', 'admin']);
+function requireSimMutationCapability(user, res) {
+    if (!SIM_MUTATION_ROLES.has(user.role)) {
+        sendJson(res, 403, { error: 'Role "' + user.role + '" is not permitted to mutate sim state' });
+        return false;
+    }
+    return true;
+}
+
 function nowIso() {
     return new Date().toISOString();
 }
@@ -1047,6 +1063,9 @@ const server = http.createServer((req, res) => {
     // /api/sim/propose + /api/sim/commit instead; this route is
     // preserved unchanged-on-the-wire until Step 2 ships the approval UI.
     if (pathname === '/api/ai/adjudicate' && req.method === 'POST') {
+        const adjudicateUser = requireAuthenticatedUser(req, res);
+        if (!adjudicateUser) return;
+        if (!requireSimMutationCapability(adjudicateUser, res)) return;
         readJsonBody(req, { maxBytes: 2_000_000 }).then(async (body) => {
             body = body || {};
             const scenarioName = body.scenarioName || scenarios.DEFAULT_NAME;
@@ -1129,6 +1148,7 @@ const server = http.createServer((req, res) => {
     if (pathname === '/api/sim/commit' && req.method === 'POST') {
         const commitUser = requireAuthenticatedUser(req, res);
         if (!commitUser) return;
+        if (!requireSimMutationCapability(commitUser, res)) return;
         readJsonBody(req, { maxBytes: 200_000 }).then(async (body) => {
             body = body || {};
             // Identity is server-derived, never client-supplied: a real HTTP
@@ -1156,6 +1176,7 @@ const server = http.createServer((req, res) => {
     if (pathname === '/api/sim/decide' && req.method === 'POST') {
         const decideUser = requireAuthenticatedUser(req, res);
         if (!decideUser) return;
+        if (!requireSimMutationCapability(decideUser, res)) return;
         readJsonBody(req, { maxBytes: 200_000 }).then(async (body) => {
             body = body || {};
             const scenarioName = body.scenarioName || scenarios.DEFAULT_NAME;

@@ -6,22 +6,25 @@
  * hardening of the sim mutation boundary:
  *
  *   POST /api/sim/propose, /api/sim/commit, /api/sim/decide
+ *   POST /api/ai/adjudicate (legacy single-step shim, same journal path)
  *
  * Confirms (against a real spawned server, not a source-text grep):
- *   1. Unauthenticated requests are rejected 401 on all three routes.
+ *   1. Unauthenticated requests are rejected 401 on all four routes.
  *   2. An authenticated session is let through (not 401).
  *   3. operator_id/actor attribution in the durable journal reflects the
  *      real session user, even when the client sends a forged operator_id
  *      in the request body.
  *   4. Registration ignores a client-supplied `role` (no self-escalation).
  *   5. The bootstrap "admin" account is actually seeded with role 'admin'.
+ *   6. A role outside SIM_MUTATION_ROLES (planner/commander/admin) gets a
+ *      real 403 on the three mutating routes (commit/decide/adjudicate) —
+ *      but NOT on propose, which never mutates state.
  *
- * NOT covered here (intentionally): a 403 (authenticated-but-forbidden)
- * leg for these three routes. Today any authenticated session may call
- * them — there is no capability/unit-function scope model yet. Building
- * that is a separate, not-yet-scoped decision (see APP_INVENTORY.md /
- * memory project_multirole_audit_governance_2026-07-14) — faking a 403
- * case here would just be dishonest coverage.
+ * This is a MINIMAL capability policy (a closed role allow-list), not the
+ * full unit/function scope model — that remains a separate, not-yet-scoped
+ * decision (see APP_INVENTORY.md / memory project_multirole_audit_governance_2026-07-14
+ * and project_team_operator_assignment_parked) since it overlaps a parked
+ * owner ruling. Don't expand this file to fake unit/function scope coverage.
  *
  *   node test-sim-route-auth-matrix-1.js
  */
@@ -154,6 +157,8 @@ process.on('exit', teardown);
         eq(u2.status, 401, 'unauth /api/sim/commit -> 401');
         var u3 = await request('POST', '/api/sim/decide', { scenarioName: 'wargame3', stepIndex: 0, decisions: [{ type: 'MOVE', actor: 'B-d1-51-001', to: [19.6, 30.11] }] });
         eq(u3.status, 401, 'unauth /api/sim/decide -> 401');
+        var u4 = await request('POST', '/api/ai/adjudicate', { scenarioName: 'wargame3', stepIndex: 0, mockMode: true });
+        eq(u4.status, 401, 'unauth /api/ai/adjudicate (legacy shim) -> 401');
 
         // ── 2. Registration ignores a client-supplied role ──────────────
         console.log('\n[2] Registration cannot self-escalate role');
@@ -175,6 +180,8 @@ process.on('exit', teardown);
         ok(!!operator.cookie, 'operator session cookie obtained');
         var a1 = await request('POST', '/api/sim/propose', { scenarioName: 'wargame3', stepIndex: 0, mockMode: true }, operator.cookie);
         ok(a1.status !== 401, 'authenticated /api/sim/propose is not blocked (status ' + a1.status + ')');
+        var a2 = await request('POST', '/api/ai/adjudicate', { scenarioName: 'wargame3', stepIndex: 0, mockMode: true }, operator.cookie);
+        ok(a2.status !== 401, 'authenticated /api/ai/adjudicate (legacy shim) is not blocked (status ' + a2.status + ')');
 
         // ── 5. Journal attribution: forged operator_id is discarded ─────
         console.log('\n[5] /api/sim/decide journals the true session user, ignoring a forged operator_id');
@@ -198,6 +205,25 @@ process.on('exit', teardown);
         var c1 = await request('POST', '/api/sim/commit', { proposal_id: 'nonexistent-proposal', accepted_action_ids: 'ALL' }, operator.cookie);
         ok(c1.status !== 401, 'authenticated /api/sim/commit reaches business logic, not auth-blocked (status ' + c1.status + ')');
         eq(c1.status, 400, 'unknown proposal_id -> 400 business-logic error (proves it got past auth into commitStep)');
+
+        // ── 7. Capability check: a role outside the allow-list gets 403 ──
+        console.log('\n[7] A role outside SIM_MUTATION_ROLES is denied 403 (authenticated but forbidden)');
+        var Database = require(path.join(ROOT, 'UI_MOdified/node_modules/better-sqlite3'));
+        var db = new Database(path.join(DATA_DIR, 'app.db'));
+        db.prepare("UPDATE users SET role='observer' WHERE username='battle-operator'").run();
+        db.close();
+        var f1 = await request('POST', '/api/sim/decide', {
+            scenarioName: 'wargame3', stepIndex: 0, runId: 'authmatrix-forbidden-run-1',
+            decisions: [{ type: 'MOVE', actor: 'B-d1-51-001', to: [19.6, 30.11] }]
+        }, operator.cookie);
+        eq(f1.status, 403, 'observer role -> 403 on /api/sim/decide (authenticated but forbidden)');
+        var f2 = await request('POST', '/api/sim/commit', { proposal_id: 'nonexistent-proposal', accepted_action_ids: 'ALL' }, operator.cookie);
+        eq(f2.status, 403, 'observer role -> 403 on /api/sim/commit');
+        var f3 = await request('POST', '/api/ai/adjudicate', { scenarioName: 'wargame3', stepIndex: 0, mockMode: true }, operator.cookie);
+        eq(f3.status, 403, 'observer role -> 403 on /api/ai/adjudicate');
+        // propose stays capability-unchecked (it never mutates state) — same session should still pass.
+        var f4 = await request('POST', '/api/sim/propose', { scenarioName: 'wargame3', stepIndex: 0, mockMode: true }, operator.cookie);
+        ok(f4.status !== 401 && f4.status !== 403, 'observer role can still call the non-mutating /api/sim/propose (status ' + f4.status + ')');
 
         // ── Result ───────────────────────────────────────────────────────
         console.log('\n' + (fail === 0 ? 'OK' : 'FAIL') + ' — ' + pass + ' pass, ' + fail + ' fail');

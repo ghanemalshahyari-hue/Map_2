@@ -75,6 +75,8 @@
     var _coaExec = null;        // active_coa_execution_state (see _commitCoa) | null
     var _committedPlanObj = null;   // RMOOZ-FREE-FIGHT-V2-COA-TO-SCENARIO-BUGFIX-AB1: the _coaPlan object _coaExec was committed from (identity check → a fresh plan / changed selection supersedes a stale commit)
     var _coaExecTimer = null;   // setInterval handle for the committed-COA tick loop
+    var _movementTaskingStatus = null;
+    var _movementTaskingSeq = 0;
     var COA_EXEC_STUCK_TICKS = 4;       // phase makes no progress for this many ticks → replan trigger
     var COA_EXEC_FORCE_LOSS_FRAC = 0.5; // active-side units missing above this fraction → replan trigger
     // RMOOZ-FREE-FIGHT-CONTINUOUS-SCENARIO-AA: continuous scenario runtime (orchestrates committed-COA
@@ -204,6 +206,7 @@
         if (v == null) return v;
         try { return JSON.parse(JSON.stringify(v)); } catch (_) { return v; }
     }
+    function clonePlain(v) { return v == null ? v : JSON.parse(JSON.stringify(v)); }
     // FREE-FIGHT-AI-LITE-A: deterministic planner + injected terrain results.
     function aiPlanner() { var w = W(); if (w && w.RmoozFreeFightAI) return w.RmoozFreeFightAI; try { return require('./free-fight-ai.js'); } catch (_) { return null; } }
     // RMOOZ-COA-REALISM-GATE-A: returns the territory/movement validation gate if loaded.
@@ -3582,8 +3585,9 @@
         };
         // OPTION-C / SLICE-C1: seed the scenario runtime clock from the authored steps' elapsed-hours span.
         var _clkB = _clockBoundsFromScenario();
-        _coaExec.clock = { start_hours: _clkB.start, current_hours: _clkB.start, end_hours: _clkB.end, duration_hours: _clkB.duration_hours, playing: false, speed: _clockSpeedMult(), display_step: -1 };   // display_step: OPTION-C/C2 (clock drives the shown snapshot)
+        _coaExec.clock = { start_hours: _clkB.start, current_hours: _clkB.start, end_hours: _clkB.end, duration_hours: _clkB.duration_hours, playing: false, paused: false, completed: false, speed: _clockSpeedMult(), display_step: -1 };   // C1 seed + C3b runtime-state fields; display_step: C2 (clock drives the shown snapshot)
         _resetRuntimeEventSessionState();   // C4b: per-run fired IDs live on the runtime session, not scenario JSON
+        _resetRuntimeMovementState();   // MOV1: movement positions live on the runtime session, never scenario JSON
         try { _publishRunClock(); } catch (_) {}
         _committedPlanObj = _coaPlan;   // AB1: remember WHICH plan object this commit came from (identity)
         // RMOOZ-ADVISORY-COMMIT-JOURNAL-V: persist the advisory/ranking decision context with the commit.
@@ -3677,7 +3681,17 @@
     function _publishOwnedPositions() {
         var w = W(); var MAP = w && w.AppAdjudicatorMap;
         if (!MAP || typeof MAP.setOwnedRunPositions !== 'function') return;
-        try { MAP.setOwnedRunPositions((_coaExec && _coaExec.active && _coaExec.owned_positions) || null); } catch (_) {}
+        // Legacy B1 gate shape, retained for compatibility:
+        // MAP.setOwnedRunPositions((_coaExec && _coaExec.active && _coaExec.owned_positions) || null)
+        var owned = (_coaExec && _coaExec.active && _coaExec.owned_positions) || null;
+        var runtime = _runtimeMovementOwnedPositions();
+        var merged = null;
+        if (owned || runtime) {
+            merged = {};
+            if (owned) { Object.keys(owned).forEach(function (uid) { merged[uid] = owned[uid]; }); }
+            if (runtime) { Object.keys(runtime).forEach(function (uid) { merged[uid] = runtime[uid]; }); }
+        }
+        try { MAP.setOwnedRunPositions(merged); } catch (_) {}
     }
 
     // OPTION-C / SLICE-C1: scenario runtime clock. The committed Run advances a scenario clock
@@ -3701,6 +3715,15 @@
     }
     function _clockBoundsFromScenario() {
         var w = W(); var scn = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        // C3a: single-source the runtime end from World State so an authored
+        // duration_minutes (runtime_scenario) actually caps the live Run's advance.
+        // Falls back to the local steps span when World State isn't loaded.
+        if (scn && w && w.AppWorldState && typeof w.AppWorldState.scenarioRuntimeBounds === 'function') {
+            try {
+                var b = w.AppWorldState.scenarioRuntimeBounds(scn);
+                if (b && isFinite(+b.start) && isFinite(+b.end)) return { start: +b.start, end: +b.end, duration_hours: (isFinite(+b.duration_hours) ? +b.duration_hours : (+b.end - +b.start)) };
+            } catch (_) {}
+        }
         var rt = (scn && scn.runtime_scenario && typeof scn.runtime_scenario === 'object') ? scn.runtime_scenario : null;
         var rtStart = rt && isFinite(+rt.start_hours) ? +rt.start_hours : null;
         var rtEnd = rt && isFinite(+rt.end_hours) ? +rt.end_hours : null;
@@ -3715,12 +3738,15 @@
     // Advance the committed Run's scenario clock one tick, clamped to [start, end]. Called from _coaExecTick.
     function _advanceScenarioClock() {
         if (!_coaExec || !_coaExec.active || !_coaExec.clock) return;
-        var c = _coaExec.clock;
-        c.speed = _clockSpeedMult();
-        if (isFinite(+c.current_hours) && isFinite(+c.end_hours)) {
-            c.current_hours = Math.min(+c.end_hours, +c.current_hours + COA_CLOCK_HOURS_PER_TICK * c.speed);
+        var c = _coaExec.clock; c.speed = _clockSpeedMult();
+        var WS = (W() || {}).AppWorldState;   // C3b single-source
+        if (WS && typeof WS.advanceRuntimeClock === 'function') {
+            var nx = WS.advanceRuntimeClock(c, COA_CLOCK_HOURS_PER_TICK);
+            c.current_hours = nx.current_hours; c.playing = nx.playing; c.completed = nx.completed;
+        } else if (isFinite(+c.current_hours) && isFinite(+c.end_hours) && c.playing && !c.paused) {
+            c.current_hours = Math.min(+c.end_hours, +c.current_hours + COA_CLOCK_HOURS_PER_TICK * c.speed);   // C1 fallback (WS not loaded)
         }
-        if (_coaExec.phase_status === 'complete' || (isFinite(+c.end_hours) && +c.current_hours >= +c.end_hours)) c.playing = false;
+        if (_coaExec.phase_status === 'complete') { c.playing = false; c.completed = true; }
         _publishRunClock();
     }
     // Push the current scenario clock (or null when no active run) to the map override.
@@ -3732,13 +3758,20 @@
     function _setScenarioClockPlaying(playing) {
         if (!_coaExec || !_coaExec.active || !_coaExec.clock) return;
         _coaExec.clock.playing = !!playing;
+        _coaExec.clock.paused = !playing;
+        if (playing) _coaExec.clock.completed = false;
         _coaExec.clock.speed = _clockSpeedMult();
         try { _publishRunClock(); } catch (_) {}
     }
     function _resetScenarioClockToStart() {
         if (!_coaExec || !_coaExec.active || !_coaExec.clock) return;
-        if (isFinite(+_coaExec.clock.start_hours)) _coaExec.clock.current_hours = +_coaExec.clock.start_hours;
+        var w = W(); var WS = w && w.AppWorldState;
+        var rc = (WS && typeof WS.resetRuntimeClock === 'function') ? WS.resetRuntimeClock(_coaExec.clock) : null;
+        if (rc && isFinite(+rc.current_hours)) _coaExec.clock.current_hours = +rc.current_hours;
+        else if (isFinite(+_coaExec.clock.start_hours)) _coaExec.clock.current_hours = +_coaExec.clock.start_hours;
         _coaExec.clock.playing = false;
+        _coaExec.clock.paused = false;
+        _coaExec.clock.completed = false;
         _coaExec.clock.display_step = -1;
         _coaExec.clock.speed = _clockSpeedMult();
         _resetRuntimeEventSessionState();
@@ -3748,6 +3781,8 @@
     // and records due/read-only events against the transient run session only.
     // It does not execute unsafe effects, mutate units, or mutate scenario JSON.
     // C4f adds fire-and-forget audit journaling through the existing sim commit path.
+    // DOC3 adds fire-and-forget doctrine audit journaling through the sanctioned
+    // runtime journal path; local play/pause never waits for it.
     function _newRuntimeEventSessionState() {
         return {
             fired_ids: {},
@@ -3767,7 +3802,20 @@
             last_effects: [],
             journaled_ids: {},
             pending_journal_records: [],
-            last_journal_error: null
+            last_journal_error: null,
+            doctrine_decisions: [],
+            pending_approvals: {},
+            approval_decisions: {},
+            approved_effects: [],
+            rejected_effects: [],
+            pending_execution_plans: [],
+            blocked_execution_plans: [],
+            execution_plan_history: [],
+            doctrine_journaled_ids: {},
+            pending_doctrine_journal_records: [],
+            last_doctrine_journal_error: null,
+            last_doctrine_journal_retry_at: null,
+            doctrine_journal_retry_count: 0
         };
     }
     function _ensureRuntimeEventSessionState() {
@@ -3790,6 +3838,19 @@
         if (!st.journaled_ids || typeof st.journaled_ids !== 'object' || Array.isArray(st.journaled_ids)) st.journaled_ids = {};
         if (!Array.isArray(st.pending_journal_records)) st.pending_journal_records = [];
         if (st.last_journal_error === undefined) st.last_journal_error = null;
+        if (!Array.isArray(st.doctrine_decisions)) st.doctrine_decisions = [];
+        if (!st.pending_approvals || typeof st.pending_approvals !== 'object' || Array.isArray(st.pending_approvals)) st.pending_approvals = {};
+        if (!st.approval_decisions || typeof st.approval_decisions !== 'object' || Array.isArray(st.approval_decisions)) st.approval_decisions = {};
+        if (!Array.isArray(st.approved_effects)) st.approved_effects = [];
+        if (!Array.isArray(st.rejected_effects)) st.rejected_effects = [];
+        if (!Array.isArray(st.pending_execution_plans)) st.pending_execution_plans = [];
+        if (!Array.isArray(st.blocked_execution_plans)) st.blocked_execution_plans = [];
+        if (!Array.isArray(st.execution_plan_history)) st.execution_plan_history = [];
+        if (!st.doctrine_journaled_ids || typeof st.doctrine_journaled_ids !== 'object' || Array.isArray(st.doctrine_journaled_ids)) st.doctrine_journaled_ids = {};
+        if (!Array.isArray(st.pending_doctrine_journal_records)) st.pending_doctrine_journal_records = [];
+        if (st.last_doctrine_journal_error === undefined) st.last_doctrine_journal_error = null;
+        if (st.last_doctrine_journal_retry_at === undefined) st.last_doctrine_journal_retry_at = null;
+        if (!isFinite(+st.doctrine_journal_retry_count)) st.doctrine_journal_retry_count = 0;
         return st;
     }
     function _resetRuntimeEventSessionState() {
@@ -4262,18 +4323,412 @@
         st.journaled_ids = (next.journaled_ids && typeof next.journaled_ids === 'object') ? next.journaled_ids : (st.journaled_ids || {});
         st.pending_journal_records = Array.isArray(next.pending_journal_records) ? next.pending_journal_records : (st.pending_journal_records || []);
         st.last_journal_error = next.last_journal_error !== undefined ? next.last_journal_error : (st.last_journal_error || null);
+        st.doctrine_decisions = Array.isArray(next.doctrine_decisions) ? next.doctrine_decisions : [];
+        st.pending_approvals = (next.pending_approvals && typeof next.pending_approvals === 'object') ? next.pending_approvals : {};
+        st.approval_decisions = (next.approval_decisions && typeof next.approval_decisions === 'object') ? next.approval_decisions : {};
+        st.approved_effects = Array.isArray(next.approved_effects) ? next.approved_effects : [];
+        st.rejected_effects = Array.isArray(next.rejected_effects) ? next.rejected_effects : [];
+        st.pending_execution_plans = Array.isArray(next.pending_execution_plans) ? next.pending_execution_plans : [];
+        st.blocked_execution_plans = Array.isArray(next.blocked_execution_plans) ? next.blocked_execution_plans : [];
+        st.execution_plan_history = Array.isArray(next.execution_plan_history) ? next.execution_plan_history : [];
+        st.doctrine_journaled_ids = (next.doctrine_journaled_ids && typeof next.doctrine_journaled_ids === 'object') ? next.doctrine_journaled_ids : {};
+        st.pending_doctrine_journal_records = Array.isArray(next.pending_doctrine_journal_records) ? next.pending_doctrine_journal_records : [];
+        st.last_doctrine_journal_error = next.last_doctrine_journal_error || null;
+        st.last_doctrine_journal_retry_at = next.last_doctrine_journal_retry_at || null;
+        st.doctrine_journal_retry_count = isFinite(+next.doctrine_journal_retry_count) ? +next.doctrine_journal_retry_count : 0;
+    }
+    function _runtimeApprovalOptions() {
+        var w = W();
+        var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        var scenarioName = (sc && (sc.name || sc.scenario_label || sc.scenario_name || sc.id)) || 'runtime';
+        var operatorId = 'operator';
+        try {
+            var cu = w && w.AppConfig && w.AppConfig.CHAT_CONFIG && w.AppConfig.CHAT_CONFIG.currentUser;
+            if (cu && cu.id) operatorId = String(cu.id).slice(0, 80);
+        } catch (_) {}
+        return {
+            scenario: sc,
+            scenarioName: scenarioName,
+            runId: 'doctrine-approval-' + scenarioName,
+            operatorId: operatorId,
+            decided_at_elapsed_hours: _coaExec && _coaExec.clock && isFinite(+_coaExec.clock.current_hours) ? +_coaExec.clock.current_hours : null,
+            scenario_time_label: _coaExec ? _scenarioClockLabel(_coaExec) : null
+        };
+    }
+    function _runtimeApprovalList() {
+        var st = _ensureRuntimeEventSessionState();
+        var API = W() && W().AppRuntimeEvents;
+        if (!st) return [];
+        if (API && typeof API.pendingApprovalList === 'function') return API.pendingApprovalList(st);
+        return Object.keys(st.pending_approvals || {}).map(function (id) {
+            var p = st.pending_approvals[id];
+            if (p && typeof p === 'object') { p.approval_id = p.approval_id || id; return p; }
+            return null;
+        }).filter(Boolean);
+    }
+    function _decideRuntimeApproval(approvalId, action) {
+        var st = _ensureRuntimeEventSessionState();
+        var API = W() && W().AppRuntimeEvents;
+        if (!st || !API || typeof API.decideRuntimeApproval !== 'function') return null;
+        var opts = _runtimeApprovalOptions();
+        var res = API.decideRuntimeApproval(st, approvalId, action, opts);
+        _syncRuntimeEffectSessionState(st, res && res.state);
+        var rec = res && res.approval;
+        if (res && res.status === 'recorded' && rec) {
+            var verb = rec.selected_action === 'approve' ? 'approved' : 'rejected';
+            var msg = 'Runtime doctrine approval ' + verb + ': ' + (rec.effect_kind || 'effect') + ' -> ' + rec.resulting_status + '.';
+            try { _appendRuntimeEventLog(msg); } catch (_) {}
+            try { _recordDecision({ role: 'operator', action: 'runtime_doctrine_' + verb, called_llm: false, source: 'runtime-events', reason: rec.reason || verb, result_summary: msg }); } catch (_) {}
+        }
+        try { _planRuntimeExecutions(); } catch (_) {}
+        try { updatePanel(); } catch (_) {}
+        return res;
+    }
+    function _runtimeApprovalHistory() {
+        var st = _ensureRuntimeEventSessionState();
+        var API = W() && W().AppRuntimeEvents;
+        if (!st || !API || typeof API.buildDoctrineApprovalHistory !== 'function') return [];
+        return API.buildDoctrineApprovalHistory(st);
+    }
+    function _runtimeApprovalSummary() {
+        var st = _ensureRuntimeEventSessionState();
+        var API = W() && W().AppRuntimeEvents;
+        if (!st || !API || typeof API.summarizeDoctrineApprovals !== 'function') {
+            return { pending: 0, approved: 0, rejected: 0, blocked: 0, journal_retry_queue: 0, read_only: true };
+        }
+        return API.summarizeDoctrineApprovals(st);
+    }
+    function _retryPendingDoctrineJournalRecords() {
+        var st = _ensureRuntimeEventSessionState();
+        var API = W() && W().AppRuntimeEvents;
+        if (!st || !API || typeof API.retryPendingDoctrineJournalRecords !== 'function') return null;
+        var res = API.retryPendingDoctrineJournalRecords(st, _runtimeApprovalOptions());
+        _syncRuntimeEffectSessionState(st, res && res.state);
+        try {
+            _appendRuntimeEventLog('Doctrine journal retry: attempted ' + ((res && res.attempted) || 0) + ', queued ' + ((res && res.queued) || 0) + '.');
+        } catch (_) {}
+        try { updatePanel(); } catch (_) {}
+        return res;
+    }
+    function _planRuntimeExecutions() {
+        var st = _ensureRuntimeEventSessionState();
+        var API = W() && W().AppRuntimeEvents;
+        if (!st || !API || typeof API.buildRuntimeExecutionPlans !== 'function') return null;
+        var opts = _runtimeApprovalOptions();
+        var res = API.buildRuntimeExecutionPlans(st, {
+            planned_at_elapsed_hours: opts.decided_at_elapsed_hours,
+            scenario_time_label: opts.scenario_time_label
+        });
+        _syncRuntimeEffectSessionState(st, res && res.state);
+        try { _startRuntimeMovementPlans(); } catch (_) {}
+        return res;
+    }
+    function _runtimeExecutionSummary() {
+        var st = _ensureRuntimeEventSessionState();
+        var API = W() && W().AppRuntimeEvents;
+        if (!st || !API || typeof API.summarizeRuntimeExecutionPlans !== 'function') return { pending: 0, blocked: 0, history: 0, last_execution_plan: null, read_only: true };
+        return API.summarizeRuntimeExecutionPlans(st);
+    }
+    function _ensureRuntimeMovementState() {
+        if (!_coaExec) return null;
+        var API = W() && W().AppRuntimeMovement;
+        if (API && typeof API.normalizeMovementState === 'function') {
+            _coaExec.runtime_movement = API.normalizeMovementState(_coaExec.runtime_movement);
+        } else if (!_coaExec.runtime_movement || typeof _coaExec.runtime_movement !== 'object') {
+            _coaExec.runtime_movement = {
+                group_movements: {}, movements: {}, runtime_positions: {}, runtime_world_state: { positions: {} },
+                arrival_events: [], group_arrival_events: [], movement_runtime_events: [], pending_decision_points: {},
+                runtime_flags: {}, movement_journal_events: [], movement_journaled_ids: {}, pending_journal_records: [],
+                last_journal_error: null, last_movement_journal_error: null, arrival_triggers_fired: {}
+            };
+        }
+        return _coaExec.runtime_movement;
+    }
+    function _resetRuntimeMovementState() {
+        if (!_coaExec) return null;
+        var API = W() && W().AppRuntimeMovement;
+        _movementTaskingStatus = null;
+        _coaExec.runtime_movement = (API && typeof API.normalizeMovementState === 'function')
+            ? API.normalizeMovementState(null)
+            : {
+                group_movements: {}, movements: {}, runtime_positions: {}, runtime_world_state: { positions: {} },
+                arrival_events: [], group_arrival_events: [], movement_runtime_events: [], pending_decision_points: {},
+                runtime_flags: {}, movement_journal_events: [], movement_journaled_ids: {}, pending_journal_records: [],
+                last_journal_error: null, last_movement_journal_error: null, arrival_triggers_fired: {}
+            };
+        return _coaExec.runtime_movement;
+    }
+    function _movementExecutionPlans() {
+        var ev = _ensureRuntimeEventSessionState();
+        var MOV = W() && W().AppRuntimeMovement;
+        if (!ev || !MOV || typeof MOV.isMovementExecutionPlan !== 'function') return [];
+        return arr(ev.pending_execution_plans).filter(function (p) { return MOV.isMovementExecutionPlan(p); });
+    }
+    function _startRuntimeMovementPlans() {
+        var MOV = W() && W().AppRuntimeMovement;
+        var st = _ensureRuntimeMovementState();
+        if (!MOV || !st || typeof MOV.startMovementExecutionPlans !== 'function') return null;
+        var plans = _movementExecutionPlans();
+        if (!plans.length) return { created: [] };
+        var elapsed = _coaExec && _coaExec.clock && isFinite(+_coaExec.clock.current_hours) ? +_coaExec.clock.current_hours : 0;
+        var res = MOV.startMovementExecutionPlans(st, plans, { elapsed_hours: elapsed, paused: !!(_coaExec && _coaExec.paused) });
+        _coaExec.runtime_movement = res && res.state ? res.state : st;
+        arr(res && res.created).forEach(function (mv) {
+            if (mv && mv.status !== 'blocked') {
+                try { _appendToEventLog('Movement started: ' + esc(mv.unit_id || '?') + ' ETA ' + _eventHoursLabel(mv.eta_elapsed_hours) + '.'); } catch (_) {}
+            }
+        });
+        return res;
+    }
+    function _movementJournalOperatorId() {
+        try {
+            var cu = W() && W().AppConfig && W().AppConfig.CHAT_CONFIG && W().AppConfig.CHAT_CONFIG.currentUser;
+            if (cu && cu.id) return String(cu.id).slice(0, 80);
+        } catch (_) {}
+        return 'operator';
+    }
+    function _movementJournalRecordId(record) {
+        return [
+            record && record.schema_version,
+            record && record.kind,
+            record && record.movement_id,
+            record && record.group_movement_id,
+            record && record.unit_id,
+            record && record.group_id,
+            record && record.arrived_at_elapsed_hours
+        ].map(function (v) { return v == null ? '' : String(v); }).join('|');
+    }
+    function _rememberRuntimeMovementJournalFailure(record, err) {
+        var st = _ensureRuntimeMovementState();
+        if (!st || !record) return;
+        var msg = err && err.message ? err.message : String(err || 'movement_journal_failed');
+        st.last_journal_error = msg;
+        st.last_movement_journal_error = msg;
+        var id = _movementJournalRecordId(record);
+        var exists = arr(st.pending_journal_records).some(function (r) { return _movementJournalRecordId(r) === id; });
+        if (!exists) st.pending_journal_records.push(JSON.parse(JSON.stringify(record)));
+    }
+    function _journalRuntimeMovementRecord(record) {
+        if (!record || !_coaExec || !_coaExec.active) return null;
+        var w = W();
+        if (!w || typeof w.fetch !== 'function') return null;
+        var sc = w.RmoozScenario && w.RmoozScenario.scenario;
+        var scenarioName = (sc && (sc.name || sc.scenario_label || sc.scenario_name || sc.id)) || null;
+        if (!scenarioName) return null;
+        var headers = { 'Content-Type': 'application/json' };
+        var runId = 'movement-arrival-' + scenarioName;
+        return w.fetch('/api/sim/propose', {
+            method: 'POST',
+            credentials: 'include',
+            headers: headers,
+            body: JSON.stringify({ scenarioName: scenarioName, stepIndex: 0, mockMode: true, runId: runId })
+        }).then(function (r) {
+            return (r && r.ok && typeof r.json === 'function') ? r.json() : null;
+        }).then(function (prop) {
+            if (!prop || !prop.proposal_id) throw new Error('movement_journal_propose_failed');
+            return w.fetch('/api/sim/commit', {
+                method: 'POST',
+                credentials: 'include',
+                headers: headers,
+                body: JSON.stringify({
+                    proposal_id: prop.proposal_id,
+                    accepted_action_ids: 'ALL',
+                    operator_id: _movementJournalOperatorId(),
+                    source: 'deterministic-sim',
+                    mods: { movement_journal: record }
+                })
+            }).then(function (r2) {
+                return (r2 && typeof r2.json === 'function') ? r2.json() : null;
+            }).then(function (res) {
+                if (res && res.ok === false) throw new Error('movement_journal_commit_failed');
+                return res;
+            });
+        });
+    }
+    function _runtimeMovementOptions(paused) {
+        return {
+            paused: !!paused,
+            scenario_time_label: _coaExec ? _scenarioClockLabel(_coaExec) : null,
+            journalMovementRecord: _journalRuntimeMovementRecord,
+            onMovementJournalFailure: _rememberRuntimeMovementJournalFailure
+        };
+    }
+    function _tickRuntimeMovement(pausedOverride) {
+        var MOV = W() && W().AppRuntimeMovement;
+        var st = _ensureRuntimeMovementState();
+        if (!MOV || !st || typeof MOV.updateRuntimeMovementState !== 'function') return null;
+        try { _startRuntimeMovementPlans(); } catch (_) {}
+        var elapsed = _coaExec && _coaExec.clock && isFinite(+_coaExec.clock.current_hours) ? +_coaExec.clock.current_hours : 0;
+        var paused = pausedOverride === true || !!(_coaExec && (_coaExec.paused || (_coaExec.clock && _coaExec.clock.paused)));
+        var res = MOV.updateRuntimeMovementState(_coaExec.runtime_movement, elapsed, _runtimeMovementOptions(paused));
+        _coaExec.runtime_movement = res && res.state ? res.state : _coaExec.runtime_movement;
+        try { _publishOwnedPositions(); } catch (_) {}
+        arr(res && res.arrivals).forEach(function (ev) {
+            try { _appendToEventLog('Movement arrived: ' + esc(ev.unit_id || '?') + ' at ' + _eventHoursLabel(ev.at_elapsed_hours) + '.'); } catch (_) {}
+            try { _recordDecision({ role: 'unit-controller', action: 'movement_arrival', called_llm: false, source: 'runtime-movement', result_summary: String(ev.unit_id || '?') + ' arrived' }); } catch (_) {}
+        });
+        return res;
+    }
+    function _runtimeMovementSummary() {
+        var st = _ensureRuntimeMovementState();
+        var MOV = W() && W().AppRuntimeMovement;
+        if (!st || !MOV || typeof MOV.summarizeRuntimeMovement !== 'function') return { planned: 0, moving: 0, arrived: 0, paused: 0, blocked: 0, group_movement_count: 0, group_status_summary: {}, runtime_position_count: 0, next_eta: null, read_only: true };
+        return MOV.summarizeRuntimeMovement(st);
+    }
+    function _runtimeMovementOwnedPositions() {
+        if (!_coaExec || !_coaExec.active || !_coaExec.runtime_movement) return null;
+        var st = _coaExec.runtime_movement;
+        var positions = (st.runtime_positions && typeof st.runtime_positions === 'object') ? st.runtime_positions : {};
+        var movements = (st.movements && typeof st.movements === 'object') ? st.movements : {};
+        var out = {};
+        Object.keys(positions).forEach(function (uid) {
+            var p = positions[uid];
+            if (!Array.isArray(p) || p.length < 2 || !isFinite(+p[0]) || !isFinite(+p[1])) return;
+            var mv = null;
+            Object.keys(movements).some(function (mid) {
+                var cand = movements[mid];
+                if (cand && String(cand.unit_id || '') === String(uid)) { mv = cand; return true; }
+                return false;
+            });
+            out[uid] = {
+                position: [+p[0], +p[1]],
+                source: 'runtime_movement',
+                movement_status: (mv && mv.status) || 'moving',
+                movement_id: (mv && mv.movement_id) || null,
+                eta_elapsed_hours: (mv && isFinite(+mv.eta_elapsed_hours)) ? +mv.eta_elapsed_hours : null,
+                progress: (mv && isFinite(+mv.progress)) ? +mv.progress : null,
+                speed: (mv && isFinite(+mv.speed)) ? +mv.speed : null,
+                speed_kph: (mv && isFinite(+mv.speed_kph)) ? +mv.speed_kph : null,
+                speed_knots: (mv && isFinite(+mv.speed_knots)) ? +mv.speed_knots : null,
+                speed_source: (mv && mv.speed_source) || null,
+                distance_km: (mv && isFinite(+mv.distance_km)) ? +mv.distance_km : null,
+                current_segment_index: (mv && isFinite(+mv.current_segment_index)) ? +mv.current_segment_index : null,
+                group_movement_id: (mv && mv.group_movement_id) || null,
+                group_id: (mv && mv.group_id) || null,
+                leader_unit_id: (mv && mv.leader_unit_id) || null,
+                formation: (mv && mv.formation) || null,
+                formation_index: (mv && isFinite(+mv.formation_index)) ? +mv.formation_index : null,
+                domain: (mv && mv.domain) || null,
+                route: (mv && Array.isArray(mv.route)) ? JSON.parse(JSON.stringify(mv.route)) : null,
+                trail: (mv && Array.isArray(mv.trail)) ? JSON.parse(JSON.stringify(mv.trail)) : null
+            };
+        });
+        return Object.keys(out).length ? out : null;
+    }
+    function _runtimeMovementTaskUnits() {
+        var w = W();
+        var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        var rs = w && w.RmoozScenario;
+        var out = [];
+        function add(list) { arr(list).forEach(function (u) { if (u) out.push(u); }); }
+        add(sc && sc.red_units);
+        add(sc && (sc.blue_units_initial || sc.blue_units));
+        add(sc && sc.units);
+        add(rs && rs.red_units);
+        add(rs && (rs.blue_units_initial || rs.blue_units));
+        add(rs && rs.units);
+        return out;
+    }
+    function _runtimeMovementTaskContext() {
+        var st = _ensureRuntimeMovementState();
+        var elapsed = _coaExec && _coaExec.clock && isFinite(+_coaExec.clock.current_hours) ? +_coaExec.clock.current_hours : 0;
+        return {
+            elapsed_hours: elapsed,
+            current_elapsed_hours: elapsed,
+            runtime_positions: st && st.runtime_positions,
+            positions: st && st.runtime_positions,
+            units: _runtimeMovementTaskUnits()
+        };
+    }
+    function _rememberMovementTaskingStatus(status) {
+        _movementTaskingStatus = clonePlain(status || {});
+        return _movementTaskingStatus;
+    }
+    function _runtimeMovementTaskingStatus() {
+        return _movementTaskingStatus ? clonePlain(_movementTaskingStatus) : null;
+    }
+    function _createRuntimeMovementTask(input) {
+        var MOV = W() && W().AppRuntimeMovement;
+        if (!_coaExec || !_coaExec.active) {
+            return _rememberMovementTaskingStatus({
+                ok: false,
+                status: 'invalid',
+                message: 'Start or commit a scenario runtime before adding movement.',
+                read_only: true
+            });
+        }
+        var st = _ensureRuntimeMovementState();
+        if (!MOV || !st || typeof MOV.createRuntimeMovementTaskPlan !== 'function' || typeof MOV.addRuntimeMovementPlan !== 'function') {
+            return _rememberMovementTaskingStatus({
+                ok: false,
+                status: 'invalid',
+                message: 'Runtime movement tasking is not available in this build.',
+                read_only: true
+            });
+        }
+        var task = clonePlain(input || {});
+        _movementTaskingSeq += 1;
+        if (!task.movement_id) task.movement_id = 'operator-move-' + _movementTaskingSeq;
+        var context = _runtimeMovementTaskContext();
+        var built = MOV.createRuntimeMovementTaskPlan(task, context);
+        if (!built || built.ok === false || !built.plan) {
+            return _rememberMovementTaskingStatus({
+                ok: false,
+                status: 'invalid',
+                code: built && built.code || 'invalid_movement_task',
+                message: built && built.message || 'Movement task could not be created.',
+                read_only: true
+            });
+        }
+        var started = MOV.addRuntimeMovementPlan(st, built.plan, context);
+        _coaExec.runtime_movement = started && started.state ? started.state : st;
+        try { _publishOwnedPositions(); } catch (_) {}
+        var created = arr(started && started.created);
+        var msg = created.length
+            ? 'Movement task started for ' + created.length + ' unit' + (created.length === 1 ? '.' : 's.')
+            : 'Movement task recorded; no new unit movement was started.';
+        var status = _rememberMovementTaskingStatus({
+            ok: created.length > 0,
+            status: created.length > 0 ? 'started' : 'unchanged',
+            message: msg,
+            movement_id: built.plan.movement_id || null,
+            plan_kind: built.plan.kind || built.plan.effect_kind || null,
+            created_count: created.length,
+            start_elapsed_hours: built.plan.start_elapsed_hours,
+            read_only: true
+        });
+        try { _appendToEventLog(msg + ' ' + (built.plan.movement_id || '')); } catch (_) {}
+        try { updatePanel(); } catch (_) {}
+        return clonePlain(status);
     }
     function _applyRuntimeEventEffectsForEvent(event, API, st) {
         if (!event || !API || typeof API.applySafeRuntimeEventEffects !== 'function' || !st) {
             return { total: 0, blocked: 0, pending: 0 };
         }
-        var res = API.applySafeRuntimeEventEffects(st, event, event.effects || []);
+        var sc = W() && W().RmoozScenario && W().RmoozScenario.scenario;
+        var res = API.applySafeRuntimeEventEffects(st, event, event.effects || [], { scenario: sc, doctrine: W() && W().AppDoctrineRules });
         _syncRuntimeEffectSessionState(st, res && res.state);
+        try { _planRuntimeExecutions(); } catch (_) {}
         var total = 0, blocked = 0, pending = 0;
         arr(res && res.effects).forEach(function (effect) {
             total++;
-            if (effect && effect.status === 'blocked') blocked++;
-            else if (effect && effect.kind === 'request_operator_decision' && effect.status === 'proposed') pending++;
+            if (effect && effect.status === 'blocked') {
+                blocked++;
+                var bmsg = 'Runtime effect blocked: ' + (effect.kind || 'unsupported') + ' (' + (effect.reason || 'blocked') + ')';
+                try { _appendRuntimeEventLog(bmsg); } catch (_) {}
+                try { _recordDecision({ role: 'operator', action: 'runtime_effect_blocked', called_llm: false, source: 'runtime-events', reason: effect.reason || 'blocked', result_summary: bmsg }); } catch (_) {}
+            } else if (effect && effect.kind === 'add_notification' && effect.status === 'applied_safe') {
+                var msg = _runtimeEffectPayloadMessage(effect) || ((event && event.title) || (event && event.id) || 'Runtime notification');
+                try { _appendRuntimeEventLog('Runtime notification: ' + msg); } catch (_) {}
+            } else if (effect && effect.kind === 'request_operator_decision' && effect.status === 'proposed') {
+                pending++;
+            } else if (effect && effect.status === 'pending_effect_execution') {
+                pending++;
+            } else if (effect && effect.status === 'requires_approval') {
+                pending++;
+                var amsg = 'Runtime effect requires approval: ' + (effect.kind || 'unsupported') + ' (' + (effect.reason || 'approval required') + ')';
+                try { _appendRuntimeEventLog(amsg); } catch (_) {}
+            }
             try { _logRuntimeEffectOutcome(effect, event); } catch (_) {}
         });
         return { total: total, blocked: blocked, pending: pending };
@@ -4341,6 +4796,48 @@
         var c = ex && ex.clock;
         if (c && isFinite(+c.current_hours)) return (+c.current_hours === 0) ? 'H' : ('H' + (c.current_hours < 0 ? '' : '+') + (Math.round(c.current_hours * 10) / 10));
         return '\u2014';
+    }
+
+    // OPTION-C / SLICE-C3b: the explicit runtime state (stopped/playing/paused/complete) + a
+    // snapshot of the runtime clock, single-sourced from the World State reducer over _coaExec.clock.
+    function _runtimeState() {
+        if (!_coaExec || !_coaExec.active || !_coaExec.clock) return 'stopped';
+        var w = W(); var WS = w && w.AppWorldState;
+        if (WS && typeof WS.runtimeClockState === 'function') { try { return WS.runtimeClockState(_coaExec.clock); } catch (_) {} }
+        var c = _coaExec.clock;
+        if (c.completed) return 'complete';
+        if (c.playing && !c.paused) return 'playing';
+        if (c.paused) return 'paused';
+        return 'stopped';
+    }
+    function _runtimeSnapshot() {
+        var c = (_coaExec && _coaExec.active && _coaExec.clock) || null;
+        if (!c) return { state: 'stopped', current_elapsed_hours: null, start_hours: null, end_hours: null, speed: _clockSpeedMult(), playing: false, paused: false, completed: false };
+        return {
+            state: _runtimeState(),
+            current_elapsed_hours: +c.current_hours, start_hours: +c.start_hours, end_hours: +c.end_hours,
+            speed: isFinite(+c.speed) ? +c.speed : _clockSpeedMult(),
+            playing: !!c.playing, paused: !!c.paused, completed: !!c.completed
+        };
+    }
+    // The authored snapshot in EFFECT at the current runtime time \u2014 review label only (NOT the run engine).
+    function _snapshotInEffectLabel() {
+        try {
+            var c = (_coaExec && _coaExec.clock) || null; if (!c) return '\u2014';
+            var w = W(); var WS = w && w.AppWorldState; var scn = w && w.RmoozScenario && w.RmoozScenario.scenario;
+            if (WS && typeof WS.findStepForElapsedHours === 'function' && scn) {
+                var f = WS.findStepForElapsedHours(scn, c.current_hours);
+                return (f && (f.time_label || ('step ' + f.index))) || '\u2014';
+            }
+        } catch (_) {}
+        return '\u2014';
+    }
+    // Set the runtime speed preset (x1/x5/x15/fire/fire2) \u2014 scales CLOCK progression, not step jumps.
+    function _setRuntimeSpeed(sp) {
+        if (FF_CLOCK_SPEED_MULT[sp] != null) _freeFightSpeed = sp;
+        if (_coaExec && _coaExec.clock) { _coaExec.clock.speed = _clockSpeedMult(); try { _publishRunClock(); } catch (_) {} }
+        try { updatePanel(); } catch (_) {}
+        return _freeFightSpeed;
     }
 
     // OPTION-C / SLICE-C2: the runtime clock drives the DISPLAYED snapshot. On each authored-step boundary the
@@ -4574,6 +5071,7 @@
         }
         _coaExec.ticks++; _coaExec.updated_at = _nowISO();
         try { _advanceScenarioClock(); } catch (_) {}   // OPTION-C/C1: advance the scenario runtime clock (current_time) this tick
+        try { _tickRuntimeMovement(false); } catch (_) {}   // MOV1: approved movement plans progress by scenario clock only
         var _runtimeEvents = null; try { _runtimeEvents = _fireRuntimeEventsFromClock(); } catch (_) {}   // C4b: clock -> evaluator -> fired IDs + operator log only (no effects)
         var _crossed = false; try { _crossed = _syncDisplayStepToClock(); } catch (_) {}   // OPTION-C/C2: clock drives the displayed snapshot step (re-renders on a boundary cross)
         var coa_tick_execute_ms = _nowMs() - te0;
@@ -4634,7 +5132,7 @@
         _coaExec.paused = false; _coaExec.replan_required = false; _coaExec.replan_reason = null; _coaExec.phase_status = 'running';
         _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
         _coaExecIntervalMs = _coaExecTickMs();   // brisk, deterministic — NOT the 6s cinematic LLM pacing
-        if (_coaExec.clock) _coaExec.clock.playing = true;   // OPTION-C/C1: the Run controls the scenario clock
+        if (_coaExec.clock) { _coaExec.clock.playing = true; _coaExec.clock.paused = false; }   // OPTION-C/C1+C3b: Run plays the clock (truthful state)
         try { _publishRunClock(); } catch (_) {}
         _coaExecTick();   // run one immediately
         _coaExecTimer = _setIntervalSafe(_coaExecTick, _coaExecIntervalMs);
@@ -4643,7 +5141,8 @@
     function _pauseCommittedCoa() {
         _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
         if (_coaExec) { _coaExec.paused = true; _coaExec.updated_at = _nowISO(); }
-        if (_coaExec && _coaExec.clock) { _coaExec.clock.playing = false; try { _publishRunClock(); } catch (_) {} }   // OPTION-C/C1: Pause stops the clock
+        if (_coaExec && _coaExec.clock) { _coaExec.clock.playing = false; _coaExec.clock.paused = true; try { _publishRunClock(); } catch (_) {} }   // OPTION-C/C1+C3b: Pause freezes the clock (truthful state)
+        try { _tickRuntimeMovement(true); } catch (_) {}
         try { _appendToEventLog('COA execution paused by operator.'); } catch (_) {}
         _persistCoaExec();   // RMOOZ-COA-COMMIT-PERSISTENCE-M
         updatePanel();
@@ -6692,6 +7191,7 @@
             try { _appendToEventLog('Run Scenario — continuous fight started. Deterministic ticks; the AI is NOT called on normal ticks.'); } catch (_) {}
         } else { _scenario.scenario_status = 'running'; _scenario.pending_replan_reason = null; }
         if (_coaExec.phase_status !== 'complete') { _coaExec.paused = false; _coaExec.replan_required = false; }
+        // OPTION-C/C3b: primary Play unfreezes the runtime clock (Play = time moves).
         _setScenarioClockPlaying(true);
         _startScenarioTimer();
         _scenarioTick();   // run one immediately so the operator sees the fight move
@@ -6702,8 +7202,10 @@
         if (!_scenarioActive()) return;
         _scenario.scenario_status = 'paused'; _scenario.updated_at = _nowISO();
         _stopScenarioTimer(); _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
+        // OPTION-C/C3b: Pause freezes the runtime clock (state stays truthful, not stale-"playing").
         if (_coaExec) { _coaExec.paused = true; _coaExec.updated_at = _nowISO(); }
         _setScenarioClockPlaying(false);
+        try { _tickRuntimeMovement(true); } catch (_) {}
         try { _appendToEventLog('Scenario paused by operator.'); } catch (_) {}
         updatePanel();
     }
@@ -6712,8 +7214,11 @@
         _stopScenarioTimer(); _clearIntervalSafe(_coaExecTimer); _coaExecTimer = null;
         _scenario.scenario_status = 'complete'; _scenario.end_condition = 'operator_stopped';
         _scenario.last_outcome = 'Operator stopped the scenario.'; _scenario.pending_replan_reason = null; _scenario.updated_at = _nowISO();
+        // OPTION-C/C3b: Stop returns the runtime clock to scenario start (single-source resetRuntimeClock).
         if (_coaExec) { _coaExec.paused = true; _coaExec.updated_at = _nowISO(); }
         _resetScenarioClockToStart();
+        try { _resetRuntimeMovementState(); } catch (_) {}
+        try { _publishOwnedPositions(); } catch (_) {}
         try { _appendToEventLog('Scenario stopped by operator.'); } catch (_) {}
         updatePanel();
     }
@@ -6866,6 +7371,25 @@
         // World-State clock label (MAP.runClockLabel: findStepForElapsedHours + start_time DTG), H-relative
         // fallback. "Run means time moves": the primary run panel shows time, not a fixed turn count.
         scenarioClockLabel: function () { try { return _scenarioClockLabel(_coaExec); } catch (_) { return '—'; } },
+        // OPTION-C/C3b: the primary run state is TIME — expose the explicit runtime state + the
+        // (secondary, review-only) authored snapshot in effect at the current runtime time.
+        runtimeApprovals: function () { try { return _runtimeApprovalList(); } catch (_) { return []; } },
+        runtimeApprovalHistory: function () { try { return _runtimeApprovalHistory(); } catch (_) { return []; } },
+        runtimeApprovalSummary: function () { try { return _runtimeApprovalSummary(); } catch (_) { return { pending: 0, approved: 0, rejected: 0, blocked: 0, journal_retry_queue: 0, read_only: true }; } },
+        retryPendingDoctrineJournalRecords: function () { return _retryPendingDoctrineJournalRecords(); },
+        planRuntimeExecutions: function () { return _planRuntimeExecutions(); },
+        runtimeExecutionSummary: function () { try { return _runtimeExecutionSummary(); } catch (_) { return { pending: 0, blocked: 0, history: 0, last_execution_plan: null, read_only: true }; } },
+        runtimeMovementSummary: function () { try { return _runtimeMovementSummary(); } catch (_) { return { planned: 0, moving: 0, arrived: 0, paused: 0, blocked: 0, group_movement_count: 0, group_status_summary: {}, runtime_position_count: 0, next_eta: null, read_only: true }; } },
+        runtimeMovementState: function () { try { return _ensureRuntimeMovementState(); } catch (_) { return null; } },
+        startRuntimeMovementPlans: function () { return _startRuntimeMovementPlans(); },
+        tickRuntimeMovement: function (paused) { return _tickRuntimeMovement(paused === true); },
+        runtimeMovementTaskingStatus: function () { try { return _runtimeMovementTaskingStatus(); } catch (_) { return null; } },
+        createRuntimeMovementTask: function (input) { return _createRuntimeMovementTask(input || {}); },
+        approveRuntimeApproval: function (approvalId) { return _decideRuntimeApproval(approvalId, 'approve'); },
+        rejectRuntimeApproval: function (approvalId) { return _decideRuntimeApproval(approvalId, 'reject'); },
+        runtimeState: function () { try { return _runtimeState(); } catch (_) { return 'stopped'; } },
+        runtimeSnapshot: function () { try { return _runtimeSnapshot(); } catch (_) { return null; } },
+        snapshotInEffectLabel: function () { try { return _snapshotInEffectLabel(); } catch (_) { return '—'; } },
         scenarioActive: function () { try { return _scenarioActive(); } catch (_) { return false; } },
         commitBlockedReason: function () { return _coaCommitBlockedReason; },
         // ── readiness / Step-1 gate (Panel 1) ──
@@ -7158,6 +7682,10 @@
         mount: mount, init: init, setObjective: setObjective, clearObjective: clearObjective,
         start: start, pause: pause, reset: reset, step: step, replan: replan, clear: clear,
         pauseCommittedRun: function () { return _pauseCommittedCoa(); },   // OPTION-C/C2: manual step-nav pauses the clock-driven committed run
+        // OPTION-C/C3b: Continuous Runtime Play Model — external/runtime API (Play = time moves).
+        runtimeState: function () { return _runtimeState(); },
+        runtimeSnapshot: function () { return _runtimeSnapshot(); },
+        setRuntimeSpeed: function (sp) { return _setRuntimeSpeed(sp); },
         setPlannerMode: setPlannerMode,
         getState: getState, getGroups: getGroups, getRed: getRed, getBlue: getBlue,
         getObjective: getObjective, getPlan: getPlan, getLlmStatus: function () { return Object.assign({}, _llmStatus); },

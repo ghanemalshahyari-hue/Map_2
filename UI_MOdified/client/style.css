@@ -33,6 +33,17 @@
     --panel-w: 340px;
 }
 
+/* Make hidden/dev-only inert surfaces authoritative over component display classes.
+   This keeps compatibility review UI from rendering as visible-but-dead cards. */
+[hidden] {
+    display: none !important;
+}
+
+[data-dev-only][hidden],
+[data-dev-only][inert] {
+    display: none !important;
+}
+
 /* ── Dark mode override — original palette ──────────────────────────── */
 [data-theme="dark"] {
     --bg: #0f172a;

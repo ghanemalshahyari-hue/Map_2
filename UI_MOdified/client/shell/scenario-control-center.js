@@ -224,6 +224,7 @@
         var latestMovement = lastOf(trace);
         var pendingReplan = scn.pending_replan_reason || ex.pending_replan_reason ||
             (ex.replan_required ? 'Committed COA requires replan' : null);
+        var approvals = arr(safeRead(function () { return eng.runtimeApprovals ? eng.runtimeApprovals() : []; }, []));
 
         return {
             version: '1.0.0-cmo-wargame-run-instrumentation-1',
@@ -252,6 +253,7 @@
             movement_summary: summarizeMovementDebug(movementDebug),
             decision_log_count: decisionLog.length,
             network_call_count: networkCalls.length,
+            pending_approval_count: approvals.length,
             latest_decision_summary: decisionSummary(latestDecision),
             latest_movement_summary: movementSummary(latestMovement),
             readiness: {
@@ -281,6 +283,162 @@
     }
     function kv(label, val, col) { return '<div style="font-size:10.5px;color:' + C.dim + ';margin:1px 0;">' + esc(label) + ': <span style="color:' + (col || C.ink) + ';font-weight:600;">' + esc(val) + '</span></div>'; }
     function note(txt, col) { return '<div style="margin-top:5px;font-size:10px;color:' + (col || C.dim) + ';line-height:1.5;">' + txt + '</div>'; }
+    function approvalSummaryHtml(eng) {
+        var approvals = arr(safeRead(function () { return eng.runtimeApprovals ? eng.runtimeApprovals() : []; }, []));
+        var summary = safeRead(function () { return eng.runtimeApprovalSummary ? eng.runtimeApprovalSummary() : null; }, null) || {};
+        var history = arr(safeRead(function () { return eng.runtimeApprovalHistory ? eng.runtimeApprovalHistory() : []; }, []));
+        var hasAudit = approvals.length || summary.approved || summary.rejected || summary.blocked || summary.journal_retry_queue;
+        if (!hasAudit) return '';
+        var h = '<div data-scc="doctrine-approvals" style="margin:7px 0;padding:7px 9px;border:1px solid ' + C.warn + ';border-radius:6px;background:#1c1608;">' +
+            '<div style="font-size:10.5px;color:' + C.warn + ';font-weight:800;">Doctrine / ROE / WRA approval audit</div>' +
+            '<div data-scc="doctrine-approval-summary" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:5px;font-size:9.5px;color:' + C.ink + ';">' +
+            '<span>pending <b style="color:#ffd27f;">' + (summary.pending || approvals.length || 0) + '</b></span>' +
+            '<span>approved <b style="color:' + C.good + ';">' + (summary.approved || 0) + '</b></span>' +
+            '<span>rejected <b style="color:' + C.bad + ';">' + (summary.rejected || 0) + '</b></span>' +
+            '<span>blocked <b style="color:' + C.bad + ';">' + (summary.blocked || 0) + '</b></span>' +
+            '<span>journal retry <b style="color:' + ((summary.journal_retry_queue || 0) ? C.warn : C.dim) + ';">' + (summary.journal_retry_queue || 0) + '</b></span>' +
+            ((summary.journal_retry_queue || 0) ? btnSec('scc-retry-doctrine-journal', 'Retry journal', 'Retry queued doctrine journal records; no effects execute') : '') +
+            '</div>';
+        approvals.slice(0, 6).forEach(function (p, idx) {
+            var d = p && p.doctrine_decision || {};
+            var id = p.approval_id || p.effect_id || ('approval-' + idx);
+            var rules = arr(d.matched_rules).map(function (r) { return r && (r.id || r.rule_id || r.name || r.source); }).filter(Boolean).join(', ') || 'none';
+            var reasons = p.reason || arr(d.reasons).join('; ') || 'approval required';
+            var dp = d.decision_point_id || (p.payload && (p.payload.decision_point_id || p.payload.decision_id)) || 'none';
+            var ev = p.event_id || 'event';
+            var at = p.at_elapsed_hours != null ? eventHoursLabel(p.at_elapsed_hours) : 'current';
+            h += '<div data-scc-approval="' + esc(id) + '" style="margin-top:7px;padding:7px 8px;border:1px solid #5c4b1d;border-radius:5px;background:#0c141d;">' +
+                '<div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;">' +
+                '<div style="font-size:10px;color:' + C.ink + ';line-height:1.45;">' +
+                '<b style="color:#ffd27f;">' + esc(p.kind || 'effect') + '</b> / ' + esc(p.status || 'requires_approval') +
+                '<br><span style="color:' + C.dim + ';">Reason:</span> ' + esc(reasons) +
+                '<br><span style="color:' + C.dim + ';">Authority:</span> ' + esc(d.required_authority || 'operator') +
+                '<br><span style="color:' + C.dim + ';">Rules:</span> ' + esc(rules) +
+                '<br><span style="color:' + C.dim + ';">Context:</span> event ' + esc(ev) + ' / decision ' + esc(dp) + ' / ' + esc(at) +
+                '</div><div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;">' +
+                btnPri('scc-approve-doctrine-' + idx, 'Approve', 'Record approval only; no combat/unit/map effect executes') +
+                btnWarn('scc-reject-doctrine-' + idx, 'Reject', 'Record rejection and keep the effect from later execution') +
+                '</div></div></div>';
+        });
+        var details = history.filter(function (r) { return r && r.kind !== 'pending_approval'; }).slice(-4).reverse();
+        if (details.length) {
+            h += '<div data-scc="doctrine-approval-history" style="margin-top:7px;border-top:1px solid #5c4b1d;padding-top:5px;font-size:9.5px;color:' + C.dim + ';">';
+            details.forEach(function (r) {
+                h += '<div style="line-height:1.45;"><b style="color:' + C.ink + ';">' + esc(r.effect_kind || 'effect') + '</b> ' +
+                    esc(r.decision || r.resulting_status || r.kind) +
+                    ' / authority ' + esc(r.required_authority || 'operator') +
+                    ' / ' + esc(r.reason || 'recorded') +
+                    (r.scenario_time_label ? (' / ' + esc(r.scenario_time_label)) : '') + '</div>';
+            });
+            h += '</div>';
+        }
+        return h + '</div>';
+    }
+    function executionPlanSummaryHtml(eng) {
+        var summary = safeRead(function () { return eng.runtimeExecutionSummary ? eng.runtimeExecutionSummary() : null; }, null) || {};
+        var pending = summary.pending || 0;
+        var blocked = summary.blocked || 0;
+        var last = summary.last_execution_plan || null;
+        if (!pending && !blocked && !last) return '';
+        var h = '<div data-scc="runtime-execution-plans" style="margin:7px 0;padding:7px 9px;border:1px solid ' + C.edgeSoft + ';border-radius:6px;background:#08121d;">' +
+            '<div style="font-size:10.5px;color:' + C.accent + ';font-weight:800;">Runtime execution plans</div>' +
+            '<div data-scc="runtime-execution-summary" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:5px;font-size:9.5px;color:' + C.ink + ';">' +
+            '<span>pending executions <b style="color:#ffd27f;">' + pending + '</b></span>' +
+            '<span>blocked executions <b style="color:' + (blocked ? C.bad : C.dim) + ';">' + blocked + '</b></span>' +
+            '</div>';
+        if (last) {
+            h += '<div data-scc="runtime-execution-last" style="margin-top:5px;font-size:9.5px;color:' + C.dim + ';line-height:1.45;">Last execution plan: ' +
+                '<b style="color:' + C.ink + ';">' + esc(last.effect_kind || 'effect') + '</b> / ' +
+                esc(last.classification || 'classification') + ' / ' + esc(last.status || 'planned') +
+                (last.reason ? (' / ' + esc(last.reason)) : '') + '</div>';
+        }
+        return h + '</div>';
+    }
+    function movementSummaryHtml(eng) {
+        var summary = safeRead(function () { return eng.runtimeMovementSummary ? eng.runtimeMovementSummary() : null; }, null) || {};
+        var active = (summary.moving || 0) + (summary.paused || 0) + (summary.planned || 0);
+        var arrived = summary.arrived || 0;
+        var blocked = summary.blocked || 0;
+        var groupMovementCount = summary.group_movement_count || 0;
+        var groupStatusSummary = summary.group_status_summary || {};
+        var positions = summary.runtime_position_count || 0;
+        if (!active && !arrived && !blocked && !positions && !groupMovementCount) return '';
+        var next = summary.next_movement || null;
+        var last = summary.last_arrival || null;
+        var h = '<div data-scc="runtime-movement" style="margin:7px 0;padding:7px 9px;border:1px solid ' + C.edgeSoft + ';border-radius:6px;background:#08121d;">' +
+            '<div style="font-size:10.5px;color:' + C.accent + ';font-weight:800;">Scenario movement runtime</div>' +
+            '<div data-scc="runtime-movement-summary" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:5px;font-size:9.5px;color:' + C.ink + ';">' +
+            '<span>moving <b style="color:' + C.good + ';">' + (summary.moving || 0) + '</b></span>' +
+            '<span>paused <b style="color:#ffd27f;">' + (summary.paused || 0) + '</b></span>' +
+            '<span>arrived <b style="color:' + C.ink + ';">' + arrived + '</b></span>' +
+            '<span>blocked <b style="color:' + (blocked ? C.bad : C.dim) + ';">' + blocked + '</b></span>' +
+            '<span>group movement <b style="color:' + C.ink + ';">' + groupMovementCount + '</b></span>' +
+            '<span>runtime positions <b style="color:' + C.ink + ';">' + positions + '</b></span>' +
+            '</div>';
+        if (groupMovementCount) {
+            h += '<div data-scc="runtime-group-movement-status" style="margin-top:5px;font-size:9.5px;color:' + C.dim + ';line-height:1.45;">Group movement status: ' +
+                '<b style="color:' + C.good + ';">moving ' + (groupStatusSummary.moving || 0) + '</b> / ' +
+                '<b style="color:#ffd27f;">paused ' + (groupStatusSummary.paused || 0) + '</b> / ' +
+                '<b style="color:' + C.ink + ';">arrived ' + (groupStatusSummary.arrived || 0) + '</b> / ' +
+                '<b style="color:' + (groupStatusSummary.blocked ? C.bad : C.dim) + ';">blocked ' + (groupStatusSummary.blocked || 0) + '</b></div>';
+        }
+        if (next) {
+            h += '<div data-scc="runtime-movement-next" style="margin-top:5px;font-size:9.5px;color:' + C.dim + ';line-height:1.45;">Next ETA: ' +
+                '<b style="color:' + C.ink + ';">' + esc(next.unit_id || '?') + '</b> / ' +
+                esc(eventHoursLabel(next.eta_elapsed_hours)) + ' / ' +
+                Math.round((+next.progress || 0) * 100) + '%</div>';
+        }
+        if (last) {
+            h += '<div data-scc="runtime-movement-last-arrival" style="margin-top:4px;font-size:9.5px;color:' + C.dim + ';line-height:1.45;">Last arrival: ' +
+                '<b style="color:' + C.ink + ';">' + esc(last.unit_id || '?') + '</b> / ' +
+                esc(eventHoursLabel(last.at_elapsed_hours)) + '</div>';
+        }
+        return h + '</div>';
+    }
+    function movementTaskingHtml(eng) {
+        var status = safeRead(function () { return eng.runtimeMovementTaskingStatus ? eng.runtimeMovementTaskingStatus() : null; }, null);
+        var input = 'width:100%;box-sizing:border-box;background:#050d16;border:1px solid ' + C.edgeSoft + ';border-radius:5px;color:' + C.ink + ';padding:5px 7px;font:inherit;font-size:10px;';
+        var label = 'display:block;font-size:9px;color:' + C.dim + ';font-weight:700;margin-bottom:2px;';
+        function field(name, text, placeholder) {
+            return '<label style="' + label + '">' + esc(text) + '</label>' +
+                '<input data-scc-move="' + name + '" placeholder="' + esc(placeholder || '') + '" style="' + input + '">';
+        }
+        function cell(html, basis) {
+            return '<div style="flex:1 1 ' + (basis || '110px') + ';min-width:0;">' + html + '</div>';
+        }
+        var statusHtml = status
+            ? '<div data-scc="movement-tasking-message" style="margin-top:5px;font-size:9.5px;color:' + (status.ok ? C.good : C.warn) + ';line-height:1.35;">' + esc(status.message || status.status || '') + '</div>'
+            : '';
+        var h = '<div data-scc="movement-tasking" style="margin:7px 0;padding:7px 9px;border:1px solid ' + C.edgeSoft + ';border-radius:6px;background:#08121d;">' +
+            '<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;">' +
+            '<div style="font-size:10.5px;color:' + C.accent + ';font-weight:800;">Movement tasking</div>' +
+            '<div style="font-size:9px;color:' + C.dim + ';">scenario time owned</div></div>' +
+            '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">' +
+            cell(field('unit-id', 'Unit ID', 'U1')) +
+            cell(field('unit-ids', 'Group unit IDs', 'U1, U2, U3'), '145px') +
+            cell(field('leader-unit-id', 'Leader', 'U1')) +
+            '</div>' +
+            '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">' +
+            cell(field('destination-lon', 'Dest lon', '18.40')) +
+            cell(field('destination-lat', 'Dest lat', '31.55')) +
+            cell(field('domain', 'Domain', 'ground')) +
+            '</div>' +
+            '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">' +
+            cell(field('speed-kph', 'Speed kph', '40')) +
+            cell(field('speed-knots', 'Speed kt', '30')) +
+            cell(field('formation', 'Formation', 'column')) +
+            cell(field('spacing-meters', 'Spacing m', '500')) +
+            '</div>' +
+            '<div style="margin-top:6px;">' +
+            '<label style="' + label + '">Route points JSON</label>' +
+            '<textarea data-scc-move="route-points" placeholder="[[18.1,31.2],[18.4,31.55]]" rows="2" style="' + input + 'resize:vertical;"></textarea>' +
+            '</div>' +
+            '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:7px;">' +
+            btnPri('scc-movement-start', 'Start movement', 'Create a runtime movement task at current scenario time') +
+            '<span style="font-size:9px;color:' + C.dim + ';">Single unit uses Unit ID; group uses Group unit IDs.</span>' +
+            '</div>' + statusHtml + '</div>';
+        return h;
+    }
     function openCmoTestGuide() {
         var g = (typeof globalThis !== 'undefined' && globalThis) || (typeof global !== 'undefined' && global) || null;
         var w = (typeof window !== 'undefined' && window) || g;
@@ -573,6 +731,10 @@
         } else if (state === 'scenario_complete') {
             controls = btnSec('scc-run', '🎬 Run Scenario again') + ' ' + btnWarn('scc-clear', '✕ Clear');
         }
+        inner += approvalSummaryHtml(eng);
+        inner += executionPlanSummaryHtml(eng);
+        inner += movementSummaryHtml(eng);
+        inner += movementTaskingHtml(eng);
         inner += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:7px;">' + controls + '</div>';
         // live runtime read-out
         if (scn && scn.scenario_active) {
@@ -580,6 +742,8 @@
             // "Run means time moves": the primary readout is scenario time, runtime state, and speed.
             // Authored progress rows stay internal and are not rendered in normal operator UI.
             inner += kv('Scenario time', (function () { try { return (eng.scenarioClockLabel && eng.scenarioClockLabel()) || '—'; } catch (_) { return '—'; } })(), C.good) +
+                // C3b: steps are review-only — the snapshot in effect is SECONDARY, never the run engine.
+                kv('Snapshot in effect', (function () { try { return (eng.snapshotInEffectLabel && eng.snapshotInEffectLabel()) || '—'; } catch (_) { return '—'; } })(), C.dim) +
                 kv('Runtime state', runtimeStateLabel(state, scn, ex), STATE_COLOR[state] || C.ink) +
                 kv('Speed', runtimeSpeedLabel(ex), C.accent) +
                 kv('Next runtime event', nextRuntimeEventLabel(ex), C.dim) +
@@ -860,6 +1024,30 @@
                 });
             });
         });
+        bindFn('scc-movement-start', function () {
+            var doc = (typeof document !== 'undefined') ? document : null;
+            var root = doc && doc.querySelector('[data-scc="movement-tasking"]');
+            function val(name) {
+                var el = root && root.querySelector('[data-scc-move="' + name + '"]');
+                return el ? String(el.value || '').trim() : '';
+            }
+            if (eng.createRuntimeMovementTask) {
+                eng.createRuntimeMovementTask({
+                    unit_id: val('unit-id'),
+                    unit_ids: val('unit-ids'),
+                    leader_unit_id: val('leader-unit-id'),
+                    destination_lon: val('destination-lon'),
+                    destination_lat: val('destination-lat'),
+                    route_points: val('route-points'),
+                    speed_kph: val('speed-kph'),
+                    speed_knots: val('speed-knots'),
+                    domain: val('domain'),
+                    formation: val('formation'),
+                    spacing_meters: val('spacing-meters')
+                });
+            }
+            (eng.repaint || function () {})();
+        });
         bindFn('scc-clear', function () { eng.clearAll(); });
         bindFn('scc-replan', function () { eng.replan(); });
         // RMOOZ-PREPARE-COA-UX-UNBLOCK-A: provider-switch, continuous run, auto-continue bindings
@@ -867,6 +1055,12 @@
         bindFn('scc-use-local-model', function () { if (typeof eng.switchToLocalModel === 'function') eng.switchToLocalModel(); });
         bindFn('scc-use-openrouter', function () { if (typeof eng.switchToOpenRouter === 'function') eng.switchToOpenRouter(); });
         bindFn('scc-evidence-toggle', function () { evidenceOpen = !evidenceOpen; (eng.repaint || function () {})(); });
+        bindFn('scc-retry-doctrine-journal', function () { if (eng.retryPendingDoctrineJournalRecords) eng.retryPendingDoctrineJournalRecords(); });
+        arr(safeRead(function () { return eng.runtimeApprovals ? eng.runtimeApprovals() : []; }, [])).slice(0, 6).forEach(function (p, idx) {
+            var id = p && (p.approval_id || p.effect_id);
+            bindFn('scc-approve-doctrine-' + idx, function () { if (eng.approveRuntimeApproval) eng.approveRuntimeApproval(id); });
+            bindFn('scc-reject-doctrine-' + idx, function () { if (eng.rejectRuntimeApproval) eng.rejectRuntimeApproval(id); });
+        });
         for (var i = 0; i < 8; i++) { (function (idx) { bindFn('scc-select-' + idx, function () { eng.selectCoa(idx); }); })(i); }
     }
 

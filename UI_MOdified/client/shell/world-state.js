@@ -280,11 +280,136 @@
         var s = obj(steps[idx]);
         return { index: idx, time_label: s.time_label || null, elapsed_hours: num(s.elapsed_hours) };
     }
+
+    /* ---- OPTION-C / SLICE-C3a: Runtime Scenario Time Anchor -----------------
+     * Additive, backward-compatible. Two optional authored fields:
+     *   - start_time      : ISO-8601 / Zulu anchor for elapsed_hours === 0 (H-hour).
+     *                        Already consumed by C1 (current_ms = start_time + hours).
+     *   - duration_minutes: positive runtime length measured from H (elapsed 0).
+     *                        When present it AUTHORITATIVELY caps the runtime end.
+     * A scenario with neither field is a legacy H-relative "stepped" scenario and
+     * behaves EXACTLY as before (end = the steps[] elapsed-hours span). steps[] stay
+     * snapshots the clock indexes into — never removed, never the runtime engine.
+     * ------------------------------------------------------------------------- */
+
+    // Runtime bounds in elapsed-hours. `steps_end` is the authored steps[] span end
+    // (legacy behaviour); `end` is the effective runtime end — the duration cap when
+    // duration_minutes is present, else steps_end. Single source of the end bound so
+    // the derived clock (display/tests) and the live Run advance (free-fight-demo)
+    // agree. Pure: reads only, never mutates the scenario.
+    function scenarioRuntimeBounds(scenario) {
+        var scn = obj(scenario), steps = arr(scn.steps);
+        var hrs = [];
+        steps.forEach(function (st) { var v = num(obj(st).elapsed_hours); if (v != null) hrs.push(v); });
+        var start = hrs.length ? Math.min.apply(null, hrs) : 0;
+        var stepsEnd = hrs.length ? Math.max.apply(null, hrs) : 0;
+        var durMin = (isFinite(+scn.duration_minutes) && +scn.duration_minutes > 0) ? +scn.duration_minutes : null;
+        // duration is measured from H (elapsed 0, == start_time); clamp so end never
+        // precedes the run start even for a pathologically tiny duration.
+        var end = (durMin != null) ? Math.max(durMin / 60, start) : stepsEnd;
+        return { start: start, end: end, steps_end: stepsEnd, duration_minutes: durMin };
+    }
+
+    // Classify a scenario. 'runtime_scenario' when an explicit type says so OR when it
+    // carries an absolute anchor (start_time) / a duration cap; otherwise legacy 'stepped'.
+    function runtimeScenarioType(scenario) {
+        var scn = obj(scenario);
+        var t = (typeof scn.type === 'string') ? scn.type.trim().toLowerCase() : '';
+        if (t === 'runtime_scenario' || t === 'runtime') return 'runtime_scenario';
+        var hasStart = typeof scn.start_time === 'string' && scn.start_time && isFinite(Date.parse(scn.start_time));
+        var hasDur = isFinite(+scn.duration_minutes) && +scn.duration_minutes > 0;
+        return (hasStart || hasDur) ? 'runtime_scenario' : 'stepped';
+    }
+
+    // Additive validation of the runtime anchor. NEVER blocks a legacy scenario:
+    // a 'stepped' scenario is always ok. A 'runtime_scenario' is checked for a coherent
+    // anchor (parseable start_time, positive duration_minutes) and, when it declares the
+    // type but supplies neither anchor, warned (it degrades to H-relative) but still ok.
+    function validateRuntimeScenario(scenario) {
+        var scn = obj(scenario);
+        var type = runtimeScenarioType(scn);
+        var errors = [], warnings = [];
+        if (type === 'runtime_scenario') {
+            var hasStartStr = typeof scn.start_time === 'string' && scn.start_time;
+            if (hasStartStr && !isFinite(Date.parse(scn.start_time))) {
+                errors.push({ path: 'start_time', msg: 'must be an ISO-8601 / Zulu timestamp' });
+            }
+            if ('duration_minutes' in scn && !(isFinite(+scn.duration_minutes) && +scn.duration_minutes > 0)) {
+                errors.push({ path: 'duration_minutes', msg: 'must be a positive number of minutes' });
+            }
+            if (!hasStartStr && !('duration_minutes' in scn)) {
+                warnings.push({ path: 'type', msg: 'runtime_scenario without start_time or duration_minutes runs as H-relative' });
+            }
+        }
+        return { ok: errors.length === 0, type: type, errors: errors, warnings: warnings };
+    }
+
+    /* ---- OPTION-C / SLICE-C3b: Continuous Runtime Play Model --------------------
+     * Owner ruling: Play = continuous scenario TIME; Step = review/snapshot only.
+     * These are the PURE, single-source reducers for the runtime clock the committed
+     * Run drives (free-fight-demo._advanceScenarioClock delegates here — NO 2nd clock).
+     * Clock shape: { start_hours, current_hours, end_hours, speed, playing, paused, completed }.
+     * ---------------------------------------------------------------------------- */
+
+    // advanceRuntimeClock(clock, hoursPerTick): advance current_hours by hoursPerTick*speed
+    // ONLY while playing & not paused & not complete; clamp to end_hours; at the bound mark
+    // completed + stop. A paused / non-playing / complete clock is frozen. Pure — returns a
+    // fresh clock, never mutates the input. This is how "speed changes clock progression, not
+    // fixed-step jumps" and "Pause freezes / Resume continues" are single-sourced.
+    function advanceRuntimeClock(clock, hoursPerTick) {
+        var c = obj(clock);
+        var start = isFinite(+c.start_hours) ? +c.start_hours : 0;
+        var cur = isFinite(+c.current_hours) ? +c.current_hours : start;
+        var out = {
+            start_hours: start, current_hours: cur, end_hours: +c.end_hours,
+            speed: isFinite(+c.speed) ? +c.speed : 1,
+            playing: !!c.playing, paused: !!c.paused, completed: !!c.completed
+        };
+        if (out.playing && !out.paused && !out.completed) {
+            var step = (isFinite(+hoursPerTick) ? +hoursPerTick : 0) * out.speed;
+            var next = cur + step;
+            if (isFinite(out.end_hours) && next >= out.end_hours) {
+                out.current_hours = out.end_hours; out.completed = true; out.playing = false;
+            } else {
+                out.current_hours = next;
+            }
+        }
+        return out;
+    }
+
+    // runtimeClockState(clock): the explicit runtime state — 'complete' | 'playing' | 'paused'
+    // | 'stopped'. Complete when flagged OR current has reached a real end bound (end>start, so
+    // a degenerate empty span is never falsely complete).
+    function runtimeClockState(clock) {
+        var c = obj(clock);
+        var cur = +c.current_hours, end = +c.end_hours, start = +c.start_hours;
+        var atEnd = isFinite(cur) && isFinite(end) && isFinite(start) && end > start && cur >= end;
+        if (c.completed === true || atEnd) return 'complete';
+        if (c.playing === true && !c.paused) return 'playing';
+        if (c.paused === true) return 'paused';
+        return 'stopped';
+    }
+
+    // resetRuntimeClock(clock): Stop/Reset returns the runtime to scenario start — current back
+    // to start_hours, not playing/paused/complete. Pure. (Speed + end bound are preserved.)
+    function resetRuntimeClock(clock) {
+        var c = obj(clock);
+        var start = isFinite(+c.start_hours) ? +c.start_hours : 0;
+        return {
+            start_hours: start, current_hours: start, end_hours: +c.end_hours,
+            speed: isFinite(+c.speed) ? +c.speed : 1, playing: false, paused: false, completed: false
+        };
+    }
+
     function _buildClock(scenario, clock) {
         var scn = obj(scenario), c = obj(clock);
         var cur = +c.current_hours;
         var startH = isFinite(+c.start_hours) ? +c.start_hours : cur;
+        var bounds = scenarioRuntimeBounds(scn);
         var endH = isFinite(+c.end_hours) ? +c.end_hours : cur;
+        // C3a: duration_minutes authoritatively caps the runtime end (overrides the
+        // steps-derived end the caller seeded). No duration → legacy end unchanged.
+        if (bounds.duration_minutes != null) endH = bounds.end;
         var found = findStepForElapsedHours(scn, cur);
         var rt = obj(scn.runtime_scenario);
         var startTime = (typeof scn.start_time === 'string' && scn.start_time)
@@ -292,6 +417,9 @@
             : ((typeof rt.start_time === 'string' && rt.start_time) ? rt.start_time : null);
         var currentMs = null;
         if (startTime) { var base = Date.parse(startTime); if (isFinite(base)) currentMs = base + cur * 3600000; }
+        // C3b: truthful runtime state (stopped/playing/paused/complete) so the readout can show it.
+        var completed = !!c.completed || (isFinite(endH) && isFinite(cur) && endH > startH && cur >= endH);
+        var state = runtimeClockState({ start_hours: startH, current_hours: cur, end_hours: endH, playing: !!c.playing, paused: !!c.paused, completed: completed });
         var durationH = isFinite(+c.duration_hours) ? +c.duration_hours
             : ((isFinite(endH) && isFinite(startH)) ? (endH - startH) : null);
         return {
@@ -300,6 +428,11 @@
             playing: !!c.playing, speed: isFinite(+c.speed) ? +c.speed : 1,
             step_index: found.index, time_label: found.time_label,
             start_time: startTime, current_ms: currentMs,
+            // C3a: additive runtime-anchor echoes (H-relative scenarios: null / false).
+            duration_minutes: bounds.duration_minutes,
+            runtime_scenario: runtimeScenarioType(scn) === 'runtime_scenario',
+            // C3b: continuous-runtime state model (paused/completed + derived state).
+            paused: !!c.paused, completed: completed, state: state,
             complete: (isFinite(endH) && isFinite(cur) && cur >= endH)
         };
     }
@@ -1235,6 +1368,19 @@
         // OPTION-C / SLICE-C1: the authored step in effect at a given elapsed-hours time
         // (steps become snapshots the runtime clock indexes into). Pure; no scenario mutation.
         findStepForElapsedHours: findStepForElapsedHours,
+        // OPTION-C / SLICE-C3a: Runtime Scenario Time Anchor (additive, backward-compatible).
+        // scenarioRuntimeBounds = single source of the runtime end (duration_minutes cap or
+        // steps span); runtimeScenarioType classifies stepped vs runtime_scenario; validate
+        // checks the anchor without ever blocking a legacy scenario. All pure.
+        scenarioRuntimeBounds: scenarioRuntimeBounds,
+        runtimeScenarioType: runtimeScenarioType,
+        validateRuntimeScenario: validateRuntimeScenario,
+        // OPTION-C / SLICE-C3b: Continuous Runtime Play Model — pure, single-source runtime-clock
+        // reducers (Play advances TIME, not fixed steps). advance = speed-scaled progression clamped
+        // to the end bound; state = stopped/playing/paused/complete; reset returns to scenario start.
+        advanceRuntimeClock: advanceRuntimeClock,
+        runtimeClockState: runtimeClockState,
+        resetRuntimeClock: resetRuntimeClock,
         applyDecision: applyDecision,
         // PR-WS2.5: derived-field rules (Inputs → Rule → Derived Output).
         // applyDerivations re-runs all rules over a snapshot (used live after the

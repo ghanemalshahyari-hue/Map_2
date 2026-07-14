@@ -23,7 +23,7 @@
         measure: { mode: 'pan',    tab: 'geo',     title: 'Measure', titleKey: 'tool-measure', hint: 'Click points on the map to measure distance',         hintKey: 'tool-hint-measure' },
         shapes:  { mode: 'pan',    tab: 'geo',     title: 'Shapes',  titleKey: 'tool-shapes',  hint: 'Choose a shape, then click the map',                  hintKey: 'tool-hint-shapes' },
         layers:  { mode: null,     tab: null,      title: 'Layers',   titleKey: 'tool-layers',  hint: 'Organize your map items',                            hintKey: 'tool-hint-layers' },
-        wargame: { mode: null,     tab: null,      title: 'Scenario', titleKey: 'tool-wargame', hint: 'Run an operational scenario (turn-based)',          hintKey: 'tool-hint-wargame' },
+        wargame: { mode: null,     tab: null,      title: 'Scenario', titleKey: 'tool-wargame', hint: 'Legacy diagnostic scenario review',                hintKey: 'tool-hint-wargame' },
         // PR-42+: Scenario Workspace Shell — live scenario workspace
         'scenario-workspace': { mode: null, tab: null, title: 'Scenario', titleKey: 'sw-tool-label', hint: 'Live Scenario Workspace — load, edit, and control scenarios', hintKey: 'sw-tool-hint' },
     };
@@ -224,6 +224,7 @@
             if (chatBtn) chatBtn.click();
             return;
         }
+        if (tool === 'wargame') tool = 'scenario-workspace';
 
         const cfg = TOOL_CONFIG[tool];
         if (!cfg) return;

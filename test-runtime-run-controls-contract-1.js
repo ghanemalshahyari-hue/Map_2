@@ -18,6 +18,8 @@ const HTML = read('UI_MOdified/client/app.html');
 const I18N = read('UI_MOdified/client/i18n.js');
 const WS = read('UI_MOdified/client/shell/world-state.js');
 const TURN = read('UI_MOdified/client/turn-engine.js');
+const RAIL = read('UI_MOdified/client/tool-rail.js');
+const STYLE = read('UI_MOdified/client/style.css');
 
 let passed = 0;
 let failed = 0;
@@ -98,9 +100,7 @@ ok('C3 legacy fallback HUD requires explicit developer class',
     TURN.includes("classList.contains('rmooz-dev-legacy-open')"));
 ok('C4 exact legacy visible button/title strings are not shipped as normal copy',
     !HTML.includes('Legacy Snapshot Adjudication') &&
-    !HTML.includes('Next snapshot') &&
-    !HTML.includes('Run trial') &&
-    !I18N.includes("'wg-btn-next': 'Next snapshot'"));
+    !HTML.includes('Run trial'));
 
 ok('D1 compatibility DOM ids are preserved inside hidden legacy panel',
     HTML.includes('id="wg-init"') &&
@@ -112,6 +112,27 @@ ok('D2 turn-engine.js is retained but gated',
     TURN.includes('if (!legacyDiagnosticsEnabled()) return null;'));
 ok('D3 authored steps remain internal clock compatibility',
     WS.includes('findStepForElapsedHours'));
+
+/* ── E. Legacy fixed-step surface not presented as a scenario RUN ──────────── */
+ok('E1 tool tooltip no longer frames the legacy HUD as a scenario run',
+    !I18N.includes('Run an operational scenario'));
+ok('E2 legacy step control renamed away from "Next Turn"',
+    !I18N.includes("'wg-btn-next': 'Next Turn'") &&
+    I18N.includes("'wg-btn-next': 'Next snapshot'"));
+ok('E3 wargame mode chip is Legacy/Diagnostic, not "Turn-based"',
+    !HTML.includes('wargame-mode-chip">Turn-based') &&
+    HTML.includes('wargame-mode-chip">Legacy'));
+ok('E4 legacy panel carries an explicit "not the scenario run" banner',
+    HTML.includes('wg-legacy-banner'));
+ok('E5 tool label marks the surface Legacy',
+    I18N.includes("'tool-wargame': 'Operational Scenario (Legacy)'"));
+ok('E6 legacy wargame rail button and panel are hidden developer-only surfaces',
+    /data-tool="wargame"[\s\S]*hidden[\s\S]*data-dev-only="legacy-wargame"/.test(HTML) &&
+    /id="wargame-panel"[\s\S]*hidden[\s\S]*data-dev-only="legacy-wargame"/.test(HTML) &&
+    /(^|\n)\s*\[hidden\]\s*\{\s*display\s*:\s*none\s*!important\s*;\s*\}/.test(STYLE));
+ok('E7 legacy wargame tool activation routes to live Scenario Workspace',
+    /tool\s*===\s*['"]wargame['"][\s\S]*scenario-workspace/.test(RAIL) &&
+    RAIL.includes("'scenario-workspace'"));
 
 console.log('\n=== Results: ' + passed + ' passed, ' + failed + ' failed ===');
 process.exit(failed ? 1 : 0);

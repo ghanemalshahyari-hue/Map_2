@@ -57,6 +57,17 @@ const TOP_LEVEL = Object.freeze({
     model_version:      { required: false, type: 'string',
         desc: 'Producer-defined version tag.' },
 
+    // ── OPTION-C / SLICE-C3a: Runtime Scenario Time Anchor (additive) ──────
+    // All optional; absent on every legacy H-relative scenario (which keep
+    // running from the steps[] elapsed-hours span). Validated pure-additively:
+    // unknown-to-legacy, type-checked when present, never required.
+    type:               { required: false, type: 'string',
+        desc: 'Scenario kind. "runtime_scenario" opts into absolute-time runtime; absent/other = legacy H-relative stepped.' },
+    start_time:         { required: false, type: 'string',
+        desc: 'ISO-8601 / Zulu anchor for elapsed_hours===0 (H-hour). Present ⇒ clock shows absolute Zulu DTG.' },
+    duration_minutes:   { required: false, type: 'number',
+        desc: 'Positive runtime length in minutes measured from H. Present ⇒ authoritatively caps the runtime end bound.' },
+
     map_bbox:           { required: true,  type: 'bbox',
         desc: '[lon_min, lat_min, lon_max, lat_max] of the operation map.' },
 
@@ -123,6 +134,16 @@ const TOP_LEVEL = Object.freeze({
         desc: 'C4a optional time-based decision points. Each item: { id?, trigger_elapsed_hours?, title?, options?, expires_elapsed_hours?, status? }.' },
     victory_conditions: { required: false, type: 'array',
         desc: 'C4a optional victory/end condition declarations. Read-only/pending in C4a; no destructive evaluation yet.' },
+    doctrine_rules:   { required: false, type: 'array',
+        desc: 'DOC1 optional doctrine constraints. Pure evaluator only: { id?, enabled?, applies_to_side?, condition?, action?, decision?, severity?, reason?, requires_authority?, tags? }.' },
+    roe_rules:        { required: false, type: 'array',
+        desc: 'DOC1 optional Rules of Engagement constraints. Pure evaluator only: { id?, target_domain?, target_status?, hostile_confirmed_required?, collateral_risk_max?, restricted_area_ids?, decision?, reason? }.' },
+    wra_rules:        { required: false, type: 'array',
+        desc: 'DOC1 optional Weapon Release Authority/Authorization constraints. Pure evaluator only: { id?, weapon_class?, target_class?, max_range_nm?, min_confidence?, required_sensor_quality?, salvo_limit?, decision?, reason? }.' },
+    authority_rules:  { required: false, type: 'array',
+        desc: 'DOC1 optional authority declarations for approval gates. Read-only metadata; no runtime approval flow in DOC1.' },
+    escalation_rules: { required: false, type: 'array',
+        desc: 'DOC1 optional escalation-rule declarations. Read-only metadata; no combat/effects execution in DOC1.' },
 
     // Provenance metadata — optional, kept by the port scripts so we
     // know where a scenario came from when debugging.

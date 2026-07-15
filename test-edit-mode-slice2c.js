@@ -65,7 +65,9 @@ console.log('\n[1] STEPS table — CMO build-order coverage');
         ['meta','map','sides','posture','doctrine','time','weather','geom','forces','missions','events','briefing','save'],
         'step ids in CMO build-order');
     const gaps = T.STEPS.filter(s => s.gap).map(s => s.id);
-    deepEq(gaps, ['doctrine','weather','missions','events'], 'gap steps are the engine GAPs');
+    // Batch B Slice 5 un-gapped 'doctrine'; Slice 6 un-gapped 'missions';
+    // Slice 7 un-gapped 'events' (real authoring UIs landed for all three).
+    deepEq(gaps, ['weather'], 'gap steps are the engine GAPs');
     // Every non-gap step must have a render fn
     const nonGapsRender = T.STEPS.filter(s => !s.gap).every(s => typeof s.render === 'function');
     ok(nonGapsRender, 'every non-gap step has a render function');
@@ -111,8 +113,9 @@ console.log('\n[4] stepIsComplete predicates');
     eq(T.stepIsComplete(empty, idIdx.meta), false, 'empty draft — Step 1 (meta) not complete');
     eq(T.stepIsComplete(empty, idIdx.map),  false, 'empty draft — Step 2 (map) not complete');
     eq(T.stepIsComplete(empty, idIdx.sides), false, 'empty draft — Step 3 (sides) not complete');
-    // Gap steps return null
-    eq(T.stepIsComplete(empty, idIdx.doctrine), null, 'gap step (doctrine) returns null');
+    // Gap steps return null. Batch B Slice 5 un-gapped 'doctrine' (real
+    // authoring UI landed) — it now returns a real boolean, not null.
+    eq(T.stepIsComplete(empty, idIdx.doctrine), false, 'doctrine (no longer a gap) — empty draft not complete');
     eq(T.stepIsComplete(empty, idIdx.weather),  null, 'gap step (weather) returns null');
 
     // Sahil sample — built scenario, should pass most non-gap predicates
@@ -137,7 +140,9 @@ console.log('\n[4] stepIsComplete predicates');
 console.log('\n[5] stepPillClass');
 {
     const sahil = JSON.parse(fs.readFileSync(SAMPLE_PATH, 'utf8'));
-    eq(T.stepPillClass(sahil, idIdx.doctrine), 'gap', 'gap step → gap pill');
+    // Batch B Slice 5: doctrine is no longer a gap; the Sahil sample carries
+    // no doctrine_rules/roe_rules/wra_rules, so its pill is 'empty', not 'gap'.
+    eq(T.stepPillClass(sahil, idIdx.doctrine), 'empty', 'doctrine (no longer a gap) — empty pill when unauthored');
     eq(T.stepPillClass(sahil, idIdx.meta),     'ok',  'complete non-gap → ok pill');
     const empty = {};
     eq(T.stepPillClass(empty, idIdx.meta),     'empty', 'incomplete non-gap → empty pill');

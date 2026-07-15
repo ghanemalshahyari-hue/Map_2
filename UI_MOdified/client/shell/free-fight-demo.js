@@ -2494,11 +2494,39 @@
         var ta = ob.task_assembly || {};
         var doctrineOk = ta.doctrine_upload_required === false || !!ta.doctrine_application_policy || (Array.isArray(ta.doctrine_sources) && ta.doctrine_sources.length > 0);
         var cmdrOk = ta.commander_review_required === false || ta.commander_approved === true || ta.commander_review_complete === true;
+        // Batch B: a genuine, server-recorded commander approval for the
+        // CURRENTLY loaded scenario also satisfies commander_approved —
+        // merged in alongside (never instead of) the scenario-authored flag.
+        var serverApproved = _serverApprovalCache.scenario_name === _currentScenarioNameForApproval() &&
+            (_serverApprovalCache.status === 'approved' || _serverApprovalCache.status === 'activated');
         return { doctrine_required: ta.doctrine_upload_required === true, doctrine_ok: doctrineOk,
-            commander_review_required: ta.commander_review_required === true, commander_approved: cmdrOk,
+            commander_review_required: ta.commander_review_required === true, commander_approved: cmdrOk || serverApproved,
             training_approved: _trainingApproved === true };
     }
     function _isSimulationOnly() { return _trainingApproved === true && _step1PreparationReport().simulation_taskable > 0; }
+    // Batch B: live server commander-approval status, merged into
+    // _taskabilityCtx()'s commander_approved alongside the scenario-authored
+    // flag. Fetched opportunistically (fire-and-forget, fail-closed — if
+    // never fetched or the fetch fails, only the scenario-authored flag
+    // applies, same as before this slice). Never trusted as the SOLE source
+    // of truth for anything server-side — the real enforcement lives in
+    // POST /api/scenario/active's 409 gate; this only lets a genuine
+    // commander approval also satisfy the CLIENT-side taskability check
+    // before an operator even attempts to task a unit.
+    var _serverApprovalCache = { scenario_name: null, status: null };
+    function _currentScenarioNameForApproval() {
+        var w = W(); var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        return (sc && sc.name) || null;
+    }
+    function _refreshServerApprovalStatus() {
+        var w = W(); var name = _currentScenarioNameForApproval();
+        if (!w || typeof w.fetch !== 'function' || !name) return;
+        w.fetch('/api/scenarios/' + encodeURIComponent(name) + '/approval', { credentials: 'same-origin' })
+            .then(function (r) { return r && r.ok ? r.json() : null; })
+            .then(function (data) {
+                if (data && data.ok) _serverApprovalCache = { scenario_name: name, status: data.status };
+            }).catch(function () {});
+    }
     // Operator approves the loaded review-only draft for TRAINING SIMULATION (not source verification). Loud +
     // recorded: decision log (white) + event log; unit source flags are NOT mutated (Evidence still shows them).
     function _approveTrainingSimulation() {
@@ -4632,12 +4660,20 @@
     function _runtimeMovementTaskContext() {
         var st = _ensureRuntimeMovementState();
         var elapsed = _coaExec && _coaExec.clock && isFinite(+_coaExec.clock.current_hours) ? +_coaExec.clock.current_hours : 0;
+        // Kick off a fresh approval-status fetch for NEXT time (fire-and-
+        // forget; this call's own classifyUnit uses whatever is cached now).
+        try { _refreshServerApprovalStatus(); } catch (_) {}
         return {
             elapsed_hours: elapsed,
             current_elapsed_hours: elapsed,
             runtime_positions: st && st.runtime_positions,
             positions: st && st.runtime_positions,
-            units: _runtimeMovementTaskUnits()
+            units: _runtimeMovementTaskUnits(),
+            // Batch B: real taskability gate, always injected. Wired to the
+            // same _classifyUnit used to gate COA generation/commit/run, so
+            // a unit blocked from COA planning is equally blocked from
+            // being tasked to move at runtime.
+            classifyUnit: function (unitId) { return _classifyUnit(_rawUnitByUid(unitId)); }
         };
     }
     function _rememberMovementTaskingStatus(status) {

@@ -44,6 +44,7 @@ try { fs.mkdirSync(UPLOAD_DIR, { recursive: true }); } catch {}
 
 const appData = require('./app-data');
 const roadmapStore = require('./roadmap-store'); // ROADMAP-4: isolated; reads/writes data/roadmap-status.json only (no ai/sim)
+const scenarioApprovalStore = require('./scenario-approval-store'); // Batch B: draft/review/approve/reject/reopen lifecycle
 const demService   = require('./dem-service');
 const ollama       = require('./ai/ollama-client');
 const aiProvider   = require('./ai/ai-provider');
@@ -62,6 +63,8 @@ const lessonStore   = require('./ai/lesson-store');
 const reportBuilder = require('./ai/report-builder');
 const { renderReportHtml } = require('./ai/report-render');
 const coaAgent     = require('./ai/coa-agent');
+const briefToScenarioV2 = require('./ai/brief-to-scenario-v2');
+const scenarioTemplates = require('./ai/scenario-templates');
 if (Database) {
     try {
         appData.initAppData({ Database, dataDir: DATA_DIR, legacyUnitsFile: process.env.RMOOZ_UNITS_DB_FILE || path.join(DATA_DIR, 'units.db') });
@@ -631,6 +634,8 @@ const server = http.createServer((req, res) => {
     // ROADMAP-4: roadmap status persistence (GET read / POST admin-only). Isolated
     // from the scenario/sim domain — never touches World State, units, or the journal.
     if (roadmapStore.handleRoadmapApi(req, res, pathname, req.method, sendJson, readJsonBody)) return;
+    // Batch B: scenario approval lifecycle (submit-for-review/review/approve/reject/reopen/approval).
+    if (scenarioApprovalStore.handleScenarioApprovalApi(req, res, pathname, req.method, sendJson, readJsonBody)) return;
 
     // GIS-TERRAIN-1 (T-1): read-only terrain endpoints (health/elevation/profile).
     // Wires the previously orphaned dem-service; degrades gracefully without a DEM.
@@ -804,6 +809,31 @@ const server = http.createServer((req, res) => {
         }).catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
         return;
     }
+    // Batch B Slice 9 - brief-to-draft AI scenario generation. Authenticated
+    // (no extra capability check needed - this endpoint NEVER writes to disk
+    // and NEVER activates a scenario; it only returns a draft object for the
+    // operator's Edit Mode workspace to open). Every generated unit is
+    // stamped needs_review:true/exact_unit_position:false (non-taskable
+    // until an operator verifies it - see unit-taskability.js).
+    // Body: { brief_text, name?, scenario_label?, center_lon?, center_lat? }
+    // Returns: { ok, scenario, validation, ai_status }
+    if (pathname === '/api/ai/scenario/generate-from-brief' && req.method === 'POST') {
+        if (!requireAuthenticatedUser(req, res)) return;
+        readJsonBody(req, { maxBytes: 1_000_000 }).then(async (body) => {
+            body = body || {};
+            return briefToScenarioV2.generateScenarioDraftFromBrief({
+                brief_text:     body.brief_text     || '',
+                name:           body.name           || null,
+                scenario_label: body.scenario_label || null,
+                center_lon:     body.center_lon,
+                center_lat:     body.center_lat,
+            });
+        }).then(r => {
+            const status = r.ok ? 200 : 400;
+            sendJson(res, status, r);
+        }).catch(e => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
+        return;
+    }
     if (pathname === '/api/ai/generate' && req.method === 'POST') {
         readJsonBody(req).then(body => {
             return ollama.generate(body || {});
@@ -918,6 +948,28 @@ const server = http.createServer((req, res) => {
             const data = scenarios.loadScenario(name);
             res.setHeader('Cache-Control', 'no-store');
             sendJson(res, 200, { ok: true, scenario: data });
+        } catch (e) {
+            sendJson(res, 404, { ok: false, error: e.message || String(e) });
+        }
+        return;
+    }
+
+    // Batch B Slice 10 — starter-template registry for the New Scenario
+    // form's base-template picker. Read-only, no auth gate (same class as
+    // GET /api/ai/scenarios / /api/ai/scenario/:name above).
+    if (pathname === '/api/scenario-templates' && req.method === 'GET') {
+        try {
+            sendJson(res, 200, { ok: true, templates: scenarioTemplates.listTemplates() });
+        } catch (e) {
+            sendJson(res, 500, { ok: false, error: e.message || String(e) });
+        }
+        return;
+    }
+    if (pathname.startsWith('/api/scenario-templates/') && req.method === 'GET') {
+        const templateId = pathname.slice('/api/scenario-templates/'.length);
+        try {
+            const data = scenarioTemplates.loadTemplate(templateId);
+            sendJson(res, 200, { ok: true, template: data });
         } catch (e) {
             sendJson(res, 404, { ok: false, error: e.message || String(e) });
         }
@@ -1045,10 +1097,24 @@ const server = http.createServer((req, res) => {
                 } catch (_) { /* not found — fall through to write */ }
             }
 
-            // 4) Write + invalidate cache + record active.
+            // 4) Write + invalidate cache.
             fs.writeFileSync(file, JSON.stringify(scenario, null, 2), 'utf8');
             try { scenarios.clearCache(); } catch (_) {}
-            try { scenarios.setActiveName(safeName); } catch (_) {}
+            // Batch B: saving a scenario no longer auto-activates it. It
+            // creates (or, on a re-save, leaves untouched) a lifecycle row
+            // at 'draft' — activation is a separate, approval-gated step
+            // (POST /api/scenario/active, below). The one exception: if this
+            // scenario name was ALREADY approved/activated from a prior
+            // round, a re-save keeps that status (does not silently revoke
+            // it) and is still reflected live since setActiveName just
+            // re-points at the same freshly-written file.
+            try {
+                scenarioApprovalStore.ensureLifecycleRow(safeName, scenariosPostUser);
+                const lifecycle = scenarioApprovalStore.getLifecycle(safeName);
+                if (lifecycle && (lifecycle.status === 'approved' || lifecycle.status === 'activated')) {
+                    scenarios.setActiveName(safeName);
+                }
+            } catch (_) {}
 
             sendJson(res, 200, {
                 ok: true, name: safeName, file: file,
@@ -1074,7 +1140,22 @@ const server = http.createServer((req, res) => {
         readJsonBody(req).then((body) => {
             const name = (body && typeof body.name === 'string') ? body.name.trim() : '';
             if (!name) { sendJson(res, 400, { ok: false, error: 'name required' }); return; }
+            // Batch B: activation requires the scenario to be commander-
+            // approved first — a real, server-enforced gate, not a client
+            // affordance. A scenario that was never authored through the
+            // Builder (no lifecycle row at all) has nothing to be approved,
+            // so it is likewise blocked here rather than silently allowed.
+            const lifecycle = scenarioApprovalStore.getLifecycle(name);
+            const status = lifecycle && lifecycle.status;
+            if (status !== 'approved' && status !== 'activated') {
+                sendJson(res, 409, {
+                    ok: false, error: 'scenario is not approved for activation',
+                    code: 'NOT_APPROVED', status: status || 'no_lifecycle_record'
+                });
+                return;
+            }
             scenarios.setActiveName(name);
+            try { scenarioApprovalStore.markActivated(name, activeUser); } catch (_) {}
             sendJson(res, 200, { ok: true, active: name });
         }).catch((e) => sendJson(res, 400, { ok: false, error: e.message || String(e) }));
         return;

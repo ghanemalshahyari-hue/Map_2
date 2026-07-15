@@ -1,0 +1,37 @@
+{
+  "name": "blank-coastal-ao",
+  "scenario_label": "Blank Coastal AO (starter template)",
+  "model_version": "authored-v1",
+  "sides": [
+    { "id": "BLUE", "name_en": "Blue Force", "name_ar": "القوات الزرقاء", "role": "friendly", "color": "#2f6fed" },
+    { "id": "RED",  "name_en": "Red Force",  "name_ar": "القوات الحمراء", "role": "hostile",  "color": "#d6332e" }
+  ],
+  "postures": { "BLUE": "FRIENDLY", "RED": "HOSTILE" },
+  "map_bbox": [-1, -1, 1, 1],
+  "ao_boundaries": [
+    { "name": "AO", "coordinates": [[[-1, -1], [1, -1], [1, 1], [-1, 1], [-1, -1]]] }
+  ],
+  "obj": { "name": "Objective", "coord": [0, 0], "target_depth_km": 0, "carver": 0, "radius_km": 0 },
+  "pipeline": [[-0.5, 0], [0.5, 0]],
+  "throughput_ceilings_km": { "H12": 0, "H24": 0, "H48": 0, "H72": 0, "H120": 0 },
+  "bls_template": [{ "name": "AO-CENTER", "coord": [0, 0] }],
+  "red_units": [],
+  "blue_units_initial": [],
+  "blue_units_base_ids": [],
+  "phase_table": [
+    { "index": 0, "time_label": "H-3",   "elapsed_hours": -3,  "phase": "PRE-H" },
+    { "index": 1, "time_label": "H+0",   "elapsed_hours": 0,   "phase": "PHASE 1" },
+    { "index": 2, "time_label": "H+12",  "elapsed_hours": 12,  "phase": "PHASE 2A" },
+    { "index": 3, "time_label": "H+36",  "elapsed_hours": 36,  "phase": "PHASE 2B" },
+    { "index": 4, "time_label": "H+72",  "elapsed_hours": 72,  "phase": "PHASE 3" },
+    { "index": 5, "time_label": "H+120", "elapsed_hours": 120, "phase": "RESOLUTION" }
+  ],
+  "steps": [
+    { "index": 0, "time_label": "H-3",   "elapsed_hours": -3,  "phase": "PRE-H" },
+    { "index": 1, "time_label": "H+0",   "elapsed_hours": 0,   "phase": "PHASE 1" },
+    { "index": 2, "time_label": "H+12",  "elapsed_hours": 12,  "phase": "PHASE 2A" },
+    { "index": 3, "time_label": "H+36",  "elapsed_hours": 36,  "phase": "PHASE 2B" },
+    { "index": 4, "time_label": "H+72",  "elapsed_hours": 72,  "phase": "PHASE 3" },
+    { "index": 5, "time_label": "H+120", "elapsed_hours": 120, "phase": "RESOLUTION" }
+  ]
+}

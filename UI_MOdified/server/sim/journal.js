@@ -175,6 +175,7 @@ module.exports = {
     appendCommit,
     loadRun,
     hashState,
+    stableStringify,
     pathForRun,
     JOURNAL_DIR,
 };

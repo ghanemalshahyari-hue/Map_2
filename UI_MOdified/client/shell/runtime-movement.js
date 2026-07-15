@@ -307,6 +307,40 @@
         if (!isGroup && !unitId) return invalidTaskPlan('missing_unit', 'Enter a unit ID before starting movement.');
 
         var leaderId = compactText(input.leader_unit_id || input.leader) || (isGroup ? unitIds[0] : unitId);
+
+        // Taskability gate (Batch B, Slice 3). Only checked when the caller
+        // injects a classifier — this keeps the module pure and backward
+        // compatible: existing callers/tests that don't pass
+        // context.classifyUnit are completely unaffected. Production
+        // callers (free-fight-demo.js) always inject the real one, wired to
+        // the live server approval status, not just a scenario-authored flag.
+        if (typeof context.classifyUnit === 'function') {
+            var targetIds = isGroup ? unitIds : [unitId];
+            var blockedUnits = [];
+            var taskableIds = [];
+            for (var ti = 0; ti < targetIds.length; ti++) {
+                var cls = context.classifyUnit(targetIds[ti]) || {};
+                if (cls.taskable === false) {
+                    blockedUnits.push({ id: targetIds[ti], review_status: cls.reason || cls.review_status || 'not_taskable' });
+                } else {
+                    taskableIds.push(targetIds[ti]);
+                }
+            }
+            if (!isGroup && blockedUnits.length) {
+                return invalidTaskPlan('unit_not_taskable',
+                    'Unit ' + blockedUnits[0].id + ' is review-only (' + blockedUnits[0].review_status +
+                    ') and cannot be tasked to move until source/coordinates/doctrine/commander review are satisfied.');
+            }
+            if (isGroup) {
+                if (taskableIds.length < 2) {
+                    return invalidTaskPlan('group_not_taskable',
+                        'Fewer than two units in this group are taskable (' + blockedUnits.length + ' blocked); group movement needs at least two.');
+                }
+                unitIds = taskableIds;
+                if (leaderId && taskableIds.indexOf(leaderId) === -1) leaderId = taskableIds[0];
+            }
+        }
+
         var route = parseTaskRoutePoints(input.route != null ? input.route : (input.route_points != null ? input.route_points : (input.route_json != null ? input.route_json : input.waypoints)));
         var destination = taskDestination(input);
         var start = normalizePoint(input.from || input.start || input.current_position) || candidatePosition(context, isGroup ? leaderId : unitId);
@@ -355,7 +389,9 @@
                 spacing_meters: groupPayload.spacing_meters,
                 payload: groupPayload
             });
-            return { ok: true, status: 'planned', plan: groupPlan, plan_kind: 'runtime_group_movement', message: 'Group movement task ready.', read_only: true };
+            return { ok: true, status: 'planned', plan: groupPlan, plan_kind: 'runtime_group_movement',
+                     message: 'Group movement task ready.', read_only: true,
+                     blocked_units: (typeof blockedUnits !== 'undefined' && blockedUnits.length) ? blockedUnits : undefined };
         }
 
         var payload = {

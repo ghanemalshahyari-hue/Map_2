@@ -205,13 +205,114 @@
         return { ok: why.length === 0, why: why.join('; ') };
     }
 
+    /* ---- Slice 5: doctrine/ROE/WRA hard rules -----------------------------
+     * doctrine-rules.js's normalizers are lenient by design (bad refs/ranges
+     * silently coerce to safe defaults, never reject) — that's correct for a
+     * runtime evaluator but wrong for authoring, where the operator should
+     * see the mistake immediately. This is the authoring-side rejection the
+     * runtime module intentionally doesn't do. */
+    var DOCTRINE_DECISIONS = ['allow', 'require_approval', 'block'];
+    var DOCTRINE_SEVERITIES = ['info', 'warn', 'critical'];
+    function validateRuleArrayHardRules(list, arrName, knownSideIds, why) {
+        if (!Array.isArray(list)) return;
+        var seenId = Object.create(null);
+        list.forEach(function (r, i) {
+            if (!r || typeof r !== 'object') { why.push(arrName + '[' + i + '] is not an object'); return; }
+            if (r.id != null && String(r.id).trim()) {
+                if (seenId[r.id]) why.push(arrName + '[' + i + '].id duplicates "' + r.id + '"');
+                else seenId[r.id] = true;
+            }
+            if (r.decision != null && DOCTRINE_DECISIONS.indexOf(r.decision) === -1) {
+                why.push(arrName + '[' + i + '].decision "' + r.decision + '" not in ' + DOCTRINE_DECISIONS.join('|'));
+            }
+            if (r.severity != null && DOCTRINE_SEVERITIES.indexOf(r.severity) === -1) {
+                why.push(arrName + '[' + i + '].severity "' + r.severity + '" not in ' + DOCTRINE_SEVERITIES.join('|'));
+            }
+            if (r.applies_to_side != null && r.applies_to_side !== '' && knownSideIds.length > 0 &&
+                knownSideIds.indexOf(r.applies_to_side) === -1) {
+                why.push(arrName + '[' + i + '].applies_to_side "' + r.applies_to_side + '" not in defined sides');
+            }
+            if (r.collateral_risk_max != null && (!Number.isFinite(r.collateral_risk_max) || r.collateral_risk_max < 0 || r.collateral_risk_max > 1)) {
+                why.push(arrName + '[' + i + '].collateral_risk_max must be 0..1 (got ' + r.collateral_risk_max + ')');
+            }
+            if (r.min_confidence != null && (!Number.isFinite(r.min_confidence) || r.min_confidence < 0 || r.min_confidence > 1)) {
+                why.push(arrName + '[' + i + '].min_confidence must be 0..1 (got ' + r.min_confidence + ')');
+            }
+            if (r.max_range_nm != null && (!Number.isFinite(r.max_range_nm) || r.max_range_nm < 0)) {
+                why.push(arrName + '[' + i + '].max_range_nm must be >= 0 (got ' + r.max_range_nm + ')');
+            }
+            if (r.salvo_limit != null && (!Number.isInteger(r.salvo_limit) || r.salvo_limit < 0)) {
+                why.push(arrName + '[' + i + '].salvo_limit must be a non-negative integer (got ' + r.salvo_limit + ')');
+            }
+        });
+    }
+    function validateDoctrineHardRules(d) {
+        var why = [];
+        var knownSideIds = (d && Array.isArray(d.sides) ? d.sides : []).map(function (s) { return s && s.id; }).filter(Boolean);
+        validateRuleArrayHardRules(d && d.doctrine_rules, 'doctrine_rules', knownSideIds, why);
+        validateRuleArrayHardRules(d && d.roe_rules, 'roe_rules', knownSideIds, why);
+        validateRuleArrayHardRules(d && d.wra_rules, 'wra_rules', knownSideIds, why);
+        return { ok: why.length === 0, why: why.join('; ') };
+    }
+
+    /* ---- Slice 7: runtime events/triggers hard rules ----------------------
+     * runtime-events.js's SAFE_RUNTIME_EFFECT_KINDS allowlist is enforced at
+     * EVALUATION time (an unsafe kind is reported 'blocked', never rejected
+     * at authoring time — the event still normalizes fine). This is the
+     * authoring-side rejection so an operator can't even save an event whose
+     * only effect can never fire. Cross-refs: update_mission_task_status /
+     * open_decision_point / close_decision_point payloads should point at
+     * ids that actually exist elsewhere in the draft, when those arrays are
+     * authored (Slice 8 adds decision_points authoring; mission_tasks is
+     * already live from Slice 6). */
+    var RUNTIME_SAFE_EFFECT_KINDS = [
+        'add_notification', 'set_runtime_flag', 'clear_runtime_flag',
+        'open_decision_point', 'close_decision_point', 'update_mission_task_status',
+        'request_operator_decision', 'weapon_release'
+    ];
+    function validateRuntimeHardRules(d) {
+        var why = [];
+        if (!d || !Array.isArray(d.runtime_events)) return { ok: true, why: '' };
+        var seenId = Object.create(null);
+        var missionTaskIds = new Set((Array.isArray(d.mission_tasks) ? d.mission_tasks : [])
+            .map(function (t) { return t && t.id; }).filter(Boolean));
+        var decisionPointIds = new Set((Array.isArray(d.decision_points) ? d.decision_points : [])
+            .map(function (p) { return p && p.id; }).filter(Boolean));
+        d.runtime_events.forEach(function (ev, i) {
+            if (!ev || typeof ev !== 'object') { why.push('runtime_events[' + i + '] is not an object'); return; }
+            if (ev.id != null && String(ev.id).trim()) {
+                if (seenId[ev.id]) why.push('runtime_events[' + i + '].id duplicates "' + ev.id + '"');
+                else seenId[ev.id] = true;
+            }
+            (Array.isArray(ev.effects) ? ev.effects : []).forEach(function (fx, j) {
+                if (!fx || typeof fx !== 'object') { why.push('runtime_events[' + i + '].effects[' + j + '] is not an object'); return; }
+                var kind = fx.kind;
+                if (kind != null && RUNTIME_SAFE_EFFECT_KINDS.indexOf(kind) === -1) {
+                    why.push('runtime_events[' + i + '].effects[' + j + '].kind "' + kind + '" not in the safe allowlist (' + RUNTIME_SAFE_EFFECT_KINDS.join('|') + ')');
+                }
+                var payload = fx.payload || {};
+                if (kind === 'update_mission_task_status' && payload.mission_task_id && missionTaskIds.size > 0 &&
+                    !missionTaskIds.has(payload.mission_task_id)) {
+                    why.push('runtime_events[' + i + '].effects[' + j + '].payload.mission_task_id "' + payload.mission_task_id + '" not in defined mission_tasks');
+                }
+                if ((kind === 'open_decision_point' || kind === 'close_decision_point') && payload.decision_point_id &&
+                    decisionPointIds.size > 0 && !decisionPointIds.has(payload.decision_point_id)) {
+                    why.push('runtime_events[' + i + '].effects[' + j + '].payload.decision_point_id "' + payload.decision_point_id + '" not in defined decision_points');
+                }
+            });
+        });
+        return { ok: why.length === 0, why: why.join('; ') };
+    }
+
     /* ---- Slice 2B: combine all hard rules (carver + forces) -------------- */
     function validateAllHardRules(d) {
         var a = validateDraftHardRules(d);
         var b = validateForcesHardRules(d);
         var c = validateObjectivesHardRules(d);
-        if (a.ok && b.ok && c.ok) return { ok: true, why: '' };
-        var why = [a.why, b.why, c.why].filter(Boolean).join('; ');
+        var e = validateDoctrineHardRules(d);
+        var f = validateRuntimeHardRules(d);
+        if (a.ok && b.ok && c.ok && e.ok && f.ok) return { ok: true, why: '' };
+        var why = [a.why, b.why, c.why, e.why, f.why].filter(Boolean).join('; ');
         return { ok: false, why: why };
     }
 
@@ -370,6 +471,12 @@
         t.value = value == null ? '' : String(value);
         t.addEventListener('input', function () { onChange(t.value); _markDirty(); });
         return t;
+    }
+    function checkboxInput(value, onChange) {
+        var c = el('input', { type: 'checkbox', class: 'sw-edit-checkbox' });
+        c.checked = !!value;
+        c.addEventListener('change', function () { onChange(c.checked); _markDirty(); });
+        return c;
     }
 
     /* ---- Slice 2A: coord-list parsing / serialisation -------------------- */
@@ -1737,6 +1844,686 @@
         host.appendChild(card);
     }
 
+    /* ---- Slice 5: Doctrine / ROE / WRA authoring (Forces-card-shell reuse) -
+     * Same idiom as renderForcesCard: a grouped list + a single detail pane
+     * below it, direct-mutation edits (fieldRow/textInput/... write straight
+     * onto the object living inside _draft.{doctrine,roe,wra}_rules), no
+     * separate "save the row" step. Written to the CANONICAL field names
+     * doctrine-rules.js's baseRule()/normalize*Rules() expect (id, enabled,
+     * decision, severity, reason, requires_authority, tags[], + per-kind
+     * fields) so authored rules round-trip through the runtime evaluator
+     * unchanged rather than through its legacy-alias fallback coercion. */
+    var DOCTRINE_RULE_KINDS = [
+        { kind: 'doctrine', arrKey: 'doctrine_rules', label: 'Doctrine' },
+        { kind: 'roe',       arrKey: 'roe_rules',       label: 'ROE' },
+        { kind: 'wra',       arrKey: 'wra_rules',       label: 'WRA' }
+    ];
+    var _selectedRuleKind = null; // 'doctrine' | 'roe' | 'wra'
+    var _selectedRuleId   = null;
+
+    function _ruleKindInfo(kind) {
+        return DOCTRINE_RULE_KINDS.find(function (k) { return k.kind === kind; }) || null;
+    }
+    function nextFreeRuleId(kind, list) {
+        var taken = new Set((list || []).map(function (r) { return r && r.id; }).filter(Boolean));
+        var i = 1;
+        while (taken.has(kind + '-' + i)) i++;
+        return kind + '-' + i;
+    }
+    function _selectRule(kind, id) { _selectedRuleKind = kind; _selectedRuleId = id; }
+    function _clearRuleSelection() { _selectedRuleKind = null; _selectedRuleId = null; }
+    function _findSelectedRule(d) {
+        if (!_selectedRuleKind || !_selectedRuleId || !d) return null;
+        var info = _ruleKindInfo(_selectedRuleKind);
+        if (!info) return null;
+        return (d[info.arrKey] || []).find(function (r) { return r.id === _selectedRuleId; }) || null;
+    }
+    function defaultRuleForKind(kind, list) {
+        var base = { id: nextFreeRuleId(kind, list), enabled: true, decision: 'allow', severity: 'info', reason: '' };
+        if (kind === 'doctrine') return Object.assign(base, { applies_to_side: '', condition: '', action: '' });
+        if (kind === 'roe') return Object.assign(base, {
+            target_domain: '', target_status: '', hostile_confirmed_required: false,
+            collateral_risk_max: null, restricted_area_ids: []
+        });
+        return Object.assign(base, { // wra
+            weapon_class: '', target_class: '', max_range_nm: null,
+            min_confidence: null, required_sensor_quality: '', salvo_limit: null
+        });
+    }
+
+    function renderDoctrineCard(host) {
+        var card = el('div', { class: 'builder-card sw-card' }, [
+            el('div', { class: 'builder-card-header' }, [
+                el('span', { class: 'builder-card-title', text: 'Doctrine / ROE / WRA · العقيدة / قواعد الاشتباك' })
+            ])
+        ]);
+        card.appendChild(el('div', { class: 'sw-edit-hint', text:
+            'Authored constraints the runtime doctrine gate evaluates (never auto-executes weapon_release or move/destroy effects — approval-only). ' +
+            'Written to doctrine_rules / roe_rules / wra_rules at scenario top level.' }));
+
+        var listEl   = el('div', { class: 'sw-forces-tree' });
+        var detailEl = el('div', { class: 'sw-forces-detail' });
+
+        function rerenderList() {
+            listEl.innerHTML = '';
+            DOCTRINE_RULE_KINDS.forEach(function (info) {
+                var list = Array.isArray(_draft[info.arrKey]) ? _draft[info.arrKey] : [];
+                var addBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: '+ ' + info.label + ' rule' });
+                addBtn.addEventListener('click', function () {
+                    if (!Array.isArray(_draft[info.arrKey])) _draft[info.arrKey] = [];
+                    var rule = defaultRuleForKind(info.kind, _draft[info.arrKey]);
+                    _draft[info.arrKey].push(rule);
+                    _selectRule(info.kind, rule.id);
+                    _markDirty();
+                    rerenderList(); rerenderDetail();
+                });
+                var groupHeader = el('div', { class: 'sw-forces-group-header' }, [
+                    el('span', { text: info.label + ' (' + list.length + ')' }), addBtn
+                ]);
+                listEl.appendChild(groupHeader);
+                list.forEach(function (r) {
+                    var isSel = _selectedRuleKind === info.kind && _selectedRuleId === r.id;
+                    var row = el('div', { class: 'sw-forces-row' + (isSel ? ' selected' : '') }, [
+                        el('span', { text: (r.id || '(no id)') + ' — ' + (r.decision || 'allow') + (r.reason ? (': ' + r.reason) : '') })
+                    ]);
+                    row.addEventListener('click', function () { _selectRule(info.kind, r.id); rerenderDetail(); rerenderList(); });
+                    listEl.appendChild(row);
+                });
+            });
+        }
+
+        function rerenderDetail() {
+            detailEl.innerHTML = '';
+            var r = _findSelectedRule(_draft);
+            if (!r) {
+                detailEl.appendChild(el('div', { class: 'sw-edit-hint', text: 'Select a rule on the left, or add a new one.' }));
+                return;
+            }
+            var info = _ruleKindInfo(_selectedRuleKind);
+            var rmBtn = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-danger', text: 'Remove rule' });
+            rmBtn.addEventListener('click', function () {
+                _draft[info.arrKey] = (_draft[info.arrKey] || []).filter(function (x) { return x !== r; });
+                _clearRuleSelection(); _markDirty();
+                rerenderList(); rerenderDetail();
+            });
+
+            var fields = [];
+            fields.push(fieldRow('id', textInput(r.id || '', function (v) { r.id = v; rerenderList(); })));
+            fields.push(fieldRow('enabled', checkboxInput(r.enabled !== false, function (v) { r.enabled = v; })));
+            fields.push(fieldRow('decision', selectInput(DOCTRINE_DECISIONS, r.decision || 'allow', function (v) { r.decision = v; rerenderList(); })));
+            fields.push(fieldRow('severity', selectInput(DOCTRINE_SEVERITIES, r.severity || 'info', function (v) { r.severity = v; })));
+            fields.push(fieldRow('reason', textInput(r.reason || '', function (v) { r.reason = v; rerenderList(); })));
+            fields.push(fieldRow('requires_authority', checkboxInput(!!r.requires_authority, function (v) { r.requires_authority = v; })));
+
+            if (info.kind === 'doctrine') {
+                fields.push(fieldRow('applies_to_side', selectInput(
+                    [''].concat((Array.isArray(_draft.sides) ? _draft.sides : []).map(function (s) { return s.id; })),
+                    r.applies_to_side || '', function (v) { r.applies_to_side = v; })));
+                fields.push(fieldRow('condition', textInput(r.condition || '', function (v) { r.condition = v; })));
+                fields.push(fieldRow('action', textInput(r.action || '', function (v) { r.action = v; })));
+            } else if (info.kind === 'roe') {
+                fields.push(fieldRow('target_domain', textInput(r.target_domain || '', function (v) { r.target_domain = v; })));
+                fields.push(fieldRow('target_status', textInput(r.target_status || '', function (v) { r.target_status = v; })));
+                fields.push(fieldRow('hostile_confirmed_required', checkboxInput(!!r.hostile_confirmed_required, function (v) { r.hostile_confirmed_required = v; })));
+                fields.push(fieldRow('collateral_risk_max (0..1)', numberInput(r.collateral_risk_max, function (v) { r.collateral_risk_max = v; }, { min: 0, max: 1, step: '0.01' })));
+            } else { // wra
+                fields.push(fieldRow('weapon_class', textInput(r.weapon_class || '', function (v) { r.weapon_class = v; })));
+                fields.push(fieldRow('target_class', textInput(r.target_class || '', function (v) { r.target_class = v; })));
+                fields.push(fieldRow('max_range_nm', numberInput(r.max_range_nm, function (v) { r.max_range_nm = v; }, { min: 0 })));
+                fields.push(fieldRow('min_confidence (0..1)', numberInput(r.min_confidence, function (v) { r.min_confidence = v; }, { min: 0, max: 1, step: '0.01' })));
+                fields.push(fieldRow('required_sensor_quality', textInput(r.required_sensor_quality || '', function (v) { r.required_sensor_quality = v; })));
+                fields.push(fieldRow('salvo_limit', numberInput(r.salvo_limit, function (v) { r.salvo_limit = v; }, { min: 0, integer: true })));
+            }
+
+            detailEl.appendChild(el('dl', { class: 'sw-kv' }, fields));
+            detailEl.appendChild(el('div', { class: 'sw-edit-actions' }, [rmBtn]));
+        }
+
+        rerenderList();
+        rerenderDetail();
+        card.appendChild(listEl);
+        card.appendChild(detailEl);
+        host.appendChild(card);
+    }
+
+    /* ---- Slice 6: Missions / tasking / routes authoring -------------------
+     * Same list+detail idiom as renderDoctrineCard, single-array version (no
+     * kind grouping — just mission_tasks[]). Written to the CANONICAL field
+     * names runtime-events.js's normalizeMissionTasks() expects (id, unit_id,
+     * group_id, kind, start_elapsed_hours, end_elapsed_hours, objective_id,
+     * status, enabled, source) at scenario top level — that normalizer reads
+     * scenario.mission_tasks concatenated with scenario.runtime_scenario.
+     * mission_tasks, so top-level is what a live-mounted scenario needs.
+     * `route` is an additive authoring-only field (not in the C4a schema
+     * descriptor, not read by the evaluator yet) capturing a drawn path via
+     * the existing _beginPickOnMapPolyline picker — same pattern already
+     * used for the pipeline field in the Geometry card. */
+    var _selectedMissionTaskId = null;
+    function _selectMissionTask(id) { _selectedMissionTaskId = id; }
+    function _clearMissionTaskSelection() { _selectedMissionTaskId = null; }
+    function _findSelectedMissionTask(d) {
+        if (!_selectedMissionTaskId || !d) return null;
+        return (d.mission_tasks || []).find(function (t) { return t.id === _selectedMissionTaskId; }) || null;
+    }
+    function nextFreeMissionTaskId(list) {
+        var taken = new Set((list || []).map(function (t) { return t && t.id; }).filter(Boolean));
+        var i = 1;
+        while (taken.has('mission-task-' + i)) i++;
+        return 'mission-task-' + i;
+    }
+    var MISSION_TASK_KINDS = ['task', 'patrol', 'strike', 'recon', 'escort', 'resupply', 'hold'];
+    var MISSION_TASK_STATUSES = ['planned', 'active', 'complete', 'cancelled'];
+    function defaultMissionTask(list) {
+        return {
+            id: nextFreeMissionTaskId(list), unit_id: '', group_id: '', kind: 'task',
+            start_elapsed_hours: null, end_elapsed_hours: null, objective_id: '',
+            status: 'planned', enabled: true, source: 'scenario', route: []
+        };
+    }
+
+    function renderMissionsCard(host) {
+        var card = el('div', { class: 'builder-card sw-card' }, [
+            el('div', { class: 'builder-card-header' }, [
+                el('span', { class: 'builder-card-title', text: 'Missions / Tasking · المهام' })
+            ])
+        ]);
+        card.appendChild(el('div', { class: 'sw-edit-hint', text:
+            'Mission task windows the runtime events engine reads (activeMissionTasks). Written to mission_tasks at scenario top level.' }));
+
+        var listEl   = el('div', { class: 'sw-forces-tree' });
+        var detailEl = el('div', { class: 'sw-forces-detail' });
+
+        function rerenderList() {
+            listEl.innerHTML = '';
+            var list = Array.isArray(_draft.mission_tasks) ? _draft.mission_tasks : [];
+            var addBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: '+ Mission task' });
+            addBtn.addEventListener('click', function () {
+                if (!Array.isArray(_draft.mission_tasks)) _draft.mission_tasks = [];
+                var task = defaultMissionTask(_draft.mission_tasks);
+                _draft.mission_tasks.push(task);
+                _selectMissionTask(task.id);
+                _markDirty();
+                rerenderList(); rerenderDetail();
+            });
+            listEl.appendChild(el('div', { class: 'sw-forces-group-header' }, [
+                el('span', { text: 'Mission tasks (' + list.length + ')' }), addBtn
+            ]));
+            list.forEach(function (t) {
+                var isSel = _selectedMissionTaskId === t.id;
+                var summary = (t.id || '(no id)') + ' — ' + (t.kind || 'task') + ' (' + (t.status || 'planned') + ')' +
+                    (t.unit_id ? (' · ' + t.unit_id) : '');
+                var row = el('div', { class: 'sw-forces-row' + (isSel ? ' selected' : '') }, [el('span', { text: summary })]);
+                row.addEventListener('click', function () { _selectMissionTask(t.id); rerenderDetail(); rerenderList(); });
+                listEl.appendChild(row);
+            });
+        }
+
+        function rerenderDetail() {
+            detailEl.innerHTML = '';
+            var t = _findSelectedMissionTask(_draft);
+            if (!t) {
+                detailEl.appendChild(el('div', { class: 'sw-edit-hint', text: 'Select a mission task on the left, or add a new one.' }));
+                return;
+            }
+            var rmBtn = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-danger', text: 'Remove mission task' });
+            rmBtn.addEventListener('click', function () {
+                _draft.mission_tasks = (_draft.mission_tasks || []).filter(function (x) { return x !== t; });
+                _clearMissionTaskSelection(); _markDirty();
+                rerenderList(); rerenderDetail();
+            });
+
+            var routeTa = textArea(coordsToLines(t.route), 4, function (v) { t.route = parseCoordLines(v); });
+            var drawRouteBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Draw route on map' });
+            drawRouteBtn.addEventListener('click', function () {
+                setStatus('Click waypoints on the map, double-click (or Enter) to finish, Esc to cancel.', false);
+                _beginPickOnMapPolyline(function (line) {
+                    t.route = line;
+                    routeTa.value = coordsToLines(line);
+                    setStatus('Route captured — ' + line.length + ' waypoints.', false);
+                }, function () { setStatus('Route draw cancelled.', false); });
+            });
+
+            var fields = [];
+            fields.push(fieldRow('id', textInput(t.id || '', function (v) { t.id = v; rerenderList(); })));
+            fields.push(fieldRow('unit_id', textInput(t.unit_id || '', function (v) { t.unit_id = v; rerenderList(); })));
+            fields.push(fieldRow('group_id', textInput(t.group_id || '', function (v) { t.group_id = v; })));
+            fields.push(fieldRow('kind', selectInput(MISSION_TASK_KINDS, t.kind || 'task', function (v) { t.kind = v; rerenderList(); })));
+            fields.push(fieldRow('status', selectInput(MISSION_TASK_STATUSES, t.status || 'planned', function (v) { t.status = v; rerenderList(); })));
+            fields.push(fieldRow('enabled', checkboxInput(t.enabled !== false, function (v) { t.enabled = v; })));
+            fields.push(fieldRow('start_elapsed_hours', numberInput(t.start_elapsed_hours, function (v) { t.start_elapsed_hours = v; }, {})));
+            fields.push(fieldRow('end_elapsed_hours', numberInput(t.end_elapsed_hours, function (v) { t.end_elapsed_hours = v; }, {})));
+            fields.push(fieldRow('objective_id', textInput(t.objective_id || '', function (v) { t.objective_id = v; })));
+            fields.push(fieldRow('route (lon, lat per line)', routeTa));
+
+            detailEl.appendChild(el('dl', { class: 'sw-kv' }, fields));
+            detailEl.appendChild(el('div', { class: 'sw-edit-actions' }, [drawRouteBtn]));
+            detailEl.appendChild(el('div', { class: 'sw-edit-actions' }, [rmBtn]));
+        }
+
+        rerenderList();
+        rerenderDetail();
+        card.appendChild(listEl);
+        card.appendChild(detailEl);
+        host.appendChild(card);
+    }
+
+    /* ---- Slice 7: Runtime events / triggers authoring ---------------------
+     * Same list+detail idiom as renderMissionsCard, plus a nested per-event
+     * effects[] sub-list. Written to the CANONICAL field names runtime-
+     * events.js's normalizeRuntimeEvents() expects (id, at_elapsed_hours,
+     * at_time, kind, title, description, once, enabled, effects[], tags,
+     * source) at scenario top level. Effect kind is a <select> restricted to
+     * the 8-item SAFE_RUNTIME_EFFECT_KINDS allowlist — anything else is
+     * silently 'blocked' by the runtime gate, so authoring anything outside
+     * it would build a rule that can never fire; effect payload is authored
+     * as free-form JSON (a textarea, parsed defensively) since payload shape
+     * varies per effect kind. `trigger_zone` is an additive authoring-only
+     * field (a closed polygon ring) captured via the existing
+     * _beginPickOnMapPolygon picker — not read by the evaluator yet, same
+     * status as missions' `route` field from Slice 6. */
+    var _selectedEventId = null;
+    function _selectEvent(id) { _selectedEventId = id; }
+    function _clearEventSelection() { _selectedEventId = null; }
+    function _findSelectedEvent(d) {
+        if (!_selectedEventId || !d) return null;
+        return (d.runtime_events || []).find(function (e) { return e.id === _selectedEventId; }) || null;
+    }
+    function nextFreeEventId(list) {
+        var taken = new Set((list || []).map(function (e) { return e && e.id; }).filter(Boolean));
+        var i = 1;
+        while (taken.has('runtime-event-' + i)) i++;
+        return 'runtime-event-' + i;
+    }
+    function nextFreeEffectId(list) {
+        var taken = new Set((list || []).map(function (e) { return e && e.id; }).filter(Boolean));
+        var i = 1;
+        while (taken.has('effect-' + i)) i++;
+        return 'effect-' + i;
+    }
+    function defaultRuntimeEvent(list) {
+        return {
+            id: nextFreeEventId(list), title: '', description: '', kind: 'runtime_event',
+            at_elapsed_hours: null, at_time: '', once: true, enabled: true,
+            effects: [], tags: [], source: 'scenario', trigger_zone: []
+        };
+    }
+    function defaultRuntimeEffect(list) {
+        return { id: nextFreeEffectId(list), kind: RUNTIME_SAFE_EFFECT_KINDS[0], payload: {} };
+    }
+
+    function renderEventsCard(host) {
+        var card = el('div', { class: 'builder-card sw-card' }, [
+            el('div', { class: 'builder-card-header' }, [
+                el('span', { class: 'builder-card-title', text: 'Events (trigger → condition → action) · الأحداث' })
+            ])
+        ]);
+        card.appendChild(el('div', { class: 'sw-edit-hint', text:
+            'Time-based runtime events the evaluator reads (read-only in C4a — approvals/journal only, never auto-executes dangerous effects). ' +
+            'Effect kind is restricted to the safe allowlist: ' + RUNTIME_SAFE_EFFECT_KINDS.join(', ') + '.' }));
+
+        var listEl   = el('div', { class: 'sw-forces-tree' });
+        var detailEl = el('div', { class: 'sw-forces-detail' });
+
+        function rerenderList() {
+            listEl.innerHTML = '';
+            var list = Array.isArray(_draft.runtime_events) ? _draft.runtime_events : [];
+            var addBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: '+ Runtime event' });
+            addBtn.addEventListener('click', function () {
+                if (!Array.isArray(_draft.runtime_events)) _draft.runtime_events = [];
+                var ev = defaultRuntimeEvent(_draft.runtime_events);
+                _draft.runtime_events.push(ev);
+                _selectEvent(ev.id);
+                _markDirty();
+                rerenderList(); rerenderDetail();
+            });
+            listEl.appendChild(el('div', { class: 'sw-forces-group-header' }, [
+                el('span', { text: 'Runtime events (' + list.length + ')' }), addBtn
+            ]));
+            list.forEach(function (ev) {
+                var isSel = _selectedEventId === ev.id;
+                var effCount = Array.isArray(ev.effects) ? ev.effects.length : 0;
+                var summary = (ev.id || '(no id)') + ' — ' + (ev.title || ev.kind || 'event') + ' (' + effCount + ' effect' + (effCount === 1 ? '' : 's') + ')';
+                var row = el('div', { class: 'sw-forces-row' + (isSel ? ' selected' : '') }, [el('span', { text: summary })]);
+                row.addEventListener('click', function () { _selectEvent(ev.id); rerenderDetail(); rerenderList(); });
+                listEl.appendChild(row);
+            });
+        }
+
+        function rerenderEffects(container, ev) {
+            container.innerHTML = '';
+            if (!Array.isArray(ev.effects)) ev.effects = [];
+            var addEffBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: '+ Effect' });
+            addEffBtn.addEventListener('click', function () {
+                ev.effects.push(defaultRuntimeEffect(ev.effects));
+                _markDirty();
+                rerenderEffects(container, ev); rerenderList();
+            });
+            container.appendChild(el('div', { class: 'sw-forces-group-header' }, [
+                el('span', { text: 'Effects (' + ev.effects.length + ')' }), addEffBtn
+            ]));
+            ev.effects.forEach(function (fx, idx) {
+                var kindSel = selectInput(RUNTIME_SAFE_EFFECT_KINDS, fx.kind || RUNTIME_SAFE_EFFECT_KINDS[0], function (v) {
+                    fx.kind = v; rerenderList();
+                });
+                var payloadTa = textArea(JSON.stringify(fx.payload || {}, null, 0), 2, function (v) {
+                    try { fx.payload = JSON.parse(v); } catch (_) { /* leave payload unchanged until valid JSON is typed */ }
+                });
+                var rmEffBtn = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-danger', text: 'Remove' });
+                rmEffBtn.addEventListener('click', function () {
+                    ev.effects = ev.effects.filter(function (x) { return x !== fx; });
+                    _markDirty();
+                    rerenderEffects(container, ev); rerenderList();
+                });
+                container.appendChild(el('div', { class: 'sw-kv-row sw-edit-row' }, [
+                    el('dt', { text: 'effect[' + idx + ']' }),
+                    el('dd', null, [kindSel, payloadTa, rmEffBtn])
+                ]));
+            });
+        }
+
+        function rerenderDetail() {
+            detailEl.innerHTML = '';
+            var ev = _findSelectedEvent(_draft);
+            if (!ev) {
+                detailEl.appendChild(el('div', { class: 'sw-edit-hint', text: 'Select an event on the left, or add a new one.' }));
+                return;
+            }
+            var rmBtn = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-danger', text: 'Remove event' });
+            rmBtn.addEventListener('click', function () {
+                _draft.runtime_events = (_draft.runtime_events || []).filter(function (x) { return x !== ev; });
+                _clearEventSelection(); _markDirty();
+                rerenderList(); rerenderDetail();
+            });
+
+            var zoneTa = textArea(coordsToLines(ev.trigger_zone), 3, function (v) { ev.trigger_zone = parseCoordLines(v); });
+            var drawZoneBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Draw trigger zone on map' });
+            drawZoneBtn.addEventListener('click', function () {
+                setStatus('Click vertices on the map, double-click (or Enter) to finish, Esc to cancel.', false);
+                _beginPickOnMapPolygon(function (ring) {
+                    ev.trigger_zone = ring;
+                    zoneTa.value = coordsToLines(ring);
+                    setStatus('Trigger zone captured — ' + ring.length + ' vertices.', false);
+                }, function () { setStatus('Trigger zone draw cancelled.', false); });
+            });
+
+            var fields = [];
+            fields.push(fieldRow('id', textInput(ev.id || '', function (v) { ev.id = v; rerenderList(); })));
+            fields.push(fieldRow('title', textInput(ev.title || '', function (v) { ev.title = v; rerenderList(); })));
+            fields.push(fieldRow('description', textArea(ev.description || '', 2, function (v) { ev.description = v; })));
+            fields.push(fieldRow('at_elapsed_hours', numberInput(ev.at_elapsed_hours, function (v) { ev.at_elapsed_hours = v; }, {})));
+            fields.push(fieldRow('at_time (ISO, optional)', textInput(ev.at_time || '', function (v) { ev.at_time = v; })));
+            fields.push(fieldRow('once', checkboxInput(ev.once !== false, function (v) { ev.once = v; })));
+            fields.push(fieldRow('enabled', checkboxInput(ev.enabled !== false, function (v) { ev.enabled = v; })));
+            fields.push(fieldRow('tags (comma-separated)', textInput((ev.tags || []).join(', '), function (v) {
+                ev.tags = v.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+            })));
+            fields.push(fieldRow('trigger_zone (lon, lat per line)', zoneTa));
+
+            detailEl.appendChild(el('dl', { class: 'sw-kv' }, fields));
+            detailEl.appendChild(el('div', { class: 'sw-edit-actions' }, [drawZoneBtn]));
+
+            var effectsHost = el('div', { class: 'sw-events-effects' });
+            rerenderEffects(effectsHost, ev);
+            detailEl.appendChild(effectsHost);
+
+            detailEl.appendChild(el('div', { class: 'sw-edit-actions' }, [rmBtn]));
+        }
+
+        rerenderList();
+        rerenderDetail();
+        card.appendChild(listEl);
+        card.appendChild(detailEl);
+        host.appendChild(card);
+    }
+
+    /* ---- Slice 8: Decision points authoring --------------------------------
+     * Same list+detail idiom as renderMissionsCard, plus a nested per-point
+     * options[] sub-list (id/label pairs, mirrors the effects[] sub-list
+     * pattern from Slice 7). Written to the CANONICAL field names runtime-
+     * events.js's normalizeDecisionPoints() expects (id, trigger_elapsed_
+     * hours, title, options[], expires_elapsed_hours, status, enabled,
+     * source) at scenario top level. */
+    var _selectedDecisionPointId = null;
+    function _selectDecisionPoint(id) { _selectedDecisionPointId = id; }
+    function _clearDecisionPointSelection() { _selectedDecisionPointId = null; }
+    function _findSelectedDecisionPoint(d) {
+        if (!_selectedDecisionPointId || !d) return null;
+        return (d.decision_points || []).find(function (p) { return p.id === _selectedDecisionPointId; }) || null;
+    }
+    function nextFreeDecisionPointId(list) {
+        var taken = new Set((list || []).map(function (p) { return p && p.id; }).filter(Boolean));
+        var i = 1;
+        while (taken.has('decision-point-' + i)) i++;
+        return 'decision-point-' + i;
+    }
+    function nextFreeOptionId(list) {
+        var taken = new Set((list || []).map(function (o) { return o && o.id; }).filter(Boolean));
+        var i = 1;
+        while (taken.has('option-' + i)) i++;
+        return 'option-' + i;
+    }
+    var DECISION_POINT_STATUSES = ['pending', 'open', 'closed', 'resolved', 'expired'];
+    function defaultDecisionPoint(list) {
+        return {
+            id: nextFreeDecisionPointId(list), title: '', trigger_elapsed_hours: null,
+            options: [], expires_elapsed_hours: null, status: 'pending', enabled: true, source: 'scenario'
+        };
+    }
+    function defaultDecisionOption(list) { return { id: nextFreeOptionId(list), label: '' }; }
+
+    function renderDecisionsCard(host) {
+        var card = el('div', { class: 'builder-card sw-card' }, [
+            el('div', { class: 'builder-card-header' }, [
+                el('span', { class: 'builder-card-title', text: 'Decision Points · نقاط القرار' })
+            ])
+        ]);
+        card.appendChild(el('div', { class: 'sw-edit-hint', text:
+            'Time-based decision points the runtime events engine can surface for operator resolution. Written to decision_points at scenario top level.' }));
+
+        var listEl   = el('div', { class: 'sw-forces-tree' });
+        var detailEl = el('div', { class: 'sw-forces-detail' });
+
+        function rerenderList() {
+            listEl.innerHTML = '';
+            var list = Array.isArray(_draft.decision_points) ? _draft.decision_points : [];
+            var addBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: '+ Decision point' });
+            addBtn.addEventListener('click', function () {
+                if (!Array.isArray(_draft.decision_points)) _draft.decision_points = [];
+                var dp = defaultDecisionPoint(_draft.decision_points);
+                _draft.decision_points.push(dp);
+                _selectDecisionPoint(dp.id);
+                _markDirty();
+                rerenderList(); rerenderDetail();
+            });
+            listEl.appendChild(el('div', { class: 'sw-forces-group-header' }, [
+                el('span', { text: 'Decision points (' + list.length + ')' }), addBtn
+            ]));
+            list.forEach(function (dp) {
+                var isSel = _selectedDecisionPointId === dp.id;
+                var optCount = Array.isArray(dp.options) ? dp.options.length : 0;
+                var summary = (dp.id || '(no id)') + ' — ' + (dp.title || 'untitled') + ' (' + optCount + ' option' + (optCount === 1 ? '' : 's') + ', ' + (dp.status || 'pending') + ')';
+                var row = el('div', { class: 'sw-forces-row' + (isSel ? ' selected' : '') }, [el('span', { text: summary })]);
+                row.addEventListener('click', function () { _selectDecisionPoint(dp.id); rerenderDetail(); rerenderList(); });
+                listEl.appendChild(row);
+            });
+        }
+
+        function rerenderOptions(container, dp) {
+            container.innerHTML = '';
+            if (!Array.isArray(dp.options)) dp.options = [];
+            var addOptBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: '+ Option' });
+            addOptBtn.addEventListener('click', function () {
+                dp.options.push(defaultDecisionOption(dp.options));
+                _markDirty();
+                rerenderOptions(container, dp); rerenderList();
+            });
+            container.appendChild(el('div', { class: 'sw-forces-group-header' }, [
+                el('span', { text: 'Options (' + dp.options.length + ')' }), addOptBtn
+            ]));
+            dp.options.forEach(function (o, idx) {
+                var idInp = textInput(o.id || '', function (v) { o.id = v; });
+                var labelInp = textInput(o.label || '', function (v) { o.label = v; });
+                var rmOptBtn = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-danger', text: 'Remove' });
+                rmOptBtn.addEventListener('click', function () {
+                    dp.options = dp.options.filter(function (x) { return x !== o; });
+                    _markDirty();
+                    rerenderOptions(container, dp); rerenderList();
+                });
+                container.appendChild(el('div', { class: 'sw-kv-row sw-edit-row' }, [
+                    el('dt', { text: 'option[' + idx + ']' }),
+                    el('dd', null, [idInp, labelInp, rmOptBtn])
+                ]));
+            });
+        }
+
+        function rerenderDetail() {
+            detailEl.innerHTML = '';
+            var dp = _findSelectedDecisionPoint(_draft);
+            if (!dp) {
+                detailEl.appendChild(el('div', { class: 'sw-edit-hint', text: 'Select a decision point on the left, or add a new one.' }));
+                return;
+            }
+            var rmBtn = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-danger', text: 'Remove decision point' });
+            rmBtn.addEventListener('click', function () {
+                _draft.decision_points = (_draft.decision_points || []).filter(function (x) { return x !== dp; });
+                _clearDecisionPointSelection(); _markDirty();
+                rerenderList(); rerenderDetail();
+            });
+
+            var fields = [];
+            fields.push(fieldRow('id', textInput(dp.id || '', function (v) { dp.id = v; rerenderList(); })));
+            fields.push(fieldRow('title', textInput(dp.title || '', function (v) { dp.title = v; rerenderList(); })));
+            fields.push(fieldRow('trigger_elapsed_hours', numberInput(dp.trigger_elapsed_hours, function (v) { dp.trigger_elapsed_hours = v; }, {})));
+            fields.push(fieldRow('expires_elapsed_hours', numberInput(dp.expires_elapsed_hours, function (v) { dp.expires_elapsed_hours = v; }, {})));
+            fields.push(fieldRow('status', selectInput(DECISION_POINT_STATUSES, dp.status || 'pending', function (v) { dp.status = v; rerenderList(); })));
+            fields.push(fieldRow('enabled', checkboxInput(dp.enabled !== false, function (v) { dp.enabled = v; })));
+
+            detailEl.appendChild(el('dl', { class: 'sw-kv' }, fields));
+
+            var optionsHost = el('div', { class: 'sw-events-effects' });
+            rerenderOptions(optionsHost, dp);
+            detailEl.appendChild(optionsHost);
+
+            detailEl.appendChild(el('div', { class: 'sw-edit-actions' }, [rmBtn]));
+        }
+
+        rerenderList();
+        rerenderDetail();
+        card.appendChild(listEl);
+        card.appendChild(detailEl);
+        host.appendChild(card);
+    }
+
+    /* ---- Slice 8: Victory / termination conditions authoring ---------------
+     * Written to the CANONICAL field names runtime-events.js's
+     * normalizeVictoryConditions() expects (id, kind, threshold,
+     * evaluate_at_elapsed_hours, continuous, side, status, enabled, source)
+     * at scenario top level. `threshold` is genuinely free-form in the
+     * evaluator (a plain number OR an object, e.g. `{hours:4}` vs `0.7`) so
+     * it's authored as JSON, parsed defensively like an event effect payload.
+     * IMPORTANT (per plan): the engine does NOT auto-terminate a scenario on
+     * these yet — authored as data only, never overclaimed as live. The card
+     * says so explicitly. */
+    var _selectedVictoryConditionId = null;
+    function _selectVictoryCondition(id) { _selectedVictoryConditionId = id; }
+    function _clearVictoryConditionSelection() { _selectedVictoryConditionId = null; }
+    function _findSelectedVictoryCondition(d) {
+        if (!_selectedVictoryConditionId || !d) return null;
+        return (d.victory_conditions || []).find(function (v) { return v.id === _selectedVictoryConditionId; }) || null;
+    }
+    function nextFreeVictoryConditionId(list) {
+        var taken = new Set((list || []).map(function (v) { return v && v.id; }).filter(Boolean));
+        var i = 1;
+        while (taken.has('victory-condition-' + i)) i++;
+        return 'victory-condition-' + i;
+    }
+    var VICTORY_CONDITION_STATUSES = ['pending', 'met', 'failed', 'expired'];
+    function defaultVictoryCondition(list) {
+        return {
+            id: nextFreeVictoryConditionId(list), kind: 'condition', threshold: null,
+            evaluate_at_elapsed_hours: null, continuous: true, side: '', status: 'pending',
+            enabled: true, source: 'scenario'
+        };
+    }
+
+    function renderVictoryCard(host) {
+        var card = el('div', { class: 'builder-card sw-card' }, [
+            el('div', { class: 'builder-card-header' }, [
+                el('span', { class: 'builder-card-title', text: 'Victory / Termination Conditions · شروط الحسم' })
+            ])
+        ]);
+        card.appendChild(el('div', { class: 'sw-warning sw-edit-hint', text:
+            '⚠ Authored as data only — the engine does NOT auto-evaluate or auto-terminate a scenario on these conditions yet. ' +
+            'No destructive evaluation. Written to victory_conditions at scenario top level.' }));
+
+        var listEl   = el('div', { class: 'sw-forces-tree' });
+        var detailEl = el('div', { class: 'sw-forces-detail' });
+
+        function rerenderList() {
+            listEl.innerHTML = '';
+            var list = Array.isArray(_draft.victory_conditions) ? _draft.victory_conditions : [];
+            var addBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: '+ Victory condition' });
+            addBtn.addEventListener('click', function () {
+                if (!Array.isArray(_draft.victory_conditions)) _draft.victory_conditions = [];
+                var vc = defaultVictoryCondition(_draft.victory_conditions);
+                _draft.victory_conditions.push(vc);
+                _selectVictoryCondition(vc.id);
+                _markDirty();
+                rerenderList(); rerenderDetail();
+            });
+            listEl.appendChild(el('div', { class: 'sw-forces-group-header' }, [
+                el('span', { text: 'Victory conditions (' + list.length + ')' }), addBtn
+            ]));
+            list.forEach(function (vc) {
+                var isSel = _selectedVictoryConditionId === vc.id;
+                var summary = (vc.id || '(no id)') + ' — ' + (vc.kind || 'condition') + (vc.side ? (' · ' + vc.side) : '') + ' (' + (vc.status || 'pending') + ')';
+                var row = el('div', { class: 'sw-forces-row' + (isSel ? ' selected' : '') }, [el('span', { text: summary })]);
+                row.addEventListener('click', function () { _selectVictoryCondition(vc.id); rerenderDetail(); rerenderList(); });
+                listEl.appendChild(row);
+            });
+        }
+
+        function rerenderDetail() {
+            detailEl.innerHTML = '';
+            var vc = _findSelectedVictoryCondition(_draft);
+            if (!vc) {
+                detailEl.appendChild(el('div', { class: 'sw-edit-hint', text: 'Select a victory condition on the left, or add a new one.' }));
+                return;
+            }
+            var rmBtn = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-danger', text: 'Remove victory condition' });
+            rmBtn.addEventListener('click', function () {
+                _draft.victory_conditions = (_draft.victory_conditions || []).filter(function (x) { return x !== vc; });
+                _clearVictoryConditionSelection(); _markDirty();
+                rerenderList(); rerenderDetail();
+            });
+
+            var thresholdTa = textArea(vc.threshold == null ? '' : JSON.stringify(vc.threshold), 2, function (v) {
+                if (v.trim() === '') { vc.threshold = null; return; }
+                try { vc.threshold = JSON.parse(v); } catch (_) { /* leave threshold unchanged until valid JSON is typed */ }
+            });
+
+            var fields = [];
+            fields.push(fieldRow('id', textInput(vc.id || '', function (v) { vc.id = v; rerenderList(); })));
+            fields.push(fieldRow('kind', textInput(vc.kind || '', function (v) { vc.kind = v; rerenderList(); })));
+            fields.push(fieldRow('side', selectInput([''].concat((Array.isArray(_draft.sides) ? _draft.sides : []).map(function (s) { return s.id; })),
+                vc.side || '', function (v) { vc.side = v; rerenderList(); })));
+            fields.push(fieldRow('threshold (JSON: number or object)', thresholdTa));
+            fields.push(fieldRow('evaluate_at_elapsed_hours', numberInput(vc.evaluate_at_elapsed_hours, function (v) { vc.evaluate_at_elapsed_hours = v; }, {})));
+            fields.push(fieldRow('continuous', checkboxInput(vc.continuous !== false, function (v) { vc.continuous = v; })));
+            fields.push(fieldRow('status', selectInput(VICTORY_CONDITION_STATUSES, vc.status || 'pending', function (v) { vc.status = v; rerenderList(); })));
+            fields.push(fieldRow('enabled', checkboxInput(vc.enabled !== false, function (v) { vc.enabled = v; })));
+
+            detailEl.appendChild(el('dl', { class: 'sw-kv' }, fields));
+            detailEl.appendChild(el('div', { class: 'sw-edit-actions' }, [rmBtn]));
+        }
+
+        rerenderList();
+        rerenderDetail();
+        card.appendChild(listEl);
+        card.appendChild(detailEl);
+        host.appendChild(card);
+    }
+
     /* ---- Slice 2C: placeholder card for engine-gap steps ----------------- */
     function renderPlaceholderCard(host, opts) {
         opts = opts || {};
@@ -1764,12 +2551,8 @@
           render: function (h) { renderPostureCard(h); } },
         { id: 'objectives', title_en: 'Objectives',        title_ar: 'الأهداف',
           render: function (h) { renderObjectivesCard(h); } },
-        { id: 'doctrine', title_en: 'Doctrine / ROE',      title_ar: 'العقيدة / قواعد الاشتباك', gap: true,
-          render: function (h) { renderPlaceholderCard(h, {
-            title: 'Doctrine / ROE / WRA',
-            why: 'CMO playbook Step 5 ⚠️ GAP — no scenario field for doctrine/WRA/ROE exists yet. The AI adjudicator uses prompt prose, not authored policy.',
-            slice: 'DOC1 (the next chosen roadmap item)'
-          }); } },
+        { id: 'doctrine', title_en: 'Doctrine / ROE',      title_ar: 'العقيدة / قواعد الاشتباك',
+          render: function (h) { renderDoctrineCard(h); } },
         { id: 'time',     title_en: 'Time & Duration',     title_ar: 'الزمن والمدة',
           render: function (h) { renderTimeDurationCard(h); } },
         { id: 'weather',  title_en: 'Weather',             title_ar: 'الطقس', gap: true,
@@ -1782,18 +2565,14 @@
           render: function (h) { renderGeometryCard(h); } },
         { id: 'forces',   title_en: 'Forces (OOB)',        title_ar: 'القوات',
           render: function (h) { renderForcesCard(h); } },
-        { id: 'missions', title_en: 'Missions',            title_ar: 'المهام', gap: true,
-          render: function (h) { renderPlaceholderCard(h, {
-            title: 'Missions / Packages',
-            why: 'CMO playbook Step 11 ⚠️ GAP — no missions[] schema. Intent is expressed per-step via actors/affected/engagement_arcs.',
-            slice: 'TASK1 in the roadmap'
-          }); } },
-        { id: 'events',   title_en: 'Events',              title_ar: 'الأحداث', gap: true,
-          render: function (h) { renderPlaceholderCard(h, {
-            title: 'Events (trigger → condition → action)',
-            why: 'CMO playbook Step 12 ⚠️ GAP — no structured events[] schema. The Event Log is a ledger, not rules that fire.',
-            slice: 'A later events-schema slice'
-          }); } },
+        { id: 'missions', title_en: 'Missions',            title_ar: 'المهام',
+          render: function (h) { renderMissionsCard(h); } },
+        { id: 'events',   title_en: 'Events',              title_ar: 'الأحداث',
+          render: function (h) { renderEventsCard(h); } },
+        { id: 'decisions', title_en: 'Decision Points',     title_ar: 'نقاط القرار',
+          render: function (h) { renderDecisionsCard(h); } },
+        { id: 'victory',  title_en: 'Victory Conditions',   title_ar: 'شروط الحسم',
+          render: function (h) { renderVictoryCard(h); } },
         { id: 'briefing', title_en: 'Briefing',            title_ar: 'التلخيص',
           render: function (h) { renderBriefingCard(h); } },
         { id: 'save',     title_en: 'Validate & Save',     title_ar: 'التحقق والحفظ',
@@ -1812,7 +2591,9 @@
             case 'map':      return isBboxValidish(d.map_bbox) && Array.isArray(d.ao_boundaries) && d.ao_boundaries.length > 0;
             case 'sides':    return Array.isArray(d.sides) && d.sides.length >= 2;
             case 'posture':  return !!(d.postures && d.postures.BLUE && d.postures.RED);
-            case 'doctrine': return null; // gap — no completion concept
+            case 'doctrine': return (Array.isArray(d.doctrine_rules) && d.doctrine_rules.length > 0) ||
+                                     (Array.isArray(d.roe_rules) && d.roe_rules.length > 0) ||
+                                     (Array.isArray(d.wra_rules) && d.wra_rules.length > 0);
             case 'time':     return Array.isArray(d.phase_table) && d.phase_table.length > 0 &&
                                     Array.isArray(d.steps) && d.steps.length === d.phase_table.length;
             case 'weather':  return null; // gap
@@ -1820,8 +2601,10 @@
                                     d.obj && !!d.obj.name && Array.isArray(d.pipeline) && d.pipeline.length >= 2;
             case 'forces':   return Array.isArray(d.red_units) && d.red_units.length >= 1 &&
                                     Array.isArray(d.blue_units_initial) && d.blue_units_initial.length >= 1;
-            case 'missions': return null; // gap
-            case 'events':   return null; // gap
+            case 'missions': return Array.isArray(d.mission_tasks) && d.mission_tasks.length > 0;
+            case 'events':   return Array.isArray(d.runtime_events) && d.runtime_events.length > 0;
+            case 'decisions': return Array.isArray(d.decision_points) && d.decision_points.length > 0;
+            case 'victory':  return Array.isArray(d.victory_conditions) && d.victory_conditions.length > 0;
             case 'briefing': return Array.isArray(d.steps) && d.steps.length > 0 &&
                                     d.steps.every(function (s) { return s && !!s.narrative_en_baseline; });
             case 'save':     return validateAllHardRules(d).ok;
@@ -1839,6 +2622,33 @@
     }
 
     /* ---- Slice 2C: New Scenario inline form ------------------------------ */
+    /* ---- Slice 10: single ingestion door for ALL four entry paths --------
+     * Manual (native "New Scenario" form), AI (Slice 9 brief-to-scenario-v2),
+     * template (starter-template registry), and import (scenario-import-
+     * wizard.js) all converge here. Stamps commander_review_status:
+     * 'needs_review' (the SAME literal brief-to-scenario-v2.js already
+     * writes for AI drafts — reusing it, not inventing a second convention)
+     * + entry_source for provenance. Opens the draft in the editor for
+     * operator review. NEVER calls mount()/setMode(true)/activates a
+     * scenario — that stays a separate, later, explicitly-gated step
+     * (Slice 11 Launch-to-SCC). */
+    function openDraftForReview(draft, opts) {
+        opts = opts || {};
+        var d = clone(draft || {});
+        d.commander_review_status = 'needs_review';
+        d.entry_source = opts.source || 'unknown';
+        _draft = d;
+        _activeStep = 0;
+        _savedState = 'unsaved';
+        renderEditor();
+        renderIndicator();
+        try {
+            logOperator('Scenario draft opened for review (' + d.entry_source + ')',
+                { name: d.name || '', source: d.entry_source });
+        } catch (_) {}
+        return d;
+    }
+
     function renderNewScenarioForm(host) {
         var nameInp  = el('input', { type: 'text', class: 'sw-edit-input', placeholder: 'e.g. my-scenario' });
         var labelInp = el('input', { type: 'text', class: 'sw-edit-input', placeholder: 'Human-readable title' });
@@ -1848,8 +2658,6 @@
         var baseSel  = el('select', { class: 'sw-edit-input' });
         var emptyOpt = el('option', { value: '__empty__', text: '(empty)' });
         baseSel.appendChild(emptyOpt);
-        var sahilOpt = el('option', { value: 'sahil-corridor-sample', text: 'sahil-corridor-sample (playbook example)' });
-        baseSel.appendChild(sahilOpt);
         // Fetch the list of saved scenarios — appears as a group below.
         // No blocking; if the fetch fails the form still works with (empty).
         (function () {
@@ -1867,9 +2675,64 @@
                     .catch(function () { /* silent — (empty) still works */ });
             } catch (_) {}
         })();
+        // Slice 10: starter-template registry (replaces the old hardcoded,
+        // dead 'sahil-corridor-sample' option that never actually loaded
+        // anything — this one really fetches the template JSON).
+        (function () {
+            try {
+                fetch('/api/scenario-templates', { credentials: 'include' })
+                    .then(function (r) { return r.ok ? r.json() : null; })
+                    .then(function (j) {
+                        if (!j || !Array.isArray(j.templates) || !j.templates.length) return;
+                        var grp = el('optgroup', { label: 'Starter templates:' });
+                        j.templates.forEach(function (t) {
+                            grp.appendChild(el('option', { value: 'template:' + t.id, text: t.label }));
+                        });
+                        baseSel.appendChild(grp);
+                    })
+                    .catch(function () { /* silent — (empty) still works */ });
+            } catch (_) {}
+        })();
         var cancelBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Cancel' });
         var createBtn = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-primary', text: 'Create' });
         var statusSpan = el('span', { class: 'sw-edit-status', text: '' });
+
+        // Slice 10: AI brief-to-draft entry path, in the same form so it
+        // lands through the same openDraftForReview() door as manual/
+        // template/import (never mounts/activates; opens in Edit Mode for
+        // operator review — every generated unit is already stamped
+        // needs_review:true/exact_unit_position:false server-side).
+        var briefTa  = textArea('', 3, function () {});
+        var aiGenBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Generate draft with AI (from brief)' });
+        aiGenBtn.addEventListener('click', function () {
+            var briefText = briefTa.value || '';
+            if (briefText.trim().length < 10) {
+                statusSpan.textContent = 'Enter a longer brief (at least 10 characters) to generate a draft.';
+                statusSpan.style.color = '#d6332e';
+                return;
+            }
+            var name = sanitiseName(nameInp.value) || 'ai-draft-scenario';
+            statusSpan.textContent = 'Generating draft from brief …';
+            statusSpan.style.color = '#1a7f37';
+            fetch('/api/ai/scenario/generate-from-brief', {
+                method: 'POST', credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ brief_text: briefText, name: name, scenario_label: labelInp.value || undefined })
+            }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, body: j }; }); })
+              .then(function (resp) {
+                  if (!resp.ok || !resp.body || !resp.body.ok || !resp.body.scenario) {
+                      statusSpan.textContent = 'AI generation failed: ' + ((resp.body && resp.body.error) || 'unknown error');
+                      statusSpan.style.color = '#d6332e';
+                      return;
+                  }
+                  close();
+                  openDraftForReview(resp.body.scenario, { source: 'ai' });
+              })
+              .catch(function (e) {
+                  statusSpan.textContent = 'Network error: ' + (e && e.message);
+                  statusSpan.style.color = '#d6332e';
+              });
+        });
 
         var form = el('div', { class: 'sw-newscen-form' }, [
             el('div', { class: 'sw-newscen-form-title', text: 'New scenario / سيناريو جديد' }),
@@ -1877,9 +2740,11 @@
                 fieldRow('name (filename, sanitised)', nameInp),
                 fieldRow('Label (EN)', labelInp),
                 fieldRow('Label (AR / عربي)', labelAr),
-                fieldRow('Base template', baseSel)
+                fieldRow('Base template', baseSel),
+                fieldRow('Brief (optional, for AI generation)', briefTa)
             ]),
-            el('div', { class: 'sw-edit-actions' }, [createBtn, cancelBtn, statusSpan])
+            el('div', { class: 'sw-edit-actions' }, [createBtn, cancelBtn, statusSpan]),
+            el('div', { class: 'sw-edit-actions' }, [aiGenBtn])
         ]);
 
         function close() {
@@ -1892,7 +2757,11 @@
         }
         cancelBtn.addEventListener('click', close);
 
-        function applyDraftAndOpen(name, fresh) {
+        // Slice 10: manual creation still gets its own pre-fill step (defaults
+        // for sides/postures/geography/forces a brand-new blank draft needs),
+        // then lands through the SAME openDraftForReview() door as AI/
+        // template/import — no separate activation path for "manual".
+        function applyDraftAndOpen(name, fresh, source) {
             fresh.name = name;
             fresh.scenario_label = labelInp.value || fresh.scenario_label || name;
             if (labelAr.value) fresh.scenario_label_ar = labelAr.value;
@@ -1903,13 +2772,8 @@
             if (!fresh.schema_variant) fresh.schema_variant = 'authored';
             if (!fresh.model_version)  fresh.model_version  = 'authored-v1';
             fresh.authoring_status = 'draft';
-            _draft = fresh;
-            _activeStep = 0;
-            _savedState = 'unsaved'; // a freshly-created/loaded draft is unsaved
             close();
-            renderEditor();
-            renderIndicator();
-            try { logOperator('New scenario draft created (in-memory only)', { name: name }); } catch (_) {}
+            openDraftForReview(fresh, { source: source || 'manual' });
         }
 
         createBtn.addEventListener('click', function () {
@@ -1943,9 +2807,30 @@
                     });
                 return;
             }
-            // (empty) or sahil-corridor-sample → standard template (the sample
-            // option is reserved for a future template loader and currently
-            // produces the same empty draft).
+            // Slice 10: starter-template registry pick.
+            if (typeof baseSelected === 'string' && baseSelected.indexOf('template:') === 0) {
+                var tid = baseSelected.slice('template:'.length);
+                statusSpan.textContent = 'Loading template "' + tid + '" …';
+                statusSpan.style.color = '#1a7f37';
+                fetch('/api/scenario-templates/' + encodeURIComponent(tid), { credentials: 'include' })
+                    .then(function (r) { return r.ok ? r.json() : null; })
+                    .then(function (j) {
+                        if (!j || !j.template) {
+                            statusSpan.textContent = 'Could not load template — falling back to empty.';
+                            statusSpan.style.color = '#d6332e';
+                            applyDraftAndOpen(name, buildEmptyTemplate());
+                            return;
+                        }
+                        applyDraftAndOpen(name, clone(j.template), 'template');
+                    })
+                    .catch(function () {
+                        statusSpan.textContent = 'Network error — using empty template.';
+                        statusSpan.style.color = '#d6332e';
+                        applyDraftAndOpen(name, buildEmptyTemplate());
+                    });
+                return;
+            }
+            // (empty) → standard blank template.
             applyDraftAndOpen(name, buildEmptyTemplate());
         });
 
@@ -2015,6 +2900,8 @@
         syncBlueBaseIds(_draft);
         var hard = validateAllHardRules(_draft);
         if (!hard.ok) { setStatus('Blocked: ' + hard.why, true); return; }
+        var gate = draftIsSafe(_draft);
+        if (!gate.ok) { setStatus('Blocked: ' + gate.why, true); return; }
         try {
             var json = JSON.stringify(_draft, null, 2);
             var blob = new Blob([json], { type: 'application/json' });
@@ -2040,6 +2927,8 @@
         syncBlueBaseIds(_draft);
         var hard = validateAllHardRules(_draft);
         if (!hard.ok) { setStatus('Blocked: ' + hard.why, true); return; }
+        var gate = draftIsSafe(_draft);
+        if (!gate.ok) { setStatus('Blocked: ' + gate.why, true); return; }
         var body = JSON.stringify({ scenario: _draft });
         setStatus('Saving to server …', false);
         fetch('/api/scenarios', {
@@ -2333,6 +3222,8 @@
         setMode: setMode,
         getDraft: function () { return _draft ? clone(_draft) : null; },
         isOn: function () { return _on; },
+        // Slice 10: the single ingestion door for manual/AI/template/import.
+        openDraftForReview: openDraftForReview,
         // Slice 2A/2B/2C: pure helpers exposed for static Node tests.
         // Not intended for runtime callers.
         _testing: {
@@ -2369,7 +3260,48 @@
             _beginMultiPick:             _beginMultiPick,
             _beginPickOnMapPolygon:      _beginPickOnMapPolygon,
             _beginPickOnMapPolyline:     _beginPickOnMapPolyline,
-            _cancelPickOnMap:            _cancelPickOnMap
+            _cancelPickOnMap:            _cancelPickOnMap,
+            // Batch B Slice 4: expose the save-gate paths for static tests.
+            draftIsSafe:                 draftIsSafe,
+            saveAsJson:                  saveAsJson,
+            saveToServer:                saveToServer,
+            saveDraft:                   saveDraft,
+            _setDraftForTest:            function (d) { _draft = d; },
+            // Batch B Slice 5: doctrine/ROE/WRA authoring.
+            validateDoctrineHardRules:   validateDoctrineHardRules,
+            renderDoctrineCard:          renderDoctrineCard,
+            defaultRuleForKind:          defaultRuleForKind,
+            nextFreeRuleId:              nextFreeRuleId,
+            DOCTRINE_RULE_KINDS:         DOCTRINE_RULE_KINDS,
+            _selectRuleForTest:          _selectRule,
+            _clearRuleSelectionForTest:  _clearRuleSelection,
+            // Batch B Slice 6: missions/tasking/routes authoring.
+            renderMissionsCard:          renderMissionsCard,
+            defaultMissionTask:          defaultMissionTask,
+            nextFreeMissionTaskId:       nextFreeMissionTaskId,
+            _selectMissionTaskForTest:   _selectMissionTask,
+            _clearMissionTaskSelectionForTest: _clearMissionTaskSelection,
+            // Batch B Slice 7: runtime events/triggers authoring.
+            validateRuntimeHardRules:    validateRuntimeHardRules,
+            RUNTIME_SAFE_EFFECT_KINDS:   RUNTIME_SAFE_EFFECT_KINDS,
+            renderEventsCard:            renderEventsCard,
+            defaultRuntimeEvent:         defaultRuntimeEvent,
+            defaultRuntimeEffect:        defaultRuntimeEffect,
+            nextFreeEventId:             nextFreeEventId,
+            _selectEventForTest:         _selectEvent,
+            _clearEventSelectionForTest: _clearEventSelection,
+            // Batch B Slice 8: decision points + victory conditions authoring.
+            renderDecisionsCard:         renderDecisionsCard,
+            defaultDecisionPoint:        defaultDecisionPoint,
+            defaultDecisionOption:       defaultDecisionOption,
+            nextFreeDecisionPointId:     nextFreeDecisionPointId,
+            _selectDecisionPointForTest: _selectDecisionPoint,
+            _clearDecisionPointSelectionForTest: _clearDecisionPointSelection,
+            renderVictoryCard:           renderVictoryCard,
+            defaultVictoryCondition:     defaultVictoryCondition,
+            nextFreeVictoryConditionId:  nextFreeVictoryConditionId,
+            _selectVictoryConditionForTest: _selectVictoryCondition,
+            _clearVictoryConditionSelectionForTest: _clearVictoryConditionSelection
         }
     };
 })();

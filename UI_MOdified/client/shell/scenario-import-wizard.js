@@ -1178,18 +1178,17 @@
                 })
                 .then(function (json) {
                     // GET /api/ai/scenario returns { ok, scenario: {...} } — unwrap before
-                    // passing to the workspace validator, which expects the scenario object
+                    // handing off to the editor, which expects the scenario object
                     // directly (checks json.steps, not json.scenario.steps).
                     var scenarioJson = (json && json.scenario) ? json.scenario : json;
-                    var ws = window.AppShellScenarioWorkspace;
-                    if (!ws || typeof ws.loadLiveScenarioFromJson !== 'function') throw new Error('workspace loader unavailable');
-                    var res = ws.loadLiveScenarioFromJson(scenarioJson);
-                    if (!res || res.passed !== true) {
-                        var reasons = (res && res.blockedReasons && res.blockedReasons.length)
-                            ? res.blockedReasons.join('; ')
-                            : 'validation failed';
-                        throw new Error('scenario load blocked: ' + reasons);
-                    }
+                    // Slice 10 (four-entry-path unification): import no longer
+                    // activates the scenario live via loadLiveScenarioFromJson —
+                    // it opens through the SAME AppEditMode.openDraftForReview()
+                    // door as manual/AI/template, for commander review before
+                    // launch (Slice 11).
+                    var editMode = window.AppEditMode;
+                    if (!editMode || typeof editMode.openDraftForReview !== 'function') throw new Error('edit mode unavailable');
+                    editMode.openDraftForReview(scenarioJson, { source: 'import' });
                     try { document.dispatchEvent(new CustomEvent('rmooz:wg-import-loaded')); } catch (_) {}
                     // fix(loader): remember this imported scenario so a refresh
                     // restores it (safe pointer — name only, data/scenarios).
@@ -1203,7 +1202,7 @@
                     hideStopped();
                     if (partial) showBadge('Partial Scenario — ' + body.generated_phase_count + '/' + body.expected_phase_count + ' phases', true);
                     else showBadge('Scenario imported — ' + body.steps + ' phases', false);
-                    setStatus('Opened "' + body.name + '" in the workspace.', '#7fc07f');
+                    setStatus('Opened "' + body.name + '" in Edit Mode for review.', '#7fc07f');
                 });
         }
 

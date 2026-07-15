@@ -407,6 +407,47 @@ function createSchema(db) {
             key TEXT PRIMARY KEY,
             value TEXT NOT NULL
         );
+
+        -- Command-authority backbone (Batch B): Team/Cell/Operator/Units
+        -- assignment + scenario approval lifecycle. 'team' is a plain label,
+        -- not its own table — it carries no attributes here.
+        CREATE TABLE IF NOT EXISTS command_cells (
+            id         TEXT PRIMARY KEY,
+            team       TEXT NOT NULL,
+            name       TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            created_by TEXT NOT NULL,
+            FOREIGN KEY (created_by) REFERENCES users(id)
+        );
+
+        CREATE TABLE IF NOT EXISTS command_assignments (
+            id            TEXT PRIMARY KEY,
+            cell_id       TEXT NOT NULL,
+            operator_id   TEXT NOT NULL,
+            scenario_name TEXT NULL,
+            unit_id       TEXT NULL,
+            cell_role     TEXT NOT NULL DEFAULT 'operator'
+                          CHECK (cell_role IN ('commander','operator','observer')),
+            created_at    TEXT NOT NULL,
+            created_by    TEXT NOT NULL,
+            FOREIGN KEY (cell_id)     REFERENCES command_cells(id),
+            FOREIGN KEY (operator_id) REFERENCES users(id)
+        );
+        CREATE INDEX IF NOT EXISTS idx_cmd_assign_scenario ON command_assignments(scenario_name);
+        CREATE INDEX IF NOT EXISTS idx_cmd_assign_operator ON command_assignments(operator_id);
+
+        CREATE TABLE IF NOT EXISTS scenario_lifecycle (
+            scenario_name TEXT PRIMARY KEY,
+            status        TEXT NOT NULL DEFAULT 'draft'
+                          CHECK (status IN ('draft','in_review','approved','rejected','activated')),
+            author_id     TEXT NULL,
+            submitted_by  TEXT NULL, submitted_at  TEXT NULL,
+            reviewed_by   TEXT NULL, reviewed_at   TEXT NULL,
+            approved_by   TEXT NULL, approved_at   TEXT NULL,
+            rejected_by   TEXT NULL, rejected_at   TEXT NULL, reject_reason TEXT NULL,
+            activated_by  TEXT NULL, activated_at  TEXT NULL,
+            updated_at    TEXT NOT NULL
+        );
     `);
     try { db.exec(`ALTER TABLE units ADD COLUMN side TEXT NULL DEFAULT 'friendly'`); } catch (_) {}
     try { db.exec(`ALTER TABLE units ADD COLUMN lat REAL NULL`); } catch (_) {}

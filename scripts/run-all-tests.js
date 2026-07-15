@@ -69,8 +69,10 @@ const BASELINE_PATH = path.join(__dirname, 'test-baseline-known-failures.json');
 // auto-detected heuristic at run time) so the classification is stable and
 // reviewable in a diff, not silently redrawn file-by-file.
 const MAIN_INTEGRATION_FILES = new Set([
+    'test-ai-generate-from-brief-endpoint-1.js',
     'test-api-scenarios-post.js',
     'test-batch-a-final-policy-matrix-1.js',
+    'test-command-authority-slice2.js',
     'test-fast-doc-1-docx-sim-bridge.js',
     'test-fast-doc-2-publish-before-import.js',
     'test-fast-int-2-wargame-geojson-import.js',

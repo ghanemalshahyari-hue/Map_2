@@ -72,6 +72,12 @@
         request_operator_decision: true,
         weapon_release: true
     };
+    // Batch C Slice C9: 'move_unit' here also happens to be a kind
+    // runtime-movement.js's isMovementExecutionPlan() matches (see the
+    // comment there) — harmless today because blocked effects never reach
+    // approved_effects/applied_effects/pending_effects (the only candidate
+    // lists buildRuntimeExecutionPlans() reads below), but do not widen this
+    // list's or that one's kind vocabulary without re-checking the overlap.
     var DANGEROUS_RUNTIME_EFFECT_REASONS = {
         move_unit: 'direct_unit_mutation_blocked',
         teleport_unit: 'direct_unit_mutation_blocked',
@@ -707,8 +713,21 @@
         state.pending_effects = arr(state.pending_effects).map(function (p) {
             return p && p.effect_id === finalEffect.effect_id ? clone(finalEffect) : p;
         });
-        if (action === 'approve') state.approved_effects.push(finalEffect);
-        else state.rejected_effects.push(finalEffect);
+        if (action === 'approve') {
+            state.approved_effects.push(finalEffect);
+            // Batch C Slice C5: actually apply the mutation now — previously
+            // approval only relabeled status + journaled, never re-entering
+            // the mutation logic, so a doctrine-gated safe effect was
+            // approved-and-forgotten (flag never set / decision point never
+            // opened / task status never updated). weapon_release is
+            // deliberately excluded (MUTABLE_SAFE_EFFECT_KINDS omits it) —
+            // it stays pending_effect_execution regardless of approval.
+            if (MUTABLE_SAFE_EFFECT_KINDS[finalEffect.kind]) {
+                applyEffectMutation(state, finalEffect.kind, obj(finalEffect.payload), finalEffect);
+            }
+        } else {
+            state.rejected_effects.push(finalEffect);
+        }
         state.last_effects.push(finalEffect);
         journalApprovalDecision(state, approval, effect, options);
         if (typeof obj(options).operatorLog === 'function') {
@@ -803,6 +822,76 @@
         allowed.doctrine_decision = rec;
         return { proposal: allowed, blocked: false, approval: false };
     }
+    // Batch C Slice C5: the kind-specific mutation logic, extracted so
+    // decideRuntimeApproval() can invoke the SAME code post-approval.
+    // Previously, an effect that required doctrine approval was, once the
+    // operator clicked Approve, only relabeled to 'approved_safe'/
+    // 'approved_pending_execution' and journaled — the underlying
+    // runtime_flags/open_decision_points/mission_task_status write never
+    // happened (approved-and-forgotten). `add_notification`/
+    // `request_operator_decision`/`weapon_release` are deliberately NOT
+    // routed through here: `add_notification` has no state to mutate,
+    // `request_operator_decision` always opens its decision point and never
+    // blocks on a missing id (a different contract than open_decision_point),
+    // and `weapon_release` stays `pending_effect_execution` forever — no
+    // executor exists for it (Locked Decision 8), approved or not.
+    function applyEffectMutation(state, kind, payload, proposal) {
+        if (kind === 'set_runtime_flag') {
+            var setKey = firstString(payload, ['key', 'flag', 'name', 'id']);
+            if (!setKey) return { ok: false, reason: 'missing_runtime_flag_key' };
+            state.runtime_flags[setKey] = payload.value !== undefined ? clone(payload.value) : true;
+            return { ok: true };
+        }
+        if (kind === 'clear_runtime_flag') {
+            var clearKey = firstString(payload, ['key', 'flag', 'name', 'id']);
+            if (!clearKey) return { ok: false, reason: 'missing_runtime_flag_key' };
+            delete state.runtime_flags[clearKey];
+            return { ok: true };
+        }
+        if (kind === 'open_decision_point') {
+            var openId = firstString(payload, ['decision_point_id', 'decision_id', 'id']);
+            if (!openId) return { ok: false, reason: 'missing_decision_point_id' };
+            state.open_decision_points[openId] = {
+                status: 'open',
+                event_id: proposal.event_id,
+                effect_id: proposal.effect_id,
+                title: payload.title || payload.label || null,
+                prompt: payload.prompt || payload.message || null,
+                options: arr(payload.options || payload.choices).map(function (option) { return clone(option); }),
+                at_elapsed_hours: proposal.at_elapsed_hours
+            };
+            return { ok: true };
+        }
+        if (kind === 'close_decision_point') {
+            var closeId = firstString(payload, ['decision_point_id', 'decision_id', 'id']);
+            if (!closeId) return { ok: false, reason: 'missing_decision_point_id' };
+            state.open_decision_points[closeId] = {
+                status: 'closed',
+                event_id: proposal.event_id,
+                effect_id: proposal.effect_id,
+                at_elapsed_hours: proposal.at_elapsed_hours
+            };
+            return { ok: true };
+        }
+        if (kind === 'update_mission_task_status') {
+            var taskId = firstString(payload, ['mission_task_id', 'task_id', 'id']);
+            var mtStatus = firstString(payload, ['status', 'runtime_status']);
+            if (!taskId) return { ok: false, reason: 'missing_mission_task_id' };
+            if (!mtStatus) return { ok: false, reason: 'missing_mission_task_status' };
+            state.mission_task_status[taskId] = {
+                status: mtStatus,
+                event_id: proposal.event_id,
+                effect_id: proposal.effect_id,
+                at_elapsed_hours: proposal.at_elapsed_hours
+            };
+            return { ok: true };
+        }
+        return { ok: false, reason: 'no_mutation_for_kind' };
+    }
+    var MUTABLE_SAFE_EFFECT_KINDS = {
+        set_runtime_flag: true, clear_runtime_flag: true, open_decision_point: true,
+        close_decision_point: true, update_mission_task_status: true
+    };
     function applySafeRuntimeEventEffects(runtimeState, event, effects, options) {
         event = clone(obj(event));
         if (effects !== undefined) event.effects = effects;
@@ -836,61 +925,9 @@
 
             if (kind === 'add_notification') {
                 finalProposal = finalEffectProposal(proposal, 'applied_safe');
-            } else if (kind === 'set_runtime_flag') {
-                var setKey = firstString(payload, ['key', 'flag', 'name', 'id']);
-                if (!setKey) finalProposal = blockedFinalProposal(proposal, 'missing_runtime_flag_key');
-                else {
-                    state.runtime_flags[setKey] = payload.value !== undefined ? clone(payload.value) : true;
-                    finalProposal = finalEffectProposal(proposal, 'applied_safe');
-                }
-            } else if (kind === 'clear_runtime_flag') {
-                var clearKey = firstString(payload, ['key', 'flag', 'name', 'id']);
-                if (!clearKey) finalProposal = blockedFinalProposal(proposal, 'missing_runtime_flag_key');
-                else {
-                    delete state.runtime_flags[clearKey];
-                    finalProposal = finalEffectProposal(proposal, 'applied_safe');
-                }
-            } else if (kind === 'open_decision_point') {
-                var openId = firstString(payload, ['decision_point_id', 'decision_id', 'id']);
-                if (!openId) finalProposal = blockedFinalProposal(proposal, 'missing_decision_point_id');
-                else {
-                    state.open_decision_points[openId] = {
-                        status: 'open',
-                        event_id: proposal.event_id,
-                        effect_id: proposal.effect_id,
-                        title: payload.title || payload.label || null,
-                        prompt: payload.prompt || payload.message || null,
-                        options: arr(payload.options || payload.choices).map(function (option) { return clone(option); }),
-                        at_elapsed_hours: proposal.at_elapsed_hours
-                    };
-                    finalProposal = finalEffectProposal(proposal, 'applied_safe');
-                }
-            } else if (kind === 'close_decision_point') {
-                var closeId = firstString(payload, ['decision_point_id', 'decision_id', 'id']);
-                if (!closeId) finalProposal = blockedFinalProposal(proposal, 'missing_decision_point_id');
-                else {
-                    state.open_decision_points[closeId] = {
-                        status: 'closed',
-                        event_id: proposal.event_id,
-                        effect_id: proposal.effect_id,
-                        at_elapsed_hours: proposal.at_elapsed_hours
-                    };
-                    finalProposal = finalEffectProposal(proposal, 'applied_safe');
-                }
-            } else if (kind === 'update_mission_task_status') {
-                var taskId = firstString(payload, ['mission_task_id', 'task_id', 'id']);
-                var status = firstString(payload, ['status', 'runtime_status']);
-                if (!taskId) finalProposal = blockedFinalProposal(proposal, 'missing_mission_task_id');
-                else if (!status) finalProposal = blockedFinalProposal(proposal, 'missing_mission_task_status');
-                else {
-                    state.mission_task_status[taskId] = {
-                        status: status,
-                        event_id: proposal.event_id,
-                        effect_id: proposal.effect_id,
-                        at_elapsed_hours: proposal.at_elapsed_hours
-                    };
-                    finalProposal = finalEffectProposal(proposal, 'applied_safe');
-                }
+            } else if (MUTABLE_SAFE_EFFECT_KINDS[kind]) {
+                var mutRes = applyEffectMutation(state, kind, payload, proposal);
+                finalProposal = mutRes.ok ? finalEffectProposal(proposal, 'applied_safe') : blockedFinalProposal(proposal, mutRes.reason);
             } else if (kind === 'request_operator_decision') {
                 var request = finalEffectProposal(proposal, 'proposed');
                 var requestId = firstString(payload, ['decision_point_id', 'decision_id', 'id']) || proposal.effect_id || proposal.event_id;
@@ -979,6 +1016,16 @@
                 effects: normalizeEffects(raw.effects),
                 tags: normalizeTags(raw.tags),
                 source: raw.source || 'scenario',
+                // Batch C Slice C4: trigger_zone was authored (a closed
+                // polygon ring) but never read by any evaluator — 100% inert.
+                // trigger_type opts an event into geo/both gating; 'time'
+                // (default) preserves every existing scenario's behavior
+                // unchanged. trigger_unit_id names which entity's live
+                // position is tested against the zone; omitted = ANY known
+                // position (a general area trigger).
+                trigger_type: (raw.trigger_type === 'geo' || raw.trigger_type === 'both') ? raw.trigger_type : 'time',
+                trigger_zone: Array.isArray(raw.trigger_zone) ? clone(raw.trigger_zone) : [],
+                trigger_unit_id: raw.trigger_unit_id || null,
                 read_only: true
             };
         });
@@ -993,6 +1040,11 @@
                 index: idx,
                 unit_id: raw.unit_id || null,
                 group_id: raw.group_id || null,
+                // Batch C Slice C2: explicit member list for group movement —
+                // resolves group_id (which has no membership registry
+                // anywhere in the codebase) the same way the SCC's manual
+                // group-movement form already does: an authored unit_ids[].
+                unit_ids: Array.isArray(raw.unit_ids) ? raw.unit_ids.map(String).filter(Boolean) : [],
                 kind: raw.kind || 'task',
                 start_elapsed_hours: firstFinite([raw.start_elapsed_hours, raw.start_hours, raw.at_elapsed_hours]),
                 end_elapsed_hours: firstFinite([raw.end_elapsed_hours, raw.end_hours]),
@@ -1000,6 +1052,11 @@
                 status: raw.status || 'planned',
                 enabled: raw.enabled !== false,
                 source: raw.source || 'scenario',
+                // Batch C: route is now a real runtime input (drives
+                // mission-task movement in free-fight-demo.js), not just an
+                // authoring-only field — echoed through unvalidated; the
+                // movement engine's own parseTaskRoutePoints normalizes it.
+                route: Array.isArray(raw.route) ? clone(raw.route) : [],
                 read_only: true
             };
         });
@@ -1044,12 +1101,47 @@
         });
     }
 
-    function dueRuntimeEvents(scenario, currentHours, firedState) {
+    // Batch C Slice C4: reuses the turf.booleanPointInPolygon idiom already
+    // used elsewhere in this codebase (client/ui/controllers/clip-controller.js)
+    // rather than a new geometry implementation. turf is resolved from an
+    // injected geoContext.turf first (keeps this module pure/testable in
+    // Node, same "optional injected dependency" pattern as
+    // runtime-movement.js's context.classifyUnit), falling back to the
+    // browser global (root.turf, i.e. window.turf) in production.
+    function resolveTurf(geoContext) {
+        if (geoContext && geoContext.turf) return geoContext.turf;
+        return (root && root.turf) || null;
+    }
+    function pointInZone(point, zone, turfLib) {
+        if (!Array.isArray(point) || point.length < 2 || !isFinite(+point[0]) || !isFinite(+point[1])) return false;
+        if (!Array.isArray(zone) || zone.length < 3) return false;
+        if (!turfLib || typeof turfLib.booleanPointInPolygon !== 'function' || typeof turfLib.point !== 'function') return false;
+        var ring = zone.map(function (p) { return [+p[0], +p[1]]; });
+        var first = ring[0], last = ring[ring.length - 1];
+        if (first[0] !== last[0] || first[1] !== last[1]) ring = ring.concat([[first[0], first[1]]]);
+        try {
+            var pt = turfLib.point([+point[0], +point[1]]);
+            var poly = { type: 'Feature', properties: {}, geometry: { type: 'Polygon', coordinates: [ring] } };
+            return !!turfLib.booleanPointInPolygon(pt, poly);
+        } catch (_) { return false; }
+    }
+    function geoTriggerDue(event, geoContext) {
+        if (!Array.isArray(event.trigger_zone) || event.trigger_zone.length < 3) return false;
+        var turfLib = resolveTurf(geoContext);
+        if (!turfLib) return false;
+        var positions = (geoContext && geoContext.positions && typeof geoContext.positions === 'object') ? geoContext.positions : {};
+        if (event.trigger_unit_id) return pointInZone(positions[event.trigger_unit_id], event.trigger_zone, turfLib);
+        return Object.keys(positions).some(function (uid) { return pointInZone(positions[uid], event.trigger_zone, turfLib); });
+    }
+    function dueRuntimeEvents(scenario, currentHours, firedState, geoContext) {
         var fired = normalizeFiredState(firedState).runtime_events;
         return normalizeRuntimeEvents(scenario).filter(function (event) {
-            if (!event.enabled || event.at_elapsed_hours == null) return false;
+            if (!event.enabled) return false;
             if (event.once && fired[event.id]) return false;
-            return currentHours != null && currentHours >= event.at_elapsed_hours;
+            var timeDue = event.at_elapsed_hours != null && currentHours != null && currentHours >= event.at_elapsed_hours;
+            if (event.trigger_type === 'geo') return geoTriggerDue(event, geoContext);
+            if (event.trigger_type === 'both') return timeDue && geoTriggerDue(event, geoContext);
+            return timeDue; // 'time' (default) — every existing scenario's behavior, unchanged
         });
     }
 
@@ -1132,7 +1224,13 @@
         var current = clockHours(runtimeState);
         if (current == null) current = 0;
         var fired = runtimeState.fired_state || runtimeState.firedState || runtimeState.fired || {};
-        var dueEvents = dueRuntimeEvents(scenario, current, fired);
+        // Batch C Slice C4: live unit/objective positions + an optional
+        // injected turf instance, so geo/both-triggered events can be
+        // evaluated. Caller-supplied runtimeState.positions is the SAME
+        // runtime_positions overlay free-fight-demo.js already maintains —
+        // no new position-tracking concept.
+        var geoContext = { positions: (runtimeState.positions || runtimeState.runtime_positions || {}), turf: runtimeState.turf };
+        var dueEvents = dueRuntimeEvents(scenario, current, fired, geoContext);
         var duePoints = dueDecisionPoints(scenario, current, fired);
         return {
             version: VERSION,
@@ -1157,6 +1255,13 @@
         normalizeMissionTasks: normalizeMissionTasks,
         normalizeDecisionPoints: normalizeDecisionPoints,
         normalizeVictoryConditions: normalizeVictoryConditions,
+        // Batch C Slice C1: was computed and returned inside
+        // evaluateRuntimeEvents()'s result object but never exported on its
+        // own, so no caller outside this module could ever invoke it
+        // directly — free-fight-demo.js's new mission-task movement tick
+        // needs to call it standalone (it doesn't want the rest of
+        // evaluateRuntimeEvents's due-event/decision-point side effects).
+        activeMissionTasks: activeMissionTasks,
         evaluateRuntimeEvents: evaluateRuntimeEvents,
         getDueRuntimeEvents: getDueRuntimeEvents,
         markRuntimeEventsFired: markRuntimeEventsFired,

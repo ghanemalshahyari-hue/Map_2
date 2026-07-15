@@ -78,11 +78,22 @@ console.log('\n--- 2. free-fight-demo.js: _stateFromStep + boundary sync + snaps
     // seed + reset of display_step
     assert('T-6  clock seeded with display_step:-1 at commit', /_coaExec\.clock = \{[^}]*display_step: -1/.test(ff));
     assert('T-7  display_step reset to -1 on restore', /if \(_coaExec\.clock\) _coaExec\.clock\.display_step = -1;/.test(ff));
-    // tick hook AFTER the clock advance, capturing _crossed
+    // tick hook AFTER the clock advance, capturing _crossed.
+    // Post-C10-correction: _advanceScenarioClock()/_syncDisplayStepToClock()
+    // were extracted out of _coaExecTick() into a shared
+    // _tickScenarioClockAndRuntimeEvents() helper (so the same tick logic
+    // also runs once COA phases exhaust, from _scenarioTransition() — see
+    // test-runtime-post-phase-continuity-1.js). _coaExecTick() now calls
+    // that helper and reads `_rt.crossed`; verify the real chain: the call
+    // exists in _coaExecTick(), and the helper itself still advances the
+    // clock BEFORE syncing the display step (order preserved).
     var ti = ff.indexOf('function _coaExecTick() {');
-    var adv = ff.indexOf('_advanceScenarioClock(); } catch (_) {}', ti);
-    var crs = ff.indexOf('_crossed = _syncDisplayStepToClock()', ti);
-    assert('T-8  _coaExecTick syncs the display step AFTER advancing the clock', ti !== -1 && adv !== -1 && crs !== -1 && crs > adv);
+    var hi = ff.indexOf('function _tickScenarioClockAndRuntimeEvents()');
+    var callsHelper = ff.indexOf('_tickScenarioClockAndRuntimeEvents()', ti) !== -1 && ff.indexOf('_rt.crossed', ti) !== -1;
+    var adv = ff.indexOf('_advanceScenarioClock(); } catch (_) {}', hi);
+    var crs = ff.indexOf('crossed = _syncDisplayStepToClock()', hi);
+    assert('T-8  _coaExecTick syncs the display step AFTER advancing the clock',
+        ti !== -1 && hi !== -1 && hi < ti && callsHelper && adv !== -1 && crs !== -1 && crs > adv);
     // per-tick scenario redraw guarded by !_crossed (snapshot already redrew on a cross)
     assert('T-9  per-tick redraw guarded by !_crossed', /if \(!_crossed\) _triggerScenarioRedraw\(\); syncMarkers\(\);/.test(ff));
     // _renderSnapshotAtStep: redraw wrapper THEN applyState in snapshot mode + skipUnitPositioning

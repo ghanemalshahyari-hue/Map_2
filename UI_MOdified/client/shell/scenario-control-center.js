@@ -196,6 +196,40 @@
         html += '<div style="margin-top:6px;font-size:9.5px;color:#bda66a;">Choice records a pending runtime proposal only; no unit, map, or combat effect is executed here.</div></div>';
         return html;
     }
+    // Batch C Slice C6: closed/resolved decision points — runtimeDecisionPointsHtml
+    // above deliberately only shows OPEN ones awaiting a choice.
+    function runtimeDecisionHistoryHtml(eng) {
+        var points = arr(safeRead(function () { return eng.runtimeDecisionHistory ? eng.runtimeDecisionHistory() : []; }, []));
+        if (!points.length) return '';
+        var statusColor = { resolved: C.good, closed: C.dim };
+        var rows = points.map(function (p) {
+            var resolution = p.selected_option_label ? (' — chose "' + esc(p.selected_option_label) + '"') : '';
+            return '<div style="display:flex;justify-content:space-between;gap:8px;font-size:9.5px;color:' + C.ink + ';margin-top:3px;">' +
+                '<span>' + esc(p.title || p.id) + '</span>' +
+                '<span style="color:' + (statusColor[p.status] || C.dim) + ';font-weight:700;">' + esc(p.status) + resolution + '</span>' +
+                '</div>';
+        }).join('');
+        return '<div data-scc="runtime-decision-history" style="margin:7px 0;padding:7px 9px;border:1px solid ' + C.edgeSoft + ';border-radius:6px;background:#08121d;">' +
+            '<div style="font-size:10.5px;color:' + C.accent + ';font-weight:800;">Decision history</div>' + rows + '</div>';
+    }
+    // Batch C Slice C6: per-event fired/pending/blocked/waiting status board
+    // — the SCC previously only showed a single "next due" hint, never a
+    // full list. Reuses the same status+reason color idiom as Slice C3's
+    // missionTaskStatusHtml / approvalSummaryHtml.
+    function runtimeEventStatusBoardHtml(eng) {
+        var events = arr(safeRead(function () { return eng.runtimeEventStatusBoard ? eng.runtimeEventStatusBoard() : []; }, []));
+        if (!events.length) return '';
+        var statusColor = { fired: C.good, pending: C.warn, blocked: C.bad, waiting: C.dim };
+        var rows = events.map(function (ev) {
+            return '<div style="display:flex;justify-content:space-between;gap:8px;font-size:9.5px;color:' + C.ink + ';margin-top:3px;">' +
+                '<span>' + esc(ev.title || ev.id) + (ev.trigger_type !== 'time' ? (' (' + esc(ev.trigger_type) + ')') : '') + '</span>' +
+                '<span style="color:' + (statusColor[ev.status] || C.dim) + ';font-weight:700;">' + esc(ev.status) +
+                (ev.reason ? (' (' + esc(ev.reason) + ')') : '') + '</span>' +
+                '</div>';
+        }).join('');
+        return '<div data-scc="runtime-event-status-board" style="margin:7px 0;padding:7px 9px;border:1px solid ' + C.edgeSoft + ';border-radius:6px;background:#08121d;">' +
+            '<div style="font-size:10.5px;color:' + C.accent + ';font-weight:800;">Runtime events</div>' + rows + '</div>';
+    }
     function runSnapshot() {
         var eng = engine();
         if (!eng) {
@@ -394,6 +428,27 @@
                 esc(eventHoursLabel(last.at_elapsed_hours)) + '</div>';
         }
         return h + '</div>';
+    }
+    // Batch C Slice C3: read-only status+reason board for authored
+    // mission_tasks[] — reuses the same status+reason idiom as the rest of
+    // this panel (approvalSummaryHtml's Reason/Authority, commit/run-blocked
+    // strings) rather than inventing new vocabulary.
+    function missionTaskStatusHtml(eng) {
+        var tasks = safeRead(function () { return eng.missionTaskRuntimeStatus ? eng.missionTaskRuntimeStatus() : null; }, null) || [];
+        if (!tasks.length) return '';
+        var statusColor = { active: C.good, complete: C.ink, blocked: C.bad, waiting: C.dim };
+        var rows = tasks.map(function (t) {
+            var label = t.is_group ? ('group of ' + t.unit_ids.length) : (t.unit_id || '?');
+            return '<div style="display:flex;justify-content:space-between;gap:8px;font-size:9.5px;color:' + C.ink + ';margin-top:3px;">' +
+                '<span>' + esc(t.id) + ' · ' + esc(label) + '</span>' +
+                '<span style="color:' + (statusColor[t.status] || C.dim) + ';font-weight:700;">' + esc(t.status) +
+                (t.reason ? (' (' + esc(t.reason) + ')') : '') + '</span>' +
+                '</div>';
+        }).join('');
+        return '<div data-scc="mission-task-status" style="margin:7px 0;padding:7px 9px;border:1px solid ' + C.edgeSoft + ';border-radius:6px;background:#08121d;">' +
+            '<div style="font-size:10.5px;color:' + C.accent + ';font-weight:800;">Mission tasks</div>' +
+            rows +
+            '</div>';
     }
     function movementTaskingHtml(eng) {
         var status = safeRead(function () { return eng.runtimeMovementTaskingStatus ? eng.runtimeMovementTaskingStatus() : null; }, null);
@@ -734,6 +789,9 @@
         inner += approvalSummaryHtml(eng);
         inner += executionPlanSummaryHtml(eng);
         inner += movementSummaryHtml(eng);
+        inner += missionTaskStatusHtml(eng);
+        inner += runtimeEventStatusBoardHtml(eng);
+        inner += runtimeDecisionHistoryHtml(eng);
         inner += movementTaskingHtml(eng);
         inner += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:7px;">' + controls + '</div>';
         // live runtime read-out
@@ -845,6 +903,20 @@
         html += '</div>';
         return html;
     }
+    // Batch C Slice C8: renders the runtime-play AAR's classified outcome
+    // (if the scenario has ended) — reuses the same status-color idiom as
+    // the rest of this panel.
+    function runtimePlayAarHtml(eng) {
+        var aar = safeRead(function () { return eng.runtimePlayAar ? eng.runtimePlayAar() : null; }, null);
+        var outcome = aar && aar.outcome;
+        if (!outcome) return '';
+        var statusColor = { pass: C.good, warn: C.warn, fail: C.bad, unknown: C.dim };
+        return '<div data-scc="runtime-play-aar" style="margin:7px 0;padding:7px 9px;border:1px solid ' + (statusColor[outcome.status] || C.edgeSoft) + ';border-radius:6px;background:#08121d;">' +
+            '<div style="font-size:10.5px;color:' + C.accent + ';font-weight:800;">Runtime-play AAR</div>' +
+            '<div style="margin-top:4px;font-size:11px;font-weight:800;color:' + (statusColor[outcome.status] || C.ink) + ';">' + esc(outcome.label) + '</div>' +
+            '<div style="margin-top:2px;font-size:9.5px;color:' + C.dim + ';line-height:1.45;">' + esc(outcome.detail || '') + '</div>' +
+            '</div>';
+    }
     function panel6Evidence(eng) {
         var head = '<button data-act="scc-evidence-toggle" data-scc-evidence-open="' + (evidenceOpen ? '1' : '0') + '" style="font:inherit;cursor:pointer;border:1px solid #3a4658;background:#0c141d;color:' + C.dim + ';border-radius:5px;padding:5px 10px;font-size:10.5px;font-weight:600;">' + (evidenceOpen ? '▾' : '▸') + ' Debug / Evidence</button>';
         if (!evidenceOpen) return panel('6', 'Debug / Evidence', head + note('Proves exactly what is being executed — generated / selected / committed COA JSON, executed movement trace, decision log, network calls. Click to open.', C.dim), C.edgeSoft);
@@ -853,6 +925,12 @@
         // First thing in the panel so an operator screenshot immediately reveals whether the browser ran
         // THIS build or a stale cache, and whether AI-lite preview leaked into execution.
         inner += buildDiagnosticsBlock(eng);
+        // Batch C Slice C8: runtime-play AAR — a DISTINCT view from the CMO
+        // test-instrumentation debrief (cmo-wargame-after-action-debrief.js);
+        // this one narrates the actual played scenario's victory/failure/
+        // timeout outcome, reconstructed from the scenario_end_condition
+        // journal record via AppRuntimeReplay.
+        inner += runtimePlayAarHtml(eng);
         // executed movement trace
         var trace = eng.executedTrace();
         inner += '<div style="margin-top:6px;font-size:9px;color:' + C.dim + ';font-weight:700;">Executed movement trace (' + trace.length + ')</div>';

@@ -3865,6 +3865,12 @@
         if (!Array.isArray(st.last_effects)) st.last_effects = [];
         if (!st.journaled_ids || typeof st.journaled_ids !== 'object' || Array.isArray(st.journaled_ids)) st.journaled_ids = {};
         if (!Array.isArray(st.pending_journal_records)) st.pending_journal_records = [];
+        // Batch C Slice C8: a bounded in-memory history of every journal
+        // record built this session (not just pending-retry ones), so the
+        // runtime-play AAR can reconstruct a timeline without a live journal
+        // read-back endpoint. Capped — this is a read-only convenience view,
+        // not the durable record (the real durable copy is the journal file).
+        if (!Array.isArray(st.journal_record_history)) st.journal_record_history = [];
         if (st.last_journal_error === undefined) st.last_journal_error = null;
         if (!Array.isArray(st.doctrine_decisions)) st.doctrine_decisions = [];
         if (!st.pending_approvals || typeof st.pending_approvals !== 'object' || Array.isArray(st.pending_approvals)) st.pending_approvals = {};
@@ -3988,6 +3994,8 @@
         key = String(key || (kind + ':' + (fallbackKey || 'record')));
         if (st.journaled_ids && st.journaled_ids[key]) return st.journaled_ids[key];
         var record = _runtimeJournalRecord(kind, data || {});
+        st.journal_record_history.push(record);
+        if (st.journal_record_history.length > 200) st.journal_record_history.shift();
         st.journaled_ids[key] = { status: 'pending', kind: kind, queued_at: _nowISO() };
         var w = W();
         if (!record.scenarioName || !record.run_id || !w || typeof w.fetch !== 'function') {
@@ -4130,6 +4138,63 @@
             seen[id] = true;
         });
         return out;
+    }
+    // Batch C Slice C6: recently closed/resolved decision points — the
+    // existing _runtimeDecisionPointsView() above deliberately only shows
+    // OPEN points awaiting an operator choice. This is the complementary
+    // read-only history view (why did this decision point close, what did
+    // the operator choose) — no new state, just a different filter over the
+    // same st.open_decision_points map _resolveRuntimeDecisionPoint/
+    // applyEffectMutation's close_decision_point branch already populate.
+    function _runtimeDecisionHistoryView() {
+        var st = _ensureRuntimeEventSessionState();
+        if (!st) return [];
+        var out = [];
+        Object.keys(st.open_decision_points || {}).forEach(function (id) {
+            var point = st.open_decision_points[id];
+            if (!point || point.status === 'open') return; // still pending -> shown in the Pending decision panel
+            out.push({
+                id: String(point.id || id),
+                title: point.title || id,
+                status: point.status || 'closed',
+                selected_option_id: point.selected_option_id || null,
+                selected_option_label: point.selected_option_label || null,
+                at_elapsed_hours: point.at_elapsed_hours,
+                read_only: true
+            });
+        });
+        return out;
+    }
+    // Batch C Slice C6: a per-runtime-event status+reason board (fired /
+    // pending-approval / blocked / waiting), reusing the SAME status idiom
+    // as Slice C3's mission-task overlay and the doctrine gate — the SCC
+    // today only shows a single "next due" hint, never a full list.
+    function _runtimeEventStatusOne(event, st) {
+        var out = { id: event.id, title: event.title || event.id, trigger_type: event.trigger_type || 'time', status: 'waiting', reason: null, read_only: true };
+        if (!event.enabled) { out.status = 'waiting'; out.reason = 'disabled'; return out; }
+        var fired = st && st.fired_ids && st.fired_ids[event.id];
+        if (!fired) {
+            out.status = 'waiting';
+            out.reason = event.trigger_type === 'geo' ? 'awaiting_geo_trigger' : 'not_yet_due';
+            return out;
+        }
+        var effects = arr(st && st.last_effects).filter(function (e) { return e && e.event_id === event.id; });
+        if (!effects.length) { out.status = 'fired'; return out; }
+        var blocked = effects.filter(function (e) { return e.status === 'blocked'; });
+        var pending = effects.filter(function (e) { return e.status === 'requires_approval' || e.status === 'pending_effect_execution' || e.status === 'proposed'; });
+        if (blocked.length) { out.status = 'blocked'; out.reason = blocked[0].reason || 'effect_blocked'; }
+        else if (pending.length) { out.status = 'pending'; out.reason = 'awaiting_approval'; }
+        else { out.status = 'fired'; }
+        return out;
+    }
+    function _runtimeEventStatusBoard() {
+        if (!_coaExec || !_coaExec.active) return [];
+        var w = W();
+        var API = w && w.AppRuntimeEvents;
+        var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        if (!API || typeof API.normalizeRuntimeEvents !== 'function' || !sc) return [];
+        var st = _ensureRuntimeEventSessionState();
+        return arr(API.normalizeRuntimeEvents(sc)).map(function (ev) { return _runtimeEventStatusOne(ev, st); });
     }
     function _applySafeRuntimeDecisionEffects(point, selected, record) {
         var st = _ensureRuntimeEventSessionState();
@@ -4737,6 +4802,141 @@
         try { updatePanel(); } catch (_) {}
         return clonePlain(status);
     }
+    // Batch C Slice C1: a deterministic movement_id per authored mission task
+    // (not derived from destination/time) so re-ticking the same in-window
+    // task is naturally idempotent via runtime-movement.js's own
+    // st.movements[id]/st.group_movements[id] dedup — no separate "started"
+    // tracking needed here.
+    function _missionTaskMovementId(task) {
+        return 'mission-task-' + String((task && task.id) || '');
+    }
+    // Batch C Slice C1: translates authored mission_tasks[] whose elapsed-time
+    // window is currently active into the SAME runtime-movement engine the
+    // manual SCC "Movement tasking" form already uses (_createRuntimeMovementTask
+    // above) — schedule-driven instead of button-driven. Never touches
+    // _writeMoveFrame/_resolveCoaMoves (the separate COA-direct-mutation path).
+    function _startAuthoredMissionMovement() {
+        if (!_coaExec || !_coaExec.active || !_coaExec.clock) return { started: 0 };
+        var w = W();
+        var API = w && w.AppRuntimeEvents;
+        var MOV = w && w.AppRuntimeMovement;
+        var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        if (!API || typeof API.activeMissionTasks !== 'function' ||
+            !MOV || typeof MOV.createRuntimeMovementTaskPlan !== 'function' || typeof MOV.addRuntimeMovementPlan !== 'function' ||
+            !sc) {
+            return { started: 0 };
+        }
+        var elapsed = isFinite(+_coaExec.clock.current_hours) ? +_coaExec.clock.current_hours : 0;
+        var tasks = arr(API.activeMissionTasks(sc, elapsed));
+        var st = _ensureRuntimeMovementState();
+        var context = _runtimeMovementTaskContext();
+        var startedCount = 0;
+        tasks.forEach(function (task) {
+            if (!task || !Array.isArray(task.route) || task.route.length < 2) return; // no route -> no-op
+            // Batch C Slice C2: group_id has no unit-membership registry
+            // anywhere in this codebase, so — same resolution the SCC's
+            // manual group-movement form already uses — an explicit
+            // unit_ids[] (>= 2 entries) means this is a group/formation task.
+            var groupUnitIds = arr(task.unit_ids).filter(Boolean);
+            var isGroup = groupUnitIds.length > 1;
+            if (!isGroup && !task.unit_id) return; // no single unit and no usable group -> no-op
+            var movementId = _missionTaskMovementId(task);
+            if ((st.movements && st.movements[movementId]) || (st.group_movements && st.group_movements[movementId])) return; // already started/arrived this run
+            var input = {
+                movement_id: movementId,
+                route: task.route,
+                start_elapsed_hours: task.start_elapsed_hours != null ? task.start_elapsed_hours : elapsed
+            };
+            if (isGroup) {
+                input.unit_ids = groupUnitIds;
+                input.leader_unit_id = task.unit_id || groupUnitIds[0];
+            } else {
+                input.unit_id = task.unit_id;
+            }
+            var built = MOV.createRuntimeMovementTaskPlan(input, context);
+            if (!built || built.ok === false || !built.plan) return; // taskability-blocked or invalid route; Slice C3 surfaces the reason
+            var res = MOV.addRuntimeMovementPlan(st, built.plan, context);
+            st = res && res.state ? res.state : st;
+            _coaExec.runtime_movement = st;
+            var created = arr(res && res.created);
+            if (created.length) {
+                startedCount += created.length;
+                var label = isGroup ? ('group of ' + groupUnitIds.length + ' units') : task.unit_id;
+                try { _appendToEventLog('Mission task movement started: ' + esc(label) + ' (' + esc(task.id) + ').'); } catch (_) {}
+            }
+        });
+        if (startedCount) { try { _publishOwnedPositions(); } catch (_) {} }
+        return { started: startedCount };
+    }
+    // Batch C Slice C3: a read-only runtime-status overlay for authored
+    // mission_tasks[] — mirrors the runtime_positions/runtime_world_state.
+    // positions convention (authored data stays as-authored; this computes a
+    // parallel view every call, nothing is written back onto scenario.
+    // mission_tasks[]). Reuses the same status+reason idiom as classifyUnit's
+    // {blockers,why,reason} and the doctrine gate's {decision,reasons} —
+    // 'waiting' | 'active' | 'complete' | 'blocked', each with a real reason.
+    function _missionTaskMovementLookup(st, movementId, isGroup) {
+        if (!st) return null;
+        return isGroup ? (st.group_movements && st.group_movements[movementId]) : (st.movements && st.movements[movementId]);
+    }
+    function _missionTaskRuntimeStatusOne(task, elapsed, st, context) {
+        var groupUnitIds = arr(task.unit_ids).filter(Boolean);
+        var isGroup = groupUnitIds.length > 1;
+        var out = {
+            id: task.id, unit_id: task.unit_id || null, group_id: task.group_id || null,
+            unit_ids: groupUnitIds, is_group: isGroup, kind: task.kind || 'task',
+            status: 'waiting', reason: null, read_only: true
+        };
+        if (!task.enabled) { out.status = 'waiting'; out.reason = 'disabled'; return out; }
+        var start = task.start_elapsed_hours == null ? 0 : task.start_elapsed_hours;
+        if (elapsed == null || elapsed < start) { out.status = 'waiting'; out.reason = 'not_yet_due'; return out; }
+        if (task.end_elapsed_hours != null && elapsed > task.end_elapsed_hours) {
+            out.status = 'complete'; out.reason = 'window_closed'; return out;
+        }
+        if (!Array.isArray(task.route) || task.route.length < 2) {
+            out.status = 'blocked'; out.reason = 'no_route_authored'; return out;
+        }
+        if (!isGroup && !task.unit_id) { out.status = 'blocked'; out.reason = 'no_unit_assigned'; return out; }
+        var movementId = _missionTaskMovementId(task);
+        var mv = _missionTaskMovementLookup(st, movementId, isGroup);
+        if (mv) {
+            var s = isGroup ? mv.group_status : mv.status;
+            out.status = (s === 'arrived') ? 'complete' : 'active';
+            out.reason = s || null;
+            return out;
+        }
+        // In-window but not started yet — probe taskability WITHOUT starting
+        // anything (createRuntimeMovementTaskPlan is pure), purely so the
+        // operator sees WHY, reusing the exact same reason the real start
+        // attempt would produce (Slice C1/C2), not a re-derived guess.
+        var MOV = W() && W().AppRuntimeMovement;
+        if (MOV && typeof MOV.createRuntimeMovementTaskPlan === 'function') {
+            var probeInput = { movement_id: movementId, route: task.route, start_elapsed_hours: start };
+            if (isGroup) { probeInput.unit_ids = groupUnitIds; probeInput.leader_unit_id = task.unit_id || groupUnitIds[0]; }
+            else { probeInput.unit_id = task.unit_id; }
+            var probe = MOV.createRuntimeMovementTaskPlan(probeInput, context || {});
+            if (!probe || probe.ok === false) {
+                out.status = 'blocked';
+                out.reason = (probe && probe.message) || 'not_taskable';
+                return out;
+            }
+        }
+        out.status = 'active'; out.reason = 'starting';
+        return out;
+    }
+    function _missionTaskRuntimeStatus() {
+        if (!_coaExec || !_coaExec.active) return [];
+        var w = W();
+        var API = w && w.AppRuntimeEvents;
+        var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        if (!API || typeof API.normalizeMissionTasks !== 'function' || !sc) return [];
+        var elapsed = _coaExec.clock && isFinite(+_coaExec.clock.current_hours) ? +_coaExec.clock.current_hours : 0;
+        var st = _ensureRuntimeMovementState();
+        var context = _runtimeMovementTaskContext();
+        return arr(API.normalizeMissionTasks(sc)).map(function (task) {
+            return _missionTaskRuntimeStatusOne(task, elapsed, st, context);
+        });
+    }
     function _applyRuntimeEventEffectsForEvent(event, API, st) {
         if (!event || !API || typeof API.applySafeRuntimeEventEffects !== 'function' || !st) {
             return { total: 0, blocked: 0, pending: 0 };
@@ -4777,7 +4977,14 @@
         if (!API || typeof API.evaluateRuntimeEvents !== 'function' || !sc) return { due_count: 0, due_decision_point_count: 0 };
         var st = _ensureRuntimeEventSessionState();
         if (!st) return { due_count: 0, due_decision_point_count: 0 };
-        var result = API.evaluateRuntimeEvents(sc, { clock: _coaExec.clock, fired_state: _runtimeEventFiredState(st) });
+        // Batch C Slice C4: feed live unit positions (the SAME runtime_positions
+        // overlay runtime-movement.js already maintains) + the loaded turf
+        // instance in, so geo/both-triggered runtime_events can evaluate.
+        var movementSt = _ensureRuntimeMovementState();
+        var result = API.evaluateRuntimeEvents(sc, {
+            clock: _coaExec.clock, fired_state: _runtimeEventFiredState(st),
+            positions: movementSt && movementSt.runtime_positions, turf: w.turf
+        });
         var dueEvents = arr(result && result.due_events);
         var duePoints = arr(result && result.due_decision_points);
         st.next_event_hours = (result && result.next_event_hours != null) ? result.next_event_hours : null;
@@ -5019,6 +5226,31 @@
         return { decisions: decisions.length, effects: (res && res.effects) || [] };
     }
 
+    // Batch C Slice C10 correction: scenario clock advancement + mission-task
+    // movement + runtime-events evaluation, extracted so it runs independent
+    // of COA-phase-execution state. Owner ruling: "Play means scenario time
+    // moves; phases/steps are review or task structure" — COA phase
+    // exhaustion must stop PHASE work only, never the clock, mission-task
+    // movement, runtime-event firing, or (via the clock it advances) victory/
+    // timeout evaluation. Previously this lived ONLY inside _coaExecTick()'s
+    // tail, which stops being invoked at all once phases exhaust (dispatch in
+    // _scenarioTick() falls through to _scenarioTransition() instead) — so an
+    // event scheduled after the last COA phase, or a dangerous effect that
+    // should stay gated, was never evaluated again even while the scenario
+    // clock was still meant to be playing. Called from BOTH _coaExecTick()
+    // (while phases are still executing) and _scenarioTransition() (once
+    // phases are exhausted, or when there was never a phase-executing COA at
+    // all) — one source of truth either way.
+    function _tickScenarioClockAndRuntimeEvents() {
+        try { _advanceScenarioClock(); } catch (_) {}   // OPTION-C/C1: advance the scenario runtime clock (current_time) this tick
+        try { _startAuthoredMissionMovement(); } catch (_) {}   // Batch C Slice C1: in-window mission_tasks[] start moving via the runtime-movement engine
+        try { _tickRuntimeMovement(false); } catch (_) {}   // MOV1: approved movement plans progress by scenario clock only
+        var runtimeEvents = null;
+        try { runtimeEvents = _fireRuntimeEventsFromClock(); } catch (_) {}   // C4b: clock -> evaluator -> fired IDs + operator log only (no effects)
+        var crossed = false;
+        try { crossed = _syncDisplayStepToClock(); } catch (_) {}   // OPTION-C/C2: clock drives the displayed snapshot step (re-renders on a boundary cross)
+        return { runtimeEvents: runtimeEvents, crossed: crossed };
+    }
     function _coaExecTick() {
         if (!_coaExec || !_coaExec.active || _coaExec.paused || _coaExec.replan_required) return null;
         var coa = _coaExec.selected_coa;
@@ -5106,10 +5338,9 @@
             try { _refreshGreenWorld('phase_advance'); } catch (_) {}
         }
         _coaExec.ticks++; _coaExec.updated_at = _nowISO();
-        try { _advanceScenarioClock(); } catch (_) {}   // OPTION-C/C1: advance the scenario runtime clock (current_time) this tick
-        try { _tickRuntimeMovement(false); } catch (_) {}   // MOV1: approved movement plans progress by scenario clock only
-        var _runtimeEvents = null; try { _runtimeEvents = _fireRuntimeEventsFromClock(); } catch (_) {}   // C4b: clock -> evaluator -> fired IDs + operator log only (no effects)
-        var _crossed = false; try { _crossed = _syncDisplayStepToClock(); } catch (_) {}   // OPTION-C/C2: clock drives the displayed snapshot step (re-renders on a boundary cross)
+        var _rt = _tickScenarioClockAndRuntimeEvents();
+        var _runtimeEvents = _rt.runtimeEvents;
+        var _crossed = _rt.crossed;
         var coa_tick_execute_ms = _nowMs() - te0;
         // RMOOZ-COA-COMMIT-LIVE-DELAY-AUDIT-N: instrument the REAL per-tick UI/map/persist costs so the
         // operator can see (in their browser) exactly where any delay is. coa_tick_execute_ms is the
@@ -7050,7 +7281,93 @@
             considered: _considered, selected: _selected, max_allowed: _maxAllowed, held: _held,
             summary: 'Red ' + posture + ringTxt + (moved ? ' — moved ' + moved + '/' + _considered + ' (budget ' + _maxAllowed + ', ' + _held + ' hold)' : ' — held') + ' (deterministic, no LLM)' };
     }
+    // Batch C Slice C7: real force-ratio calc, reusing world-state.js's
+    // computeBalanceSummary (the SAME echelon-weighted formula the stepped/
+    // W3 world already uses — [[feedback_ranges_from_db_not_invented]], no
+    // second implementation) rather than inventing a new one. free-fight's
+    // own units (_greenUnits()) strip strength/status/echelon, so this reads
+    // the raw authored red_units/blue_units_initial directly. Free-fight
+    // does not track live per-unit attrition today (no step unit_state), so
+    // strength/status default to "full strength / alive" — this is honestly
+    // an echelon-weighted composition ratio, not a live-attrition ratio;
+    // it becomes more accurate automatically if/when free-fight ever tracks
+    // per-unit damage.
+    function _forceRatioUnits() {
+        var w = W(); var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        if (!sc) return [];
+        var red = Array.isArray(sc.red_units) ? sc.red_units : [];
+        var blue = Array.isArray(sc.blue_units_initial) ? sc.blue_units_initial : (Array.isArray(sc.blue_units) ? sc.blue_units : []);
+        function mapSide(list, side) {
+            return arr(list).map(function (u) {
+                return { side: side, echelon: u && u.echelon, strength: u && u.strength, status: u && u.status, off_map: false };
+            });
+        }
+        return mapSide(red, 'RED').concat(mapSide(blue, 'BLUE'));
+    }
+    function _forceRatioSummary() {
+        var w = W(); var WS = w && w.AppWorldState;
+        if (!WS || typeof WS.computeBalanceSummary !== 'function') return { force_ratio_value: null, losses: null };
+        try { return WS.computeBalanceSummary({ units: _forceRatioUnits() }); } catch (_) { return { force_ratio_value: null, losses: null }; }
+    }
+    // Batch C Slice C7: authored victory_conditions[] evaluated against real
+    // state — two supported kinds (anything else stays inert/never-met,
+    // honestly, same "no destructive evaluation" pattern Slice 8's authoring
+    // card already disclosed): 'force_ratio_below' (threshold: number — met
+    // when the RED/BLUE force ratio drops below it, computed via
+    // _forceRatioSummary above) and 'hold_objective' (threshold: {hours:N},
+    // side: 'blue'|'red' — met once that side has held CONTINUOUS objective
+    // control for >= N hours, via _scenario.objective_control_since, updated
+    // every _scenarioTransition tick alongside outcome.objective_control).
+    function _victoryConditionMet() {
+        var w = W(); var sc = w && w.RmoozScenario && w.RmoozScenario.scenario;
+        if (!sc) return null;
+        var conditions = arr(sc.victory_conditions).concat(arr(sc.runtime_scenario && sc.runtime_scenario.victory_conditions));
+        if (!conditions.length) return null;
+        var elapsed = _coaExec && _coaExec.clock && isFinite(+_coaExec.clock.current_hours) ? +_coaExec.clock.current_hours : null;
+        var since = _scenario && _scenario.objective_control_since;
+        for (var i = 0; i < conditions.length; i++) {
+            var c = conditions[i];
+            if (!c || c.enabled === false) continue;
+            if (c.kind === 'force_ratio_below' && isFinite(+c.threshold)) {
+                var fr = _forceRatioSummary().force_ratio_value;
+                if (fr != null && fr < +c.threshold) return { id: c.id, kind: c.kind, side: c.side || null };
+            } else if (c.kind === 'hold_objective' && c.threshold && isFinite(+c.threshold.hours)) {
+                var wantSide = String(c.side || '').toLowerCase();
+                if (since && since.side === wantSide && elapsed != null && isFinite(+since.since_hours) &&
+                    (elapsed - since.since_hours) >= +c.threshold.hours) {
+                    return { id: c.id, kind: c.kind, side: c.side || null };
+                }
+            }
+        }
+        return null;
+    }
     function _scenarioEndCondition(outcome) {
+        // Batch C Slice C7: authored victory conditions + the runtime clock's
+        // own timeout feed this SAME single chokepoint — not a second
+        // "is it over" mechanism.
+        var victory = _victoryConditionMet();
+        if (victory) {
+            return { code: 'victory_condition_met', summary: 'Victory condition "' + (victory.id || victory.kind) + '" met — scenario complete.',
+                     victory_condition_id: victory.id, side: victory.side };
+        }
+        // NOTE: _coaExec.clock.completed is deliberately NOT used here — it is
+        // overloaded (free-fight-demo.js:_advanceScenarioClock also sets it
+        // true whenever the committed-COA's phase_status reaches 'complete',
+        // which has nothing to do with running out of authored time). Instead
+        // this re-derives the genuine timeout the same way world-state.js's
+        // _buildClock computes its truthful `completed` state: only when
+        // end_hours is a REAL bound strictly after start_hours (guards the
+        // degenerate/unauthored case where end_hours silently defaults to
+        // current_hours and would otherwise read as "always complete").
+        if (_coaExec && _coaExec.clock) {
+            var _c = _coaExec.clock;
+            var _startH = isFinite(+_c.start_hours) ? +_c.start_hours : 0;
+            var _endH = isFinite(+_c.end_hours) ? +_c.end_hours : null;
+            var _curH = isFinite(+_c.current_hours) ? +_c.current_hours : null;
+            if (_endH != null && _curH != null && _endH > _startH && _curH >= _endH) {
+                return { code: 'scenario_timeout', summary: 'Scenario runtime clock reached its authored end time — scenario complete.' };
+            }
+        }
         if (outcome.blue_success) return { code: 'objective_secured', summary: 'Objective secured by Blue — scenario complete.' };
         if (outcome.blue_unable) return { code: 'blue_unable_to_continue', summary: 'Blue has no units able to continue — scenario complete.' };
         if (outcome.red_unable) return { code: 'red_unable_to_contest', summary: 'Red has no units able to contest — scenario complete.' };
@@ -7124,6 +7441,18 @@
             updatePanel();
             return _scenario;
         }
+        // Batch C Slice C10 correction: this is the path that runs once the
+        // committed COA's phases are exhausted (or when there was never a
+        // phase-executing COA at all) — the clock/mission-task-movement/
+        // runtime-events tick must ALSO happen here, not just inside
+        // _coaExecTick(), or "Play means scenario time moves" breaks the
+        // instant a short COA's phases finish inside a longer authored
+        // runtime. Respects the same paused-guard _coaExecTick() itself
+        // honors — an operator pause (_pauseCommittedCoa) must freeze this
+        // exactly like a phase-executing tick would.
+        if (!(_coaExec && _coaExec.paused)) {
+            _tickScenarioClockAndRuntimeEvents();
+        }
         // 1) White adjudication (deterministic) — AREA-based objective control (AC)
         _scenario.current_actor = 'white';
         var outcome = _whiteScenarioOutcome();
@@ -7131,6 +7460,21 @@
         _scenario.objective_control = outcome.objective_control;   // AC: Blue / Red / Contested / Uncontrolled
         _scenario.blue_presence = outcome.blue_presence;
         _scenario.red_contest = outcome.red_contest;
+        // Batch C Slice C7: objective-control-DURATION accumulator (no
+        // equivalent existed anywhere — objective_control was recomputed
+        // fresh every tick with no history) so hold_objective victory
+        // conditions can require CONTINUOUS control, not cumulative.
+        (function () {
+            var elapsedNow = _coaExec && _coaExec.clock && isFinite(+_coaExec.clock.current_hours) ? +_coaExec.clock.current_hours : null;
+            var controlSide = (outcome.objective_control === 'blue' || outcome.objective_control === 'red') ? outcome.objective_control : null;
+            if (controlSide) {
+                if (!_scenario.objective_control_since || _scenario.objective_control_since.side !== controlSide) {
+                    _scenario.objective_control_since = { side: controlSide, since_hours: elapsedNow };
+                }
+            } else {
+                _scenario.objective_control_since = null;
+            }
+        })();
         // RMOOZ-AI-FREE-FIGHT-EVENT-MILESTONES-A: per-turn White adjudication, named milestone.
         try { _recordDecision({ role: 'white', action: 'scenario_outcome_check', called_llm: false, source: 'scenario',
             reason: outcome.reason, result_summary: 'turn ' + _scenario.scenario_turn + ' · ' + outcome.summary + ' · contested ' + outcome.objective_contested }); } catch (_) {}
@@ -7153,6 +7497,15 @@
             _scenario.current_actor = 'white'; _scenario.pending_replan_reason = null; _scenario.updated_at = _nowISO();
             _stopScenarioTimer();
             try { _appendToEventLog('Scenario complete — ' + esc(end.code) + ': ' + esc(end.summary)); } catch (_) {}
+            // Batch C Slice C7/C8: a new journal record kind for scenario-outcome
+            // events — appended through the SAME existing sim-journal boundary
+            // every other runtime record uses (/api/sim/propose+/commit via
+            // _journalRuntimeRecord), so Slice C8's AAR can reconstruct it.
+            try {
+                _journalRuntimeRecord('scenario_end_condition', {
+                    detail: { code: end.code, summary: end.summary, victory_condition_id: end.victory_condition_id || null, side: end.side || null }
+                }, 'scenario_end_condition:' + ((_scenario && _scenario.name) || 'scenario'));
+            } catch (_) {}
             updatePanel();
             return _scenario;
         }
@@ -7226,7 +7579,18 @@
             _scenario = _newScenario();
             try { _appendToEventLog('Run Scenario — continuous fight started. Deterministic ticks; the AI is NOT called on normal ticks.'); } catch (_) {}
         } else { _scenario.scenario_status = 'running'; _scenario.pending_replan_reason = null; }
-        if (_coaExec.phase_status !== 'complete') { _coaExec.paused = false; _coaExec.replan_required = false; }
+        // Batch C Slice C10 correction: _coaExec.paused must clear on EVERY
+        // resume, not only while phases are still executing. Before this
+        // fix, once phases were already complete, _pauseScenario() left
+        // _coaExec.paused stuck at true forever — harmless before this
+        // batch (nothing else read it once phase_status was 'complete'),
+        // but now _scenarioTransition() checks it to gate the clock/
+        // runtime-events tick (see _tickScenarioClockAndRuntimeEvents call
+        // above), so a "Resume"/"Run again" after a post-phase-exhaustion
+        // pause would silently never actually resume evaluation despite
+        // scenario_status correctly flipping back to 'running'.
+        _coaExec.paused = false;
+        if (_coaExec.phase_status !== 'complete') { _coaExec.replan_required = false; }
         // OPTION-C/C3b: primary Play unfreezes the runtime clock (Play = time moves).
         _setScenarioClockPlaying(true);
         _startScenarioTimer();
@@ -7419,6 +7783,11 @@
         runtimeMovementState: function () { try { return _ensureRuntimeMovementState(); } catch (_) { return null; } },
         startRuntimeMovementPlans: function () { return _startRuntimeMovementPlans(); },
         tickRuntimeMovement: function (paused) { return _tickRuntimeMovement(paused === true); },
+        // Batch C Slice C1: exposed for tests + the Slice C3 SCC status panel;
+        // production callers get this for free every tick via _coaExecTick.
+        startAuthoredMissionMovement: function () { try { return _startAuthoredMissionMovement(); } catch (_) { return { started: 0 }; } },
+        // Batch C Slice C3: read-only status+reason board for the SCC panel.
+        missionTaskRuntimeStatus: function () { try { return _missionTaskRuntimeStatus(); } catch (_) { return []; } },
         runtimeMovementTaskingStatus: function () { try { return _runtimeMovementTaskingStatus(); } catch (_) { return null; } },
         createRuntimeMovementTask: function (input) { return _createRuntimeMovementTask(input || {}); },
         approveRuntimeApproval: function (approvalId) { return _decideRuntimeApproval(approvalId, 'approve'); },
@@ -7550,6 +7919,29 @@
         runBlockedReason: function () { return _coaExec && _coaExec.run_blocked_reason; },
         runtimeDecisionPoints: function () { return _runtimeDecisionPointsView(); },
         resolveRuntimeDecisionPoint: function (decisionPointId, optionId) { return _resolveRuntimeDecisionPoint(decisionPointId, optionId); },
+        // Batch C Slice C6: closed/resolved decision-point history + a
+        // per-event fired/pending/blocked/waiting status board.
+        runtimeDecisionHistory: function () { try { return _runtimeDecisionHistoryView(); } catch (_) { return []; } },
+        runtimeEventStatusBoard: function () { try { return _runtimeEventStatusBoard(); } catch (_) { return []; } },
+        // Batch C Slice C7: real force-ratio + victory-condition evaluation.
+        forceRatioSummary: function () { try { return _forceRatioSummary(); } catch (_) { return { force_ratio_value: null, losses: null }; } },
+        victoryConditionMet: function () { try { return _victoryConditionMet(); } catch (_) { return null; } },
+        scenarioEndCondition: function (outcome) { try { return _scenarioEndCondition(outcome || _whiteScenarioOutcome()); } catch (_) { return null; } },
+        // Batch C Slice C8: reconstructs this session's journal_record_history
+        // (Slice C7's scenario_end_condition record + every other runtime
+        // journal record) into a timeline + classified outcome narrative via
+        // AppRuntimeReplay — a DISTINCT AAR from the CMO test-instrumentation
+        // one (cmo-wargame-after-action-debrief.js), scoped to actual
+        // victory/failure/timeout outcomes, not release-grading.
+        runtimePlayAar: function () {
+            try {
+                var w = W(); var RR = w && w.AppRuntimeReplay;
+                var st = _ensureRuntimeEventSessionState();
+                if (!RR || typeof RR.buildRuntimePlayAar !== 'function' || !st) return null;
+                var rows = arr(st.journal_record_history).map(function (r) { return { mods: { runtime_journal: r } }; });
+                return RR.buildRuntimePlayAar(rows);
+            } catch (_) { return null; }
+        },
         // ── evidence (Panel 6) ──
         decisionLog: function () { return _decisionLog.slice(-20); },
         networkCalls: function () { return _netLog.slice(-20); },

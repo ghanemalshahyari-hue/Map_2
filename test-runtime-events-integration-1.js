@@ -191,10 +191,19 @@ ok('T-11 C4a evaluator contract remains available to C4b',
     typeof RuntimeEvents.markRuntimeEventsFired === 'function' &&
     RuntimeEvents.evaluateRuntimeEvents(scenario(), { clock: { current_hours: 0.5 }, fired_state: {} }).due_events[0].id === 'h0030');
 
+// Post-C10-correction: _advanceScenarioClock()/_fireRuntimeEventsFromClock()
+// are no longer called inline in _coaExecTick() — they were extracted into a
+// shared _tickScenarioClockAndRuntimeEvents() helper so the SAME tick logic
+// also runs once COA phases exhaust (from _scenarioTransition(), see
+// test-runtime-post-phase-continuity-1.js). Verify the real chain instead:
+// _coaExecTick calls the helper, and the helper itself still advances the
+// clock BEFORE firing runtime events (order preserved).
+const sharedTickHelperBlock = block(ffSource, 'function _tickScenarioClockAndRuntimeEvents()', 'function _coaExecTick()');
 ok('T-12 _coaExecTick integrates clock advance before runtime event firing and records timing counts',
-    tickBlock.indexOf('_advanceScenarioClock()') !== -1 &&
-    tickBlock.indexOf('_fireRuntimeEventsFromClock()') !== -1 &&
-    tickBlock.indexOf('_advanceScenarioClock()') < tickBlock.indexOf('_fireRuntimeEventsFromClock()') &&
+    tickBlock.indexOf('_tickScenarioClockAndRuntimeEvents()') !== -1 &&
+    sharedTickHelperBlock.indexOf('_advanceScenarioClock()') !== -1 &&
+    sharedTickHelperBlock.indexOf('_fireRuntimeEventsFromClock()') !== -1 &&
+    sharedTickHelperBlock.indexOf('_advanceScenarioClock()') < sharedTickHelperBlock.indexOf('_fireRuntimeEventsFromClock()') &&
     /runtime_event_count/.test(tickBlock) &&
     /runtime_decision_point_count/.test(tickBlock));
 

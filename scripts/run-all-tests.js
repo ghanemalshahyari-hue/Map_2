@@ -60,9 +60,13 @@ const fs   = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
 
+const { findDuplicateFilenameKeys } = require('./baseline-duplicate-key-check.js');
+
 const ROOT = path.join(__dirname, '..');
 const CONCURRENCY = 8;
-const BASELINE_PATH = path.join(__dirname, 'test-baseline-known-failures.json');
+// Overridable so test-baseline-duplicate-key-guard-1.js can point this at a
+// disposable fixture instead of ever touching the real baseline file.
+const BASELINE_PATH = process.env.RMOOZ_TEST_BASELINE_PATH || path.join(__dirname, 'test-baseline-known-failures.json');
 
 // Server-spawning integration tests — anything else at root is a fast,
 // deterministic static contract. Kept as an explicit list (not an
@@ -82,7 +86,7 @@ const MAIN_INTEGRATION_FILES = new Set([
     'test-session-security-hardening-1.js',
     'test-sim-route-auth-matrix-1.js',
 ]);
-const BROWSER_FILES = ['verify-canonical-workflow-1.js', 'verify-batch-b-launch-journey-1.js'];
+const BROWSER_FILES = ['verify-canonical-workflow-1.js', 'verify-batch-b-launch-journey-1.js', 'verify-batch-c-runtime-fidelity-journey-1.js'];
 
 function parseArg(name, def) {
     const i = process.argv.indexOf(name);
@@ -93,7 +97,19 @@ const filter = parseArg('--filter', null);
 const updateBaseline = process.argv.includes('--update-baseline');
 
 function loadBaseline() {
-    try { return JSON.parse(fs.readFileSync(BASELINE_PATH, 'utf8')); }
+    let raw;
+    try { raw = fs.readFileSync(BASELINE_PATH, 'utf8'); }
+    catch (_) { return { known_failures: {} }; }
+    // Must run BEFORE JSON.parse: a duplicate filename key parses "successfully"
+    // with the last occurrence silently shadowing the first — see the header
+    // comment on baseline-duplicate-key-check.js for the incident this guards.
+    const dupes = findDuplicateFilenameKeys(raw);
+    if (dupes.length) {
+        console.error(`\n[FATAL] ${BASELINE_PATH} has duplicate filename key(s): ${dupes.join(', ')}`);
+        console.error('JSON.parse silently keeps only the LAST occurrence of a duplicate key, which can hide a live quarantine entry behind a dead one. Fix the file — exactly one entry per filename — before running the gate.');
+        process.exit(1);
+    }
+    try { return JSON.parse(raw); }
     catch (_) { return { known_failures: {} }; }
 }
 

@@ -237,14 +237,19 @@ const SHAPES = Object.freeze({
         required: [],
         optional: [
             'id', 'at_elapsed_hours', 'at_time', 'kind', 'title',
-            'description', 'once', 'enabled', 'effects', 'tags', 'source'
+            'description', 'once', 'enabled', 'effects', 'tags', 'source',
+            // Batch C Slice C4: geo triggers now drive real evaluation.
+            'trigger_type', 'trigger_zone', 'trigger_unit_id'
         ],
     },
     mission_tasks_item: {
         required: [],
         optional: [
             'id', 'unit_id', 'group_id', 'kind', 'start_elapsed_hours',
-            'end_elapsed_hours', 'objective_id', 'status', 'enabled', 'source'
+            'end_elapsed_hours', 'objective_id', 'status', 'enabled', 'source',
+            // Batch C: route/unit_ids now drive real runtime movement (Slices
+            // C1/C2) — no longer authoring-only, so documented here too.
+            'route', 'unit_ids'
         ],
     },
     decision_points_item: {

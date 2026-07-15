@@ -137,9 +137,13 @@ console.log('\n[2] Authored mission task round-trips through normalizeMissionTas
     eq(norm.status, 'active', 'status unchanged');
     eq(norm.enabled, true, 'enabled unchanged');
     eq(norm.source, 'scenario', 'source unchanged');
-    // `route` is an authoring-only field, not part of the runtime evaluator's
-    // canonical shape — it must survive untouched in the raw scenario object
-    // even though the normalizer doesn't echo it back.
+    // Batch C Slice C1: `route` is now a real runtime input (drives
+    // mission-task movement) — the normalizer echoes it back unvalidated,
+    // and the authored draft itself is still left untouched (clone, not a
+    // shared reference).
+    ok(Array.isArray(norm.route) && norm.route.length === 2 &&
+        norm.route[0][0] === 10 && norm.route[1][1] === 21,
+        'route is echoed back by normalizeMissionTasks() unchanged');
     eq(draft.mission_tasks[0].route.length, 2, 'route field itself is left untouched in the authored draft');
 }
 

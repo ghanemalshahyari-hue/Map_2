@@ -4716,6 +4716,10 @@
     <script src="shell/runtime-events.js?v=c4a"></script>
     <!-- MOV1: movement-only runtime executor. Scenario-clock in, runtime-owned positions out. -->
     <script src="shell/runtime-movement.js?v=mov1"></script>
+    <!-- C4g / Batch C Slice C8: pure runtime-journal replay/AAR reconstruction.
+         Journal rows in, timeline + scenario-outcome narrative out. Read-only facade
+         only: no DOM, map, scenario, storage, or backend side effects. -->
+    <script src="shell/runtime-replay.js?v=c4g"></script>
     <!-- PR-WS3 (SCC-REAL-STATE-A): the state-transition engine. Loaded so a COMMITTED
          Scenario Control Center run can route its per-tick moves through World State
          (AppWorldStateTransition.applyDecision) and reflect them on the live map.

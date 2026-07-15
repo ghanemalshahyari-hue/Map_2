@@ -2003,10 +2003,13 @@
      * status, enabled, source) at scenario top level — that normalizer reads
      * scenario.mission_tasks concatenated with scenario.runtime_scenario.
      * mission_tasks, so top-level is what a live-mounted scenario needs.
-     * `route` is an additive authoring-only field (not in the C4a schema
-     * descriptor, not read by the evaluator yet) capturing a drawn path via
-     * the existing _beginPickOnMapPolyline picker — same pattern already
-     * used for the pipeline field in the Geometry card. */
+     * `route` captures a drawn path via the existing _beginPickOnMapPolyline
+     * picker — same pattern already used for the pipeline field in the
+     * Geometry card. As of Batch C Slices C1/C2, `route` (and an explicit
+     * `unit_ids[]` for group/formation tasks) are REAL runtime inputs —
+     * free-fight-demo.js's _startAuthoredMissionMovement() drives the
+     * runtime-movement engine from them every tick; they are no longer
+     * authoring-only/inert. */
     var _selectedMissionTaskId = null;
     function _selectMissionTask(id) { _selectedMissionTaskId = id; }
     function _clearMissionTaskSelection() { _selectedMissionTaskId = null; }
@@ -2026,7 +2029,7 @@
         return {
             id: nextFreeMissionTaskId(list), unit_id: '', group_id: '', kind: 'task',
             start_elapsed_hours: null, end_elapsed_hours: null, objective_id: '',
-            status: 'planned', enabled: true, source: 'scenario', route: []
+            status: 'planned', enabled: true, source: 'scenario', route: [], unit_ids: []
         };
     }
 
@@ -2096,6 +2099,15 @@
             fields.push(fieldRow('id', textInput(t.id || '', function (v) { t.id = v; rerenderList(); })));
             fields.push(fieldRow('unit_id', textInput(t.unit_id || '', function (v) { t.unit_id = v; rerenderList(); })));
             fields.push(fieldRow('group_id', textInput(t.group_id || '', function (v) { t.group_id = v; })));
+            // Batch C Slice C2: group_id has no unit-membership registry
+            // anywhere in this codebase — an explicit unit_ids[] (>= 2
+            // entries) is what actually drives group/formation movement,
+            // same resolution the SCC's manual "Movement tasking" form
+            // already uses (Group unit IDs + Leader).
+            fields.push(fieldRow('unit_ids (comma-separated, for group movement)', textInput(
+                Array.isArray(t.unit_ids) ? t.unit_ids.join(', ') : '',
+                function (v) { t.unit_ids = String(v || '').split(/[\s,;]+/).map(function (s) { return s.trim(); }).filter(Boolean); }
+            )));
             fields.push(fieldRow('kind', selectInput(MISSION_TASK_KINDS, t.kind || 'task', function (v) { t.kind = v; rerenderList(); })));
             fields.push(fieldRow('status', selectInput(MISSION_TASK_STATUSES, t.status || 'planned', function (v) { t.status = v; rerenderList(); })));
             fields.push(fieldRow('enabled', checkboxInput(t.enabled !== false, function (v) { t.enabled = v; })));
@@ -2126,10 +2138,13 @@
      * silently 'blocked' by the runtime gate, so authoring anything outside
      * it would build a rule that can never fire; effect payload is authored
      * as free-form JSON (a textarea, parsed defensively) since payload shape
-     * varies per effect kind. `trigger_zone` is an additive authoring-only
-     * field (a closed polygon ring) captured via the existing
-     * _beginPickOnMapPolygon picker — not read by the evaluator yet, same
-     * status as missions' `route` field from Slice 6. */
+     * varies per effect kind. `trigger_zone` (a closed polygon ring) is
+     * captured via the existing _beginPickOnMapPolygon picker. As of Batch C
+     * Slice C4, `trigger_type` ('time'|'geo'|'both', default 'time' so every
+     * existing scenario is unaffected) + `trigger_zone` + `trigger_unit_id`
+     * (which entity's live position to test; blank = any known position) are
+     * REAL runtime inputs — runtime-events.js evaluates them via
+     * turf.booleanPointInPolygon, no longer authoring-only/inert. */
     var _selectedEventId = null;
     function _selectEvent(id) { _selectedEventId = id; }
     function _clearEventSelection() { _selectedEventId = null; }
@@ -2149,11 +2164,13 @@
         while (taken.has('effect-' + i)) i++;
         return 'effect-' + i;
     }
+    var RUNTIME_TRIGGER_TYPES = ['time', 'geo', 'both'];
     function defaultRuntimeEvent(list) {
         return {
             id: nextFreeEventId(list), title: '', description: '', kind: 'runtime_event',
             at_elapsed_hours: null, at_time: '', once: true, enabled: true,
-            effects: [], tags: [], source: 'scenario', trigger_zone: []
+            effects: [], tags: [], source: 'scenario', trigger_zone: [],
+            trigger_type: 'time', trigger_unit_id: ''
         };
     }
     function defaultRuntimeEffect(list) {
@@ -2167,7 +2184,8 @@
             ])
         ]);
         card.appendChild(el('div', { class: 'sw-edit-hint', text:
-            'Time-based runtime events the evaluator reads (read-only in C4a — approvals/journal only, never auto-executes dangerous effects). ' +
+            'Time and/or geo-triggered runtime events the evaluator reads (read-only — approvals/journal only, never auto-executes dangerous effects). ' +
+            'trigger_type "geo"/"both" evaluates trigger_zone against trigger_unit_id\'s live position (blank = any unit). ' +
             'Effect kind is restricted to the safe allowlist: ' + RUNTIME_SAFE_EFFECT_KINDS.join(', ') + '.' }));
 
         var listEl   = el('div', { class: 'sw-forces-tree' });
@@ -2266,6 +2284,8 @@
             fields.push(fieldRow('tags (comma-separated)', textInput((ev.tags || []).join(', '), function (v) {
                 ev.tags = v.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
             })));
+            fields.push(fieldRow('trigger_type', selectInput(RUNTIME_TRIGGER_TYPES, ev.trigger_type || 'time', function (v) { ev.trigger_type = v; })));
+            fields.push(fieldRow('trigger_unit_id (blank = any unit)', textInput(ev.trigger_unit_id || '', function (v) { ev.trigger_unit_id = v; })));
             fields.push(fieldRow('trigger_zone (lon, lat per line)', zoneTa));
 
             detailEl.appendChild(el('dl', { class: 'sw-kv' }, fields));

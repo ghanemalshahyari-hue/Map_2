@@ -78,6 +78,9 @@
         if (kind === 'operator_decision_selected' || kind === 'runtime_decision_opened' || kind === 'runtime_decision_resolved') return 'operator_decision';
         if (kind === 'runtime_effect_applied_safe') return 'safe_effect';
         if (kind === 'runtime_effect_blocked') return 'blocked_effect';
+        // Batch C Slice C8: extends this existing reconstruction (not a new
+        // journal/replay concept) with the new scenario_end_condition kind.
+        if (kind === 'scenario_end_condition') return 'scenario_outcome';
         return 'runtime_record';
     }
     function labelFor(record) {
@@ -102,6 +105,9 @@
         }
         if (record.kind === 'runtime_effect_blocked') {
             return 'Runtime effect blocked: ' + text((blocked && blocked.kind) || 'blocked effect');
+        }
+        if (record.kind === 'scenario_end_condition') {
+            return 'Scenario ended: ' + text(detail.summary || detail.code || 'end condition');
         }
         return 'Runtime record: ' + text(record.kind || 'record');
     }
@@ -274,6 +280,89 @@
         }).map(clone);
     }
 
+    /* ---- Batch C Slice C8: runtime-play AAR ---------------------------------
+     * A DISTINCT AAR from cmo-wargame-after-action-debrief.js — that one is
+     * scoped to CMO-war-game test-instrumentation/release-grading (run_mode,
+     * evidence release-readiness). This one narrates an actual played
+     * scenario's victory/failure/timeout outcome, reconstructed purely from
+     * the durable scenario_end_condition journal record (Slice C7) via the
+     * SAME reconstruction this module already does for every other runtime
+     * record kind — not a new journal/replay concept, an extension of this
+     * one. Reuses the CMO debrief's classification SHAPE ({key,label,
+     * label_ar,status,detail}) since that idiom is already established here,
+     * but with its own vocabulary (scenario end-condition codes, not CMO
+     * run-mode/evidence state) — deliberately does not read or write the
+     * separate Scenario Evidence / CMO release-gate stack.
+     */
+    var SCENARIO_OUTCOME_CLASSIFICATIONS = {
+        objective_secured: {
+            key: 'objective_secured', label: 'Objective secured', label_ar: 'تم تأمين الهدف',
+            status: 'pass', detail: 'Blue secured the objective — scenario complete.'
+        },
+        blue_unable_to_continue: {
+            key: 'blue_unable_to_continue', label: 'Blue unable to continue', label_ar: 'الأزرق غير قادر على الاستمرار',
+            status: 'fail', detail: 'Blue had no units able to continue — scenario complete.'
+        },
+        red_unable_to_contest: {
+            key: 'red_unable_to_contest', label: 'Red unable to contest', label_ar: 'الأحمر غير قادر على المنازعة',
+            status: 'pass', detail: 'Red had no units able to contest — scenario complete.'
+        },
+        victory_condition_met: {
+            key: 'victory_condition_met', label: 'Victory condition met', label_ar: 'تحقق شرط النصر',
+            status: 'pass', detail: 'An authored victory condition was met — scenario complete.'
+        },
+        scenario_timeout: {
+            key: 'scenario_timeout', label: 'Scenario timed out', label_ar: 'انتهت مهلة السيناريو',
+            status: 'warn', detail: 'The runtime clock reached its authored end time — scenario complete.'
+        },
+        max_turns_reached: {
+            key: 'max_turns_reached', label: 'Maximum turns reached', label_ar: 'تم بلوغ الحد الأقصى للجولات',
+            status: 'warn', detail: 'The scenario reached its maximum turn count without a decisive outcome.'
+        },
+        max_auto_turns_reached: {
+            key: 'max_auto_turns_reached', label: 'Auto-director turn limit reached', label_ar: 'تم بلوغ حد دورات المدير الآلي',
+            status: 'warn', detail: 'The auto-director reached its turn limit — operator decision needed.'
+        }
+    };
+    function classifyScenarioOutcome(record) {
+        if (!record || record.kind !== 'scenario_end_condition') return null;
+        var detail = obj(record.detail);
+        var code = text(detail.code) || 'unknown';
+        var cls = SCENARIO_OUTCOME_CLASSIFICATIONS[code] || {
+            key: code, label: 'Unrecognized end condition', label_ar: 'حالة نهاية غير معروفة', status: 'unknown', detail: 'This end-condition code is not yet classified.'
+        };
+        var status = cls.status;
+        // A victory_condition_met favoring Red is bad news for the Blue-
+        // perspective operator, even though the SAME code fires either way.
+        if (code === 'victory_condition_met' && String(detail.side || '').toLowerCase() === 'red') status = 'fail';
+        return {
+            code: code,
+            key: cls.key,
+            label: cls.label,
+            label_ar: cls.label_ar,
+            status: status,
+            detail: detail.summary || cls.detail,
+            victory_condition_id: detail.victory_condition_id || null,
+            side: detail.side || null,
+            elapsed_hours: record.elapsed_hours,
+            scenario_time_label: record.scenario_time_label,
+            read_only: true
+        };
+    }
+    function buildRuntimePlayAar(records) {
+        var replay = buildRuntimeReplay(records);
+        var endRecords = replay.records.filter(function (r) { return r.kind === 'scenario_end_condition'; });
+        var endRecord = endRecords.length ? endRecords[endRecords.length - 1] : null;
+        return {
+            version: VERSION,
+            timeline_label: 'Runtime-play AAR',
+            outcome: endRecord ? classifyScenarioOutcome(endRecord) : null,
+            timeline: replay.timeline,
+            summary: replay.summary,
+            read_only: true
+        };
+    }
+
     var api = {
         RUNTIME_REPLAY_VERSION: VERSION,
         normalizeRuntimeJournalRecord: normalizeRuntimeJournalRecord,
@@ -282,6 +371,8 @@
         buildRuntimeAarSummary: buildRuntimeAarSummary,
         groupRuntimeReplayByTime: groupRuntimeReplayByTime,
         filterRuntimeReplay: filterRuntimeReplay,
+        classifyScenarioOutcome: classifyScenarioOutcome,
+        buildRuntimePlayAar: buildRuntimePlayAar,
         _internal: {
             compareRecords: compareRecords,
             recordKey: recordKey

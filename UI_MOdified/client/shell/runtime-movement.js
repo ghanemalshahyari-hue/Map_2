@@ -195,6 +195,17 @@
     function movementId(plan) {
         return String((plan && (plan.movement_id || plan.execution_id || plan.source_effect_id || plan.effect_id)) || '');
     }
+    // Batch C Slice C9: this kind list includes 'move_unit'/'movement', which
+    // ALSO appear in runtime-events.js's DANGEROUS_RUNTIME_EFFECT_REASONS
+    // (hard-blocked, direct_unit_mutation_blocked). Today that's harmless —
+    // a blocked effect never reaches approved_effects/applied_effects/
+    // pending_effects, the only candidate lists buildRuntimeExecutionPlans()
+    // reads (see runtime-events.js's own DANGEROUS_RUNTIME_EFFECT_REASONS
+    // comment) — but a future refactor that merges those candidate lists
+    // "for visibility" would accidentally let a blocked dangerous effect
+    // start real movement through this keyword match. Do not widen either
+    // list's kind vocabulary without re-checking this overlap; regression-
+    // locked by test-dangerous-effect-safety-lock-1.js.
     function isMovementExecutionPlan(plan) {
         if (!isObj(plan)) return false;
         var kind = String(plan.effect_kind || plan.kind || plan.type || '').toLowerCase();

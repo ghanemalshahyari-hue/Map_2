@@ -78,10 +78,11 @@ const MAIN_INTEGRATION_FILES = new Set([
     'test-fast-int-2-wargame-geojson-import.js',
     'test-proxy-trust-1.js',
     'test-scenario-sim-endpoint-auth-matrix-1.js',
+    'test-scenario-stale-revision-guard-1.js',
     'test-session-security-hardening-1.js',
     'test-sim-route-auth-matrix-1.js',
 ]);
-const BROWSER_FILE = 'verify-canonical-workflow-1.js';
+const BROWSER_FILES = ['verify-canonical-workflow-1.js', 'verify-batch-b-launch-journey-1.js'];
 
 function parseArg(name, def) {
     const i = process.argv.indexOf(name);
@@ -144,7 +145,7 @@ function signaturesEqualOrSubset(current, baseline) {
 
 let files;
 if (mode === 'browser') {
-    files = [BROWSER_FILE];
+    files = BROWSER_FILES.slice();
 } else {
     const all = fs.readdirSync(ROOT).filter(f => /^test-.*\.js$/i.test(f));
     if (mode === 'fast') files = all.filter(f => !MAIN_INTEGRATION_FILES.has(f));

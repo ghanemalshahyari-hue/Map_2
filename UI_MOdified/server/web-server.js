@@ -1101,15 +1101,22 @@ const server = http.createServer((req, res) => {
             fs.writeFileSync(file, JSON.stringify(scenario, null, 2), 'utf8');
             try { scenarios.clearCache(); } catch (_) {}
             // Batch B: saving a scenario no longer auto-activates it. It
-            // creates (or, on a re-save, leaves untouched) a lifecycle row
-            // at 'draft' — activation is a separate, approval-gated step
-            // (POST /api/scenario/active, below). The one exception: if this
-            // scenario name was ALREADY approved/activated from a prior
-            // round, a re-save keeps that status (does not silently revoke
-            // it) and is still reflected live since setActiveName just
-            // re-points at the same freshly-written file.
+            // creates a lifecycle row at 'draft' — activation is a separate,
+            // approval-gated step (POST /api/scenario/active, below).
+            // Slice 12 (E2E-discovered fix): a re-save of a scenario that was
+            // ALREADY approved/activated used to silently keep that status —
+            // a stale-revision bypass where edited-but-unreviewed content
+            // could still launch under an old approval, with no reviewer
+            // ever having seen the new content. A re-save now demotes
+            // approved/activated back to 'draft', requiring a fresh
+            // submit+approve cycle before it can launch/activate again. The
+            // FIRST save of a brand-new scenario has nothing to invalidate.
             try {
+                const existedBefore = !!scenarioApprovalStore.getLifecycle(safeName);
                 scenarioApprovalStore.ensureLifecycleRow(safeName, scenariosPostUser);
+                if (existedBefore) {
+                    scenarioApprovalStore.invalidateApprovalOnRevision(safeName, scenariosPostUser);
+                }
                 const lifecycle = scenarioApprovalStore.getLifecycle(safeName);
                 if (lifecycle && (lifecycle.status === 'approved' || lifecycle.status === 'activated')) {
                     scenarios.setActiveName(safeName);

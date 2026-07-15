@@ -2867,8 +2867,15 @@
         return fetch('/api/scenarios/' + encodeURIComponent(name) + '/approval', { credentials: 'include' })
             .then(function (r) { return r.status === 404 ? null : (r.ok ? r.json() : null); })
             .then(function (j) {
-                _approvalCache = (j && j.ok) ? j : null;
-                if (andRerender && _draft && _draft.name === name && _activeStep === STEPS.length - 1) renderEditor();
+                var next = (j && j.ok) ? j : null;
+                // renderSaveStepCard() calls _refreshApprovalStatus(true) on every
+                // render, which calls renderEditor() -> renderSaveStepCard() again
+                // on a change — re-rendering unconditionally here would make that
+                // an infinite fetch/render loop. Only re-render when the fetched
+                // status actually differs from what's cached.
+                var changed = JSON.stringify(next) !== JSON.stringify(_approvalCache);
+                _approvalCache = next;
+                if (andRerender && changed && _draft && _draft.name === name && _activeStep === STEPS.length - 1) renderEditor();
             })
             .catch(function () { /* leave the last-known cache in place */ });
     }
@@ -2880,31 +2887,62 @@
             body: JSON.stringify(reason ? { reason: reason } : {})
         }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, status: r.status, body: j }; }); });
     }
-    function launchToSCC() {
-        saveDraft(); // re-validates hard rules + draftIsSafe; populates window.RmoozScenario.scenario on success
-        var slot = window.RmoozScenario;
-        var sc = slot && slot.scenario;
-        if (!sc) { setStatus('Blocked: scenario failed to save — Control Center not opened.', true); return; }
-        if (!_approvalCache || (_approvalCache.status !== 'approved' && _approvalCache.status !== 'activated')) {
-            setStatus('Blocked: commander approval required before launch (current status: ' +
-                ((_approvalCache && _approvalCache.status) || 'not submitted') + ').', true);
-            return;
-        }
-        if (!(window.RmoozFreeFightDemo && typeof window.RmoozFreeFightDemo.mount === 'function')) {
-            setStatus('Free Fight engine not loaded (shell/free-fight-demo.js).', true);
-            return;
-        }
-        var mountOpts = {};
-        if (sc.obj && Array.isArray(sc.obj.coord) && sc.obj.coord.length >= 2) {
-            mountOpts.objective = { lon: sc.obj.coord[0], lat: sc.obj.coord[1] };
-        }
-        // Empty payload is correct here — the SCC engine (RmoozFreeFightDemo.engine
-        // -> scenario-control-center.js) reads window.RmoozScenario.scenario
-        // directly for red_units/blue_units_initial/etc; mount()'s payload only
-        // feeds the separate legacy demo-overlay marker layer, not the SCC.
-        window.RmoozFreeFightDemo.mount({}, mountOpts);
-        logOperator('Scenario launched to Scenario Control Center', { name: sc.name || '' });
-        setStatus('Launched "' + (sc.name || '') + '" to the Scenario Control Center.', false);
+    /* Batch B Slice 12 (E2E-discovered fixes over the original Slice 11 cut):
+     *   1. Re-checks approval status FRESH at the moment of launch — never
+     *      trusts the last-rendered _approvalCache, which can be stale (a
+     *      re-save after approval invalidates it server-side per
+     *      invalidateApprovalOnRevision(), but a cache from before that
+     *      re-save would still read "approved" until refreshed).
+     *   2. Requires an explicit operator confirmation before launching.
+     *   3. Launches the SERVER's approved copy (GET /api/ai/scenario/:name),
+     *      never the locally-edited _draft — closes the window between "the
+     *      server says approved" and "the operator has since made further
+     *      local-only edits that were never saved/reviewed".
+     * launchToSCC(opts) — opts.confirmFn overridable for tests (defaults to
+     * window.confirm); opts.skipConfirmForTest bypasses the prompt entirely.
+     */
+    function launchToSCC(opts) {
+        opts = opts || {};
+        if (!_draft || !_draft.name) { setStatus('Blocked: save to server first — no draft name to launch.', true); return Promise.resolve(false); }
+        var name = _draft.name;
+        setStatus('Checking approval status …', false);
+        return _refreshApprovalStatus(false).then(function () {
+            if (!_approvalCache || _approvalCache.scenario_name !== name ||
+                (_approvalCache.status !== 'approved' && _approvalCache.status !== 'activated')) {
+                setStatus('Blocked: commander approval required before launch (current status: ' +
+                    ((_approvalCache && _approvalCache.status) || 'not submitted') + ').', true);
+                if (_activeStep === STEPS.length - 1) renderEditor(); // reflect the fresh status in the UI
+                return false;
+            }
+            var confirmFn = opts.confirmFn || window.confirm;
+            var proceed = opts.skipConfirmForTest ? true : (typeof confirmFn === 'function' ? confirmFn('Launch "' + name + '" to the Scenario Control Center?') : true);
+            if (!proceed) { setStatus('Launch cancelled.', false); return false; }
+            return fetch('/api/ai/scenario/' + encodeURIComponent(name), { credentials: 'include' })
+                .then(function (r) { return r.ok ? r.json() : null; })
+                .then(function (j) {
+                    var sc = (j && j.scenario) ? j.scenario : null;
+                    if (!sc) { setStatus('Blocked: could not load the approved scenario from the server.', true); return false; }
+                    if (!(window.RmoozFreeFightDemo && typeof window.RmoozFreeFightDemo.mount === 'function')) {
+                        setStatus('Free Fight engine not loaded (shell/free-fight-demo.js).', true);
+                        return false;
+                    }
+                    window.RmoozScenario = window.RmoozScenario || {};
+                    window.RmoozScenario.scenario = sc; // the server's approved copy, not the local _draft
+                    var mountOpts = {};
+                    if (sc.obj && Array.isArray(sc.obj.coord) && sc.obj.coord.length >= 2) {
+                        mountOpts.objective = { lon: sc.obj.coord[0], lat: sc.obj.coord[1] };
+                    }
+                    // Empty payload is correct here — the SCC engine (RmoozFreeFightDemo.engine
+                    // -> scenario-control-center.js) reads window.RmoozScenario.scenario
+                    // directly for red_units/blue_units_initial/etc; mount()'s payload only
+                    // feeds the separate legacy demo-overlay marker layer, not the SCC.
+                    window.RmoozFreeFightDemo.mount({}, mountOpts);
+                    logOperator('Scenario launched to Scenario Control Center', { name: sc.name || name });
+                    setStatus('Launched "' + (sc.name || name) + '" to the Scenario Control Center.', false);
+                    return true;
+                })
+                .catch(function (e) { setStatus('Network error: ' + (e && e.message), true); return false; });
+        });
     }
 
     function renderSaveStepCard(host) {
@@ -3009,7 +3047,7 @@
         var canLaunch = !!(_approvalCache && (_approvalCache.status === 'approved' || _approvalCache.status === 'activated') &&
             validateAllHardRules(_draft).ok && draftIsSafe(_draft).ok);
         if (!canLaunch) launchBtn.setAttribute('disabled', 'disabled');
-        launchBtn.addEventListener('click', launchToSCC);
+        launchBtn.addEventListener('click', function () { launchToSCC(); });
         approvalCard.appendChild(el('div', { class: 'sw-edit-actions' }, [launchBtn]));
         approvalCard.appendChild(el('div', { class: 'sw-edit-hint',
             text: 'Launch is enabled only once the server-side lifecycle status is "approved" (or "activated") and all hard rules + the P0 safety gate pass.' }));
@@ -3067,9 +3105,16 @@
             return r.json().then(function (j) { return { ok: r.ok, status: r.status, body: j }; });
         }).then(function (resp) {
             if (resp.ok) {
-                setStatus('Saved to server as "' + resp.body.name + '" (active).', false);
+                // Slice 12 (E2E-discovered fix): saving a scenario changes its
+                // server-side lifecycle row (creates it, or — per Slice 12's
+                // stale-revision guard — may demote an approved one back to
+                // draft), but nothing previously refreshed the Save step's
+                // approval-status UI to reflect that. The operator would have
+                // had to navigate away and back to see Submit/Launch update.
+                setStatus('Saved to server as "' + resp.body.name + '".', false);
                 logOperator('Scenario saved to server', { name: resp.body.name });
                 _setSavedState('on-server');
+                _refreshApprovalStatus(true);
                 return;
             }
             if (resp.status === 409) {
@@ -3084,6 +3129,7 @@
                               setStatus('Overwritten on server as "' + resp2.body.name + '".', false);
                               logOperator('Scenario overwritten on server', { name: resp2.body.name });
                               _setSavedState('on-server');
+                              _refreshApprovalStatus(true);
                           } else {
                               setStatus('Server rejected overwrite: ' + (resp2.body && resp2.body.error || resp2.status), true);
                           }

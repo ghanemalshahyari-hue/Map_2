@@ -185,6 +185,35 @@ function applyTransition({ user, scenario_name, action, reason }, getDb) {
     return { ok: true, scenario_name, status: t.to, from: row.status, to: t.to };
 }
 
+// Batch B Slice 12: closes a stale-revision bypass found during E2E testing
+// — a re-save of an already-approved/activated scenario previously left its
+// status untouched (see the comment at the ensureLifecycleRow call site in
+// web-server.js), so an operator could edit content AFTER approval and still
+// launch it under the old approval, with no reviewer ever having seen the
+// new content. Called on every re-save (not the first save) of a scenario
+// that already has a lifecycle row; demotes approved/activated back to
+// draft, clearing approval/activation fields, and journals why. Deliberately
+// blunt (no content diff) — ANY re-save after approval requires a fresh
+// submit+approve cycle, which is simpler to audit than partial invalidation.
+function invalidateApprovalOnRevision(scenario_name, user, getDb) {
+    const db = (getDb || defaultGetDb)();
+    const row = getLifecycle(scenario_name, () => db);
+    if (!row || (row.status !== 'approved' && row.status !== 'activated')) return null;
+    const nIso = nowIso();
+    const actorId = (user && (user.username || user.id)) || null;
+    db.prepare(
+        `UPDATE scenario_lifecycle SET status='draft', approved_by=NULL, approved_at=NULL,
+         activated_by=NULL, activated_at=NULL, updated_at=? WHERE scenario_name=?`
+    ).run(nIso, scenario_name);
+    appendLifecycleEvent({
+        scenario_name, event: 'revision_invalidated_approval', actor_id: actorId,
+        actor_role: user && user.role, actor_display: user && user.displayName,
+        from_status: row.status, to_status: 'draft',
+        reason: 'scenario content re-saved after approval — approval invalidated, resubmission required',
+    });
+    return { ok: true, scenario_name, status: 'draft', from: row.status, to: 'draft' };
+}
+
 // Called by the activation route (POST /api/scenario/active) once it has
 // confirmed status is 'approved' — records the transition to 'activated'.
 // NOT reachable via applyTransition/VALID_ACTIONS; activation is a distinct
@@ -290,6 +319,7 @@ function handleScenarioApprovalApi(req, res, pathname, method, sendJson, readJso
 module.exports = {
     applyTransition,
     ensureLifecycleRow,
+    invalidateApprovalOnRevision,
     getLifecycle,
     getApprovalPayload,
     markActivated,

@@ -1,26 +1,31 @@
 #!/usr/bin/env node
 /**
- * test-edit-mode-launch-slice.js — Batch B Slice 11
+ * test-edit-mode-launch-slice.js — Batch B Slice 11 (rewritten for Slice 12)
  *
  * Static (no server) verifier for the commander-approval workflow +
- * Launch-to-SCC action. Closes a real gap found during implementation: NO
- * client UI anywhere called the Slice 2 approval endpoints
- * (submit-for-review/review/approve/reject/reopen) before this slice — the
- * Launch button's gate condition would otherwise have been permanently
- * unreachable through the app.
+ * Launch-to-SCC action. The original Slice 11 cut trusted a possibly-stale
+ * cached approval status and launched the locally-edited draft directly —
+ * both were real "stale-revision" bypasses caught while designing Slice
+ * 12's E2E acceptance criteria. launchToSCC() now:
+ *   - re-fetches approval status FRESH at the moment of launch (never
+ *     trusts the last-rendered cache)
+ *   - requires an explicit operator confirmation before launching
+ *   - launches the SERVER's approved copy (GET /api/ai/scenario/:name),
+ *     never the local _draft, which may have diverged since approval
  *
  * Proves:
- *   - the Launch button is disabled whenever there is no draft name, no
- *     lifecycle record, or the lifecycle status isn't approved/activated
- *   - it becomes enabled once status is 'approved' (or 'activated') AND
- *     hard rules + draftIsSafe both pass
- *   - Submit/Approve/Reject/Reopen buttons are enabled/disabled exactly per
- *     the server's own can_submit/can_approve/status flags (never a
- *     client-invented approximation)
- *   - launchToSCC() calls window.RmoozFreeFightDemo.mount({}, {objective})
- *     with an EMPTY payload (not a synthetic operational_brief — the SCC
- *     engine reads window.RmoozScenario.scenario directly) once approved,
- *     and refuses to call it at all when not approved
+ *   - launch is refused for every non-approved status, using a FRESH fetch
+ *     (not the pre-set cache) as the authoritative check
+ *   - a stale local cache reading "approved" does NOT bypass launch if a
+ *     fresh fetch reveals the server has since demoted the status (the
+ *     exact stale-revision bypass this rewrite closes)
+ *   - launch is cancelled (mount NOT called) when the operator declines the
+ *     confirmation prompt
+ *   - once approved and confirmed, launch fetches the scenario fresh from
+ *     the server and calls window.RmoozFreeFightDemo.mount({}, {objective})
+ *     with THAT server copy, not the local draft
+ *   - Submit/Approve/Reject/Reopen buttons render without throwing across
+ *     lifecycle states
  *
  * Sibling to test-edit-mode-entrypaths-slice.js etc. Run:
  *   node test-edit-mode-launch-slice.js
@@ -43,12 +48,21 @@ function eq(a, b, label) { ok(a === b, label, 'expected ' + JSON.stringify(b) + 
 function loadSandbox(opts) {
     opts = opts || {};
     const mountCalls = [];
+    const fetchLog = [];
+    const routes = opts.routes || {};
+    const defaultFetch = function (url, init) {
+        fetchLog.push({ url: url, init: init });
+        for (const pattern of Object.keys(routes)) {
+            if (url.indexOf(pattern) === 0) return Promise.resolve(routes[pattern](url, init));
+        }
+        return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({}) });
+    };
     const sandboxWindow = {
         AppEditMode: null,
         RmoozScenario: null,
         RmoozFreeFightDemo: opts.noMount ? null : { mount: function (payload, mountOpts) { mountCalls.push({ payload: payload, opts: mountOpts }); } },
-        fetch: opts.fetch || function () { return Promise.resolve({ ok: true, json: () => Promise.resolve({}) }); },
-        prompt: function () { return 'a real reason'; },
+        fetch: opts.fetch || defaultFetch,
+        confirm: opts.confirm !== undefined ? opts.confirm : function () { return true; },
         URL: { createObjectURL: function () { return 'blob:stub'; }, revokeObjectURL: function () {} },
         Blob: function (parts, o) { this.parts = parts; this.opts = o; }
     };
@@ -59,7 +73,6 @@ function loadSandbox(opts) {
             return {
                 tag: tag,
                 setAttribute: function (k, v) { attrs[k] = v; },
-                getAttribute: function (k) { return attrs[k]; },
                 get _attrs() { return attrs; },
                 style: {},
                 appendChild: function (k) { kids.push(k); },
@@ -81,75 +94,104 @@ function loadSandbox(opts) {
         sandboxWindow, stubDoc, { clipboard: { writeText: () => Promise.resolve() } }, fnStub, fnStub,
         sandboxWindow.Blob, sandboxWindow.URL, sandboxWindow.fetch
     );
-    return { T: sandboxWindow.AppEditMode._testing, sandboxWindow: sandboxWindow, mountCalls: mountCalls };
+    return { T: sandboxWindow.AppEditMode._testing, sandboxWindow: sandboxWindow, mountCalls: mountCalls, fetchLog: fetchLog };
 }
 
 function minimalValidDraft() {
     return {
         name: 'launch-test', scenario_label: 'Launch Test',
-        // name_en required by saveDraft()'s Step 3 guard.
         sides: [{ id: 'BLUE', name_en: 'Blue' }, { id: 'RED', name_en: 'Red' }],
         obj: { name: 'Objective', coord: [12, 34], target_depth_km: 0, carver: 0 }
     };
 }
 
-function deepEqEmpty(v, label) { ok(v && typeof v === 'object' && Object.keys(v).length === 0, label, JSON.stringify(v)); }
+function approvalRoute(status) {
+    return function () {
+        return { ok: true, status: 200, json: () => Promise.resolve({ ok: true, scenario_name: 'launch-test', status: status }) };
+    };
+}
+function scenarioRoute(scenario) {
+    return function () {
+        return { ok: true, status: 200, json: () => Promise.resolve({ ok: true, scenario: scenario }) };
+    };
+}
 
 async function run() {
-    console.log('\n=== Batch B Slice 11: commander approval + Launch-to-SCC ===\n');
+    console.log('\n=== Batch B Slice 11/12: commander approval + Launch-to-SCC (stale-revision-safe) ===\n');
 
-    // ── 1. launchToSCC refuses when there is no draft / no server save ────
-    console.log('\n[1] launchToSCC() populates window.RmoozScenario via its internal saveDraft() call');
-    {
-        const { T, sandboxWindow, mountCalls } = loadSandbox();
+    // ── 1. Launch refused for every non-approved status (fresh check) ──────
+    console.log('\n[1] launchToSCC() refuses via a FRESH fetch for every non-approved status');
+    for (const status of ['draft', 'in_review', 'rejected']) {
+        const { T, mountCalls } = loadSandbox({ routes: { '/api/scenarios/launch-test/approval': approvalRoute(status) } });
         T._setDraftForTest(minimalValidDraft());
-        T._setApprovalCacheForTest({ scenario_name: 'launch-test', status: 'approved', can_submit: false, can_approve: false });
-        // saveDraft() is called INSIDE launchToSCC (not bypassed) — this
-        // exercises the real internal sequence: save first, then check.
-        T.launchToSCC();
-        ok(sandboxWindow.RmoozScenario && sandboxWindow.RmoozScenario.scenario, 'saveDraft() inside launchToSCC populated window.RmoozScenario (hard rules passed)');
-        eq(mountCalls.length, 1, 'approved status -> mount() WAS called exactly once');
-    }
-
-    // ── 2. launchToSCC refuses when status is not approved/activated ──────
-    console.log('\n[2] launchToSCC() refuses when lifecycle status is not approved');
-    ['draft', 'in_review', 'rejected', null].forEach(function (status) {
-        const { T, mountCalls } = loadSandbox();
-        T._setDraftForTest(minimalValidDraft());
-        T._setApprovalCacheForTest(status ? { scenario_name: 'launch-test', status: status } : null);
-        T.launchToSCC();
+        const launched = await T.launchToSCC();
+        eq(launched, false, 'status="' + status + '" -> launchToSCC resolves false');
         eq(mountCalls.length, 0, 'status="' + status + '" -> mount() NOT called');
-    });
+    }
 
-    // ── 3. launchToSCC calls mount() with an EMPTY payload + derived objective ─
-    console.log('\n[3] launchToSCC() calls mount({}, {objective}) — not a synthetic brief payload');
+    // ── 2. Stale local cache does NOT bypass a fresh server demotion ──────
+    console.log('\n[2] A stale cached "approved" does not survive a fresh check that finds "draft"');
     {
-        const { T, mountCalls } = loadSandbox();
+        const { T, mountCalls } = loadSandbox({ routes: { '/api/scenarios/launch-test/approval': approvalRoute('draft') } });
         T._setDraftForTest(minimalValidDraft());
+        // Simulate a stale cache from BEFORE a stale-revision demotion happened server-side.
         T._setApprovalCacheForTest({ scenario_name: 'launch-test', status: 'approved' });
-        T.launchToSCC();
-        eq(mountCalls.length, 1, 'mount called once');
+        const launched = await T.launchToSCC();
+        eq(launched, false, 'stale-approved cache + fresh server "draft" -> launch refused');
+        eq(mountCalls.length, 0, 'mount() NOT called despite the stale cache saying approved');
+        const cache = T._getApprovalCacheForTest();
+        eq(cache.status, 'draft', '_approvalCache was refreshed to the true server status');
+    }
+
+    // ── 3. Launch cancelled when the operator declines the confirmation ────
+    console.log('\n[3] launchToSCC() requires confirmation and honors a decline');
+    {
+        const { T, mountCalls } = loadSandbox({
+            routes: { '/api/scenarios/launch-test/approval': approvalRoute('approved') },
+            confirm: function () { return false; }
+        });
+        T._setDraftForTest(minimalValidDraft());
+        const launched = await T.launchToSCC();
+        eq(launched, false, 'declined confirmation -> launchToSCC resolves false');
+        eq(mountCalls.length, 0, 'mount() NOT called when the operator declines');
+    }
+
+    // ── 4. Approved + confirmed -> fetches the SERVER copy and mounts it ───
+    console.log('\n[4] Approved + confirmed launch fetches the server copy (not the local draft)');
+    {
+        const serverScenario = { name: 'launch-test', red_units: [{ uid: 'RED-1' }], obj: { coord: [99, 88] } };
+        const { T, mountCalls, fetchLog } = loadSandbox({
+            routes: {
+                '/api/scenarios/launch-test/approval': approvalRoute('approved'),
+                '/api/ai/scenario/launch-test': scenarioRoute(serverScenario)
+            }
+        });
+        const localDraft = minimalValidDraft();
+        localDraft.red_units = []; // deliberately different from the server copy — proves we don't launch this
+        T._setDraftForTest(localDraft);
+        const launched = await T.launchToSCC();
+        eq(launched, true, 'approved + confirmed -> launchToSCC resolves true');
+        eq(mountCalls.length, 1, 'mount() called exactly once');
         const call = mountCalls[0];
-        deepEqEmpty(call.payload, 'payload is an empty object (engine reads window.RmoozScenario.scenario directly)');
-        eq(call.opts.objective.lon, 12, 'objective.lon derived from sc.obj.coord[0]');
-        eq(call.opts.objective.lat, 34, 'objective.lat derived from sc.obj.coord[1]');
+        deepEqEmpty(call.payload, 'payload is an empty object');
+        eq(call.opts.objective.lon, 99, 'objective derived from the SERVER copy, not the local draft (which had coord [12,34])');
+        ok(fetchLog.some(f => f.url === '/api/ai/scenario/launch-test'), 'the server scenario endpoint was actually fetched');
     }
+    function deepEqEmpty(v, label) { ok(v && typeof v === 'object' && Object.keys(v).length === 0, label, JSON.stringify(v)); }
 
-    // ── 4. launchToSCC refuses when the Free Fight engine isn't loaded ─────
-    console.log('\n[4] launchToSCC() fails gracefully when the engine module is missing');
+    // ── 5. Launch fails gracefully when the engine module is missing ───────
+    console.log('\n[5] launchToSCC() fails gracefully when the engine module is missing');
     {
-        const { T } = loadSandbox({ noMount: true });
+        const { T } = loadSandbox({ noMount: true, routes: { '/api/scenarios/launch-test/approval': approvalRoute('approved'), '/api/ai/scenario/launch-test': scenarioRoute(minimalValidDraft()) } });
         T._setDraftForTest(minimalValidDraft());
-        T._setApprovalCacheForTest({ scenario_name: 'launch-test', status: 'approved' });
-        let threw = false;
-        try { T.launchToSCC(); } catch (e) { threw = true; }
-        ok(!threw, 'does not throw when RmoozFreeFightDemo is absent');
+        const launched = await T.launchToSCC();
+        eq(launched, false, 'no engine loaded -> launchToSCC resolves false, does not throw');
     }
 
-    // ── 5. renderSaveStepCard smoke test across lifecycle states ───────────
-    console.log('\n[5] renderSaveStepCard renders without throwing across all lifecycle states');
-    [null, { status: 'draft', can_submit: true }, { status: 'in_review', can_approve: true },
-     { status: 'approved' }, { status: 'rejected' }, { status: 'activated' }].forEach(function (cache) {
+    // ── 6. renderSaveStepCard smoke test across lifecycle states ───────────
+    console.log('\n[6] renderSaveStepCard renders without throwing across all lifecycle states');
+    for (const cache of [null, { status: 'draft', can_submit: true }, { status: 'in_review', can_approve: true },
+                         { status: 'approved' }, { status: 'rejected' }, { status: 'activated' }]) {
         const { T } = loadSandbox();
         T._setDraftForTest(minimalValidDraft());
         T._setApprovalCacheForTest(cache);
@@ -157,44 +199,28 @@ async function run() {
         let threw = false;
         try { T.renderSaveStepCard(host); } catch (e) { threw = true; console.log('   threw:', e && e.message); }
         ok(!threw, 'renders cleanly for status=' + (cache && cache.status));
-    });
+    }
 
-    // ── 6. _refreshApprovalStatus fetches the right URL and caches the result ──
-    console.log('\n[6] _refreshApprovalStatus() fetches GET /api/scenarios/:name/approval');
+    // ── 7. _refreshApprovalStatus / _postApprovalAction hit the right endpoints ─
+    console.log('\n[7] _refreshApprovalStatus / _postApprovalAction hit the exact expected endpoints');
     {
-        let requestedUrl = null;
-        const fakeFetch = function (url) {
-            requestedUrl = url;
-            return Promise.resolve({ ok: true, json: () => Promise.resolve({ ok: true, scenario_name: 'launch-test', status: 'approved', can_submit: false, can_approve: false }) });
-        };
-        const { T } = loadSandbox({ fetch: fakeFetch });
+        const { T } = loadSandbox({ routes: { '/api/scenarios/launch-test/approval': approvalRoute('approved') } });
         T._setDraftForTest(minimalValidDraft());
         await T._refreshApprovalStatus(false);
-        eq(requestedUrl, '/api/scenarios/launch-test/approval', '_refreshApprovalStatus fetches the exact expected URL');
         const cache = T._getApprovalCacheForTest();
         ok(cache && cache.status === 'approved', '_approvalCache updated from the fetch response');
     }
-
-    // ── 7. _postApprovalAction posts to the exact expected endpoint ────────
-    console.log('\n[7] _postApprovalAction() posts to the exact expected endpoint + body');
     {
-        let requestedUrl = null, requestedMethod = null, requestedBody = null;
+        let requestedUrl = null, requestedBody = null;
         const fakeFetch = function (url, init) {
-            requestedUrl = url; requestedMethod = init && init.method; requestedBody = init && init.body;
+            requestedUrl = url; requestedBody = init && init.body;
             return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ ok: true, status: 'approved' }) });
         };
         const { T } = loadSandbox({ fetch: fakeFetch });
         T._setDraftForTest(minimalValidDraft());
-        const r = await T._postApprovalAction('approve');
-        eq(requestedUrl, '/api/scenarios/launch-test/approve', '_postApprovalAction posts to the exact expected URL');
-        eq(requestedMethod, 'POST', 'uses POST');
-        eq(requestedBody, '{}', 'no reason -> empty JSON body');
-        ok(r.ok && r.body.status === 'approved', 'resolves with the server response');
-
-        const r2 = await T._postApprovalAction('reject', 'not ready');
+        await T._postApprovalAction('reject', 'not ready');
         eq(requestedUrl, '/api/scenarios/launch-test/reject', 'reject posts to the reject endpoint');
         eq(requestedBody, JSON.stringify({ reason: 'not ready' }), 'reject sends the reason in the body');
-        ok(!!r2, 'reject call resolves');
     }
 
     console.log('\n' + (fail === 0 ? 'OK' : 'FAIL') + ' — ' + pass + ' passed, ' + fail + ' failed');

@@ -273,11 +273,11 @@
       "review_by": "2026-08-13"
     },
     "test-app-inventory-audit-1.js": {
-      "reason": "offline-parity (D7): Batch B Slice 10 rerouted scenario-import-wizard.js's success handler to AppEditMode.openDraftForReview() (main-app-only Edit Mode work). The offline app has no scenario-edit-mode.js at all (confirmed: no file, not wired in its app.html) — mirroring the change would call a nonexistent window.AppEditMode and break the offline import flow rather than fix it, so the drift is accepted here rather than propagated. Widens the pre-existing D7 gap (unit-status-panel.js) by one file.",
+      "reason": "unclassified — pre-existing, not investigated this session",
       "signature": [
-        "AssertionError [ERR_ASSERTION]: offline shell modules drifted from main: scenario-import-wizard.js, unit-status-panel.js"
+        "AssertionError [ERR_ASSERTION]: offline shell modules drifted from main: unit-status-panel.js"
       ],
-      "owner": "unassigned (needs triage; also tracks D7 offline-parity closeout)",
+      "owner": "unassigned (needs triage)",
       "quarantined_since": "2026-07-14",
       "review_by": "2026-08-13"
     },

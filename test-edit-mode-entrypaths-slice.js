@@ -124,13 +124,38 @@ console.log('\n[4] Source-scan — openDraftForReview never mounts/activates a s
 // ── 5. scenario-import-wizard.js reroutes to openDraftForReview ────────────
 console.log('\n[5] scenario-import-wizard.js reroutes its success handler');
 {
+    // Wide enough to cover the whole openScenario body, including the
+    // feature-detected fallback branch (added post-Slice-10, see below) —
+    // a narrower window previously let this check silently look at a
+    // truncated slice and miss the reintroduced loadLiveScenarioFromJson
+    // call entirely.
     const wizSrc = fs.readFileSync(WIZARD_PATH, 'utf8');
-    const fnBody = wizSrc.slice(wizSrc.indexOf('function openScenario'), wizSrc.indexOf('function openScenario') + 2600);
+    const startIdx = wizSrc.indexOf('function openScenario');
+    const endIdx = wizSrc.indexOf('\n        }\n', startIdx); // end of openScenario()
+    const fnBody = wizSrc.slice(startIdx, endIdx > startIdx ? endIdx : startIdx + 3000);
     ok(/AppEditMode\.openDraftForReview|editMode\.openDraftForReview/.test(fnBody), 'openScenario calls AppEditMode.openDraftForReview');
     ok(/source:\s*'import'/.test(fnBody), 'import is stamped with source:"import"');
-    // Match an actual invocation (name immediately followed by a call), not
-    // the explanatory comment that references the old function by name.
-    ok(!/loadLiveScenarioFromJson\s*\(/.test(fnBody), 'openScenario no longer calls loadLiveScenarioFromJson (activates nothing)');
+    // Post-Slice-10 fix (found during the pre-push audit, see D6/D7 offline-
+    // parity below): scenario-import-wizard.js is byte-shared with the
+    // offline build, which has no scenario-edit-mode.js at all — so this
+    // file feature-detects window.AppEditMode.openDraftForReview and falls
+    // back to the original loadLiveScenarioFromJson() activation when it's
+    // absent (offline), rather than throwing. The call must exist, but ONLY
+    // inside that fallback branch, gated behind the feature check.
+    ok(/loadLiveScenarioFromJson\s*\(/.test(fnBody), 'openScenario retains a loadLiveScenarioFromJson(...) fallback call (for builds without Edit Mode, e.g. offline)');
+    const editModeCheckIdx = fnBody.search(/editMode\s*&&\s*typeof\s*editMode\.openDraftForReview\s*===\s*'function'/);
+    const fallbackCallIdx = fnBody.indexOf('loadLiveScenarioFromJson(');
+    ok(editModeCheckIdx !== -1, 'the fallback is gated behind an explicit editMode feature check');
+    ok(fallbackCallIdx > editModeCheckIdx && editModeCheckIdx !== -1, 'loadLiveScenarioFromJson(...) sits AFTER (inside the else of) the feature check, not unconditionally');
+}
+
+// ── 5b. scenario-import-wizard.js stays byte-identical with the offline copy ─
+console.log('\n[5b] scenario-import-wizard.js parity with Offline_Deployment (OFFLINE-PARITY-D6/D7)');
+{
+    const OFFLINE_WIZARD_PATH = path.join(ROOT, 'UI_MOdified/Offline_Deployment/offline_app/client/shell/scenario-import-wizard.js');
+    const mainSrc = fs.readFileSync(WIZARD_PATH, 'utf8');
+    const offlineSrc = fs.readFileSync(OFFLINE_WIZARD_PATH, 'utf8');
+    eq(mainSrc, offlineSrc, 'main and offline scenario-import-wizard.js are byte-identical (no D6/D7-style drift reintroduced by Slice 10)');
 }
 
 // ── 6. New Scenario form wires the template registry + AI generation ───────

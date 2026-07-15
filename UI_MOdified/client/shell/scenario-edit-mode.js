@@ -68,6 +68,15 @@
     var _forcesPickOnMap  = false;          // 'Pick on map' placement mode active?
     var _forcesPickMapHandlers = null;       // teardown handle for the click+ESC listeners
 
+    // Slice 11: cached server-side approval/lifecycle payload for the
+    // currently-open draft's name (draft->in_review->approved/rejected->
+    // activated, from scenario-approval-store.js / GET .../approval). Null
+    // until the scenario has been saved to the server at least once (no
+    // lifecycle row exists before that). Refreshed fire-and-forget on every
+    // render of the Save step, same pattern as free-fight-demo.js's
+    // _serverApprovalCache.
+    var _approvalCache = null; // { scenario_name, status, can_submit, can_review, can_approve, can_activate, history } | null
+
     /* ---- small helpers ---------------------------------------------------- */
     function el(tag, attrs, kids) {
         var n = document.createElement(tag);
@@ -2846,6 +2855,58 @@
     }
 
     /* ---- Slice 2C: Step 13 — Validate & Save card ------------------------ */
+    /* ---- Slice 11: approval workflow + Launch-to-SCC ----------------------
+     * Reuses the REAL server-side lifecycle (scenario-approval-store.js,
+     * built in Slice 2) — draft->in_review->approved/rejected->activated.
+     * There was previously NO client UI calling those endpoints at all; this
+     * closes that gap so the Launch button's gate condition is actually
+     * reachable through the app, not a permanently-disabled control. */
+    function _refreshApprovalStatus(andRerender) {
+        if (!_draft || !_draft.name) return Promise.resolve();
+        var name = _draft.name;
+        return fetch('/api/scenarios/' + encodeURIComponent(name) + '/approval', { credentials: 'include' })
+            .then(function (r) { return r.status === 404 ? null : (r.ok ? r.json() : null); })
+            .then(function (j) {
+                _approvalCache = (j && j.ok) ? j : null;
+                if (andRerender && _draft && _draft.name === name && _activeStep === STEPS.length - 1) renderEditor();
+            })
+            .catch(function () { /* leave the last-known cache in place */ });
+    }
+    function _postApprovalAction(action, reason) {
+        if (!_draft || !_draft.name) return Promise.reject(new Error('no draft name'));
+        return fetch('/api/scenarios/' + encodeURIComponent(_draft.name) + '/' + action, {
+            method: 'POST', credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(reason ? { reason: reason } : {})
+        }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, status: r.status, body: j }; }); });
+    }
+    function launchToSCC() {
+        saveDraft(); // re-validates hard rules + draftIsSafe; populates window.RmoozScenario.scenario on success
+        var slot = window.RmoozScenario;
+        var sc = slot && slot.scenario;
+        if (!sc) { setStatus('Blocked: scenario failed to save — Control Center not opened.', true); return; }
+        if (!_approvalCache || (_approvalCache.status !== 'approved' && _approvalCache.status !== 'activated')) {
+            setStatus('Blocked: commander approval required before launch (current status: ' +
+                ((_approvalCache && _approvalCache.status) || 'not submitted') + ').', true);
+            return;
+        }
+        if (!(window.RmoozFreeFightDemo && typeof window.RmoozFreeFightDemo.mount === 'function')) {
+            setStatus('Free Fight engine not loaded (shell/free-fight-demo.js).', true);
+            return;
+        }
+        var mountOpts = {};
+        if (sc.obj && Array.isArray(sc.obj.coord) && sc.obj.coord.length >= 2) {
+            mountOpts.objective = { lon: sc.obj.coord[0], lat: sc.obj.coord[1] };
+        }
+        // Empty payload is correct here — the SCC engine (RmoozFreeFightDemo.engine
+        // -> scenario-control-center.js) reads window.RmoozScenario.scenario
+        // directly for red_units/blue_units_initial/etc; mount()'s payload only
+        // feeds the separate legacy demo-overlay marker layer, not the SCC.
+        window.RmoozFreeFightDemo.mount({}, mountOpts);
+        logOperator('Scenario launched to Scenario Control Center', { name: sc.name || '' });
+        setStatus('Launched "' + (sc.name || '') + '" to the Scenario Control Center.', false);
+    }
+
     function renderSaveStepCard(host) {
         var card = el('div', { class: 'builder-card sw-card' }, [
             el('div', { class: 'builder-card-header' }, [
@@ -2889,6 +2950,72 @@
         ]));
         card.appendChild(el('div', { class: 'sw-edit-hint',
             text: 'In-memory save updates the live RmoozScenario. Save As / Save to server persist outside the in-memory boundary.' }));
+
+        // Slice 11: commander-approval workflow + Launch-to-SCC. Requires the
+        // draft to have been saved to the server at least once (Save to
+        // server above) — a lifecycle row is created on first server save.
+        var approvalCard = el('div', { class: 'sw-approval-card' });
+        approvalCard.appendChild(el('div', { class: 'builder-card-header' }, [
+            el('span', { class: 'builder-card-title', text: 'Commander Approval & Launch · موافقة القائد والإطلاق' })
+        ]));
+        if (!_draft.name) {
+            approvalCard.appendChild(el('div', { class: 'sw-edit-hint',
+                text: 'Save to server first — approval status is tracked per saved scenario name.' }));
+        } else if (!_approvalCache) {
+            approvalCard.appendChild(el('div', { class: 'sw-edit-hint',
+                text: 'No lifecycle record yet for "' + _draft.name + '" — save to server, then submit for review.' }));
+        } else {
+            approvalCard.appendChild(el('div', { class: 'sw-edit-hint', text: 'Status: ' + _approvalCache.status }));
+        }
+
+        var submitBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Submit for review' });
+        var approveBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Approve (commander)' });
+        var rejectBtn = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-danger', text: 'Reject' });
+        var reopenBtn = el('button', { type: 'button', class: 'sw-edit-btn', text: 'Reopen to draft' });
+        if (!_approvalCache || !_approvalCache.can_submit) submitBtn.setAttribute('disabled', 'disabled');
+        if (!_approvalCache || !_approvalCache.can_approve) approveBtn.setAttribute('disabled', 'disabled');
+        if (!_approvalCache || !_approvalCache.can_approve) rejectBtn.setAttribute('disabled', 'disabled');
+        if (!_approvalCache || !(_approvalCache.status === 'approved' || _approvalCache.status === 'rejected')) reopenBtn.setAttribute('disabled', 'disabled');
+
+        submitBtn.addEventListener('click', function () {
+            _postApprovalAction('submit-for-review').then(function (r) {
+                setStatus(r.ok ? 'Submitted for review.' : ('Blocked: ' + (r.body && r.body.error)), !r.ok);
+                _refreshApprovalStatus(true);
+            });
+        });
+        approveBtn.addEventListener('click', function () {
+            _postApprovalAction('approve').then(function (r) {
+                setStatus(r.ok ? 'Approved.' : ('Blocked: ' + (r.body && r.body.error)), !r.ok);
+                _refreshApprovalStatus(true);
+            });
+        });
+        rejectBtn.addEventListener('click', function () {
+            var reason = window.prompt ? window.prompt('Reject reason (required):') : 'rejected';
+            if (!reason || !reason.trim()) { setStatus('Reject cancelled — a reason is required.', true); return; }
+            _postApprovalAction('reject', reason).then(function (r) {
+                setStatus(r.ok ? 'Rejected.' : ('Blocked: ' + (r.body && r.body.error)), !r.ok);
+                _refreshApprovalStatus(true);
+            });
+        });
+        reopenBtn.addEventListener('click', function () {
+            _postApprovalAction('reopen').then(function (r) {
+                setStatus(r.ok ? 'Reopened to draft.' : ('Blocked: ' + (r.body && r.body.error)), !r.ok);
+                _refreshApprovalStatus(true);
+            });
+        });
+        approvalCard.appendChild(el('div', { class: 'sw-edit-actions' }, [submitBtn, approveBtn, rejectBtn, reopenBtn]));
+
+        var launchBtn = el('button', { type: 'button', class: 'sw-edit-btn sw-edit-btn-primary', text: 'Launch to Scenario Control Center' });
+        var canLaunch = !!(_approvalCache && (_approvalCache.status === 'approved' || _approvalCache.status === 'activated') &&
+            validateAllHardRules(_draft).ok && draftIsSafe(_draft).ok);
+        if (!canLaunch) launchBtn.setAttribute('disabled', 'disabled');
+        launchBtn.addEventListener('click', launchToSCC);
+        approvalCard.appendChild(el('div', { class: 'sw-edit-actions' }, [launchBtn]));
+        approvalCard.appendChild(el('div', { class: 'sw-edit-hint',
+            text: 'Launch is enabled only once the server-side lifecycle status is "approved" (or "activated") and all hard rules + the P0 safety gate pass.' }));
+
+        card.appendChild(approvalCard);
+        _refreshApprovalStatus(true); // fire-and-forget; re-renders this step if the status changes
 
         host.appendChild(card);
     }
@@ -3301,7 +3428,14 @@
             defaultVictoryCondition:     defaultVictoryCondition,
             nextFreeVictoryConditionId:  nextFreeVictoryConditionId,
             _selectVictoryConditionForTest: _selectVictoryCondition,
-            _clearVictoryConditionSelectionForTest: _clearVictoryConditionSelection
+            _clearVictoryConditionSelectionForTest: _clearVictoryConditionSelection,
+            // Batch B Slice 11: approval workflow + Launch-to-SCC.
+            launchToSCC:                 launchToSCC,
+            _refreshApprovalStatus:      _refreshApprovalStatus,
+            _postApprovalAction:         _postApprovalAction,
+            _setApprovalCacheForTest:    function (v) { _approvalCache = v; },
+            _getApprovalCacheForTest:    function () { return _approvalCache; },
+            renderSaveStepCard:          renderSaveStepCard
         }
     };
 })();

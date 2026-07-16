@@ -448,11 +448,122 @@ function createSchema(db) {
             activated_by  TEXT NULL, activated_at  TEXT NULL,
             updated_at    TEXT NOT NULL
         );
+
+        -- Batch D Slice 1: immutable scenario revisions. Append-only — a row
+        -- is NEVER updated or deleted once written. scenario_lifecycle above
+        -- tracks CURRENT approval state only; this table is the authoritative
+        -- content history POST /api/scenarios writes to on every real change
+        -- (content-hash-identical resaves are a no-op, no new row). The live
+        -- data/scenarios/<name>.json file remains a mirror of the latest
+        -- revision so every existing reader keeps working unmodified.
+        CREATE TABLE IF NOT EXISTS scenario_revisions (
+            id              TEXT PRIMARY KEY,
+            scenario_name   TEXT NOT NULL,
+            revision_number INTEGER NOT NULL,
+            content_hash    TEXT NOT NULL,
+            content_json    TEXT NOT NULL,
+            created_by      TEXT NULL,
+            created_at      TEXT NOT NULL,
+            source          TEXT NOT NULL DEFAULT 'manual'
+                            CHECK (source IN ('manual','ai','template','import','clone','restore','legacy'))
+        );
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_scenario_rev_unique ON scenario_revisions(scenario_name, revision_number);
+        CREATE INDEX IF NOT EXISTS idx_scenario_rev_name ON scenario_revisions(scenario_name);
     `);
     try { db.exec(`ALTER TABLE units ADD COLUMN side TEXT NULL DEFAULT 'friendly'`); } catch (_) {}
     try { db.exec(`ALTER TABLE units ADD COLUMN lat REAL NULL`); } catch (_) {}
     try { db.exec(`ALTER TABLE units ADD COLUMN lng REAL NULL`); } catch (_) {}
     try { db.exec(`ALTER TABLE units ADD COLUMN placed_at TEXT NULL`); } catch (_) {}
+    // Batch D Slice 2: bind approval/activation to the EXACT scenario_revisions
+    // row that was reviewed, not just "whatever's on disk now" — approve/
+    // activate record the revision_number in force at that moment.
+    try { db.exec(`ALTER TABLE scenario_lifecycle ADD COLUMN approved_revision INTEGER NULL`); } catch (_) {}
+    try { db.exec(`ALTER TABLE scenario_lifecycle ADD COLUMN activated_revision INTEGER NULL`); } catch (_) {}
+    // Batch D Slice 4/5: generic "what this revision was based on" reference —
+    // the restored-from revision number (restore) or the source scenario name
+    // (clone). Reused rather than adding two single-purpose columns.
+    try { db.exec(`ALTER TABLE scenario_revisions ADD COLUMN source_ref TEXT NULL`); } catch (_) {}
+    migrateArchivedStatus(db);
+    migrateLegacyRevisionSource(db);
+}
+
+// Batch D Slice 5: adds the 'archived' status. SQLite has no ALTER TABLE ...
+// ALTER COLUMN / DROP CONSTRAINT, so widening a CHECK constraint on an
+// existing table means recreating it — copy rows into a new table with the
+// widened constraint, drop the old one, rename. Idempotent: checks the
+// live schema text for 'archived' first and no-ops if already migrated.
+// Archive/restore-from-archive never touch scenario_revisions — archiving is
+// reversible bookkeeping on scenario_lifecycle only, not a content change.
+function migrateArchivedStatus(db) {
+    const row = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='scenario_lifecycle'").get();
+    if (!row || !row.sql || row.sql.indexOf("'archived'") !== -1) return;
+    const tx = db.transaction(() => {
+        db.exec(`
+            CREATE TABLE scenario_lifecycle_new (
+                scenario_name TEXT PRIMARY KEY,
+                status        TEXT NOT NULL DEFAULT 'draft'
+                              CHECK (status IN ('draft','in_review','approved','rejected','activated','archived')),
+                author_id     TEXT NULL,
+                submitted_by  TEXT NULL, submitted_at  TEXT NULL,
+                reviewed_by   TEXT NULL, reviewed_at   TEXT NULL,
+                approved_by   TEXT NULL, approved_at   TEXT NULL, approved_revision INTEGER NULL,
+                rejected_by   TEXT NULL, rejected_at   TEXT NULL, reject_reason TEXT NULL,
+                activated_by  TEXT NULL, activated_at  TEXT NULL, activated_revision INTEGER NULL,
+                archived_by   TEXT NULL, archived_at   TEXT NULL, pre_archive_status TEXT NULL,
+                updated_at    TEXT NOT NULL
+            );
+        `);
+        db.exec(`
+            INSERT INTO scenario_lifecycle_new (
+                scenario_name, status, author_id, submitted_by, submitted_at, reviewed_by, reviewed_at,
+                approved_by, approved_at, approved_revision, rejected_by, rejected_at, reject_reason,
+                activated_by, activated_at, activated_revision, updated_at
+            )
+            SELECT scenario_name, status, author_id, submitted_by, submitted_at, reviewed_by, reviewed_at,
+                   approved_by, approved_at, approved_revision, rejected_by, rejected_at, reject_reason,
+                   activated_by, activated_at, activated_revision, updated_at
+            FROM scenario_lifecycle;
+        `);
+        db.exec(`DROP TABLE scenario_lifecycle;`);
+        db.exec(`ALTER TABLE scenario_lifecycle_new RENAME TO scenario_lifecycle;`);
+    });
+    tx();
+}
+
+// Batch D (checkpoint retrofit): adds the 'legacy' revision source — used
+// when backfilling revision 1 for scenario files that predate the revisions
+// system (see scenario-revisions-store.js::backfillLegacyRevisions()), so
+// that provenance stays honest (never mislabeled as 'manual'/'ai'/etc.).
+// Same recreate-and-copy approach as migrateArchivedStatus, for the same
+// SQLite ALTER-CHECK-constraint limitation.
+function migrateLegacyRevisionSource(db) {
+    const row = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='scenario_revisions'").get();
+    if (!row || !row.sql || row.sql.indexOf("'legacy'") !== -1) return;
+    const tx = db.transaction(() => {
+        db.exec(`
+            CREATE TABLE scenario_revisions_new (
+                id              TEXT PRIMARY KEY,
+                scenario_name   TEXT NOT NULL,
+                revision_number INTEGER NOT NULL,
+                content_hash    TEXT NOT NULL,
+                content_json    TEXT NOT NULL,
+                created_by      TEXT NULL,
+                created_at      TEXT NOT NULL,
+                source          TEXT NOT NULL DEFAULT 'manual'
+                                CHECK (source IN ('manual','ai','template','import','clone','restore','legacy')),
+                source_ref      TEXT NULL
+            );
+        `);
+        db.exec(`
+            INSERT INTO scenario_revisions_new (id, scenario_name, revision_number, content_hash, content_json, created_by, created_at, source, source_ref)
+            SELECT id, scenario_name, revision_number, content_hash, content_json, created_by, created_at, source, source_ref FROM scenario_revisions;
+        `);
+        db.exec(`DROP TABLE scenario_revisions;`);
+        db.exec(`ALTER TABLE scenario_revisions_new RENAME TO scenario_revisions;`);
+        db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_scenario_rev_unique ON scenario_revisions(scenario_name, revision_number);`);
+        db.exec(`CREATE INDEX IF NOT EXISTS idx_scenario_rev_name ON scenario_revisions(scenario_name);`);
+    });
+    tx();
 }
 
 // Generate a URL-safe random password. 16 bytes of base64url ≈ 128 bits of

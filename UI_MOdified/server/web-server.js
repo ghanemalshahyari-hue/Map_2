@@ -45,6 +45,7 @@ try { fs.mkdirSync(UPLOAD_DIR, { recursive: true }); } catch {}
 const appData = require('./app-data');
 const roadmapStore = require('./roadmap-store'); // ROADMAP-4: isolated; reads/writes data/roadmap-status.json only (no ai/sim)
 const scenarioApprovalStore = require('./scenario-approval-store'); // Batch B: draft/review/approve/reject/reopen lifecycle
+const scenarioRevisionsStore = require('./scenario-revisions-store'); // Batch D: immutable content revisions
 const demService   = require('./dem-service');
 const ollama       = require('./ai/ollama-client');
 const aiProvider   = require('./ai/ai-provider');
@@ -68,6 +69,20 @@ const scenarioTemplates = require('./ai/scenario-templates');
 if (Database) {
     try {
         appData.initAppData({ Database, dataDir: DATA_DIR, legacyUnitsFile: process.env.RMOOZ_UNITS_DB_FILE || path.join(DATA_DIR, 'units.db') });
+        // Batch D: existing scenario files predate the revisions system —
+        // give each one a real revision 1 (source:'legacy') so compare/
+        // restore work against their actual prior content, without ever
+        // mutating the files themselves or requiring callers to change.
+        // Idempotent (skips any scenario that already has revision history)
+        // and runs once at boot, never on a request path.
+        try {
+            const backfillResult = require('./scenario-revisions-store').backfillLegacyRevisions(path.join(DATA_DIR, 'scenarios'));
+            if (backfillResult.backfilled > 0) {
+                console.log(`[scenario-revisions] backfilled revision 1 for ${backfillResult.backfilled}/${backfillResult.scanned} scenario file(s).`);
+            }
+        } catch (e) {
+            console.error('[scenario-revisions] legacy backfill failed (non-fatal):', e && e.message ? e.message : e);
+        }
     } catch (e) {
         console.error('\n  WARNING: better-sqlite3 native binding failed to load.');
         console.error('  Auth/units/plans features will be disabled (static pages still work).');
@@ -636,6 +651,8 @@ const server = http.createServer((req, res) => {
     if (roadmapStore.handleRoadmapApi(req, res, pathname, req.method, sendJson, readJsonBody)) return;
     // Batch B: scenario approval lifecycle (submit-for-review/review/approve/reject/reopen/approval).
     if (scenarioApprovalStore.handleScenarioApprovalApi(req, res, pathname, req.method, sendJson, readJsonBody)) return;
+    // Batch D: scenario revision history + field-level compare (read-only).
+    if (scenarioRevisionsStore.handleScenarioRevisionsApi(req, res, pathname, req.method, sendJson)) return;
 
     // GIS-TERRAIN-1 (T-1): read-only terrain endpoints (health/elevation/profile).
     // Wires the previously orphaned dem-service; degrades gracefully without a DEM.
@@ -933,7 +950,35 @@ const server = http.createServer((req, res) => {
     // this to populate its dropdown.
     if (pathname === '/api/ai/scenarios' && req.method === 'GET') {
         try {
-            sendJson(res, 200, { ok: true, scenarios: scenarios.listScenarios(), active: scenarios.getActiveName(), default: scenarios.getActiveName() });
+            const names = scenarios.listScenarios();
+            // Batch D Slice 6: ?detail=1 enhances the SAME list endpoint with
+            // owner/status/revision/approval/last-modified — the Scenario
+            // Library's data source — rather than adding a second list route.
+            // Scenarios predating the lifecycle/revisions system (no DB row —
+            // ported/legacy files never saved through POST /api/scenarios)
+            // degrade honestly to null fields + file mtime, not fabricated data.
+            if (url.searchParams.get('detail') === '1') {
+                const detail = names.map((name) => {
+                    const lifecycle = scenarioApprovalStore.getLifecycle(name);
+                    const latest = scenarioRevisionsStore.getLatestRevision(name);
+                    let label = null;
+                    try { label = scenarios.loadScenario(name).scenario_label || null; } catch (_) {}
+                    let mtime = null;
+                    try { mtime = fs.statSync(path.join(DATA_DIR, 'scenarios', name + '.json')).mtime.toISOString(); } catch (_) {}
+                    return {
+                        name, label,
+                        owner: lifecycle ? lifecycle.author_id : null,
+                        status: lifecycle ? lifecycle.status : null,
+                        revision: latest ? latest.revision_number : null,
+                        approved_revision: lifecycle ? lifecycle.approved_revision : null,
+                        activated_revision: lifecycle ? lifecycle.activated_revision : null,
+                        last_modified: latest ? latest.created_at : mtime,
+                    };
+                });
+                sendJson(res, 200, { ok: true, scenarios: detail, active: scenarios.getActiveName(), default: scenarios.getActiveName() });
+                return;
+            }
+            sendJson(res, 200, { ok: true, scenarios: names, active: scenarios.getActiveName(), default: scenarios.getActiveName() });
         } catch (e) {
             sendJson(res, 500, { ok: false, error: e.message || String(e) });
         }
@@ -1051,6 +1096,92 @@ const server = http.createServer((req, res) => {
     //   POST /api/scenarios            { scenario: {...} }
     //   POST /api/scenarios?overwrite=1 — replace an existing file (else 409).
     // 409 anti-clobber prevents accidentally overwriting wargame3 etc.
+    // Shared save-path core for authored scenario content — used by BOTH
+    // POST /api/scenarios and the Batch D restore endpoint below (decision:
+    // restore must go through the SAME save path as any other save, not a
+    // separate write route, so validation/lifecycle/revision behavior can
+    // never drift between the two). Returns { status, body } for the caller
+    // to sendJson verbatim.
+    function saveScenarioContent(scenario, user, opts) {
+        opts = opts || {};
+        // 1) Validate against the same schema the loader runs on read.
+        const validator = require('./ai/scenario-validator');
+        const r = validator.validateScenario(scenario);
+        if (!r.ok) {
+            return { status: 400, body: {
+                ok: false, error: 'scenario validation failed', errors: r.errors,
+                formatted: validator.formatErrors(r.errors).split('\n').slice(0, 10)
+            }};
+        }
+        // 2) Same sanitisation as /api/scenario/import so the on-disk
+        //    filename is predictable and safe.
+        const rawName = (scenario.name && typeof scenario.name === 'string') ? scenario.name.trim() : '';
+        const safeName = rawName.toLowerCase()
+            .replace(/[^a-z0-9._-]+/g, '_')
+            .replace(/^_+|_+$/g, '')
+            .slice(0, 64) || 'authored';
+        scenario.name = safeName; // the loader requires name to match filename
+
+        const dir = path.join(DATA_DIR, 'scenarios');
+        try { fs.mkdirSync(dir, { recursive: true }); } catch (_) {}
+        const file = path.join(dir, safeName + '.json');
+
+        // 3) 409 if exists and overwrite not requested.
+        const overwrite = !!opts.overwrite;
+        if (!overwrite) {
+            try {
+                fs.accessSync(file, fs.constants.F_OK);
+                return { status: 409, body: {
+                    ok: false, error: 'scenario "' + safeName + '" already exists', name: safeName, file
+                }};
+            } catch (_) { /* not found — fall through to write */ }
+        }
+
+        // 4) Write + invalidate cache.
+        fs.writeFileSync(file, JSON.stringify(scenario, null, 2), 'utf8');
+        try { scenarios.clearCache(); } catch (_) {}
+        // Batch B: saving a scenario no longer auto-activates it. It creates a
+        // lifecycle row at 'draft' — activation is a separate, approval-gated
+        // step. Slice 12: a re-save of an already-approved/activated scenario
+        // demotes it back to 'draft' (stale-revision guard) — see
+        // scenario-approval-store.js for the full rationale.
+        try {
+            const existedBefore = !!scenarioApprovalStore.getLifecycle(safeName);
+            scenarioApprovalStore.ensureLifecycleRow(safeName, user);
+            if (existedBefore) {
+                scenarioApprovalStore.invalidateApprovalOnRevision(safeName, user);
+            }
+            const lifecycle = scenarioApprovalStore.getLifecycle(safeName);
+            if (lifecycle && (lifecycle.status === 'approved' || lifecycle.status === 'activated')) {
+                scenarios.setActiveName(safeName);
+            }
+        } catch (_) {}
+
+        // Batch D Slice 1: append an immutable revision on real content change
+        // (content-hash-identical resaves are a no-op — no new row). The file
+        // above is always kept as the latest-revision mirror; scenario_revisions
+        // is the authoritative history.
+        let revisionInfo = null;
+        try {
+            revisionInfo = scenarioRevisionsStore.appendRevisionIfChanged(
+                safeName, scenario, user, opts.source || 'manual', opts.sourceRef
+            );
+        } catch (_) {}
+
+        return {
+            status: 200,
+            body: {
+                ok: true, name: safeName, file,
+                steps: (scenario.steps || []).length,
+                red_units: (scenario.red_units || []).length,
+                blue_units: (scenario.blue_units_initial || []).length,
+                overwritten: overwrite,
+                revision: revisionInfo ? revisionInfo.revision_number : null,
+                revision_created: revisionInfo ? revisionInfo.created : false
+            }
+        };
+    }
+
     if (pathname === '/api/scenarios' && req.method === 'POST') {
         const scenariosPostUser = requireAuthenticatedUser(req, res);
         if (!scenariosPostUser) return;
@@ -1060,82 +1191,112 @@ const server = http.createServer((req, res) => {
             if (!scenario || typeof scenario !== 'object') {
                 return sendJson(res, 400, { ok: false, error: 'body.scenario object required' });
             }
-            // 1) Validate against the same schema the loader runs on read.
-            const validator = require('./ai/scenario-validator');
-            const r = validator.validateScenario(scenario);
-            if (!r.ok) {
-                return sendJson(res, 400, {
-                    ok: false, error: 'scenario validation failed',
-                    errors: r.errors,
-                    formatted: validator.formatErrors(r.errors).split('\n').slice(0, 10)
-                });
-            }
-            // 2) Same sanitisation as /api/scenario/import so the on-disk
-            //    filename is predictable and safe.
-            const rawName = (scenario.name && typeof scenario.name === 'string')
-                ? scenario.name.trim() : '';
-            const safeName = rawName.toLowerCase()
-                .replace(/[^a-z0-9._-]+/g, '_')
-                .replace(/^_+|_+$/g, '')
-                .slice(0, 64) || 'authored';
-            // The loader requires name to match filename; enforce it here.
-            scenario.name = safeName;
-
-            const dir = path.join(DATA_DIR, 'scenarios');
-            try { fs.mkdirSync(dir, { recursive: true }); } catch (_) {}
-            const file = path.join(dir, safeName + '.json');
-
-            // 3) 409 if exists and overwrite not requested.
-            const overwrite = url.searchParams.get('overwrite') === '1';
-            if (!overwrite) {
-                try {
-                    fs.accessSync(file, fs.constants.F_OK);
-                    return sendJson(res, 409, {
-                        ok: false, error: 'scenario "' + safeName + '" already exists',
-                        name: safeName, file: file
-                    });
-                } catch (_) { /* not found — fall through to write */ }
-            }
-
-            // 4) Write + invalidate cache.
-            fs.writeFileSync(file, JSON.stringify(scenario, null, 2), 'utf8');
-            try { scenarios.clearCache(); } catch (_) {}
-            // Batch B: saving a scenario no longer auto-activates it. It
-            // creates a lifecycle row at 'draft' — activation is a separate,
-            // approval-gated step (POST /api/scenario/active, below).
-            // Slice 12 (E2E-discovered fix): a re-save of a scenario that was
-            // ALREADY approved/activated used to silently keep that status —
-            // a stale-revision bypass where edited-but-unreviewed content
-            // could still launch under an old approval, with no reviewer
-            // ever having seen the new content. A re-save now demotes
-            // approved/activated back to 'draft', requiring a fresh
-            // submit+approve cycle before it can launch/activate again. The
-            // FIRST save of a brand-new scenario has nothing to invalidate.
-            try {
-                const existedBefore = !!scenarioApprovalStore.getLifecycle(safeName);
-                scenarioApprovalStore.ensureLifecycleRow(safeName, scenariosPostUser);
-                if (existedBefore) {
-                    scenarioApprovalStore.invalidateApprovalOnRevision(safeName, scenariosPostUser);
-                }
-                const lifecycle = scenarioApprovalStore.getLifecycle(safeName);
-                if (lifecycle && (lifecycle.status === 'approved' || lifecycle.status === 'activated')) {
-                    scenarios.setActiveName(safeName);
-                }
-            } catch (_) {}
-
-            sendJson(res, 200, {
-                ok: true, name: safeName, file: file,
-                steps: (scenario.steps || []).length,
-                red_units: (scenario.red_units || []).length,
-                blue_units: (scenario.blue_units_initial || []).length,
-                overwritten: overwrite
+            const result = saveScenarioContent(scenario, scenariosPostUser, {
+                overwrite: url.searchParams.get('overwrite') === '1',
+                source: body.source || 'manual',
             });
+            sendJson(res, result.status, result.body);
         }).catch((e) => {
             const code = e && e.code === 'BODY_TOO_LARGE' ? 413
                        : e && e.code === 'INVALID_JSON'   ? 400 : 400;
             sendJson(res, code, { ok: false, error: e.message || String(e) });
         });
         return;
+    }
+
+    // Batch D Slice 4: restore an old revision AS A NEW DRAFT — never rewrites
+    // history. Reuses the EXACT same save path as any other save (validator,
+    // file write, lifecycle handling, revision append with source='restore'),
+    // just with the content sourced from an old scenario_revisions row instead
+    // of the request body, and overwrite forced true (the scenario file
+    // already exists by definition — you can't restore a revision of nothing).
+    {
+        const restoreMatch = /^\/api\/scenarios\/([^/]+)\/revisions\/(\d+)\/restore$/.exec(pathname);
+        if (restoreMatch && req.method === 'POST') {
+            const restoreUser = requireAuthenticatedUser(req, res);
+            if (!restoreUser) return;
+            if (!requireSimMutationCapability(restoreUser, res)) return;
+            const scenarioName = decodeURIComponent(restoreMatch[1]);
+            const revisionNumber = parseInt(restoreMatch[2], 10);
+            const revision = scenarioRevisionsStore.getRevision(scenarioName, revisionNumber);
+            if (!revision) {
+                sendJson(res, 404, { ok: false, error: 'revision ' + revisionNumber + ' not found for "' + scenarioName + '"' });
+                return;
+            }
+            let content;
+            try { content = JSON.parse(revision.content_json); }
+            catch (e) { sendJson(res, 500, { ok: false, error: 'stored revision content is not valid JSON' }); return; }
+            const result = saveScenarioContent(content, restoreUser, {
+                overwrite: true, source: 'restore', sourceRef: String(revisionNumber),
+            });
+            sendJson(res, result.status, result.body);
+            return;
+        }
+    }
+
+    // Batch D Slice 5: clone — an independent new scenario seeded from the
+    // source's latest revision, its OWN fresh lifecycle row (draft), never
+    // touching the source's history. body.new_name required.
+    {
+        const cloneMatch = /^\/api\/scenarios\/([^/]+)\/clone$/.exec(pathname);
+        if (cloneMatch && req.method === 'POST') {
+            const cloneUser = requireAuthenticatedUser(req, res);
+            if (!cloneUser) return;
+            if (!requireSimMutationCapability(cloneUser, res)) return;
+            const sourceName = decodeURIComponent(cloneMatch[1]);
+            readJsonBody(req, { maxBytes: 4096 }).then((body) => {
+                const newName = (body && typeof body.new_name === 'string') ? body.new_name.trim() : '';
+                if (!newName) { sendJson(res, 400, { ok: false, error: 'body.new_name is required' }); return; }
+                const sourceLatest = scenarioRevisionsStore.getLatestRevision(sourceName);
+                if (!sourceLatest) {
+                    sendJson(res, 404, { ok: false, error: 'source scenario "' + sourceName + '" has no revisions to clone' });
+                    return;
+                }
+                let content;
+                try { content = JSON.parse(sourceLatest.content_json); }
+                catch (e) { sendJson(res, 500, { ok: false, error: 'stored revision content is not valid JSON' }); return; }
+                content.name = newName;
+                const result = saveScenarioContent(content, cloneUser, {
+                    overwrite: false, source: 'clone', sourceRef: sourceName,
+                });
+                sendJson(res, result.status, result.body);
+            }).catch((e) => sendJson(res, 400, { ok: false, error: (e && e.message) || 'Invalid JSON' }));
+            return;
+        }
+    }
+
+    // Batch D Slice 5: save the CURRENT latest revision as a reusable
+    // template — writes into the SAME template registry
+    // GET /api/scenario-templates already reads (a dynamic, DATA_DIR-backed
+    // portion added alongside the static curated entries), not a parallel
+    // store. body.label required (shown in the template picker).
+    {
+        const templateMatch = /^\/api\/scenarios\/([^/]+)\/save-as-template$/.exec(pathname);
+        if (templateMatch && req.method === 'POST') {
+            const templateUser = requireAuthenticatedUser(req, res);
+            if (!templateUser) return;
+            if (!requireSimMutationCapability(templateUser, res)) return;
+            const sourceName = decodeURIComponent(templateMatch[1]);
+            readJsonBody(req, { maxBytes: 4096 }).then((body) => {
+                const label = (body && typeof body.label === 'string') ? body.label.trim() : '';
+                if (!label) { sendJson(res, 400, { ok: false, error: 'body.label is required' }); return; }
+                const latest = scenarioRevisionsStore.getLatestRevision(sourceName);
+                if (!latest) {
+                    sendJson(res, 404, { ok: false, error: 'source scenario "' + sourceName + '" has no revisions to save as a template' });
+                    return;
+                }
+                let content;
+                try { content = JSON.parse(latest.content_json); }
+                catch (e) { sendJson(res, 500, { ok: false, error: 'stored revision content is not valid JSON' }); return; }
+                try {
+                    const template = scenarioTemplates.saveAsTemplate(content, label, templateUser);
+                    sendJson(res, 200, { ok: true, template });
+                } catch (e) {
+                    sendJson(res, 400, { ok: false, error: e.message || String(e) });
+                }
+            }).catch((e) => sendJson(res, 400, { ok: false, error: (e && e.message) || 'Invalid JSON' }));
+            return;
+        }
     }
 
     // Persist the operator's active-scenario selection so the HUD boots into
@@ -1158,6 +1319,20 @@ const server = http.createServer((req, res) => {
                 sendJson(res, 409, {
                     ok: false, error: 'scenario is not approved for activation',
                     code: 'NOT_APPROVED', status: status || 'no_lifecycle_record'
+                });
+                return;
+            }
+            // Batch D Slice 2: defense in depth on top of the blunt any-resave
+            // demotion — refuse activation if the content has moved on since
+            // approval even in an edge case where the demotion somehow didn't
+            // fire, rather than trusting status alone.
+            const latestRev = scenarioRevisionsStore.getLatestRevision(name);
+            const latestRevNumber = latestRev ? latestRev.revision_number : null;
+            if (status === 'approved' && lifecycle.approved_revision != null && lifecycle.approved_revision !== latestRevNumber) {
+                sendJson(res, 409, {
+                    ok: false, error: 'scenario content has changed since approval — resubmit for review',
+                    code: 'NOT_APPROVED', status: 'stale_revision',
+                    approved_revision: lifecycle.approved_revision, latest_revision: latestRevNumber
                 });
                 return;
             }

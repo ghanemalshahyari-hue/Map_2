@@ -35,6 +35,9 @@ function commandAuthority() {
 function journalHash() {
     return require('./sim/journal');
 }
+function scenarioRevisions() {
+    return require('./scenario-revisions-store');
+}
 
 function dataDir() { return process.env.RMOOZ_DATA_DIR || path.join(__dirname, '..', 'data'); }
 function journalDir() { return path.join(dataDir(), 'journal'); }
@@ -165,9 +168,17 @@ function applyTransition({ user, scenario_name, action, reason }, getDb) {
     const fields = { status: t.to, updated_at: nIso };
     if (action === 'submit') { fields.submitted_by = actorId; fields.submitted_at = nIso; fields.reject_reason = null; }
     if (action === 'review')  { fields.reviewed_by = actorId; fields.reviewed_at = nIso; }
-    if (action === 'approve') { fields.approved_by = actorId; fields.approved_at = nIso; }
+    if (action === 'approve') {
+        fields.approved_by = actorId; fields.approved_at = nIso;
+        // Batch D Slice 2: bind approval to the EXACT revision reviewed, not
+        // just "whatever's on disk" — the commander approval UI can then show
+        // precisely which revision was approved, and activation (below) can
+        // refuse to proceed if the content has moved on since.
+        const latest = scenarioRevisions().getLatestRevision(scenario_name, () => db);
+        fields.approved_revision = latest ? latest.revision_number : null;
+    }
     if (action === 'reject')  { fields.rejected_by = actorId; fields.rejected_at = nIso; fields.reject_reason = reason; }
-    if (action === 'reopen')  { fields.approved_by = null; fields.approved_at = null;
+    if (action === 'reopen')  { fields.approved_by = null; fields.approved_at = null; fields.approved_revision = null;
                                  fields.rejected_by = null; fields.rejected_at = null; fields.reject_reason = null; }
 
     const setClause = Object.keys(fields).map(k => k + ' = ?').join(', ');
@@ -202,8 +213,8 @@ function invalidateApprovalOnRevision(scenario_name, user, getDb) {
     const nIso = nowIso();
     const actorId = (user && (user.username || user.id)) || null;
     db.prepare(
-        `UPDATE scenario_lifecycle SET status='draft', approved_by=NULL, approved_at=NULL,
-         activated_by=NULL, activated_at=NULL, updated_at=? WHERE scenario_name=?`
+        `UPDATE scenario_lifecycle SET status='draft', approved_by=NULL, approved_at=NULL, approved_revision=NULL,
+         activated_by=NULL, activated_at=NULL, activated_revision=NULL, updated_at=? WHERE scenario_name=?`
     ).run(nIso, scenario_name);
     appendLifecycleEvent({
         scenario_name, event: 'revision_invalidated_approval', actor_id: actorId,
@@ -222,13 +233,64 @@ function markActivated(scenario_name, user, getDb) {
     const db = (getDb || defaultGetDb)();
     const nIso = nowIso();
     const actorId = user.username || user.id;
+    // Batch D Slice 2: record the revision that is actually being activated,
+    // for the same audit reason approval records approved_revision.
+    const latest = scenarioRevisions().getLatestRevision(scenario_name, () => db);
+    const activatedRevision = latest ? latest.revision_number : null;
     db.prepare(
-        `UPDATE scenario_lifecycle SET status='activated', activated_by=?, activated_at=?, updated_at=? WHERE scenario_name=?`
-    ).run(actorId, nIso, nIso, scenario_name);
+        `UPDATE scenario_lifecycle SET status='activated', activated_by=?, activated_at=?, activated_revision=?, updated_at=? WHERE scenario_name=?`
+    ).run(actorId, nIso, activatedRevision, nIso, scenario_name);
     appendLifecycleEvent({
         scenario_name, event: 'activated', actor_id: actorId, actor_role: user.role,
         actor_display: user.displayName, from_status: 'approved', to_status: 'activated',
     });
+    return activatedRevision;
+}
+
+// Batch D Slice 5: archive/restore-from-archive. Archiving is reversible
+// bookkeeping only — it never touches scenario_revisions (no content change)
+// and is reachable from ANY status (unlike applyTransition's fixed from/to
+// map), so it lives as its own pair of functions rather than forcing it into
+// VALID_ACTIONS/TRANSITIONS. "Avoid destructive deletion" per the batch's
+// scope — there is no delete endpoint anywhere; archive is the only way to
+// get a scenario out of active rotation, and it always round-trips.
+function archiveScenario(scenario_name, user, getDb) {
+    const db = (getDb || defaultGetDb)();
+    if (!user) throw withCode('Authentication required', 'UNAUTHENTICATED');
+    if (!commandAuthority().canAuthor(user)) throw withCode('Not permitted to archive this scenario', 'FORBIDDEN');
+    const row = getLifecycle(scenario_name, () => db);
+    if (!row) throw withCode('Scenario has no lifecycle record — save it first', 'NOT_FOUND');
+    if (row.status === 'archived') throw withCode('Scenario is already archived', 'INVALID_TRANSITION');
+    const nIso = nowIso();
+    const actorId = user.username || user.id;
+    db.prepare(
+        `UPDATE scenario_lifecycle SET status='archived', archived_by=?, archived_at=?, pre_archive_status=?, updated_at=? WHERE scenario_name=?`
+    ).run(actorId, nIso, row.status, nIso, scenario_name);
+    appendLifecycleEvent({
+        scenario_name, event: 'archived', actor_id: actorId, actor_role: user.role,
+        actor_display: user.displayName, from_status: row.status, to_status: 'archived',
+    });
+    return { ok: true, scenario_name, status: 'archived', from: row.status, to: 'archived' };
+}
+
+function restoreFromArchive(scenario_name, user, getDb) {
+    const db = (getDb || defaultGetDb)();
+    if (!user) throw withCode('Authentication required', 'UNAUTHENTICATED');
+    if (!commandAuthority().canAuthor(user)) throw withCode('Not permitted to restore this scenario from archive', 'FORBIDDEN');
+    const row = getLifecycle(scenario_name, () => db);
+    if (!row) throw withCode('Scenario has no lifecycle record — save it first', 'NOT_FOUND');
+    if (row.status !== 'archived') throw withCode('Scenario is not archived', 'INVALID_TRANSITION');
+    const restoredStatus = row.pre_archive_status || 'draft';
+    const nIso = nowIso();
+    const actorId = user.username || user.id;
+    db.prepare(
+        `UPDATE scenario_lifecycle SET status=?, archived_by=NULL, archived_at=NULL, pre_archive_status=NULL, updated_at=? WHERE scenario_name=?`
+    ).run(restoredStatus, nIso, scenario_name);
+    appendLifecycleEvent({
+        scenario_name, event: 'restored_from_archive', actor_id: actorId, actor_role: user.role,
+        actor_display: user.displayName, from_status: 'archived', to_status: restoredStatus,
+    });
+    return { ok: true, scenario_name, status: restoredStatus, from: 'archived', to: restoredStatus };
 }
 
 function getApprovalPayload(scenario_name, user, getDb) {
@@ -237,6 +299,7 @@ function getApprovalPayload(scenario_name, user, getDb) {
     const row = getLifecycle(scenario_name, () => db);
     if (!row) return null;
     const status = row.status;
+    const latest = scenarioRevisions().getLatestRevision(scenario_name, () => db);
     return {
         ok: true,
         scenario_name,
@@ -244,13 +307,21 @@ function getApprovalPayload(scenario_name, user, getDb) {
         author_id: row.author_id,
         submitted_by: row.submitted_by, submitted_at: row.submitted_at,
         reviewed_by: row.reviewed_by, reviewed_at: row.reviewed_at,
-        approved_by: row.approved_by, approved_at: row.approved_at,
+        approved_by: row.approved_by, approved_at: row.approved_at, approved_revision: row.approved_revision,
         rejected_by: row.rejected_by, rejected_at: row.rejected_at, reject_reason: row.reject_reason,
-        activated_by: row.activated_by, activated_at: row.activated_at,
+        activated_by: row.activated_by, activated_at: row.activated_at, activated_revision: row.activated_revision,
+        archived_by: row.archived_by, archived_at: row.archived_at, pre_archive_status: row.pre_archive_status,
+        // Batch D Slice 2: the current HEAD revision, so a UI can show the
+        // operator whether approved_revision is still current (===latest) or
+        // stale (a re-save has moved on — invalidateApprovalOnRevision
+        // already demotes status on any resave, this is for display/audit).
+        latest_revision: latest ? latest.revision_number : null,
         can_submit:  CA.canAuthor(user) && ['draft', 'rejected'].includes(status),
         can_review:  CA.canAuthor(user) && status === 'in_review',
         can_approve: CA.canApprove(user, scenario_name, () => db) && status === 'in_review',
         can_activate: CA.canActivate(user) && (status === 'approved' || status === 'activated'),
+        can_archive: CA.canAuthor(user) && status !== 'archived',
+        can_restore_from_archive: CA.canAuthor(user) && status === 'archived',
         history: readLifecycleEvents(scenario_name),
     };
 }
@@ -283,6 +354,9 @@ function handleScenarioApprovalApi(req, res, pathname, method, sendJson, readJso
 
     const ACTION_TO_TRANSITION = { 'submit-for-review': 'submit', 'review': 'review',
                                     'approve': 'approve', 'reject': 'reject', 'reopen': 'reopen' };
+    // Batch D Slice 5: archive/restore-from-archive bypass applyTransition
+    // entirely (reachable from any status) — routed to their own functions.
+    const STANDALONE_ACTIONS = { 'archive': archiveScenario, 'restore-from-archive': restoreFromArchive };
 
     if (action === 'approval' && method === 'GET') {
         const user = resolveUser(req);
@@ -313,6 +387,20 @@ function handleScenarioApprovalApi(req, res, pathname, method, sendJson, readJso
         return true;
     }
 
+    if (STANDALONE_ACTIONS[action] && method === 'POST') {
+        const user = resolveUser(req);
+        if (!user) { sendJson(res, 401, { ok: false, error: 'Authentication required' }); return true; }
+        readJsonBody(req, { maxBytes: 4096 }).then(() => {
+            try {
+                const r = STANDALONE_ACTIONS[action](scenarioName, user);
+                sendJson(res, 200, r);
+            } catch (e) {
+                sendJson(res, codeToHttp(e.code), { ok: false, error: e.message || 'Bad request', code: e.code || null });
+            }
+        }).catch((e) => sendJson(res, 400, { ok: false, error: (e && e.message) || 'Invalid JSON' }));
+        return true;
+    }
+
     return false; // known /api/scenarios/:name/* shape but not our action — let other routes/404 handle it
 }
 
@@ -323,6 +411,8 @@ module.exports = {
     getLifecycle,
     getApprovalPayload,
     markActivated,
+    archiveScenario,
+    restoreFromArchive,
     appendLifecycleEvent,
     readLifecycleEvents,
     handleScenarioApprovalApi,

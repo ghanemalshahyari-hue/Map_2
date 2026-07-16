@@ -207,6 +207,22 @@
                     <span data-i18n="sw-tool-label">Scenario</span>
                 </button>
 
+                <!-- Batch D gap fix: the Scenario Library (search/filter/status/owner/
+                     revision, approve/launch entry, revisions/compare/restore/archive/
+                     clone) had no reachable trigger for a normal operator — its only
+                     wiring was inside #timeline-strip, a data-dev-only preview strip
+                     that is `hidden` by default. data-tool="scenario-library" has no
+                     TOOL_CONFIG entry (same pattern as "orbat"/"import" above) —
+                     scenario-library.js binds this button directly. -->
+                <button class="tool-rail-btn" data-tool="scenario-library" type="button"
+                        title="Scenario Library — search, review, and manage saved scenarios · مكتبة السيناريوهات">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                    <span>Library</span>
+                </button>
+
                 <div class="tool-rail-spacer"></div>
 
                 <button class="tool-rail-btn" data-tool="layers" type="button" data-i18n-title="tool-layers" title="Layers">
@@ -5841,6 +5857,7 @@
          only acts when a ?launch= intent is present, so direct /app.html and the
          Wargame-3 path are untouched. -->
     <script src="shell/native-scenario-loader.js?v=3"></script>
+    <script src="shell/scenario-library.js?v=1"></script>
     <!-- Scenario Entry Consolidation: Back to Main Window, Export Scenario JSON,
          and the Developer/Import disclosure that hides scenario-load clutter. -->
     <script src="shell/workspace-consolidation.js?v=1"></script>

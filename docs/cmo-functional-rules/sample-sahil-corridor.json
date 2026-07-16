@@ -53,14 +53,14 @@
 
   "blue_units_base_ids": ["HQ", "B1", "B2", "B3", "B4", "ARTY", "BCO", "RES"],
   "blue_units_initial": [
-    { "unit_uid": "BLUE-HQ",   "base_id": "HQ",   "coord": [19.15, 30.55], "echelon": "brigade",  "sidc": "10031000001211000000" },
-    { "unit_uid": "BLUE-1",    "base_id": "B1",   "coord": [18.95, 30.40], "echelon": "battalion","sidc": "10031000001211000000" },
-    { "unit_uid": "BLUE-2",    "base_id": "B2",   "coord": [19.05, 30.42], "echelon": "battalion","sidc": "10031000001211000000" },
-    { "unit_uid": "BLUE-3",    "base_id": "B3",   "coord": [19.12, 30.44], "echelon": "battalion","sidc": "10031000001211000000" },
-    { "unit_uid": "BLUE-4",    "base_id": "B4",   "coord": [18.88, 30.38], "echelon": "battalion","sidc": "10031000001211000000" },
-    { "unit_uid": "BLUE-ARTY", "base_id": "ARTY", "coord": [19.20, 30.58], "echelon": "battalion","sidc": "10031000001505000000" },
-    { "unit_uid": "BLUE-BCO",  "base_id": "BCO",  "coord": [19.00, 30.46], "echelon": "company",  "sidc": "10031000001213000000" },
-    { "unit_uid": "BLUE-RES",  "base_id": "RES",  "coord": [19.25, 30.60], "echelon": "battalion","sidc": "10031000001205000000" }
+    { "unit_uid": "BLUE-HQ",   "base_id": "BLS-CENTER", "coord": [19.15, 30.55], "echelon": "brigade",  "sidc": "10031000001211000000" },
+    { "unit_uid": "BLUE-1",    "base_id": "BLS-WEST",   "coord": [18.95, 30.40], "echelon": "battalion","sidc": "10031000001211000000" },
+    { "unit_uid": "BLUE-2",    "base_id": "BLS-EAST",   "coord": [19.05, 30.42], "echelon": "battalion","sidc": "10031000001211000000" },
+    { "unit_uid": "BLUE-3",    "base_id": "BLS-EAST",   "coord": [19.12, 30.44], "echelon": "battalion","sidc": "10031000001211000000" },
+    { "unit_uid": "BLUE-4",    "base_id": "BLS-WEST",   "coord": [18.88, 30.38], "echelon": "battalion","sidc": "10031000001211000000" },
+    { "unit_uid": "BLUE-ARTY", "base_id": "BLS-CENTER", "coord": [19.20, 30.58], "echelon": "battalion","sidc": "10031000001505000000" },
+    { "unit_uid": "BLUE-BCO",  "base_id": "BLS-EAST",   "coord": [19.00, 30.46], "echelon": "company",  "sidc": "10031000001213000000" },
+    { "unit_uid": "BLUE-RES",  "base_id": "BLS-CENTER", "coord": [19.25, 30.60], "echelon": "battalion","sidc": "10031000001205000000" }
   ],
 
   "ao_boundaries": [

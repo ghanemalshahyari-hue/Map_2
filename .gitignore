@@ -115,6 +115,18 @@ UI_MOdified/TestingAI/Other_App_Ai_Generated output/
 # GitHub >50MB warnings. Keep the files on disk, never track them.
 graphify-out/
 
+# BATCH-D-JOURNAL-HYGIENE-1: the scenario-lifecycle audit trail
+# (scenario-approval-store.js::appendLifecycleEvent) is pure runtime state —
+# a normal operator rehearsal against the real dev server (no RMOOZ_DATA_DIR
+# override) can create it under UI_MOdified/data/journal/ same as any other
+# machine-local artifact in this file. Exact path only, NOT a directory/glob
+# rule — this directory also holds pre-existing, intentionally-tracked
+# journal fixtures (legacy-shim-*.jsonl, manual-*.jsonl, run-*.jsonl) that
+# must stay tracked. appendLifecycleEvent()/readLifecycleEvents() both
+# tolerate the file's total absence (mkdirSync recursive on write, empty-list
+# on a missing-file read) — see test-scenario-lifecycle-journal-hygiene-1.js.
+UI_MOdified/data/journal/scenario-lifecycle.jsonl
+
 # RUNTIME-OVERRIDES-CLEANUP-1: operator scenario overrides are app-written
 # runtime state (written by writeObjectiveOverride in wargame-sim-bridge.js when
 # the operator saves in the Scenario Setup wizard). Tracking it kept the worktree

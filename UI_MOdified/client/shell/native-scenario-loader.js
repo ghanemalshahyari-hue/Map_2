@@ -194,7 +194,15 @@
     }
     // Minimal in-app scenario picker: lists data/scenarios via the existing
     // /api/ai/scenarios endpoint and loads the chosen one. No file parsing here.
+    // Batch D Slice 6: superseded by the richer Scenario Library (search/
+    // filter/owner/status/revision/approval/last-modified) — delegate there
+    // when it's loaded; this bare picker stays only as a defensive fallback
+    // if scenario-library.js somehow isn't present.
     function openScenarioPicker() {
+        if (window.AppScenarioLibrary && typeof window.AppScenarioLibrary.open === 'function') {
+            window.AppScenarioLibrary.open();
+            return;
+        }
         if (document.getElementById('rmooz-scenario-picker')) return;   // single instance
         fetch('/api/ai/scenarios', { credentials: 'same-origin' })
             .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })

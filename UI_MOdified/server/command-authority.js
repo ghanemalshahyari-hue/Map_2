@@ -62,8 +62,25 @@ function canAuthor(user) {
     return !!user && SIM_MUTATION_ROLES.has(user.role);
 }
 
+// Batch D Slice 2: self-approval denial. A commander who also authored this
+// scenario may not approve their own submission — approval must come from a
+// second, independent person, not the same person under a different hat.
+// (Confirmed absent before this fix: isCommander only ever checked role/cell
+// assignment, never compared identity to scenario_lifecycle.author_id.)
+function isSelfApproval(user, scenarioName, getDb) {
+    if (!user || !scenarioName) return false;
+    const db = (getDb || defaultGetDb)();
+    if (!db) return false;
+    const row = db.prepare('SELECT author_id FROM scenario_lifecycle WHERE scenario_name = ?').get(scenarioName);
+    if (!row || row.author_id == null) return false;
+    const approverIdentity = user.username || user.id;
+    return !!approverIdentity && approverIdentity === row.author_id;
+}
+
 function canApprove(user, scenarioName, getDb) {
-    return isCommander(user, scenarioName, getDb);
+    if (!isCommander(user, scenarioName, getDb)) return false;
+    if (isSelfApproval(user, scenarioName, getDb)) return false;
+    return true;
 }
 
 // Activation is permitted to anyone who can author, PROVIDED the scenario
@@ -113,6 +130,7 @@ function assignOperator({ cellId, operatorId, scenarioName, unitId, cellRole, cr
 module.exports = {
     SIM_MUTATION_ROLES,
     isCommander,
+    isSelfApproval,
     canAuthor,
     canApprove,
     canActivate,

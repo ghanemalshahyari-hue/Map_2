@@ -1081,7 +1081,7 @@
         bindFn('scc-clear-obj', function () { eng.clearObjectiveX(); (eng.repaint || function () {})(); });
         bindFn('scc-commit', function () { eng.commit(eng.selectedIdx()); });
         bindFn('scc-run', function () {
-            if (state() === 'committed' && typeof eng.runScenarioContinuous === 'function') eng.runScenarioContinuous();
+            if (sccState(eng) === 'committed' && typeof eng.runScenarioContinuous === 'function') eng.runScenarioContinuous();
             else eng.runScenario();
         });
         bindFn('scc-run-once', function () { eng.runCommittedOnce(); });

@@ -86,7 +86,7 @@ const MAIN_INTEGRATION_FILES = new Set([
     'test-session-security-hardening-1.js',
     'test-sim-route-auth-matrix-1.js',
 ]);
-const BROWSER_FILES = ['verify-canonical-workflow-1.js', 'verify-batch-b-launch-journey-1.js', 'verify-batch-c-runtime-fidelity-journey-1.js'];
+const BROWSER_FILES = ['verify-canonical-workflow-1.js', 'verify-batch-b-launch-journey-1.js', 'verify-batch-c-runtime-fidelity-journey-1.js', 'verify-batch-d-scenario-lifecycle-slice10.js'];
 
 function parseArg(name, def) {
     const i = process.argv.indexOf(name);

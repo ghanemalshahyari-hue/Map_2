@@ -1134,7 +1134,33 @@
             try { return require('./detection.js'); } catch (_) { return null; }
         })() : null);
         if (!det || typeof det.computeContacts !== 'function') return null;
-        try { return det.computeContacts(ws) || null; } catch (_) { return null; }
+        // Batch E Slice 2 (DET2, hardened): real terrain LOS on the server-
+        // authoritative path only — the browser has no synchronous DEM access,
+        // so client-side live preview stays LOS-agnostic (documented scope
+        // boundary; see terrain-los-bridge.js). The require only succeeds under
+        // Node (typeof window === 'undefined' guards a browser <script> load).
+        //
+        // Terrain is PRECOMPUTED here, BEFORE detection: precomputeLos()
+        // candidate-filters by range, samples/caches, and returns a PURE
+        // synchronous lookup — so det.computeContacts never does terrain I/O.
+        // The degraded/ok status is stashed on ws.derived.terrain_los for
+        // diagnostics / the why-not UI (never silently swallowed).
+        var opts = {};
+        if (typeof window === 'undefined' && typeof require === 'function') {
+            try {
+                var losBridge = require('../../server/sim/terrain-los-bridge.js');
+                if (losBridge && typeof losBridge.precomputeLos === 'function') {
+                    var m = obj(ws.meta);
+                    var generation = (m.revision != null) ? m.revision
+                                    : (m.movement_generation != null) ? m.movement_generation
+                                    : (m.step_index != null) ? m.step_index : null;
+                    var pre = losBridge.precomputeLos(ws, { generation: generation });
+                    if (pre && typeof pre.losBlocked === 'function') opts.losBlocked = pre.losBlocked;
+                    if (pre && pre.status) { ws.derived = obj(ws.derived); ws.derived.terrain_los = pre.status; }
+                }
+            } catch (_) {}
+        }
+        try { return det.computeContacts(ws, opts) || null; } catch (_) { return null; }
     }
 
     /* ---- TASK1-B: unit tasking lookup (ws.derived.unit_tasking) -----------

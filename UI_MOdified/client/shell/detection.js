@@ -117,6 +117,66 @@
         return (range <= 0.6 * reff) ? 'firm' : 'tentative';
     }
 
+    /* ---- Batch E Slice 3 (CORRECTED per real-CMO manual audit) ------------
+     * The real installed CMO keeps knowledge and affiliation as INDEPENDENT
+     * axes (proven by its Awareness settings: side can be known while type is
+     * not, and vice-versa). The earlier single ladder
+     * (unknown->...->hostile/friendly) conflated two axes and is removed.
+     * Every contact now carries FOUR independent fields:
+     *   - detection_state    : that a track exists + its position precision
+     *                          ('precise' | 'imprecise'), from confidence.
+     *   - classification_level: what KIND/class is known ('unknown' | 'classified').
+     *   - identity           : the exact unit identity, separately NULLABLE
+     *                          (this engine does not resolve specific identity
+     *                          from sensors yet — stays null, honestly).
+     *   - affiliation        : 'unknown' | 'friendly' | 'neutral' | 'unfriendly'
+     *                          | 'hostile'. ALWAYS 'unknown' out of raw
+     *                          detection — the scenario `side` must NEVER
+     *                          auto-populate it, and detection confidence must
+     *                          NEVER imply hostility. Affiliation is resolved
+     *                          separately by posture + explicit operator/manual
+     *                          evidence (Batch E4), not here.
+     * 'hostile'/'friendly' are NOT part of the knowledge (classification) enum.
+     */
+    var DETECTION_STATES     = ['imprecise', 'precise'];
+    var CLASSIFICATION_LEVELS = ['unknown', 'classified'];
+    var AFFILIATIONS         = ['unknown', 'friendly', 'neutral', 'unfriendly', 'hostile'];
+
+    function detectionAxesFor(method, confidence) {
+        return {
+            detection_state:     confidence === 'firm' ? 'precise' : 'imprecise',
+            // Only a firm radar return resolves a class; ESM (bearing only) and
+            // weak/tentative radar carry no platform data -> 'unknown'.
+            classification_level: (method === 'radar' && confidence === 'firm') ? 'classified' : 'unknown',
+            identity:            null,        // not resolved from sensors this batch
+            affiliation:         'unknown'    // NEVER from side; posture/manual only (E4)
+        };
+    }
+
+    // Backward-compatibility normalization adapter. Any contact record — a
+    // freshly-computed one, or a legacy one that still carries the old single
+    // `identification` string — is coerced to the four-axis shape. Legacy
+    // knowledge values map onto the knowledge axes; legacy 'hostile'/'friendly'
+    // are DELIBERATELY NOT mapped onto affiliation (that would reinstate the
+    // exact side/confidence->hostility conflation this correction removes) —
+    // affiliation stays 'unknown' until posture/manual evidence sets it.
+    function normalizeContactIdentity(contact) {
+        var c = contact || {};
+        if (c.detection_state == null && c.classification_level == null &&
+            c.affiliation == null && typeof c.identification === 'string') {
+            var legacy = c.identification;
+            c.detection_state = (legacy === 'unknown') ? 'imprecise' : 'precise';
+            c.classification_level = (legacy === 'classified' || legacy === 'identified') ? 'classified' : 'unknown';
+            c.identity = (legacy === 'identified' && c.identity != null) ? c.identity : (c.identity != null ? c.identity : null);
+            c.affiliation = 'unknown';
+        }
+        if (DETECTION_STATES.indexOf(c.detection_state) === -1) c.detection_state = 'imprecise';
+        if (CLASSIFICATION_LEVELS.indexOf(c.classification_level) === -1) c.classification_level = 'unknown';
+        if (c.identity === undefined) c.identity = null;
+        if (AFFILIATIONS.indexOf(c.affiliation) === -1) c.affiliation = 'unknown';
+        return c;
+    }
+
     /* ---- main: compute the contacts each side holds ----------------------- */
     function computeContacts(worldState, opts) {
         opts = opts || {};
@@ -158,13 +218,13 @@
                         var reff = Math.min(rdet, horizon);
                         var conf = confidenceFor(range, reff);
                         if (!conf) continue;
-                        consider({
+                        consider(Object.assign({
                             target_uid: tgt.uid, detected_by_side: obs.side || null,
                             by_unit: obs.uid, by_sensor: sen.id || sen.class || 'radar',
                             method: 'radar', range_nm: +range.toFixed(1), max_range_nm: +reff.toFixed(1),
                             confidence: conf,
                             classification: conf === 'firm' ? (tgt.role || tgt.domain || 'unknown') : 'unknown'
-                        });
+                        }, detectionAxesFor('radar', conf)));
                     } else if (stype === 'esm') {
                         // passive: detect a target that has an EMITTING radar, at ~1.5× its ref range
                         var emitter = (tgt.sensors || []).filter(function (x) {
@@ -173,18 +233,20 @@
                         if (!emitter) continue;
                         var resm = Math.min(1.5 * emitter, horizon);
                         if (range > resm) continue;
-                        consider({
+                        consider(Object.assign({
                             target_uid: tgt.uid, detected_by_side: obs.side || null,
                             by_unit: obs.uid, by_sensor: sen.id || 'esm',
                             method: 'esm', range_nm: +range.toFixed(1), max_range_nm: +resm.toFixed(1),
                             confidence: 'tentative', classification: 'emitter bearing'
-                        });
+                        }, detectionAxesFor('esm', 'tentative')));
                     }
                 }
             }
         }
 
-        return Object.keys(best).map(function (k) { return best[k]; });
+        // Belt-and-suspenders: guarantee every emitted contact carries the
+        // full four-axis shape (also coerces any legacy record that slipped in).
+        return Object.keys(best).map(function (k) { return normalizeContactIdentity(best[k]); });
     }
 
     var api = {
@@ -193,7 +255,20 @@
         computeContacts: computeContacts,
         // formulas exposed for tests / reuse
         radarHorizonNm: radarHorizonNm,
-        rcsDetectRangeNm: rcsDetectRangeNm
+        rcsDetectRangeNm: rcsDetectRangeNm,
+        // Batch E Slice 2 (DET2 hardening): exposed so the terrain-LOS
+        // candidate-range cull reads THIS engine's DB-driven ranges rather
+        // than a duplicated table ([[feedback_ranges_from_db_not_invented]]).
+        sensorRef: sensorRef,
+        sensorType: sensorType,
+        // Batch E Slice 3 (corrected): the independent knowledge/affiliation
+        // axes + the backward-compat normalization adapter. Affiliation is a
+        // SEPARATE axis resolved by posture/manual evidence (E4) — never here.
+        DETECTION_STATES: DETECTION_STATES,
+        CLASSIFICATION_LEVELS: CLASSIFICATION_LEVELS,
+        AFFILIATIONS: AFFILIATIONS,
+        detectionAxesFor: detectionAxesFor,
+        normalizeContactIdentity: normalizeContactIdentity
     };
     root.AppDetection = api;
     if (typeof module !== 'undefined' && module.exports) module.exports = api;

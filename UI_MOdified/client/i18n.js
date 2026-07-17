@@ -982,6 +982,7 @@
             'usp-badge-veteran':        'VETERAN',
             'usp-badge-elite':          'ELITE',
             'usp-no-unit':              'No selected unit. Select a row from the readiness matrix to inspect evidence.',
+            'usp-no-comms-data':        'No comms data',
             'usp-unit-status':          'UNIT STATUS',
             /* ── TASK1-C: Current Orders tasking details ── */
             'usp-lbl-orders':     'CURRENT ORDERS',
@@ -3402,6 +3403,7 @@
             'usp-badge-veteran':        'محنك',
             'usp-badge-elite':          'نخبة',
             'usp-no-unit':              'لا توجد وحدة محددة. اختر وحدة من مصفوفة الجاهزية لعرض الأدلة.',
+            'usp-no-comms-data':        'لا توجد بيانات اتصالات',
             'usp-unit-status':          'حالة الوحدة',
             /* ── TASK1-C: Current Orders tasking details ── */
             'usp-lbl-orders':     'الأوامر الحالية',

@@ -12655,6 +12655,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // Restore circle-X interactivity when leaving scalloped drawing mode
         setScallopedDrawingIntercept(false);
 
+        // Scenario Edit Mode: the wide workspace panel overlays the map, so a
+        // real click can't reach the tiles to place a symbol. Collapse the panel
+        // to a strip while the symbol tool is active (restored for every other
+        // tool) so map-click unit placement is actually reachable by an operator.
+        if (window.AppEditMode && typeof window.AppEditMode.isOn === 'function'
+            && window.AppEditMode.isOn()
+            && typeof window.AppEditMode.setMapPlacementMode === 'function') {
+            window.AppEditMode.setMapPlacementMode(currentMode === 'symbol');
+        }
+
         if (currentMode === 'pan') {
             map.getContainer().style.cursor = '';
             map.dragging.enable();

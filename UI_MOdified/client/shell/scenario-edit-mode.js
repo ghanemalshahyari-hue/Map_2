@@ -975,9 +975,10 @@
             try { h.externalCleanup(); } catch (_) {}
             return;
         }
-        // 2D-1O: tear down the overlay-collapse + banner.
+        // 2D-1O: tear down the overlay-collapse + banner — but keep the strip
+        // collapsed if the symbol-tool map-placement mode is still active.
         var panel = document.getElementById(PANEL_ID);
-        if (panel) panel.classList.remove('sw-editmode-picking');
+        if (panel && !_mapPlacementActive) panel.classList.remove('sw-editmode-picking');
         var banner = document.getElementById('sw-editmode-pick-banner');
         if (banner && banner.parentNode) banner.parentNode.removeChild(banner);
         if (!h) return;
@@ -3458,6 +3459,38 @@
         ind.appendChild(el('span', { class: 'sw-editmode-badge ' + badgeClass, text: badgeText }));
     }
 
+    /* ---- map-placement mode: collapse the wide panel so the map is clickable —
+     * In Edit Mode the workspace panel grows to `sw-editmode-wide` and overlays
+     * the whole map, so a real operator click can't reach the map tiles to place
+     * a symbol (only a scripted Leaflet event could). When the symbol tool is
+     * active we collapse the panel to the same right-edge strip the pick-on-map
+     * flow uses (`sw-editmode-picking`) so the map underneath is fully clickable,
+     * and show a banner; every other tool restores the full editor. Driven from
+     * app.js's mode-change handler. */
+    var _mapPlacementActive = false;
+    function setMapPlacementMode(on) {
+        var panel = document.getElementById(PANEL_ID);
+        if (!panel) return;
+        on = !!on && _on;                    // only meaningful while Edit Mode is on
+        if (on === _mapPlacementActive) return;
+        _mapPlacementActive = on;
+        var bar = document.getElementById(BAR_ID);
+        var banner = document.getElementById('sw-editmode-place-banner');
+        if (on) {
+            panel.classList.add('sw-editmode-picking');   // reuse the collapse-to-strip layout
+            if (bar && !banner) {
+                banner = el('div', { id: 'sw-editmode-place-banner', class: 'sw-editmode-pick-banner-global' }, [
+                    el('span', { text: 'وضع الرموز على الخريطة — انقر الخريطة لإضافة وحدة للسيناريو' }),
+                    el('small', { text: 'Placing units — click the map. Pick another tool to return to the form.' })
+                ]);
+                bar.appendChild(banner);
+            }
+        } else {
+            panel.classList.remove('sw-editmode-picking');
+            if (banner && banner.parentNode) banner.parentNode.removeChild(banner);
+        }
+    }
+
     /* ---- toggle / mount --------------------------------------------------- */
     function setMode(on) {
         _on = !!on;
@@ -3480,6 +3513,7 @@
             renderIndicator();
             logOperator('Edit mode ON');
         } else {
+            setMapPlacementMode(false);   // clear any collapse/banner before leaving
             if (strip)  strip.style.display = '';
             if (editor) editor.hidden = true;
             if (btn) btn.textContent = 'Edit mode / تحرير';
@@ -3546,6 +3580,9 @@
         // Map-click unit placement (Edit Mode): route a placed symbol into the
         // draft's red_units/blue_units_initial instead of an operator marker.
         placeUnitFromMap: placeUnitFromMap,
+        // Collapse the wide editor to a strip while the symbol tool is active so
+        // the map underneath is reachable by a real click (driven from app.js).
+        setMapPlacementMode: setMapPlacementMode,
         // Slice 10: the single ingestion door for manual/AI/template/import.
         openDraftForReview: openDraftForReview,
         // Slice 2A/2B/2C: pure helpers exposed for static Node tests.

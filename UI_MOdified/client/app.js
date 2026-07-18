@@ -14142,8 +14142,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // auto-link to the nearest landing site) and skip the operator-layer marker.
             if (window.AppEditMode && typeof window.AppEditMode.isOn === 'function' && window.AppEditMode.isOn()
                 && typeof window.AppEditMode.placeUnitFromMap === 'function') {
-                window.AppEditMode.placeUnitFromMap(sidc, e.latlng.lng, e.latlng.lat);
-                return;
+                // Contract: an OBJECT result means edit-mode handled the click —
+                // either it placed the unit ({ok:true}) or it rejected with a
+                // surfaced reason ({ok:false} for ambiguous affiliation / no
+                // same-side base / invalid coord). In edit mode we never want an
+                // operator-layer marker, so any object → stop here. Only a literal
+                // `false` (edit mode not ready) falls through to a normal marker.
+                if (window.AppEditMode.placeUnitFromMap(sidc, e.latlng.lng, e.latlng.lat)) return;
             }
             const opts = { ...getTextModifiers(), size: 25, simpleStatusModifier: true };
 

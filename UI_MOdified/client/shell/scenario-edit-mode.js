@@ -1123,6 +1123,134 @@
         return _beginMultiPick('polyline', 'Draw line', onFinish, onCancel);
     }
 
+    /* ---- map-click unit placement into the draft --------------------------
+     * app.js's symbol-tool click handler calls this when Edit Mode is ON: a
+     * symbol dropped on the map IS a scenario unit, so route it into the
+     * in-memory draft (red_units / blue_units_initial) instead of the
+     * operator-layer marker. This mutates the WORKING-COPY draft ONLY — never
+     * window.units, never the journal, never /api/sim/commit — the same safety
+     * boundary as +Red/+Blue and pick-on-map.
+     *
+     * Correctness invariants (owner multi-role review, P0 — corrupting
+     * canonical scenario data must be impossible):
+     *   1. Side comes from an EXPLICIT affiliation mapping of the SIDC
+     *      standard-identity digit (20-digit 2525D/APP-6, index 3):
+     *        friend(3)/assumed-friend(2) -> blue ; suspect(5)/hostile(6) -> red
+     *      pending(0)/unknown(1)/neutral(4)/malformed -> AMBIGUOUS. Ambiguous
+     *      is NEVER silently coerced to a side; the caller must supply an
+     *      explicit opts.side, otherwise nothing is created.
+     *   2. A unit only auto-links to a REAL same-side base already in the draft.
+     *      If none exists, nothing is created (no synthetic/dangling base_id)
+     *      and the reason is surfaced — the operator adds a base first.
+     *   3. Invalid coordinates create nothing.
+     *
+     * Result contract:
+     *   false                              -> Edit Mode not ready (caller may
+     *                                         fall back to a normal marker)
+     *   { ok:false, reason, ... }          -> rejected (ambiguous | needsBase |
+     *                                         invalid_coord); caller must NOT
+     *                                         drop a marker (edit-mode surfaced
+     *                                         a status telling the operator why)
+     *   { ok:true, side, unit }            -> placed into the draft
+     */
+    // Explicit standard-identity -> side. Returns 'red' | 'blue' | 'ambiguous'.
+    // Reads the 20-digit 2525D/APP-6 standard-identity digit at index 3 (the
+    // layout generateSIDC + buildMiniSymbolHtml use). A string too short to be
+    // a real SIDC is malformed → ambiguous (never a guessed side).
+    function sidcSide(sidc) {
+        var s = String(sidc == null ? '' : sidc);
+        if (s.length < 10) return 'ambiguous';              // malformed / too short
+        switch (s.charAt(3)) {
+            case '2': case '3': return 'blue';              // assumed friend / friend
+            case '5': case '6': return 'red';               // suspect / hostile
+            default:            return 'ambiguous';         // 0 pending, 1 unknown, 4 neutral, other
+        }
+    }
+    // Resolve the side to place on: an explicit caller choice wins; else derive
+    // from the SIDC. Never returns a guessed side for ambiguous affiliation.
+    function resolvePlacementSide(sidc, opts) {
+        var explicit = opts && opts.side;
+        if (explicit === 'red' || explicit === 'blue') return explicit;
+        return sidcSide(sidc);
+    }
+    function nearestBaseName(coord, sideWanted) {
+        var bases = (Array.isArray(_draft && _draft.bls_template) ? _draft.bls_template : [])
+            .filter(function (b) { return b && b.name && (b.side || 'RED') === sideWanted; });
+        if (!bases.length) return null;
+        var lon = Number(coord[0]) || 0, lat = Number(coord[1]) || 0;
+        var best = null, bestD = Infinity;
+        bases.forEach(function (b) {
+            if (!Array.isArray(b.coord) || b.coord.length < 2) return;
+            var dlon = (Number(b.coord[0]) || 0) - lon;
+            var dlat = (Number(b.coord[1]) || 0) - lat;
+            var d = dlon * dlon + dlat * dlat; // squared-euclidean is fine for nearest-selection
+            if (d < bestD) { bestD = d; best = b; }
+        });
+        return best ? best.name : null;
+    }
+    function placeUnitFromMap(sidc, lng, lat, opts) {
+        if (!_on || !_draft) return false;
+
+        // (3) reject invalid coordinates before touching the draft. Guard the
+        // raw inputs first — Number(null) and Number('') both coerce to 0, which
+        // would silently drop a missing coordinate onto the equator.
+        var rawBad = function (v) { return v == null || (typeof v === 'string' && v.trim() === ''); };
+        var lon = Number(lng), latN = Number(lat);
+        if (rawBad(lng) || rawBad(lat) || !isFinite(lon) || !isFinite(latN) ||
+            lon < -180 || lon > 180 || latN < -90 || latN > 90) {
+            try { setStatus('Cannot place unit: invalid map coordinate.', true); } catch (_) {}
+            return { ok: false, reason: 'invalid_coord' };
+        }
+
+        // (1) explicit affiliation -> side; ambiguous is never coerced.
+        var side = resolvePlacementSide(sidc, opts);
+        if (side !== 'red' && side !== 'blue') {
+            try {
+                setStatus('Ambiguous affiliation (' + sidcSide(sidc) + '). Choose a hostile ' +
+                          '(Red) or friendly (Blue) symbol, or set the side explicitly.', true);
+            } catch (_) {}
+            return { ok: false, reason: 'ambiguous_affiliation', ambiguous: true, affiliation: sidcSide(sidc) };
+        }
+
+        fillForcesDefaults(_draft);
+        var coord = [lon, latN];
+
+        // (2) only link to a REAL same-side base; never invent one.
+        var baseName = nearestBaseName(coord, side === 'red' ? 'RED' : 'BLUE');
+        if (!baseName) {
+            try {
+                setStatus('No ' + side.toUpperCase() + ' base in the draft yet — add a ' +
+                          side.toUpperCase() + ' landing site (BLS) in the Forces Geometry step ' +
+                          'first, then place the unit.', true);
+            } catch (_) {}
+            return { ok: false, reason: 'needs_base', needsBase: true, side: side };
+        }
+
+        var created;
+        if (side === 'red') {
+            var uid = nextFreeUid('RED', _draft.red_units, 'uid');
+            created = {
+                uid: uid, label: '', bls: baseName,
+                appear: 0, role: 'Main effort', coord: coord, strength: 1, sidc: sidc
+            };
+            _draft.red_units.push(created);
+            _selectUnit('red', uid);
+        } else {
+            var unitUid = nextFreeUid('BLUE', _draft.blue_units_initial, 'unit_uid');
+            created = { unit_uid: unitUid, base_id: baseName, coord: coord, sidc: sidc };
+            _draft.blue_units_initial.push(created);
+            _selectUnit('blue', unitUid);
+        }
+        _markDirty();
+        try { renderEditor(); } catch (_) {}
+        try { _maybeRepaintMap(); } catch (_) {}
+        try {
+            logOperator('Unit placed from map (' + side.toUpperCase() + ')',
+                { sidc: sidc, coord: coord, base: baseName });
+        } catch (_) {}
+        return { ok: true, side: side, unit: created };
+    }
+
     function renderForcesCard(host) {
         var card = el('div', { class: 'builder-card sw-card' }, [
             el('div', { class: 'builder-card-header' }, [
@@ -3415,6 +3543,9 @@
         setMode: setMode,
         getDraft: function () { return _draft ? clone(_draft) : null; },
         isOn: function () { return _on; },
+        // Map-click unit placement (Edit Mode): route a placed symbol into the
+        // draft's red_units/blue_units_initial instead of an operator marker.
+        placeUnitFromMap: placeUnitFromMap,
         // Slice 10: the single ingestion door for manual/AI/template/import.
         openDraftForReview: openDraftForReview,
         // Slice 2A/2B/2C: pure helpers exposed for static Node tests.
@@ -3437,6 +3568,12 @@
             validateAllHardRules:    validateAllHardRules,
             RED_UNIT_ROLES:          RED_UNIT_ROLES,
             nextFreeUid:             nextFreeUid,
+            // Map-click placement helpers + a mode/draft setter for static tests.
+            sidcSide:                 sidcSide,
+            resolvePlacementSide:     resolvePlacementSide,
+            nearestBaseName:          nearestBaseName,
+            placeUnitFromMap:         placeUnitFromMap,
+            _setOnForTest:            function (on) { _on = !!on; },
             // Slice 2C
             STEPS:                       STEPS,
             stepIsComplete:              stepIsComplete,

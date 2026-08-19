@@ -2368,6 +2368,12 @@
         try { renderEchelonRollup(); } catch (_) { /* ignore */ }
         try { updateUnitScale(); } catch (_) { /* ignore */ } // initial zoom-responsive symbol size
         try { renderMovementTrails(0); } catch (_) { /* ignore */ } // AN4: record step-0 positions (no trail yet)
+        try {
+            if (ownedRunPositions) {
+                _applyOwnedRunPositionsToMarkers();
+                _renderOwnedRunMovementDisplay();
+            }
+        } catch (_) { /* ignore */ }
 
         // Add the legend control near the lower-left edge so it stays out of
         // the densest unit laydown and can be toggled from the app header.

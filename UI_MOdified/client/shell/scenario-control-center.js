@@ -800,8 +800,6 @@
             // "Run means time moves": the primary readout is scenario time, runtime state, and speed.
             // Authored progress rows stay internal and are not rendered in normal operator UI.
             inner += kv('Scenario time', (function () { try { return (eng.scenarioClockLabel && eng.scenarioClockLabel()) || '—'; } catch (_) { return '—'; } })(), C.good) +
-                // C3b: steps are review-only — the snapshot in effect is SECONDARY, never the run engine.
-                kv('Snapshot in effect', (function () { try { return (eng.snapshotInEffectLabel && eng.snapshotInEffectLabel()) || '—'; } catch (_) { return '—'; } })(), C.dim) +
                 kv('Runtime state', runtimeStateLabel(state, scn, ex), STATE_COLOR[state] || C.ink) +
                 kv('Speed', runtimeSpeedLabel(ex), C.accent) +
                 kv('Next runtime event', nextRuntimeEventLabel(ex), C.dim) +

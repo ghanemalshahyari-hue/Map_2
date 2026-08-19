@@ -2,7 +2,7 @@
 
 /*
  * C3b baseline gate: primary Play owns continuous scenario time.
- * Play advances current_hours. Step/snapshot controls remain review-only.
+ * Play advances current_hours. Legacy snapshot controls remain diagnostic/review-only.
  */
 
 const fs = require('fs');
@@ -93,7 +93,7 @@ console.log('\n--- 3. free-fight runtime uses the World State clock reducers ---
         /runtimeState:/.test(ff) && /runtimeSnapshot:/.test(ff) && /setRuntimeSpeed:/.test(ff));
 })();
 
-console.log('\n--- 4. UI contract: Play means time, Step means review ---');
+console.log('\n--- 4. UI contract: Play means scenario time ---');
 (function () {
     const scc = read('UI_MOdified/client/shell/scenario-control-center.js');
     const i18n = read('UI_MOdified/client/i18n.js');
@@ -101,7 +101,7 @@ console.log('\n--- 4. UI contract: Play means time, Step means review ---');
     const map = read('UI_MOdified/client/wargame/adjudicator-map.js');
     ok('SCC primary readout shows Scenario time', scc.includes("kv('Scenario time'"));
     ok('SCC primary readout does not expose Turn/Phase rows', !scc.includes("kv('Turn") && !scc.includes("kv('Phase'"));
-    ok('snapshot is secondary review language', scc.includes('Snapshot in effect'));
+    ok('SCC normal run readout does not expose Snapshot wording', !scc.includes('Snapshot in effect'));
     ok('legacy step control is Next snapshot', i18n.includes("'wg-btn-next': 'Next snapshot'"));
     ok('legacy HUD is marked diagnostic', html.includes('wargame-mode-chip">Legacy') && html.includes('wg-legacy-banner'));
     ok('manual snapshot scrub pauses a playing run', map.includes('pauseCommittedRun') && map.includes('opts.snapshot'));

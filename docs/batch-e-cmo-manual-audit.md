@@ -18,10 +18,12 @@ E1–E3 remain intact and unpushed, treated as **provisional** pending this revi
 | Product | Command: Modern Operations (CMO) |
 | Install path | `U:\SteamLibrary\steamapps\common\Command - Modern Operations` |
 | Source | Steam (second library on `U:\`) |
+| **CMO application version** | **`v1.09 – Build 1825.15`** (observed 2026-07-16 from the live launch dialog — the app's own reported version; distinct from the exe file-version metadata, which is a generic `1.0.0.0`) |
+| **Steam distribution build ID** | **`22395538`** (manifest `appmanifest_1076160.acf` — the Steam depot build, distinct from the CMO app version above) |
 | Steam AppID | `1076160` |
-| Steam buildid | `22395538` (manifest `appmanifest_1076160.acf`) |
 | Manifest last-updated | 2026-06-03 (UTC) |
-| Executable | `Command.exe` (~43.8 MB) + `Launcher.exe`; exe file-version metadata is a generic `1.0.0.0` — the meaningful version fingerprint is the Steam buildid plus the DB build (below) |
+| Executable | `Command.exe` (~43.8 MB) + `Launcher.exe`; exe file-version metadata is a generic `1.0.0.0` — the meaningful fingerprints are the two version identifiers above plus the DB build (below) |
+| Launch requirement (observed) | Steam client must be **running and signed in** — `Command.exe` shows a "Steam client Not running!" modal and exits otherwise (Steam build; `Steamworks.NET.dll`/`CSteamworks.dll`). No offline/DRM-bypass path is used. |
 | Database build | ships DB3K up to `DB3K_515.db3` and CWDB up to `CWDB_514.db3` (community + classic DBs) |
 | Manuals present | `Manuals\CMO manual EBOOK.pdf` (11 MB, the full game manual — primary source), `CMO manual TO PRINT.pdf`, `Command Live Issue 1–13.pdf`; top-level `whatsnew.pdf`, `Tiny Release Notes.pdf`, `End Users Agreement.pdf` |
 
@@ -317,3 +319,74 @@ NOT drive CMO; the operator opens CMO manually and captures screenshots / a shor
 
 Capture **behavior and UI structure only** — no database values, unit stats, or scenario content.
 Once these confirm (or correct) the manual-derived model, E4 resumes on the validated basis.
+
+## 9. LIVE-OBSERVED evidence (2026-07-16, "Flight Tutorial – Electronic Warfare", v1.09 Build 1825.15)
+
+Captured live from the running application (guarded window-only screenshots + vision), so these rows
+are upgraded from manual-only to **live-confirmed**. Method: agent-controlled (UIA menu invokes +
+verified coordinate clicks) with a screenshot after each action; own-side POV; screenshot refs are
+scratchpad `cmo-doctrine-06.png` / `cmo-state-08.png`.
+
+**Doctrine & ROE editor** — window titled *"Doctrine & ROE for unit: Radar (AN/FPS-100) Har Ramon
+(Facility)"*. Top tabs: **General · EMCON Settings · Weapon Release Authorization (WRA) · Withdraw &
+Redeploy (Ships/Subs/Land) · Targeting Priority**. Category filters: ALL · RoE · ASW · Refuel · ASuW ·
+EMCON · Land. A `(Parent Side)` reference + "Doctrine Window (Ctrl+F9)" are present.
+
+- **WCS is per-domain, live-confirmed (E4):** the RoE section shows **`WCS (Air)`, `WCS (Surface)`,
+  `WCS (Submarine)`, `WCS (Land)`** as four separate fields, here each **"Inherited, Tight"**. This
+  confirms the manual: WCS (Free/Tight/Hold) is split by target domain and is the fire-authority gate
+  — validating the E4 re-scope (affiliation + WCS, not IFF).
+- **Doctrine inheritance is literal, live-confirmed (E7):** *every* field displays **"Inherited,
+  <value>"** — Engage Ambiguous: Inherited, Pessimistic · Auto Evade: Inherited, Yes · Maintain
+  Standoff: Inherited, Yes · Ignore Plotted Course: Inherited, No · Nuclear Weapons: Inherited, No ·
+  Refuel: Inherited, Always Except Tankers · Anti-Surface SAMs: Inherited, No · Navigation (Land):
+  Inherited, Shortest Route · etc. Confirms the side→…→unit inherit-by-default cascade.
+- **EMCON is a category tab, live-confirmed (E5):** a dedicated **"EMCON Settings"** tab (not a numeric
+  level). "Ignore Under Attack: Inherited, Yes" appears under an "Emission Control (EMCON)" group.
+- **WRA + Targeting Priority are first-class tabs, live-confirmed (E7/E8).**
+- **"Engage Ambiguous: Pessimistic"** — the ambiguity axis exists as doctrine (relevant to how
+  ambiguous/unidentified contacts gate engagement).
+
+**Still pending (highest priority):** the identity-vs-affiliation *contact* baseline — a selected
+non-own contact's full information panel showing detection state / classification / identity /
+affiliation as separate fields. Partial data point observed: a contact hover label read
+**"TN:146 / Radar (Flat Face B [P-19]) / 0.0 kts"** (a track-number + type classification), but the
+complete panel with an explicit affiliation/posture field has not yet been captured. (Agent
+coordinate-click automation is unreliable here — the automation host intermittently steals foreground,
+so a single operator click on a contact is the trustworthy way to stage this one capture.)
+
+## 8. UI-Automation feasibility probe (tested 2026-07-16) — why capture is operator-assisted
+
+An owner-authorized, read-only probe (launch → enumerate → correlate → then a single authorized
+control test) established exactly how far agent-driven automation of CMO can go. **CMO is a WinForms
+app** (`WindowsForms10.Window…`), launched (build **v1.09 Build 1825.15**) only with the **Steam
+client running + signed in** (it shows a "Steam client Not running!" modal and exits otherwise).
+
+**Identity-addressable via UI Automation (works):** the main-menu buttons carry stable AutomationIds
+(`Button_NewGame`, `Button_CreateScenario`, `Button_LoadScenario`, `Button_QuickBattle`,
+`Button_Campaign`, `Button_LoadGame`, `Button_Exit`); the full menu bar and the Editor submenu are
+named MenuItems (Add / Edit Sides, Unit actions, Scenario Times + Duration, Lua Script Console, …);
+standard dialog menus are exposed. **UIA *control* is confirmed** — `InvokePattern.Invoke()` on
+`Button_CreateScenario` was executed and the observed result was a fresh scenario entering ScenEdit
+(the "Editor" menu appeared). So menu/dialog automation by control identity is genuinely feasible.
+
+**NOT identity-addressable (blocks the experiment):**
+1. **The map/globe** — a single custom-rendered surface exposing no per-unit / per-contact elements.
+   Placing the Blue/Red units and selecting an on-map contact are therefore coordinate actions.
+2. **The Lua Script Console** — its Scintilla editor exposes **0 Edit controls** (no `ValuePattern`),
+   and the **RUN button is not a UIA element and has no menu equivalent** (`File → Open…` and
+   `Edit → Paste` exist, but no Run/Execute item). So a setup script can be loaded/injected by
+   identity but **cannot be executed** by identity.
+3. **The Load Scenario dialog** — its scenario tree (Tutorials / Standalone / Showcase / DLC packs)
+   exposes **0 UIA TreeItems** and its action buttons (`Load selected`, `Browse…`, `Cancel`) are not
+   exposed (only a generic "Open"). So even opening an existing **tutorial** scenario — which would
+   have reduced setup work — cannot be driven by control identity. (The `File → Load` menu item that
+   *opens* this dialog IS exposed; the dialog's contents are not.)
+
+**Determination:** menu/dialog steps are automatable by identity, but the two surfaces the
+identity-vs-affiliation experiment actually requires (unit placement on the map; Lua execution) are
+custom-rendered and reachable only by coordinate clicks / SendKeys — which are excluded. Per §7's
+rule, automation stops here and evidence collection is **operator-assisted guided capture** (operator
+drives the map/RUN; the agent screenshots each screen via PowerShell + reads it with vision, builds
+the behavior matrix). This is a tested limitation, not an assumption — real controls were invoked and
+the specific custom surfaces identified.
